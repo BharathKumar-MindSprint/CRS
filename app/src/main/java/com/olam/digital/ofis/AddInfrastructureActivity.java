@@ -197,7 +197,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                if(mCurrentLocation != null)
+                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
                     setPoiGPS(mCurrentLocation);
             }
         };
@@ -451,7 +451,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }*/
 
 //        Toast.makeText(AddInfrastructureActivity.this,"Track Count : "+(new GpsTrackerLogic().getGPSTrackList(context)).size(),Toast.LENGTH_LONG).show();
-        if(mCurrentLocation != null) {
+        if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
             setPoiGPS(mCurrentLocation);
         }
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
@@ -1109,7 +1109,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null) {
+                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     setPoiGPS(mCurrentLocation);
                                 }else{
                                     if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {

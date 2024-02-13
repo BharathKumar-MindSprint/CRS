@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -219,6 +220,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
+
+    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
@@ -249,6 +252,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     static boolean isdownloadfarmplan;
     static boolean isEnableDM = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,8 +343,57 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 SYNC_INTERVAL
         );
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
+
+                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
+            }
+        }
         // Request Permission only for Android Version Marshmallow and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
+
+                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
+            }
+        }
+        // Request Permission only for Android Version Marshmallow and above
+
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check Phone Permission
             if (ContextCompat.checkSelfPermission(HomeActivity.this,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
@@ -400,51 +453,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         });
 
-//        if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
-//
-//
-//            saveUpdateButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    // Request Permission only for Android Version Marshmallow and above
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                        // Check Phone Permission
-//                        if (ContextCompat.checkSelfPermission(HomeActivity.this,
-//                                android.Manifest.permission.READ_PHONE_STATE)
-//                                != PackageManager.PERMISSION_GRANTED) {
-//
-//                    //request permission
-//                    ActivityCompat.requestPermissions(HomeActivity.this,
-//                            new String[]{android.Manifest.permission.READ_PHONE_STATE},
-//                            MY_PERMISSIONS_REQUEST);
-//
-//                } else {
-//
-//                    // Permission already granted
-//                    firstTimeSetup();
-//                }
-//            } else {
-//
-//                        // Call methods directly for Android versions lower than Marshmallow
-//                        firstTimeSetup();
-//                    }
-//                }
-//            });
-//        } else {
-//            checkForUpdate();
-//            mainSection.removeView(firstRunSection);
-//            long currentVersionCode = sharedPreferences.getLong("VERSION_NUM", 0);
-//            if (BuildConfig.VERSION_CODE > currentVersionCode) {
-//                Toast.makeText(context, res.getString(R.string.upgrade_message), Toast.LENGTH_LONG).show();
-//                Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
-//                nl.syncData();
-//            }
-//        }
-
         gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location != null) {
+                if (location != null && !GPSUtils.isMockLocation(location)) {
                     mCurrentLocation = location;
                     TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
                     trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
@@ -1546,6 +1558,38 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             }
 
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[3] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[4] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[5] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[6] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        // Permissions granted, proceed with your code
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                            || !shouldShowRequestPermissionRationale(permissions[3])
+                            || !shouldShowRequestPermissionRationale(permissions[4])
+                            || !shouldShowRequestPermissionRationale(permissions[5])
+                            || !shouldShowRequestPermissionRationale(permissions[6])
+                            || !shouldShowRequestPermissionRationale(permissions[7])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
     }
@@ -1933,9 +1977,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 for (int i = 0; i < mainResponseList.size(); i++) {
                                     int id = mainResponseList.get(i).getId();
                                     int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
+                                    String followUpDurationVal = mainResponseList.get(i).getFollowUpDurationVal();
                                     String assessmentType = mainResponseList.get(i).getAssessmentType();
                                     int surveyType = mainResponseList.get(i).getSurveyType();
                                     int followUpAttempts = mainResponseList.get(i).getFollowUpAttempts();
+                                    String followUpAttemptsVal = mainResponseList.get(i).getFollowUpAttemptsVal();
                                     String name = mainResponseList.get(i).getName();
                                     String nameFr = mainResponseList.get(i).getNameFr();
                                     String nameIdn = mainResponseList.get(i).getNameIdn();
@@ -2008,6 +2054,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     user.followUpAttempts = followUpAttempts;
                                     user.displayLogic = displayLogic;
                                     user.maxScore = maxScore;
+                                    user.followUpAttemptsVal = followUpAttemptsVal;
+                                    user.followUpDurationVal = followUpDurationVal;
 //                                    user.assessmentResultType = assessmentResultType;
 
                                     db.dmMainModuleDao().insert(user);
@@ -2729,104 +2777,114 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
 
                                 ArrayList<ExistingModuleItem> existingModuleItemArrayList = new ArrayList<>();
-                                followUpItemArrayList.clear();
+                                existingModuleItemArrayList.clear();
                                 existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
 
-                                for (int j = 0; j < followUpItemArrayList.size(); j++) {
-                                    int questionId = followUpItemArrayList.get(j).getQuestionId();
-                                    int id = followUpItemArrayList.get(j).getId();
-                                    int complianceId = followUpItemArrayList.get(j).getComplianceId();
-                                    int moduleId = followUpItemArrayList.get(j).getModuleId();
-                                    int actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
-                                    int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
-                                    int attempt = followUpItemArrayList.get(j).getAttempt();
-                                    long farmerId = followUpItemArrayList.get(j).getFarmerId();
-                                    String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
-                                    String createdAt = followUpItemArrayList.get(j).getCreatedAt();
-                                    String createdBy = followUpItemArrayList.get(j).getCreatedBy();
-                                    List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
+                                if (followUpItemArrayList!=null){
+                                    for (int j = 0; j < followUpItemArrayList.size(); j++) {
+                                        int questionId = followUpItemArrayList.get(j).getQuestionId();
+                                        int id = followUpItemArrayList.get(j).getId();
+                                        int complianceId = followUpItemArrayList.get(j).getComplianceId();
+                                        int moduleId = followUpItemArrayList.get(j).getModuleId();
+                                        String actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
+                                        int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
+                                        int attempt = followUpItemArrayList.get(j).getAttempt();
+                                        long farmerId = followUpItemArrayList.get(j).getFarmerId();
+                                        String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
+                                        String createdAt = followUpItemArrayList.get(j).getCreatedAt();
+                                        String createdBy = followUpItemArrayList.get(j).getCreatedBy();
+                                        List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
                                     /*JSONArray captureProof = new JSONArray();
                                     for (int k = 0; k < captureProofList.size(); k++) {
                                         captureProof.put(captureProofList.get(k));
                                     }*/
-                                    String status = followUpItemArrayList.get(j).getStatus().trim();
-                                    String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
-                                    String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
-                                    boolean isPortal = followUpItemArrayList.get(j).isPortal();
+                                        String status = followUpItemArrayList.get(j).getStatus().trim();
+                                        String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
+                                        String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
+                                        boolean isPortal = followUpItemArrayList.get(j).isPortal();
 
-                                    FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
-                                    followUpItemMainTable.actionPlanId = actionPlanId;
-                                    followUpItemMainTable.questionId = questionId;
-                                    followUpItemMainTable.id = id;
-                                    followUpItemMainTable.complianceId = complianceId;
-                                    followUpItemMainTable.moduleId = moduleId;
-                                    followUpItemMainTable.dmSubModId = dmSubModId;
-                                    followUpItemMainTable.attempt = attempt;
-                                    followUpItemMainTable.actionPlanText = actionPlanText;
-                                    followUpItemMainTable.createdAt = createdAt;
-                                    followUpItemMainTable.createdBy = createdBy;
-                                    followUpItemMainTable.status = status;
-                                    followUpItemMainTable.updatedAt = updatedAt;
-                                    followUpItemMainTable.updatedBy = updatedBy;
-                                    followUpItemMainTable.isPortal = isPortal;
-                                    followUpItemMainTable.farmerId = farmerId;
-                                    followUpItemMainTable.isSync = true;
-                                    followUpItemMainTable.dmCapturedProof = captureProofList.size();
+                                        FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
+                                        followUpItemMainTable.actionPlanId = actionPlanId;
+                                        followUpItemMainTable.questionId = questionId;
+                                        followUpItemMainTable.id = id;
+                                        followUpItemMainTable.complianceId = complianceId;
+                                        followUpItemMainTable.moduleId = moduleId;
+                                        followUpItemMainTable.dmSubModId = dmSubModId;
+                                        followUpItemMainTable.attempt = attempt;
+                                        followUpItemMainTable.actionPlanText = actionPlanText;
+                                        followUpItemMainTable.createdAt = createdAt;
+                                        followUpItemMainTable.createdBy = createdBy;
+                                        followUpItemMainTable.status = status;
+                                        followUpItemMainTable.updatedAt = updatedAt;
+                                        followUpItemMainTable.updatedBy = updatedBy;
+                                        followUpItemMainTable.isPortal = isPortal;
+                                        followUpItemMainTable.farmerId = farmerId;
+                                        followUpItemMainTable.isSync = true;
+                                        if (captureProofList!=null){
+                                            followUpItemMainTable.dmCapturedProof = captureProofList.size();
+                                        }else {
+                                            followUpItemMainTable.dmCapturedProof = 0;
+                                        }
 
-                                    db.followUpItemMainTableDao().insert(followUpItemMainTable);
+                                        db.followUpItemMainTableDao().insert(followUpItemMainTable);
 
-                                }
-
-                                for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
-                                    int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
-                                    int submittedModuleId = existingModuleItemArrayList.get(k).getId();
-                                    String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
-                                    int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
-                                    int moduleId = existingModuleItemArrayList.get(k).getModuleId();
-                                    int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
-                                    ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
-                                    answersItemArrayList.clear();
-                                    answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
-                                    Result result = existingModuleItemArrayList.get(k).getResult();
-
-                                    for (int l = 0; l < answersItemArrayList.size(); l++) {
-                                        int answerId = answersItemArrayList.get(l).getAnswerId();
-                                        int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
-                                        int questionId = answersItemArrayList.get(l).getQuestionId();
-                                        String answerValue = answersItemArrayList.get(l).getAnswerValue();
-                                        String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
-                                        int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
-                                        String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
-
-                                        DmSurveyAnswerTable dmSurveyAnswerTable = new DmSurveyAnswerTable();
-                                        dmSurveyAnswerTable.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable.farmerId = String.valueOf(farmerId);
-                                        dmSurveyAnswerTable.moduleId = String.valueOf(moduleId);
-                                        dmSurveyAnswerTable.submittedModuleId = submittedModuleId;
-                                        dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
-                                        dmSurveyAnswerTable.questionID = String.valueOf(questionId);
-                                        dmSurveyAnswerTable.answer = answerValue;
-//                                        dmSurveyAnswerTable.isCaptureProof = captureProofs;
-                                        dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
-                                        dmSurveyAnswerTable.actionPlanText = actionPlanText;
-                                        dmSurveyAnswerTable.isSynced = true;
-                                        dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                     }
-                                    String[] totalBudget = result.getTotalBudget().split(" ");
-                                    DMSurveyReport dmSurveyReport = new DMSurveyReport(result.getTotalComplaint(),
-                                            result.getTotalSatisfactory(),
-                                            result.getTotalNonComplaint(),
-                                            result.getTotalActionPlan(),
-                                            Double.parseDouble(totalBudget[0].trim()),
-                                            result.getResultType(),
-                                            result.getResultValue(),
-                                            result.getResultRemarks(),
-                                            farmerId,moduleId,
-                                            farmerGroupId,
-                                            currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
-                                    db.dmSurveyReportDao().insert(dmSurveyReport);
                                 }
+
+
+                                if (existingModuleItemArrayList!= null){
+                                    for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
+                                        int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
+                                        int submittedModuleId = existingModuleItemArrayList.get(k).getId();
+                                        String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
+                                        int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
+                                        int moduleId = existingModuleItemArrayList.get(k).getModuleId();
+                                        int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
+                                        ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
+                                        answersItemArrayList.clear();
+                                        answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
+                                        Result result = existingModuleItemArrayList.get(k).getResult();
+
+                                        for (int l = 0; l < answersItemArrayList.size(); l++) {
+                                            int answerId = answersItemArrayList.get(l).getAnswerId();
+                                            int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
+                                            int questionId = answersItemArrayList.get(l).getQuestionId();
+                                            String answerValue = answersItemArrayList.get(l).getAnswerValue();
+                                            String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
+                                            int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
+                                            String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
+
+                                            DmSurveyAnswerTable dmSurveyAnswerTable = new DmSurveyAnswerTable();
+                                            dmSurveyAnswerTable.answerID = String.valueOf(answerId);
+                                            dmSurveyAnswerTable.farmerId = String.valueOf(farmerId);
+                                            dmSurveyAnswerTable.moduleId = String.valueOf(moduleId);
+                                            dmSurveyAnswerTable.submittedModuleId = submittedModuleId;
+                                            dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
+                                            dmSurveyAnswerTable.questionID = String.valueOf(questionId);
+                                            dmSurveyAnswerTable.answer = answerValue;
+//                                        dmSurveyAnswerTable.isCaptureProof = captureProofs;
+                                            dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
+                                            dmSurveyAnswerTable.actionPlanText = actionPlanText;
+                                            dmSurveyAnswerTable.isSynced = true;
+                                            dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
+                                            db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
+                                        }
+                                        String[] totalBudget = result.getTotalBudget().split(" ");
+                                        DMSurveyReport dmSurveyReport = new DMSurveyReport(result.getTotalComplaint(),
+                                                result.getTotalSatisfactory(),
+                                                result.getTotalNonComplaint(),
+                                                result.getTotalActionPlan(),
+                                                Double.parseDouble(totalBudget[0].trim()),
+                                                result.getResultType(),
+                                                result.getResultValue(),
+                                                result.getResultRemarks(),
+                                                farmerId,moduleId,
+                                                farmerGroupId,
+                                                currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
+                                        db.dmSurveyReportDao().insert(dmSurveyReport);
+                                    }
+                                }
+
 
                             }
 

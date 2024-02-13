@@ -616,14 +616,14 @@
     <string name="deactivating_license">Menonaktifkan Lisensi ..</string>
     <string name="biometric_license_failed_in_offline">Lisensi Dinonaktifkan di Offline</string>
     <string name="biometric_license_failed">Lisensi Biometrik: gagal</string>
-    <string name="biometric_licence_deactivation_queue">Penonaktifan Lisensi Biometrik</string>
+   <string name="biometric_licence_deactivation_queue">Penonaktifan Lisensi Biometrik</string>
     <string name="face_recognizion">Pengenalan Wajah</string>
 
-    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
+     <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
-    <string name="update_firebase_install_id_info">Updating Informations</string>
-    <string name="attendee_sex">Sex</string>
-    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
+     <string name="update_firebase_install_id_info">Updating Informations</string>
+     <string name="attendee_sex">Sex</string>
+     <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
     <string name="cs_page2_17">2.    Apabila Data Petani Anda dibagikan dengan pihak ketiga seperti pelanggan dan mitra kami sebagai kelanjutan dari Tujuan dan penggunaan khusus yang disetujui di atas, setiap pelanggan dan mitra adalah pengontrol data sesuai hak mereka sendiri dan Anda menyetujui penggunaan data Anda oleh mereka sebagaimana disebutkan dalam Paragraf 1 dan diperinci dalam Pernyataan Privasi. Apabila terdapat pelanggan atau mitra yang memerlukan penggunaan Data Petani di luar Tujuan dan penggunaan khusus yang disebutkan di atas, mereka dapat menghubungi Anda secara langsung untuk meminta persetujuan Anda lebih lanjut</string>
     <string name="cs_page2_18">3.    Anda dapat menarik persetujuan yang telah diberikan, meminta akses dan/atau koreksi Data Petani Anda, dan/atau meminta informasi yang berkaitan dengan kebijakan dan praktik kami kapan pun dengan menghubungi kami di <a href="privacy@ofi.com">privacy@ofi.com</a>. Meskipun pengungkapan yang diminta tidak bersifat wajib, ketidakmampuan dalam menyediakan Data Petani dan/atau penarikan persetujuan Anda dapat memengaruhi kemampuan kami untuk memberikan layanan tertentu yang dapat Anda minta dari kami secara terpisah (tergantung kasusnya). Sebagai contoh, alamat Anda mungkin diperlukan tidak hanya untuk membantu penelusuran, tetapi juga bagi kami untuk mengirimkan bahan tertentu kepada Anda seperti perlengkapan pertanian. Dalam kasus di mana Anda mencabut persetujuan, kami dapat menyimpan data tersebut untuk memenuhi kewajiban kontrak kami kepada Anda tetapi tidak akan menggunakan data tersebut untuk tujuan lain apa pun</string>
     <string name="cs_page2_19">4.    Pertanyaan Privasi Data Petani kami tersedia di bawah ini untuk referensi Anda. Penyataan ini menjelaskan cara kami menangani dan melindungi data pribadi. Meskipun Data Petani Anda akan dibagikan dengan orang-orang yang disebutkan di atas, Data Petani Anda yang kami simpan akan dijaga kerahasiaannya dan sesuai dengan undang-undang privasi yang berlaku</string>
@@ -790,4 +790,7 @@
     <string name="ofis_request_help">Minta bantuan</string>
 
     <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
+    <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
+    <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
+    <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
 </resources>

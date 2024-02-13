@@ -66,7 +66,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
@@ -101,9 +100,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     private static final int MY_GALLERYPERMISSION_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
-    private static int CAMERA_REQUEST = 0;
-    private static int GALLERY_PICK = 0;
-    private static int GALLERY_PICK_DOCX = 0;
+
+    private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
+    private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
+    private static final int CAMERA_REQUEST = 2277;
+    private static final int GALLERY_PICK = 2233;
+    private static final int GALLERY_PICK_DOCX = 4455;
+
+    private static int GALLERY_QUESTION_ID = 0;
 
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
     private String mCurrentPhotoPath;
@@ -534,7 +538,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(DialogInterface dialog, int item) {
                             if (finalOptions[item].equals("Take Photo")) {
                                 if (isStoragePermissionCameraGranted()) {
-                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
+//                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
+                                    GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     // Ensure that there's a camera activity to handle the intent
                                     if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -565,27 +570,30 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
                                     String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
                                     if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
-                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
+//                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
                                         galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
                                         galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                                         galleryIntent.setType("*/*");
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
                                     } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
-                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+//                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
                                         galleryIntent.setType("*/*");
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                     } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
-                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+//                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
                                         galleryIntent.setType("*/*");
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                     }
 
@@ -896,7 +904,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         EditText editTextCurrencyInput = new EditText(getActivity());
         editTextCurrencyInput.setHint("Amount");
         editTextCurrencyInput.setTextSize(14);
-        editTextCurrencyInput.setText(amountT);
+        if (amountT.equals("0")){
+            editTextCurrencyInput.setHint(amountT);
+        }else {
+            editTextCurrencyInput.setText(amountT);
+        }
+//        editTextCurrencyInput.setText(amountT);
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
         editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -981,6 +994,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             options.inJustDecodeBounds = false;
             options.inTempStorage = new byte[16 * 1024];
 
+            int questionId = GALLERY_QUESTION_ID;
             Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath, options);
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1001,7 +1015,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
             dmComplaintFileTable.setIsFileSynced(0);
-            dmComplaintFileTable.setFilePath(uriImage.getPath());
+//            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1009,15 +1023,35 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setOfisFileName(OFISFileName);
             dmComplaintFileTable.setFileData(imageBytes);
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
-            dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
+            dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
             dmComplaintFileTable.setAttempt(0);
+            // Get an array of app-specific external storage directories
+            File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+            // The first element of the array will be the primary external storage directory
+            File primaryExternalStorageDir = externalStorageDirs[0];
+            File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+            if (!destinationFolder.exists()) {
+                destinationFolder.mkdirs();
+            }
+            File destinationFile = new File(destinationFolder, OFISFileName);
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                outputStream.write(imageBytes);
+                outputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String destinationFilePath = destinationFile.getAbsolutePath();
+            dmComplaintFileTable.setFilePath(destinationFilePath);
             db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
             long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
-            dynamicArrayName = "imageArray" + CAMERA_REQUEST;
+            dynamicArrayName = "imageArray" + questionId;
 
-            dynamicArrayNameFile = "fileArray" + CAMERA_REQUEST;
+            dynamicArrayNameFile = "fileArray" + questionId;
 
             dynamicArrayFile.clear();
             dynamicArray.clear();
@@ -1033,13 +1067,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dynamicArraysFile.clear();
 
 
-            View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(CAMERA_REQUEST));
+            View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
             LinearLayout linearLayoutImage = (LinearLayout) desiredView;
 
 
             List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
             dmComplaintFileTableList.clear();
-            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST, Constants.FARMER_ID, 0);
+            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
             if (dmComplaintFileTableList.size() != 0) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                     retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1138,8 +1172,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             StringBuffer sb = new StringBuffer(valueCode);
             sb.deleteCharAt(sb.length() - 1);
 
-            int questionId = Integer.parseInt(sb.toString());
+//            int questionId = Integer.parseInt(sb.toString());
 
+            int questionId = GALLERY_QUESTION_ID;
 //            Toast.makeText(getActivity(), "" + questionId, Toast.LENGTH_SHORT).show();
 
 
@@ -1166,7 +1201,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1176,6 +1211,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1287,7 +1342,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else if (mime.equalsIgnoreCase("application/pdf")) {
+            }
+            else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
 
                 // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
@@ -1340,7 +1396,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFile_name(newFileFormat);
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setIsFileSynced(0);
-                    dmComplaintFileTable.setFilePath(uri.getPath());
+
+//                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1350,6 +1407,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1458,7 +1535,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else if (mime.equalsIgnoreCase("image/jpeg")
+            }
+            else if (mime.equalsIgnoreCase("image/jpeg")
                     || mime.equalsIgnoreCase("image/png")) {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
@@ -1497,7 +1575,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                dmComplaintFileTable.setFilePath(filePathimage);
+
+//                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1507,6 +1586,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(imageBytes);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1634,8 +1733,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             StringBuffer sb = new StringBuffer(valueCode);
             sb.deleteCharAt(sb.length() - 1);
 
-            int questionId = Integer.parseInt(sb.toString());
+//            int questionId = Integer.parseInt(sb.toString());
 
+            int questionId = GALLERY_QUESTION_ID;
 //            Toast.makeText(getActivity(), "" + questionId, Toast.LENGTH_SHORT).show();
 
 
@@ -1659,7 +1759,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(fileByteArray);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1668,6 +1768,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1828,7 +1948,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
-                    dmComplaintFileTable.setFilePath(uri1.getPath());
+//                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
@@ -1839,6 +1959,25 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -2073,10 +2212,33 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
     public boolean isStoragePermissionGalleryGranted() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                return  true;
+            }else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
+                return false;
+            }
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-
 
                 return true;
             } else {
@@ -2092,7 +2254,32 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
     public boolean isStoragePermissionCameraGranted() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                return  true;
+            }else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
+                return false;
+            }
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -2119,6 +2306,70 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU){
+            try {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                    // Permissions granted, proceed with your code
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                        && (!shouldShowRequestPermissionRationale(permissions[0])
+                        || !shouldShowRequestPermissionRationale(permissions[1])
+                        || !shouldShowRequestPermissionRationale(permissions[2])
+                        || !shouldShowRequestPermissionRationale(permissions[3])
+                        || !shouldShowRequestPermissionRationale(permissions[4])
+                        || !shouldShowRequestPermissionRationale(permissions[5])
+                        || !shouldShowRequestPermissionRationale(permissions[6])
+                        || !shouldShowRequestPermissionRationale(permissions[7])
+                )) {
+                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                }else {
+                    Toast.makeText(getContext(), R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (requestCode == MY_CAMERA_PERMISSION_CODE_TIRAMISU){
+            try {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                    // Permissions granted, proceed with your code
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                        && (!shouldShowRequestPermissionRationale(permissions[0])
+                        || !shouldShowRequestPermissionRationale(permissions[1])
+                        || !shouldShowRequestPermissionRationale(permissions[2])
+                        || !shouldShowRequestPermissionRationale(permissions[3])
+                        || !shouldShowRequestPermissionRationale(permissions[4])
+                        || !shouldShowRequestPermissionRationale(permissions[5])
+                        || !shouldShowRequestPermissionRationale(permissions[6])
+                        || !shouldShowRequestPermissionRationale(permissions[7])
+                )) {
+                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                }else {
+                    Toast.makeText(getContext(), R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 //Toast.makeText(PatientReasonActivity.this, R.string.camera_perm_granted, Toast.LENGTH_LONG).show();
@@ -2137,6 +2388,23 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             }
         }
 
+    }
+
+    public void showSettingsDialog(String msg) {
+        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getContext());
+        dialog.setTitle(R.string.permission_permanent_denial_title);
+        dialog.setMessage(msg).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getContext().getPackageName())));
+            }
+        }).setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                Toast.makeText(getContext(), R.string.permission_permanent_denial_msg, Toast.LENGTH_LONG).show();
+            }
+        });
+        dialog.show();
     }
 
 

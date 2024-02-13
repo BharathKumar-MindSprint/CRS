@@ -580,14 +580,14 @@
     <string name="name">Nama:</string>
 
     <string name="allchilds_name">Semua nama anak-anak (sebagaimana berlaku)</string>
-    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
+     <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="please_click_checkbox">Silakan klik semua kotak centang yang sesuai</string>
     <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
     <string name="txt_farm_name">Farm Name:</string>
     <string name="txt_farm_code">Farm Code:</string>
-    <string name="attendee_sex">Sex</string>
+     <string name="attendee_sex">Sex</string>
 
 
 
@@ -732,4 +732,8 @@
     <string name="ofis_request_help">Minta bantuan</string>
 
     <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
+    <string name="other_certification">Other Certification</string>
+    <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
+    <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
+    <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
 </resources>

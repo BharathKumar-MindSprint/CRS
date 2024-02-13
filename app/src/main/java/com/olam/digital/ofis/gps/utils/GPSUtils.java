@@ -1,7 +1,7 @@
 package com.olam.digital.ofis.gps.utils;
 
 import android.content.ContentValues;
-import android.content.Context;
+import android.location.Location;
 
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -37,4 +37,14 @@ public class GPSUtils {
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE,timestamp.toString());
         return  geoContentValues;
     }
+
+    public static boolean isMockLocation(Location location){
+        if (android.os.Build.VERSION.SDK_INT >= 18  && android.os.Build.VERSION.SDK_INT <= 31  ) {
+            return location.isFromMockProvider();
+        }else if(android.os.Build.VERSION.SDK_INT > 31){
+            return location.isMock();
+        }
+        return false;
+    }
+
 }

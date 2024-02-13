@@ -623,7 +623,7 @@
 
     <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
-    <string name="update_firebase_install_id_info">Updating Informations</string>
+   <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="attendee_sex">Sex</string>
     <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
     <string name="cs_page2_title">1.    Penggunaan Data Pribadi</string>
@@ -793,4 +793,7 @@
     <string name="ofis_request_help">Minta bantuan</string>
 
     <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
+    <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
+    <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
+    <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
 </resources>

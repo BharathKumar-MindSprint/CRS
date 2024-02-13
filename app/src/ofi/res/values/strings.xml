@@ -15,6 +15,7 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
     <!-- main stuff -->
     <string name="app_name">OFI Companion Debug</string>
@@ -184,6 +185,8 @@
     <!-- For View Sub Module - questionnaire default values -->
     <string name="ModuleTitle">Module title goes here</string>
     <string name="ModuleSubTitle">Module sub title goes here</string>
+    <string name="ModuleTitleDescription">Module Description goes here</string>
+    <string name="ModuleSubTitleDescription">Module sub description goes here</string>
     <string name="ModuleStatus">New task</string>
     <string name="module_in_progress">In Progress: </string>
     <string name="module_finished">Awaiting Upload</string>
@@ -296,6 +299,7 @@
     <string name="fullreview_farm_management_plan_in_progress">Full Review in Progress</string>
     <string name="fmp_are_you_sure">This will require a new plan to be printed, are you sure you want to proceed?</string>
     <string name="complete_all_required_fields">You must complete all required fields before you can submit this item (i.e. questions displaying a red *)</string>
+    <string name="complete_in_range">Required text feild should be in range.</string>
     <string name="complete_all_required_fields_mandatry">Survey Configuration Error. Please submit an Ask for help.</string>
     <string name="ReadAndAgreeConsent">Read and agree to consent statement</string>
     <string name="consentStatementMain1">It is necessary for you to supply us with personal data in connection with the Olam sustainability programme of which you are part of. This personal data will be collected and stored on the Olam Farmer Information System ("<strong>OFIS</strong>"). You may subsequently withdraw any consent given for our collection, use and disclosure of your personal data. However, failure to supply your personal data and/or subsequent withdrawal of your consent may result in you being unable to participate in the sustainability programme.</string>
@@ -876,18 +880,18 @@ Note that we can anonymise or aggregate any of the information we collect and us
     <string name="gdpr_data_t_ans2"> Legitimate interest, and when a contractual relationship exists, in order to fulfil our contractual obligations to you</string>
     <string name="gdpr_data_t3"> Provide Traceability in the Supply Chain	</string>
     <string name="gdpr_data_t_ans3"> Legitimate interest</string>
-    <string name="gdpr_data_t4"> Foster Careers	</string>
-    <string name="gdpr_data_t_ans4"> Legitimate interest</string>
-    <string name="gdpr_data_t5"> Communicate with you regarding services you are party to	</string>
-    <string name="gdpr_data_t_ans5"> Legitimate interest</string>
-    <string name="gdpr_data_t6"> Provide and improve our websites, apps, products, and services	</string>
-    <string name="gdpr_data_t_ans6"> Legitimate interest</string>
-    <string name="gdpr_data_t7"> Address legal issues	</string>
-    <string name="gdpr_data_t_ans7"> Legal obligation</string>
-    <string name="gdpr_data_t8"> Manage office visitors	</string>
-    <string name="gdpr_data_t_ans8"> Legitimate interest</string>
-    <string name="gdpr_data_t9"> Marketing communications and analytics	</string>
-    <string name="gdpr_data_t_ans9"> Consent</string>
+<string name="gdpr_data_t4"> Foster Careers	</string>
+<string name="gdpr_data_t_ans4"> Legitimate interest</string>
+<string name="gdpr_data_t5"> Communicate with you regarding services you are party to	</string>
+<string name="gdpr_data_t_ans5"> Legitimate interest</string>
+<string name="gdpr_data_t6"> Provide and improve our websites, apps, products, and services	</string>
+<string name="gdpr_data_t_ans6"> Legitimate interest</string>
+<string name="gdpr_data_t7"> Address legal issues	</string>
+<string name="gdpr_data_t_ans7"> Legal obligation</string>
+<string name="gdpr_data_t8"> Manage office visitors	</string>
+<string name="gdpr_data_t_ans8"> Legitimate interest</string>
+<string name="gdpr_data_t9"> Marketing communications and analytics	</string>
+<string name="gdpr_data_t_ans9"> Consent</string>
     <string name="gdpr_data2">\n Your Rights
 \n  \nThe law gives you certain rights in respect of the information we collect from you. Among these rights, you have the right to ask us for a copy of your personal data, to verify, correct, or restrict (stop any active) processing of your personal data.
 \n  \nIn addition, you can object to the processing of your personal data in some circumstances (namely, where we don’t have to process the data to meet a contractual or other legal requirement, or where we are using the data for direct marketing).
@@ -1101,4 +1105,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
     <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
+    <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
+    <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
+    <string name="range_hint_A_R">Range : %1$d-%2$d</string>
 </resources>

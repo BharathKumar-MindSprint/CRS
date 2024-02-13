@@ -16,6 +16,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -53,11 +54,9 @@ public class AuthenticationClient {
     public static <S> S createService(
             Class<S> serviceClass, Context context) {
         setup(context);
-        TokenInterceptor interceptor =
-                new TokenInterceptor();
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
-        httpClient.addInterceptor(interceptor);
+        httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         httpClient.sslSocketFactory(getSSLSocketFactory());
         httpClient.retryOnConnectionFailure(false);
         builder.client(httpClient.build());

@@ -579,7 +579,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                if(mCurrentLocation != null)
+                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
                     setPoiGPS(mCurrentLocation);
             }
         };
@@ -711,7 +711,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null) {
+                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     setPoiGPS(mCurrentLocation);
                                 }else{
                                    /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {

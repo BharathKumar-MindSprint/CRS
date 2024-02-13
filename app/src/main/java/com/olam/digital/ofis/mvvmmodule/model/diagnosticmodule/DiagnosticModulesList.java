@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule;
 
+import androidx.room.ColumnInfo;
+
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -72,6 +74,12 @@ public class DiagnosticModulesList {
 	@SerializedName("followUpAttempts")
 	private int followUpAttempts;
 
+	@SerializedName("followUpAttemptsVal")
+	private String followUpAttemptsVal;
+
+	@SerializedName("followUpDurationVal")
+	private String followUpDurationVal;
+
 	@SerializedName("nameEs")
 	private String nameEs;
 
@@ -108,9 +116,37 @@ public class DiagnosticModulesList {
 	@SerializedName("displayLogic")
 	private String displayLogic;
 
+	@SerializedName("recurrenceCount")
+	public String recurrenceCount;
 
+	@SerializedName("recurrenceStartDate")
+	public String recurrenceStartDate;
+	@SerializedName("recurrenceEndDate")
+	public String recurrenceEndDate;
 
+	public String getRecurrenceStartDate() {
+		return recurrenceStartDate;
+	}
 
+	public void setRecurrenceStartDate(String recurrenceStartDate) {
+		this.recurrenceStartDate = recurrenceStartDate;
+	}
+
+	public String getRecurrenceEndDate() {
+		return recurrenceEndDate;
+	}
+
+	public void setRecurrenceEndDate(String recurrenceEndDate) {
+		this.recurrenceEndDate = recurrenceEndDate;
+	}
+
+	public String getRecurrenceCount() {
+		return recurrenceCount;
+	}
+
+	public void setRecurrenceCount(String recurrenceCount) {
+		this.recurrenceCount = recurrenceCount;
+	}
 
 	public int getMaxScore() {
 		return maxScore;
@@ -364,9 +400,22 @@ public class DiagnosticModulesList {
 		this.descriptionTr = descriptionTr;
 	}
 
+	public String getFollowUpAttemptsVal() {
+		return followUpAttemptsVal;
+	}
 
+	public void setFollowUpAttemptsVal(String followUpAttemptsVal) {
+		this.followUpAttemptsVal = followUpAttemptsVal;
+	}
 
-	public DiagnosticModulesList(int followUpDuration, String assessmentType, String descriptionPt, String nameFr, List<QuestionsItem> questions, String description, String nameIdn, String descriptionFr, List<ComplianceIndicatorItem> complianceIndicator, String namePt, String nameLo, String nameTr, List<CurrencyItem> currency, int id, int surveyType, String nameTh, String nameVi, int followUpAttempts, String nameEs, String descriptionVi, String descriptionEs, List<SectionsItem> sections, Recurrence recurrence, String descriptionTh, String name, String descriptionLo, String descriptionIdn, String descriptionTr) {
+	public String getFollowUpDurationVal() {
+		return followUpDurationVal;
+	}
+
+	public void setFollowUpDurationVal(String followUpDurationVal) {
+		this.followUpDurationVal = followUpDurationVal;
+	}
+	public DiagnosticModulesList(int followUpDuration, String assessmentType, String descriptionPt, String nameFr, List<QuestionsItem> questions, String description, String nameIdn, String descriptionFr, List<ComplianceIndicatorItem> complianceIndicator, String namePt, String nameLo, String nameTr, List<CurrencyItem> currency, int id, int surveyType, String nameTh, String nameVi, int followUpAttempts, String nameEs, String descriptionVi, String descriptionEs, List<SectionsItem> sections, Recurrence recurrence, String descriptionTh, String name, String descriptionLo, String descriptionIdn, String descriptionTr , String recurrenceCount , String recurrenceStartDate , String recurrenceEndDate , String followUpAttemptsVal, String followUpDurationVal) {
 		this.followUpDuration = followUpDuration;
 		this.assessmentType = assessmentType;
 		this.descriptionPt = descriptionPt;
@@ -395,6 +444,11 @@ public class DiagnosticModulesList {
 		this.descriptionLo = descriptionLo;
 		this.descriptionIdn = descriptionIdn;
 		this.descriptionTr = descriptionTr;
+		this.recurrenceCount = recurrenceCount;
+		this.recurrenceStartDate = recurrenceStartDate;
+		this.recurrenceEndDate = recurrenceEndDate;
+		this.followUpAttemptsVal = followUpAttemptsVal;
+		this.followUpDurationVal = followUpDurationVal;
 	}
 
 

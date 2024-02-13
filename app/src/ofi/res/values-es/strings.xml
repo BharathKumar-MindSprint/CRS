@@ -116,6 +116,8 @@
     <!-- For View Sub Module - questionnaire default values -->
     <string name="ModuleTitle">Título del módulo aquí</string>
     <string name="ModuleSubTitle">Subtítulo del módulo aquí</string>
+    <string name="ModuleTitleDescription">Module Description goes here</string>
+    <string name="ModuleSubTitleDescription">Module sub description goes here</string>
     <string name="ModuleStatus">Nueva tarea</string>
     <string name="module_in_progress">En progreso: </string>
     <string name="module_finished">Completado pero NO Enviado</string>
@@ -798,6 +800,9 @@
     <string name="update_signature_hint">Toca para actualizar</string>
     <string name="are_you_at_the_farmers_hh">¿Está usted en el hogar del agricultor?</string>
     <string name="ofis_request_help">Pida ayuda</string>
+    <string name="alert_review">El valor ingresado está fuera del rango permitido, será enviado para revisión del administrador</string>
+    <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
+    <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
 
 </resources>
 

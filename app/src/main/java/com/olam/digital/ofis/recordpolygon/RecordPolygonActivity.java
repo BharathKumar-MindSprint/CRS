@@ -3,6 +3,7 @@ package com.olam.digital.ofis.recordpolygon;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,10 +17,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -205,6 +208,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
     };
     private LocationRequest locationRequest;
+
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS_ANDROID_13 = 1255;
     Logger logger;
     ArrayList<String> plotNameList;
     private LinearLayout plotList;
@@ -356,6 +361,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
         SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
 
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
         MAPBOXSATELLITELABELLED = new MapBoxTileSource("MapBoxSatelliteLabelled", 1, 19, 256, ".png");
         ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveAccessToken(this);
         ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveMapBoxMapId(this);
@@ -485,14 +493,21 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         }
         setStdTileProvider();
-        map.setTileSource(MAPBOXSATELLITELABELLED);
+//        map.setTileSource(MAPBOXSATELLITELABELLED);
+        map.setTileSource(TileSourceFactory.MAPNIK);
         map.getOverlayManager().getTilesOverlay().setColorFilter(null);
         mapController.setZoom(17);
 
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int permissionStatusExtStorage = getPermissionStatus(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionStatus == BLOCKED_OR_NEVER_ASKED || permissionStatusExtStorage == BLOCKED_OR_NEVER_ASKED) {
-            checkPermissions();
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                checkPermissionsForAndroid13Above();
+            }else {
+                checkPermissions();
+            }
+
         }
         initializeLoggingVariables();
     }
@@ -563,7 +578,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private void initCenterCurrentLocation() {
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionStatus == DENIED) {
-            checkPermissions();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                checkPermissionsForAndroid13Above();
+            }else {
+                checkPermissions();
+            }
             return;
         } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
             showChangeSettingsDialog();
@@ -775,7 +794,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     void initiateLogging() {
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionStatus == DENIED) {
-            checkPermissions();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                checkPermissionsForAndroid13Above();
+            }else {
+                checkPermissions();
+            }
             return;
         } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
             showChangeSettingsDialog();
@@ -980,6 +1003,28 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
     }
 
+    void checkPermissionsForAndroid13Above(){
+        List<String> permissions = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
+            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+
+        }
+
+        if (!permissions.isEmpty()) {
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -994,7 +1039,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 try {
                     // Check for WRITE_EXTERNAL_STORAGE
-                    Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    Boolean storage = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                        storage = perms.get(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED &&
+                                perms.get(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED &&
+                                perms.get(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
+                    }else {
+                        storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    }
                     if (!storage) {
                         // Permission Denied
                         Toast.makeText(this, R.string.storage_permission_explanation, Toast.LENGTH_LONG).show();
@@ -1009,6 +1061,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     e.printStackTrace();
                 }
             }
+
+
         }
     }
 
@@ -1091,6 +1145,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onPause() {
         super.onPause();
+        map.onPause();
         logger.addRecordToLog("onPause checkSelfPermission");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(this);
@@ -1977,6 +2032,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onResume() {
         super.onResume();
+        map.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_PLOT_POLYGON);
     }
 

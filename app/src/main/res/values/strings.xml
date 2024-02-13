@@ -144,7 +144,7 @@
     <string name="permission_permanent_denial_title">Permission was permanently denied</string>
     <string name="permission_permanent_denial_msg">Permission request is permanently denied. Please provide permissions from Application Settings.</string>
     <string name="go_to_settings_msg">Allow permission from application settings.\nGo to settings?</string>
-
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <!-- in XML -->
     <string name="Add_Farmer">Add Farmer</string>
     <string name="Farmer_Name">Farmer Name</string>
@@ -183,6 +183,8 @@
     <!-- For View Sub Module - questionnaire default values -->
     <string name="ModuleTitle">Module title goes here</string>
     <string name="ModuleSubTitle">Module sub title goes here</string>
+    <string name="ModuleTitleDescription">Module Description goes here</string>
+    <string name="ModuleSubTitleDescription">Module sub description goes here</string>
     <string name="ModuleStatus">New task</string>
     <string name="module_in_progress">In Progress: </string>
     <string name="module_finished">Awaiting Upload</string>
@@ -1105,4 +1107,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_diognostic_module">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="other_certification">Other Certification</string>
+    <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
+    <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
+    <string name="range_hint_A_R">Range : %1$d-%2$d</string>
 </resources>

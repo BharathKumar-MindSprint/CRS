@@ -1,10 +1,8 @@
 //apply plugin: 'com.dynatrace.instrumentation'
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
-apply plugin: 'com.google.firebase.firebase-perf'
 
 
-//noinspection GroovyMissingReturnStatement
 android {
     dexOptions {
         preDexLibraries true
@@ -24,8 +22,8 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
     flavorDimensions "default"
     defaultConfig {
         applicationId "com.olam.digital.ofis"
@@ -33,11 +31,12 @@ android {
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 19
-        //noinspection OldTargetApi
-        targetSdkVersion 29
+        targetSdkVersion 33
         multiDexEnabled true
-        versionCode 67
-        versionName "10.6.0"
+        versionCode 71
+        versionName "11.6.4"
+
+
 
 
         javaCompileOptions {
@@ -50,10 +49,11 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+
         }
         release {
             lintOptions {
@@ -61,24 +61,22 @@ android {
                 checkReleaseBuilds false
                 abortOnError false
             }
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+
         }
     }
 
     productFlavors {
-        //noinspection GroovyMissingReturnStatement
 
         dev {
             applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
-
             resValue "string", "applicationName", "OFIS DEV"
-            //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
@@ -86,52 +84,36 @@ android {
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
-            //KeyCloak
             resValue "string", "clientId", '"mobile-ofis-app-dev"'
             resValue "string", "clientSecret", '"4afbbe46-ab48-4db9-8c67-dea623e691b1"'
-
         }
 
+
         devofi {
-
-            applicationId "com.olam.digital.ofis"
-
+            applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-            // New SIT DNS name
-            // https://otofis-zuul.olamdigital.com/
-
-            resValue "string", "applicationName", "OFI Companion"
-            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
-            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisprdscs.olamdigital.com/"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
+            resValue "string", "applicationName", "OFI DEV"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
         }
 
         sitofi {
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
-            // New SIT DNS name
             resValue "string", "applicationName", "OFI SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-//            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
-//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
@@ -140,82 +122,59 @@ android {
 
         uat{
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
-            //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
-            // resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
-
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
         }
 
         uatofi{
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
-            //New UAT DNS name
             resValue "string", "applicationName", "OFI UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
-
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
         }
 
 
         sit {
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
-            // New SIT DNS name
             resValue "string", "applicationName", "OFIS SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-            //KeyCloak
             resValue "string", "clientId", '"ofis-mobile-sit"'
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
-
         }
 
         preprod {
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-            // New SIT DNS name
-            // https://otofis-zuul.olamdigital.com/
-
             resValue "string", "applicationName", "OFIS Preprod"
             resValue "string", "AUTH_SERVER_URL", 'https://ofisot-zuul-preprod.olamdigital.com/ofisoauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://ofisot-zuul-preprod.olamdigital.com/"'
@@ -223,21 +182,15 @@ android {
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
             resValue "string", "clientId", '"ofis-mobile-sit"'
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
         }
 
-        //noinspection GroovyMissingReturnStatement
         prod {
             applicationId "com.olam.digital.ofis"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-            // New SIT DNS name
-            // https://otofis-zuul.olamdigital.com/
-
             resValue "string", "applicationName", "OFIS Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
@@ -250,13 +203,9 @@ android {
 
         prodofi {
             applicationId "com.olam.digital.ofis"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-            // New SIT DNS name
-            // https://otofis-zuul.olamdigital.com/
-
             resValue "string", "applicationName", "OFI Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
@@ -269,14 +218,11 @@ android {
 
         // OGA
         devoga {
-            // Original
             applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
-
             resValue "string", "applicationName", "OGA DEV"
-            //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
@@ -284,39 +230,28 @@ android {
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
-
         }
 
         sitoga {
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
-            // New SIT DNS name
             resValue "string", "applicationName", "OGA SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-//            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
-//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
-//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
 
-        uatoga{
+        uatoga {
             applicationId "com.olam.digital.ofispreprod"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-
             resValue "string", "applicationName", "OGA UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
@@ -330,11 +265,9 @@ android {
 
         prodoga {
             applicationId "com.olam.digital.ofis"
-
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-
             resValue "string", "applicationName", "OGA Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
@@ -344,38 +277,28 @@ android {
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
-
-
     }
 
     testOptions {
         unitTests.returnDefaultValues = true
     }
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     sourceSets {
         devofi {
-            //  java.srcDirs = ['src/flavorA/java', 'src/sharedType/java']
             res.srcDirs = ['src/devofi/res', 'src/ofi/res']
-            //   assets.srcDirs = ['src/flavorA/assets', 'src/sharedType/assets']
         }
         sitofi {
-            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
             res.srcDirs = ['src/sitofi/res', 'src/ofi/res']
-            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
         }
         uatofi {
-            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
             res.srcDirs = ['src/uatofi/res', 'src/ofi/res']
-            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
         }
 
         prodofi {
-            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
             res.srcDirs = ['src/prodofi/res', 'src/ofi/res']
-            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
         }
 
         // OGA
@@ -393,28 +316,27 @@ android {
         }
 
     }
+    namespace 'com.olam.digital.ofis'
 
 
 }
 
-sonarqube{
-    properties
-            {
-                property "sonar.projectName", "olam-ot2.0-mobile-android-prod"
-                property "sonar.projectKey", "olam-ot2.0-mobile-android-prod"
-                property "sonar.host.url", "https://10.101.32.103:9000/"
-                property "sonar.language", "java"
-                property "sonar.sources", "src/main/java/"
-                property "sonar.java.sources", "src/main/java/"
-                property "sonar.sourceEncoding", "UTF-8"
-                property "sonar.login", "sonar-user"
-                property "sonar.password", "olam123\$\$"
-            }
+sonarqube {
+    properties {
+        property "sonar.projectName", "olam-ot2.0-mobile-android-prod"
+        property "sonar.projectKey", "olam-ot2.0-mobile-android-prod"
+        property "sonar.host.url", "https://10.101.32.103:9000/"
+        property "sonar.language", "java"
+        property "sonar.sources", "src/main/java/"
+        property "sonar.java.sources", "src/main/java/"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.login", "sonar-user"
+        property "sonar.password", "olam123\$\$"
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //compile project(":OSMBonusPack")
     implementation 'com.squareup.okhttp3:okhttp:3.7.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
@@ -423,85 +345,46 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-//    implementation 'com.google.android.material:material:1.0.0'
-//    implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.google.android.material:material:1.3.0'
 
     implementation 'androidx.mediarouter:mediarouter:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
-    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation 'com.google.firebase:firebase-crash:11x.8.0'
     implementation 'com.google.firebase:firebase-perf:17.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
-    implementation 'org.mapsforge:mapsforge-map-android:0.6.1'
-    implementation 'org.mapsforge:mapsforge-map:0.6.1'
+//    implementation 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
+//    implementation 'org.mapsforge:mapsforge-map-android:0.6.1'
+//    implementation 'org.mapsforge:mapsforge-map:0.6.1'
+    implementation 'org.osmdroid:osmdroid-android:6.1.17'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'androidx.multidex:multidex:2.0.0'
-
-    //   implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.github.MKergall:osmbonuspack:6.4'
-    // dexter runtime permissions
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-//        implementation 'com.jakewharton.timber:timber:4.7.1'
-    //    implementation 'com.auth0.android:jwtdecode:1.2.0'
-//    implementation 'com.dynatrace.agent:agent-android:7.+'
-
-
-    // Required for local unit tests (JUnit 4 framework)
-    // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.12'
-    // Optional -- Robolectric environment
     testImplementation 'androidx.test:core:1.0.0'
-    // Optional -- Mockito framework
     testImplementation 'org.mockito:mockito-core:1.10.19'
-    // Optional - Mock the JSON Object. Because jsonobject will come under instrumentation test.
     testImplementation 'org.json:json:20140107'
-
-    /* implementation('com.github.danysantiago:sendgrid-android:1') {
-         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-     }*/
     implementation "com.github.tarek360:instacapture:2.0.1"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.github.gcacace:signature-pad:1.2.1'
-
-    /* implementation project(path: ':InAppLib_1.8')*/
-
-    // User Event Analytics
     implementation 'org.matomo.sdk:tracker:4.1.1'
-
-//    def appCenterSdkVersion = '3.0.0'
-//    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
-
     implementation 'com.scottyab:aescrypt:0.0.1'
-
-    // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.xw.repo:bubbleseekbar:3.20'
     implementation 'com.google.android.material:material:1.1.0-alpha10'
-
-    //
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
-    //implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
-
-    // Room components
-
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
-
-    // pdf compressor
     implementation 'com.itextpdf:itextg:5.5.10'
-
-
-
 }
 
 apply plugin: 'com.google.gms.google-services'

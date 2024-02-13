@@ -211,7 +211,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
         if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
 
-            if (mCurrentLocation!=null){}else {
+            if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)){}else {
                 if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
                     gpsTracker.getDeviceLocation();
                     return;

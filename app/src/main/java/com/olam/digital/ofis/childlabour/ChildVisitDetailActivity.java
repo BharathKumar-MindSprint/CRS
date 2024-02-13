@@ -76,7 +76,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         gpsListener=new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location!=null){
+                if (location!=null && !GPSUtils.isMockLocation(location)){
                     mCurrentLocation=location;
                 }
             }
@@ -142,7 +142,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
 
     // method to save the child survey visit details
     private void saveVisitDetails() {
-        if (mCurrentLocation!=null){}else {
+        if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)){}else {
             if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
                 gpsTracker.getDeviceLocation();
                 return;

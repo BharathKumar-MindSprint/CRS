@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb.followuptable;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -32,10 +33,12 @@ public class FollowUpItemMainTable {
     @ColumnInfo(name = "createdBy")
     public String createdBy;
 
-    @ColumnInfo(name = "actionPlanId")
-    public int actionPlanId;
 
-    @ColumnInfo(name = "actionPlanText")
+    @ColumnInfo(name = "actionPlanId", defaultValue = "0", index = true)
+    public String actionPlanId;
+
+
+    @ColumnInfo(name = "actionPlanText", defaultValue = "0", index = true)
     public String actionPlanText;
 
     @ColumnInfo(name = "id")

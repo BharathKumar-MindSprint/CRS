@@ -227,7 +227,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                 // add transaction to network queue
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
 
-                if (mCurrentLocation!=null){}else {
+                if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)){}else {
                     if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
                         gpsTracker.getDeviceLocation();
                         return;
