@@ -15,7 +15,7 @@ public class ChildLabourUtils {
     public static final String VILLAGE_NAME="village";
     public static final String MALE="Male";
     public static final String FEMALE="Female";
-    public static final String CHILD_LABOUR_ENDPOINT="ofismaster/master/ischildenumerator?enumeratorId=";
+    public static final String CHILD_LABOUR_ENDPOINT="ofismaster/master/ischildenumerator";
     public static final String IS_CHILD_ENUMERATOR="child_enumerator";
     public static final String CHILD_FARMER_ID="farmer_id";
     public static final String CHILD_ID="child_id";
@@ -45,8 +45,8 @@ public class ChildLabourUtils {
     public static final String HOUSEHOLD_ENABLED="householdEnabled";
     public static final String INSPECTION_ENABLED="inspectionEnabled";
     public static final String FOLLOWUP_ENABLED="followupEnabled";
-    public static final String SMARTNOTIFICATION_ENDPOINT="ofischild/child/getdetailsbyenumaratorid/?enumeratorId=";
-    public static final String PAGENUMBER_CONSTANT="&pageNo=";
+    public static final String SMARTNOTIFICATION_ENDPOINT="ofischild/child/getdetailsbyenumaratorid/?";
+    public static final String PAGENUMBER_CONSTANT="pageNo=";
     public static final String LIMIT_CONSTANT="&limit=";
     public static final String MODULE_CONSTANT="&module=";
 
