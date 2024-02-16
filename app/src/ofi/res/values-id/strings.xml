@@ -791,7 +791,7 @@
     <string name="ofis_request_help">Minta bantuan</string>
 
     <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
-    <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
+    <string name="alert_review">Nilai yang dimasukkan akan dikirim untuk tinjauan administrator untuk validasi tambahan</string>
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
     <string name="metrics">Metrik:</string>
