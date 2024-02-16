@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Çiftçi bul</string>
     <string name="title_activity_view_farmer">Çiftçi detayları</string>
     <string name="title_activity_complete_module">Tam anket modülü</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Yardımcısı Ayıklama</string>
@@ -599,7 +598,7 @@
 
     <string name="allchilds_name">Tüm çocukların isimleri (uygun olduğu üzere)</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -647,10 +646,11 @@
     <string name="certification_name">Sertifika Adı</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
+    <string name="metrics">Ölçüm:</string>
+    <string name="converted_metrics">Dönüştürülen metrikler</string>
     <string name="advanced_filters">Gelişmiş filtreler</string>
     <string name="spinner_partner_default">Ortak</string>
     <string name="spinner_programme_default">programı</string>
-    <string name="metrics">Ölçüm</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
     <string name="no_internet_polygon">Halihazırda yakalanan çokgeni görüntülemek için lütfen cihazınızın internetini etkinleştirin!</string>
     <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>

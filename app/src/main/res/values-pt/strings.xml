@@ -13,7 +13,6 @@
     <string name="title_activity_find_farmer">Encontrar produtor</string>
     <string name="title_activity_view_farmer">Detalhes do produtor</string>
     <string name="title_activity_complete_module">Completar o questiário</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Depurar OFIS</string>
@@ -713,7 +712,7 @@
     <string name="please_check_question">Por favor, verifique a pergunta</string>
     <string name="please_check_dependent_question">já que a questão sobre dependentes foi atualizada</string>
     <string name="national_id_info">Atualize o ID nacional do produtor</string>
-    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0 ha. Tente gravar um polígono diferente.</string>
+    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0.0009ha. Tente gravar um polígono diferente.</string>
     <string name="direct_value_below_error">Insira o valor da pergunta %1$d abaixo de %2$d</string>
     <string name="direct_value_above_error">Insira o valor da pergunta %1$d acima de %2$d</string>
     <string name="direct_value_greater_than_error">Insira o valor da pergunta %1$d dentro ou igual a %2$d</string>
@@ -748,10 +747,11 @@
     <string name="certification_name">Nome da Certificação</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
+    <string name="metrics">Métricas:</string>
+    <string name="converted_metrics">Métricas convertidas</string>
     <string name="advanced_filters">Filtros avançados</string>
     <string name="spinner_partner_default">Parceiro</string>
     <string name="spinner_programme_default">Programa</string>
-    <string name="metrics">Métricas</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
     <string name="no_internet_polygon">Habilite a Internet do seu dispositivo para visualizar o polígono já capturado!</string>
     <string name="edit_already_logged_plot">%1$s já logado e salvo! Quer regravar o mesmo enredo novamente?</string>

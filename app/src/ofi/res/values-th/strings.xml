@@ -656,7 +656,7 @@
     <string name="biometric_licence_deactivation_queue">การปิดใช้งานใบอนุญาตไบโอเมตริกซ์</string>
     <string name="face_recognizion">การจดจำใบหน้า</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -728,7 +728,8 @@
     <string name="alert_review">Kh̀āthī̀ p̂xn xyū̀ nxk ch̀wng thī̀ xnuỵāt kh̀ā nận ca t̄hūk s̄̀ng pị h̄ı̂ p̄hū̂ dūlæ rabb trwc s̄xb</string>
     <string name="alert_review_hint">Lütfen aralığında bir değer girin %1$d-%2$d</string>
     <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
-    <string name="metrics">วัด</string>
+    <string name="metrics">วัด:</string>
+    <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
     <string name="no_internet_polygon">Pord peid chı̂ ngān xinthexr̒nĕt xupkrṇ̒ k̄hxng khuṇ pheụ̄̀x dū rūp h̄lāy h̄elī̀ym thī̀ bạnthụk wị̂ læ̂w!</string>
     <string name="edit_already_logged_plot">%1$S k̄hêā s̄ū̀ rabb læa bạnthụk wị̂ læ̂w! Khuṇ t̂xngkār bạn thụk phl̆xt reụ̄̀xng deim xīk khrậng h̄rụ̄x mị̀?</string>
     <string name="save_polygon_alertdialog">Khuṇ næ̀cı h̄rụ̄x ẁā cabạn thụk%1$s txn nī̂?</string>

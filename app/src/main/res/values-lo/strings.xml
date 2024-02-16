@@ -14,8 +14,6 @@
     <string name="title_activity_find_farmer">ຊອກ​ຫາ​ສວນ</string>
     <string name="title_activity_view_farmer">ລາຍ​ລະ​ອ່ຽດ​ຂອງ​ຊາວ​ສວນ</string>
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
-
 
     <!-- main stuff -->
     <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
@@ -586,7 +584,7 @@
 
     <string name="allchilds_name">ທຸກໆຊື່ຂອງເດັກ (ຕາມຄວາມ ເໝາະ ສົມ)</string>
 
-<!--    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>-->
+<!--    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>-->
 <!--    <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>-->
 <!--    <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>-->
 <!--    <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>-->
@@ -674,7 +672,7 @@
     <string name="consent_statement">ຄຳສັ່ງ ຍິນຍອມ</string>
         <string name="Please_accept_consent">ທ່ານຕ້ອງຍອມຮັບການຍິນຍອມເພື່ອຊ່ວຍຊາວກະສິກອນ</string>
         <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>
-        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
+        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0.0009ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
 
         <string name="direct_value_below_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງລຸ່ມ %2$d</string>
         <string name="direct_value_above_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງເທິງ %2$d</string>
@@ -906,10 +904,11 @@
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
     <string name="advanced_filters">ຕົວກອງຂັ້ນສູງ</string>
     <string name="spinner_partner_default">ຄູ່ຮ່ວມງານ</string>
     <string name="spinner_programme_default">ໂຄງການ</string>
-    <string name="metrics">Metrics</string>
     <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>
     <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
     <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>

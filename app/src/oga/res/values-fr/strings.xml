@@ -712,7 +712,7 @@
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
     <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -1071,7 +1071,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
-    <string name="metrics">Métrique</string>
+    <string name="metrics">Métrique:</string>
+    <string name="converted_metrics">Métriques converties</string>
     <string name="no_internet_polygon">Veuillez activer Internet sur votre appareil pour afficher le polygone déjà capturé !</string>
     <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
     <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>
