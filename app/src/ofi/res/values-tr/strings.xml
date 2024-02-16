@@ -725,7 +725,7 @@
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
     <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
     <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
-    <string name="alert_review">Girilen değer izin verilen aralığın dışında, yönetici incelemesi için gönderilecek</string>
+    <string name="alert_review">Girilen değer, ek doğrulama amacıyla yönetici incelemesine aktarılacak</string>
     <string name="alert_review_hint">Lütfen %1$d-%2$d aralığında bir değer girin</string>
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
     <string name="metrics">Ölçüm:</string>
