@@ -2008,7 +2008,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     if (dataTypeName != null){
 
                                         if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
@@ -2017,6 +2017,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
 
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal")){
+                                            datatype = "decimal";
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));

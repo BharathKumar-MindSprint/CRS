@@ -70,6 +70,8 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DecimalFilter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NegativeDecimalFilter;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.json.JSONArray;
@@ -2051,6 +2053,8 @@ public class DynamicQuestions {
                     datatype = "text";
                 } else if (datatypeOld.equals("Numbers Only") || datatypeOld.equals("Percentage")) {
                     datatype = "int";
+                } else if (datatypeOld.equals("Decimal")) {
+                    datatype = "decimal";
                 }
             }
         }else {
@@ -2454,7 +2458,120 @@ public class DynamicQuestions {
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else if (answerValue.equals("Alphabetical")){
+            } else if (answerValue.equals("Decimal")) {
+                try{
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")){
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        String answerLimit = display.get("answerLimit").toString();
+                        int maxDecimalLimit = display.getInt("maxDecimalLimit");
+
+                        if (!answerLimit.equals("null")){
+                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                            et.setHint("Character limit : " + answerLimit);
+                            setDecimalWithCharacterLimit(et , Integer.parseInt(answerLimit), maxDecimalLimit);
+
+                        }else{
+
+                            JSONArray range = display.getJSONArray("range");
+                            int validationOnRange=display.optInt("validationOnRangeId");
+
+                            for(int i=0; i<range.length(); i++){
+                                JSONObject rangeArray = range.getJSONObject(i);
+
+                                globally = rangeArray.getString("globally");
+                                assignmentType = rangeArray.getString("assignmentType");
+                                assignmentField = rangeArray.getString("assignmentField");
+
+
+                                String assignmentTypeColumn = "";
+
+                                switch (assignmentType){
+                                    case "1" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                        break;
+                                    case "2" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                        break;
+                                    case "3" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                        break;
+                                    case "4" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                        break;
+                                    case "5" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                        break;
+                                    case "6" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                        break;
+                                    case "7" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                        break;
+                                    case "8" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                        break;
+                                    case "9" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                        break;
+                                }
+
+                                long farmerId = Utilities.farmerId;
+                                roomDB = OFISRoomDB.getDbInstance(context);
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
+                                    min = rangeArray.getInt("min");
+                                    max = rangeArray.getInt("max");
+                                    if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                    }else {
+                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                    }
+                                    if (min < 0) {
+//                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                        setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                    } else {
+//                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                        setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                    }
+
+                                    break;
+                                }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
+                                    min = rangeArray.getInt("min");
+                                    max = rangeArray.getInt("max");
+                                    if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                    }else {
+                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                    }
+
+                                    if (min < 0) {
+//                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+
+                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                        setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                    } else {
+                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                        setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+
+
+
+//                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (answerValue.equals("Alphabetical")){
                 try{
                     JSONObject displayConfig = new JSONObject();
                     displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
@@ -3024,6 +3141,73 @@ public class DynamicQuestions {
         editText.setFilters(new InputFilter[] { characterLimitFilter });
     }
 
+    private void setDecimalWithCharacterLimit(final EditText editText, final int maxCharacterLimit, final int maxDecimalLimit) {
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                int dotIndex = newValue.indexOf(".");
+
+                // Enforce character limit before and after decimal separately
+                if (dotIndex == -1) { // No decimal yet
+                    if (newValue.length() > maxCharacterLimit) {
+                        editText.setError("Character limit exceeded before decimal");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null);
+                            }
+                        }, 3000);
+                        return "";
+                    }
+                } else { // Decimal exists
+                    String beforeDecimal = newValue.substring(0, dotIndex);
+                    if (beforeDecimal.length() > maxCharacterLimit) {
+                        editText.setError("Character limit exceeded before decimal");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null);
+                            }
+                        }, 3000);
+                        return "";
+                    }
+
+                    String afterDecimal = newValue.substring(dotIndex + 1);
+                    if (afterDecimal.length() > maxDecimalLimit) {
+                        editText.setError("Decimal limit exceeded");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null);
+                            }
+                        }, 3000);
+                        return "";
+                    }
+                }
+
+                // Allow only one decimal point
+                if (newValue.lastIndexOf(".") != dotIndex && source.toString().equals(".")) {
+                    return "";
+                }
+
+                // Prevent multiple leading zeros if no decimal is present
+                if (!newValue.contains(".") && newValue.startsWith("0") && source.toString().equals("0")) {
+                    return "";
+                }
+
+                editText.setError(null);
+                return null;
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { filter });
+    }
+
+
     /*
     private void setIntegerWithCharacterLimit(final EditText editText , final int maxCharacterLimit) {
 
@@ -3088,6 +3272,220 @@ public class DynamicQuestions {
         };
 
         editText.setFilters(new InputFilter[] { alphabetFilter });
+    }
+
+
+
+    public void setPositiveDecimalFilter(EditText editText, int minValue, int maxValue, int validationOnRange, int maxDecimalLimit) {
+
+        InputFilter decimalRangeFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                try {
+                    // Create the resulting string and parse it to double
+                    String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+                    double input = Double.parseDouble(resultingText);
+
+                    // Check for exceeding decimal limit
+                    String[] parts = resultingText.split("\\.");
+                    if (parts.length > 1 && parts[1].length() > maxDecimalLimit) {
+                        return ""; // Reject if decimal places exceed limit
+                    }
+
+                    // Check if input is within valid range
+                    if (input >= minValue && input <= maxValue) {
+                        return null; // Allow valid input
+                    }
+
+                    // Handle input below minimum value
+                    if (resultingText.length() > 0) {
+                        int inputValue = Integer.parseInt(resultingText);
+                        if (inputValue < minValue) {
+                            return null; // Allow input but prevent further input until minimum value is reached
+                        }
+                    }
+
+                    // Set text watcher for dynamic error handling
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            String input = editText.getText().toString();
+                            if (!input.isEmpty()) {
+                                double number = Double.parseDouble(input);
+                                if (number >= minValue) {
+                                    // Valid input starting from minimum value
+                                    if (number <= maxValue) {
+                                        editText.setError(null);
+                                    } else {
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            editText.setError(context.getString(R.string.alert_review));
+                                        }
+                                    }
+                                } else {
+                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                        editText.setError(context.getString(R.string.alert_review));
+                                    } else {
+                                        // Input less than minimum value
+                                        editText.setError(String.format(context.getString(R.string.alert_review_hint), minValue, maxValue));
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Handle input exceeding maximum value
+                    if (input > maxValue) {
+                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                            editText.setError(context.getString(R.string.alert_review));
+                        } else {
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint), minValue, maxValue));
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null); // Clear error message after delay
+                            }
+                        }, 3000);
+                        return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
+                    } else {
+                        if (input < minValue) {
+                            return source;
+                        } else {
+                            return source;
+                        }
+                    }
+
+                } catch (NumberFormatException ignored) {
+                    // Ignore invalid input and let it through
+                }
+
+                return ""; // Reject invalid input
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { decimalRangeFilter });
+    }
+
+
+    private void setNegativeDecimalFilter(EditText editText, int minValue, int maxValue, int validationOnRange, int maxDecimalLimit) {
+
+        InputFilter negativeDecimalRangeFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                try {
+                    String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                    if (resultingText.equals("-") && minValue < 0) {
+                        return null; // Reject the input if minValue is negative
+                    }
+
+                    // Parse the resulting string
+                    String[] parts = resultingText.split("\\.");
+                    if (parts.length > 2) {
+                        // Restrict multiple decimal points
+                        return "";
+                    }
+
+                    // Check for excessive decimal digits
+                    if (parts.length == 2 && parts[1].length() > maxDecimalLimit) {
+                        return "";
+                    }
+
+                    double input = Double.parseDouble(resultingText);
+
+                    if (input >= minValue && input <= maxValue) {
+                        return null; // Input is valid
+                    }
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            String input = editText.getText().toString();
+
+                            if (!input.isEmpty() && input.matches("-?\\d+(\\.\\d+)?")) {
+                                try {
+                                    double number = Double.parseDouble(input);
+                                    if (number >= minValue) {
+                                        // Valid input starting from the minimum value
+                                        if (number <= maxValue) {
+                                            editText.setError(null);
+                                        }else{
+                                            if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                                editText.setError(context.getString(R.string.alert_review));
+                                            }
+                                        }
+                                    } else {
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            editText.setError(context.getString(R.string.alert_review));
+                                        } else {
+                                            // Input is less than the minimum value
+                                            editText.setError(String.format(context.getString(R.string.alert_review_hint),minValue,maxValue));
+                                        }
+                                    }
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                if (!input.isEmpty()){
+                                    editText.setError("Please enter a valid number.");
+                                }
+                            }
+                        }
+                    });
+
+                    if (input > maxValue) {
+                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                            editText.setError(context.getString(R.string.alert_review));
+                        }else {
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint),minValue,maxValue));
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null); // Clear the error message after delay
+                            }
+                        }, 3000); // Delay for 3 seconds
+                        return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId())? source:"";
+
+                    } else {
+                        if(input < minValue) {
+                            return source;
+                        } else {
+                            return source;
+                        }
+
+                    }
+
+                } catch (NumberFormatException ignored) {
+                }
+
+                return ""; // Reject invalid input
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { negativeDecimalRangeFilter });
     }
 
 
