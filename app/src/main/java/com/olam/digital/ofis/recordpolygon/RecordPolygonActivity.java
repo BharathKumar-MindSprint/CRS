@@ -36,6 +36,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.telephony.mbms.StreamingServiceInfo;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -139,6 +141,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -1311,7 +1315,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
         mLastTime = currentTime;
 
-        // Capture the Logger item 
+        // Capture the Logger item
 
         logger.addRecordToLog( currentTrackname +"-- >  Accuracy -->" + pLoc.getAccuracy()  +"\n" +
                 "    Latitude  -->"+ pLoc.getLatitude() +"\n" +
@@ -2100,6 +2104,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                plotDelete.setTag("Plot "+i);
                 Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
                 int totalPlotCount = plotIdsSynced.getCount() + i;
                 plotCount.setText("Plot " + i);
@@ -2109,16 +2114,18 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     plotName.setText(name);
                     if (isSynced.equalsIgnoreCase("1")){
                         plotName.setEnabled(false);
+                        plotName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.ofis_list_item_disabled_text));
                     }else {
                         plotName.setEnabled(true);
                     }
                 }
                 int count = getTotalLoggedPlotCount() + 1;
-                if(i == 1 || i <= count){
+                /*if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
-                }
+                }*/
+                plotDelete.setVisibility(View.VISIBLE);
                 if(isSynced.equalsIgnoreCase("1")){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }
@@ -2132,6 +2139,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             TextView plotCount = plotLayout.findViewById(R.id.plotCount);
             EditText plotName = plotLayout.findViewById(R.id.plotName);
             LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+            plotDelete.setTag("Plot "+1);
             plotDelete.setVisibility(View.GONE);
             bindPlotDelete(plotDelete);
         }
@@ -2142,8 +2150,56 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 LinearLayout numberrow = (LinearLayout) v.getParent();
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                String plotNumber = (String) v.getTag();
                 DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                String plotName = plotNumber.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
+
+                Matcher matcherPlotNumber = Pattern.compile("Plot\\s+(\\d+)").matcher(plotNumber);
+                String plotId = null;
+                if (matcherPlotNumber.find()){
+                    plotId = matcherPlotNumber.group(1);
+                }
+//                String plotId = plotNumber.substring(plotNumber.length() - 1);
+                Cursor c =dl.getPNamePlotGeoData(mOlamFarmerId);
+                if (c.getCount() > 0) {
+                    c.moveToFirst();
+                    for (int i = 1; i <= c.getCount(); i++) {
+                        String pName = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME));
+//                        String [] pID = pName.split("_");
+//                        String pNameId = pID[0].substring(pID[0].length() - 1);
+                        Pattern pattern = Pattern.compile("plot([^_]+)_");
+                        Matcher matcher = pattern.matcher(pName);
+
+                        String pNameId = null;
+                        if (matcher.find()) {
+                            pNameId = matcher.group(1);
+                        }
+
+                        if (pNameId.equals(plotId)){
+                            dl.deleteDatafromGeoPlot(plotName);
+                            SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(plotNumber);
+                           if (dl.getPNamePlotGeoData(mOlamFarmerId).getCount() == 0){
+                               dl.deleteNetworkQueuePlotItemByFarmerId(mFarmerId);
+                           }
+                        }
+
+                        if (Integer.parseInt(pNameId) > Integer.parseInt(plotId)){
+                            //decrementing saved shared prefrences
+                            LocationBeanList beans = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList("Plot " + pNameId);
+                            SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + pNameId);
+                            int finalPlot = Integer.parseInt(pNameId) - 1;
+                            SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList("Plot " + finalPlot, beans);
+
+                            // updating db
+                            dl.updateGeoPlotDataAfterDelete(pName , Integer.parseInt(pNameId)-1 , mOlamFarmerId);
+                        }
+
+
+                        c.moveToNext();
+
+                    }
+                }
+                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
                 ArrayList<String> plotNames = getAllPlotValues();
                 dl.insertNewPlot(String.valueOf(mFarmerId),plotNames);
                 LayoutInflater inflater = getLayoutInflater();
