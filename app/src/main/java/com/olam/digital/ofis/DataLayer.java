@@ -489,7 +489,7 @@ public class DataLayer {
         }
     }
 
-    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName) {
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName, String created_date) {
         try {
 
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
@@ -505,6 +505,7 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "1");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, plotName);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT, created_date);
 
             db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
         }catch (Exception e){
@@ -1902,6 +1903,27 @@ public class DataLayer {
             cursor.close();
         }
         return metricId;
+    }
+
+    public String getCreatedPlotDateByID(int plotId){
+        String createdDate = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotId)};
+            cursor = db.query(OFISDBContract.PlotEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    createdDate = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return createdDate;
     }
 
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
