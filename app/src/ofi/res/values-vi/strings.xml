@@ -732,7 +732,7 @@
     <string name="range_hint_A_R_decimal">Phạm vi: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Vui lòng nhập chi tiết chứng nhận</string>
     <string name="update_certification">Cập nhật chứng nhận</string>
-    <string name="certification">Certification</string>
+    <string name="certification">Chứng nhận</string>
     <string name="certification_name">Tên chứng nhận</string>
     <string name="select_certification">Chọn Chứng nhận</string>
     <string name="others">Others</string>
