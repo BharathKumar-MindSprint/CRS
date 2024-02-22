@@ -253,6 +253,16 @@ public class DataLayer {
         }
     }
 
+    public void deleteDatafromGeoPlot(String plotName){
+        try {
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
         try {
             ContentValues values = new ContentValues();
@@ -425,6 +435,13 @@ public class DataLayer {
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
     }
 
+    public Cursor getPNamePlotGeoData(String mOlamFarmerid) {
+        String[] columns = new String[]{OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME};
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(mOlamFarmerid)};
+        return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
 
     public void updatePlotGeoDataAfterSync(String plotId, String plotName) {
         try {
@@ -457,6 +474,18 @@ public class DataLayer {
                     db.delete(table, whereClause, whereArgs);
                 }
             }
+        }
+    }
+
+    public void updateGeoPlotDataAfterDelete(String pName , int plotId , String mOlamFarmerId){
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, "plot"+ plotId +"_" + mOlamFarmerId);
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(pName)};
+            db.update(OFISDBContract.PlotGeoData.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -8631,6 +8660,13 @@ public class DataLayer {
         }
 
         return updated;
+    }
+
+
+    public long deleteNetworkQueuePlotItemByFarmerId(long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
     public String getMultiFarmLocationbyId(long farmerId) {
