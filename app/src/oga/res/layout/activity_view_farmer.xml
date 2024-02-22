@@ -166,7 +166,7 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
                 android:layout_weight="0.8"
-                android:text="Please update the Certification of farmer"
+                android:text="@string/please_update_the_certification_of_farmer"
                 android:textColor="@color/ofis_base_font_white" />
             <ImageView
                 android:id="@+id/cert_info_close_btn"
