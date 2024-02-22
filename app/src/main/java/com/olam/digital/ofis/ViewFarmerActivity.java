@@ -1857,6 +1857,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotName.setText(name);
                     if (isSynced.equalsIgnoreCase("1")){
                         plotName.setEnabled(false);
+                        plotName.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     }else {
                         plotName.setEnabled(true);
                     }
