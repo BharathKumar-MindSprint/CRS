@@ -801,13 +801,27 @@
     <string name="update_signature_hint">Toca para actualizar</string>
     <string name="are_you_at_the_farmers_hh">¿Está usted en el hogar del agricultor?</string>
     <string name="ofis_request_help">Pida ayuda</string>
+    <string name="other_certification">Otra Certificación</string>
     <string name="alert_review">El valor ingresado será enviado para revisión del administrador para una validación adicional</string>
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
+    <string name="please_enter_certification_details">Por favor ingrese los detalles de la certificación</string>
+    <string name="update_certification">Certificación de actualización</string>
+    <string name="certification">Certificación</string>
+    <string name="certification_name">Nombre de certificacion</string>
+    <string name="select_certification">Seleccione Certificación</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Por favor actualice la certificación del agricultor.</string>
     <string name="metrics">Métricas:</string>
     <string name="converted_metrics">Métricas convertidas</string>
+    <string name="advanced_filters">Filtros avanzados</string>
+    <string name="spinner_partner_default">Pareja</string>
+    <string name="spinner_programme_default">programa</string>
+    <string name="view_farmer_information"><u>Ver información del agricultor</u></string>
     <string name="no_internet_polygon">¡Habilite Internet en su dispositivo para ver el polígono ya capturado!</string>
     <string name="edit_already_logged_plot">¡%1$s ya han iniciado sesión y guardado! ¿Quieres volver a grabar la misma trama?</string>
     <string name="save_polygon_alertdialog">¿Estás seguro de ahorrar %1$s ahora?</string>
+
+
 </resources>
 

@@ -741,10 +741,11 @@
     <string name="alert_review">O valor inserido será enviado para revisão do administrador para validação adicional</string>
     <string name="alert_review_hint">Por favor insira o valor dentro do intervalo %1$d-%2$d</string>
     <string name="range_hint_A_R">Faixa: %1$d-%2$d</string>
-    <string name="please_enter_certification_details">Please enter Certification details</string>
+    <string name="please_enter_certification_details">Insira os detalhes da certificação</string>
     <string name="update_certification">Atualizar certificação</string>
-    <string name="certification">Certification</string>
+    <string name="certification">Certificação</string>
     <string name="certification_name">Nome da Certificação</string>
+    <string name="select_certification">Selecione Certificação</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
     <string name="metrics">Métricas:</string>
@@ -752,7 +753,7 @@
     <string name="advanced_filters">Filtros avançados</string>
     <string name="spinner_partner_default">Parceiro</string>
     <string name="spinner_programme_default">Programa</string>
-    <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="view_farmer_information"><u>Ver informações do agricultor</u></string>
     <string name="no_internet_polygon">Habilite a Internet do seu dispositivo para visualizar o polígono já capturado!</string>
     <string name="edit_already_logged_plot">%1$s já logado e salvo! Quer regravar o mesmo enredo novamente?</string>
     <string name="save_polygon_alertdialog">Tem certeza de que deseja economizar %1$s agora?</string>
