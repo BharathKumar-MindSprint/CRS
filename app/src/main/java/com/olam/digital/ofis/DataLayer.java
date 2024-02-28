@@ -4841,6 +4841,22 @@ public class DataLayer {
         }
     }
 
+    public void deleteDatafromGeoPlot(String plotName){
+        try {
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public long deleteNetworkQueuePlotItemByFarmerId(long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
     public void updateSubModuleChildAnswers(ArrayList<JSONObject> answerSet, long farmerModuleId, int subModuleId, long farmerId, String olamFarmerId, int farmId, String type) {
         try {
             // delete existing answers for this farmer and submodule
