@@ -2589,6 +2589,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT_NAME);
                     add(COLUMN_NAME_PLOTTED_NAME);
                     add(COLUMN_IS_SYNCED);
+                    add(COLUMN_NAME_CREATED_AT);
                 }}
         );
     }

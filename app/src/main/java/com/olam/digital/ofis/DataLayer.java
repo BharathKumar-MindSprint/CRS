@@ -480,6 +480,13 @@ public class DataLayer {
         return db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, null, null, null, null, null);
     }
 
+    public Cursor getPNamePlotGeoData(String mOlamFarmerid) {
+        String[] columns = new String[]{OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME};
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(mOlamFarmerid)};
+        return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
 
     public void updatePlotGeoDataAfterSync(String plotId, String plotName) {
         try {
@@ -512,6 +519,18 @@ public class DataLayer {
                     db.delete(table, whereClause, whereArgs);
                 }
             }
+        }
+    }
+
+    public void updateGeoPlotDataAfterDelete(String pName , int plotId , String mOlamFarmerId){
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, "plot"+ plotId +"_" + mOlamFarmerId);
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(pName)};
+            db.update(OFISDBContract.PlotGeoData.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

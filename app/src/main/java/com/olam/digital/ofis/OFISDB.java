@@ -552,9 +552,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED + " INTEGER DEFAULT 0, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS + " INTEGER DEFAULT 0, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO + " TEXT, "
-            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " TEXT, "
-            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT + " TEXT, "
-            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT)";
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " TEXT, " +  OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT + " TEXT)";
 
     private static final String OFIS_FMP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanEntry.TABLE_NAME +
             " ( " + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
@@ -1161,9 +1160,7 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE +" TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID +" TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID +" TEXT default null");
 
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC +" TEXT default null");

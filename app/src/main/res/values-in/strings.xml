@@ -445,7 +445,7 @@
     <string name="record_polygon_input_messege">"Berapa banyak plot lain yang dia miliki? "</string>
     <string name="record_polygon_input_title">"Analisis Tingkat Plot "</string>
     <string name="record_polygon_input_hint">"Masukkan Jumlah plot "</string>
-    <string name="camera_and_gallery_permission_denial_msg">Fitur kamera dan galeri tidak berfungsi tanpa izin ini!</string>
+    <string name="camera_and_gallery_permission_denial_msg">"Fitur kamera dan galeri tidak berfungsi tanpa izin ini! "</string>
     <string name="gps_permission_denial_msg">"Fitur Lokasi tidak berfungsi tanpa izin ini! "</string>
     <string name="phone_state_permission_denial_msg">"Izin Telepon diperlukan untuk mendapatkan nomor IMEI perangkat "</string>
     <string name="permission_permanent_denial_title">"Izin ditolak secara permanen "</string>
@@ -470,6 +470,7 @@
     <string name="phone_number_recorded">Phone number recorded</string>
     <string name="invalid_imei_msg">Nomor IMEI Anda tidak valid, silakan hubungi kami untuk bantuan</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
+    <string name="title_child_labour">Register Child</string>
     <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
@@ -575,17 +576,19 @@
     <string name="farmer_signature">Farmer Tanda tangan</string>
     <string name="enum_sign">Staff Tanda tangan</string>
     <string name="enum_name">Enumerator Nama</string>
-     <string name="childs_name">Nama Anak </string>
+    <string name="childs_name">Nama Anak</string>
     <string name="name">Nama:</string>
 
     <string name="allchilds_name">Semua nama anak-anak (sebagaimana berlaku)</string>
-      <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
+    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
-     <string name="please_click_checkbox">Sila klik semua kotak pilihan yang sesuai</string>
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="please_click_checkbox">Silakan klik semua kotak centang yang sesuai</string>
+    <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
     <string name="txt_farm_name">Farm Name:</string>
     <string name="txt_farm_code">Farm Code:</string>
-     <string name="attendee_sex">Sex</string>
+    <string name="attendee_sex">Sex</string>
+
 
 
 
@@ -730,18 +733,22 @@
 
     <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
     <string name="other_certification">Sertifikasi Lainnya</string>
-    <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
+    <string name="alert_review">Nilai yang dimasukkan akan dikirim untuk tinjauan administrator untuk validasi tambahan</string>
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
-    <string name="please_enter_certification_details">Please enter Certification details</string>
+    <string name="please_enter_certification_details">Silakan masukkan rincian Sertifikasi</string>
     <string name="update_certification">Perbarui Sertifikasi</string>
-    <string name="certification">Certification</string>
+    <string name="certification">Sertifikasi</string>
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
-    <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="select_certification">Pilih Sertifikasi</string>
     <string name="metrics">Metrik:</string>
     <string name="converted_metrics">Metrik yang dikonversi</string>
-    <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="advanced_filters">Filter tingkat lanjut</string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
+    <string name="view_farmer_information"><u>Lihat Informasi Petani</u></string>
     <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
     <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
     <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
