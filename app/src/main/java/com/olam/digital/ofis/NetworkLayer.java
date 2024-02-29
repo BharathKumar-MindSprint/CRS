@@ -4270,7 +4270,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         public void onResponse(Call call, Response postResponse) {
                             try {
                                 String statusMessage;
-
+                                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                                 //     JSONObject response = new JSONObject(postResponse.body().string());
                                 if (postResponse.isSuccessful()) {
                                     // JSONObject farmerResponse = response.getJSONObject("farmer");
@@ -4321,6 +4321,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId);
+                                        db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);

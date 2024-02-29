@@ -725,11 +725,24 @@
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
     <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
     <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
-    <string name="alert_review">Girilen değer izin verilen aralığın dışında, yönetici incelemesi için gönderilecek</string>
+
+    <string name="other_certification">Diğer Sertifikasyon</string>
+    <string name="alert_review">Girilen değer, ek doğrulama amacıyla yönetici incelemesine aktarılacak</string>
     <string name="alert_review_hint">Lütfen %1$d-%2$d aralığında bir değer girin</string>
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
+    <string name="please_enter_certification_details">Lütfen Sertifika ayrıntılarını girin</string>
+    <string name="update_certification">Sertifikayı Güncelle</string>
+    <string name="certification">Sertifikasyon</string>
+    <string name="certification_name">Sertifika Adı</string>
+    <string name="select_certification">Sertifikasyon Seçin</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
     <string name="metrics">Ölçüm:</string>
     <string name="converted_metrics">Dönüştürülen metrikler</string>
+    <string name="advanced_filters">Gelişmiş filtreler</string>
+    <string name="spinner_partner_default">Ortak</string>
+    <string name="spinner_programme_default">programı</string>
+    <string name="view_farmer_information"><u>Çiftçi Bilgilerini Görüntüle</u></string>
     <string name="no_internet_polygon">Halihazırda yakalanan çokgeni görüntülemek için lütfen cihazınızın internetini etkinleştirin!</string>
     <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>
     <string name="save_polygon_alertdialog">%1$s\'ı şimdi kaydettiğinizden emin misiniz?</string>
