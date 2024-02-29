@@ -6048,7 +6048,7 @@ public class DataLayer {
 
         String columns = questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_POSITION + ", "
-                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DATATYPE_ID + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION + ", "
                 + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_ES + ", "
                 + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_PT + ", "
                 + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_LO + ", "
