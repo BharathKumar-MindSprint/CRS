@@ -736,6 +736,8 @@
     <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Harap masukkan nilai dalam rentang %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Jangkauan: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
     <string name="update_certification">Perbarui Sertifikasi</string>
     <string name="certification">Certification</string>

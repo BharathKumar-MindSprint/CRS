@@ -2336,7 +2336,7 @@ public class DynamicQuestions {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        int min = 0, max =0;
+
         String globally;
         String assignmentType = "";
         String assignmentField = "";
@@ -2361,6 +2361,7 @@ public class DynamicQuestions {
             } else if (answerValue.equals("Numbers Only")){
 //                et.setInputType(InputType.TYPE_CLASS_NUMBER);
                 try{
+                    int min = 0, max =0;
                     JSONObject displayConfig = new JSONObject();
                     displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                     if (displayConfig.has("display")){
@@ -2460,6 +2461,7 @@ public class DynamicQuestions {
                 }
             } else if (answerValue.equals("Decimal")) {
                 try{
+                    double min = 0, max =0;
                     JSONObject displayConfig = new JSONObject();
                     displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                     if (displayConfig.has("display")){
@@ -2521,12 +2523,12 @@ public class DynamicQuestions {
                                 roomDB = OFISRoomDB.getDbInstance(context);
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
                                 if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
-                                    min = rangeArray.getInt("min");
-                                    max = rangeArray.getInt("max");
+                                    min = rangeArray.getDouble("min");
+                                    max = rangeArray.getDouble("max");
                                     if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
-                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                     }else {
-                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
                                     }
                                     if (min < 0) {
 //                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
@@ -2540,12 +2542,12 @@ public class DynamicQuestions {
 
                                     break;
                                 }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
-                                    min = rangeArray.getInt("min");
-                                    max = rangeArray.getInt("max");
+                                    min = rangeArray.getDouble("min");
+                                    max = rangeArray.getDouble("max");
                                     if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
-                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                     }else {
-                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
                                     }
 
                                     if (min < 0) {
@@ -2688,8 +2690,6 @@ public class DynamicQuestions {
         Drawable originalDrawable = et.getBackground();
         String finalDefaultValue = defaultValue;
         final String[] initialText = {""};
-        int finalMax = max;
-        int finalMin = min;
         String finalDatatype = datatype;
         boolean finalIsLocalUnit = isLocalUnit;
         et.addTextChangedListener(new TextWatcher() {
@@ -2700,7 +2700,6 @@ public class DynamicQuestions {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//                Toast.makeText(context, "Max:" + finalMax + " Min:" + finalMin, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -3276,7 +3275,7 @@ public class DynamicQuestions {
 
 
 
-    public void setPositiveDecimalFilter(EditText editText, int minValue, int maxValue, int validationOnRange, int maxDecimalLimit) {
+    public void setPositiveDecimalFilter(EditText editText, final double minValue, final double maxValue, int validationOnRange, int maxDecimalLimit) {
 
         InputFilter decimalRangeFilter = new InputFilter() {
             @Override
@@ -3337,7 +3336,7 @@ public class DynamicQuestions {
                                         editText.setError(context.getString(R.string.alert_review));
                                     } else {
                                         // Input less than minimum value
-                                        editText.setError(String.format(context.getString(R.string.alert_review_hint), minValue, maxValue));
+                                        editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
                                     }
                                 }
                             }
@@ -3349,7 +3348,7 @@ public class DynamicQuestions {
                         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                             editText.setError(context.getString(R.string.alert_review));
                         } else {
-                            editText.setError(String.format(context.getString(R.string.alert_review_hint), minValue, maxValue));
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
                         }
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -3378,7 +3377,7 @@ public class DynamicQuestions {
     }
 
 
-    private void setNegativeDecimalFilter(EditText editText, int minValue, int maxValue, int validationOnRange, int maxDecimalLimit) {
+    private void setNegativeDecimalFilter(EditText editText, final double minValue, final double maxValue, int validationOnRange, int maxDecimalLimit) {
 
         InputFilter negativeDecimalRangeFilter = new InputFilter() {
             @Override
@@ -3441,7 +3440,7 @@ public class DynamicQuestions {
                                             editText.setError(context.getString(R.string.alert_review));
                                         } else {
                                             // Input is less than the minimum value
-                                            editText.setError(String.format(context.getString(R.string.alert_review_hint),minValue,maxValue));
+                                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal),minValue,maxValue));
                                         }
                                     }
                                 } catch (NumberFormatException e) {
@@ -3459,7 +3458,7 @@ public class DynamicQuestions {
                         if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
                             editText.setError(context.getString(R.string.alert_review));
                         }else {
-                            editText.setError(String.format(context.getString(R.string.alert_review_hint),minValue,maxValue));
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal),minValue,maxValue));
                         }
                         new Handler().postDelayed(new Runnable() {
                             @Override

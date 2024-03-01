@@ -640,6 +640,8 @@
     <string name="alert_review">Giá trị đã nhập nằm ngoài phạm vi cho phép, giá trị này sẽ được đẩy lên để quản trị viên xem xét</string>
     <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
     <string name="range_hint_A_R">Phạm vi: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Vui lòng nhập giá trị trong phạm vi %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Phạm vi: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
     <string name="update_certification">Cập nhật chứng nhận</string>
     <string name="certification">Certification</string>
