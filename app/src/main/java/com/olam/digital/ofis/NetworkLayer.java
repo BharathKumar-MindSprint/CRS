@@ -2009,10 +2009,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
                                                 dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
-                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")){
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));

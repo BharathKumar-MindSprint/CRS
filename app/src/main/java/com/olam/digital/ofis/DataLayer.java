@@ -4370,10 +4370,16 @@ public class DataLayer {
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
+        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+        String sortOrder = "CASE " +
+                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+//                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' or " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 1 and 2 " +
+//                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+                "ELSE " + orderBy + " + 2 " +
+                "END END";
         String sql = "SELECT " + questionTable + ".*, " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name FROM " + questionTable
                 + " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = "
-                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + whereClause + " ORDER BY " + orderBy;
+                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + whereClause + " ORDER BY " + sortOrder;
 
         return db.rawQuery(sql, whereArgs);
     }
