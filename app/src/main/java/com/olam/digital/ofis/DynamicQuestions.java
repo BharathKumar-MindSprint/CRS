@@ -3283,14 +3283,25 @@ public class DynamicQuestions {
                                        Spanned dest, int dstart, int dend) {
                 try {
                     // Create the resulting string and parse it to double
+//                    String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+//                    double input = Double.parseDouble(resultingText);
+
                     String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
-                    double input = Double.parseDouble(resultingText);
+                    boolean addingDecimalPoint = source.toString().equals(".") && !dest.toString().contains(".");
 
                     // Check for exceeding decimal limit
                     String[] parts = resultingText.split("\\.");
                     if (parts.length > 1 && parts[1].length() > maxDecimalLimit) {
                         return ""; // Reject if decimal places exceed limit
                     }
+
+                    // Allow adding a decimal point even if below minimum value
+                    if (addingDecimalPoint) {
+                        return null; // Allow decimal point to be entered
+                    }
+
+                    // Parse input as double only if not just adding a decimal point
+                    double input = Double.parseDouble(resultingText);
 
                     // Check if input is within valid range
                     if (input >= minValue && input <= maxValue) {
