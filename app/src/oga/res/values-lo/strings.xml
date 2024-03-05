@@ -952,6 +952,8 @@
     <string name="alert_review">kha thi ponkhao aemn yunok khobkhed thi anunyad  man chathuk suknyuhai kuadsob phuboengaenynglabob</string>
     <string name="alert_review_hint">kaluna sai kha phainaikhobkhed %1$d-%2$d</string>
     <string name="range_hint_A_R">suang: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">kaluna sai kha phainaikhobkhed %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">suang: %.2f-%.2f</string>
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
