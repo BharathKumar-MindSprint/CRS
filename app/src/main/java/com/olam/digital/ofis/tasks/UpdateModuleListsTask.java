@@ -14,6 +14,7 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
+import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 
@@ -57,6 +58,7 @@ class UpdateModuleListsTask extends DatabaseTask {
                 // get the various sub lists
                 JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray, questionTypeArray , answerTypeArray, recurrenceTypeArray;
                 List<ValidationOnRange> validationOnRangeList;
+                List<AssignmentType> assignmentTypeList;
                 try {
                     moduleArray = response.getJSONArray(OFISDBContract.ModuleEntry.TABLE_NAME);
 /*
@@ -152,6 +154,19 @@ class UpdateModuleListsTask extends DatabaseTask {
                     roomDB.validationOnRangeDao().insertAll(validationOnRangeList);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling ValidationOnRange table", e));
+                    e.printStackTrace();
+                }
+
+                try{
+                    Gson gson = new Gson();
+                    JSONArray assignmentTypeArray = response.getJSONArray("assignmentTypes");
+                    Log.e(TAG,"AssignmentTypes: " + assignmentTypeArray);
+                    Type type = new TypeToken<List<AssignmentType>>() {}.getType();
+                    assignmentTypeList = gson.fromJson(String.valueOf(assignmentTypeArray), type);
+                    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
+                    roomDB.assignmentTypeDao().insertAll(assignmentTypeList);
+                }catch (JSONException e){
+                    FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling AssignmentTypes table", e));
                     e.printStackTrace();
                 }
 
