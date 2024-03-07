@@ -1234,11 +1234,11 @@ public class DynamicQuestions {
                         if (display.has("range")) {
                             JSONArray range = display.getJSONArray("range");
                             JSONObject rangeArray = range.getJSONObject(0);
-                            int min = rangeArray.optInt(AppConstants.RANGE_MIN);
+                            double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
                             int max = rangeArray.optInt(AppConstants.RANGE_MAX);
 
                             if (getAnswerMinMaxvalidation(questionId) != "noval") {
-                                float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId));
+                                double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
 //                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
 //                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
 //                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
@@ -3317,7 +3317,7 @@ public class DynamicQuestions {
 
                     // Check for exceeding decimal limit
                     String[] parts = resultingText.split("\\.");
-                    if (parts.length > 1 && parts[1].length() > maxDecimalLimit) {
+                    if (parts.length > 1 && parts[0].length() > maxDecimalLimit) {
                         return ""; // Reject if decimal places exceed limit
                     }
 
@@ -3336,7 +3336,7 @@ public class DynamicQuestions {
 
                     // Handle input below minimum value
                     if (resultingText.length() > 0) {
-                        int inputValue = Integer.parseInt(resultingText);
+                        double inputValue = Double.parseDouble(resultingText);
                         if (inputValue < minValue) {
                             return null; // Allow input but prevent further input until minimum value is reached
                         }
