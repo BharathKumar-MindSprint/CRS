@@ -639,6 +639,8 @@
     <string name="alert_review">Kh̀āthī̀ p̂xn ca t̄hūk s̄̀ng pị h̄ı̂ p̄hū̂ dūlæ rabb trwc s̄xb pheụ̄̀x trwc s̄xb pheìmteim</string>
     <string name="alert_review_hint">Pord p̂xn kh̀āthī̀ xyū̀ nı ch̀wng %1$d-%2$d</string>
     <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Lütfen aralığında bir değer girin %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Phis̄ạy: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Kruṇā krxk rāy laxeīyd kār rạbrxng</string>
     <string name="update_certification">Xạphdet bırạbrxng</string>
     <string name="certification">Kār rạbrxng</string>

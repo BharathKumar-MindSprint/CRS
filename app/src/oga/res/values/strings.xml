@@ -1095,6 +1095,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Please enter the value within the range %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Range : %.2f-%.2f</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
