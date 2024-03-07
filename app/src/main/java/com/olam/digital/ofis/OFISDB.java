@@ -323,7 +323,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT )";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT )";
 
 
 
@@ -1160,6 +1162,10 @@ class OFISDB extends SQLiteOpenHelper {
 
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT +" TEXT default null");
+
+            // Multiple assignment
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD +" TEXT default null");
         }catch (Exception e){
             e.printStackTrace();
         }

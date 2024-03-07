@@ -1234,11 +1234,11 @@ public class DynamicQuestions {
                         if (display.has("range")) {
                             JSONArray range = display.getJSONArray("range");
                             JSONObject rangeArray = range.getJSONObject(0);
-                            int min = rangeArray.optInt(AppConstants.RANGE_MIN);
+                            double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
                             int max = rangeArray.optInt(AppConstants.RANGE_MAX);
 
                             if (getAnswerMinMaxvalidation(questionId) != "noval") {
-                                float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId));
+                                double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
 //                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
 //                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
 //                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
@@ -2390,41 +2390,9 @@ public class DynamicQuestions {
 
                                 if (!assignmentField.equals("null")){
 
-                                    String assignmentTypeColumn = "";
-
-                                    switch (assignmentType){
-                                        case "1" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                            break;
-                                        case "2" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                            break;
-                                        case "3" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                            break;
-                                        case "4" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                            break;
-                                        case "5" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                            break;
-                                        case "6" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                            break;
-                                        case "7" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                            break;
-                                        case "8" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                            break;
-                                        case "9" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                            break;
-                                    }
-
                                     long farmerId = Utilities.farmerId;
                                     roomDB = OFISRoomDB.getDbInstance(context);
-                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
                                     if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
                                         min = rangeArray.getInt("min");
                                         max = rangeArray.getInt("max");
@@ -2462,41 +2430,9 @@ public class DynamicQuestions {
 
                                     if (assignmentFields.equals("null") || assignmentFields.equals("[]")){
 
-                                        String assignmentTypeColumn = "";
-
-                                        switch (assignmentType){
-                                            case "1" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                break;
-                                            case "2" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                break;
-                                            case "3" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                break;
-                                            case "4" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                break;
-                                            case "5" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                break;
-                                            case "6" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                break;
-                                            case "7" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                break;
-                                            case "8" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                break;
-                                            case "9" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                break;
-                                        }
-
                                         long farmerId = Utilities.farmerId;
                                         roomDB = OFISRoomDB.getDbInstance(context);
-                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
                                         if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
                                             min = rangeArray.getInt("min");
                                             max = rangeArray.getInt("max");
@@ -2537,41 +2473,9 @@ public class DynamicQuestions {
                                         // Iterate through the integer array using a for loop
                                         for (int fieldMultipleAssignment : intArray) {
 
-                                            String assignmentTypeColumn = "";
-
-                                            switch (assignmentType){
-                                                case "1" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                    break;
-                                                case "2" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                    break;
-                                                case "3" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                    break;
-                                                case "4" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                    break;
-                                                case "5" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                    break;
-                                                case "6" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                    break;
-                                                case "7" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                    break;
-                                                case "8" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                    break;
-                                                case "9" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                    break;
-                                            }
-
                                             long farmerId = Utilities.farmerId;
                                             roomDB = OFISRoomDB.getDbInstance(context);
-                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
                                             if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)  && globally.equals("false")) {
                                                 min = rangeArray.getInt("min");
                                                 max = rangeArray.getInt("max");
@@ -2641,42 +2545,9 @@ public class DynamicQuestions {
                                 assignmentType = rangeArray.getString("assignmentType");
                                 assignmentField = rangeArray.getString("assignmentField");
 
-
-                                String assignmentTypeColumn = "";
-
-                                switch (assignmentType){
-                                    case "1" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                        break;
-                                    case "2" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                        break;
-                                    case "3" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                        break;
-                                    case "4" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                        break;
-                                    case "5" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                        break;
-                                    case "6" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                        break;
-                                    case "7" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                        break;
-                                    case "8" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                        break;
-                                    case "9" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                        break;
-                                }
-
                                 long farmerId = Utilities.farmerId;
                                 roomDB = OFISRoomDB.getDbInstance(context);
-                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
                                 if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
                                     min = rangeArray.getDouble("min");
                                     max = rangeArray.getDouble("max");
@@ -3446,7 +3317,7 @@ public class DynamicQuestions {
 
                     // Check for exceeding decimal limit
                     String[] parts = resultingText.split("\\.");
-                    if (parts.length > 1 && parts[1].length() > maxDecimalLimit) {
+                    if (parts.length > 1 && parts[0].length() > maxDecimalLimit) {
                         return ""; // Reject if decimal places exceed limit
                     }
 
@@ -3465,7 +3336,7 @@ public class DynamicQuestions {
 
                     // Handle input below minimum value
                     if (resultingText.length() > 0) {
-                        int inputValue = Integer.parseInt(resultingText);
+                        double inputValue = Double.parseDouble(resultingText);
                         if (inputValue < minValue) {
                             return null; // Allow input but prevent further input until minimum value is reached
                         }
@@ -4163,40 +4034,9 @@ public class DynamicQuestions {
                                 }
 
                                 if (!assignmentField.equals("null")){
-                                    String assignmentTypeColumn = "";
-
-                                    switch (assignmentType){
-                                        case "1" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                            break;
-                                        case "2" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                            break;
-                                        case "3" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                            break;
-                                        case "4" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                            break;
-                                        case "5" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                            break;
-                                        case "6" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                            break;
-                                        case "7" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                            break;
-                                        case "8" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                            break;
-                                        case "9" :
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                            break;
-                                    }
 
                                     long farmerId = Utilities.farmerId;
-                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                     if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
@@ -4249,40 +4089,9 @@ public class DynamicQuestions {
 
                                         // Iterate through the integer array using a for loop
                                         for (int fieldMultipleAssignment : intArray) {
-                                            String assignmentTypeColumn = "";
-
-                                            switch (assignmentType){
-                                                case "1" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                    break;
-                                                case "2" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                    break;
-                                                case "3" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                    break;
-                                                case "4" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                    break;
-                                                case "5" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                    break;
-                                                case "6" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                    break;
-                                                case "7" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                    break;
-                                                case "8" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                    break;
-                                                case "9" :
-                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                    break;
-                                            }
 
                                             long farmerId = Utilities.farmerId;
-                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                             if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")){
 
@@ -4920,40 +4729,8 @@ public class DynamicQuestions {
                         }
 
                         if (!assignmentField.equals("null")){
-                            String assignmentTypeColumn = "";
 
-
-                            switch (assignmentType) {
-                                case "1":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                    break;
-                                case "2":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                    break;
-                                case "3":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                    break;
-                                case "4":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                    break;
-                                case "5":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                    break;
-                                case "6":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                    break;
-                                case "7":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                    break;
-                                case "8":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                    break;
-                                case "9":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                    break;
-                            }
-
-                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, assignmentTypeColumn);
+                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
 
                             if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
@@ -5092,40 +4869,7 @@ public class DynamicQuestions {
                                 // Iterate through the integer array using a for loop
                                 for (int fieldMultipleAssignment : intArray) {
 
-                                    String assignmentTypeColumn = "";
-
-
-                                    switch (assignmentType) {
-                                        case "1":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                            break;
-                                        case "2":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                            break;
-                                        case "3":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                            break;
-                                        case "4":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                            break;
-                                        case "5":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                            break;
-                                        case "6":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                            break;
-                                        case "7":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                            break;
-                                        case "8":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                            break;
-                                        case "9":
-                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                            break;
-                                    }
-
-                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, assignmentTypeColumn);
+                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
 
                                     if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
 
@@ -6029,39 +5773,8 @@ public class DynamicQuestions {
                             }
 
                             if (!assignmentField.equals("null")){
-                                String assignmentTypeColumn = "";
 
-                                switch (assignmentType){
-                                    case "1" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                        break;
-                                    case "2" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                        break;
-                                    case "3" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                        break;
-                                    case "4" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                        break;
-                                    case "5" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                        break;
-                                    case "6" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                        break;
-                                    case "7" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                        break;
-                                    case "8" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                        break;
-                                    case "9" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                        break;
-                                }
-
-                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                 if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
@@ -6525,39 +6238,7 @@ public class DynamicQuestions {
                                     // Iterate through the integer array using a for loop
                                     for (int fieldMultipleAssignment : intArray) {
 
-                                        String assignmentTypeColumn = "";
-
-                                        switch (assignmentType){
-                                            case "1" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                break;
-                                            case "2" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                break;
-                                            case "3" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                break;
-                                            case "4" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                break;
-                                            case "5" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                break;
-                                            case "6" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                break;
-                                            case "7" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                break;
-                                            case "8" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                break;
-                                            case "9" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                break;
-                                        }
-
-                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
 
@@ -7570,39 +7251,7 @@ public class DynamicQuestions {
 
                             if (!assignmentField.equals("null")){
 
-                                String assignmentTypeColumn = "";
-
-                                switch (assignmentType){
-                                    case "1" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                        break;
-                                    case "2" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                        break;
-                                    case "3" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                        break;
-                                    case "4" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                        break;
-                                    case "5" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                        break;
-                                    case "6" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                        break;
-                                    case "7" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                        break;
-                                    case "8" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                        break;
-                                    case "9" :
-                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                        break;
-                                }
-
-                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                 if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
@@ -7816,39 +7465,7 @@ public class DynamicQuestions {
                                     // Iterate through the integer array using a for loop
                                     for (int fieldMultipleAssignment : intArray) {
 
-                                        String assignmentTypeColumn = "";
-
-                                        switch (assignmentType){
-                                            case "1" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                break;
-                                            case "2" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                break;
-                                            case "3" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                break;
-                                            case "4" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                break;
-                                            case "5" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                break;
-                                            case "6" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                break;
-                                            case "7" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                break;
-                                            case "8" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                break;
-                                            case "9" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                break;
-                                        }
-
-                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(assignmentType));
 
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
 
@@ -9939,6 +9556,40 @@ public class DynamicQuestions {
             // Parsing failed
             return false;
         }
+    }
+
+    private String getColumnName(String assignmentType){
+        String assignmentTypeColumn = "";
+        switch (assignmentType){
+            case "1" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                break;
+            case "2" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                break;
+            case "3" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                break;
+            case "4" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                break;
+            case "5" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                break;
+            case "6" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                break;
+            case "7" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                break;
+            case "8" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                break;
+            case "9" :
+                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                break;
+        }
+        return assignmentTypeColumn;
     }
 
 
