@@ -253,6 +253,16 @@ public class DataLayer {
         }
     }
 
+    public void deleteDatafromGeoPlot(String plotName){
+        try {
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
         try {
             ContentValues values = new ContentValues();
@@ -425,6 +435,13 @@ public class DataLayer {
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
     }
 
+    public Cursor getPNamePlotGeoData(String mOlamFarmerid) {
+        String[] columns = new String[]{OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME};
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(mOlamFarmerid)};
+        return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
 
     public void updatePlotGeoDataAfterSync(String plotId, String plotName) {
         try {
@@ -460,7 +477,19 @@ public class DataLayer {
         }
     }
 
-    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName) {
+    public void updateGeoPlotDataAfterDelete(String pName , int plotId , String mOlamFarmerId){
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, "plot"+ plotId +"_" + mOlamFarmerId);
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(pName)};
+            db.update(OFISDBContract.PlotGeoData.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName, String created_date) {
         try {
 
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
@@ -476,6 +505,7 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "1");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, plotName);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT, created_date);
 
             db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
         }catch (Exception e){
@@ -1873,6 +1903,27 @@ public class DataLayer {
             cursor.close();
         }
         return metricId;
+    }
+
+    public String getCreatedPlotDateByID(int plotId){
+        String createdDate = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotId)};
+            cursor = db.query(OFISDBContract.PlotEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    createdDate = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return createdDate;
     }
 
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
@@ -4319,10 +4370,16 @@ public class DataLayer {
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
+        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+        String sortOrder = "CASE " +
+                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+//                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' or " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 1 and 2 " +
+//                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+                "ELSE " + orderBy + " + 2 " +
+                "END END";
         String sql = "SELECT " + questionTable + ".*, " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name FROM " + questionTable
                 + " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = "
-                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + whereClause + " ORDER BY " + orderBy;
+                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + whereClause + " ORDER BY " + sortOrder;
 
         return db.rawQuery(sql, whereArgs);
     }
@@ -8631,6 +8688,13 @@ public class DataLayer {
         }
 
         return updated;
+    }
+
+
+    public long deleteNetworkQueuePlotItemByFarmerId(long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
     public String getMultiFarmLocationbyId(long farmerId) {

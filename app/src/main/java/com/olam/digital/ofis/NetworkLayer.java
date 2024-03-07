@@ -2009,10 +2009,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
                                                 dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
-                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")){
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -2348,7 +2350,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
                                         //                                {"farmId":216778,"farmerId":228862,"plots":[{"id":322982,"plotId":"plot1_CI-0001-AN59-0080","plotName":"t"}]}
 
-                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID), plotDataObj.getString("plotId"));
+                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID), plotDataObj.getString("plotId"), plotDataObj.getString("created_at"));
                                     }
 
                                 } catch (JSONException e) {
@@ -4266,7 +4268,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         public void onResponse(Call call, Response postResponse) {
                             try {
                                 String statusMessage;
-
+                                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                                 //     JSONObject response = new JSONObject(postResponse.body().string());
                                 if (postResponse.isSuccessful()) {
                                     // JSONObject farmerResponse = response.getJSONObject("farmer");
@@ -4317,6 +4319,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId);
+                                        db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);
