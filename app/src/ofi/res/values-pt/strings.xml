@@ -775,7 +775,7 @@
     <string name="please_check_question">Por favor, verifique a pergunta</string>
     <string name="please_check_dependent_question">já que a questão sobre dependentes foi atualizada</string>
     <string name="national_id_info">Atualize o ID nacional do produtor</string>
-    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0 ha. Tente gravar um polígono diferente.</string>
+    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0.0009ha. Tente gravar um polígono diferente.</string>
     <string name="direct_value_below_error">Insira o valor da pergunta %1$d abaixo de %2$d</string>
     <string name="direct_value_above_error">Insira o valor da pergunta %1$d acima de %2$d</string>
     <string name="direct_value_greater_than_error">Insira o valor da pergunta %1$d dentro ou igual a %2$d</string>
@@ -800,9 +800,19 @@
     <string name="update_signature_hint">Toque para atualizar</string>
     <string name="are_you_at_the_farmers_hh">Você está na casa do produtor?</string>
     <string name="ofis_request_help">Solicitar ajuda</string>
-    <string name="alert_review">O valor inserido está fora do intervalo permitido, será enviado para revisão do administrador</string>
+    <string name="other_certification">Outra Certificação</string>
+    <string name="alert_review">O valor inserido será enviado para revisão do administrador para validação adicional</string>
     <string name="alert_review_hint">Por favor insira o valor dentro do intervalo %1$d-%2$d</string>
     <string name="range_hint_A_R">Faixa: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Por favor insira o valor dentro do intervalo %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Faixa: %.2f-%.2f</string>
+    <string name="please_enter_certification_details">Insira os detalhes da certificação</string>
+    <string name="update_certification">Atualizar certificação</string>
+    <string name="certification">Certificação</string>
+    <string name="certification_name">Nome da Certificação</string>
+    <string name="select_certification">Selecione Certificação</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
     <string name="metrics">Métricas:</string>
     <string name="converted_metrics">Métricas convertidas</string>
 </resources>
