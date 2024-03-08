@@ -1862,6 +1862,26 @@ public class DataLayer {
         return metricId;
     }
 
+    public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
+        String assignmentField="";
+        Cursor farmerCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    assignmentField = farmerCursor.getString(farmerCursor.getColumnIndex(assignmentTypeColumn));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            farmerCursor.close();
+        }
+        return  assignmentField;
+    }
+
 
     public String getGlobalIdByAnswerID(int answerId){
         String metricId = "";
@@ -1926,25 +1946,6 @@ public class DataLayer {
         return createdDate;
     }
 
-    public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
-        String assignmentField="";
-        Cursor farmerCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerCursor != null) {
-                while (farmerCursor.moveToNext()) {
-                    assignmentField = farmerCursor.getString(farmerCursor.getColumnIndex(assignmentTypeColumn));
-                }
-            }
-        } catch (Exception e) {
-        }finally {
-            farmerCursor.close();
-        }
-        return  assignmentField;
-    }
 
     public Cursor getNIDPhotostatusByType(String type, long farmerid) {
         String[] columns = new String[]{"*"};
@@ -7464,6 +7465,49 @@ public class DataLayer {
             if (cursor != null){
                 while(cursor.moveToNext()){
                     value = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerType.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+    public String getQuestionAssignmentTypeId(int id){
+        String value = "" ;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getQuestionAssignmentFieldId(int id){
+        String value = "" ;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD));
                 }
             }
         }catch (Exception e) {
