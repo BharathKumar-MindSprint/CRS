@@ -712,7 +712,7 @@
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
     <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -1071,6 +1071,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Veuillez entrer la valeur dans la plage %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Gamme: %.2f-%.2f</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
 </resources>

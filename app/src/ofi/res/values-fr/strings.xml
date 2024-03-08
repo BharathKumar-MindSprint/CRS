@@ -1069,9 +1069,19 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="description">Description</string>
     <string name="Loading">Chargement de</string>
     <string name="PleaseWait">Veuillez patienter</string>
-    <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
+    <string name="other_certification">Autre certification</string>
+    <string name="alert_review">La valeur saisie sera soumise à l\'examen de l\'administrateur pour une validation supplémentaire.</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Veuillez entrer la valeur dans la plage %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Gamme: %.2f-%.2f</string>
+    <string name="please_enter_certification_details">Veuillez saisir les détails de la certification</string>
+    <string name="update_certification">Mettre à jour la certification</string>
+    <string name="certification">Certification</string>
+    <string name="certification_name">Nom du certificat</string>
+    <string name="select_certification">Sélectionnez Certification</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
 

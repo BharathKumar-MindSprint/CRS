@@ -145,6 +145,7 @@ public class DynamicQuestions {
         this.dl = dl;
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
+        this.roomDB = OFISRoomDB.getDbInstance(context);
     }
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
@@ -465,6 +466,7 @@ public class DynamicQuestions {
                                                         } catch (NumberFormatException e) {
                                                             // Handle the case where parsing fails
                                                             e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
                                                         }
                                                     } else {
                                                         // Handle the case where any of the variables is null
@@ -587,6 +589,7 @@ public class DynamicQuestions {
                                             } catch (NumberFormatException e) {
                                                 // Handle the case where parsing fails
                                                 e.printStackTrace();
+                                                previewLayout.setVisibility(View.GONE);
                                             }
                                         } else {
                                             // Handle the case where any of the variables is null
@@ -3496,6 +3499,7 @@ public class DynamicQuestions {
                                                         } catch (NumberFormatException e) {
                                                             // Handle the case where parsing fails
                                                             e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
                                                         }
                                                     } else {
                                                         // Handle the case where any of the variables is null
@@ -3835,6 +3839,7 @@ public class DynamicQuestions {
                                                 } catch (NumberFormatException e) {
                                                     // Handle the case where parsing fails
                                                     e.printStackTrace();
+                                                    previewLayout.setVisibility(View.GONE);
                                                 }
                                             } else {
                                                 // Handle the case where any of the variables is null
@@ -4191,6 +4196,7 @@ public class DynamicQuestions {
                                                         } catch (NumberFormatException e) {
                                                             // Handle the case where parsing fails
                                                             e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
                                                         }
                                                     } else {
                                                         // Handle the case where any of the variables is null
@@ -5101,7 +5107,6 @@ public class DynamicQuestions {
                                                             LinearLayout.LayoutParams.WRAP_CONTENT,
                                                             LinearLayout.LayoutParams.WRAP_CONTENT
                                                     ));
-                                                    previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
                                                     String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
@@ -5112,8 +5117,13 @@ public class DynamicQuestions {
                                                     if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                                         try {
                                                             // Perform your calculations and set the text
-                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                            answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                            if (canParseToDouble(answerValue)) {
+                                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                                previewLayout.addView(answerTextView);
+                                                                previewLayout.setVisibility(View.VISIBLE);
+                                                            }
+
                                                         } catch (NumberFormatException e) {
                                                             // Handle the case where parsing fails
                                                             e.printStackTrace();
@@ -5122,7 +5132,6 @@ public class DynamicQuestions {
                                                         // Handle the case where any of the variables is null
                                                         contentTextView.setText("Some values are null");
                                                     }
-                                                    previewLayout.addView(answerTextView);
                                                 }else {
                                                     previewLayout.setVisibility(View.GONE);
                                                     previewLayout.removeAllViews();
@@ -5404,7 +5413,6 @@ public class DynamicQuestions {
                                                                             LinearLayout.LayoutParams.WRAP_CONTENT,
                                                                             LinearLayout.LayoutParams.WRAP_CONTENT
                                                                     ));
-                                                                    previewLayout.setVisibility(View.VISIBLE);
                                                                     String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                                                     String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                                     String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
@@ -5413,8 +5421,13 @@ public class DynamicQuestions {
                                                                     if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                                                         try {
                                                                             // Perform your calculations and set the text
-                                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                                            answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+
+                                                                            if (canParseToDouble(answerValue)) {
+                                                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                                answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                                                previewLayout.addView(answerTextView);
+                                                                                previewLayout.setVisibility(View.VISIBLE);
+                                                                            }
                                                                         } catch (NumberFormatException e) {
                                                                             // Handle the case where parsing fails
                                                                             e.printStackTrace();
@@ -5423,7 +5436,6 @@ public class DynamicQuestions {
                                                                         // Handle the case where any of the variables is null
                                                                         contentTextView.setText("Some values are null");
                                                                     }
-                                                                    previewLayout.addView(answerTextView);
                                                                 }else {
                                                                     previewLayout.setVisibility(View.GONE);
                                                                 }
@@ -8331,6 +8343,18 @@ public class DynamicQuestions {
             }
         }
         return 0; // Default to the first item if the value is not found
+    }
+
+    public static boolean canParseToDouble(String answerValue) {
+        try {
+            // Try parsing the string to double
+            Double.parseDouble(answerValue);
+            // If no exception is thrown, parsing succeeded
+            return true;
+        } catch (NumberFormatException e) {
+            // Parsing failed
+            return false;
+        }
     }
 
 
