@@ -1533,7 +1533,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }catch (Exception e){}
                 try {
                     String plotallLocations = prepareJsonServerSync();
-                    saveToSyncDatabase(plotallLocations);
+                    saveToSyncDatabase(plotallLocations,plotId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1645,11 +1645,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    void saveToSyncDatabase(String plotsJson) {
+    void saveToSyncDatabase(String plotsJson, String plotId) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName);
+            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName, plotId);
         }
     }
 
