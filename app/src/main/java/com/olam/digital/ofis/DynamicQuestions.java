@@ -2973,11 +2973,16 @@ public class DynamicQuestions {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
+                // Prevent spaces at the beginning
+                if (dest.length() == 0 && Character.isSpaceChar(source.charAt(start))) {
+                    return "";
+                }
+
                 StringBuilder filteredStringBuilder = new StringBuilder();
 
                 for (int i = start; i < end; i++) {
                     char character = source.charAt(i);
-                    if (Character.isLetterOrDigit(character)) {
+                    if (Character.isLetterOrDigit(character) || Character.isSpaceChar(character)) {
                         if (filteredStringBuilder.length() < maxCharacterLimit) {
                             filteredStringBuilder.append(character);
                         }
@@ -3276,11 +3281,16 @@ public class DynamicQuestions {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
+                // Prevent spaces at the beginning
+                if (dest.length() == 0 && Character.isSpaceChar(source.charAt(start))) {
+                    return "";
+                }
+
                 StringBuilder filteredStringBuilder = new StringBuilder();
 
                 for (int i = start; i < end; i++) {
                     char character = source.charAt(i);
-                    if (Character.isLetter(character)) {
+                    if (Character.isLetter(character) || Character.isSpaceChar(character)) {
                         if (filteredStringBuilder.length() < maxCharacterLimit) {
                             filteredStringBuilder.append(character);
                         }
