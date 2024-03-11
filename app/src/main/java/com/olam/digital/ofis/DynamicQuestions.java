@@ -3308,16 +3308,12 @@ public class DynamicQuestions {
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
                 try {
-                    // Create the resulting string and parse it to double
-//                    String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
-//                    double input = Double.parseDouble(resultingText);
-
                     String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
                     boolean addingDecimalPoint = source.toString().equals(".") && !dest.toString().contains(".");
 
                     // Check for exceeding decimal limit
                     String[] parts = resultingText.split("\\.");
-                    if (parts.length > 1 && parts[0].length() > maxDecimalLimit) {
+                    if (parts.length > 1 && parts[1].length() > maxDecimalLimit) { // Modified to check the decimal part
                         return ""; // Reject if decimal places exceed limit
                     }
 
@@ -3429,7 +3425,7 @@ public class DynamicQuestions {
 
                     // Parse the resulting string
                     String[] parts = resultingText.split("\\.");
-                    if (parts.length > 2) {
+                    if (parts.length > maxDecimalLimit) {
                         // Restrict multiple decimal points
                         return "";
                     }
