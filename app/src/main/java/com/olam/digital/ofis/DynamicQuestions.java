@@ -2464,14 +2464,82 @@ public class DynamicQuestions {
                                         }
 
                                     }else {
+                                        int[] farmerOrderList = new int[]{ 6,5,8,9,4,3,2,1,7 };
                                         // Convert the string array to an integer array
                                         int[] intArray = new int[stringArray.length];
                                         for (int m = 0; m < stringArray.length; m++) {
                                             intArray[m] = Integer.parseInt(stringArray[m]);
                                         }
+                                        for(int orderList : farmerOrderList){
+                                            if(Integer.parseInt(assignmentType) == orderList){
+                                                for (int fieldMultipleAssignment : intArray) {
+                                                    String assignmentTypeColumn = "";
+                                                    switch (assignmentType){
+                                                        case "1" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                                            break;
+                                                        case "2" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                                            break;
+                                                        case "3" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                                            break;
+                                                        case "4" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                                            break;
+                                                        case "5" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                                            break;
+                                                        case "6" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                                            break;
+                                                        case "7" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                                            break;
+                                                        case "8" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                                            break;
+                                                        case "9" :
+                                                            assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                                            break;
+                                                    }
+                                                    long farmerId = Utilities.farmerId;
+                                                    roomDB = OFISRoomDB.getDbInstance(context);
+                                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                                    if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)  && globally.equals("false")) {
+                                                        min = rangeArray.getInt("min");
+                                                        max = rangeArray.getInt("max");
+                                                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                                        }else {
+                                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                                        }
+                                                        if (min < 0) {
+                                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                                        } else {
+                                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                                        }
+                                                        break;
+                                                    }else if (assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null") && globally.equals("true")){
+                                                        min = rangeArray.getInt("min");
+                                                        max = rangeArray.getInt("max");
+                                                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                                        }else {
+                                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                                        }
+                                                        if (min < 0) {
+                                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                                        } else {
+                                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
 
                                         // Iterate through the integer array using a for loop
-                                        for (int fieldMultipleAssignment : intArray) {
+                                       /* for (int fieldMultipleAssignment : intArray) {
 
                                             long farmerId = Utilities.farmerId;
                                             roomDB = OFISRoomDB.getDbInstance(context);
@@ -2506,7 +2574,7 @@ public class DynamicQuestions {
                                                 }
                                             }
 
-                                        }
+                                        }*/
                                     }
                                 }
 
