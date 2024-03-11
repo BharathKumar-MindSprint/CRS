@@ -31,11 +31,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private final int roleId;
@@ -497,29 +495,6 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-        }
-        String start_date_string = childModuleDto.getStartDate();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        Date startDate = null;
-        try {
-            if(start_date_string!=null) {
-                startDate = dateFormat.parse(start_date_string);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Date currentDateNew = new Date();
-
-        if (startDate!=null){
-            if(currentDateNew.before(startDate)){
-                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                enabledItem.setText("false");
             }
         }
         return convertView;
