@@ -3695,7 +3695,7 @@ public class DynamicQuestions {
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
 //        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-
+        final String displayType = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
         String oldDatatype = null;
 
         String datatype = null;
@@ -3706,7 +3706,7 @@ public class DynamicQuestions {
         }
 
         if(oldDatatype!=null){
-            if (oldDatatype.equals("Dropdown")){
+            if (oldDatatype.equals("Dropdown") || oldDatatype.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                 datatype = "int";
             }
         }
@@ -4135,8 +4135,7 @@ public class DynamicQuestions {
                     e.printStackTrace();
                 }
 
-            final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
-
+            final boolean isDensityQuestion = (dataTypeID == 6 && displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) ? true : (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
 
             if (hasAnswers) {
                 if (datatype.equals("int") && (!isDensityQuestion)) {

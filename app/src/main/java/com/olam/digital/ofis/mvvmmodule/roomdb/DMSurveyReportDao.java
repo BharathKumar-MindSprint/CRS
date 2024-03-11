@@ -19,7 +19,8 @@ public interface DMSurveyReportDao {
     @Query("DELETE FROM DMSurveyReport WHERE moduleId = :moduleId AND farmerId = :farmerId")
     void deleteAlreadyStoredData(int moduleId, int farmerId);
 
-
+    @Query("UPDATE DMSurveyReport SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
+    void updatefarmerId(int tempFarmerId, int farmerId);
 
     /*@Query("SELECT * FROM DMSurveyReport WHERE id = :reportId")
     DMSurveyReport getSurveyReportById(int reportId);*/
