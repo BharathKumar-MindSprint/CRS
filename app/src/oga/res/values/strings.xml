@@ -481,7 +481,6 @@
     <string name="untick_task_msg">Please confirm you would like to mark this task as incomplete?</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
     <string name="loggin_In">Logging In</string>
-    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
