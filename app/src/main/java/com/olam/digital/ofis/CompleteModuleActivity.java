@@ -573,9 +573,9 @@ public class CompleteModuleActivity extends BaseActivity {
                 }
                 break;
             default:
-                /*if (resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     dynamicQuestions.setFullImageFromFilePath(res);
-                }*/
+                }
         }
     }
 
