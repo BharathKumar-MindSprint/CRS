@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -18,14 +17,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +61,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -74,13 +70,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
-import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -90,7 +82,7 @@ import java.util.Objects;
 
 public class CompleteModuleActivity extends BaseActivity {
 
-    private  final String MATOMOTAG = this.getClass().getSimpleName();
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     private long farmerId;
     private long moduleId;
     private long farmerModuleId;
@@ -104,7 +96,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLng;
     private String farmerName;
     private String viewModuleAns;
-    private Cursor subModules, questions , modules;
+    private Cursor subModules, questions, modules;
     public static Cursor allQuestions;
     private Context context;
     private Resources res;
@@ -128,6 +120,10 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String PLOTID = "PLOTID";
     private long networkQueueId = 0;
     public static boolean editMode = false;
+
+    private final static int REQUEST_IMAGE_CAPTURE = 1;
+
+    private final static int REQUEST_IMAGE_GALLERY = 2;
 
     // for GPS location system
 //    private GoogleApiClient googleApiClient;
@@ -155,9 +151,9 @@ public class CompleteModuleActivity extends BaseActivity {
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
 
-    private Location mCurrentCapturedLocation=null;
-    GPSListener gpsListener=null;
-    private GPSTracker gpsTracker=null;
+    private Location mCurrentCapturedLocation = null;
+    GPSListener gpsListener = null;
+    private GPSTracker gpsTracker = null;
 
     public static ScrollView scrollView;
     LinearLayout viewSurveyAnswer;
@@ -184,14 +180,14 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
         viewModuleAns = intent.getStringExtra(VIEW_MODULE);
-
         try {
             isPlotSurvey = intent.getStringExtra(ISPLOTSURVEY);
             if (isPlotSurvey.equalsIgnoreCase("true")) {
                 plotId = intent.getIntExtra(PLOTID, 0);
             }
-        }catch (Exception e){}
-        scrollView= findViewById(R.id.scrollView);
+        } catch (Exception e) {
+        }
+        scrollView = findViewById(R.id.scrollView);
         context = this;
         res = getResources();
         dl = new DataLayer(res, context);
@@ -200,15 +196,15 @@ public class CompleteModuleActivity extends BaseActivity {
 
         DynamicQuestions.resource(res);
         setupGPS();
-        gpsListener=new GPSListener() {
+        gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location!=null && !GPSUtils.isMockLocation(location)){
-                    mCurrentCapturedLocation=location;
+                if (location != null && !GPSUtils.isMockLocation(location)) {
+                    mCurrentCapturedLocation = location;
                 }
             }
         };
-        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker = new GPSTracker(this, gpsListener);
         // gpsTracker.getDeviceLocation();
 //        if (gpsTracker.isGpsEnabled()){
         gpsTracker.startLocationUpdateInitially();
@@ -227,11 +223,11 @@ public class CompleteModuleActivity extends BaseActivity {
         Utilities.subModuleId = subModuleId;
         Utilities.farmerId = farmerId;
         Utilities.olamFarmerId = olamFarmerId;
-        Utilities.moduleId = (int)moduleId;
+        Utilities.moduleId = (int) moduleId;
 
         Utilities.farmerModuleId = farmerModuleId;
 
-        Utilities.packagename=getPackageName();
+        Utilities.packagename = getPackageName();
 
         // all questions
         allQuestions = dl.getAllQuestionIds((int) moduleId);
@@ -253,13 +249,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 subModules.moveToFirst();
                 subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
                 questions = dl.getQuestionsBySubModuleId(subModuleId);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
         }
-
-
 
 
         viewSurveyAnswer.setOnClickListener(new View.OnClickListener() {
@@ -289,11 +283,10 @@ public class CompleteModuleActivity extends BaseActivity {
 
         bindSaveButton();
         setupFooter();
-        dynamicQuestions.SurveyType="other";
+        dynamicQuestions.SurveyType = "other";
 
 
-}
-
+    }
 
 
     private void checkTime() {
@@ -301,8 +294,8 @@ public class CompleteModuleActivity extends BaseActivity {
             int auto_time_enabled = 0;
             int auto_time_zone_enabled = 0;
 
-                auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
-                auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+            auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
+            auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
 //
             if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -317,7 +310,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 AlertDialog alert = builder.create();
                 alert.show();
             } else {
-               // autotimeEnabled = true;
+                // autotimeEnabled = true;
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("HomeActivity: Error getting phone auto time settings", e));
@@ -359,7 +352,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
+                if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
                     setPoiGPS(mCurrentLocation);
             }
         };
@@ -454,8 +447,6 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
 
-
-   
     private void moveToCurrentSubModule(int subModuleId) {
         while (subModules.moveToNext()) {
             if (subModuleId == subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID))) {
@@ -471,11 +462,11 @@ public class CompleteModuleActivity extends BaseActivity {
             TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
             String language = Locale.getDefault().getLanguage();
-            String moduleDescription = dl.getDescriptionByModuleId(Integer.parseInt(String.valueOf(moduleId)) , language);
+            String moduleDescription = dl.getDescriptionByModuleId(Integer.parseInt(String.valueOf(moduleId)), language);
 
             moduleNameTv.setText(moduleName);
 
-            if (moduleDescription!=null && !moduleDescription.equals("null")) {
+            if (moduleDescription != null && !moduleDescription.equals("null")) {
                 moduleDescriptionTv.setVisibility(View.VISIBLE);
                 moduleDescriptionTv.setText(moduleDescription);
             }
@@ -496,9 +487,9 @@ public class CompleteModuleActivity extends BaseActivity {
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
-            String showDescription = dl.getShowDescriptionModule(Integer.parseInt(String.valueOf(moduleId)),subModuleId);
+            String showDescription = dl.getShowDescriptionModule(Integer.parseInt(String.valueOf(moduleId)), subModuleId);
             int columnSubModulesDescription = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION);
-            if (!Objects.equals(showDescription, "false")){
+            if (!Objects.equals(showDescription, "false")) {
                 TextView subModuleDescriptionTv = (TextView) findViewById(R.id.completeModuleSubModuleDescription);
                 subModuleDescriptionTv.setVisibility(View.VISIBLE);
                 subModuleDescriptionTv.setText(subModules.getString(columnSubModulesDescription));
@@ -530,7 +521,7 @@ public class CompleteModuleActivity extends BaseActivity {
             } else {
                 viewSurveyAnswer.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -549,7 +540,7 @@ public class CompleteModuleActivity extends BaseActivity {
 //            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     gpsTracker.getDeviceLocation();
                     startLocationUpdates();
-                }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+                } else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
 //            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     stopLocationUpdates();
                 }
@@ -557,20 +548,42 @@ public class CompleteModuleActivity extends BaseActivity {
             case 6575:
                 checkTime();
                 break;
-            default:
+            case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    dynamicQuestions.setFullImageFromFilePath(res);
+                    if (dynamicQuestions.getCurrentPhotoPath() != null) {
+                        dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_CAPTURE");
+                    } else {
+                        Toast.makeText(CompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                    }
                 }
+                break;
+            case REQUEST_IMAGE_GALLERY:
+                if (resultCode == RESULT_OK) {
+                    String realPath = ImageFilePath.getPath(CompleteModuleActivity.this, imageReturnedIntent.getData());
+                    try {
+                        if (realPath != null) {
+                            dynamicQuestions.setFullImageFromFilePath(realPath, "portrait","IMAGE_GALLERY");
+                            // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
+                        } else {
+                            Toast.makeText(CompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            default:
+                /*if (resultCode == RESULT_OK) {
+                    dynamicQuestions.setFullImageFromFilePath(res);
+                }*/
         }
     }
-
-
 
 
     private void setupSubModuleQuestions() {
         // loop through questions and generate the right control for each
 //        while (questions.moveToNext()) {
-        if(questions != null && questions.moveToFirst()) {
+        if (questions != null && questions.moveToFirst()) {
             boolean noOtherQuestion = false;
             do {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
@@ -580,7 +593,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
                 long farmerId = Utilities.farmerId;
 
-                if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")){
+                if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                         noOtherQuestion = true;
                         dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
@@ -614,7 +627,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                         noOtherQuestion = true;
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                    }else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                         noOtherQuestion = true;
                         renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                    /* try{
@@ -627,11 +640,10 @@ public class CompleteModuleActivity extends BaseActivity {
                             }
                         }
                     }catch (Exception e){}*/
-                    }
-                    else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                         noOtherQuestion = true;
 
-                        dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false, -1 , null,0);
+                        dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
 
                     }/*else {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
@@ -639,7 +651,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     }
                 }*/
 
-                }else {
+                } else {
                     String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
 
                     // Convert the string array to an integer array
@@ -650,7 +662,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
                     // Iterate through the integer array using a for loop
                     for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
-                        String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId , getColumnName(questionAssignmentType));
+                        String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
 
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
@@ -686,7 +698,7 @@ public class CompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                 noOtherQuestion = true;
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                            }else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                                 noOtherQuestion = true;
                                 renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                    /* try{
@@ -699,11 +711,10 @@ public class CompleteModuleActivity extends BaseActivity {
                             }
                         }
                     }catch (Exception e){}*/
-                            }
-                            else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                                 noOtherQuestion = true;
 
-                                dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false, -1 , null,0);
+                                dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
 
                             }/*else {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
@@ -751,27 +762,27 @@ public class CompleteModuleActivity extends BaseActivity {
             public void onClick(View view) {
 
                 // validate all the submodules question is answered
-                boolean isMandated = false,isMinVal = false;
+                boolean isMandated = false, isMinVal = false;
                 try {
 //                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
 //                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
 //                        return;
 //                    }
-                    if( DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0){
-                        String constraintMsg= new CoffeeConstraints().getConstraintExceedMsg(context,dl);
-                        Toast.makeText(CompleteModuleActivity.this,constraintMsg,Toast.LENGTH_SHORT).show();
+                    if (DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0) {
+                        String constraintMsg = new CoffeeConstraints().getConstraintExceedMsg(context, dl);
+                        Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     // Check the editQuestionSet in each submodule
 
-                    if (DynamicQuestions.getInstance().editQuestionSet.size()>0){
-                        ArrayList<Integer> AllSubmodulesQuestions=dl.getAllSubmodulesQuestionsId(questions);
+                    if (DynamicQuestions.getInstance().editQuestionSet.size() > 0) {
+                        ArrayList<Integer> AllSubmodulesQuestions = dl.getAllSubmodulesQuestionsId(questions);
                         ArrayList<Integer> affectedQuestions = new ArrayList<Integer>(AllSubmodulesQuestions);
                         // use common.retainAll
 
                         affectedQuestions.retainAll(DynamicQuestions.getInstance().editQuestionSet);
-                        if (affectedQuestions.size()>0) {
+                        if (affectedQuestions.size() > 0) {
                             String constraintMsg = new CoffeeConstraints().getAffectedQuestionMsg(context, dl, affectedQuestions);
                             Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
                             return;
@@ -780,30 +791,31 @@ public class CompleteModuleActivity extends BaseActivity {
                     }
 
 
-
                     isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
-                    isMinVal =dynamicQuestions.CheckMinMaxforQuestion(questions);
+                    isMinVal = dynamicQuestions.CheckMinMaxforQuestion(questions);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(! isMandated){
-                    Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
+                if (!isMandated) {
+                    Toast.makeText(CompleteModuleActivity.this, res.getString(R.string.restriction_in_submodules), Toast.LENGTH_SHORT).show();
                     return;
-                } else if(!isMinVal){
-                    Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.valid_range),Toast.LENGTH_SHORT).show();
+                } else if (!isMinVal) {
+                    Toast.makeText(CompleteModuleActivity.this, res.getString(R.string.valid_range), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // End
                 if (isLastPage) {
 
-                    try{
-                        if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){}else {
+                    try {
+                        if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
+                        } else {
                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                                 gpsTracker.getDeviceLocation();
                                 return;
                             }
                         }
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                    }
 
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -813,15 +825,15 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-                    if (MultiFarmUtils.isMultiFarmEnumerator){
-                        String multifarmId=dl.getMultiFarmId(farmerId);
-                        if (multifarmId!=null){
+                    if (MultiFarmUtils.isMultiFarmEnumerator) {
+                        String multifarmId = dl.getMultiFarmId(farmerId);
+                        if (multifarmId != null) {
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, multifarmId);
-                        }else{
+                        } else {
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                         }
 
-                    }else{
+                    } else {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                     }
 
@@ -832,11 +844,11 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
                     boolean exist = dl.isPlotSavedinNetworkLayer(farmerId, plotId, farmerModuleId);
 //                    if (statusFinished == 0) {
-                    if (! exist) {
+                    if (!exist) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module",plotId);
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId, "module", plotId);
                     }
                     statusFinished = 1;
                     saveSubModule("finish");
@@ -854,7 +866,7 @@ public class CompleteModuleActivity extends BaseActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                 saveSubModule("exit");
             }
         });
@@ -869,9 +881,9 @@ public class CompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){
+            if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
 
-            }else {
+            } else {
                 if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                     gpsTracker.getDeviceLocation();
                     return;
@@ -896,11 +908,11 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
         if (action.equalsIgnoreCase("next")) {
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NEXT_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NEXT_SUBMODULE, ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToNext();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         } else if (action.equalsIgnoreCase("back")) {
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PREVIOUS_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PREVIOUS_SUBMODULE, ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToPrevious();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         }
@@ -955,7 +967,7 @@ public class CompleteModuleActivity extends BaseActivity {
             finish();
 
         }*/
-        boolean bool=dynamicQuestions.checkDisplayStatus((int) moduleId);
+        boolean bool = dynamicQuestions.checkDisplayStatus((int) moduleId);
         /// required recheck before push
         /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
             if(bool){
@@ -977,7 +989,7 @@ public class CompleteModuleActivity extends BaseActivity {
         }
         dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished, plotId);
         if (action.equalsIgnoreCase("exit")) {
-            if(bool){
+            if (bool) {
                 ViewFarmerActivity.farmerId = farmerId;
 
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
@@ -985,7 +997,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 context.startActivity(intent);
             }
         } else if (action.equalsIgnoreCase("finish")) {
-            if(bool){
+            if (bool) {
                 if (canSaveAndFinish) {
 
                     if (dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) && !editMode) {
@@ -1020,9 +1032,8 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
 
-
     private void collectGPSPoint(Location farmLocation) {
-        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
         trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY);
         trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
@@ -1032,8 +1043,8 @@ public class CompleteModuleActivity extends BaseActivity {
         trackDetailsDTO.setFarmerName(farmerName);
         trackDetailsDTO.setSurveyName(moduleName);
 
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
-        new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
     }
 
     /**
@@ -1062,13 +1073,13 @@ public class CompleteModuleActivity extends BaseActivity {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
+                                if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     setPoiGPS(mCurrentLocation);
-                                }else{
+                                } else {
                                    /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
                                         pd.dismiss();
                                     }*/
-                                    Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                    Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.record_location_timeout), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }, 6000);
@@ -1086,7 +1097,7 @@ public class CompleteModuleActivity extends BaseActivity {
                                /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
                                     pd.dismiss();
                                 }*/
-                                Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.record_location_timeout), Toast.LENGTH_LONG).show();
                             }
                         }, 1000);
 
@@ -1110,7 +1121,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
                                 break;
                             default:
-                                Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.record_location_timeout), Toast.LENGTH_LONG).show();
 
                         }
                     }
@@ -1179,9 +1190,9 @@ public class CompleteModuleActivity extends BaseActivity {
 
         Cursor questions = dl.retrieveQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
         try {
-            if(questions != null){
+            if (questions != null) {
                 boolean noOtherQuestion = false;
-             while (questions.moveToNext()) {
+                while (questions.moveToNext()) {
                  /*LinearLayout questionInclude = (LinearLayout) inflaterQuestions.inflate(R.layout.question_answer_row, questionsSection, false);
                  questionsSection.addView(questionInclude);
                  TextView questionText = (TextView) questionInclude.findViewById(R.id.questionText);
@@ -1190,52 +1201,52 @@ public class CompleteModuleActivity extends BaseActivity {
                  int columnIndex = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
                  questionText.setText(questions.getString(columnIndex));
                  answerText.setText("Answer Here");*/
-                 dynamicQuestions.hasAnswers = true;
-                 dynamicQuestions.viewAnswer = true;
-                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                    dynamicQuestions.hasAnswers = true;
+                    dynamicQuestions.viewAnswer = true;
+                    String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
-                 final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                 final String questionAssignmentType = dl.getQuestionAssignmentTypeId(questionId);
-                 final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
-                 long farmerId = Utilities.farmerId;
+                    final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                    final String questionAssignmentType = dl.getQuestionAssignmentTypeId(questionId);
+                    final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
+                    long farmerId = Utilities.farmerId;
 
-                 if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")){
-                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null,true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(),true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
-                         noOtherQuestion = true;
-                         renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
+                    if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
+                        if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(), true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTreeDensityQuestion(questions, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                            noOtherQuestion = true;
+                            renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                     /* try{
                          if (mCurrentCapturedLocation!=null){
                              dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
@@ -1246,53 +1257,53 @@ public class CompleteModuleActivity extends BaseActivity {
                              }
                          }
                      }catch (Exception e){}*/
-                     }else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-                         noOtherQuestion = true;
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                            noOtherQuestion = true;
 
-                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false , -1 , null,0);
+                            dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
 
-                     }/*else {
+                        }/*else {
                      if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
                          dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
                      }
                  }*/
-                 }else {
-                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null,true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(),true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
-                         noOtherQuestion = true;
-                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
-                         noOtherQuestion = true;
-                         renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
+                    } else {
+                        if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(), true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderTreeDensityQuestion(questions, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                            noOtherQuestion = true;
+                            dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                            noOtherQuestion = true;
+                            renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                     /* try{
                          if (mCurrentCapturedLocation!=null){
                              dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
@@ -1303,36 +1314,38 @@ public class CompleteModuleActivity extends BaseActivity {
                              }
                          }
                      }catch (Exception e){}*/
-                     }else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-                         noOtherQuestion = true;
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                            noOtherQuestion = true;
 
-                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false , -1 , null,0);
+                            dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
 
-                     }/*else {
+                        }/*else {
                      if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
                          dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
                      }
                  }*/
-                 }
+                    }
 
-             }
+                }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-            TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
-            try {
-                int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
-                moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
-            }catch (Exception e){e.printStackTrace();}
-            popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    popupWindow.dismiss();
-                    dynamicQuestions.viewAnswer = false;
-                }
-            });
+        TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
+        try {
+            int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+            moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+                dynamicQuestions.viewAnswer = false;
+            }
+        });
     }
 
     public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition) {
@@ -1350,13 +1363,13 @@ public class CompleteModuleActivity extends BaseActivity {
         String oldDatatype = null;
 
         String datatype = null;
-        if (dataTypeID == 6){
-            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-        }else{
+        if (dataTypeID == 6) {
+            oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        } else {
             datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
-        if(oldDatatype!=null){
-            if (oldDatatype.equals("Location")){
+        if (oldDatatype != null) {
+            if (oldDatatype.equals("Location")) {
                 datatype = "text";
             }
         }
@@ -1367,22 +1380,22 @@ public class CompleteModuleActivity extends BaseActivity {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try{
-                        if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){
+                    try {
+                        if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
 
-                        }else {
+                        } else {
                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                                 gpsTracker.getDeviceLocation();
                                 return;
                             }
                         }
-                        String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
-                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, locationValue,0, 0, 0);
+                        String locationValue = mCurrentCapturedLocation.getLatitude() + "," + mCurrentCapturedLocation.getLongitude();
+                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, locationValue, 0, 0, 0);
                         textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
                         textView.setBackgroundResource(R.drawable.list_item_disabled);
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setEnabled(false);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -1393,14 +1406,14 @@ public class CompleteModuleActivity extends BaseActivity {
             parentLayout.addView(questionWrapper);
 
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" + e.getMessage());
         }
     }
 
     public static void dimBehind(PopupWindow popupWindow) {
         View container;
         if (popupWindow.getBackground() == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 container = (View) popupWindow.getContentView().getParent();
             } else {
                 container = popupWindow.getContentView();
@@ -1414,40 +1427,40 @@ public class CompleteModuleActivity extends BaseActivity {
         }
         Context context = popupWindow.getContentView().getContext();
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-       WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
         p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);
     }
 
-    private String getColumnName(String assignmentType){
+    private String getColumnName(String assignmentType) {
         String assignmentTypeColumn = "";
-        switch (assignmentType){
-            case "1" :
+        switch (assignmentType) {
+            case "1":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
                 break;
-            case "2" :
+            case "2":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
                 break;
-            case "3" :
+            case "3":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
                 break;
-            case "4" :
+            case "4":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
                 break;
-            case "5" :
+            case "5":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
                 break;
-            case "6" :
+            case "6":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
                 break;
-            case "7" :
+            case "7":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
                 break;
-            case "8" :
+            case "8":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
                 break;
-            case "9" :
+            case "9":
                 assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
                 break;
         }
