@@ -757,7 +757,7 @@
     <string name="consent_statement">ຄຳສັ່ງ ຍິນຍອມ</string>
         <string name="Please_accept_consent">ທ່ານຕ້ອງຍອມຮັບການຍິນຍອມເພື່ອຊ່ວຍຊາວກະສິກອນ</string>
     <!--    <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>-->
-        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
+        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0.0009ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
 
         <string name="direct_value_below_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງລຸ່ມ %2$d</string>
         <string name="direct_value_above_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງເທິງ %2$d</string>
@@ -952,8 +952,12 @@
     <string name="alert_review">kha thi ponkhao aemn yunok khobkhed thi anunyad  man chathuk suknyuhai kuadsob phuboengaenynglabob</string>
     <string name="alert_review_hint">kaluna sai kha phainaikhobkhed %1$d-%2$d</string>
     <string name="range_hint_A_R">suang: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">kaluna sai kha phainaikhobkhed %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">suang: %.2f-%.2f</string>
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
 
 </resources>

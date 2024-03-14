@@ -66,6 +66,9 @@ import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
 import com.olam.digital.ofis.model.FarmerGeo;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
@@ -84,11 +87,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -140,6 +145,7 @@ public class DynamicQuestions {
         this.dl = dl;
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
+        this.roomDB = OFISRoomDB.getDbInstance(context);
     }
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
@@ -342,7 +348,7 @@ public class DynamicQuestions {
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
 
-    private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable) {
+    private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable, Integer globalMetricId , Integer localMetricId, int metricsValue) {
 
         // New
         Iterator<JSONObject> iterator = answerSet.iterator();
@@ -374,19 +380,127 @@ public class DynamicQuestions {
             CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
             if (cb.isChecked()) {
-                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(cbId.getText()));
+                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
             }
         }
     }
-    private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType, LinearLayout linearLayout,int repeaterItemPosition) {
+    private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType, LinearLayout linearLayout,int repeaterItemPosition,Integer globalMetricId, Integer localMetricId, int metricsValue, Spinner spinner, Map<Integer, String> spinnerData, ArrayAdapter<String> spinnerAdapter, LinearLayout previewLayout, TextView contentTextView) {
+
+        final Integer[] radioGlobalMetrics = {globalMetricId};
+        final Integer[] radioLocalMetrics = {localMetricId};
+
+
+        if (globalMetricId != 0){
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    // Get the selected item from the adapter
+                    String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+                    if (spinnerData != null) {
+                        for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
+
+                                if (entry.getKey() == Integer.parseInt(String.valueOf(globalMetricId))){
+                                    radioGlobalMetrics[0] = entry.getKey();
+                                    radioLocalMetrics[0] = 0;
+                                }else {
+                                    radioLocalMetrics[0] = entry.getKey();
+                                    radioGlobalMetrics[0] = 0;
+                                }
+                                // Display a Toast with the selected localUnitId
+//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
+
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                                            if (currentQuestionId == questionId) {
+                                                try {
+                                                    currentAnswer.put("globalMetricId", radioGlobalMetrics[0]);
+                                                    currentAnswer.put("localMetricId", radioLocalMetrics[0]);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = null;
+                                                Integer localMetricIdAnswer = null;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.setVisibility(View.VISIBLE);
+//                                                    titleTextView.setVisibility(View.VISIBLE);
+//                                                    contentTextView.setVisibility(View.VISIBLE);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(globalMetricId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                Log.d("AnswerNewSet" , answerSet.toString());
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // Do nothing here if needed
+                }
+            });
+        }
 
         RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                // This method is called when any RadioButton within the RadioGroup is checked
-                // Uncheck other RadioButtons in the same RadioGroup
                 for (int i = 0; i < group.getChildCount(); i++) {
                     RadioButton radioButton = (RadioButton) group.getChildAt(i);
                     radioButton.setChecked(radioButton.getId() == checkedId);
@@ -399,6 +513,7 @@ public class DynamicQuestions {
 //                Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
 //                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
 
+
                 if (repeaterItemPosition == -1){
                     if (answerSet!=null){
                         for (int i = 0; i < answerSet.size(); i++) {
@@ -410,7 +525,7 @@ public class DynamicQuestions {
                             }
                         }
                     }
-                    saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId));
+                    saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId), radioGlobalMetrics[0], radioLocalMetrics[0], 0);
                 }else {
                     int count =1;
                     if (answerSet!=null){
@@ -437,10 +552,63 @@ public class DynamicQuestions {
                         }
                     }
 
-                    saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId));
+                    saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId) , radioGlobalMetrics[0], radioLocalMetrics[0], 0);
 
                 }
 
+                if (globalMetricId != null && !globalMetricId.equals(0)) {
+                    if (answerSet.size() != 0) {
+                        for (int i = 0; i < answerSet.size(); i++) {
+                            JSONObject currentAnswer = answerSet.get(i);
+
+                            if (currentAnswer != null) {
+                                int currentQuestionId = currentAnswer.optInt("question_id");
+                                int answerJsonVal = currentAnswer.optInt("answer");
+
+                                if (currentQuestionId == questionId) {
+                                    Integer globalMetricIdAnswer = null;
+                                    Integer localMetricIdAnswer = null;
+                                    if (currentAnswer.has("globalMetricId")){
+                                        globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                    }
+                                    if (currentAnswer.has("localMetricId")){
+                                        localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                    }
+                                    if (localMetricIdAnswer != 0){
+                                        previewLayout.setVisibility(View.VISIBLE);
+                                        String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(globalMetricId));
+                                        String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                        String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                        String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                            try {
+                                                // Perform your calculations and set the text
+                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                            } catch (NumberFormatException e) {
+                                                // Handle the case where parsing fails
+                                                e.printStackTrace();
+                                                previewLayout.setVisibility(View.GONE);
+                                            }
+                                        } else {
+                                            // Handle the case where any of the variables is null
+                                            contentTextView.setText("Some values are null");
+                                        }
+                                    }else {
+                                        previewLayout.setVisibility(View.GONE);
+                                    }
+
+                                }else{
+                                    previewLayout.setVisibility(View.GONE);
+                                }
+
+                            }
+                        }
+                    }else{
+                        previewLayout.setVisibility(View.GONE);
+                    }
+                }
 
             }
         });
@@ -520,7 +688,7 @@ public class DynamicQuestions {
         }
     }
 
-    public void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer) {
+    public void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, Integer globalMetricId, Integer localMetricId, double metricAnswer) {
         try {
             if(viewAnswer) return;
             if (answer.length() > 0) {
@@ -543,6 +711,9 @@ public class DynamicQuestions {
                             currentAnswer.put("parent_question_id", parentQuestionId);
                             currentAnswer.put("repeater_item_position", repeaterItemPosition);
                             currentAnswer.put("reporting_year", reportingYear);
+                            currentAnswer.put("globalMetricId", globalMetricId);
+                            currentAnswer.put("localMetricId", localMetricId);
+                            currentAnswer.put("metricAnswer", metricAnswer);
                             isNew = false;
                             break;
                         }
@@ -558,6 +729,9 @@ public class DynamicQuestions {
                     newAnswer.put("datatype", datatype);
                     newAnswer.put("answer", answer);
                     newAnswer.put("reporting_year", reportingYear);
+                    newAnswer.put("globalMetricId", globalMetricId);
+                    newAnswer.put("localMetricId", localMetricId);
+                    newAnswer.put("metricAnswer", metricAnswer);
                     answerSet.add(newAnswer);
                 }
             } else if(answerId > 0){
@@ -571,7 +745,7 @@ public class DynamicQuestions {
         }
     }
 
-    private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, float min, float max) {
+    private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, float min, float max, Integer globalMetricId, Integer localMetricId,double metricAnswer) {
         try {
             if(viewAnswer) return;
             if (answer.length() > 0) {
@@ -859,6 +1033,7 @@ public class DynamicQuestions {
         if (questionList.size() == 0){
             match =true;
         }else {
+//            boolean newMatch = new HashSet<>(answeredQuestionList).containsAll(new HashSet<>(questionList));
             if (answeredQuestionList.containsAll(questionList)) {
                 match = true;
             }
@@ -1194,7 +1369,7 @@ public class DynamicQuestions {
                     }
                 }.start();
 
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue, 0, 0, 0);
             }
         }
 
@@ -1455,7 +1630,7 @@ public class DynamicQuestions {
                         currentMetaData.optInt("parent_id", 0),
                         currentMetaData.optInt("repeater_position", -1),
                         currentMetaData.getString("data_type"),
-                        getCurrentPhotoFileName()
+                        getCurrentPhotoFileName(), 0, 0, 0
                 );
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log("Dynamic Questions: Error getting photo question image :" +e.getMessage());
@@ -1557,7 +1732,7 @@ public class DynamicQuestions {
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01");
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01", 0, 0, 0);
                         }
 
                         @Override
@@ -1588,13 +1763,13 @@ public class DynamicQuestions {
                         }
                         if (answerDateString != null) {
                             today.setTime(serverDateFormat.parse(answerDateString));
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString, 0, 0, 0);
                         }
                     }else{
                         /* OCA-59 - Date Picker Question */
                         // Solution : Update the current data during inflate the view
                         Calendar cal = Calendar.getInstance();
-                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()), 0, 0, 0);
                     }
 
                     String finalDatatype1 = datatype;
@@ -1608,7 +1783,7 @@ public class DynamicQuestions {
                                     // get the date
                                     Calendar cal = Calendar.getInstance();
                                     cal.set(selectedYear, selectedMonth, selectedDay);
-                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()));
+                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()), 0, 0, 0);
                                 }
                             }
                     );
@@ -1652,7 +1827,7 @@ public class DynamicQuestions {
                         @Override
                         public void onClick(View view) {
 //                            String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue" );
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue" , 0, 0, 0);
                             textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
                             textView.setBackgroundResource(R.drawable.list_item_disabled);
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -1882,9 +2057,6 @@ public class DynamicQuestions {
             datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
 
-
-
-
         int answerIdTemp = 0;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -1896,8 +2068,233 @@ public class DynamicQuestions {
             }
         }
         final int answerId = answerIdTemp;
-
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+
+        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "2";
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
+        final boolean[] unCheckAllBox = {false};
+        boolean isLocalUnit = false;
+        // Create an inner wrapper
+        LinearLayout innerWrapper = new LinearLayout(context);
+        innerWrapper.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        innerWrapper.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout previewLayout = new LinearLayout(context);
+        previewLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        ));
+        previewLayout.setOrientation(LinearLayout.VERTICAL);
+        previewLayout.setPadding(16, 16, 16, 16);
+
+        TextView titleTextView = new TextView(context);
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
+        titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        titleTextView.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+
+        // Create the second TextView
+        TextView contentTextView = new TextView(context);
+        contentTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Add TextViews to the LinearLayout
+        previewLayout.addView(titleTextView);
+        previewLayout.addView(contentTextView);
+        previewLayout.setVisibility(View.GONE);
+
+
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+            List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
+
+            if (unitMappings.isEmpty()) {
+
+                List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
+                selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        2 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinner.setSelection(localAnswer);
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), getGlobalUnit.keySet().toArray(new Integer[0])));
+                }*/
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+
+
+            } else {
+                isLocalUnit = true;
+                Map<Integer, String> spinnerData = new HashMap<>();
+                List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
+                }
+
+                for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
+                    spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        2 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+
+                if (answerId != 0){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
+
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+                        // Find the corresponding localUnitId in the spinnerData map
+                        for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
+
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                    selectedGlobalID[0] = 0;
+                                }
+
+                                unCheckAllBox[0] = true;
+
+                                // Display a Toast with the selected localUnitId
+//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                                            if (currentQuestionId == questionId) {
+                                                try {
+                                                    currentAnswer.put("globalMetricId", selectedGlobalID[0]);
+                                                    currentAnswer.put("localMetricId", selectedLocalID[0]);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = null;
+                                                Integer localMetricIdAnswer = null;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.setVisibility(View.VISIBLE);
+//                                                    titleTextView.setVisibility(View.VISIBLE);
+//                                                    contentTextView.setVisibility(View.VISIBLE);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = et.getText().toString();
+                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(String.valueOf(answerJsonVal)) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
+                                                }
+
+
+
+
+
+                                            }
+
+                                        }
+                                    }
+                                }
+                                Log.d("AnswerNewSet" , answerSet.toString());
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+            }
+        }
+
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+            LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(
+                    0, // Width set to 0
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    8 // Weight set to 8 (80% of the total weight)
+            );
+            et.setLayoutParams(editTextParams);
+        }
         et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         et.setTag(questionId);
@@ -1913,7 +2310,7 @@ public class DynamicQuestions {
 
             if (currentAnswerValue != null) {
                 et.setText(currentAnswerValue);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue, selectedGlobalID[0], selectedLocalID[0], 0);
             }
         }
 
@@ -1957,7 +2354,7 @@ public class DynamicQuestions {
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else if (answerValue.equals("Numbers Only")){
+            } else if (answerValue.equals("Numbers Only")){
 //                et.setInputType(InputType.TYPE_CLASS_NUMBER);
                 try{
                     JSONObject displayConfig = new JSONObject();
@@ -2152,10 +2549,10 @@ public class DynamicQuestions {
             }
             if (answer.equalsIgnoreCase("")){
                 et.setText(defaultValue);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultValue);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultValue, selectedGlobalID[0], selectedLocalID[0], 0);
             }else{
                 et.setText(answer);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answer);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answer, selectedGlobalID[0], selectedLocalID[0],0);
             }
         }
 
@@ -2177,6 +2574,7 @@ public class DynamicQuestions {
         int finalMax = max;
         int finalMin = min;
         String finalDatatype = datatype;
+        boolean finalIsLocalUnit = isLocalUnit;
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -2194,7 +2592,14 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString());
+                double metricConversionValue = 0;
+                /*if (finalIsLocalUnit){
+                    if (finalDatatype.equals("int")){
+                        double conversionFactor = roomDB.localUnitDao().getConversionFactorById(selectedLocalID[0]);
+                        metricConversionValue = conversionFactor * Double.parseDouble(et.getText().toString());
+                    }
+                }*/
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString(), selectedGlobalID[0], selectedLocalID[0], metricConversionValue);
 
 
               //   Check the dependent questions - OFS-44 Check
@@ -2252,7 +2657,7 @@ public class DynamicQuestions {
                         if (!finalDefaultValue.equalsIgnoreCase("")){
                             et.setText(finalDefaultValue);
                             et.setSelection(et.getText().length());
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, finalDefaultValue);
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, finalDefaultValue, selectedGlobalID[0], selectedLocalID[0], 0);
                         }else {
                             removeAnswerEntry(questionId);
                         }
@@ -2261,7 +2666,7 @@ public class DynamicQuestions {
                         if (initialText[0].equalsIgnoreCase("0")){
                                 et.setText(value.replace("0", ""));
                                 et.setSelection(et.getText().length());
-                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString());
+                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString(), selectedGlobalID[0], selectedLocalID[0],  0);
                             }
                         }
                     }
@@ -2301,6 +2706,49 @@ public class DynamicQuestions {
                            // et.setError(null);
                         }
                     }
+
+                    if(et.getText().toString()!= null && !TextUtils.isEmpty(et.getText().toString())){
+                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                            if (answerSet != null) {
+                                for (int i = 0; i < answerSet.size(); i++) {
+                                    JSONObject currentAnswer = answerSet.get(i);
+
+                                    if (currentAnswer != null) {
+                                        int currentQuestionId = currentAnswer.optInt("question_id");
+                                        int answerJsonVal = currentAnswer.optInt("answer");
+
+                                        if (currentQuestionId == questionId) {
+                                            Integer globalMetricIdAnswer = null;
+                                            Integer localMetricIdAnswer = null;
+                                            if (currentAnswer.has("globalMetricId")){
+                                                globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                            }
+                                            if (currentAnswer.has("localMetricId")){
+                                                localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                            }
+                                            if (localMetricIdAnswer != 0){
+                                                previewLayout.setVisibility(View.VISIBLE);
+//                                                    titleTextView.setVisibility(View.VISIBLE);
+//                                                    contentTextView.setVisibility(View.VISIBLE);
+                                                String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                String answerValue = et.getText().toString();
+                                                contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(String.valueOf(answerJsonVal)) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                            }else {
+                                                previewLayout.setVisibility(View.GONE);
+                                            }
+
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        previewLayout.setVisibility(View.GONE);
+                    }
+
             }
         });
 
@@ -2326,12 +2774,27 @@ public class DynamicQuestions {
 
 
 
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+            if (isRepeaterItem) {
+                innerWrapper.addView(et);
+                innerWrapper.addView(spinner);
+//                parentLayout.addView(previewLayout);
+                parentLayout.addView(innerWrapper);
 
-        if (isRepeaterItem) {
-            parentLayout.addView(et);
-        } else {
-            questionWrapper.addView(et);
-            parentLayout.addView(questionWrapper);
+            } else {
+                innerWrapper.addView(et);
+                innerWrapper.addView(spinner);
+                questionWrapper.addView(innerWrapper);
+//                questionWrapper.addView(previewLayout);
+                parentLayout.addView(questionWrapper);
+            }
+        }else {
+            if (isRepeaterItem) {
+                parentLayout.addView(et);
+            } else {
+                questionWrapper.addView(et);
+                parentLayout.addView(questionWrapper);
+            }
         }
     }
 
@@ -2827,8 +3290,261 @@ public class DynamicQuestions {
         }
         final int answerId = answerIdTemp;
 
+        //Local unit
+        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "37";
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
+        boolean isLocalUnit = false;
+        // Create an inner wrapper
+        LinearLayout innerWrapper = new LinearLayout(context);
+        LinearLayout.LayoutParams innerParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        innerParams.setMargins(0,7,0,0);
+        innerWrapper.setLayoutParams(innerParams);
+
+        innerWrapper.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        /*TextView text = new TextView(getInstance().context);
+        text.setText("Metrics:");
+        text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                0, // Width set to 0
+                LinearLayout.LayoutParams.MATCH_PARENT,2
+        );
+        text.setGravity(Gravity.CENTER);
+        text.setLayoutParams(textParams);
+        innerWrapper.addView(text);*/
+
+        LinearLayout previewLayout = new LinearLayout(context);
+        previewLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        ));
+        previewLayout.setOrientation(LinearLayout.VERTICAL);
+        previewLayout.setPadding(16, 16, 16, 16);
+
+        TextView titleTextView = new TextView(context);
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
+        titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        titleTextView.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+
+        // Create the second TextView
+        TextView contentTextView = new TextView(context);
+        contentTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Add TextViews to the LinearLayout
+        previewLayout.addView(titleTextView);
+        previewLayout.addView(contentTextView);
+        previewLayout.setVisibility(View.GONE);
+
+        final Spinner spinnerLocal = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+            List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
+
+            if (unitMappings.isEmpty()) {
+
+                List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
+                selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
+                LinearLayout.LayoutParams spinnerLocalParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        2 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerLocalParams.setMargins(7, 0, 0, 0);
+                spinnerLocal.setLayoutParams(spinnerLocalParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinnerLocal.setAdapter(spinnerAdapter);
+
+
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinnerLocal.setSelection(localAnswer);
+                }else {
+                    spinnerLocal.setSelection(Integer.parseInt(metricGlobalId));
+                }*/
+
+                spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+
+
+            } else {
+                isLocalUnit = true;
+                Map<Integer, String> spinnerData = new HashMap<>();
+                List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
+                }
+
+                for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
+                    spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        2 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinnerLocal.setLayoutParams(spinnerParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinnerLocal.setAdapter(spinnerAdapter);
+                if (answerId != 0){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinnerLocal.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinnerLocal.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
+
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinnerLocal.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
+                spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+                        // Find the corresponding localUnitId in the spinnerData map
+                        for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
+
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                    selectedGlobalID[0] = 0;
+                                }
+                                // Display a Toast with the selected localUnitId
+//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
+
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                                            if (currentQuestionId == questionId) {
+                                                try {
+                                                    currentAnswer.put("globalMetricId", selectedGlobalID[0]);
+                                                    currentAnswer.put("localMetricId", selectedLocalID[0]);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = null;
+                                                Integer localMetricIdAnswer = null;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.setVisibility(View.VISIBLE);
+//                                                    titleTextView.setVisibility(View.VISIBLE);
+//                                                    contentTextView.setVisibility(View.VISIBLE);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
+                                                }
+
+
+
+
+
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                Log.d("AnswerNewSet" , answerSet.toString());
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+            }
+        }
+
+        // code end
+
 //        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+            LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                    0, // Width set to 0
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    8 // Weight set to 8 (80% of the total weight)
+            );
+            spinner.setLayoutParams(spinnerParams);
+        }
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, res.getStringArray(R.array.plotvariants));
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
@@ -3064,14 +3780,14 @@ public class DynamicQuestions {
                     //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
                         if (finalDatatype.equals("int") && (!isDensityQuestion)) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id), selectedGlobalID[0], selectedLocalID[0], 0);
 
                             long h = Long.parseLong("0026");
 
 
                         } else {
                             Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)), selectedGlobalID[0], selectedLocalID[0], 0);
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
@@ -3088,6 +3804,63 @@ public class DynamicQuestions {
                     if (isDensityQuestion) {
                         renderTreeDensityPlots(position, res);
                     }
+
+
+                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                        if (answerSet.size() != 0) {
+                            for (int i = 0; i < answerSet.size(); i++) {
+                                JSONObject currentAnswer = answerSet.get(i);
+
+                                if (currentAnswer != null) {
+                                    int currentQuestionId = currentAnswer.optInt("question_id");
+                                    int answerJsonVal = currentAnswer.optInt("answer");
+
+                                    if (currentQuestionId == questionId) {
+                                        Integer globalMetricIdAnswer = null;
+                                        Integer localMetricIdAnswer = null;
+                                        if (currentAnswer.has("globalMetricId")){
+                                            globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                        }
+                                        if (currentAnswer.has("localMetricId")){
+                                            localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                        }
+                                        if (localMetricIdAnswer != 0){
+                                            previewLayout.setVisibility(View.VISIBLE);
+                                            String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                            String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                            String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                            String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                            if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                try {
+                                                    // Perform your calculations and set the text
+                                                    double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                } catch (NumberFormatException e) {
+                                                    // Handle the case where parsing fails
+                                                    e.printStackTrace();
+                                                    previewLayout.setVisibility(View.GONE);
+                                                }
+                                            } else {
+                                                // Handle the case where any of the variables is null
+                                                contentTextView.setText("Some values are null");
+                                            }
+                                        }else {
+                                            previewLayout.setVisibility(View.GONE);
+                                        }
+
+                                    }else{
+                                        previewLayout.setVisibility(View.GONE);
+                                    }
+
+                                }
+                            }
+                        }else{
+                            previewLayout.setVisibility(View.GONE);
+                        }
+                    }
+
+
                 }
 
                 @Override
@@ -3098,12 +3871,31 @@ public class DynamicQuestions {
                 }
             });
 
-            if (isRepeaterItem) {
-                parentLayout.addView(spinner);
-            } else {
-                questionWrapper.addView(spinner);
-                parentLayout.addView(questionWrapper);
+
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+                if (isRepeaterItem) {
+                    innerWrapper.addView(spinner);
+                    innerWrapper.addView(spinnerLocal);
+                    parentLayout.addView(innerWrapper);
+                    parentLayout.addView(previewLayout);
+//                parentLayout.addView(spinner);
+                } else {
+                    innerWrapper.addView(spinner);
+                    innerWrapper.addView(spinnerLocal);
+                    questionWrapper.addView(innerWrapper);
+//                questionWrapper.addView(innerWrapper);
+                    questionWrapper.addView(previewLayout);
+                    parentLayout.addView(questionWrapper);
+                }
+            }else {
+                if (isRepeaterItem) {
+                    parentLayout.addView(spinner);
+                } else {
+                    questionWrapper.addView(spinner);
+                    parentLayout.addView(questionWrapper);
+                }
             }
+
 
 
         } catch (JSONException e) {
@@ -3194,6 +3986,254 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
+        //code start
+        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+        ArrayAdapter<String> spinnerAdapter = null;
+        Map<Integer, String> spinnerData = null;
+//        String metricGlobalId = "43";
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
+        boolean isLocalUnit = false;
+        // Create an inner wrapper
+        LinearLayout innerWrapper = new LinearLayout(context);
+        innerWrapper.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        innerWrapper.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        TextView text = new TextView(getInstance().context);
+        text.setText(context.getResources().getString(R.string.metrics));
+        text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                0, // Width set to 0
+                LinearLayout.LayoutParams.MATCH_PARENT,2
+        );
+        text.setGravity(Gravity.CENTER);
+        text.setLayoutParams(textParams);
+
+        LinearLayout previewLayout = new LinearLayout(context);
+        previewLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        ));
+        previewLayout.setOrientation(LinearLayout.VERTICAL);
+        previewLayout.setPadding(16, 16, 16, 16);
+
+        TextView titleTextView = new TextView(context);
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
+        titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        titleTextView.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+
+        // Create the second TextView
+        TextView contentTextView = new TextView(context);
+        contentTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Add TextViews to the LinearLayout
+        previewLayout.addView(titleTextView);
+        previewLayout.addView(contentTextView);
+        previewLayout.setVisibility(View.GONE);
+
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+            List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
+
+            if (unitMappings.isEmpty()) {
+
+                List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
+                selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        8 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+
+                /*if (hasAnswers){
+                    int
+
+                    spinner.setSelection(localAnswer);
+                }else {
+                    spinner.setSelection(getGlobalUnit.indexOf(metricGlobalId));
+
+                }*/
+                ArrayAdapter<String> finalSpinnerAdapter1 = spinnerAdapter;
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = finalSpinnerAdapter1.getItem(position);
+
+//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+
+
+            } else {
+                isLocalUnit = true;
+                    spinnerData = new HashMap<>();
+                List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
+
+                for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
+                    spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
+                }
+
+                List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        8 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+                if (answerId != 0){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
+
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
+                Map<Integer, String> finalSpinnerData = spinnerData;
+                ArrayAdapter<String> finalSpinnerAdapter = spinnerAdapter;
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = finalSpinnerAdapter.getItem(position);
+
+                        // Find the corresponding localUnitId in the spinnerData map
+                        for (Map.Entry<Integer, String> entry : finalSpinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
+
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                    selectedGlobalID[0] = 0;
+                                }
+                                // Display a Toast with the selected localUnitId
+//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
+
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                                            if (currentQuestionId == questionId) {
+                                                    try {
+                                                        currentAnswer.put("globalMetricId", selectedGlobalID[0]);
+                                                        currentAnswer.put("localMetricId", selectedLocalID[0]);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+
+                                        }
+                                    }
+                                }
+
+                                if (answerSet.size() != 0) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = 0;
+                                                Integer localMetricIdAnswer = 0;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.setVisibility(View.VISIBLE);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                            previewLayout.setVisibility(View.GONE);
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
+                                                }
+
+                                            }else{
+                                                previewLayout.setVisibility(View.GONE);
+                                            }
+
+                                        }
+                                    }
+                                }else{
+                                    previewLayout.setVisibility(View.GONE);
+                                }
+
+
+                                Log.d("AnswerNewSet" , answerSet.toString());
+
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+            }
+        }
+
+        // code end
+
         if (radio != null && radio.getCount() > 0) {
             LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.activity_radio_group, null);
             RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
@@ -3265,7 +4305,11 @@ public class DynamicQuestions {
 
                                 String radioName = dl.getValueByLookUpID(lookupID);
                                 RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                radioButton.setText(radioName);
+                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+                                    radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+                                }else{
+                                    radioButton.setText(radioName);
+                                }
                                 radioButton.setId(Integer.parseInt(lookupID));
 
                                 if (rbAnswers.getCount() == 0){
@@ -3273,7 +4317,7 @@ public class DynamicQuestions {
                                         radioButton.setChecked(true);
                                         radioButton.setEnabled(true);
                                         String finalDatatype = datatype;
-                                        saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID);
+                                        saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
                                     }
                                 }
 
@@ -3282,7 +4326,7 @@ public class DynamicQuestions {
                                     if (Integer.parseInt(lookupID) == Integer.parseInt(dl.radioAnswerValueFromAnswersTable(answerId))){
                                         radioButton.setChecked(true);
                                         radioButton.setEnabled(true);
-                                        saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID);
+                                        saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
                                     }
 
 
@@ -3328,9 +4372,22 @@ public class DynamicQuestions {
                 e.printStackTrace();
             }
 
+            int finalGlobalMetrics = 0;
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+                finalGlobalMetrics = Integer.parseInt(metricGlobalId);
+                innerWrapper.addView(text);
+                innerWrapper.addView(spinner);
+                questionWrapper.addView(linearLayout);
+                questionWrapper.addView(innerWrapper);
+                questionWrapper.addView(previewLayout);
+                parentLayout.addView(questionWrapper);
 
-            questionWrapper.addView(linearLayout);
-            parentLayout.addView(questionWrapper);
+            }else {
+                questionWrapper.addView(linearLayout);
+                parentLayout.addView(questionWrapper);
+            }
+
+
 
             /*if (otherChoice.equals("true")) {
                 final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
@@ -3418,7 +4475,8 @@ public class DynamicQuestions {
                 parentLayout.addView(questionWrapper);
             }*/
 
-            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition);
+
+            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView);
 
         }
 
@@ -3541,14 +4599,14 @@ public class DynamicQuestions {
                     //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
                         if (finalDatatype.equals("int") && (!isDensityQuestion)) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id), 0, 0, 0);
 
                             long h = Long.parseLong("0026");
 
 
                         } else {
                             Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)), 0, 0, 0);
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
@@ -3794,16 +4852,32 @@ public class DynamicQuestions {
         }
 
 
+        int answerIdTemp = 0;
         final boolean singleSelect;
         boolean tempSingleSelect = false;
+        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
 
         Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
         Cursor cbAnswers;
         if(isSavedAns) {
              cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                answerIdTemp = questions.getInt(questions.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
+            }
         }else{
              cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                try {
+                    answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    answerIdTemp = 0;
+                }
+
+            }
         }
+        final int answerId = answerIdTemp;
+
         // is this a question we can only select one answer to?
         // get display config
         try {
@@ -3831,8 +4905,262 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
-        final int[] checkboxCount = {0};
 
+        //code start
+//        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "2";
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
+        final boolean[] unCheckAllBox = {false};
+        boolean isLocalUnit = false;
+        // Create an inner wrapper
+        LinearLayout innerWrapper = new LinearLayout(context);
+        innerWrapper.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        innerWrapper.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        TextView text = new TextView(getInstance().context);
+        text.setText(context.getResources().getString(R.string.metrics));
+        text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                0, // Width set to 0
+                LinearLayout.LayoutParams.MATCH_PARENT,2
+        );
+        text.setGravity(Gravity.CENTER);
+        text.setLayoutParams(textParams);
+
+        LinearLayout previewLayout = new LinearLayout(context);
+        previewLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+        ));
+        previewLayout.setOrientation(LinearLayout.VERTICAL);
+        previewLayout.setPadding(16, 16, 16, 16);
+
+        TextView titleTextView = new TextView(context);
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
+        titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        titleTextView.setTextColor(context.getResources().getColor(R.color.weightage_bar));
+
+        // Create the second TextView
+        TextView contentTextView = new TextView(context);
+        contentTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Add TextViews to the LinearLayout
+//        previewLayout.addView(titleTextView);
+//        previewLayout.addView(contentTextView);
+        previewLayout.setVisibility(View.GONE);
+
+
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+            List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
+
+            if (unitMappings.isEmpty()) {
+
+                List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
+                selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        8 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinner.setSelection(localAnswer);
+                }else {
+                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                }*/
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+
+//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+
+
+            } else {
+                isLocalUnit = true;
+                Map<Integer, String> spinnerData = new HashMap<>();
+                List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
+
+                for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
+                    spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
+                }
+
+                List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
+                LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
+                        0, // Width set to 0
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        8 // Weight set to 2 (20% of the total weight)
+                );
+                spinnerParams.setMargins(7, 0, 0, 0);
+                spinner.setLayoutParams(spinnerParams);
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
+                spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(spinnerAdapter);
+                if (answerId != 0){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
+
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // Get the selected item from the adapter
+                        String selectedAbbreviation = spinnerAdapter.getItem(position);
+
+                        // Find the corresponding localUnitId in the spinnerData map
+                        for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
+
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                    selectedGlobalID[0] = 0;
+                                }
+
+//                                uncheckAllCheckbox(questionWrapper, checkboxes, questions, farmerId,cbAnswers, defaultLookUpValue);
+                                unCheckAllBox[  0] = true;
+                                // Display a Toast with the selected localUnitId
+//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                                            if (currentQuestionId == questionId) {
+                                                try {
+                                                    currentAnswer.put("globalMetricId", selectedGlobalID[0]);
+                                                    currentAnswer.put("localMetricId", selectedLocalID[0]);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                if (answerSet != null) {
+                                    previewLayout.removeAllViews();
+                                    previewLayout.addView(titleTextView);
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = null;
+                                                Integer localMetricIdAnswer = null;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    TextView answerTextView = new TextView(context);
+                                                    answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                                    ));
+//                                                    titleTextView.setVisibility(View.VISIBLE);
+//                                                    contentTextView.setVisibility(View.VISIBLE);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            if (canParseToDouble(answerValue)) {
+                                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                                previewLayout.addView(answerTextView);
+                                                                previewLayout.setVisibility(View.VISIBLE);
+                                                            }
+
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
+                                                    previewLayout.removeAllViews();
+                                                }
+                                            }else {
+                                                previewLayout.setVisibility(View.GONE);
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                Log.d("AnswerNewSet" , answerSet.toString());
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // Do nothing here if needed
+                    }
+                });
+            }
+        }
+
+        // code end
+
+        final int[] checkboxCount = {0};
         if (checkboxes != null && checkboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
@@ -3917,7 +5245,11 @@ public class DynamicQuestions {
 
                                     String checkBoxName = dl.getValueByLookUpID(lookupID);
                                     tvId.setText(lookupID);
-                                    tv.setText(checkBoxName);
+                                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+                                        tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+                                    }else{
+                                        tv.setText(checkBoxName);
+                                    }
                                     tl.addView(tr);
 
                             /*if (cbAnswers.getCount() == 0) {
@@ -4042,8 +5374,84 @@ public class DynamicQuestions {
                                                 }
                                             }
 
+                                            if (unCheckAllBox[0]){
+                                                while (cbAnswers.moveToNext()) {
+                                                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                                        cb.setChecked(false);
+                                                        cb.setEnabled(false);
+                                                        checkboxCount[0]++;
+                                                    }
+                                                }
+                                            }
 
-                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+
+                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, selectedGlobalID[0],selectedLocalID[0] , 0);
+
+                                            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                                                if (answerSet.size() != 0) {;
+                                                    previewLayout.removeAllViews();
+                                                    previewLayout.addView(titleTextView);
+                                                    for (int i = 0; i < answerSet.size(); i++) {
+                                                        JSONObject currentAnswer = answerSet.get(i);
+
+                                                        if (currentAnswer != null) {
+                                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                                            int answerJsonVal = currentAnswer.optInt("answer");
+
+                                                            if (currentQuestionId == questionId) {
+                                                                Integer globalMetricIdAnswer = null;
+                                                                Integer localMetricIdAnswer = null;
+                                                                if (currentAnswer.has("globalMetricId")){
+                                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                                }
+                                                                if (currentAnswer.has("localMetricId")){
+                                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                                }
+                                                                if (localMetricIdAnswer != 0){
+                                                                    TextView answerTextView = new TextView(context);
+                                                                    answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                                                    ));
+                                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                                        try {
+                                                                            // Perform your calculations and set the text
+
+                                                                            if (canParseToDouble(answerValue)) {
+                                                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                                answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                                                previewLayout.addView(answerTextView);
+                                                                                previewLayout.setVisibility(View.VISIBLE);
+                                                                            }
+                                                                        } catch (NumberFormatException e) {
+                                                                            // Handle the case where parsing fails
+                                                                            e.printStackTrace();
+                                                                        }
+                                                                    } else {
+                                                                        // Handle the case where any of the variables is null
+                                                                        contentTextView.setText("Some values are null");
+                                                                    }
+                                                                }else {
+                                                                    previewLayout.setVisibility(View.GONE);
+                                                                }
+
+                                                            }else{
+                                                                previewLayout.setVisibility(View.GONE);
+                                                            }
+
+                                                        }
+                                                    }
+                                                }else{
+                                                    previewLayout.setVisibility(View.GONE);
+                                                    previewLayout.removeAllViews();
+                                                }
+                                            }
+
                                         }
                                     });
 
@@ -4170,7 +5578,7 @@ public class DynamicQuestions {
 
                                     }
 
-                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl);
+                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl, selectedGlobalID[0] ,selectedLocalID[0], 0);
                                 }
                             });
 
@@ -4298,7 +5706,7 @@ public class DynamicQuestions {
 
                                 }
 
-                                saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl);
+                                saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl, selectedGlobalID[0] , selectedLocalID[0], 0);
                             }
                         });
 
@@ -4311,10 +5719,40 @@ public class DynamicQuestions {
                 e.printStackTrace();
             }
 
-            questionWrapper.addView(tl);
-            parentLayout.addView(questionWrapper);
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                if (answerSet != null) {
+                    for (int i = 0; i < answerSet.size(); i++) {
+                        JSONObject currentAnswer = answerSet.get(i);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        if (currentAnswer != null) {
+                            int currentQuestionId = currentAnswer.optInt("question_id");
+
+                            if (currentQuestionId == questionId) {
+                                int globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                int localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                contentTextView.setText(globalMetricIdAnswer);
+
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
+                innerWrapper.addView(text);
+                innerWrapper.addView(spinner);
+                questionWrapper.addView(tl);
+                questionWrapper.addView(innerWrapper);
+                questionWrapper.addView(previewLayout);
+                parentLayout.addView(questionWrapper);
+            }else{
+                questionWrapper.addView(tl);
+                parentLayout.addView(questionWrapper);
+            }
+
+
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, selectedGlobalID[0] , selectedLocalID[0],0);
         }
     }
 
@@ -4426,7 +5864,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                     }
                 });
 
@@ -4436,7 +5874,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
     }
 
@@ -4585,7 +6023,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
     }
 
@@ -4702,7 +6140,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
                     }
                 });
 
@@ -4712,7 +6150,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
 
     }
@@ -4922,7 +6360,7 @@ public class DynamicQuestions {
                                                 }
                                             }
 
-                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                                         }
                                     });
 
@@ -4994,7 +6432,7 @@ public class DynamicQuestions {
                                         clickedCb.setChecked(true);
                                     }
 
-                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                                 }
                             });
 
@@ -5064,7 +6502,7 @@ public class DynamicQuestions {
                                     clickedCb.setChecked(true);
                                 }
 
-                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                             }
                         });
 
@@ -5148,7 +6586,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
 
     }
@@ -5229,7 +6667,7 @@ public class DynamicQuestions {
                             }
                             repeaterItemsWrapper.removeAllViews();
                             removeAnswerEntry(questionId, answerId);
-                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString());
+                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString(), 0, 0, 0);
                             renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
                             if (id > 0) {
 
@@ -5328,7 +6766,7 @@ public class DynamicQuestions {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (id > 0 || zeroAcceptable) {
-                            saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString(), 0, 0, 0);
                             if (id > 0) {
                                 renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, false);
                             } else {
@@ -5707,10 +7145,10 @@ public class DynamicQuestions {
 
             if (currentAnswer == 1) {
                 spinner.setSelection(1, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer), 0, 0, 0);
             } else if (currentAnswer == 0) {
                 spinner.setSelection(2, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer), 0, 0, 0);
             }
         }
 
@@ -5838,7 +7276,7 @@ public class DynamicQuestions {
 
                         }
                         Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")), 0, 0, 0);
     //                    if (questionId == 4333) {
   //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
 //                            TextView errorText = (TextView) spinner.getSelectedView();
@@ -6312,7 +7750,7 @@ public class DynamicQuestions {
                         (int) hundredpercentquestion.getTag(R.string.hpPqId),
                         (int) hundredpercentquestion.getTag(R.string.hpRiP),
                         (String) hundredpercentquestion.getTag(R.string.hpD),
-                        "0");
+                        "0", 0, 0, 0);
             }
         }
 
@@ -6439,7 +7877,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                     }
                 });
 
@@ -6449,7 +7887,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
     }
 
@@ -6531,7 +7969,7 @@ public class DynamicQuestions {
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01");
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01", 0, 0, 0);
                         }
 
                         @Override
@@ -6562,7 +8000,7 @@ public class DynamicQuestions {
                         }
                         if (answerDateString != null) {
                             today.setTime(serverDateFormat.parse(answerDateString));
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString, 0, 0, 0);
                         }
                     }
 
@@ -6577,7 +8015,7 @@ public class DynamicQuestions {
                                     // get the date
                                     Calendar cal = Calendar.getInstance();
                                     cal.set(selectedYear, selectedMonth, selectedDay);
-                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()));
+                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()), 0, 0, 0);
                                 }
                             }
                     );
@@ -6708,7 +8146,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl,0,0, 0);
                     }
                 });
 
@@ -6718,7 +8156,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl,0,0, 0);
         }
 
     }
@@ -6783,7 +8221,7 @@ public class DynamicQuestions {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (id > 0 || zeroAcceptable) {
-                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString());
+                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString(), 0,0, 0);
                             if (id > 0) {
                                 renderRepeaterItemsForSIP(questionId, id, repeaterItemsWrapper, res);
                             } else {
@@ -6897,5 +8335,27 @@ public class DynamicQuestions {
             return null;
         }
     }
+
+    private int getIndexForValue(int value, Integer[] keys) {
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i] == value) {
+                return i;
+            }
+        }
+        return 0; // Default to the first item if the value is not found
+    }
+
+    public static boolean canParseToDouble(String answerValue) {
+        try {
+            // Try parsing the string to double
+            Double.parseDouble(answerValue);
+            // If no exception is thrown, parsing succeeded
+            return true;
+        } catch (NumberFormatException e) {
+            // Parsing failed
+            return false;
+        }
+    }
+
 
 }

@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Recherchez un planteur</string>
     <string name="title_activity_view_farmer">Détails sur le planteur</string>
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Compagnon Debug</string>
@@ -711,8 +712,8 @@
     <!--<string name="attendee_sex1">Genre</string>-->
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
-    <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+   <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
+    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -1068,9 +1069,20 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="description">Description</string>
     <string name="Loading">Chargement de</string>
     <string name="PleaseWait">Veuillez patienter</string>
-    <string name="other_certification">Other Certification</string>
-    <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
+    <string name="other_certification">Autre certification</string>
+    <string name="alert_review">La valeur saisie sera soumise à l\'examen de l\'administrateur pour une validation supplémentaire.</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Veuillez entrer la valeur dans la plage %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Gamme: %.2f-%.2f</string>
+    <string name="please_enter_certification_details">Veuillez saisir les détails de la certification</string>
+    <string name="update_certification">Mettre à jour la certification</string>
+    <string name="certification">Certification</string>
+    <string name="certification_name">Nom du certificat</string>
+    <string name="select_certification">Sélectionnez Certification</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
+    <string name="metrics">Métrique:</string>
+    <string name="converted_metrics">Métriques converties</string>
 
 </resources>

@@ -15,6 +15,7 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
     <!-- main stuff -->
     <string name="app_name">Olam Agri Companion Debug</string>
@@ -480,7 +481,6 @@
     <string name="untick_task_msg">Please confirm you would like to mark this task as incomplete?</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
     <string name="loggin_In">Logging In</string>
-    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
@@ -731,7 +731,7 @@
     <string name="face_recognizion">Face Recognition</string>
 
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -1096,4 +1096,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Please enter the value within the range %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Range : %.2f-%.2f</string>
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">Converted Metrics</string>
 </resources>

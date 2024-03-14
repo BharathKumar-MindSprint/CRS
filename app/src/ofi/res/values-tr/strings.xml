@@ -657,7 +657,7 @@
     <string name="biometric_licence_deactivation_queue">Biyometrik Lisans Devre Dışı Bırakma</string>
     <string name="face_recognizion">Yüz tanıma</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -725,7 +725,20 @@
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
     <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
     <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
-    <string name="alert_review">Girilen değer izin verilen aralığın dışında, yönetici incelemesi için gönderilecek</string>
+
+    <string name="other_certification">Diğer Sertifikasyon</string>
+    <string name="alert_review">Girilen değer, ek doğrulama amacıyla yönetici incelemesine aktarılacak</string>
     <string name="alert_review_hint">Lütfen %1$d-%2$d aralığında bir değer girin</string>
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Lütfen %.2f-%.2f aralığında bir değer girin</string>
+    <string name="range_hint_A_R_decimal">Menzil: %.2f-%.2f</string>
+    <string name="please_enter_certification_details">Lütfen Sertifika ayrıntılarını girin</string>
+    <string name="update_certification">Sertifikayı Güncelle</string>
+    <string name="certification">Sertifikasyon</string>
+    <string name="certification_name">Sertifika Adı</string>
+    <string name="select_certification">Sertifikasyon Seçin</string>
+    <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
+    <string name="metrics">Ölçüm:</string>
+    <string name="converted_metrics">Dönüştürülen metrikler</string>
 </resources>

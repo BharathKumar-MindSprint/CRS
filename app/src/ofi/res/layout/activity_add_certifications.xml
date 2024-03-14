@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context=".AddCertificationsActivity">
+
+    <TextView
+        android:id="@+id/certification_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_10"
+        android:padding="@dimen/margin_10"
+        android:text="@string/certification"
+        android:textColor="@color/ofis_text_field"
+        android:textSize="@dimen/ofis_med_text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/lin_certification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin_10"
+        android:paddingTop="@dimen/ofis_xlarge_pad"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/certification_tv">
+
+        <Spinner
+            android:id="@+id/spinner_certificationName"
+            android:layout_width="185dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:layout_marginRight="@dimen/margin_10"
+            android:dropDownWidth="300dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="start" />
+
+        <EditText
+            android:id="@+id/ed_other_certification"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/margin_10"
+            android:background="@drawable/edittext_bg_light"
+            android:hint="@string/other_certification"
+            android:maxLength="50"
+            android:textSize="@dimen/ofis_input_field_text"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/certification_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ofis_xlarge_pad"
+        android:background="@color/ofis_action_button_background"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="@string/Save"
+        android:textColor="@color/ofis_base_font_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/lin_certification" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
