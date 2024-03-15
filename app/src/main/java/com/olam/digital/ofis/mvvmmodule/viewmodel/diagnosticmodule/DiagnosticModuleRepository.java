@@ -23,7 +23,7 @@ public class DiagnosticModuleRepository {
 
     public LiveData<ResponseModel> getAllDiagnosticModuleData(Integer id) {
         final MutableLiveData<ResponseModel> data = new MutableLiveData<>();
-        Call<ResponseModel> call = manageRecords.getAllDiagnosticModuleData();
+        Call<ResponseModel> call = manageRecords.getAllDiagnosticModuleData(1);
 
         call.enqueue(new Callback<ResponseModel>() {
 

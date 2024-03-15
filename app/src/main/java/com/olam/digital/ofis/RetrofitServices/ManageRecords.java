@@ -31,7 +31,7 @@ import retrofit2.http.Query;
 public interface ManageRecords {
 
     @GET("ofistraining/ofis/mobile/course/master/allcourses")
-    Call<Course> getAllCourses();
+    Call<Course> getAllCourses(@Query("enumeratorLoginId") String enumeratorLoginId);
 
     @GET("ofistraining/ofis/mobile/course/module")
     Call<Module> getAllModules(@Query("id") int id);
@@ -65,19 +65,19 @@ public interface ManageRecords {
     Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
 
     //Diagnostic Module
-    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData")
-    Call<ResponseModel> getAllDiagnosticModuleData();
+    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData/{enumerator}")
+    Call<ResponseModel> getAllDiagnosticModuleData(@Path("enumerator") Integer enumeratorId);
 
     @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
     Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
                                                                   @Body String diagnosticModuleSurveyRequestBody);
 
-    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData")
-    Call<FollowUpResponseModel> getAllFollowUpDMData();
+    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData/{enum_id}")
+    Call<FollowUpResponseModel> getAllFollowUpDMData(@Path("enum_id") Integer enumeratorId);
 
 
-    @GET("ofissurvey/survey/getLocalUnitMasterData")
-    Call<LocalUnitResponseModel> getAllLocalUnitResponseModel();
+    @GET("ofissurvey/survey/getLocalUnitMasterData/{enum_id}")
+    Call<LocalUnitResponseModel> getAllLocalUnitResponseModel(@Path("enum_id") Integer enumeratorId);
 
     @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
     Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);

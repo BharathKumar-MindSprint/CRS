@@ -93,7 +93,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     } else {
                         JSONObject inputArgs = new JSONObject();
 
-                       String endpoint = "ofisoauth/api/v1/oauth/migrateRole?installId="+DeviceIDxctractor.fetchDeviceID(mContext);
+                       String endpoint = "ofisoauth/api/v1/oauth/migrateRole?enumeratorId="+Utilities.getFromSharedPrefs(mContext)+"&installId="+DeviceIDxctractor.fetchDeviceID(mContext);
                        // inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(mContext));
                         okHttpPostOauth(mContext, endpoint, inputArgs, new Callback() {
                             @Override
