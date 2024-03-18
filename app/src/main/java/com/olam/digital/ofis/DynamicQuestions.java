@@ -29,6 +29,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -1366,7 +1367,7 @@ public class DynamicQuestions {
                 if (currentAnswerValue.contains("/")) {
                     String externalPath = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() : "";
                     //final String finalCurrentAnswerValue = externalPath + "/" + currentAnswerValue;
-                    final String finalCurrentAnswerValue =currentAnswerValue;
+                    final String finalCurrentAnswerValue = currentAnswerValue;
                     new CountDownTimer(1000, 100) {
                         public void onTick(long millisUntilFinished) {
                         }
@@ -3149,32 +3150,41 @@ public class DynamicQuestions {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
-                StringBuilder filteredStringBuilder = new StringBuilder();
 
-                for (int i = start; i < end; i++) {
-                    char character = source.charAt(i);
-                    if (Character.isLetterOrDigit(character)) {
-                        if (filteredStringBuilder.length() < maxCharacterLimit) {
-                            filteredStringBuilder.append(character);
+                if (source instanceof SpannableStringBuilder) {
+                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
+                    for (int i = end - 1; i >= start; i--) {
+                        char currentChar = source.charAt(i);
+                        if (!Character.isLetterOrDigit(currentChar) && !Character.isSpaceChar(currentChar)) {
+                            sourceAsSpannableBuilder.delete(i, i + 1);
                         }
                     }
-                }
-
-                int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
-                if (remainingCharacters <= 0) {
-                    editText.setError("Character limit reached");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            editText.setError(null); // Clear the error message after delay
-                        }
-                    }, 3000); // Delay for 3 seconds
-                    return ""; // Limit reached, discard the input
+                    return source;
                 } else {
-                    editText.setError(null);
+                    StringBuilder filteredStringBuilder = new StringBuilder();
+                    for (int i = start; i < end; i++) {
+                        char character = source.charAt(i);
+                        if (Character.isLetterOrDigit(character) || Character.isSpaceChar(character)) {
+                            if (filteredStringBuilder.length() < maxCharacterLimit) {
+                                filteredStringBuilder.append(character);
+                            }
+                        }
+                    }
+                    int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
+                    if (remainingCharacters <= 0) {
+                        editText.setError("Character limit reached");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null); // Clear the error message after delay
+                            }
+                        }, 3000); // Delay for 3 seconds
+                        return ""; // Limit reached, discard the input
+                    } else {
+                        editText.setError(null);
+                    }
+                    return filteredStringBuilder.toString();
                 }
-
-                return filteredStringBuilder.toString();
             }
         };
 
@@ -3447,23 +3457,32 @@ public class DynamicQuestions {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
-                StringBuilder filteredStringBuilder = new StringBuilder();
-
-                for (int i = start; i < end; i++) {
-                    char character = source.charAt(i);
-                    if (Character.isLetter(character)) {
-                        if (filteredStringBuilder.length() < maxCharacterLimit) {
-                            filteredStringBuilder.append(character);
+                if (source instanceof SpannableStringBuilder) {
+                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
+                    for (int i = end - 1; i >= start; i--) {
+                        char currentChar = source.charAt(i);
+                        if (!Character.isLetterOrDigit(currentChar) && !Character.isSpaceChar(currentChar)) {
+                            sourceAsSpannableBuilder.delete(i, i + 1);
                         }
                     }
-                }
+                    return source;
+                } else {
+                    StringBuilder filteredStringBuilder = new StringBuilder();
+                    for (int i = start; i < end; i++) {
+                        char character = source.charAt(i);
+                        if (Character.isLetter(character)) {
+                            if (filteredStringBuilder.length() < maxCharacterLimit) {
+                                filteredStringBuilder.append(character);
+                            }
+                        }
+                    }
+                    int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
+                    if (remainingCharacters <= 0) {
+                        return ""; // Limit reached, discard the input
+                    }
 
-                int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
-                if (remainingCharacters <= 0) {
-                    return ""; // Limit reached, discard the input
+                    return filteredStringBuilder.toString();
                 }
-
-                return filteredStringBuilder.toString();
             }
         };
 
