@@ -2559,103 +2559,28 @@ public class DynamicQuestions {
                             JSONArray range = display.getJSONArray("range");
                             int validationOnRange = display.optInt("validationOnRangeId");
 
-                            for (int i = 0; i < range.length(); i++) {
-                                JSONObject rangeArray = range.getJSONObject(i);
+                            int[] farmerOrderList = new int[]{6, 5, 8, 9, 4, 3, 2, 1, 7, 0};
+                            boolean valueFound = false;
+                            for (int orderList : farmerOrderList) {
 
-                                globally = rangeArray.getString("globally");
-                                assignmentType = rangeArray.getString("assignmentType");
-                                assignmentField = rangeArray.getString("assignmentField");
-                                assignmentFields = rangeArray.getString("assignmentFields");
+                                for (int i = 0; i < range.length(); i++) {
+                                    JSONObject rangeArray = range.getJSONObject(i);
 
-                                if (!assignmentField.equals("null")) {
-
-                                    long farmerId = Utilities.farmerId;
-                                    roomDB = OFISRoomDB.getDbInstance(context);
-                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-                                    if (assignmentField.equals(farmerAssignmentField) && globally.equals("false")) {
-                                        min = rangeArray.getInt("min");
-                                        max = rangeArray.getInt("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
-                                        } else {
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
-                                        }
-                                        if (min < 0) {
-                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                        } else {
-                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                        }
-
-                                        break;
-                                    } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")) {
-                                        min = rangeArray.getInt("min");
-                                        max = rangeArray.getInt("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
-                                        } else {
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
-                                        }
-                                        if (min < 0) {
-                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                        } else {
-                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                        }
+                                    globally = rangeArray.getString("globally");
+                                    assignmentType = rangeArray.getString("assignmentType");
+                                    if (assignmentType.equals("null")) {
+                                        assignmentType = "0";
                                     }
+                                    assignmentField = rangeArray.getString("assignmentField");
+                                    assignmentFields = rangeArray.getString("assignmentFields");
 
-                                } else {
-                                    // Remove square brackets and split the string into an array of strings
-                                    String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
+                                    if (Integer.parseInt(assignmentType) == orderList && Integer.parseInt(assignmentType) != 0) {
 
-
-                                    if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
-
-                                        long farmerId = Utilities.farmerId;
-                                        roomDB = OFISRoomDB.getDbInstance(context);
-                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-                                        if (assignmentField.equals(farmerAssignmentField) && globally.equals("false")) {
-                                            min = rangeArray.getInt("min");
-                                            max = rangeArray.getInt("max");
-                                            if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                                et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
-                                            } else {
-                                                et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
-                                            }
-                                            if (min < 0) {
-                                                setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                            } else {
-                                                setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                            }
-
-                                            break;
-                                        } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")) {
-                                            min = rangeArray.getInt("min");
-                                            max = rangeArray.getInt("max");
-                                            if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                                et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
-                                            } else {
-                                                et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
-                                            }
-                                            if (min < 0) {
-                                                setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                            } else {
-                                                setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                            }
-                                        }
-
-                                    } else {
-                                        // Convert the string array to an integer array
-                                        int[] intArray = new int[stringArray.length];
-                                        for (int m = 0; m < stringArray.length; m++) {
-                                            intArray[m] = Integer.parseInt(stringArray[m]);
-                                        }
-
-                                        // Iterate through the integer array using a for loop
-                                        for (int fieldMultipleAssignment : intArray) {
-
+                                        if (!assignmentField.equals("null")) {
                                             long farmerId = Utilities.farmerId;
                                             roomDB = OFISRoomDB.getDbInstance(context);
                                             String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-                                            if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) && globally.equals("false")) {
+                                            if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
                                                 min = rangeArray.getInt("min");
                                                 max = rangeArray.getInt("max");
                                                 if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
@@ -2668,9 +2593,9 @@ public class DynamicQuestions {
                                                 } else {
                                                     setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
                                                 }
-
+                                                valueFound = true;
                                                 break;
-                                            } else if (assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null") && globally.equals("true")) {
+                                            } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
                                                 min = rangeArray.getInt("min");
                                                 max = rangeArray.getInt("max");
                                                 if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
@@ -2684,9 +2609,59 @@ public class DynamicQuestions {
                                                     setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
                                                 }
                                             }
+                                        } else if (!assignmentFields.equals("null") && !valueFound) {
+
+                                            // Remove square brackets and split the string into an array of strings
+                                            String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
+
+                                            // Convert the string array to an integer array
+                                            int[] intArray = new int[stringArray.length];
+                                            for (int m = 0; m < stringArray.length; m++) {
+                                                intArray[m] = Integer.parseInt(stringArray[m]);
+                                            }
+
+                                            for (int fieldMultipleAssignment : intArray) {
+                                                long farmerId = Utilities.farmerId;
+                                                roomDB = OFISRoomDB.getDbInstance(context);
+                                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+
+                                                if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
+                                                    min = rangeArray.getInt("min");
+                                                    max = rangeArray.getInt("max");
+                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                                    } else {
+                                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                                    }
+                                                    if (min < 0) {
+                                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                                    } else {
+                                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                                    }
+
+                                                    valueFound = true;
+                                                    break;
+                                                }
+
+                                            }
 
                                         }
+
+                                    } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
+                                        min = rangeArray.getInt("min");
+                                        max = rangeArray.getInt("max");
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+                                        } else {
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                        }
+                                        if (min < 0) {
+                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                        } else {
+                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                        }
                                     }
+
                                 }
 
                             }
@@ -2717,57 +2692,167 @@ public class DynamicQuestions {
                             JSONArray range = display.getJSONArray("range");
                             int validationOnRange = display.optInt("validationOnRangeId");
 
-                            for (int i = 0; i < range.length(); i++) {
-                                JSONObject rangeArray = range.getJSONObject(i);
+                            int[] farmerOrderList = new int[]{6, 5, 8, 9, 4, 3, 2, 1, 7, 0};
+                            boolean valueFound = false;
+                            for (int orderList : farmerOrderList) {
 
-                                globally = rangeArray.getString("globally");
-                                assignmentType = rangeArray.getString("assignmentType");
-                                assignmentField = rangeArray.getString("assignmentField");
+                                for (int i = 0; i < range.length(); i++) {
+                                    JSONObject rangeArray = range.getJSONObject(i);
 
-                                long farmerId = Utilities.farmerId;
-                                roomDB = OFISRoomDB.getDbInstance(context);
-                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-                                if (assignmentField.equals(farmerAssignmentField) && globally.equals("false")) {
-                                    min = rangeArray.getDouble("min");
-                                    max = rangeArray.getDouble("max");
-                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
-                                    } else {
-                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                    globally = rangeArray.getString("globally");
+                                    assignmentType = rangeArray.getString("assignmentType");
+                                    if (assignmentType.equals("null")) {
+                                        assignmentType = "0";
                                     }
-                                    if (min < 0) {
+                                    assignmentField = rangeArray.getString("assignmentField");
+                                    assignmentFields = rangeArray.getString("assignmentFields");
+
+                                    if (Integer.parseInt(assignmentType) == orderList && Integer.parseInt(assignmentType) != 0) {
+                                        if (!assignmentField.equals("null")) {
+                                            long farmerId = Utilities.farmerId;
+                                            roomDB = OFISRoomDB.getDbInstance(context);
+                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+                                            if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
+                                                min = rangeArray.getDouble("min");
+                                                max = rangeArray.getDouble("max");
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                    et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                                } else {
+                                                    et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                                }
+                                                if (min < 0) {
+                                                    et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                                    setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                                } else {
+                                                    et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                                    setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                                }
+
+                                                break;
+                                            } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
+                                                min = rangeArray.getDouble("min");
+                                                max = rangeArray.getDouble("max");
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                    et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                                } else {
+                                                    et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                                }
+
+                                                if (min < 0) {
+                                                    et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                                    setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                                } else {
+                                                    et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                                    setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+
+                                                }
+                                            }
+
+                                        } else if (!assignmentFields.equals("null") && !valueFound) {
+
+                                            // Remove square brackets and split the string into an array of strings
+                                            String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
+
+                                            // Convert the string array to an integer array
+                                            int[] intArray = new int[stringArray.length];
+                                            for (int m = 0; m < stringArray.length; m++) {
+                                                intArray[m] = Integer.parseInt(stringArray[m]);
+                                            }
+
+                                            for (int fieldMultipleAssignment : intArray) {
+
+                                                long farmerId = Utilities.farmerId;
+                                                roomDB = OFISRoomDB.getDbInstance(context);
+                                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+
+                                                if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
+                                                    min = rangeArray.getDouble("min");
+                                                    max = rangeArray.getDouble("max");
+                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                                    } else {
+                                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                                    }
+                                                    if (min < 0) {
+                                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                                        setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                                    } else {
+                                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                                        setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                                    }
+
+                                                    valueFound = true;
+                                                    break;
+
+                                                }
+
+
+                                            }
+
+                                        }
+                                    } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
+                                        min = rangeArray.getDouble("min");
+                                        max = rangeArray.getDouble("max");
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                        } else {
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                        }
+                                        if (min < 0) {
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                            setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                        } else {
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                            setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                        }
+                                    }
+
+                                    /*long farmerId = Utilities.farmerId;
+                                    roomDB = OFISRoomDB.getDbInstance(context);
+                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+                                    if (assignmentField.equals(farmerAssignmentField) && globally.equals("false")) {
+                                        min = rangeArray.getDouble("min");
+                                        max = rangeArray.getDouble("max");
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                        } else {
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                        }
+                                        if (min < 0) {
 //                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                                        setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                    } else {
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                            setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                        } else {
 //                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-                                        setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                    }
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                            setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                        }
 
-                                    break;
-                                } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")) {
-                                    min = rangeArray.getDouble("min");
-                                    max = rangeArray.getDouble("max");
-                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                        et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
-                                    } else {
-                                        et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                        break;
                                     }
+                                    else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")) {
+                                        min = rangeArray.getDouble("min");
+                                        max = rangeArray.getDouble("max");
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
+                                        } else {
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
+                                        }
 
-                                    if (min < 0) {
+                                        if (min < 0) {
 //                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
 
-                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                                        setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                    } else {
-                                        et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-                                        setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                                            setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
+                                        } else {
+                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+                                            setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
 
 
 //                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
 
-                                    }
+                                        }
+                                    }*/
                                 }
                             }
 
