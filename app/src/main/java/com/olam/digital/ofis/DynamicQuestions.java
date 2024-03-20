@@ -2806,53 +2806,6 @@ public class DynamicQuestions {
                                             setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
                                         }
                                     }
-
-                                    /*long farmerId = Utilities.farmerId;
-                                    roomDB = OFISRoomDB.getDbInstance(context);
-                                    String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-                                    if (assignmentField.equals(farmerAssignmentField) && globally.equals("false")) {
-                                        min = rangeArray.getDouble("min");
-                                        max = rangeArray.getDouble("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
-                                        } else {
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
-                                        }
-                                        if (min < 0) {
-//                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                                            setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                        } else {
-//                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-                                            setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                        }
-
-                                        break;
-                                    }
-                                    else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")) {
-                                        min = rangeArray.getDouble("min");
-                                        max = rangeArray.getDouble("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
-                                        } else {
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
-                                        }
-
-                                        if (min < 0) {
-//                                        setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
-
-                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                                            setNegativeDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-                                        } else {
-                                            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-                                            setPositiveDecimalFilter(et, min, max, validationOnRange, maxDecimalLimit);
-
-
-//                                        setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
-
-                                        }
-                                    }*/
                                 }
                             }
 
