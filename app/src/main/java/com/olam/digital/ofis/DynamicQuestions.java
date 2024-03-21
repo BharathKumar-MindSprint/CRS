@@ -671,6 +671,9 @@ public class DynamicQuestions {
                             currentAnswer.put("parent_question_id", 0);
                             currentAnswer.put("repeater_item_position", repeaterItemPosition);
                             currentAnswer.put("reporting_year", reportingYear);
+                            currentAnswer.put("globalMetricId", 0);
+                            currentAnswer.put("localMetricId", 0);
+                            currentAnswer.put("metricAnswer", 0);
                             isNew = false;
                             break;
                         }
@@ -686,10 +689,13 @@ public class DynamicQuestions {
                     newAnswer.put("answer", answer);
                     newAnswer.put("sub_answers", subAnswers);
                     newAnswer.put("reporting_year", reportingYear);
+                    newAnswer.put("globalMetricId", 0);
+                    newAnswer.put("localMetricId", 0);
+                    newAnswer.put("metricAnswer", 0);
                     answerSet.add(newAnswer);
                 }
             }
-
+            Log.d("AnswerSetCheck", String.valueOf(answerSet));
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
@@ -9063,9 +9069,9 @@ public class DynamicQuestions {
             datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
 
-        if (oldDatatype != null) {
-            if (oldDatatype.equals("Farm Tree Density")) {
-                datatype = "text";
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Farm Tree Density")){
+                datatype = "decimal";
             }
         }
 
@@ -9082,7 +9088,7 @@ public class DynamicQuestions {
             calcAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
 
             String currentAnswerValue;
-            currentAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
+            currentAnswerValue = questions.getString(questions.getColumnIndex("answer_text"));
 
             if (questions.getColumnIndex("answer_id") != -1) {
                 densityAnswerId = questions.getInt(questions.getColumnIndex("answer_id"));

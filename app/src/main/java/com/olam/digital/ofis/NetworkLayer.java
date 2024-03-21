@@ -2005,7 +2005,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
                                     }
 
-                                    if (dataTypeName != null){
+                                    if (dataTypeName != null && datatypeID.equals("6")){
 
                                         if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
                                                 dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
@@ -2019,7 +2019,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
 
-                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal")){
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "decimal";
                                         }
                                     }else {
