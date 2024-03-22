@@ -2583,7 +2583,7 @@ public class DynamicQuestions {
                                             if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
                                                 min = rangeArray.getInt("min");
                                                 max = rangeArray.getInt("max");
-                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                     et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                                 } else {
                                                     et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
@@ -2598,7 +2598,7 @@ public class DynamicQuestions {
                                             } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
                                                 min = rangeArray.getInt("min");
                                                 max = rangeArray.getInt("max");
-                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                     et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                                 } else {
                                                     et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
@@ -2628,7 +2628,7 @@ public class DynamicQuestions {
                                                 if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
                                                     min = rangeArray.getInt("min");
                                                     max = rangeArray.getInt("max");
-                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                         et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                                     } else {
                                                         et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
@@ -2650,7 +2650,7 @@ public class DynamicQuestions {
                                     } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
                                         min = rangeArray.getInt("min");
                                         max = rangeArray.getInt("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                             et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                         } else {
                                             et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
@@ -2715,7 +2715,7 @@ public class DynamicQuestions {
                                             if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
                                                 min = rangeArray.getDouble("min");
                                                 max = rangeArray.getDouble("max");
-                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                     et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                                 } else {
                                                     et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
@@ -2732,7 +2732,7 @@ public class DynamicQuestions {
                                             } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
                                                 min = rangeArray.getDouble("min");
                                                 max = rangeArray.getDouble("max");
-                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                     et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                                 } else {
                                                     et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
@@ -2768,7 +2768,7 @@ public class DynamicQuestions {
                                                 if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
                                                     min = rangeArray.getDouble("min");
                                                     max = rangeArray.getDouble("max");
-                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                                         et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                                     } else {
                                                         et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
@@ -2793,7 +2793,7 @@ public class DynamicQuestions {
                                     } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
                                         min = rangeArray.getDouble("min");
                                         max = rangeArray.getDouble("max");
-                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                        if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                             et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
                                         } else {
                                             et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
