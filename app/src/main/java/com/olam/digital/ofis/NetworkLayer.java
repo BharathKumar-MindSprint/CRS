@@ -1973,15 +1973,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             subset_section.put("sub_answers", sub_answers);
                             answer.put("subset_section", subset_section);*/
                                     String datatypeID = "";
+                                    String displayTypeId = "";
+                                    String answerTypeId = "";
                                     String dataTypeName = "";
                                     String datatype = "";
 
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                    datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
                                         // use answerType
                                         try{
-                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
-                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(datatypeID));
+                                            answerTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(answerTypeId));
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
@@ -1994,8 +1997,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }else{
                                         // use displayType
                                         try{
-                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
-                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
+                                            displayTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(displayTypeId));
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
