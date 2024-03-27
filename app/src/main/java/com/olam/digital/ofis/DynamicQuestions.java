@@ -3643,7 +3643,7 @@ public class DynamicQuestions {
 
                     // Check for exceeding decimal limit
                     String[] parts = resultingText.split("\\.");
-                    if (parts.length > 1 && parts[0].length() > maxDecimalLimit) {
+                    if (parts.length > 1 && parts[1].length() > maxDecimalLimit) {
                         return ""; // Reject if decimal places exceed limit
                     }
 
