@@ -1522,7 +1522,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    getFarmLocation();
+//                    getFarmLocation();
                 }
             } else {
                 showAlert(getString(R.string.no_internet_polygon));
