@@ -4219,6 +4219,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         try {
                             MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                             multiFarmArray = multiFarmDTO.getStakeholdersInfo();
+                            for (int i = 0; i < multiFarmArray.length(); i++) {
+                                // Get the JSON object at index i
+                                JSONObject jsonObjectId = multiFarmArray.getJSONObject(i);
+                                // Modify the value
+                                if (jsonObjectId.get("farmerId").equals(localFarmerId)) {
+                                    jsonObjectId.put("farmerId", 0);
+                                }
+                            }
                             jsonObject.put("multifarmStakeholder", multiFarmArray);
                             jsonObject.put("farmName", multiFarmDTO.getFarmName());
                             jsonObject.put("farmCode", multiFarmDTO.getFarmCode());
