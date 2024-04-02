@@ -1960,7 +1960,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static void GetAllDiagnosticModule() {
         deleteRoomDbValues();
         ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
+        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
@@ -2760,7 +2760,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static void GetAllFollowUpDMData() {
 
         ManageRecords GetAllFollowUpDMData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<FollowUpResponseModel> call = GetAllFollowUpDMData.getAllFollowUpDMData();
+        Call<FollowUpResponseModel> call = GetAllFollowUpDMData.getAllFollowUpDMData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
         call.enqueue(new Callback<FollowUpResponseModel>() {
             @Override
             public void onResponse(Call<FollowUpResponseModel> call, Response<FollowUpResponseModel> response) {

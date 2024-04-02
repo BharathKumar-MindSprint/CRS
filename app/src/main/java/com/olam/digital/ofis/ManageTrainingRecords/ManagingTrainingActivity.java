@@ -384,7 +384,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     private void courseSpinnerMethod() {
         ManageRecords AllCourse=RetrofitClient.getRetrofit().create(ManageRecords.class);
         String EnumeratorID=new AuthenticationHelper(context).getuserName();
-        Call<Course> call=AllCourse.getAllCourses();
+        Call<Course> call=AllCourse.getAllCourses(EnumeratorID);
         call.enqueue(new Callback<Course>() {
             @Override
             public void onResponse(Call<Course> call, Response<Course> response) {
