@@ -13,9 +13,10 @@ public class AlphanumericFilterSip implements InputFilter {
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         String input = source.toString();
 
-        // Check if the input is alphanumeric and within the character limit
-        if (input.matches("[a-zA-Z0-9]+") && (dest.length() + input.length() <= maxLength)) {
-            return null; // Accept the input
+        if (input.equals(" ") && dest.length() > 0) {
+            return null;
+        } else if (input.matches("[a-zA-Z0-9]+") && (dest.length() + input.length() <= maxLength)) {
+            return null;
         }
 
         // Reject the input
