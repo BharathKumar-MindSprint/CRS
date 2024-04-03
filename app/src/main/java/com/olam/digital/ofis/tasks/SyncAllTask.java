@@ -701,7 +701,7 @@ public class SyncAllTask extends SyncTask {
     private void syncEnumAssignmentCheck() {
 
         String endpoint = "";
-        endpoint = "ofismaster/master/enumeratorAssignmentsCheck";
+        endpoint = "ofismaster/master/enumeratorAssignmentsCheck?enumeratorId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -843,7 +843,7 @@ public class SyncAllTask extends SyncTask {
     private void syncSpinners() {
         JSONObject inputArgs = new JSONObject();
         String endPoint = "";
-        endPoint = "ofisfarmer-data/farmerdata/getcountryspinners";
+        endPoint = "ofisfarmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override
@@ -999,7 +999,7 @@ public class SyncAllTask extends SyncTask {
     }
     private void syncLocalUnit() throws JSONException{
         ManageRecords getLocalUnitMasterData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        retrofit2.Call<LocalUnitResponseModel> call = getLocalUnitMasterData.getAllLocalUnitResponseModel();
+        retrofit2.Call<LocalUnitResponseModel> call = getLocalUnitMasterData.getAllLocalUnitResponseModel(Integer.valueOf(Utilities.getFromSharedPrefs(context)) );
 
         call.enqueue(new retrofit2.Callback<LocalUnitResponseModel>() {
             @Override
@@ -1079,7 +1079,7 @@ public class SyncAllTask extends SyncTask {
         // endPoint= "sync_modules";
         //new End point  :
         // endPoint ="survey/survey/questionnaire/getAllQuestionnaireData/448";
-        endPoint = "ofissurvey/survey/questionnaire/getAllQuestionnaireData";
+        endPoint = "ofissurvey/survey/questionnaire/getAllQuestionnaireData/" + Utilities.getFromSharedPrefs(context);
         // String mUrl = "http://137.116.146.9:8080/survey/questionnaire/getAllQuestionnaireData";
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
@@ -1222,7 +1222,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncChildEnumerator() {
         String endpoint = "";
-        endpoint = ChildLabourUtils.CHILD_LABOUR_ENDPOINT;
+        endpoint = ChildLabourUtils.CHILD_LABOUR_ENDPOINT + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1277,7 +1277,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncHouseholdEnumerator() {
         String endpoint = "";
-        endpoint = "ofismaster/master/isFarmerHHEnumerator";
+        endpoint = "ofismaster/master/isFarmerHHEnumerator?enumeratorId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1327,7 +1327,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncMultiFarmEnumerator() {
         String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/enableMultiFarmByEnumerator";
+        endpoint = "ofisfarmer/multifarm/enableMultiFarmByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1423,7 +1423,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncExistingMultiFarms() {
         String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/farmerinfo";
+        endpoint = "ofisfarmer/multifarm/farmerinfo/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1472,7 +1472,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncFarmerLeadEnumerator() {
         String endpoint = "";
-        endpoint = "ofismaster/master/isFLEnumerator";
+        endpoint = "ofismaster/master/isFLEnumerator?enumeratorId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1524,7 +1524,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncNationalIDs() {
         String endpoint = "";
-        endpoint = "ofismaster/master/nationalId/getNationalIDsByEnumerator";
+        endpoint = "ofismaster/master/nationalId/getNationalIDsByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1570,7 +1570,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncEnumNationalIDs() {
         String endpoint = "";
-        endpoint = "ofisfarmer/farmer/getEnumeratorFarmersUniqueId";
+        endpoint = "ofisfarmer/farmer/getEnumeratorFarmersUniqueId?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1623,7 +1623,7 @@ public class SyncAllTask extends SyncTask {
         // endpoint="sync_trainingdata";
         // New Java End point MS
         // endpoint="ofistraining/training/synctrainingdata?enumeratorLoginId=100305";
-        endpoint = "ofistraining/training/synctrainingdata";
+        endpoint = "ofistraining/training/synctrainingdata?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
@@ -1676,7 +1676,7 @@ public class SyncAllTask extends SyncTask {
         //  endPoint="sync_tasks";
         // new end point
         //   endPoint="ofistasks/activities/tasks/sync_tasks?enumeraorLoginId=100305";
-        endPoint = "ofistasks/activities/tasks/sync_tasks";
+        endPoint = "ofistasks/activities/tasks/sync_tasks?enumeraorLoginId=" + Utilities.getFromSharedPrefs(context);
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, null, new Callback() {
             @Override
@@ -1734,7 +1734,7 @@ public class SyncAllTask extends SyncTask {
         }
 
         String endpoint = "";
-        endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid";
+        endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
@@ -1793,7 +1793,7 @@ public class SyncAllTask extends SyncTask {
         }
 
         String endpoint = "";
-        endpoint = "ofischild/child/findsubmittedmodulesbyenumeter";
+        endpoint = "ofischild/child/findsubmittedmodulesbyenumeter/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
@@ -1899,7 +1899,7 @@ public class SyncAllTask extends SyncTask {
     private void syncSmartNotification(int notificationModuleId, int pageNumber){
 
         String endpoint = "";
-        endpoint = ChildLabourUtils.SMARTNOTIFICATION_ENDPOINT
+        endpoint = ChildLabourUtils.SMARTNOTIFICATION_ENDPOINT+ Utilities.getFromSharedPrefs(context)
                 +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
                 +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
                 +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
