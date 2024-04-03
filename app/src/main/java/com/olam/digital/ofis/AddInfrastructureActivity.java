@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -224,7 +225,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
         poiName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
-        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(20)});
+        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
         poiName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
@@ -465,6 +466,10 @@ public class AddInfrastructureActivity extends BaseActivity {
             setPoiGPS(mCurrentLocation);
         }
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
+
+        SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
+        String receivedSipName = sharedPref.getString("SIP_NAME", "");
+        poiName.setText(receivedSipName);
     }
 
     private boolean checkPermissions() {
