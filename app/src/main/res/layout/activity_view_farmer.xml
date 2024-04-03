@@ -36,7 +36,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gender - "
+                    android:text="@string/ofis_select_gender"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Age - "
+                    android:text="@string/age"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -85,7 +85,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number -"
+                    android:text="@string/PhoneNumberHint"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -112,7 +112,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Partner -"
+                    android:text="@string/spinner_partner_default"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -133,7 +133,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Program -"
+                    android:text="@string/spinner_programme_default"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -160,7 +160,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Country -"
+                    android:text="@string/spinner_country_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -181,7 +181,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Region -"
+                    android:text="@string/spinner_region_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -208,7 +208,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="District -"
+                    android:text="@string/spinner_district_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -229,7 +229,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sub-District -"
+                    android:text="@string/spinner_subdistrict_default"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -256,7 +256,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Place -"
+                    android:text="@string/spinner_place_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -283,7 +283,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Farmer Group - "
+                    android:text="@string/spinner_farmergroup_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -304,7 +304,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Section - "
+                    android:text="@string/spinner_section_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"

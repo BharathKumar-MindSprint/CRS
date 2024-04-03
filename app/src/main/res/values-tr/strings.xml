@@ -148,6 +148,15 @@
     <string name="spinner_section_default">Bölüm seç</string>
     <string name="spinner_product_default">Ürün seç</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Ülke</string>
+    <string name="spinner_region_view_farmer">Yöre</string>
+    <string name="spinner_district_view_farmer">Bölge</string>
+    <string name="spinner_place_view_farmer">Yer</string>
+    <string name="spinner_farmergroup_view_farmer">Çiftçi grubu</string>
+    <string name="spinner_section_view_farmer">Bölüm</string>
+    <string name="spinner_product_view_farmer">Ürün</string>
+
     <string-array name="poitypes">
         <item>Okul</item>
         <item>Sağlık Merkezi</item>

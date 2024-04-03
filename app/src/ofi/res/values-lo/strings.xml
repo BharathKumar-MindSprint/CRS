@@ -148,6 +148,15 @@
     <string name="spinner_section_default">ເລືອກ​ຂະ​ແໜງ</string>
     <string name="spinner_product_default">ເລືອກ​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">​ປະ​ເທດ</string>
+    <string name="spinner_region_view_farmer">​ພື້ນ​ທີ່</string>
+    <string name="spinner_district_view_farmer">​ເມືອງ</string>
+    <string name="spinner_place_view_farmer">​ສະ​ຖານ​ທີ</string>
+    <string name="spinner_farmergroup_view_farmer">​ກຸ່ມ​ຊາວ​ສວນ</string>
+    <string name="spinner_section_view_farmer">​ຂະ​ແໜງ</string>
+    <string name="spinner_product_view_farmer">​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
+
     <string-array name="poitypes">
         <item>ໂຮງ​ຮຽນ</item><!-- sc -->
         <item>ສູນ​ການ​ແພ​ດ</item><!-- hc -->
