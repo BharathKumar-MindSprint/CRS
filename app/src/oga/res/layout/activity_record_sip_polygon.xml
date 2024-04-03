@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <EditText
                         android:id="@+id/name_sip"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

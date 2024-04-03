@@ -33,6 +33,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -121,7 +124,9 @@ public class RecordSipPolygon extends AppCompatActivity {
     private static final String SIP_NAME = "SIP_NAME";
     private static final String SIP_CATEGORY_ID = "SIP_CATEGORY_ID";
 
-    TextView category_name_sip, name_sip;
+
+    TextView category_name_sip;
+    EditText name_sip;
     Button start_stop_recording_sip, pause_recording_sip, bttnSave, delete_plot;
     static int currentLoggingTrackSpinnerPosition = 0;
 
@@ -239,7 +244,8 @@ public class RecordSipPolygon extends AppCompatActivity {
 
 
         category_name_sip = (TextView) findViewById(R.id.category_name_sip);
-        name_sip = (TextView) findViewById(R.id.name_sip);
+        name_sip = (EditText) findViewById(R.id.name_sip);
+        name_sip.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
         bttnSave = (Button) findViewById(R.id.save_recording_sip);
         recordingStatus = (ImageView) findViewById(R.id.recording_status_sip);
         areaInfo = (TextView) findViewById(R.id.areaInfo_sip);
@@ -251,6 +257,25 @@ public class RecordSipPolygon extends AppCompatActivity {
 
         category_name_sip.setText(category_name);
         name_sip.setText(sip_name);
+        name_sip.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
+
+        name_sip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
+                sharedPref.edit().putString("SIP_NAME", name_sip.getText().toString()).apply();
+            }
+        });
 
 
         SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
