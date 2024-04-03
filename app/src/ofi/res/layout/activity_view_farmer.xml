@@ -163,7 +163,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_country_default"
+                    android:text="@string/spinner_country_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -184,7 +184,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_region_default"
+                    android:text="@string/spinner_region_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -211,7 +211,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_district_default"
+                    android:text="@string/spinner_district_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -259,7 +259,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_place_default"
+                    android:text="@string/spinner_place_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -286,7 +286,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_farmergroup_default"
+                    android:text="@string/spinner_farmergroup_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -307,7 +307,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_section_default"
+                    android:text="@string/spinner_section_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"

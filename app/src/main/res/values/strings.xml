@@ -219,6 +219,16 @@
     <string name="spinner_section_default">Section</string>
     <string name="spinner_product_default">Product</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Country</string>
+    <string name="spinner_region_view_farmer">Region</string>
+    <string name="spinner_district_view_farmer">District</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_place_view_farmer">Place</string>
+    <string name="spinner_farmergroup_view_farmer">Farmer Group</string>
+    <string name="spinner_section_view_farmer">Section</string>
+    <string name="spinner_product_view_farmer">Product</string>
+
     <string-array name="poitypes">
         <item>School</item>
         <item>Health centre</item>
