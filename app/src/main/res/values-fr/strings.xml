@@ -145,6 +145,15 @@
     <string name="spinner_section_default">Sélectionnez la section</string>
     <string name="spinner_product_default">Sélectionnez le produit</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">pays</string>
+    <string name="spinner_region_view_farmer">région</string>
+    <string name="spinner_district_view_farmer">quartier</string>
+    <string name="spinner_place_view_farmer">lieu</string>
+    <string name="spinner_farmergroup_view_farmer">organisation de planteurs</string>
+    <string name="spinner_section_view_farmer">section</string>
+    <string name="spinner_product_view_farmer">produit</string>
+
     <string-array name="poitypes">
         <item>École</item>
         <item>Dispensaire</item>
@@ -1072,6 +1081,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="alert_review">La valeur saisie sera soumise à l\'examen de l\'administrateur pour une validation supplémentaire.</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Veuillez entrer la valeur dans la plage %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Gamme: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Veuillez saisir les détails de la certification</string>
     <string name="update_certification">Mettre à jour la certification</string>
     <string name="certification">Certification</string>

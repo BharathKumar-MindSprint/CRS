@@ -148,6 +148,16 @@
     <string name="spinner_section_default">ເລືອກ​ຂະ​ແໜງ</string>
     <string name="spinner_product_default">ເລືອກ​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
 
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">​ປະ​ເທດ</string>
+    <string name="spinner_region_view_farmer">​ພື້ນ​ທີ່</string>
+    <string name="spinner_district_view_farmer">​ເມືອງ</string>
+    <string name="spinner_place_view_farmer">​ສະ​ຖານ​ທີ</string>
+    <string name="spinner_farmergroup_view_farmer">​ກຸ່ມ​ຊາວ​ສວນ</string>
+    <string name="spinner_section_view_farmer">​ຂະ​ແໜງ</string>
+    <string name="spinner_product_view_farmer">​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
+
     <string-array name="poitypes">
         <item>ໂຮງ​ຮຽນ</item><!-- sc -->
         <item>ສູນ​ການ​ແພ​ດ</item><!-- hc -->
@@ -894,6 +904,8 @@
     <string name="alert_review">kha thi ponkhao chathuk suknyuhai phuboengaenyng kuadka kuadsob pheu kuadsob phoemtoem</string>
     <string name="alert_review_hint">kaluna sai kha phainaikhobkhed %1$d-%2$d</string>
     <string name="range_hint_A_R">suang: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">kaluna sai kha phainaikhobkhed %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">suang: %.2f-%.2f</string>
     <string name="please_enter_certification_details">kaluna sai lailaoiad kanyangyun</string>
     <string name="update_certification">abded kanyangyun</string>
     <string name="certification">kanyangyun</string>

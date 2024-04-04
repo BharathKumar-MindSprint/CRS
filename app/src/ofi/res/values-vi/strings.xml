@@ -148,6 +148,16 @@
     <string name="spinner_section_default">Chọn bộ phận</string>
     <string name="spinner_product_default">Chọn sản phẩm</string>
 
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Quốc gia</string>
+    <string name="spinner_region_view_farmer">vùng</string>
+    <string name="spinner_district_view_farmer">Quận/Huyện</string>
+    <string name="spinner_place_view_farmer">địa điểm</string>
+    <string name="spinner_farmergroup_view_farmer">nhóm Nông hộ</string>
+    <string name="spinner_section_view_farmer">bộ phận</string>
+    <string name="spinner_product_view_farmer">sản phẩm</string>
+
     <string-array name="poitypes">
         <item>Trường học</item><!-- sch -->
         <item>Trung tâm Y tế</item><!-- hc -->
@@ -728,6 +738,8 @@
     <string name="alert_review">Giá trị đã nhập sẽ được đẩy để quản trị viên xem xét nhằm xác thực bổ sung</string>
     <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
     <string name="range_hint_A_R">Phạm vi: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Vui lòng nhập giá trị trong phạm vi %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Phạm vi: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Vui lòng nhập chi tiết chứng nhận</string>
     <string name="update_certification">Cập nhật chứng nhận</string>
     <string name="certification">Chứng nhận</string>

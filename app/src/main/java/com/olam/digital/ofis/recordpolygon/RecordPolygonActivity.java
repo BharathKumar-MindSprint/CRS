@@ -886,7 +886,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                     showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
                             }else{
                                 int loggedPlotCount = getTotalLoggedPlotCount() ;
-                                int actualPlot = Integer.parseInt(StringUtils.split(currentTrackname)[1]);
+//                                int actualPlot = Integer.parseInt(StringUtils.split(currentTrackname)[1]);
+                                int actualPlot = extractLastNumber(currentTrackname);
                                 if(loggedPlotCount == 0 ){
                                     if(actualPlot == farmPlotCount + 1){
                                         showPlotLocationConfirmDialog(currentTrackname);
@@ -935,6 +936,20 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         } else {
             showToastMessage(getResources().getString(R.string.try_again_later_msg));
         }
+    }
+
+    public static Integer extractLastNumber(String trackName) {
+        String[] parts = trackName.split("\\s+");  // Split by whitespace
+
+        for (int i = parts.length - 1; i >= 0; i--) {
+            try {
+                return Integer.parseInt(parts[i]);  // Attempt to parse integer
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return 0;
     }
 
     boolean isGPSProviderEnabled() {
@@ -1522,7 +1537,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    getFarmLocation();
+//                    getFarmLocation();
                 }
             } else {
                 showAlert(getString(R.string.no_internet_polygon));

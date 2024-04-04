@@ -148,6 +148,15 @@
     <string name="spinner_section_default">Pilih Bagian</string>
     <string name="spinner_product_default">Pilih produk</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">negara</string>
+    <string name="spinner_region_view_farmer">Provinsi</string>
+    <string name="spinner_district_view_farmer">Kabupaten/Kota</string>
+    <string name="spinner_place_view_farmer">Desa/Kelurahan</string>
+    <string name="spinner_farmergroup_view_farmer">Kelompok Tani</string>
+    <string name="spinner_section_view_farmer">Bagian</string>
+    <string name="spinner_product_view_farmer">produk</string>
+
     <string-array name="poitypes">
         <item>Sekolah</item>
         <item>Pusat Kesahatan</item>
@@ -736,6 +745,8 @@
     <string name="alert_review">Nilai yang dimasukkan akan dikirim untuk tinjauan administrator untuk validasi tambahan</string>
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
+    <string name="alert_review_hint_decimal">Harap masukkan nilai dalam rentang %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Jangkauan: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Silakan masukkan rincian Sertifikasi</string>
     <string name="update_certification">Perbarui Sertifikasi</string>
     <string name="certification">Sertifikasi</string>

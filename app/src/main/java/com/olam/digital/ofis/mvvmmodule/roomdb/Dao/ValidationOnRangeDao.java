@@ -31,6 +31,9 @@ public interface ValidationOnRangeDao {
     @Query("SELECT id FROM ValidationOnRange WHERE value =  \"Restrict\" ")
     int getValidationOnRangeIdRestrict();
 
+    @Query("SELECT id FROM ValidationOnRange WHERE value =  \"Restrict & Review\" ")
+    int getValidationOnRangeIdRestrictandReview();
+
     @Delete
     void delete(ValidationOnRange validationOnRange);
 
