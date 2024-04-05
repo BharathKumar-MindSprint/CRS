@@ -8,26 +8,16 @@
     android:id="@+id/layout_find_farmer"
     tools:ignore="Overdraw">
 
-    <ScrollView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:fillViewport="true"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/topSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/ofis_farmer_screen_actions_background"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin">
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -124,23 +114,21 @@
         </LinearLayout>
 
         </RelativeLayout>
-                <TextView
-                    android:id="@+id/advancedFilters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|left"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:clickable="true"
-                    android:drawableRight="@drawable/ic_group_collapse_15"
-                    android:gravity="center|left"
-                    android:onClick="expandOrCollapse"
-                    android:text="@string/advanced_filters"
-                    android:textColor="@color/ofis_base_font_white"
-                    android:textSize="@dimen/ofis_large_text" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/advanced_filters"
+            android:id="@+id/advancedFilters"
+            android:textColor="@color/ofis_base_font_white"
+            android:layout_marginTop="@dimen/margin_10"
+            android:clickable="true"
+            android:onClick="expandOrCollapse"
+            android:drawableRight="@drawable/ic_drop_down_collapse"
+            android:textSize="@dimen/ofis_large_text" />
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/advancedFilterLayout"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -187,6 +175,7 @@
                 android:paddingLeft="-5dp"
                 android:dropDownWidth="300dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
@@ -225,6 +214,7 @@
                 android:paddingLeft="-5dp"
                 android:dropDownWidth="300dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
@@ -319,14 +309,12 @@
         android:id="@+id/bottomSection"
         android:layout_below="@+id/topSection">
 
-                <ListView
-                    android:id="@+id/list"
-                    android:layout_width="match_parent"
-                    android:layout_height="545dp"
-                    android:nestedScrollingEnabled="true"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="0dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+    </LinearLayout>
+
 </RelativeLayout>

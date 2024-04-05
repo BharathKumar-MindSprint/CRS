@@ -167,7 +167,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     public void expandOrCollapse(View view){
         boolean visibilityresult = advancedFilterLayout.getVisibility() == View.GONE;
-        advancedFilter.setCompoundDrawablesWithIntrinsicBounds(0, 0, visibilityresult ? R.drawable.ic_group_collapse_00 : R.drawable.ic_group_collapse_15 , 0);
+        advancedFilter.setCompoundDrawablesWithIntrinsicBounds(0, 0, visibilityresult ? R.drawable.ic_task_drop_down_expand : R.drawable.ic_drop_down_collapse , 0);
         advancedFilterLayout.setVisibility(visibilityresult ? View.VISIBLE : View.GONE);
     }
 
@@ -201,9 +201,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         bindProgram();
         bindPartner();
         bindFarmerGroups();
-        bindSection();
         bindCertificationNameSpinner();
-
+        bindSection();
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -567,6 +566,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     selectedCertifications.clear();
                     for (int i = 0; i < items.size(); i++) {
                         if (items.get(i).isSelected()) {
+//                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                             selectedCertifications.add(Integer.parseInt(String.valueOf(items.get(i).getId())));
                         }else {
                             selectedCertifications.remove(selectedCertifications.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
