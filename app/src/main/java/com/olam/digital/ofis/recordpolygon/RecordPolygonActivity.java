@@ -1744,7 +1744,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
 
             if (plotName != null && plotGeoJson != null) {
-                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName);
+                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName, mFarmerId);
                 dl.updatePlottedName(selectedPlotId,plotName,mFarmerId);
             }
         }

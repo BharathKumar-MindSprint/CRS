@@ -1070,6 +1070,7 @@ public class OFISDBContract {
     public static abstract class PlotGeoData implements BaseColumns {
         public static final String TABLE_NAME = "plotgeodata";
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_PLOT_NAME = "plot_name";
         public static final String COLUMN_NAME_ENTEREDPLOT_NAME = "enteredPlotName";
         public static final String COLUMN_NAME_FARM_ID = "farm_id";
@@ -1079,6 +1080,7 @@ public class OFISDBContract {
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_PLOT_ID);
+                    add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_PLOT_NAME);
                     add(COLUMN_NAME_FARM_ID);
                     add(COLUMN_NAME_SERVER_ID);
