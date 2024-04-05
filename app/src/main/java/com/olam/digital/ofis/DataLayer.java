@@ -218,14 +218,15 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData, String enteredPlotName) {
+    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId) {
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
         String[] whereArgs = new String[]{String.valueOf(plotName)};
         db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
 
         ContentValues plotGeoValues = new ContentValues();
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, plotName);
-        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID, farmerId);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID, mOlamFarmerId);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID, farmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME, enteredPlotName);
 
         //temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
@@ -415,6 +416,29 @@ public class DataLayer {
         return data.getCount();
 
     }
+
+    public String getPlottedNameFromPlotGeoData(long farmerId, String plotName){
+        String plottedName = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId), plotName};
+            cursor = db.query(OFISDBContract.PlotGeoData.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    plottedName = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            plottedName = null;
+        }finally {
+            cursor.close();
+        }
+        return plottedName;
+    }
+
     public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
         Cursor plotIdsSynced = syncedPlotIds(farmerId);
         int existingPlots = 0;
@@ -436,6 +460,7 @@ public class DataLayer {
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, getPlottedNameFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
                 long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
