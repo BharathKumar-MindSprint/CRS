@@ -15,7 +15,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 151;
+    private static final int DATABASE_VERSION = 152;
 
 
 
@@ -277,6 +277,7 @@ class OFISDB extends SQLiteOpenHelper {
 
     private static final String OFIS_PLOT_GEO_DATA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotGeoData.TABLE_NAME
             + " ( " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " TEXT, "
@@ -1043,6 +1044,10 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow150(sqLiteDatabase);
         }
 
+        if (oldVersion < 152){
+            migrateFromVersionBelow151(sqLiteDatabase);
+        }
+
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1177,12 +1182,25 @@ class OFISDB extends SQLiteOpenHelper {
 
             sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
 
-            // Multiple assignment
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE +" TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD +" TEXT default null");
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+
+    private void migrateFromVersionBelow151(SQLiteDatabase sqLiteDatabase){
+
+        try{
+            // Multiple assignment
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD +" TEXT default null");
+
+            // Add farmerId in geoplot data
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID +" TEXT default null");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {
