@@ -141,6 +141,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1665,7 +1666,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 recordPolygonIntent.putExtra(FARM_ID, lFarmID);
                 recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-                recordPolygonIntent.putExtra(PLOT_COUNT, count);
+//                recordPolygonIntent.putExtra(PLOT_COUNT, count);
+                int totalCount = dl.fetchPlotTotalCount(String.valueOf(Long.valueOf(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))));
+                recordPolygonIntent.putExtra(PLOT_COUNT, totalCount);
+                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)), totalCount);
                 recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
                 startActivity(recordPolygonIntent);
             } else if (itemType.equalsIgnoreCase("module")) {
