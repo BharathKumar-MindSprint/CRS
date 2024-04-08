@@ -13,13 +13,14 @@ public class AlphanumericFilterSip implements InputFilter {
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         String input = source.toString();
 
-        if (input.equals(" ") && dest.length() > 0) {
-            return null;
-        } else if (input.matches("[a-zA-Z0-9]+") && (dest.length() + input.length() <= maxLength)) {
-            return null;
+        if (!input.matches("[a-zA-Z0-9 ]+")) {
+            return "";
         }
 
-        // Reject the input
-        return "";
+        if (dest.length() + input.length() > maxLength) {
+            return "";
+        }
+
+        return null;
     }
 }
