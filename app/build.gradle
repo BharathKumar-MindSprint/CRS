@@ -33,8 +33,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 181
-        versionName "11.7.1"
+        versionCode 182
+        versionName "11.7.2"
 
 
 
@@ -64,7 +64,7 @@ android {
             minifyEnabled false
             shrinkResources false
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
 
         }
     }
