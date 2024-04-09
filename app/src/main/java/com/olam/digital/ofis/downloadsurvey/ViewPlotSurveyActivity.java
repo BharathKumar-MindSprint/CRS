@@ -289,6 +289,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                     if (isPlotSurvey.equalsIgnoreCase("true")) {
                         ChildModuleDto childModuleDto = new ChildModuleDto();
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
+                        childModuleDto.setStartDate(moduleAssignments.getString(moduleAssignments.getColumnIndex("startDate")));
 
                         childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME)));
                         childModuleDto.setSubmodule_name(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex("submodule_name" + moduleNameSuffix) != -1) ? "submodule_name" + moduleNameSuffix : "submodule_name")));
