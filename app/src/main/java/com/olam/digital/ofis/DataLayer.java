@@ -3482,6 +3482,7 @@ public class DataLayer {
                         "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) AND " +
                         "(farmer_child_modules.child_id = ?)" +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_child_modules.current_submodule_id = submodules.id WHERE " +
+                        "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                         "(moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3496,6 +3497,8 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
                         child_id,
+                        farmer.getString(farmer.getColumnIndex("country_id")),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("region_id")),
                         farmer.getString(farmer.getColumnIndex("district_id")),
@@ -3585,7 +3588,8 @@ public class DataLayer {
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
+                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND " +
+                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3606,7 +3610,8 @@ public class DataLayer {
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
                             "moduleassignments.isPlotSurvey == 'true' AND "+
-                            "moduleassignments.isFarmSurvey == 'false' AND" +
+                            "moduleassignments.isFarmSurvey == 'false' AND " +
+                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3620,6 +3625,8 @@ public class DataLayer {
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("region_id")),
                         farmer.getString(farmer.getColumnIndex("district_id")),
