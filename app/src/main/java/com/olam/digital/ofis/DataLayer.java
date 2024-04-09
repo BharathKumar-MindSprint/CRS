@@ -294,15 +294,6 @@ public class DataLayer {
         }
     }
 
-    public void deleteDatafromGeoPlot(String plotName){
-        try {
-            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(plotName)};
-            db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
         try {
@@ -7550,27 +7541,6 @@ public class DataLayer {
         return  newId;
     }
 
-    public String getCreatedPlotDateByID(int plotId){
-        String createdDate = "";
-        Cursor cursor = null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(plotId)};
-            cursor = db.query(OFISDBContract.PlotEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
-            if(cursor != null){
-                while(cursor.moveToNext()){
-                    createdDate = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT));
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            cursor.close();
-        }
-        return createdDate;
-    }
-
     public MultiFarmDTO getMultiFarmInfoObj(long farmId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID + " = ?";
@@ -8973,11 +8943,6 @@ public class DataLayer {
     }
 
 
-    public long deleteNetworkQueuePlotItemByFarmerId(long farmerId) {
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
-        return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
-    }
 
     public String getMultiFarmLocationbyId(long farmerId) {
         Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
