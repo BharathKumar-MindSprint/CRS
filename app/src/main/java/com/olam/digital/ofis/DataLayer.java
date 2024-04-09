@@ -281,7 +281,6 @@ public class DataLayer {
             count = cursor.getInt(0);
         }
         cursor.close();
-        db.close();
         return count;
     }
 

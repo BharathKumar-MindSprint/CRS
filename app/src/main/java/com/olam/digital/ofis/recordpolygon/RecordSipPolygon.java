@@ -279,7 +279,9 @@ public class RecordSipPolygon extends AppCompatActivity {
 //                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                sharedPref.edit().putString("SIP_NAME_INFRA", name_sip.getText().toString()).apply();
 
-                dl.updateSipNameByUploadId(sip_upload_id, name_sip.getText().toString());
+                if (!name_sip.getText().toString().isEmpty()){
+                    dl.updateSipNameByUploadId(sip_upload_id, name_sip.getText().toString());
+                }
             }
         });
 
