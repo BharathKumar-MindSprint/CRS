@@ -244,7 +244,7 @@ public class DataLayer {
         }
     }
 
-    public void updateSipPlotGeoData(int category_sip_id, String category_name, String plotGeoData, String sip_name) {
+    public void updateSipPlotGeoData(int category_sip_id, String category_name, String plotGeoData, String sip_name, String uploadId) {
 
         // delete need to be handled
 //        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
@@ -255,6 +255,7 @@ public class DataLayer {
         plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID, category_sip_id);
         plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY, category_name);
         plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME, sip_name);
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID, uploadId);
 
         /*//temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
         if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
@@ -272,9 +273,9 @@ public class DataLayer {
     }
 
 
-    public int getSipPlot(int id) {
+    public int getSipPlot(String id) {
         int count = 0;
-        String query = "SELECT COUNT(*) FROM " + OFISDBContract.SipPlot.TABLE_NAME + " WHERE " + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+        String query = "SELECT COUNT(*) FROM " + OFISDBContract.SipPlot.TABLE_NAME + " WHERE " + OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
@@ -1942,6 +1943,29 @@ public class DataLayer {
         return captureSipPolygon;
     }
 
+    public boolean getIfSipAlreadyRecorded(String id){
+        boolean rowExists = false;
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                    OFISDBContract.SipPlot.TABLE_NAME,
+                    null,
+                    OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?",
+                    new String[]{id},
+                    null,
+                    null,
+                    null
+            );
+
+            rowExists = cursor != null && cursor.moveToFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+        }
+        return rowExists;
+    }
+
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
@@ -2052,7 +2076,7 @@ public class DataLayer {
         Cursor farmerCursor=null;
         try {
             String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+            String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(id)};
             farmerCursor = db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
             if (farmerCursor != null) {
@@ -3891,8 +3915,8 @@ public class DataLayer {
 
     }
 
-    public void deleteSipPlotItem(int id) {
-        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+    public void deleteSipPlotItem(String id) {
+        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
         try {
             db.delete(OFISDBContract.SipPlot.TABLE_NAME, whereClause, whereArgs);

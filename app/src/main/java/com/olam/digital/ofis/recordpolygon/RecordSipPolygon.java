@@ -62,6 +62,7 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -108,13 +109,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
+import java.util.UUID;
 
 public class RecordSipPolygon extends AppCompatActivity {
 
     private String category_name;
 
     private ImageView recordingStatus;
-    private String sip_name;
+    private String sip_name, sip_upload_id;
 
     private int category_sip_id;
 
@@ -253,6 +255,8 @@ public class RecordSipPolygon extends AppCompatActivity {
         category_name = getIntent().getStringExtra(CATEGORY_NAME);
         sip_name = getIntent().getStringExtra(SIP_NAME);
         category_sip_id = getIntent().getIntExtra(SIP_CATEGORY_ID,0);
+        sip_upload_id = getIntent().getStringExtra("SIP_UPLOAD_ID");
+        currentTrackname = sip_upload_id;
 
 
         category_name_sip.setText(category_name);
@@ -272,8 +276,8 @@ public class RecordSipPolygon extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
-                sharedPref.edit().putString("SIP_NAME", name_sip.getText().toString()).apply();
+//                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
+//                sharedPref.edit().putString("SIP_NAME_INFRA", name_sip.getText().toString()).apply();
             }
         });
 
@@ -459,8 +463,8 @@ public class RecordSipPolygon extends AppCompatActivity {
         initializeLoggingVariables();
 
         try {
-            if (dl.getSipPlot(category_sip_id) > 0){
-                plotGraphInMap(category_sip_id);
+            if (dl.getSipPlot(sip_upload_id) > 0){
+                plotGraphInMap(sip_upload_id);
                 delete_plot.setVisibility(View.VISIBLE);
             }
         }catch (Exception e){
@@ -507,7 +511,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                 if(mDestinationPolygon != null){
                     map.getOverlays().remove(mDestinationPolygon);
                 }
-                dl.deleteSipPlotItem(category_sip_id);
+                dl.deleteSipPlotItem(currentTrackname);
                 delete_plot.setVisibility(View.GONE);
 //                initiateLogging();
 
@@ -526,7 +530,7 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
 
-    private void plotGraphInMap(int id){
+    private void plotGraphInMap(String id){
         DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
         String jsonString = dl.getPLotDataFromCategoryId(String.valueOf(id));
         ArrayList<GeoPoint> plotPoints = PlotDataParser.parsePlotData(jsonString);
@@ -585,8 +589,8 @@ public class RecordSipPolygon extends AppCompatActivity {
         TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
         TextView tvTitle= dialogView.findViewById(R.id.tv_title);
         tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setText(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
-        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog, currentTrackname));
+        tvTitle.setText(getResources().getString(R.string.save_polygon_alertdialog_title, name_sip.getText().toString()));
+        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog, name_sip.getText(),toString()));
         Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
         Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
         btnNo.setText(R.string.close);
@@ -603,8 +607,10 @@ public class RecordSipPolygon extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 alert.dismiss();
-                currentTrackname = category_sip_id + "_" + currentTrackname.toLowerCase().replace(" ", "-");
+                currentTrackname = sip_upload_id;
 
+//                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
+//                sharedPref.edit().putString("SIP_UPLOAD_ID", currentTrackname).apply();
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
 
@@ -612,7 +618,7 @@ public class RecordSipPolygon extends AppCompatActivity {
 
 //                String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
 //                String plotName = txtPlotName.getText().toString();
-                saveSipPlotGeoDataJsonToDatabase(plotGeoJson, category_sip_id, category_name,sip_name);
+                saveSipPlotGeoDataJsonToDatabase(plotGeoJson, category_sip_id, category_name,name_sip.getText().toString(),currentTrackname);
                 JSONObject jObj=new JSONObject();
                 try {
                     String encodedPlotsJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
@@ -633,7 +639,7 @@ public class RecordSipPolygon extends AppCompatActivity {
 
                 //List<LocationBeanList> list = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
 
-                showToastMessage(getResources().getString(R.string.saved_successfully_msg, currentTrackname));
+                showToastMessage(getResources().getString(R.string.saved_successfully_msg, sip_name));
                 mLocationBeanList = new ArrayList<>();
                 bttnSave.setEnabled(false);
                 disableBtn(bttnSave);
@@ -746,13 +752,13 @@ public class RecordSipPolygon extends AppCompatActivity {
 
     }
 
-    void saveSipPlotGeoDataJsonToDatabase(String plotGeoJson, int category_sip_id, String category_name, String sip_name) {
+    void saveSipPlotGeoDataJsonToDatabase(String plotGeoJson, int category_sip_id, String category_name, String sip_name,String uploadId) {
         DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
         if (plotGeoJson != null) {
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
 
             if (plotGeoJson != null) {
-                dl.updateSipPlotGeoData(category_sip_id, category_name, plotGeoJson,sip_name);
+                dl.updateSipPlotGeoData(category_sip_id, category_name, plotGeoJson,sip_name, uploadId);
             }
         }
     }
@@ -827,7 +833,7 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
     void handleStartStopLoggingButton() {
-        currentTrackname = sip_name;
+//        currentTrackname = sip_name;
 
         if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
@@ -840,7 +846,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                     builder.setView(dialogView);
                     TextView tvTitle=(TextView)dialogView.findViewById(R.id.tv_title);
                     tvTitle.setVisibility(View.VISIBLE);
-                    tvTitle.setText(getResources().getString(R.string.ready_to_save, currentTrackname));
+                    tvTitle.setText(getResources().getString(R.string.ready_to_save, sip_name));
                     TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
                     tvMsg.setText(R.string.restart_logging);
                     Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
@@ -871,7 +877,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                 }
 
             } else {
-                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+                showToastMessage(getResources().getString(R.string.already_logged_and_saved, sip_name));
 //                editPlotAlertDialog();
             }
 
@@ -1056,7 +1062,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                             DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
                             int farmPlotCount = dl.fetchSyncedSipPlotCountById(String.valueOf(category_sip_id));
                             if(farmPlotCount == 0) {
-                                showPlotLocationConfirmDialog(currentTrackname);
+                                showPlotLocationConfirmDialog(sip_name);
 
                             }else{
 
@@ -1080,7 +1086,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                             }
                         } else {
                             if (mLocationBeanList.size() > 0) {
-                                showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
+                                showToastMessage(getResources().getString(R.string.ready_to_save, sip_name).trim().toUpperCase());
                                 pause_recording_sip.setEnabled(false);
                                 disableBtn(pause_recording_sip);
                                 bttnSave.setEnabled(true);
@@ -1390,7 +1396,7 @@ public class RecordSipPolygon extends AppCompatActivity {
             return;
         }
         if (mIsLoggingStarted) {
-            recordCurrentLocationInTrack(category_sip_id + "_" + currentTrackname.toLowerCase().replace(" ", "-"), currentTrackname, newLocation);
+            recordCurrentLocationInTrack(sip_upload_id , sip_upload_id , newLocation);
         }
     }
 
