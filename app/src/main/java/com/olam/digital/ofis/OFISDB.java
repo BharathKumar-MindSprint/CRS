@@ -156,7 +156,9 @@ class OFISDB extends SQLiteOpenHelper {
 
 
     private static final String OFIS_SIP_PLOT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SipPlot.TABLE_NAME
-            + " ( " + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " INTEGER PRIMARY KEY, "
+            + " ( " + OFISDBContract.SipPlot.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " TEXT, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " TEXT, "
             + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY + " TEXT, "
             + OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME + " TEXT, "
             + OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED + " TEXT, "

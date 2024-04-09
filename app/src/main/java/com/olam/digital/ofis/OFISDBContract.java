@@ -169,12 +169,16 @@ public class OFISDBContract {
 
     public static abstract class SipPlot implements BaseColumns{
         public static final String TABLE_NAME = "sipPlot";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_SIP_UPLOAD_ID = "sip_upload_id";
         public static final String COLUMN_NAME_SIP_CATEGORY_ID = "sipCategoryId";
         public static final String COLUMN_NAME_SIP_CATEGORY = "sipCategory";
         public static final String COLUMN_NAME_SIP_NAME = "sipName";
         public static final String COLUMN_NAME_IS_SYNCED = "isSynced";
         public static final String COLUMN_NAME_SIP_PLOT = "sipPlot";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
+            add(COLUMN_NAME_ID);
+            add(COLUMN_NAME_SIP_UPLOAD_ID);
             add(COLUMN_NAME_SIP_CATEGORY_ID);
             add(COLUMN_NAME_SIP_CATEGORY);
             add(COLUMN_NAME_SIP_NAME);

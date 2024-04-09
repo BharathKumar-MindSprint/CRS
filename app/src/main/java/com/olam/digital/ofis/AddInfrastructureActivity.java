@@ -21,8 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -80,6 +82,7 @@ import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity {
@@ -185,6 +188,8 @@ public class AddInfrastructureActivity extends BaseActivity {
     private static final String SIP_NAME = "SIP_NAME";
     private static final String SIP_CATEGORY_ID = "SIP_CATEGORY_ID";
 
+    private static String sip_polygon_upload_id = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,7 +230,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
         poiName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
-        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
         poiName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
@@ -234,6 +238,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         sip_polygon_icon = (ImageButton) findViewById(R.id.sip_polygon_icon);
+        sip_polygon_upload_id = "";
         if(!editMode)
             searchingGPS();
 
@@ -467,9 +472,17 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
 
-        SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
-        String receivedSipName = sharedPref.getString("SIP_NAME", "");
-        poiName.setText(receivedSipName);
+
+
+
+
+        if (dl.getIfSipAlreadyRecorded(sip_polygon_upload_id)){
+            poiName.setText(dl.getSipNameByUploadId(sip_polygon_upload_id));
+        }
+
+        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
+
+
     }
 
     private boolean checkPermissions() {
@@ -492,6 +505,8 @@ public class AddInfrastructureActivity extends BaseActivity {
 
 
         String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
+        sip_polygon_upload_id = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT));
+
         modulesSpinner.setSelection(selectedModulePOI);
         moduleId = moduleDTOS.get(selectedModulePOI).getId();
         subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
@@ -680,6 +695,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT, sip_polygon_upload_id);
             if(isSubdistrictCapture) {
                 if (isVillage){
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id1);
@@ -706,6 +722,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, place_id);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE, ChildLabourUtils.FALSE);
+
+                dl.updateSipNameByUploadId(sip_polygon_upload_id, poiName.getText().toString());
             }
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1083,6 +1101,13 @@ public class AddInfrastructureActivity extends BaseActivity {
                             sipPolygonIntent.putExtra(CATEGORY_NAME, moduleName);
                             sipPolygonIntent.putExtra(SIP_NAME, poiName.getText().toString());
                             sipPolygonIntent.putExtra(SIP_CATEGORY_ID, subModuleDTOS.get(position).getId());
+                            if (dl.getIfSipAlreadyRecorded(sip_polygon_upload_id)){
+                                sipPolygonIntent.putExtra("SIP_UPLOAD_ID", sip_polygon_upload_id);
+                            }else {
+                                sip_polygon_upload_id = UUID.randomUUID().toString().toLowerCase().replace(" ", "-");
+                                sipPolygonIntent.putExtra("SIP_UPLOAD_ID", sip_polygon_upload_id);
+                            }
+
                             //recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
                             startActivity(sipPolygonIntent);
                         }else {
