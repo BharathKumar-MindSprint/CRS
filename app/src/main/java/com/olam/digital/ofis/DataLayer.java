@@ -1966,6 +1966,42 @@ public class DataLayer {
         return rowExists;
     }
 
+    public String getSipNameByUploadId(String id){
+        String sip_name = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SipPlot.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    sip_name = cursor.getString(cursor.getColumnIndex(OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return sip_name;
+    }
+
+
+    public int updateSipNameByUploadId(String id, String newName) {
+        int rowsUpdated = 0;
+        try {
+            String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_UPLOAD_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME, newName);
+            rowsUpdated = db.update(OFISDBContract.SipPlot.TABLE_NAME, contentValues, whereClause, whereArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rowsUpdated;
+    }
+
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;

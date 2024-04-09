@@ -278,6 +278,8 @@ public class RecordSipPolygon extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
 //                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                sharedPref.edit().putString("SIP_NAME_INFRA", name_sip.getText().toString()).apply();
+
+                dl.updateSipNameByUploadId(sip_upload_id, name_sip.getText().toString());
             }
         });
 
@@ -639,7 +641,7 @@ public class RecordSipPolygon extends AppCompatActivity {
 
                 //List<LocationBeanList> list = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
 
-                showToastMessage(getResources().getString(R.string.saved_successfully_msg, sip_name));
+                showToastMessage(getResources().getString(R.string.saved_successfully_msg, name_sip.getText().toString()));
                 mLocationBeanList = new ArrayList<>();
                 bttnSave.setEnabled(false);
                 disableBtn(bttnSave);
@@ -742,7 +744,7 @@ public class RecordSipPolygon extends AppCompatActivity {
             trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
             trackDetailsDTO.setSipCategoryId(category_sip_id);
             trackDetailsDTO.setSipCategoryName(category_name);
-            trackDetailsDTO.setSipName(sip_name);
+            trackDetailsDTO.setSipName(name_sip.getText().toString());
             trackDetailsDTO.setPolygonPlotDetails(plotDetails);
 
             ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
@@ -846,7 +848,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                     builder.setView(dialogView);
                     TextView tvTitle=(TextView)dialogView.findViewById(R.id.tv_title);
                     tvTitle.setVisibility(View.VISIBLE);
-                    tvTitle.setText(getResources().getString(R.string.ready_to_save, sip_name));
+                    tvTitle.setText(getResources().getString(R.string.ready_to_save, name_sip.getText().toString()));
                     TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
                     tvMsg.setText(R.string.restart_logging);
                     Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
@@ -877,7 +879,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                 }
 
             } else {
-                showToastMessage(getResources().getString(R.string.already_logged_and_saved, sip_name));
+                showToastMessage(getResources().getString(R.string.already_logged_and_saved, name_sip.getText().toString()));
 //                editPlotAlertDialog();
             }
 
@@ -1062,7 +1064,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                             DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
                             int farmPlotCount = dl.fetchSyncedSipPlotCountById(String.valueOf(category_sip_id));
                             if(farmPlotCount == 0) {
-                                showPlotLocationConfirmDialog(sip_name);
+                                showPlotLocationConfirmDialog(name_sip.getText().toString());
 
                             }else{
 
@@ -1086,7 +1088,7 @@ public class RecordSipPolygon extends AppCompatActivity {
                             }
                         } else {
                             if (mLocationBeanList.size() > 0) {
-                                showToastMessage(getResources().getString(R.string.ready_to_save, sip_name).trim().toUpperCase());
+                                showToastMessage(getResources().getString(R.string.ready_to_save, name_sip.getText().toString()).trim().toUpperCase());
                                 pause_recording_sip.setEnabled(false);
                                 disableBtn(pause_recording_sip);
                                 bttnSave.setEnabled(true);

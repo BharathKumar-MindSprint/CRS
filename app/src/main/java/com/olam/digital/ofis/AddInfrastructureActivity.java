@@ -474,17 +474,11 @@ public class AddInfrastructureActivity extends BaseActivity {
 
 
 
-        /*SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
-        String receivedSipName = sharedPref.getString("SIP_NAME_INFRA", "");
-        if (Objects.equals(receivedSipName, "")) {
-            poiName.setText(receivedSipName);
-        }*/
 
-        /*if (Utilities.sip_polygon_recorded){
-            if (Objects.equals(sip_polygon_upload_id, "")){
-                sip_polygon_upload_id = sharedPref.getString("SIP_UPLOAD_ID", "");
-            }
-        }*/
+
+        if (dl.getIfSipAlreadyRecorded(sip_polygon_upload_id)){
+            poiName.setText(dl.getSipNameByUploadId(sip_polygon_upload_id));
+        }
 
         poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
 
@@ -728,6 +722,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, place_id);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE, ChildLabourUtils.FALSE);
+
+                dl.updateSipNameByUploadId(sip_polygon_upload_id, poiName.getText().toString());
             }
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
