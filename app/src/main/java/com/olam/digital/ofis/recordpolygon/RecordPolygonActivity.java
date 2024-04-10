@@ -2167,51 +2167,53 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 String plotNumber = (String) v.getTag();
                 DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
-                String plotName = plotNumber.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
+                if(plotNumber!=null){
+                    String plotName = plotNumber.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
 
-                Matcher matcherPlotNumber = Pattern.compile("Plot\\s+(\\d+)").matcher(plotNumber);
-                String plotId = null;
-                if (matcherPlotNumber.find()){
-                    plotId = matcherPlotNumber.group(1);
-                }
+                    Matcher matcherPlotNumber = Pattern.compile("Plot\\s+(\\d+)").matcher(plotNumber);
+                    String plotId = null;
+                    if (matcherPlotNumber.find()){
+                        plotId = matcherPlotNumber.group(1);
+                    }
 //                String plotId = plotNumber.substring(plotNumber.length() - 1);
-                Cursor c =dl.getPNamePlotGeoData(mOlamFarmerId);
-                if (c.getCount() > 0) {
-                    c.moveToFirst();
-                    for (int i = 1; i <= c.getCount(); i++) {
-                        String pName = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME));
+                    Cursor c =dl.getPNamePlotGeoData(mOlamFarmerId);
+                    if (c.getCount() > 0) {
+                        c.moveToFirst();
+                        for (int i = 1; i <= c.getCount(); i++) {
+                            String pName = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME));
 //                        String [] pID = pName.split("_");
 //                        String pNameId = pID[0].substring(pID[0].length() - 1);
-                        Pattern pattern = Pattern.compile("plot([^_]+)_");
-                        Matcher matcher = pattern.matcher(pName);
+                            Pattern pattern = Pattern.compile("plot([^_]+)_");
+                            Matcher matcher = pattern.matcher(pName);
 
-                        String pNameId = null;
-                        if (matcher.find()) {
-                            pNameId = matcher.group(1);
+                            String pNameId = null;
+                            if (matcher.find()) {
+                                pNameId = matcher.group(1);
+                            }
+
+                            if (pNameId.equals(plotId)){
+                                dl.deleteDatafromGeoPlot(plotName);
+                                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(plotNumber);
+                                if (dl.getPNamePlotGeoData(mOlamFarmerId).getCount() == 0){
+                                    dl.deleteNetworkQueuePlotItemByFarmerId(mFarmerId);
+                                }
+                            }
+
+                            if (Integer.parseInt(pNameId) > Integer.parseInt(plotId)){
+                                //decrementing saved shared prefrences
+                                LocationBeanList beans = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList("Plot " + pNameId);
+                                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + pNameId);
+                                int finalPlot = Integer.parseInt(pNameId) - 1;
+                                SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList("Plot " + finalPlot, beans);
+
+                                // updating db
+                                dl.updateGeoPlotDataAfterDelete(pName , Integer.parseInt(pNameId)-1 , mOlamFarmerId);
+                            }
+
+
+                            c.moveToNext();
+
                         }
-
-                        if (pNameId.equals(plotId)){
-                            dl.deleteDatafromGeoPlot(plotName);
-                            SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(plotNumber);
-                           if (dl.getPNamePlotGeoData(mOlamFarmerId).getCount() == 0){
-                               dl.deleteNetworkQueuePlotItemByFarmerId(mFarmerId);
-                           }
-                        }
-
-                        if (Integer.parseInt(pNameId) > Integer.parseInt(plotId)){
-                            //decrementing saved shared prefrences
-                            LocationBeanList beans = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList("Plot " + pNameId);
-                            SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + pNameId);
-                            int finalPlot = Integer.parseInt(pNameId) - 1;
-                            SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList("Plot " + finalPlot, beans);
-
-                            // updating db
-                            dl.updateGeoPlotDataAfterDelete(pName , Integer.parseInt(pNameId)-1 , mOlamFarmerId);
-                        }
-
-
-                        c.moveToNext();
-
                     }
                 }
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
