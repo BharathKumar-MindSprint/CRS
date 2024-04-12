@@ -156,6 +156,8 @@
     <string name="spinner_farmergroup_view_farmer">grupo de produtores/cooperativa</string>
     <string name="spinner_section_view_farmer">zona</string>
     <string name="spinner_product_view_farmer">produto</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_age_view_farmer">idade</string>
 
     <string-array name="poitypes">
         <item>Escola</item>
