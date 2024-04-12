@@ -228,6 +228,7 @@
     <string name="spinner_farmergroup_view_farmer">Farmer Group</string>
     <string name="spinner_section_view_farmer">Section</string>
     <string name="spinner_product_view_farmer">Product</string>
+    <string name="spinner_age_view_farmer">Age</string>
 
     <string-array name="poitypes">
         <item>School</item>

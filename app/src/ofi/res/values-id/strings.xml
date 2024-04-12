@@ -158,6 +158,8 @@
     <string name="spinner_farmergroup_view_farmer">Kelompok Tani</string>
     <string name="spinner_section_view_farmer">Bagian</string>
     <string name="spinner_product_view_farmer">produk</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_age_view_farmer">usia</string>
 
     <string-array name="poitypes">
         <item>Sekolah</item>

@@ -224,6 +224,7 @@
     <string name="spinner_region_view_farmer">Region</string>
     <string name="spinner_district_view_farmer">District</string>
     <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_age_view_farmer">Age</string>
     <string name="spinner_place_view_farmer">Place</string>
     <string name="spinner_farmergroup_view_farmer">Farmer Group</string>
     <string name="spinner_section_view_farmer">Section</string>
