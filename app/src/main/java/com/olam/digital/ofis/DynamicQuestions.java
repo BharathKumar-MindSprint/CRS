@@ -1249,16 +1249,23 @@ public class DynamicQuestions {
                             int max = rangeArray.optInt(AppConstants.RANGE_MAX);
 
                             if (getAnswerMinMaxvalidation(questionId) != "noval") {
-                                double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
+                                String wrongValue = getAnswerMinMaxvalidation(questionId);
+                                if (wrongValue.equals("-")) {
+                                    status = false;
+                                    break;
+                                }else {
+                                    double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
 //                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
 //                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
 //                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
 
-                                if (answer < min) {
-                                    status = false;
+                                    if (answer < min || answer > max) {
+                                        status = false;
 //                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                                    break;
+                                        break;
+                                    }
                                 }
+
                             }
 //                            }
 
@@ -3831,7 +3838,8 @@ public class DynamicQuestions {
                     String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
 
                     if (resultingText.equals("-") && minValue < 0) {
-                        return null; // Reject the input if minValue is negative
+                        editText.setError("Please enter a valid number.");
+                        return null;
                     }
 
                     // Parse the resulting string
@@ -3889,6 +3897,8 @@ public class DynamicQuestions {
                                                     editText.setError(context.getString(R.string.alert_review));
 
                                                 }
+                                            }else {
+                                                editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
                                             }
                                         }
                                     } else {
@@ -3944,6 +3954,11 @@ public class DynamicQuestions {
                             }, 3000);
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
+                        }
+                        if (maxValue<0){
+                            if (input > maxValue) {
+                                return source;
+                            }
                         }
                         return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
 
