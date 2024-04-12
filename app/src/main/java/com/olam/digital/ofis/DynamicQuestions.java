@@ -3340,21 +3340,21 @@ public class DynamicQuestions {
                         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                             editText.setError(context.getString(R.string.alert_review));
                         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
-                            int vr_min = rangeArray.optInt("vr_min");
-                            int vr_max = rangeArray.optInt("vr_max");
-                            if (vr_min > inputNumber || inputNumber > vr_max) {
-                                editText.setError(context.getString(R.string.alert_review));
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint), startLimit, endLimit));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int vr_min = rangeArray.optInt("vr_min");
+                                    int vr_max = rangeArray.optInt("vr_max");
+                                    if (vr_min > inputNumber || inputNumber > vr_max) {
+                                        editText.setError(context.getString(R.string.alert_review));
+                                    }
+                                }
+                            }, 1000);
 
-                            }
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint), startLimit, endLimit));
                         }
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                editText.setError(null); // Clear the error message after delay
-                            }
-                        }, 3000); // Delay for 3 seconds
                         return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
 
                     } else {
@@ -3464,16 +3464,22 @@ public class DynamicQuestions {
                     } else {
                         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                             editText.setError(context.getString(R.string.alert_review));
-                        } else {
+                        } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()){
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint), minLimit, maxLimit));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int vr_min = rangeArray.optInt("vr_min");
+                                    int vr_max = rangeArray.optInt("vr_max");
+                                    if (vr_min > inputNumber || inputNumber > vr_max) {
+                                        editText.setError(context.getString(R.string.alert_review));
+                                    }
+                                }
+                            }, 1000);
+                        }else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint), minLimit, maxLimit));
 
                         }
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                editText.setError(null); // Clear the error message after delay
-                            }
-                        }, 3000); // Delay for 3 seconds
                         return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
                     }
                 } catch (NumberFormatException e) {
@@ -3772,21 +3778,23 @@ public class DynamicQuestions {
                         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                             editText.setError(context.getString(R.string.alert_review));
                         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
-                            double vr_min = rangeArray.optDouble("vr_min");
-                            double vr_max = rangeArray.optDouble("vr_max");
-                            if (vr_min > input || input > vr_max) {
-                                editText.setError(context.getString(R.string.alert_review));
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    double vr_min = rangeArray.optDouble("vr_min");
+                                    double vr_max = rangeArray.optDouble("vr_max");
+                                    if (vr_min > input || input > vr_max) {
+                                        editText.setError(context.getString(R.string.alert_review));
 
-                            }
+                                    }
+                                }
+                            }, 3000);
+
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
                         }
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                editText.setError(null); // Clear error message after delay
-                            }
-                        }, 3000);
+
                         return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
                     } else {
                         if (input < minValue) {
@@ -3917,21 +3925,21 @@ public class DynamicQuestions {
                         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                             editText.setError(context.getString(R.string.alert_review));
                         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
-                            double vr_min = rangeArray.optDouble("vr_min");
-                            double vr_max = rangeArray.optDouble("vr_max");
-                            if (vr_min >input || input > vr_max) {
-                                editText.setError(context.getString(R.string.alert_review));
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    double vr_min = rangeArray.optDouble("vr_min");
+                                    double vr_max = rangeArray.optDouble("vr_max");
+                                    if (vr_min >input || input > vr_max) {
+                                        editText.setError(context.getString(R.string.alert_review));
 
-                            }
+                                    }
+                                }
+                            }, 3000);
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
                         }
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                editText.setError(null); // Clear the error message after delay
-                            }
-                        }, 3000); // Delay for 3 seconds
                         return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) ? source : "";
 
                     } else {
