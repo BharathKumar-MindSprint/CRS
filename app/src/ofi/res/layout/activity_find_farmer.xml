@@ -166,7 +166,7 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:hintText="@string/spinner_region_default"/>
+                app:hintText="@string/spinner_region_view_farmer"/>
 
             <com.olam.digital.ofis.MultiSpinnerSearch
                 android:id="@+id/spinner_district"
@@ -180,7 +180,7 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:hintText="@string/spinner_district_default"/>
+                app:hintText="@string/spinner_district_view_farmer"/>
 
         </LinearLayout>
         <LinearLayout
@@ -205,7 +205,7 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:hintText="@string/spinner_place_default"/>
+                app:hintText="@string/spinner_place_view_farmer"/>
 
             <com.olam.digital.ofis.MultiSpinnerSearch
                 android:id="@+id/spinner_partner"
@@ -257,7 +257,7 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:hintText="@string/spinner_farmergroup_default"/>
+                app:hintText="@string/spinner_farmergroup_view_farmer"/>
 
         </LinearLayout>
         <LinearLayout
@@ -282,7 +282,7 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:hintText="@string/spinner_section_default"/>
+                app:hintText="@string/spinner_section_view_farmer"/>
 
             <com.olam.digital.ofis.MultiSpinnerSearch
                 android:id="@+id/spinner_certification"
