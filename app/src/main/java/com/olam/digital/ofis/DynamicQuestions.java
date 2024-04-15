@@ -2951,7 +2951,7 @@ public class DynamicQuestions {
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
-        if (decimelRestrict > 0) {
+        if (decimelRestrict > 0 && datatype.equals("decimal") ) {
             et.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(decimelRestrict)});
         }
         // Decimal 2 digits concept - End
@@ -2973,7 +2973,12 @@ public class DynamicQuestions {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if (finalDatatype.equals("decimal") ) {
+                    int length = et.getText().length();
+                    if (length > 12) {
+                        et.getText().delete(length - 1, length);
+                    }
+                }
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
