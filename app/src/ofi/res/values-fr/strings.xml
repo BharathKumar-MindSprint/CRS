@@ -154,7 +154,7 @@
     <string name="spinner_farmergroup_view_farmer">organisation de planteurs</string>
     <string name="spinner_section_view_farmer">section</string>
     <string name="spinner_product_view_farmer">produit</string>
-    <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_subdistrict_view_farmer">Sous-district</string>
     <string name="spinner_age_view_farmer">âge</string>
 
     <string-array name="poitypes">
