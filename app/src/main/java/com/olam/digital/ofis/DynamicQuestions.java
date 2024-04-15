@@ -1241,11 +1241,168 @@ public class DynamicQuestions {
                     JSONObject display = displayConfig.getJSONObject("display");
                     int validationOnRange = display.optInt("validationOnRangeId");
 
+                    String globally;
+                    String assignmentType = "";
+                    String assignmentField = "";
+                    String assignmentFields = "";
                     if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrict() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                         if (display.has("range")) {
                             JSONArray range = display.getJSONArray("range");
-                            JSONObject rangeArray = range.getJSONObject(0);
-                            double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
+//                            JSONObject rangeArray = range.getJSONObject(0);
+
+                            int[] farmerOrderList = new int[]{6, 5, 8, 9, 4, 3, 2, 1, 7, 0};
+                            boolean valueFound = false;
+                            for (int orderList : farmerOrderList) {
+
+                                for (int i = 0; i < range.length(); i++) {
+                                    JSONObject rangeArray = range.getJSONObject(i);
+
+                                    globally = rangeArray.getString("globally");
+                                    assignmentType = rangeArray.getString("assignmentType");
+                                    if (assignmentType.equals("null")) {
+                                        assignmentType = "0";
+                                    }
+                                    assignmentField = rangeArray.getString("assignmentField");
+                                    assignmentFields = rangeArray.getString("assignmentFields");
+
+                                    if (Integer.parseInt(assignmentType) == orderList && Integer.parseInt(assignmentType) != 0) {
+
+                                        if (!assignmentField.equals("null")) {
+                                            long farmerId = Utilities.farmerId;
+                                            roomDB = OFISRoomDB.getDbInstance(context);
+                                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+                                            if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
+                                                double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
+                                                int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+
+                                                if (getAnswerMinMaxvalidation(questionId) != "noval") {
+                                                    String wrongValue = getAnswerMinMaxvalidation(questionId);
+                                                    if (wrongValue.equals("-")) {
+                                                        status = false;
+                                                        break;
+                                                    }else {
+                                                        double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
+//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+
+                                                        if (answer < min || answer > max) {
+                                                            status = false;
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                                                            break;
+                                                        }
+                                                    }
+
+                                                }
+
+
+                                                valueFound = true;
+                                                break;
+                                            } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
+                                                double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
+                                                int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+
+                                                if (getAnswerMinMaxvalidation(questionId) != "noval") {
+                                                    String wrongValue = getAnswerMinMaxvalidation(questionId);
+                                                    if (wrongValue.equals("-")) {
+                                                        status = false;
+                                                        break;
+                                                    }else {
+                                                        double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
+//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+
+                                                        if (answer < min || answer > max) {
+                                                            status = false;
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                                                            break;
+                                                        }
+                                                    }
+
+                                                }
+
+
+                                            }
+                                        } else if (!assignmentFields.equals("null") && !valueFound) {
+
+                                            // Remove square brackets and split the string into an array of strings
+                                            String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
+
+                                            // Convert the string array to an integer array
+                                            int[] intArray = new int[stringArray.length];
+                                            for (int m = 0; m < stringArray.length; m++) {
+                                                intArray[m] = Integer.parseInt(stringArray[m]);
+                                            }
+
+                                            for (int fieldMultipleAssignment : intArray) {
+                                                long farmerId = Utilities.farmerId;
+                                                roomDB = OFISRoomDB.getDbInstance(context);
+                                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
+
+                                                if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
+                                                    double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
+                                                    int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+
+                                                    if (getAnswerMinMaxvalidation(questionId) != "noval") {
+                                                        String wrongValue = getAnswerMinMaxvalidation(questionId);
+                                                        if (wrongValue.equals("-")) {
+                                                            status = false;
+                                                            break;
+                                                        }else {
+                                                            double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
+//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+
+                                                            if (answer < min || answer > max) {
+                                                                status = false;
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                                                                break;
+                                                            }
+                                                        }
+
+                                                    }
+
+
+                                                    valueFound = true;
+                                                    break;
+                                                }
+
+                                            }
+
+                                        }
+
+                                    } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
+                                        double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
+                                        int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+
+                                        if (getAnswerMinMaxvalidation(questionId) != "noval") {
+                                            String wrongValue = getAnswerMinMaxvalidation(questionId);
+                                            if (wrongValue.equals("-")) {
+                                                status = false;
+                                                break;
+                                            }else {
+                                                double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
+//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+
+                                                if (answer < min || answer > max) {
+                                                    status = false;
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                                                    break;
+                                                }
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+                            /*double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
                             int max = rangeArray.optInt(AppConstants.RANGE_MAX);
 
                             if (getAnswerMinMaxvalidation(questionId) != "noval") {
@@ -1266,7 +1423,7 @@ public class DynamicQuestions {
                                     }
                                 }
 
-                            }
+                            }*/
 //                            }
 
                         }
