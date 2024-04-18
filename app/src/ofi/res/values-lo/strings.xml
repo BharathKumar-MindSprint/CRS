@@ -1005,7 +1005,7 @@
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
     <string name="metrics">me trik:</string>
     <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
-    <string name="advanced_filters">ຕົວກອງຂັ້ນສູງ</string>
+    <string name="advanced_filters"><u>ຕົວກອງຂັ້ນສູງ</u></string>
     <string name="spinner_partner_default">ຄູ່ຮ່ວມງານ</string>
     <string name="spinner_programme_default">ໂຄງການ</string>
     <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>

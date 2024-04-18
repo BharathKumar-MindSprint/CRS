@@ -660,7 +660,7 @@
     <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
     <string name="metrics">Ölçüm:</string>
     <string name="converted_metrics">Dönüştürülen metrikler</string>
-    <string name="advanced_filters">Gelişmiş filtreler</string>
+    <string name="advanced_filters"><u>Gelişmiş filtreler</u></string>
     <string name="spinner_partner_default">Ortak</string>
     <string name="spinner_programme_default">programı</string>
     <string name="view_farmer_information"><u>Çiftçi Bilgilerini Görüntüle</u></string>
