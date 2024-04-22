@@ -826,7 +826,7 @@
     <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
     <string name="metrics">Métricas:</string>
     <string name="converted_metrics">Métricas convertidas</string>
-    <string name="advanced_filters">Filtros avançados</string>
+    <string name="advanced_filters"><u>Filtros avançados</u></string>
     <string name="spinner_partner_default">Parceiro</string>
     <string name="spinner_programme_default">Programa</string>
     <string name="view_farmer_information"><u>Ver informações do agricultor</u></string>

@@ -751,7 +751,7 @@
     <string name="please_update_the_certification_of_farmer">Pord prạbprung bırạbrxng k̄hxng kes̄ʹtrkr</string>
     <string name="metrics">วัด:</string>
     <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
-    <string name="advanced_filters">ตัวกรองขั้นสูง</string>
+    <string name="advanced_filters"><u>ตัวกรองขั้นสูง</u></string>
     <string name="spinner_partner_default">พันธมิตร</string>
     <string name="spinner_programme_default">โปรแกรม</string>
     <string name="view_farmer_information"><u>Dū k̄ĥxmūl kes̄ʹtrkr</u></string>

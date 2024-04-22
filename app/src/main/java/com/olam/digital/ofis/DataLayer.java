@@ -10297,10 +10297,19 @@ public class DataLayer {
             } else {
                 whereClause += " AND ";
             }
-            String certifications = selectedCertifications.toString().replace("[", "")
-                    .replace("]", "");
-            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID
-                    + " IN( " + certifications + ")";
+            String[] certifications = selectedCertifications.toString().replace("[", "")
+                    .replace("]", "").replace(" ", "").split(",");
+            whereClause += "(" + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID
+                    + " LIKE '%";
+
+            for (int i = 0; i < certifications.length; i++) {
+                if (i == certifications.length - 1) {
+                    whereClause += certifications[i] + "%')";
+                } else {
+                    whereClause += certifications[i] + "%' OR " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID
+                            + " LIKE '%";
+                }
+            }
         }
         
         String sql =  "select distinct(farmers.id) as _id, " +
