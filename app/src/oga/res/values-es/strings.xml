@@ -153,6 +153,8 @@
     <string name="spinner_farmergroup_view_farmer">grupo de agricultores</string>
     <string name="spinner_section_view_farmer">sección</string>
     <string name="spinner_product_view_farmer">producto</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrito</string>
+    <string name="spinner_age_view_farmer">edad</string>
 
     <string-array name="poitypes">
         <item>Centro Escolar</item>

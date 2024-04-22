@@ -47,6 +47,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private CustomListAdapter_Farmer customListAdapter_farmerAdapter;
     private EditText ed;
     private TextView advancedFilter;
+    private LinearLayout farmerTopSection;
     private MultiSpinnerSearch farmerGroupSpinner, sectionSpinner, regionSpinner, districtSpinner, placeSpinner, partnerSpinner, programSpinner,certificationSpinner;
 
     private Spinner countrySpinner, productSpinner;
@@ -132,6 +133,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         certificationSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_certification);
         advancedFilter = (TextView) findViewById(R.id.advancedFilters);
         advancedFilterLayout = (LinearLayout) findViewById(R.id.advancedFilterLayout);
+        farmerTopSection = (LinearLayout) findViewById(R.id.topSection);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         ed.setFilters(new InputFilter[] { filter });
@@ -169,6 +171,13 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         boolean visibilityresult = advancedFilterLayout.getVisibility() == View.GONE;
         advancedFilter.setCompoundDrawablesWithIntrinsicBounds(0, 0, visibilityresult ? R.drawable.ic_task_drop_down_expand : R.drawable.ic_drop_down_collapse , 0);
         advancedFilterLayout.setVisibility(visibilityresult ? View.VISIBLE : View.GONE);
+        if (visibilityresult){
+            farmerTopSection.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f));
+
+        }else {
+            farmerTopSection.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.25f));
+
+        }
     }
 
     private void showFarmerList() {
