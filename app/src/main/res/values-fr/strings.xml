@@ -1092,7 +1092,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
-    <string name="advanced_filters">Filtres avancés</string>
+    <string name="advanced_filters"><u>Filtres avancés</u></string>
     <string name="spinner_partner_default">Partenaire</string>
     <string name="spinner_programme_default">Programme</string>
     <string name="view_farmer_information"><u>Afficher les informations sur l\'agriculteur</u></string>

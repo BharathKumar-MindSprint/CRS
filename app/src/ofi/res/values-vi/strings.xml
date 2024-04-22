@@ -749,7 +749,7 @@
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Số liệu đã chuyển đổi</string>
-    <string name="advanced_filters">Bộ lọc nâng cao</string>
+    <string name="advanced_filters"><u>Bộ lọc nâng cao</u></string>
     <string name="spinner_partner_default">Cộng sự</string>
     <string name="spinner_programme_default">Chương trình</string>
     <string name="view_farmer_information"><u>Xem thông tin nông dân</u></string>

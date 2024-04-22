@@ -1134,7 +1134,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
     <string name="please_update_the_certification_of_farmer">Please update the Certification of farmer</string>
-    <string name="advanced_filters">Advanced Filters</string>
+    <string name="advanced_filters"><u>Advanced Filters</u></string>
     <string name="spinner_partner_default">Partner</string>
     <string name="spinner_programme_default">Programme</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
