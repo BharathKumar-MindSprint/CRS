@@ -528,7 +528,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if(!phonenumberinfo.toString().equals("")){
                         phonenumberinfo.append("\n");
                     }
-                    phonenumberinfo.append("+").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                    phonenumberinfo.append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
                 }
             }
             genderInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
