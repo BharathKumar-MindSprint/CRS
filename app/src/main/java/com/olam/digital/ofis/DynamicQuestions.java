@@ -8249,7 +8249,7 @@ public class DynamicQuestions {
                 final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
 
                 ArrayList<String> repeatOptions = new ArrayList<>(maxrepeats);
-                for (int i = 0; i < maxrepeats; i++) {
+                for (int i = 0; i <= maxrepeats; i++) {
                     /*if (zeroAcceptable){
                         if (!repeatOptions.contains("0")){
                             repeatOptions.add("0");
