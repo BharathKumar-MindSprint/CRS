@@ -1001,7 +1001,7 @@
     <string name="certification_name">su kanyangyun</string>
     <string name="select_certification">leuok kanyangyun</string>
     <string name="please_update_the_certification_of_farmer">kaluna abded kanyangyun khongsauakasikon</string>
-    <string name="view_farmer_information">boeng khomun sauakasikon</string>
+    <string name="view_farmer_information"><u>boeng khomun sauakasikon</u></string>
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
