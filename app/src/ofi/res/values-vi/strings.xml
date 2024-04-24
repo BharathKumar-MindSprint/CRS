@@ -666,7 +666,7 @@
     <string name="biometric_licence_deactivation_queue">Hủy kích hoạt giấy phép sinh trắc học</string>
     <string name="face_recognizion">Nhận dạng khuôn mặt</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Diện tích đa giác được ghi nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng thử ghi lại đa giác</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -674,7 +674,7 @@
     <string name="direct_greater_lesser_error">Please enter value of question %1$d above %2$d or below %3$d</string>
     <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>
     <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>
-    <string name="common_survey_config_error">Survey config error. Please check the display config</string>
+    <strifng name="common_survey_config_error">Survey config error. Please check the display config</strifng>
     <string name="restriction_in_submodules">Vui lòng trả lời tất cả các câu hỏi bắt buộc để tiếp tục</string>
     <string name="please_respond_mandatory_question">Vui lòng trả lời câu hỏi bắt buộc</string>
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
