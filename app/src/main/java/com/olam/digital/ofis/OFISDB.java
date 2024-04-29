@@ -1182,16 +1182,6 @@ class OFISDB extends SQLiteOpenHelper {
 
             // Add farmerId in geoplot data
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID +" TEXT default null");
-
-            /*sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME +" ADD COLUMN " + "answer_decimal_copy TEXT default null");
-            sqLiteDatabase.execSQL(" UPDATE " + OFISDBContract.AnswerEntry.TABLE_NAME +" SET answer_decimal_copy = " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL);
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " DROP COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL);
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " RENAME " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL +" TO answer_decimal_copy");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " DROP COLUMN answer_decimal_copy");
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " CHANGE COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " TEXT NULL default null");
-             */
-
         }catch (Exception e){
             e.printStackTrace();
         }
