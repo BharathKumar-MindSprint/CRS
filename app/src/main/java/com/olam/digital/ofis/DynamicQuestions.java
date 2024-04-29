@@ -3505,16 +3505,19 @@ public class DynamicQuestions {
                             editText.setError(context.getString(R.string.alert_review));
                         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint), startLimit, endLimit));
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    int vr_min = rangeArray.optInt("vr_min");
-                                    int vr_max = rangeArray.optInt("vr_max");
-                                    if (vr_min > inputNumber || inputNumber > vr_max) {
-                                        editText.setError(context.getString(R.string.alert_review));
+
+                            if (inputNumber >= startLimit && inputNumber <= endLimit){
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int vr_min = rangeArray.optInt("vr_min");
+                                        int vr_max = rangeArray.optInt("vr_max");
+                                        if (vr_min > inputNumber || inputNumber > vr_max) {
+                                            editText.setError(context.getString(R.string.alert_review));
+                                        }
                                     }
-                                }
-                            }, 1000);
+                                }, 1000);
+                            }
 
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint), startLimit, endLimit));
@@ -3943,17 +3946,21 @@ public class DynamicQuestions {
                             editText.setError(context.getString(R.string.alert_review));
                         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    double vr_min = rangeArray.optDouble("vr_min");
-                                    double vr_max = rangeArray.optDouble("vr_max");
-                                    if (vr_min > input || input > vr_max) {
-                                        editText.setError(context.getString(R.string.alert_review));
 
+                            if (input >= minValue && input <= maxValue){
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        double vr_min = rangeArray.optDouble("vr_min");
+                                        double vr_max = rangeArray.optDouble("vr_max");
+                                        if (vr_min > input || input > vr_max) {
+                                            editText.setError(context.getString(R.string.alert_review));
+
+                                        }
                                     }
-                                }
-                            }, 3000);
+                                }, 3000);
+                            }
+
 
                         } else {
                             editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
