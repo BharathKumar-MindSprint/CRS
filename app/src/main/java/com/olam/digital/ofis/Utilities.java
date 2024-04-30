@@ -101,6 +101,9 @@ public class Utilities {
     public static String CONSENTERROR = "Error in saving FarmerConsent";
     public static String NID_ERROR = "This national ID has already been added to the farmer";
 
+    // OW-4529 Fix
+    public static String DUPLICATE_ERROR = "Dupicate survey entry";
+
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
     try {

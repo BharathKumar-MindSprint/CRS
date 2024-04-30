@@ -2147,7 +2147,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 if (response != null) {
                                                     JSONArray errorObj = response.getJSONArray("errors");
                                                     String errorItem = (String) errorObj.get(0);
-                                                    if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)) {
+                                                    // OW-4529 Fix
+                                                    if (errorItem.equalsIgnoreCase(Utilities.DUPLICATE_ERROR)) {
                                                         // Do the Activity if the duplicate entry is there
                                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                                         dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate, finalFarmId, finalPlotId);
@@ -2155,7 +2156,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         // Update the message
                                                         statusMessage = res.getString(R.string.item_synced);
                                                         msg.obj = statusMessage;
+                                                        msg.what = 9;
                                                         handler.dispatchMessage(msg);
+                                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                popupMsgInfo(res.getString(R.string.duplicate_survey));
+                                                            }
+                                                        });
                                                     } else if (response.getInt("statusCode") == 3035) {
 
                                                         statusMessage = res.getString(R.string.item_synced);
