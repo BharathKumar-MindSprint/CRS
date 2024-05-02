@@ -1108,7 +1108,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                                 sipPolygonIntent.putExtra("SIP_UPLOAD_ID", sip_polygon_upload_id);
                             }
 
-                            //recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+                            sipPolygonIntent.setAction(Intent.ACTION_DEFAULT);
                             startActivity(sipPolygonIntent);
                         }else {
                             Toast.makeText(AddInfrastructureActivity.this,"Please provide the Sip Name",Toast.LENGTH_SHORT).show();
