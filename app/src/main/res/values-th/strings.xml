@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">ยืนยัน</string>
     <string name="place_name_not_unique">ชื่อนี้ถูกใช้งานแล้ว กรุณาเลือกชื่อใหม่</string>
     <string name="title_activity_record_polygon">บันทึกขอบเขตพื้นที่</string>
+    <string name="title_activity_record_sip_polygon">บันทึกรูปหลายเหลี่ยม SIP</string>
     <string name="loading">"กำลังโหลด "</string>
     <string name="wait">โปรดรอสักครู่</string>
     <string name="save_button_text">บันทึก</string>

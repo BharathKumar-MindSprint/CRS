@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">Konfirmasi</string>
     <string name="place_name_not_unique">Nama tempat ini telah terdaftar di kecamatan. Mohon pilih nama yang telah terdaftar di list</string>
     <string name="title_activity_record_polygon">"Mencatat poligon plot "</string>
+    <string name="title_activity_record_sip_polygon">Rekam poligon SIP</string>
     <string name="loading">"Sedang memuat "</string>
     <string name="wait">"Harap tunggu "</string>
     <string name="save_button_text">Simpan</string>
