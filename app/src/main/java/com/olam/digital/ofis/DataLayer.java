@@ -4437,6 +4437,11 @@ public class DataLayer {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
+        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+        String sortOrder = "CASE " +
+                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+                "ELSE " + orderBy + " + 2 " +
+                "END END";
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
@@ -4457,8 +4462,7 @@ public class DataLayer {
                 + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " AND "
                 + farmerQuery + " AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
                 + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? GROUP BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY " + sortOrder;
         String[] whereArgs = new String[]{
                 farmerQueryValue,
                 String.valueOf(farmerModuleId),

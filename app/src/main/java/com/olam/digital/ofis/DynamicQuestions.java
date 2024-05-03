@@ -1114,6 +1114,7 @@ public class DynamicQuestions {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
         textImgLayout.setOrientation(LinearLayout.HORIZONTAL);
+        textImgLayout.setWeightSum(2);
 //        combinedLayout.setPadding(16, 16, 16, 16);
 
 
@@ -1125,7 +1126,7 @@ public class DynamicQuestions {
         ImageView imageViewInfo = new ImageView(context);
         imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f
         ));
         imageViewInfo.setPadding(3, 0, 0, 0);
         imageViewInfo.setImageResource(R.drawable.info_icon);
