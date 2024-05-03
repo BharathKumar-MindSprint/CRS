@@ -399,6 +399,7 @@
     <string name="mm_transaction_confirm">ຢືນຢັນ</string>
     <string name="place_name_not_unique">ສະຖານທີ່ມີໃນເມືອງນັ້ນມີຊື່ວ່າ. ກະລຸນາໃຊ້ໃນສະຖານທີ່ທີ່ມີຢູ່ແລ້ວ.</string>
     <string name="title_activity_record_polygon">"ການບັນທຶກຕອນດິນ "</string>
+    <string name="title_activity_record_sip_polygon">ບັນທຶກ SIP polygon</string>
     <string name="loading">"ກຳລັງກວດສອບ "</string>
     <string name="wait">ກະລຸນາລໍຖ້າ</string>
     <string name="save_button_text">ບັນທຶກ</string>

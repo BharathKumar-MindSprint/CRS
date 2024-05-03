@@ -413,6 +413,7 @@
     <string name="mm_transaction_confirm">Onay</string>
     <string name="place_name_not_unique">Bu yer ismi bu bölgede daha önceden bulunmaktadır. Lütfen listeden mevcut yeri seçiniz.</string>
     <string name="title_activity_record_polygon">Bahçe poligonunu kaydet</string>
+    <string name="title_activity_record_sip_polygon">SIP poligonunu kaydet</string>
     <string name="loading">"Yükleniyor "</string>
     <string name="wait">Lütfen bekleyin</string>
     <string name="save_button_text">Kaydet</string>

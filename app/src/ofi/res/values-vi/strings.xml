@@ -413,6 +413,7 @@
     <string name="mm_transaction_confirm">Xác nhận</string>
     <string name="place_name_not_unique">Tên của địa điểm đã có trong quận/huyện này. Vui lòng chọn địa điểm hiện tại từ danh sách.</string>
     <string name="title_activity_record_polygon">Diện tích lô</string>
+    <string name="title_activity_record_sip_polygon">Ghi đa giác SIP</string>
     <string name="loading">"Đang tải "</string>
     <string name="wait">Xin chờ</string>
     <string name="save_button_text">Lưu</string>

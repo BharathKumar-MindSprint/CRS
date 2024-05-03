@@ -411,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirmar</string>
     <string name="place_name_not_unique">Este nombre de sitio ya existe dentro del distrito. Por favor seleccione el sitio existente de la lista</string>
     <string name="title_activity_record_polygon">Registrar polígono del lote</string>
+    <string name="title_activity_record_sip_polygon">Grabar polígono SIP</string>
     <string name="loading">"Cargando "</string>
     <string name="wait">Por favor espere</string>
     <string name="save_button_text">Guardar</string>

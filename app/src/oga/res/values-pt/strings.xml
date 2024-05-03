@@ -410,6 +410,7 @@
     <string name="mm_transaction_confirm">Confirme</string>
     <string name="place_name_not_unique">Esse local já existe nessa região, por favor selecione o local na lista</string>
     <string name="title_activity_record_polygon">"Gravar o trecho "</string>
+    <string name="title_activity_record_sip_polygon">Gravar polígono SIP</string>
     <string name="loading">"Carregando "</string>
     <string name="wait">Por favor aguarde</string>
     <string name="save_button_text">Salve</string>

@@ -48,7 +48,16 @@
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
         <activity
             android:name=".recordpolygon.RecordSipPolygon"
-            android:exported="false" />
+            android:label="@string/title_activity_record_sip_polygon"
+            android:parentActivityName=".AddInfrastructureActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="UnusedAttribute"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.AddInfrastructureActivity" />
+        </activity>
         <activity
             android:name=".recordpolygon.polygonhistory.PolygonHistory"
             android:exported="false" />
