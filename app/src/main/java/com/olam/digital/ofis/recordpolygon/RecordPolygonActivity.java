@@ -2125,7 +2125,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
-                if(! name.equalsIgnoreCase("null")){
+//                if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                     if (isSynced.equalsIgnoreCase("1")){
                         plotName.setEnabled(false);
@@ -2133,7 +2133,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     }else {
                         plotName.setEnabled(true);
                     }
-                }
+//                }
                 int count = getTotalLoggedPlotCount() + 1;
                 /*if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);

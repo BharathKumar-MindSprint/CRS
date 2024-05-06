@@ -528,7 +528,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if(!phonenumberinfo.toString().equals("")){
                         phonenumberinfo.append("\n");
                     }
-                    phonenumberinfo.append("+").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                    phonenumberinfo.append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
                 }
             }
             genderInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
@@ -1857,7 +1857,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
-                if(! name.equalsIgnoreCase("null")){
+//                if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                     if (isSynced.equalsIgnoreCase("1")){
                         plotName.setEnabled(false);
@@ -1865,7 +1865,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         plotName.setEnabled(true);
                     }
-                }
+//                }
                 int count = dl.fetchPlotData(String.valueOf(farmerId));
                 if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);
