@@ -9414,7 +9414,7 @@ public class DynamicQuestions {
                     }
                 }
             } else {
-                if (plots > 1 && plots < existingItemsSize) {
+                if (plots > 1 && plots <= existingItemsSize) {
                     for (int j = existingItemsSize; j >= plots; j--) {
                         densityPlotSection.removeViewAt(j - 1);
                     }
