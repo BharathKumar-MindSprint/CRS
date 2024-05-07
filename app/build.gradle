@@ -34,7 +34,7 @@ android {
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 186
-        versionName "11.7.6"
+        versionName "12.5.3"
 
 
 
