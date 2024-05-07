@@ -660,6 +660,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
             list.add(dmLookupValuesItemList.get(k).value);
+            list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesItemList.get(k).allowCustomActionPlan);
@@ -1258,6 +1259,22 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             case "tr" -> dmQuestionsModule.questionTr;
             case "vi" -> dmQuestionsModule.questionVi;
             default -> dmQuestionsModule.question;
+        };
+    }
+    public String getLookupValuebyLanguage(DmLookupValuesItem dmLookupValuesItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmLookupValuesItem.value;
+            case "es" -> dmLookupValuesItem.valueEs;
+            case "fr" -> dmLookupValuesItem.valueFr;
+            case "id" -> dmLookupValuesItem.valueId;
+            case "in" -> dmLookupValuesItem.valueId;
+            case "lo" -> dmLookupValuesItem.valueLo;
+            case "pt" -> dmLookupValuesItem.valuePt;
+            case "th" -> dmLookupValuesItem.valueTh;
+            case "tr" -> dmLookupValuesItem.valueTr;
+            case "vi" -> dmLookupValuesItem.valueVi;
+            default -> dmLookupValuesItem.value;
         };
     }
 }
