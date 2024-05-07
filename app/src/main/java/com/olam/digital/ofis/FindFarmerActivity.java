@@ -201,10 +201,10 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     {
         //Bind Countries
         Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+        dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_view_farmer, null, false);
 
         Cursor products = dl.getSpinnerData(OFISDBContract.ProductsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME);
-        dl.bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_default, null, false);
+        dl.bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_view_farmer, null, false);
 
         bindRegion();
         bindDistrict();
