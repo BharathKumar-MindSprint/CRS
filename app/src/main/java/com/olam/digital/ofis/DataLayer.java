@@ -4558,6 +4558,23 @@ public class DataLayer {
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    Cursor getAnswersForQuestionByFarmerRepeaterCheckbox(int questionId, long farmerId, long farmerModuleId, int repeaterItemPosition) {
+        String[] columns = new String[]{"*"};
+        String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery + " AND "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue,
+                String.valueOf(farmerModuleId),
+                String.valueOf(repeaterItemPosition)
+        };
+
+        return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
 
     Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, long farmerModuleId) {
         String[] columns = new String[]{"*"};

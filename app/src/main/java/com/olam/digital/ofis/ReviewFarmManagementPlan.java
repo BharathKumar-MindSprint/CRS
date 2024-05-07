@@ -393,7 +393,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                 String displayType = fmpBaselineQuestions.getString(fmpBaselineQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
                 if (displayType.toLowerCase().equals("checkbox")) {
-                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, 0, false);
+                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, 0, false, false, -1, null, 0);
                 } else if (displayType.toLowerCase().equals("datepicker")) {
                     dynamicQuestions.renderDatePickerQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                 } else if (displayType.toLowerCase().equals("decimal")) {
