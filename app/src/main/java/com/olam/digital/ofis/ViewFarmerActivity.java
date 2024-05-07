@@ -112,8 +112,6 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpR
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1320,7 +1318,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
 
                 for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-                    dmSurveyName = dmQuestionsModuleList.get(i).name;
+//                    dmSurveyName = dmQuestionsModuleList.get(i).nameFr;
+                    dmSurveyName = getNamesbyLanguage(dmQuestionsModuleList.get(i));
                     dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
                     moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
                     followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
@@ -3193,5 +3192,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
+    public String getNamesbyLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.name;
+            case "es" -> dmMainModule.nameEs;
+            case "fr" -> dmMainModule.nameFr;
+            case "id" -> dmMainModule.nameIdn;
+            case "in" -> dmMainModule.nameIdn;
+            case "lo" -> dmMainModule.nameLo;
+            case "pt" -> dmMainModule.namePt;
+            case "th" -> dmMainModule.nameTh;
+            case "tr" -> dmMainModule.nameTr;
+            case "vi" -> dmMainModule.nameVi;
+            default -> dmMainModule.name;
+        };
+
+    }
 
 }

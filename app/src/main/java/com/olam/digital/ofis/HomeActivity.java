@@ -1816,7 +1816,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Log.e("OD_AccessTOKEN", odAccessToken);
 
                     DownloadFormList("home");
-
+                    if (isEnableDM) {
+                        GetAllDiagnosticModule();
+                    }
                 } else if (response.code() == 400) {
                     progressDialog.hide();
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);

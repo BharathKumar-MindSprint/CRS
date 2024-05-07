@@ -35,6 +35,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
@@ -45,6 +46,7 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -165,6 +167,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         Constants.questionIds.clear();
         for (int m = 0; m < dmQuestionsModuleList.size(); m++) {
             DmQuestionsModule dmQuestionsModule = dmQuestionsModuleList.get(m);
+            dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -1241,7 +1244,22 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
     }
 
-
+    public String getNamesbyLanguage(DmQuestionsModule dmQuestionsModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.question;
+            case "es" -> dmQuestionsModule.questionEs;
+            case "fr" -> dmQuestionsModule.questionFr;
+            case "id" -> dmQuestionsModule.questionIdn;
+            case "in" -> dmQuestionsModule.questionIdn;
+            case "lo" -> dmQuestionsModule.questionLo;
+            case "pt" -> dmQuestionsModule.questionPt;
+            case "th" -> dmQuestionsModule.questionTh;
+            case "tr" -> dmQuestionsModule.questionTr;
+            case "vi" -> dmQuestionsModule.questionVi;
+            default -> dmQuestionsModule.question;
+        };
+    }
 }
 
 
