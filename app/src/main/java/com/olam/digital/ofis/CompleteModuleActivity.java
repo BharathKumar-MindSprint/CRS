@@ -596,7 +596,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                         noOtherQuestion = true;
-                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                         noOtherQuestion = true;
                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
@@ -667,7 +667,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                                 noOtherQuestion = true;
-                                dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+                                dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                                 noOtherQuestion = true;
                                 dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
@@ -1213,7 +1213,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                         if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                             noOtherQuestion = true;
-                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
+                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true, false, -1, null, 0);
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                             noOtherQuestion = true;
                             dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, true);
@@ -1270,7 +1270,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     } else {
                         if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                             noOtherQuestion = true;
-                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
+                            dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true, false, -1, null, 0);
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                             noOtherQuestion = true;
                             dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, true);
