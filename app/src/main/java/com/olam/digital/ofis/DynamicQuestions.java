@@ -355,11 +355,11 @@ public class DynamicQuestions {
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
 
-    private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable, Integer globalMetricId, Integer localMetricId, int metricsValue) {
+    private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable, Integer globalMetricId, Integer localMetricId, int metricsValue, final int repeaterItemPosition) {
 
         // New
         Iterator<JSONObject> iterator = answerSet.iterator();
-        while (iterator.hasNext()) {
+        /*while (iterator.hasNext()) {
             JSONObject currentAnswer = iterator.next();
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
@@ -367,7 +367,7 @@ public class DynamicQuestions {
                     iterator.remove();
                 }
             }
-        }
+        }*/
 
         // Old
 //        for (int i = 0; i < answerSet.size(); i++) {
@@ -380,16 +380,76 @@ public class DynamicQuestions {
 //            }
 //        }
 
-        int tableRows = questionTable.getChildCount();
+        if (repeaterItemPosition == -1) {
+            while (iterator.hasNext()) {
+                JSONObject currentAnswer = iterator.next();
+                if (currentAnswer != null) {
+                    int currentQuestionId = currentAnswer.optInt("question_id");
+                    if (currentQuestionId == questionId) {
+                        iterator.remove();
+                    }
+                }
+            }
+
+            int tableRows = questionTable.getChildCount();
+            for (int j = 0; j < tableRows; j++) {
+                TableRow tr = (TableRow) questionTable.getChildAt(j);
+                TextView cbId = (TextView) tr.findViewById(R.id.cbId);
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                if (cb.isChecked()) {
+                    saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
+                }
+            }
+        } else {
+            int count = 1;
+            if (answerSet != null) {
+                for (int i = 0; i < answerSet.size(); i++) {
+                    JSONObject currentAnswer = answerSet.get(i);
+                    if (currentAnswer != null) {
+                        if (currentAnswer.optInt("question_id") == questionId && currentAnswer.optInt("repeater_item_position") == repeaterItemPosition) {
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            if (count > 1) {
+                while (iterator.hasNext()) {
+                    JSONObject currentAnswer = iterator.next();
+                    if (currentAnswer != null) {
+                        int currentQuestionId = currentAnswer.optInt("question_id");
+                        int repeaterItemPositionSet = currentAnswer.optInt("repeater_item_position");
+                        if (currentQuestionId == questionId && repeaterItemPositionSet == repeaterItemPosition ) {
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+
+            int tableRows = questionTable.getChildCount();
+            for (int j = 0; j < tableRows; j++) {
+                TableRow tr = (TableRow) questionTable.getChildAt(j);
+                TextView cbId = (TextView) tr.findViewById(R.id.cbId);
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                if (cb.isChecked()) {
+                    saveAnswerEntry(questionId, Integer.parseInt((String) cbId.getText()), parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
+                }
+            }
+
+        }
+
+        /*int tableRows = questionTable.getChildCount();
         for (int j = 0; j < tableRows; j++) {
             TableRow tr = (TableRow) questionTable.getChildAt(j);
             TextView cbId = (TextView) tr.findViewById(R.id.cbId);
             CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
             if (cb.isChecked()) {
-                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
+                saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
             }
-        }
+        }*/
     }
 
     private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType, LinearLayout linearLayout, int repeaterItemPosition, Integer globalMetricId, Integer localMetricId, int metricsValue, Spinner spinner, Map<Integer, String> spinnerData, ArrayAdapter<String> spinnerAdapter, LinearLayout previewLayout, TextView contentTextView) {
@@ -6006,9 +6066,10 @@ public class DynamicQuestions {
     }
 
 
-    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, boolean isSavedAns) {
+    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, boolean isSavedAns, boolean isRepeaterItem, final int repeaterItemPosition, Cursor repeaterAnswers, final int parentQuestionId) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(questions, false, questionWrapper);
+        renderQuestion(questions, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
 
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
@@ -6045,7 +6106,11 @@ public class DynamicQuestions {
                 answerIdTemp = questions.getInt(questions.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
             }
         } else {
-            cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                cbAnswers = dl.getAnswersForQuestionByFarmerRepeaterCheckbox(questionId, farmerId, farmerModuleId, repeaterItemPosition);
+            } else {
+                cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            }
             if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 try {
                     answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
@@ -6418,6 +6483,7 @@ public class DynamicQuestions {
                                                 cb.setEnabled(false);
                                             }
                                             //End
+                                            // arch
                                             while (cbAnswers.moveToNext()) {
                                                 if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
                                                     cb.setChecked(true);
@@ -6536,7 +6602,7 @@ public class DynamicQuestions {
                                                 }
 
 
-                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+                                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
 
                                                 if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                     if (answerSet.size() != 0) {
@@ -6760,7 +6826,7 @@ public class DynamicQuestions {
                                                 }
 
 
-                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+                                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
 
                                                 if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                     if (answerSet.size() != 0) {
@@ -6991,7 +7057,7 @@ public class DynamicQuestions {
                                                         }
 
 
-                                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+                                                        saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
 
                                                         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                             if (answerSet.size() != 0) {
@@ -7191,7 +7257,7 @@ public class DynamicQuestions {
 
                                     }
 
-                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+                                    saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
                                 }
                             });
 
@@ -7318,7 +7384,7 @@ public class DynamicQuestions {
 
                                 }
 
-                                saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
                             }
                         });
 
@@ -7364,7 +7430,7 @@ public class DynamicQuestions {
             }
 
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, selectedGlobalID[0], selectedLocalID[0], 0);
+            saveMultipleAnswerEntry(questionId, parentQuestionId, datatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
         }
     }
 
@@ -7476,7 +7542,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0,-1);
                     }
                 });
 
@@ -7486,7 +7552,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0,-1);
         }
     }
 
@@ -7634,7 +7700,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
     }
 
@@ -7751,7 +7817,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+                        saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
                     }
                 });
 
@@ -7761,7 +7827,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
     }
@@ -7943,7 +8009,7 @@ public class DynamicQuestions {
                                                     }
                                                 }
 
-                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                             }
                                         });
 
@@ -8047,7 +8113,7 @@ public class DynamicQuestions {
                                                     }
                                                 }
 
-                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                             }
                                         });
 
@@ -8157,7 +8223,7 @@ public class DynamicQuestions {
                                                             }
                                                         }
 
-                                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                                     }
                                                 });
 
@@ -8235,7 +8301,7 @@ public class DynamicQuestions {
                                         clickedCb.setChecked(true);
                                     }
 
-                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                 }
                             });
 
@@ -8305,7 +8371,7 @@ public class DynamicQuestions {
                                     clickedCb.setChecked(true);
                                 }
 
-                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                             }
                         });
 
@@ -8389,7 +8455,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
     }
@@ -8675,7 +8741,7 @@ public class DynamicQuestions {
                                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                         renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                                        renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner, farmerId, farmerModuleId, false);
+                                        renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner, farmerId, farmerModuleId, false, true , i, repeaterAnswers, questionId);
                                     } else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
                                         renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId, false, i, repeaterAnswers, questionId);
                                     }
@@ -9679,7 +9745,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                     }
                 });
 
@@ -9689,7 +9755,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             parentLayout.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
     }
 
@@ -9948,7 +10014,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                     }
                 });
 
@@ -9958,7 +10024,7 @@ public class DynamicQuestions {
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0);
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
     }
