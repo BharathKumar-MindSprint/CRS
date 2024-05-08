@@ -151,9 +151,9 @@
     <!-- spinner values add -->
     <string name="spinner_country_view_farmer">país</string>
     <string name="spinner_region_view_farmer">região</string>
-    <string name="spinner_district_view_farmer">bairro/distrito/departamento</string>
+    <string name="spinner_district_view_farmer">distrito</string>
     <string name="spinner_place_view_farmer">local</string>
-    <string name="spinner_farmergroup_view_farmer">grupo de produtores/cooperativa</string>
+    <string name="spinner_farmergroup_view_farmer">grupo de agricultores</string>
     <string name="spinner_section_view_farmer">zona</string>
     <string name="spinner_product_view_farmer">produto</string>
     <string name="spinner_subdistrict_view_farmer">Sub distrito</string>
