@@ -313,7 +313,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
 
                                     //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
-                                    farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
 
                                     // Set Tag in edit Mode
                                     farmRoleSpinner.setTag(roleId);
@@ -380,7 +380,6 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                             for (int j = 0; j < length; j++) {
                                 try {
                                     String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
-
                                     String id=null;
                                     if (multifarmArray.getJSONObject(j).has("id")) {
                                         id = (multifarmArray.getJSONObject(j).getString("id"));
@@ -407,7 +406,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
 
                                     //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
-                                    farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
 
                                     // Set Tag in edit Mode
                                     farmRoleSpinner.setTag(roleId);
@@ -988,7 +987,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     // Allowing the Farmer and delete the farmer stakeholder
                     bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
                     bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                    farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
                     // Set Tag in edit Mode
                     farmRoleSpinner.setTag(roleId);
 
@@ -1201,5 +1200,17 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
     public void showSurvey() {
 
+    }
+
+    private int getIndexForFarmerRoleSpinnerList(String roleId) {
+        String localeSuffix = Utilities.getLocaleSuffix(res);
+        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
+        int id = Integer.parseInt(roleId);
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getId() == id) {
+                return i + 1;
+            }
+        }
+        return 0;
     }
 }
