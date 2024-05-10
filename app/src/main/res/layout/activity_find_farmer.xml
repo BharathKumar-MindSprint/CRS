@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/ofis_page_background"
     tools:context="com.olam.digital.ofis.FindFarmerActivity"
+    android:id="@+id/layout_find_farmer"
     tools:ignore="Overdraw">
 
     <LinearLayout
@@ -21,54 +23,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <!--        <LinearLayout-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent">-->
+
+        <TextView
+            android:id="@+id/pageTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:text="@string/Select_Farmer"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:text="@string/Select_Farmer"
-                android:id="@+id/pageTitle"
-                android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_large_text"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+        <!--        </LinearLayout>-->
 
         <!-- business groups -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+            android:layout_marginTop="@dimen/margin_10"
+            android:orientation="horizontal"
             android:paddingLeft="0dp"
-            android:paddingRight="0dp">
+            android:paddingRight="0dp"
+            android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
 
             <Spinner
+                android:id="@+id/spinner_country"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_farmerGroup"
-                android:layout_weight="1"
-                android:layout_marginLeft="0dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:nextFocusDown="@+id/spinner_section"
-                android:nextFocusForward="@+id/spinner_section"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
-                android:scaleType="center" />
+                android:nextFocusForward="@+id/spinner_section" />
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_section"
+                android:id="@+id/spinner_product"
                 android:layout_marginRight="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_weight="1"
@@ -78,219 +74,246 @@
         </LinearLayout>
         <!-- end business groups -->
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/ofis_edit_text_holo_dark">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:textColorHint="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:id="@+id/findFarmerSearchBox"
-                android:layout_weight="1"
-                android:textColor="@color/ofis_base_font_white"
-                android:hint="@string/Farmer_Name"
-                android:background="@android:color/transparent"/>
-            <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/imageButton"
-                android:layout_weight="8"
-                app:srcCompat="@drawable/ic_search"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/Search" />
-        </LinearLayout>
-
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/advanced_filters"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="4"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/findFarmerSearchBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:drawableRight="@drawable/ic_searchimg"
+                    android:drawablePadding="@dimen/margin_10"
+                    android:hint="@string/Farmer_Name"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_input_field_text" />
+
+                <ImageButton
+                    android:id="@+id/photoSearchButton"
+                    android:layout_width="@dimen/standard_button_width_height"
+                    android:layout_height="@dimen/standard_button_width_height"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:adjustViewBounds="false"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/Camera"
+                    android:padding="0dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_actionbutton_camera" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <TextView
             android:id="@+id/advancedFilters"
-            android:textColor="@color/ofis_base_font_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_10"
             android:clickable="true"
-            android:onClick="expandOrCollapse"
             android:drawableRight="@drawable/ic_drop_down_collapse"
-            android:textSize="@dimen/ofis_large_text"
-            android:visibility="gone"/>
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/advancedFilterLayout"
-            android:visibility="gone"
+            android:onClick="expandOrCollapse"
+            android:text="@string/advanced_filters"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text" />
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
-                android:layout_marginTop="@dimen/margin_10"
-                android:layout_weight="1"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp">
-
-                <!--<Spinner
-                    android:id="@+id/spinner_region"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"/>-->
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_region"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_region_default"/>
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_district"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_district_default"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/advancedFilterLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
-                android:layout_marginTop="@dimen/margin_10"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_place"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <!--<Spinner
+                        android:id="@+id/spinner_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="-5dp"
+                        android:dropDownWidth="300dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>-->
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_region_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_district_view_farmer" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="@dimen/margin_10"
                     android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_place_default"/>
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
 
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_partner"
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_place_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_partner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_partner_default" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="@dimen/margin_10"
                     android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_partner_default"/>
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
 
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_program"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_programme_default" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_farmerGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_farmergroup_view_farmer" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_section_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_certification"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/certification_name" />
+
+                </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
-                android:layout_marginTop="@dimen/margin_10"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp">
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_program"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_programme_default"/>
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/spinner_farmerGroup"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginRight="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_farmergroup_default"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
-                android:layout_marginTop="@dimen/margin_10"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp">
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_section"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/spinner_section_default"/>
-
-                <com.olam.digital.ofis.MultiSpinnerSearch
-                    android:id="@+id/spinner_certification"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="-5dp"
-                    android:dropDownWidth="300dp"
-                    android:layout_marginRight="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    app:hintText="@string/certification_name"/>
-
-            </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 
