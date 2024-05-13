@@ -1162,7 +1162,7 @@ public class DynamicQuestions {
     public void renderQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
         LinearLayout combinedLayout = new LinearLayout(getInstance().context);
         combinedLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
         combinedLayout.setOrientation(LinearLayout.VERTICAL);
@@ -1170,7 +1170,7 @@ public class DynamicQuestions {
 
         LinearLayout textImgLayout = new LinearLayout(getInstance().context);
         textImgLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
         textImgLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -1186,7 +1186,7 @@ public class DynamicQuestions {
         ImageView imageViewInfo = new ImageView(context);
         imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f
+                LinearLayout.LayoutParams.WRAP_CONTENT, 0.2f
         ));
         imageViewInfo.setPadding(3, 0, 0, 0);
         imageViewInfo.setImageResource(R.drawable.info_icon);

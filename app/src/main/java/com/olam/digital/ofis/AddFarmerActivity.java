@@ -46,6 +46,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -621,7 +622,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             // Allowing the Farmer and delete the farmer stakeholder
                             bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
                             bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                            farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                            farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
                             // Set Tag in edit Mode
                             farmRoleSpinner.setTag(roleId);
 
@@ -3521,7 +3522,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     // Allowing the Farmer and delete the farmer stakeholder
                     bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
                     bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                    farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
+
                     // Set Tag in edit Mode
                     farmRoleSpinner.setTag(roleId);
 
@@ -3728,6 +3730,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-
+    private int getIndexForFarmerRoleSpinnerList(String roleId) {
+        String localeSuffix = Utilities.getLocaleSuffix(res);
+        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
+        int id = Integer.parseInt(roleId);
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getId() == id) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
 
 }

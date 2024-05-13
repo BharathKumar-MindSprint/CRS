@@ -1526,6 +1526,35 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         e.printStackTrace();
                     }
                 }
+                 if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                     enabledItem.setText("false");
+                 }
+
+                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                 dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                 Date startDate = null;
+                 try {
+                     if(start_date_string!=null) {
+                         startDate = dateFormat.parse(start_date_string);
+                     }
+                 } catch (ParseException e) {
+                     e.printStackTrace();
+                 }
+
+                 Date currentDateNew = new Date();
+
+                 if (startDate!=null){
+                     if(currentDateNew.before(startDate)){
+                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                         enabledItem.setText("false");
+                     }
+                 }
 
             } else {
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -1534,8 +1563,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 enabledItem.setText("false");
                 enabledItem.setTag("hasfarm");
             }
-            
-            
         }
     }
 
