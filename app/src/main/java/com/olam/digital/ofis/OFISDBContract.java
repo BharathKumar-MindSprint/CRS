@@ -352,6 +352,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_PLOT_SURVEY = "isPlotSurvey";
         public static final String COLUMN_NAME_ROLE_ID = "fkFarmerRoleId";
         public static final String COLUMN_NAME_VIEW_MODULE = "view_module";
+        public static final String COLUMN_NAME_FARMER_ROLE_ID = "farmerRoleId";
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -369,6 +370,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ROLE_ID);
                     add(COLUMN_NAME_VIEW_MODULE);
                     add(COLUMN_NAME_IS_PLOT_SURVEY);
+                    add(COLUMN_NAME_FARMER_ROLE_ID);
                     add(COLUMN_NAME_COUNTRY_ID);
                 }}
         );
