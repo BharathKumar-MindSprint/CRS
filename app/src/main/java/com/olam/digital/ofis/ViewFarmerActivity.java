@@ -994,7 +994,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 if (farmSurvey){
                      modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
                             " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
                             " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
@@ -1014,7 +1014,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }else {
                      modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
                             " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
                             " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
@@ -1081,6 +1081,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "isFarmSurvey",
                         "view_module",
                         "fkFarmerRoleId",
+                        "farmerRoleId",
                         "farmer_module_id",
                         "status_started",
                         "status_finished",
@@ -1118,7 +1119,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "",
                         "",
-                        "",
+                        "","",
                         "", "", "",
                         "",
                         "",
@@ -1154,7 +1155,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "",
                         "",
-                        "","",
+                        "","","",
                         "", "", "",
                         "",
                         "farmpolygon"
@@ -1199,13 +1200,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 if (isHHAvailable) {
 
                     // add new record household location task
-                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "","", "", "", "", "", "","", "", "", res.getString(R.string.household_farmer)});
+                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "","", "", "", "","", "", "","", "", "", res.getString(R.string.household_farmer)});
                 }
 
                 MultiFarmUtils.isMultiFarmEnumerator = Utilities.getChildLabourPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
                 if (MultiFarmUtils.isMultiFarmEnumerator) {
                     // add new record for update multifarm
-                    mc.addRow(new String[]{"0", res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "", "",
+                    mc.addRow(new String[]{"0", res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "","", "",
                             "", "", "", "", "multifarm"});
 
                 }
@@ -1239,7 +1240,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "",
                         "",
-                        "", "", "",
+                        "", "", "", "",
                         "","",
                         "",
                         "Phone"
@@ -1258,14 +1259,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if (isSubdistrictCapture) {
                         if (selectedsubdistrict.equalsIgnoreCase("0")) {
                             // update farmers subdistrict
-                            mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "", "", "", "", "", "", "Subdistrict"});
+                            mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "","", "", "", "", "", "", "Subdistrict"});
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 // add update consent statement task
-                mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "","", "", "", "", "", "", "", "", "", Utilities.CONSENTSTATEMENT});
+                mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "","", "", "", "","", "", "", "", "", "", Utilities.CONSENTSTATEMENT});
 
                 // add e-signature for existing farmers
                 mc.addRow(new String[]{
@@ -1296,7 +1297,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "",
                         "",
-                        "",
+                        "","",
                         "", "", "",
                         "","",
                         "Signature"
@@ -1305,13 +1306,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
                 if (isNIDAvailable) {
 //         add national id information
-                    mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", "National_ID"});
+                    mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "","", "", "", "","", "", "National_ID"});
                 }
                 // add certification
                 if(db.certificationsDao().getCertifications().size()>0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
                             res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
-                            "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", res.getString(R.string.certification)});
+                            "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "","", "", "", "", "","", "", res.getString(R.string.certification)});
                 }
 
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
@@ -1359,7 +1360,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                            "", "", "", "", "", startDate, "",moduleID , "",
                             "",
                             "",
-                            "", "", "", "", "", "",moduleID , "",
+                            "", "", "","", "", "", "",moduleID , "",
                             "diagnostic"
                     });
 
@@ -1370,7 +1371,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
-                    mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "", "PlotSurvey"});
+                    mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey"});
                 }
                 Cursor fmp = dl.getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
@@ -1408,7 +1409,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             res.getString(R.string.review_farm_management_plan_hint),
                             res.getString(R.string.review_farm_management_plan_hint),
                             res.getString(R.string.review_farm_management_plan_hint),
-                            "", "", "", "", "",
+                            "", "", "", "", "","",
                             String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID))),
                             String.valueOf(fmpStarted),
                             String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_HAS_FEEDBACK))),
@@ -1450,7 +1451,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "",
                             "",
                             "",
-                            "", "", "",
+                            "","", "", "",
                             "","",
                             "",
                             ChildLabourUtils.REG_CHILD
@@ -1484,7 +1485,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "",
                             "",
                             "",
-                            "", "", "",
+                            "", "","", "",
                             "",
                             "","",
                             "",

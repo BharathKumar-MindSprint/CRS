@@ -15,7 +15,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 152;
+    private static final int DATABASE_VERSION = 153;
 
 
 
@@ -242,6 +242,7 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_VIEW_MODULE + " INTEGER, " +
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_PLOT_SURVEY + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_FARMER_ROLE_ID + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
 
     private static final String OFIS_FARMERMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerModulesEntry.TABLE_NAME
@@ -1036,6 +1037,9 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow151(sqLiteDatabase);
         }
 
+        if (oldVersion < 153) {
+            migrateFromVersionBelow152(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1182,6 +1186,16 @@ class OFISDB extends SQLiteOpenHelper {
 
             // Add farmerId in geoplot data
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID +" TEXT default null");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void migrateFromVersionBelow152(SQLiteDatabase sqLiteDatabase){
+
+        try{
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_FARMER_ROLE_ID +" TEXT default null");
         }catch (Exception e){
             e.printStackTrace();
         }

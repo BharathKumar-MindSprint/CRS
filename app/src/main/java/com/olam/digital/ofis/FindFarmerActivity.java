@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NavUtils;
 
 import android.text.Editable;
@@ -172,10 +174,10 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         advancedFilter.setCompoundDrawablesWithIntrinsicBounds(0, 0, visibilityresult ? R.drawable.ic_task_drop_down_expand : R.drawable.ic_drop_down_collapse , 0);
         advancedFilterLayout.setVisibility(visibilityresult ? View.VISIBLE : View.GONE);
         if (visibilityresult){
-            farmerTopSection.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f));
+            farmerTopSection.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 1000));
 
         }else {
-            farmerTopSection.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.25f));
+            farmerTopSection.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
 
         }
     }
@@ -199,10 +201,10 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     {
         //Bind Countries
         Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+        dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_view_farmer, null, false);
 
         Cursor products = dl.getSpinnerData(OFISDBContract.ProductsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME);
-        dl.bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_default, null, false);
+        dl.bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_view_farmer, null, false);
 
         bindRegion();
         bindDistrict();
