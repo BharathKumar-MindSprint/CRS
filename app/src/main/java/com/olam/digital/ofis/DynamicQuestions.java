@@ -951,8 +951,32 @@ public class DynamicQuestions {
                         String questionsString = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                         String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
+                        boolean questionFound = false;
+                        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                        final String questionAssignmentType = dl.getQuestionAssignmentTypeId(questionId);
+                        final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
+                        long farmerId = Utilities.farmerId;
+                        if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
+                            questionFound = true;
+                        } else {
+                            String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
+
+                            // Convert the string array to an integer array
+                            int[] intArrayQuestion = new int[stringArrayQuestion.length];
+                            for (int m = 0; m < stringArrayQuestion.length; m++) {
+                                intArrayQuestion[m] = Integer.parseInt(stringArrayQuestion[m]);
+                            }
+
+                            for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
+                                String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
+                                if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
+                                    questionFound =true;
+                                }
+                            }
+                        }
+
 //                        check the type only for calcualted question. Calculated question FRANKLIN
-                        if (!type.equalsIgnoreCase("Calculated")) {
+                        if (!type.equalsIgnoreCase("Calculated") && questionFound) {
                             questionList.add(Integer.parseInt(questionsString));
                         }
 
@@ -977,129 +1001,7 @@ public class DynamicQuestions {
                     }
                 }
 
-                /*String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
-                if (type.replaceAll(" ", "").toLowerCase().equals("textbox")){
-                    final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                    final String answerTypeForDatatype = dl.getAnswerTypeByQuestionID(questionId);
-                    final String datatype = dl.getAnswerTypeValue(Integer.parseInt(answerTypeForDatatype));
-
-                    if (datatype.equals("Numbers Only") || datatype.equals("Percentage")) {
-                        try{
-                            JSONObject displayConfigVal = new JSONObject();
-                            displayConfigVal = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                            if (displayConfigVal.has("display")){
-                                JSONObject displayVal = displayConfigVal.getJSONObject("display");
-                                String answerLimit = displayVal.get("answerLimit").toString();
-
-                                if (!answerLimit.equals("null")){
-                                    match = true;
-                                }else{
-
-                                    int min = 0, max =0;
-                                    String globally;
-                                    String assignmentType = "";
-                                    String assignmentField = "";
-
-                                    JSONArray range = displayVal.getJSONArray("range");
-                                    for(int i=0; i<range.length(); i++){
-                                        JSONObject rangeArray = range.getJSONObject(i);
-
-                                        globally = rangeArray.getString("globally");
-                                        assignmentType = rangeArray.getString("assignmentType");
-                                        assignmentField = rangeArray.getString("assignmentField");
-
-
-                                        String assignmentTypeColumn = "";
-
-                                        switch (assignmentType){
-                                            case "1" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                                break;
-                                            case "2" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                                break;
-                                            case "3" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                                break;
-                                            case "4" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                                break;
-                                            case "5" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                                break;
-                                            case "6" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                                break;
-                                            case "7" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                                break;
-                                            case "8" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                                break;
-                                            case "9" :
-                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                                break;
-                                        }
-
-                                        Resources res = null;
-                                        long farmerId = Utilities.farmerId;
-                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
-                                        if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
-                                            min = rangeArray.getInt("min");
-                                            max = rangeArray.getInt("max");
-
-                                            int ans = 0;
-                                            for (int j = 0; j < answerSet.size(); j++) {
-                                                JSONObject currentAnswer = answerSet.get(j);
-                                                if (currentAnswer != null) {
-                                                    int currentQuestionId = currentAnswer.optInt("question_id");
-                                                    if (currentQuestionId == questionId && currentAnswer.getString("datatype") == "int" ){
-                                                        ans  = currentAnswer.getInt("answer");
-                                                    }
-                                                }
-                                            }
-
-                                            if (min <=  ans && ans <= max) {
-                                                match = true;
-                                            }else {
-                                                Toast.makeText(context, res.getString(R.string.complete_in_range), Toast.LENGTH_LONG).show();
-                                                match = false;
-                                            }
-
-
-                                            break;
-                                        }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
-                                            min = rangeArray.getInt("min");
-                                            max = rangeArray.getInt("max");
-                                            int ans = 0;
-                                            for (int j = 0; j < answerSet.size(); j++) {
-                                                JSONObject currentAnswer = answerSet.get(j);
-                                                if (currentAnswer != null) {
-                                                    int currentQuestionId = currentAnswer.optInt("question_id");
-                                                    if (currentQuestionId == questionId && currentAnswer.getString("datatype") == "int" ){
-                                                        ans  = currentAnswer.getInt("answer");
-                                                    }
-                                                }
-                                            }
-
-                                            if (min <=  ans && ans <= max) {
-                                                match = true;
-                                            }else {
-                                                Toast.makeText(context, res.getString(R.string.complete_in_range), Toast.LENGTH_LONG).show();
-                                                match = false;
-                                            }
-                                        }
-                                    }
-
-                                }
-                            }
-
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }*/
             } while (questions.moveToNext());
         }
 
@@ -6483,7 +6385,6 @@ public class DynamicQuestions {
                                                 cb.setEnabled(false);
                                             }
                                             //End
-                                            // arch
                                             while (cbAnswers.moveToNext()) {
                                                 if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
                                                     cb.setChecked(true);
