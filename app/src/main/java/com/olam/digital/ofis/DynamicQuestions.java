@@ -3137,8 +3137,13 @@ public class DynamicQuestions {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (finalDatatype.equals("decimal") ) {
-                    int length = et.getText().length();
+                int length = et.getText().length();
+
+                if (finalDatatype.equals("int") ) {
+                    if (length > 9) {
+                        et.getText().delete(length - 1, length);
+                    }
+                }else if (finalDatatype.equals("decimal") ) {
                     if (length > 12) {
                         et.getText().delete(length - 1, length);
                     }

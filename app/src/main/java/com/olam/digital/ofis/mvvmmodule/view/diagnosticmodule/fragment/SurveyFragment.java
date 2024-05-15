@@ -659,7 +659,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
-            list.add(dmLookupValuesItemList.get(k).value);
             list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
