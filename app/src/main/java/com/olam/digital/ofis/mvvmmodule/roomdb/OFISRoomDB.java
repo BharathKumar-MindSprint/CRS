@@ -66,7 +66,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class},
-        version = 10)
+        version = 11)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";

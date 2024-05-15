@@ -33,8 +33,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 186
-        versionName "12.5.3"
+        versionCode 73
+        versionName "10.6.6"
 
 
 
