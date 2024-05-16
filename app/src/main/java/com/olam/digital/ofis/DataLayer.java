@@ -5280,9 +5280,8 @@ public class DataLayer {
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, multifarmArray.getJSONObject(j).get("responsibilities").toString());
                                 valuesList.add(values);
-
-
                             }
                         }
                     }
@@ -8089,8 +8088,9 @@ public class DataLayer {
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, multifarmArray.getJSONObject(j).get("responsibilities").toString());
+                        Log.d("mutlistakeholders", multifarmArray.getJSONObject(j).get("responsibilities").toString());
                         valuesList.add(values);
-
 
                     }
                 }
@@ -10351,6 +10351,16 @@ public class DataLayer {
                 + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
 
         return db.rawQuery(sql, null);
+    }
+
+    public Cursor getResponsibilityDataFromTable(String tableName, String language){
+        try {
+            return db.rawQuery("SELECT id," +  language  + " FROM " + tableName, null);
+        }
+        catch (Exception e) {
+            //if language column didn't found in the table, it will throw exception, so we will return english column values
+            return db.rawQuery("SELECT id, name FROM " + tableName, null);
+        }
     }
 
 }

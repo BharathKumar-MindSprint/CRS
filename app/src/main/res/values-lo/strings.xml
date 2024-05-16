@@ -929,5 +929,7 @@
     <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
     <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>
 
+    <string name="farmer_roles">bodbad sauakasikon</string>
+    <string name="select_level_of_responsibility">leuok khuaamhabphidsob</string>
 </resources>
 

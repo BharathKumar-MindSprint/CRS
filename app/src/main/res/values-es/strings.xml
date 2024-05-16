@@ -773,5 +773,7 @@
     <string name="edit_already_logged_plot">¡%1$s ya han iniciado sesión y guardado! ¿Quieres volver a grabar la misma trama?</string>
     <string name="save_polygon_alertdialog">¿Estás seguro de ahorrar %1$s ahora?</string>
 
+    <string name="farmer_roles">Roles de los agricultores</string>
+    <string name="select_level_of_responsibility">Seleccionar responsabilidad</string>
 </resources>
 

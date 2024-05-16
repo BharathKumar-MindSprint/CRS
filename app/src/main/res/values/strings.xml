@@ -1147,4 +1147,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="delete_plot">Delete Plot</string>
     <string name="delete_sip_polygon">Are you sure you want to delete saved polygon?</string>
 
+    <string name="select_level_of_responsibility">Select level of responsibility</string>
+    <string name="farmer_roles">Farmer Role</string>
 </resources>
