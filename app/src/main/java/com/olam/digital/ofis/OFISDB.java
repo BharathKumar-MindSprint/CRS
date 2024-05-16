@@ -1215,14 +1215,7 @@ class OFISDB extends SQLiteOpenHelper {
     private void migrateFromVersionBelow152(SQLiteDatabase sqLiteDatabase){
 
         try{
-            String tableName = "sipPlot";
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'", null);
-
-            if (cursor.getCount() == 0) {
-                sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
-            }
-
-            cursor.close();
+            sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
         }catch (Exception e){
             e.printStackTrace();
         }
