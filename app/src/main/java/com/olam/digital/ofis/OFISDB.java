@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -15,7 +16,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 152;
+    private static final int DATABASE_VERSION = 153;
 
 
 
@@ -1050,6 +1051,10 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow151(sqLiteDatabase);
         }
 
+        if (oldVersion < 153){
+            migrateFromVersionBelow152(sqLiteDatabase);
+        }
+
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1177,7 +1182,6 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT +" TEXT default null");
 
 
-            sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1207,6 +1211,25 @@ class OFISDB extends SQLiteOpenHelper {
         }
 
     }
+
+    private void migrateFromVersionBelow152(SQLiteDatabase sqLiteDatabase){
+
+        try{
+            String tableName = "sipPlot";
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'", null);
+
+            if (cursor.getCount() == 0) {
+                sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
+            }
+
+            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("drop table IF EXISTS modules;");
