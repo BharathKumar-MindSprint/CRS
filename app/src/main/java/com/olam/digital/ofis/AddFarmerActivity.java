@@ -3792,10 +3792,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         multiSpinnerSearch.setSearchEnabled(false);
 
         // If you will set the limit, this button will not display automatically.
-        multiSpinnerSearch.setShowSelectAllButton(true);
+        multiSpinnerSearch.setShowSelectAllButton(false);
 
         //A text that will display in clear text button
-        multiSpinnerSearch.setClearText("Clear");
+        multiSpinnerSearch.setClearText(null);
 
         //To set Title and placeholder for dropdown
         multiSpinnerSearch.setHintText(hintText);
