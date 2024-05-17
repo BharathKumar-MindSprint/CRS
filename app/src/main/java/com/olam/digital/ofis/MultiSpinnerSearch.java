@@ -148,6 +148,16 @@ public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelList
 		return selectedItemsIds;
 	}
 
+	public String getSelectedValues() {
+		StringBuilder selectedItemsIds = new StringBuilder();
+		for (KeyPairBoolData item : items) {
+			if (item.isSelected()) {
+				selectedItemsIds.append(item.getId()).append(",");
+			}
+		}
+		return selectedItemsIds.toString();
+	}
+
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		// refresh text on spinner
