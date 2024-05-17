@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">Xác nhận</string>
     <string name="place_name_not_unique">Tên của địa điểm đã có trong quận/huyện này. Vui lòng chọn địa điểm hiện tại từ danh sách.</string>
     <string name="title_activity_record_polygon">Diện tích lô</string>
+    <string name="title_activity_record_sip_polygon">Ghi đa giác SIP</string>
     <string name="loading">"Đang tải "</string>
     <string name="wait">Xin chờ</string>
     <string name="save_button_text">Lưu</string>
@@ -609,7 +610,7 @@
 
     <string name="allchilds_name">Tất cả tên của trẻ em (nếu có)</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Diện tích đa giác được ghi nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng thử ghi lại đa giác</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -662,7 +663,7 @@
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Số liệu đã chuyển đổi</string>
-    <string name="advanced_filters">Bộ lọc nâng cao</string>
+    <string name="advanced_filters"><u>Bộ lọc nâng cao</u></string>
     <string name="spinner_partner_default">Cộng sự</string>
     <string name="spinner_programme_default">Chương trình</string>
     <string name="view_farmer_information"><u>Xem thông tin nông dân</u></string>

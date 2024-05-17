@@ -3469,6 +3469,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 */
 
                 params.put("farm_id", 0);
+
+                // need to work
+                String sipPlotJson = dl.getPLotDataFromCategoryId(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
+                params.put("positionalData",sipPlotJson);
 //            params.put("Capacity", 0);
 //            params.put("Product_id", 0);
 
@@ -3513,6 +3517,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (postResponse.isSuccessful()) {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
+                            dl.deleteSipPlotItem(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
                             dl.deleteSipNetworkQueueItem(networkQueueItemId);
                             initGPSSync();
                             statusMessage = res.getString(R.string.item_synced);
@@ -3522,6 +3527,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             msg.obj = statusMessage;
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
+
+
                         } else {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, url, postResponse.code(), "Request : " + params.toString() + " Response  : " + postResponse.networkResponse().toString(), context);

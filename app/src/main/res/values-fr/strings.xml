@@ -411,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirme</string>
     <string name="place_name_not_unique">Ce lieu existe déjà dans ce district. Veuillez le sélectionner à partir de la liste s\'il vous plait.</string>
     <string name="title_activity_record_polygon">"Enregistrer un polygone de tracé"</string>
+    <string name="title_activity_record_sip_polygon">Enregistrer le polygone SIP</string>
     <string name="loading">"Chargement "</string>
     <string name="wait">"Patientez "</string>
     <string name="save_button_text">"sauvegarder "</string>
@@ -723,7 +724,7 @@
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
    <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+    <string name="zero_area_msg">La superficie du polygone enregistrée est inférieure à la superficie minimale configurée (0,0009 HA). Veuillez réessayer d\'enregistrer le polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -1094,7 +1095,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
-    <string name="advanced_filters">Filtres avancés</string>
+    <string name="advanced_filters"><u>Filtres avancés</u></string>
     <string name="spinner_partner_default">Partenaire</string>
     <string name="spinner_programme_default">Programme</string>
     <string name="view_farmer_information"><u>Afficher les informations sur l\'agriculteur</u></string>

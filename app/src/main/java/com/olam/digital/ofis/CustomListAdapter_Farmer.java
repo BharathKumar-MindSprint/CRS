@@ -88,8 +88,8 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
             String country_id = cursor.getString(cursor.getColumnIndex("country_id"));
             DataLayer dl = new DataLayer(res,context);
 
-            boolean isODOrigin = dl.isODOrigin(Integer.parseInt(country_id));
-         //   boolean isODOrigin=false;
+//            boolean isODOrigin = dl.isODOrigin(Integer.parseInt(country_id));
+            boolean isODOrigin=false;
 
             if(isODOrigin) {
                 String odidvalue = cursor.getString(cursor.getColumnIndex("odFarmerId"));

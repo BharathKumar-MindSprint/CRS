@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">Onay</string>
     <string name="place_name_not_unique">Bu yer ismi bu bölgede daha önceden bulunmaktadır. Lütfen listeden mevcut yeri seçiniz.</string>
     <string name="title_activity_record_polygon">Bahçe poligonunu kaydet</string>
+    <string name="title_activity_record_sip_polygon">SIP poligonunu kaydet</string>
     <string name="loading">"Yükleniyor "</string>
     <string name="wait">Lütfen bekleyin</string>
     <string name="save_button_text">Kaydet</string>
@@ -609,7 +610,7 @@
 
     <string name="allchilds_name">Tüm çocukların isimleri (uygun olduğu üzere)</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Kaydedilen çokgen alanı, yapılandırılan minimum alandan (0,0009 HA) azdır. Lütfen poligonu tekrar kaydetmeyi deneyin</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -662,7 +663,7 @@
     <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
     <string name="metrics">Ölçüm:</string>
     <string name="converted_metrics">Dönüştürülen metrikler</string>
-    <string name="advanced_filters">Gelişmiş filtreler</string>
+    <string name="advanced_filters"><u>Gelişmiş filtreler</u></string>
     <string name="spinner_partner_default">Ortak</string>
     <string name="spinner_programme_default">programı</string>
     <string name="view_farmer_information"><u>Çiftçi Bilgilerini Görüntüle</u></string>

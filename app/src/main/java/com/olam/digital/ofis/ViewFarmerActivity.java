@@ -112,8 +112,6 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpR
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -346,7 +344,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
         if (isNIDAvailable) {
             boolean available = dl.isValueavailable(farmerId);
-           if (!available) {
+            if (!available) {
                 statusInfoLayout.setVisibility(View.VISIBLE);
             } else {
                 statusInfoLayout.setVisibility(View.GONE);
@@ -626,7 +624,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     customListAdapter_modulesAdapter =
                             new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId,multiFarmId, isAtLeastOnePlotSurveyCaptured);
 
-                     // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
+                    // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
                     listView.setAdapter(customListAdapter_modulesAdapter);
                 }
             } catch (JSONException e) {
@@ -1012,6 +1010,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
                 }else {
+
                      modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
                             "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
@@ -1325,7 +1324,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
 
                 for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-                    dmSurveyName = dmQuestionsModuleList.get(i).name;
+//                    dmSurveyName = dmQuestionsModuleList.get(i).nameFr;
+                    dmSurveyName = getNamesbyLanguage(dmQuestionsModuleList.get(i));
                     dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
                     moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
                     followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
@@ -2119,7 +2119,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
                         if (mCurrentCapturedLocation != null) {
-                              collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
+                            collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
                         } else if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                             gpsTracker.getDeviceLocation();
                             return;
@@ -2481,7 +2481,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
         if (enabled.getText().toString().equalsIgnoreCase("true")) {
             if (id > 0) {
-               String mfFarmId  = dl.getMultifarmfarmId(farmerId);
+                String mfFarmId  = dl.getMultifarmfarmId(farmerId);
                 if (mfFarmId != null && MultiFarmUtils.isMultiFarmEnumerator) {
                     try {
                         showPopupFarmDetails(v, position, id, mfFarmId);
@@ -2718,31 +2718,31 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
 
 //        fetch multifarm details
-            MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
-            JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
-            if (multiFarmArray != null) {
-                for (int i = 0; i < multiFarmArray.length(); i++) {
-                    JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
+        MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
+        JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+        if (multiFarmArray != null) {
+            for (int i = 0; i < multiFarmArray.length(); i++) {
+                JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
 //            String farmerName=jsonobject.optString("farmerName");
-                    String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
-                    String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
-                    LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
-                    TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
-                    TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
-                    TextView farmerRole = includeFarmerList.findViewById(R.id.role);
-                    int farmerCount = i + 1;
-                    farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
-                    farmer_name.setText(farmerName);
-                    farmerRole.setText(role);
-                    farmerList.addView(includeFarmerList);
-                }
-
-                TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
-                TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
-                farmName.setText(multiFarmDTO.getFarmName());
-                farmCode.setText(multiFarmDTO.getFarmCode());
-
+                String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
+                String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
+                LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
+                TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
+                TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
+                TextView farmerRole = includeFarmerList.findViewById(R.id.role);
+                int farmerCount = i + 1;
+                farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
+                farmer_name.setText(farmerName);
+                farmerRole.setText(role);
+                farmerList.addView(includeFarmerList);
             }
+
+            TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
+            TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
+            farmName.setText(multiFarmDTO.getFarmName());
+            farmCode.setText(multiFarmDTO.getFarmCode());
+
+        }
 
         farmDetailDialog.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2794,7 +2794,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         farmDetailDialog.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 farmDetailDialog.dismiss();
+                farmDetailDialog.dismiss();
             }
         });
 
@@ -3198,5 +3198,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
+    public String getNamesbyLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.name;
+            case "es" -> dmMainModule.nameEs;
+            case "fr" -> dmMainModule.nameFr;
+            case "id" -> dmMainModule.nameIdn;
+            case "in" -> dmMainModule.nameIdn;
+            case "lo" -> dmMainModule.nameLo;
+            case "pt" -> dmMainModule.namePt;
+            case "th" -> dmMainModule.nameTh;
+            case "tr" -> dmMainModule.nameTr;
+            case "vi" -> dmMainModule.nameVi;
+            default -> dmMainModule.name;
+        };
+
+    }
 
 }

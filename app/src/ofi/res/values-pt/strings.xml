@@ -151,9 +151,9 @@
     <!-- spinner values add -->
     <string name="spinner_country_view_farmer">país</string>
     <string name="spinner_region_view_farmer">região</string>
-    <string name="spinner_district_view_farmer">bairro/distrito/departamento</string>
+    <string name="spinner_district_view_farmer">distrito</string>
     <string name="spinner_place_view_farmer">local</string>
-    <string name="spinner_farmergroup_view_farmer">grupo de produtores/cooperativa</string>
+    <string name="spinner_farmergroup_view_farmer">grupo de agricultores</string>
     <string name="spinner_section_view_farmer">zona</string>
     <string name="spinner_product_view_farmer">produto</string>
     <string name="spinner_subdistrict_view_farmer">Sub distrito</string>
@@ -411,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirme</string>
     <string name="place_name_not_unique">Esse local já existe nessa região, por favor selecione o local na lista</string>
     <string name="title_activity_record_polygon">"Gravar o trecho "</string>
+    <string name="title_activity_record_sip_polygon">Gravar polígono SIP</string>
     <string name="loading">"Carregando "</string>
     <string name="wait">Por favor aguarde</string>
     <string name="save_button_text">Salve</string>
@@ -786,7 +787,7 @@
     <string name="please_check_question">Por favor, verifique a pergunta</string>
     <string name="please_check_dependent_question">já que a questão sobre dependentes foi atualizada</string>
     <string name="national_id_info">Atualize o ID nacional do produtor</string>
-    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0.0009ha. Tente gravar um polígono diferente.</string>
+    <string name="zero_area_msg">A área do polígono registrada é menor que a área mínima configurada (0,0009 HA). Por favor, tente gravar o polígono novamente</string>
     <string name="direct_value_below_error">Insira o valor da pergunta %1$d abaixo de %2$d</string>
     <string name="direct_value_above_error">Insira o valor da pergunta %1$d acima de %2$d</string>
     <string name="direct_value_greater_than_error">Insira o valor da pergunta %1$d dentro ou igual a %2$d</string>
@@ -826,7 +827,7 @@
     <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
     <string name="metrics">Métricas:</string>
     <string name="converted_metrics">Métricas convertidas</string>
-    <string name="advanced_filters">Filtros avançados</string>
+    <string name="advanced_filters"><u>Filtros avançados</u></string>
     <string name="spinner_partner_default">Parceiro</string>
     <string name="spinner_programme_default">Programa</string>
     <string name="view_farmer_information"><u>Ver informações do agricultor</u></string>

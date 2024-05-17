@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">Konfirmasi</string>
     <string name="place_name_not_unique">Nama tempat ini telah terdaftar di kecamatan. Mohon pilih nama yang telah terdaftar di list</string>
     <string name="title_activity_record_polygon">"Mencatat poligon plot "</string>
+    <string name="title_activity_record_sip_polygon">Rekam poligon SIP</string>
     <string name="loading">"Sedang memuat "</string>
     <string name="wait">"Harap tunggu "</string>
     <string name="save_button_text">Simpan</string>
@@ -717,7 +718,7 @@
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
     <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
     <string name="national_id_info">Harap perbarui ID Nasional petani</string>
-    <string name="zero_area_msg">Tidak dapat menyimpan poligon yang direkam dengan 0.0009ha. Silakan coba merekam poligon yang berbeda</string>
+    <string name="zero_area_msg">Luas poligon yang tercatat kurang dari luas minimum yang dikonfigurasi (0,0009 HA). Silakan coba merekam poligon lagi</string>
     <string name="direct_value_below_error">Silakan masukkan nilai pertanyaan %1 d di bawah %2 d</string>
     <string name="direct_value_above_error">Silakan masukkan nilai pertanyaan %1 d di atas %2 d</string>
     <string name="direct_value_greater_than_error">Harap masukkan nilai pertanyaan %1 d di dalam atau sama dengan %2 d</string>
@@ -759,7 +760,7 @@
     <string name="metrics">Metrik:</string>
     <string name="converted_metrics">Metrik yang dikonversi</string>
     <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
-    <string name="advanced_filters">Filter tingkat lanjut</string>
+    <string name="advanced_filters"><u>Filter tingkat lanjut</u></string>
     <string name="spinner_partner_default">Mitra</string>
     <string name="spinner_programme_default">Program</string>
     <string name="view_farmer_information"><u>Lihat Informasi Petani</u></string>

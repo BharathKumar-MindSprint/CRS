@@ -412,6 +412,7 @@
     <string name="mm_transaction_confirm">ยืนยัน</string>
     <string name="place_name_not_unique">ชื่อนี้ถูกใช้งานแล้ว กรุณาเลือกชื่อใหม่</string>
     <string name="title_activity_record_polygon">บันทึกขอบเขตพื้นที่</string>
+    <string name="title_activity_record_sip_polygon">บันทึกรูปหลายเหลี่ยม SIP</string>
     <string name="loading">"กำลังโหลด "</string>
     <string name="wait">โปรดรอสักครู่</string>
     <string name="save_button_text">บันทึก</string>
@@ -608,7 +609,7 @@
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
     <string name="allchilds_name">ชื่อเด็กทั้งหมด (ตามความเหมาะสม)</string>
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Phụ̄̂nthī̀ rūp h̄lāy h̄elī̀ym thī̀ bạnthụk wị̂ n̂xy kẁā phụ̄̂nthī̀ thī̀ kảh̄nd kh̀ā k̄hận t̀ả (0.0009 HA) pord lxng bạnthụk rūp h̄lāy h̄elī̀ym xīk khrậng</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -661,7 +662,7 @@
     <string name="please_update_the_certification_of_farmer">Pord prạbprung bırạbrxng k̄hxng kes̄ʹtrkr</string>
     <string name="metrics">วัด:</string>
     <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
-    <string name="advanced_filters">ตัวกรองขั้นสูง</string>
+    <string name="advanced_filters"><u>ตัวกรองขั้นสูง</u></string>
     <string name="spinner_partner_default">พันธมิตร</string>
     <string name="spinner_programme_default">โปรแกรม</string>
     <string name="view_farmer_information"><u>Dū k̄ĥxmūl kes̄ʹtrkr</u></string>
