@@ -1973,15 +1973,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             subset_section.put("sub_answers", sub_answers);
                             answer.put("subset_section", subset_section);*/
                                     String datatypeID = "";
+                                    String displayTypeId = "";
+                                    String answerTypeId = "";
                                     String dataTypeName = "";
                                     String datatype = "";
 
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                    datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
                                         // use answerType
                                         try{
-                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
-                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(datatypeID));
+                                            answerTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(answerTypeId));
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
@@ -1994,8 +1997,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }else{
                                         // use displayType
                                         try{
-                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
-                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
+                                            displayTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(displayTypeId));
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
@@ -2005,18 +2008,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
                                     }
 
-                                    if (dataTypeName != null){
+                                    if (dataTypeName != null && datatypeID.equals("6")){
 
                                         if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
-                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")){
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
 
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
+                                            datatype = "decimal";
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -3462,6 +3469,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 */
 
                 params.put("farm_id", 0);
+
+                // need to work
+                String sipPlotJson = dl.getPLotDataFromCategoryId(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
+                params.put("positionalData",sipPlotJson);
 //            params.put("Capacity", 0);
 //            params.put("Product_id", 0);
 
@@ -3506,6 +3517,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (postResponse.isSuccessful()) {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
+                            dl.deleteSipPlotItem(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
                             dl.deleteSipNetworkQueueItem(networkQueueItemId);
                             initGPSSync();
                             statusMessage = res.getString(R.string.item_synced);
@@ -3515,6 +3527,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             msg.obj = statusMessage;
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
+
+
                         } else {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, url, postResponse.code(), "Request : " + params.toString() + " Response  : " + postResponse.networkResponse().toString(), context);
@@ -4212,6 +4226,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         try {
                             MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                             multiFarmArray = multiFarmDTO.getStakeholdersInfo();
+                            for (int i = 0; i < multiFarmArray.length(); i++) {
+                                // Get the JSON object at index i
+                                JSONObject jsonObjectId = multiFarmArray.getJSONObject(i);
+                                // Modify the value
+                                if (jsonObjectId.get("farmerId").equals(localFarmerId)) {
+                                    jsonObjectId.put("farmerId", 0);
+                                }
+                            }
                             jsonObject.put("multifarmStakeholder", multiFarmArray);
                             jsonObject.put("farmName", multiFarmDTO.getFarmName());
                             jsonObject.put("farmCode", multiFarmDTO.getFarmCode());

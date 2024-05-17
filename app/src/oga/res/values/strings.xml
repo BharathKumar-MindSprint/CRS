@@ -14,8 +14,8 @@
     <string name="title_activity_find_farmer">Find Farmer</string>
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
+    <string name="title_activity_record_sip_polygon">Record SIP polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
-    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
     <!-- main stuff -->
     <string name="app_name">Olam Agri Companion Debug</string>
@@ -146,7 +146,6 @@
     <string name="permission_permanent_denial_title">Permission was permanently denied</string>
     <string name="permission_permanent_denial_msg">Permission request is permanently denied. Please provide permissions from Application Settings.</string>
     <string name="go_to_settings_msg">Allow permission from application settings.\nGo to settings?</string>
-
     <!-- in XML -->
     <string name="Add_Farmer">Add Farmer</string>
     <string name="Farmer_Name">Farmer Name</string>
@@ -219,6 +218,17 @@
     <string name="spinner_farmergroup_default">Farmer Group</string>
     <string name="spinner_section_default">Section</string>
     <string name="spinner_product_default">Product</string>
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Country</string>
+    <string name="spinner_region_view_farmer">Region</string>
+    <string name="spinner_district_view_farmer">District</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrict</string>
+    <string name="spinner_place_view_farmer">Place</string>
+    <string name="spinner_farmergroup_view_farmer">Farmer Group</string>
+    <string name="spinner_section_view_farmer">Section</string>
+    <string name="spinner_product_view_farmer">Product</string>
+    <string name="spinner_age_view_farmer">Age</string>
 
     <string-array name="poitypes">
         <item>School</item>
@@ -481,6 +491,7 @@
     <string name="untick_task_msg">Please confirm you would like to mark this task as incomplete?</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
     <string name="loggin_In">Logging In</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
@@ -731,7 +742,7 @@
     <string name="face_recognizion">Face Recognition</string>
 
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Recorded polygon area is less than the minimum configured area (0.0009 HA). Please try recording the polygon again</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -1094,10 +1105,15 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
-    <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
+    <string name="alert_review_hint">Please enter value within the range %1$d - %2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
-    <string name="alert_review_hint_decimal">Please enter the value within the range %.2f-%.2f</string>
+    <string name="alert_review_hint_decimal">Please enter value within the range %.2f - %.2f</string>
     <string name="range_hint_A_R_decimal">Range : %.2f-%.2f</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
+    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
+    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to re-record the same plot again ?</string>
+    <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
+    <string name="delete_sip_polygon">Are you sure you want to delete saved polygon?</string>
+
 </resources>

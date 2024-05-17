@@ -13,6 +13,7 @@ public class ScreenNameConstants {
     public static final String SCREEN_TRAINING_RECORDS_ACTIVITY="TrainingRecords Activity";
     public static final String SCREEN_VIEW_FARMER_ACTIVITY = "ViewFarmer Activity";
     public static final String SCREEN_RECORD_POLYGON_ACTIVITY = "RecordPolygon Activity";
+    public static final String SCREEN_RECORD_SIP_POLYGON_ACTIVITY = "Record SIP Polygon Activity";
     public static final String SCREEN_ADD_NATIONAL_ID_ACTIVITY = "AddNationalid Activity";
     public static final String SCREEN_COMPLETE_MODULE_ACTIVITY = "CompleteModule Activity";
     public static final String SCREEN_REGISTER_CHILD_ACTIVITY = "RegisterChild Activity";
@@ -36,6 +37,7 @@ public class ScreenNameConstants {
     public static final String SCREEN_TRAINING_RECORDS="Training Records Screen";
     public static final String SCREEN_VIEW_FARMER="View Farmer Screen";
     public static final String SCREEN_RECORD_PLOT_POLYGON="Record Plot Polygon Screen";
+    public static final String SCREEN_RECORD_SIP_PLOT_POLYGON="Record SIP Plot Polygon Screen";
     public static final String SCREEN_ADD_NATIONAL_ID = "View National ID Screen";
     public static final String SCREEN_COMPLETE_QUESTIONARE = "Complete Questionnare Screen";
     public static final String SCREEN_REGISTER_CHILD = "Register Child Screen";
@@ -70,6 +72,8 @@ public class ScreenNameConstants {
     public static final String BUTTON_ADD_NATIONAL_ID = "National ID Button";
     public static final String BUTTON_NATIONAL_ID_PHOTO = "National ID Photo Button";
     public static final String BUTTON_CERTIFICATION = "Certification Button";
+
+//    public static final String BUTTON_POLYGON_HISTORY = "Polygon History Button";
     public static final String BUTTON_SHOW_CONSENT = "Show Consent Button";
     public static final String BUTTON_HIDE_CONSENT = "Hide Consent Button";
     public static final String BUTTON_SAVE_FARMER = "Save Farmer Button";

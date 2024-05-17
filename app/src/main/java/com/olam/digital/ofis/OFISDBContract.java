@@ -167,6 +167,29 @@ public class OFISDBContract {
 
     }
 
+    public static abstract class SipPlot implements BaseColumns{
+        public static final String TABLE_NAME = "sipPlot";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_SIP_UPLOAD_ID = "sip_upload_id";
+        public static final String COLUMN_NAME_SIP_CATEGORY_ID = "sipCategoryId";
+        public static final String COLUMN_NAME_SIP_CATEGORY = "sipCategory";
+        public static final String COLUMN_NAME_SIP_NAME = "sipName";
+        public static final String COLUMN_NAME_IS_SYNCED = "isSynced";
+        public static final String COLUMN_NAME_SIP_PLOT = "sipPlot";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
+            add(COLUMN_NAME_ID);
+            add(COLUMN_NAME_SIP_UPLOAD_ID);
+            add(COLUMN_NAME_SIP_CATEGORY_ID);
+            add(COLUMN_NAME_SIP_CATEGORY);
+            add(COLUMN_NAME_SIP_NAME);
+            add(COLUMN_NAME_IS_SYNCED);
+            add(COLUMN_NAME_SIP_PLOT);
+        }
+
+        });
+
+    }
+
     public static abstract class SipGroupEntry implements BaseColumns {
         public static final String TABLE_NAME = "sipGroupMaster"; // sip_group Alies modules_sip
         public static final String COLUMN_NAME_ID = "id";
@@ -204,6 +227,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_MODULE_ID = "sipGroupId";
         //        public static final String COLUMN_NAME_POSITION = "position";
+        public static final String COLUMN_NAME_CAPTURE_SIP_POLYGON = "captureSipPolygon";
         public static final String COLUMN_NAME_NAME = "sipName";
         public static final String COLUMN_NAME_NAME_FR = "sipName_fr";
         public static final String COLUMN_NAME_NAME_ES = "sipName_es";
@@ -222,6 +246,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_MODULE_ID);
 //                    add(COLUMN_NAME_POSITION);
+                    add(COLUMN_NAME_CAPTURE_SIP_POLYGON);
                     add(COLUMN_NAME_NAME);
                     add(COLUMN_NAME_NAME_FR);
                     add(COLUMN_NAME_NAME_ES);
@@ -573,6 +598,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_OTHER_CHOICE = "otherChoice";
 
         public static final String COLUMN_NAME_METRIC = "metric";
+        public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE = "questionAssignmentType";
+        public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD = "questionAssignmentField";
 
 
 
@@ -616,6 +643,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_TYPE);
                     add(COLUMN_NAME_OTHER_CHOICE);
                     add(COLUMN_NAME_METRIC);
+                    add(COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE);
+                    add(COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD);
 
                 }}
         );
@@ -872,7 +901,7 @@ public class OFISDBContract {
         );
     }
 
-//    Consent Statement Table
+    //    Consent Statement Table
     public static abstract class ConsentStatementEntry implements BaseColumns {
         public static final String TABLE_NAME = "consentstatement";
         public static final String COLUMN_NAME_ID = "id";
@@ -885,7 +914,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ENUM_SIGN = "enumeratorConsentSignature";
         public static final String COLUMN_NAME_OLAM_FARMER_NAME = "olamfarmername";
         public static final String COLUMN_NAME_CONFIRMED_DATE = "confirmedDate";
-           public static final String COLUMN_NAME_OCCUPATION = "occupation";
+        public static final String COLUMN_NAME_OCCUPATION = "occupation";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -972,7 +1001,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_REGISTER_DATE = "registeredDate";
         //        for moderation - nationalid
         public static final String COLUMN_NAME_MODERATION_STATUS = "nidmoderation";
-//        OFHG-2 Household latlong
+        //        OFHG-2 Household latlong
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LAT = "householdLat";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LNG = "householdLng";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_ID = "householdId";
@@ -986,6 +1015,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT = "plot";
         public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
+        public static final String COLUMN_NAME_AGE = "age";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1024,6 +1054,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PROGRAMME_ID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_AGE);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1033,6 +1064,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLACE_ID);
                     add(COLUMN_NAME_SECTION_ID);
                     add(COLUMN_NAME_FARMER_NAME);
+                    add(COLUMN_NAME_GENDER);
                     add(COLUMN_NAME_OLAM_FARMER_ID);
                     add(COLUMN_NAME_WEBSITE_SUBMITTED_MODULES);
                     add(COLUMN_NAME_FARM_PRIMARY_LAT);
@@ -1052,6 +1084,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ODFARMERID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_PARTNER_ID);
+                    add(COLUMN_NAME_PROGRAMME_ID);
+                    add(COLUMN_NAME_AGE);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -1060,6 +1095,7 @@ public class OFISDBContract {
     public static abstract class PlotGeoData implements BaseColumns {
         public static final String TABLE_NAME = "plotgeodata";
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_PLOT_NAME = "plot_name";
         public static final String COLUMN_NAME_ENTEREDPLOT_NAME = "enteredPlotName";
         public static final String COLUMN_NAME_FARM_ID = "farm_id";
@@ -1069,6 +1105,7 @@ public class OFISDBContract {
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_PLOT_ID);
+                    add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_PLOT_NAME);
                     add(COLUMN_NAME_FARM_ID);
                     add(COLUMN_NAME_SERVER_ID);
@@ -1472,6 +1509,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
         public static final String COLUMN_NAME_PLOT_NAME = "plotName";
+        public static final String COLUMN_NAME_SIP_PLOT = "sipPlot";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1525,6 +1563,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
                     add(COLUMN_NAME_PLOT_NAME);
+                    add(COLUMN_NAME_SIP_PLOT);
                 }}
         );
 
@@ -2474,7 +2513,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_FARM_ID = "farm_id";
         public static final String COLUMN_NAME_EXISTING_FARM_TYPE = "farmType";
         public static final String COLUMN_NAME_RECORDED_PLOTS= "positionData";
-       // public static final String COLUMN_NAME_NAME_IS_FARM_AVAILABLE = "farm_available";
+        // public static final String COLUMN_NAME_NAME_IS_FARM_AVAILABLE = "farm_available";
         public static final String COLUMN_NAME_NAME_LATITUDE = "primary_lat";
         public static final String COLUMN_NAME_NAME_LONGITUDE = "primary_lng";
         public static final String COLUMN_NAME_NAME_STAKE_HOLDERS = "stakeHolders";

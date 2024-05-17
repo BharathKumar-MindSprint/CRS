@@ -148,6 +148,17 @@
     <string name="spinner_section_default">ເລືອກ​ຂະ​ແໜງ</string>
     <string name="spinner_product_default">ເລືອກ​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">​ປະ​ເທດ</string>
+    <string name="spinner_region_view_farmer">​ພື້ນ​ທີ່</string>
+    <string name="spinner_district_view_farmer">​ເມືອງ</string>
+    <string name="spinner_place_view_farmer">​ສະ​ຖານ​ທີ</string>
+    <string name="spinner_farmergroup_view_farmer">​ກຸ່ມ​ຊາວ​ສວນ</string>
+    <string name="spinner_section_view_farmer">​ຂະ​ແໜງ</string>
+    <string name="spinner_product_view_farmer">​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
+    <string name="spinner_subdistrict_view_farmer">meuong nyony</string>
+    <string name="spinner_age_view_farmer">ອາຍຸ</string>
+
     <string-array name="poitypes">
         <item>ໂຮງ​ຮຽນ</item><!-- sc -->
         <item>ສູນ​ການ​ແພ​ດ</item><!-- hc -->
@@ -387,6 +398,7 @@
     <string name="mm_transaction_confirm">ຢືນຢັນ</string>
     <string name="place_name_not_unique">ສະຖານທີ່ມີໃນເມືອງນັ້ນມີຊື່ວ່າ. ກະລຸນາໃຊ້ໃນສະຖານທີ່ທີ່ມີຢູ່ແລ້ວ.</string>
     <string name="title_activity_record_polygon">"ການບັນທຶກຕອນດິນ "</string>
+    <string name="title_activity_record_sip_polygon">ບັນທຶກ SIP polygon</string>
     <string name="loading">"ກຳລັງກວດສອບ "</string>
     <string name="wait">ກະລຸນາລໍຖ້າ</string>
     <string name="save_button_text">ບັນທຶກ</string>
@@ -640,7 +652,7 @@
     <string name="biometric_licence_deactivation_queue">ການຢຸດໃບອະນຸຍາດ Biometric</string>
     <string name="face_recognizion">ການຮັບຮູ້ໃບ ໜ້າ</string>
 
-<!--    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>-->
+<!--    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>-->
 <!--    <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>-->
 <!--    <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>-->
 <!--    <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>-->
@@ -757,7 +769,7 @@
     <string name="consent_statement">ຄຳສັ່ງ ຍິນຍອມ</string>
         <string name="Please_accept_consent">ທ່ານຕ້ອງຍອມຮັບການຍິນຍອມເພື່ອຊ່ວຍຊາວກະສິກອນ</string>
     <!--    <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>-->
-        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0.0009ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
+        <string name="zero_area_msg">ພື້ນທີ່ polygon ທີ່ບັນທຶກໄວ້ແມ່ນໜ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລອງບັນທຶກ polygon ອີກຄັ້ງ</string>
 
         <string name="direct_value_below_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງລຸ່ມ %2$d</string>
         <string name="direct_value_above_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງເທິງ %2$d</string>
@@ -959,5 +971,8 @@
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
+    <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>
+    <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
+    <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>
 
 </resources>

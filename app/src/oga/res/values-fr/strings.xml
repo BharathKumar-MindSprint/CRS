@@ -145,6 +145,17 @@
     <string name="spinner_section_default">Sélectionnez la section</string>
     <string name="spinner_product_default">Sélectionnez le produit</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">pays</string>
+    <string name="spinner_region_view_farmer">région</string>
+    <string name="spinner_district_view_farmer">quartier</string>
+    <string name="spinner_place_view_farmer">lieu</string>
+    <string name="spinner_farmergroup_view_farmer">organisation de planteurs</string>
+    <string name="spinner_section_view_farmer">section</string>
+    <string name="spinner_product_view_farmer">produit</string>
+    <string name="spinner_subdistrict_view_farmer">Sous-district</string>
+    <string name="spinner_age_view_farmer">âge</string>
+
     <string-array name="poitypes">
         <item>École</item>
         <item>Dispensaire</item>
@@ -400,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirme</string>
     <string name="place_name_not_unique">Ce lieu existe déjà dans ce district. Veuillez le sélectionner à partir de la liste s\'il vous plait.</string>
     <string name="title_activity_record_polygon">"Enregistrer un polygone de tracé"</string>
+    <string name="title_activity_record_sip_polygon">Enregistrer le polygone SIP</string>
     <string name="loading">"Chargement "</string>
     <string name="wait">"Patientez "</string>
     <string name="save_button_text">"sauvegarder "</string>
@@ -712,7 +724,7 @@
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
     <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+    <string name="zero_area_msg">La superficie du polygone enregistrée est inférieure à la superficie minimale configurée (0,0009 HA). Veuillez réessayer d\'enregistrer le polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -1075,4 +1087,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="range_hint_A_R_decimal">Gamme: %.2f-%.2f</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
+    <string name="no_internet_polygon">Veuillez activer Internet sur votre appareil pour afficher le polygone déjà capturé !</string>
+    <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
+    <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>
+
 </resources>

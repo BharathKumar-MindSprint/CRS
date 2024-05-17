@@ -149,6 +149,17 @@
     <string name="spinner_section_default">เลือกตำบล</string>
     <string name="spinner_product_default">เลือกสินค้า</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">ประเทศ</string>
+    <string name="spinner_region_view_farmer">จังหวัด</string>
+    <string name="spinner_district_view_farmer">อำเภอ</string>
+    <string name="spinner_place_view_farmer">ตำบล</string>
+    <string name="spinner_farmergroup_view_farmer">กลุ่มเกษตรกร</string>
+    <string name="spinner_section_view_farmer">ตำบล</string>
+    <string name="spinner_product_view_farmer">สินค้า</string>
+    <string name="spinner_subdistrict_view_farmer">Tảbl</string>
+    <string name="spinner_age_view_farmer">อายุ</string>
+
     <string-array name="poitypes">
         <item>โรงเรียน</item>
         <item>ศูนย์พยาบาล</item>
@@ -401,6 +412,7 @@
     <string name="mm_transaction_confirm">ยืนยัน</string>
     <string name="place_name_not_unique">ชื่อนี้ถูกใช้งานแล้ว กรุณาเลือกชื่อใหม่</string>
     <string name="title_activity_record_polygon">บันทึกขอบเขตพื้นที่</string>
+    <string name="title_activity_record_sip_polygon">บันทึกรูปหลายเหลี่ยม SIP</string>
     <string name="loading">"กำลังโหลด "</string>
     <string name="wait">โปรดรอสักครู่</string>
     <string name="save_button_text">บันทึก</string>
@@ -656,7 +668,7 @@
     <string name="biometric_licence_deactivation_queue">การปิดใช้งานใบอนุญาตไบโอเมตริกซ์</string>
     <string name="face_recognizion">การจดจำใบหน้า</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Phụ̄̂nthī̀ rūp h̄lāy h̄elī̀ym thī̀ bạnthụk wị̂ n̂xy kẁā phụ̄̂nthī̀ thī̀ kảh̄nd kh̀ā k̄hận t̀ả (0.0009 HA) pord lxng bạnthụk rūp h̄lāy h̄elī̀ym xīk khrậng</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -732,5 +744,9 @@
     <string name="range_hint_A_R_decimal">Phis̄ạy: %.2f-%.2f</string>
     <string name="metrics">วัด:</string>
     <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
+    <string name="no_internet_polygon">Pord peid chı̂ ngān xinthexr̒nĕt xupkrṇ̒ k̄hxng khuṇ pheụ̄̀x dū rūp h̄lāy h̄elī̀ym thī̀ bạnthụk wị̂ læ̂w!</string>
+    <string name="edit_already_logged_plot">%1$S k̄hêā s̄ū̀ rabb læa bạnthụk wị̂ læ̂w! Khuṇ t̂xngkār bạn thụk phl̆xt reụ̄̀xng deim xīk khrậng h̄rụ̄x mị̀?</string>
+    <string name="save_polygon_alertdialog">Khuṇ næ̀cı h̄rụ̄x ẁā cabạn thụk%1$s txn nī̂?</string>
+
 
 </resources>

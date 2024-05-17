@@ -15,9 +15,8 @@
     <string name="title_activity_view_farmer">Detail petani</string>
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
 
-
     <!-- main stuff -->
-    <string name="app_name">OFI Debug</string>
+    <string name="app_name">OFIS Debug</string>
     <string name="cd_topSectionColour">Latar berwarna untuk setiap bagian</string>
     <string name="ofis_switch_text_yes">Ya</string>
     <string name="ofis_switch_text_no">Tidak</string>
@@ -148,6 +147,17 @@
     <string name="spinner_farmergroup_default">Pilih Kelompok Tani</string>
     <string name="spinner_section_default">Pilih Bagian</string>
     <string name="spinner_product_default">Pilih produk</string>
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">negara</string>
+    <string name="spinner_region_view_farmer">Provinsi</string>
+    <string name="spinner_district_view_farmer">Kabupaten/Kota</string>
+    <string name="spinner_place_view_farmer">Desa/Kelurahan</string>
+    <string name="spinner_farmergroup_view_farmer">Kelompok Tani</string>
+    <string name="spinner_section_view_farmer">Bagian</string>
+    <string name="spinner_product_view_farmer">produk</string>
+    <string name="spinner_subdistrict_view_farmer">Kecamatan</string>
+    <string name="spinner_age_view_farmer">usia</string>
 
     <string-array name="poitypes">
         <item>Sekolah</item>
@@ -401,6 +411,7 @@
     <string name="mm_transaction_confirm">Konfirmasi</string>
     <string name="place_name_not_unique">Nama tempat ini telah terdaftar di kecamatan. Mohon pilih nama yang telah terdaftar di list</string>
     <string name="title_activity_record_polygon">"Mencatat poligon plot "</string>
+    <string name="title_activity_record_sip_polygon">Rekam poligon SIP</string>
     <string name="loading">"Sedang memuat "</string>
     <string name="wait">"Harap tunggu "</string>
     <string name="save_button_text">Simpan</string>
@@ -497,94 +508,79 @@
     <string name="downloading_child_data">Downloading Child Enumerator Details</string>
     <string name="no_child_registered">Register Child to enable the surveys</string>
     <string name="please_select_Age">Please select Age</string>
-    <string name="checking_biometric_enumerator">"Memeriksa Pencacah Biometrik "</string>
-    <string name="validating_facial_match">Memvalidasi pencocokan wajah</string>
-    <string name="back_to_registration">Kembali ke Pendaftaran</string>
-    <string name="no_duplicates_found">Tidak ada duplikat yang ditemukan</string>
-    <string name="moderation_info">Saat melanjutkan dengan pendaftaran baru, catatan duplikat yang terdaftar akan selalu dikirim untuk moderasi</string>
-    <string name="continue_biometric">Terus</string>
-    <string name="cancel_biometric">Batalkan</string>
-    <string name="mark_as_unique">Tandai sebagai Unik</string>
-    <string name="label_national_id">ID Nasional:</string>
-    <string name="label_country" >Negara:</string>
-    <string name="label_region">Provinsi:</string>
-    <string name="label_district">Kabupaten/Kota:</string>
-    <string name="label_place">Kecamatan:</string>
-    <string name="label_farmer_group">Kelompok Tani:</string>
-    <string name="title_duplicate_records">Rekaman Duplikat</string>
-    <string name="back_to_registration_info">Saat melanjutkan dengan pendaftaran baru, catatan duplikat yang terdaftar akan selalu dikirim untuk moderasi</string>
-    <string name="match">Pertandingan</string>
-    <string name="dob">Tanggal lahir</string>
-    <string name="view_farmer_info">Saat melanjutkan, catatan yang terdaftar akan dikirim untuk moderasi</string>
-    <string name="unique">Unik</string>
-    <string name="maximum_five_records">Hanya maksimal 5 rekaman yang dapat dipilih dalam satu waktu</string>
-    <string name="view_mark_as_unique_info">Rekaman akan dikirim untuk moderasi tingkat kedua. Bagaimanapun Anda akan diizinkan untuk melakukan aktivitas lebih lanjut</string>
-    <string name="update_biomatric">Perbarui Biometrik</string>
-    <string name="update_biomatric_hint">Tekan untuk perbarui</string>
-    <string name="farmer_photo_validation">Silakan unggah foto petani</string>
-    <string name="label_duplicate_found">Duplikat ditemukan</string>
-    <string name="title_list_of_duplicates">Daftar Duplikat</string>
-    <string name="label_duplicate_records">Rekaman Duplikat</string>
-    <string name="label_section">Bagian:</string>
-    <string name="photo_not_matching">Foto tidak cocok</string>
-    <string name="updating_farmer_images">Memperbarui Citra Biometrik Petani</string>
 
-    <!-- OFI Consent Consent -->
     <string name="farmer_consent">PERSETUJUAN PETANI</string>
-    <string name="personal_info_collection">"PEMBERITAHUAN PENGUMPULAN INFORMASI PRIBADI "</string>
-    <string name="cs_page2_1">Kami dapat menggunakan dan membagikan data pribadi Anda seperti berikut</string>
-    <string name="cs_page2_2">Apakah Anda setuju? Silakan beri tanda centang “✔ “ atau tulis “ya”</string>
-    <string name="cs_page2_3">Mengisi Sistem Terkait ofi</string>
-    <string name="cs_page2_4">Kami dapat mengumpulkan Data Petani untuk mengisi sistem terkait ofi dimana data Anda dapat dikelola kemudian dianalisis untuk memberikan kami pandangan penting seperti tren dan isu yang memengaruhi rantai pasokan serta meningkatkan layanan kami kepada Anda dan pelanggan kami. Untuk melakukannya, karyawan ofi dan afiliasinya serta pemroses pihak ketiga tertentu akan memiliki akses ke Sistem terkait ofi tersebut dan Data Petani Anda. Data Petani Anda dapat dibagikan dengan afiliasi, mitra, dan pelanggan kami.</string>
-    <string name="cs_page2_5">Menyediakan Ketertelusuran untuk Pasar</string>
-    <string name="cs_page2_6">Kami dapat memembagikan Data petani yang Anda berikan pada kami dengan pelanggan dan mitra kami (yang juga dapat membagikan Data Petani dengan pelanggan dan mitra mereka) untuk memberikan pandangan penting tentang sumber makanan mereka dan pihak yang memproduksinya. Transparansi ini memungkinkan pembeli untuk membuat keputusan pembelian yang termaklum dan bertanggung jawab. Upaya ketertelusuran ini akan dibagikan kepada publik</string>
+    <string name="personal_info_collection">PEMBERITAHUAN PENGUMPULAN INFORMASI PRIBADI</string>
+    <string name="consent_statement_pageone2">Data pribadi Anda, termasuk nama, umur, informasi kontak (alamat surel, nomor telepon, alamat surat) foto, video atau rekam digital, informasi biografis, sosial dan geografis, finansial, pertanian dan informasi hasil, masukan dari Anda, dan bilamana sesuai, termasuk milik anak atau tanggungan Anda (“Data Petani”) akan dikumpulkan dan disimpan oleh kami dan akan tersedia bagi para pelanggan, mitra bisnis kami dan dalam beberapa kasus, akan tersedia bagi umum melalui laman, media sosial, publikasi elektronik atau tertulis Olam. Hal ini juga meliputi Sistem Informasi Petani Olam (“OFIS”) dan/atau platform AtSource (“AtSource”) yang merupakan pangkalan data dan perangkat daring yang berisikan data terkait petani yang digunakan oleh kami dan para pelanggan serta mitra kami. Bersama ini kami meminta Anda untuk mengetahui dan memberikan persetujuan bagi pengumpulan, penggunaan dan pengungkapan Data Pribadi Anda untuk Tujuan ini, sesuai dengan Pemberitahuan Pengumpulan Informasi Pribadi ini.</string>
+    <string name="consent_statement_pageone1">Dimintakan kepada Anda untuk memberikan kepada Olam International Limited (selanjutnya disebut sebagai “Olam,” “kami,” atau “kita”) data pribadi guna mendukung usaha-usaha Olam dalam mempromosikan keberlanjutkan dan pelacakan pada rantai pasokannya dan sebaliknya mempromosikan perdagangan yang bertanggung jawab dengan para petani seperti Anda sendiri di seluruh dunia (“Tujuan”).</string>
+    <string name="cs_page2_title">Penggunaan Data Pribadi</string>
+    <string name="cs_page2_1">Kami akan menggunakan dan membagikan Data Pribadi Anda sebagai berikut</string>
+    <string name="cs_page2_2">Anda setuju? Beri tanda“✔“ atau “ya” </string>
+    <string name="cs_page2_3">Mengisi OFIS dan pangkalan data Olam lainnya</string>
+    <string name="cs_page2_4">Kami akan mengumpulkan Data Petani untuk mengisi OFIS dan pangkalan data Olam lainnya di mana data Anda dapat diatur kemudian dianalisis guna memberi kami wawasan yang penting seperti tren dan isu-isu yang dapat mempengaruhi rantai pasokan. Guna melakukan hal tersebut, karyawan Olam serta anak perusahannya dan pemroses pihak ketiga tertentu akan memiliki akses ke Data Petani Anda. Pangkalan data ini dan informasi yang ada di dalamnya dapat dibagikan kepada afiliasi, mitra, dan para pelanggan kami.</string>
+    <string name="cs_page2_5">Menyediakan Pelacakan bagi Pasar</string>
+    <string name="cs_page2_6">Kami akan membagikan Data Petani yang Anda sediakan dengan para pelanggan dan mitra kami (yang juga akan membagikan Data Petani tersebut dengan para pelanggan dan mitra mereka) guna menyediakan wawasan tentang dari mana makanan mereka berasal dan siapa yang menghasilkannya. Transparansi ini memungkinkan para pembeli untuk mengambil keputusan pembelian yang terinformasi dan bertanggung jawab.</string>
     <string name="cs_page2_7">Trend and Issue Spotting</string>
-    <string name="cs_page2_8"> -----  </string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
     <string name="cs_page2_9">Penjualan dan Pengembangan Petani</string>
-    <string name="cs_page2_10">Kami dapat menggunakan Data Petani untuk melakukan bisnis dengan Anda dan membantu mengidentifikasi kesempatan bagi Anda menumbuhkan bisnis dan operasi Anda. Apabila diperlukan, kami dapat memberi Anda peluang untuk mendapatkan pembiayaan, mesin, saran manajemen, persediaan pertanian, dan asuransi, selain peluang penjualan - semua diberikan secara langsung oleh kami atau pihak ketiga yang kami hubungkan dengan Anda. Oleh karena itu, pihak ketiga ini akan diberikan akses ke Data Petani Anda untuk memberikan Anda peluang penjualan dan pengembangan ini</string>
-    <string name="cs_page2_11">Promoting Traceability</string>
-    <string name="cs_page2_12"> ------ </string>
-    <string name="cs_page2_13">Periklanan dan Promosi Publik</string>
-    <string name="cs_page2_14">Ofi dan afiliasinya, yang, untuk menghindari keraguan, termasuk Olam Brands B.V. dan pelanggan serta mitra ofi dapat menggunakan Data Petani termasuk nama, foto, informasi lokasi, informasi produk dan wawancara (jika ada) dalam materi iklan yang akan dibagikan untuk umum, seperti situs web, publikasi tertulis dan pada produk untuk mempromosikan pembelian produk seperti yang Anda produksi serta memasarkan inisiatif ketertelusuran dan keberlanjutan kami.</string>
+    <string name="cs_page2_10">Kami akan menggunakan Data Petani dari Anda dan data OFIS agregat untuk membantu mengenali kesempatan bagi Anda untuk mengembangkan bisnis dan operasi Anda. Saat kesempatan yang tepat muncul, kami akan menyediakan bagi Anda, kesempatan mendapatkan pendanaan, permesinan, saran pengelolaan pertanian, pasokan pertanian, dan asuransi, sebagai tambahan dari kesempatan penjualan – semuanya akan disediakan secara langsung oleh kami atau pihak ketiga yang kami referensikan bagi Anda. Tentunya, pihak ketiga ini akan diberikan akses ke Data Petani Anda.</string>
+    <string name="cs_page2_11">Promosi Pelacakan</string>
+    <string name="cs_page2_12">Kami akan menggunakan Data Petani Anda untuk mempromosikan program pelacakan yang kami jalankan, termasuk di OFIS, AtSource dan media lainnya seperti misalnya laman afiliasi kami serta dalam komunikasi langsung. Ini berarti kami akan menggunakan Data Petani pada materi informasi dan presentasi yang dibagikan di antara kami, pelanggan kami (dan calon pelanggan), dan mitra kami (dan calon mitra) yang kiranya membantu pelacakan dan keberlanjutan.</string>
+    <string name="cs_page2_13">Iklan dan Promosi Publik</string>
+    <string name="cs_page2_14">Olam dan para pelanggan serta mitranya akan menggunakan Data Petani, termasuk nama, foto, video, informasi lokasi, informasi produk dan wawancara (bila ada) pada materi iklan yang akan dibagikan secara publik, seperti pada laman, publikasi tertulis dan pada produk. Tujuannya adalah mempromosikan pembelian produk seperti yang diproduksi oleh Anda serta mempromosikan dukungan kepada petani serta prakarsa pelacakan dan keberlanjutan kami.</string>
     <string name="cs_page2_15">Riset</string>
-    <string name="cs_page2_16">Kami dapat membagikan Data Petani Anda untuk mendukung studi oleh organisasi pendidikan, pemerintah, dan non-pemerintah yang berfokus pada petani lokal, masyarakat, pertanian, rantai pasokan, ketertelusuran, keberlanjutan dan studi berkesadaran sosial terkait guna mendorong kolaborasi dan pengembangan masyarakat dalam lingkup ruang keberlanjutan dan ketertelusuran. Organisasi tersebut dapat menggunakan Data Petani Anda dalam komunikasi elektronik atau publikasi mereka sendiri.</string>
-    <string name="cs_page3_1">I,</string>
-    <string name="cs_page3_4">•   Apabila saya menyetujui atas nama anak atau anak di bawah umur, saya adalah orang tua atau wali sah dari anak atau anak di bawah umur tersebut</string>
-    <string name="cs_page4_1">"APABILA PEMBERITAHUAN DIBACAKAN KEPADA INDIVIDU OLEH STAF/PERWAKILAN ofi: "</string>
-    <string name="cs_page4_2">Saya menyatakan bahwa Peserta telah mendengarkan saya membacakan Pemberitahuan Pengumpulan Informasi Pribadi dan mereka telah memberikan persetujuan mereka dengan jelas untuk pengumpulan, penggunaan, transfer di luar yurisdiksi dan pengungkapan data pribadinya oleh ofi untuk tujuan yang ditetapkan di dalamnya</string>
+    <string name="cs_page2_16">Kami akan membagikan Data Petani Anda guna mendukung studi oleh organisasi pendidikan, pemerintahan, dan non-pemerintah yang berfokus pada petani lokal, masyarakat, pertanian, rantai-pasokan, pelacakan, keberlanjutan dan studi kesadaran sosial lainnya guna mempromosikan kolaborasi masyarakat dan pengembangan dalam hal keberlanjutan dan pelacakan. Organisasi-organisasi ini juga dapat menggunakan Data Petani Anda dalam komunikasi elektronik atau terpublikasi milik mereka sendiri.</string>
+    <string name="cs_page2_17">Saat Data Petani dibagikan dengan pihak ketiga seperti misalnya para pelanggan dan mitra kami guna memajukan Tujuan dan penggunaan tertentu yang dijelaskan di atas, masing-masing dari pelanggan dan mitra ini adalah pengendali data dengan haknya sendiri dan Anda menyetujui penggunaan data Anda seperti diatur di Paragraf 1 dan seperti dirinci di Pernyataan Privasi.</string>
+    <string name="cs_page2_18">Anda dapat menarik persetujuan yang diberikan, meminta akses dan/atau koreksi Data Petani dan/atau meminta informasi terkait dengan kebijakan dan praktik kami kapan saja dengan mengontak kami di <a href="privacy@olamnet.com">privacy@olamnet.com</a>. Meskipun tidak ada permintaan informasi bersifat wajib, kegagalan memberikan Data Petani dan/atau penarikan persetujuan Anda setelahnya dapat mempengaruhi kemampuan kami dalam memberikan layanan tertentu yang bisa saja Anda minta dari kami secara terpisah (yang bisa saja terjadi). Misalnya, alamat Anda mungkin diperlukan tidak hanya untuk membantu dalam pelacakan, namun juga bagi kami untuk mengirimkan bahan-bahan tertentu kepada Anda seperti misalnya pasokan pertanian. Dalam contoh demikian, di mana Anda menarik persetujuan, kami bisa saja tetap menyimpan data tersebut guna memenuhi kewajiban kontraktual kami kepada Anda namun tidak akan menggunakan data tersebut untuk tujuan lainnya.</string>
+    <string name="cs_page2_19">Pernyataan Privasi Data Petani kami tersedia sebagai referensi Anda di bawah. Pernyataan ini menjelaskan bagaimana kami menangani dan melindungi data pribadi. Saat Data Petani Anda dibagikan dengan mereka yang dijelaskan di atas, Data Petani Anda yang kami simpan akan tetap rahasia dan akan disimpan di server kami di Singapura dan mengikuti ketentuan hukum privasi yang berlaku.</string>
+    <string name="cs_page3_1">Saya,</string>
+    <string name="cs_page3_2">dengan ini menyatakan telah membaca, memahami dan menyetujui ketentuan yang ada pada Pemberitahuan Pengumpulan Informasi Pribadi dan Pernyatan Privasi Data Petani dan bahwa: </string>
+    <string name="cs_page3_3">Saya telah memberikan tanda  “<b><i>✔</i></b>“ di Paragraf 1 di mana saya menyetujui penggunaan dan pengumpulan data pribadi saya untuk Tujuan tertentu yang diperlihatkan di sana.</string>
+    <string name="cs_page3_4">Di mana saya menyetujui atas nama seorang anak atau anak di bawah umur, saya bertindak sebagai orangtua atau wali dari anak atau anak di bawah umur tersebut.</string>
+    <string name="cs_page3_5">Saya memahami bahwa saya tidak akan menerima imbalan finansial atau lainnya untuk data pribadi apa pun termasuk gambar dan properti intelektual apa pun yang ada di dalam gambar apa pun akan menjadi milik Olam.</string>
+    <string name="cs_page3_6">Saya memahami bahwa saya memiliki hak untuk menarik persetujuan bagi saya atau anak/anak di bawah umur saya kapan saja dan bahwa saat persetujuan tersebut ditarik, Olam tidak akan menggunakan gambar atau data pribadi dalam publikasi apa pun di masa depan, namun dapat terus menggunakan Data Pribadi tersebut dalam publikasi yang sudah diedarkan.</string>
+    <string name="cs_page4_1">DI MANA PEMBERITAHUAN DIBACAKAN KEPADA INDIVIDU OLEH STAF/PERWAKILAN OLAM:</string>
+    <string name="cs_page4_2">Saya mengonfirmasi bahwa Partisipan telah mendengarkan saat saya membacakan Pemberitahuan Pengumpulan Informasi Pribadi dan mereka telah secara yakin memberikan persetujuan bagi pengumpulan, penggunaan, pemindahan keluar yurisdiksi dan pengungkapan data pribadinya oleh Olam untuk tujuan yang dikemukakan di sini.</string>
     <string name="cs_page5_1">Pernyataan Privasi Data Petani</string>
-    <string name="cs_page5_3">Merupakan kewajiban kami untuk mematuhi semua undang-undang privasi dan perlindungan data yang berlaku. Ofi akan mengumpulkan dan menggunakan data Anda hanya untuk tujuan tertentu yang sah, memprosesnya dengan cara yang sesuai dengan tujuannya, mengambil langkah yang wajar untuk memastikan bahwa data Anda akurat, lengkap dan selalu diperbarui (jika diperlukan), dan mengambil tindakan yang tepat guna memberikan perlindungan yang memadai untuk data Anda.\n\n <b>Pengontrol Data</b>\n\n Pengontrol data untuk informasi Anda adalah Olam International Limited yang didirikan di Singapura dengan nomor perusahaan 199504676H dan entitas terafiliasi yang relevan di negara Anda atau dalam grup perusahaan ofi, sebagaimana berlaku.\n\n Secara umum, kami bertindak sebagai pengontrol data untuk data pribadi. Namun, dalam keadaan tertentu, Mitra Bisnis dapat melibatkan kami untuk memberikan mereka layanan pemrosesan tertentu berkaitan dengan data pribadi. Dalam hal demikian, pengumpulan dan penggunaan data pribadi Anda oleh Mitra Bisnis diatur oleh kebijakan privasi yang mereka miliki dan kami memercayai perwakilan hukum mereka bahwa kami berwenang untuk memproses data pribadi dengan cara yang mereka usulkan atau tunjukkan.\n\n Seperti dijelaskan di atas, kami akan membagikan informasi pribadi Anda untuk tujuan tertentu. Apabila informasi pribadi Anda ditransfer di luar EEA ke afiliasi ofi atau entitas di negara yang tidak tunduk pada keputusan yang memadai oleh Komisi UE, data pribadi Anda akan dilindungi oleh perlindungan lintas batas yang disetujui Komisi UE termasuk klausul kontrak standar untuk transfer data lintas batas.</string>
-    <string name="cs_page5_5">Kami dapat mengumpulkan dan memproses data pribadi tentang Anda termasuk namun tidak terbatas pada: \n
-        •	Foto, video dan gambar lainnya (di mana identitas pribadi Anda dapat diidentifikasi dengan jelas);\n
-        •	Nama depan dan nama belakang;\n
-        •	Data pertanian termasuk hasil pertanian dan infrastruktur;\n
-        •	Umpan balik dari Anda\n
-        •	Informasi sosial, finansial, geografis dan biografis;\n
-        •	Alamat dan detail kontak lainnya.\n
-        •	Data lokasi saat Anda mengizinkan kami mengakses lokasi Anda dalam aplikasi</string>
-    <string name="cs_page5_6">"Apa tujuan kami menggunakan data Anda? "</string>
-    <string name="cs_page5_8">"Apa dasar hukum kami dalam mengumpulkan dan memproses data Anda? "</string>
-    <string name="cs_page5_10">"Dengan siapa kami membagikan data? "</string>
-    <string name="cs_page5_11">Kami dapat membagikan data Anda dengan anggota grup ofi lainnya, termasuk afiliasi, untuk mencapai tujuan yang dijelaskan di atas. Kami juga akan membagikan data Anda dengan otoritas pemerintah dan/atau pejabat penegak hukum apabila diwajibkan oleh hukum, dan setiap pelanggan, penyedia layanan, pemasok dan mitra bisnis ofi di saat ini dan masa mendatang dalam mewujudkan tujuan yang dijelaskan di atas atau dengan persetujuan Anda.</string>
-    <string name="cs_page5_12">"Ke mana kami akan mengirimkan data Anda? "</string>
-    <string name="cs_page5_13">Selain membagikan dengan pemroses pihak ketiga untuk tujuan yang dicantumkan di atas, dari waktu ke waktu data Anda dapat ditransfer ke salah satu afiliasi kami di negara lain. Kami akan mengambil langkah wajar untuk memastikan bahwa data Anda terlindungi secara memadai sesuai dengan undang-undang perlindungan data yang relevan yang mengendalikan pemrosesan data di negara tersebut. Jika Anda adalah petani yang berada di EEA (Wilayah Ekonomi Eropa), di mana informasi pribadi Anda ditransfer di luar EEA ke afiliasi atau entitas di negara yang tidak tunduk pada keputusan yang memadai oleh Komisi UE, data pribadi Anda akan dilindungi oleh perlindungan lintas batas yang disetujui Komisi UE termasuk klausul kontrak standar untuk transfer data lintas batas</string>
-    <string name="cs_page5_14">Apa tindakan yang kami lakukan untuk melindungi data Anda?</string>
-    <string name="cs_page5_15">"Ofi mempertahankan perlindungan data yang wajar untuk melindungi kerahasiaan, keamanan dan integritas data Anda. Meskipun kami melakukan tindakan keamanan untuk membantu melindungi data Anda dari pengungkapan yang tidak sah; kami tidak dapat menjamin keamanan informasi yang diberikan di internet dan tidak akan bertanggung jawab atas pelanggaran keamanan di luar kendali wajar kami. "</string>
-    <string name="cs_page5_16">"Apa hak yang Anda miliki sehubungan dengan data Anda? "</string>
-    <string name="cs_page5_17">"Anda dapat memilih untuk tidak memberikan data yang kami minta. Anda berhak untuk meminta salinan data Anda kepada ofi guna memverifikasi, membenarkan atau membatasi pemrosesan aktif data Anda. Anda dapat meminta ofi untuk menghentikan penggunaan gambar Anda kapan saja, di mana gambar tidak akan digunakan dalam publikasi di masa mendatang tetapi dapat tetap muncul dalam publikasi yang telah beredar. Anda berhak untuk mengajukan keluhan setiap saat kepada otoritas perlindungan data di wilayah yang bersangkutan. Hak-hak ini mungkin dibatasi dalam undang-undang. Jika Anda ingin menggunakan hak-hak ini atau memiliki pertanyaan tentang hal ini, Anda dapat menghubungi ofi di privacy@ofi.com. "</string>
-    <string name="cs_page5_18">"Berapa lama Anda akan menyimpan data saya? "</string>
-    <string name="cs_page5_19">Kecuali sebagaimana diwajibkan oleh hukum, ofi akan menyimpan data pribadi Anda dalam jangka waktu tertentu yang diperlukan untuk tujuan pengumpulan data tersebut. Ofi akan membagikan periode penyimpanan data pribadi Anda atas permintaan Anda.</string>
+    <string name="cs_page5_2">Kebijakan ini menjelaskan tentang penggunaan Data Petani Anda yang dikumpulkan di bawah Pemberitahuan Pengumpulan Informasi Pribadi yang ditanda tangani oleh Anda ( “Pemberitahuan”) oleh Olam dan afiliasinya. Pernyataan ini merupakan pelengkap dan harus dibaca bersama dengan Pemberitahuan dan Pernyataan Privasi Grup Olam yang tersedia di <a href="www.olamgroup.com/privacy/indonesia-privacy.html">www.olamgroup.com/privacy/indonesia-privacy.html</a>. Bilamana ada inkonsistensi, Pemberitahuan akan dipakai sebagai rujukan daripada Pernyataan Privasi dan Pernyataan Privasi Grup Olam (dengan urutan sedemikian).</string>
+    <string name="cs_page5_3">Merupakan kebijakan Olam untuk memenuhi segala UU privasi dan perlindungan data yang berlaku. Olam akan mengumpulkan dan menggunakan data Anda hanya untuk tujuan tertentu dan sah, memprosesnya sedemikian rupa agar konsisten dengan tujuan tersebut, mengambil langkah-langkah yang masuk akal untuk memastikan bahwa data Anda akurat, lengkap dan diperbarui (bilamana perlu) dan mengambil tindakan yang tepat untuk memberikan perlindungan yang memadai bagi data Anda. </string>
+    <string name="cs_page5_4">Data apa yang kami kumpulkan?</string>
+    <string name="cs_page5_5">Kami mengumpulkan dan memproses data pribadi tentang Anda termasuk namun tidak terbatas pada:\n
+•	Foto, video dan pencitraan lain (di mana identitas pribadi Anda dapat dengan jelas dikenali);\n
+•	Nama depan dan nama terakhir; \n
+•	Hasil dan infrastruktur pertanian\n
+•	Masukan dari Anda yang dapat berisikan data pribadi;\n
+•	Informasi sosial, geografis dan biografis;\n
+•	Negara tempat tinggal dan detail kontak lainnya; dan\n
+•	pekerjaan.
+</string>
+    <string name="cs_page5_6">Untuk tujuan apa kami menggunakan data Anda?</string>
+    <string name="cs_page5_7">Kami menggunakan data ini untuk tujuan berikut ini:\n
+•	Menyediakan layanan kepada Anda; \n
+•	Berkomunikasi dengan Anda; \n
+•	Mempromosikan prakarsa keberlanjutan dan pelacakan kami;\n
+•	Memasarkan dan mempromosikan produk Olam dan aktivitas korporat di kanal-kanal yang dimiliki Olam termasuk laman, media sosial dan cetak dan secara aktif menaruh konten di publikasi media eksternal (cetak dan daring);\n
+•	Mendukung prakarsa riset dari mitra kami untuk mendukung kolaborasi masyarakat dan kemajuan di bidang keberlanjutan dan pelacakan; \n
+•	Mengenali tren, isu, dan risiko di pasar agrikultur dan di rantai pasokan; dan\n
+•	Mengembangkan dan mengelola hubungan kami dengan Anda serta mitra bisnis kami.
+</string>
+    <string name="cs_page5_8">Apa dasar hukum kami dalam mengumpulkan dan memproses data Anda?</string>
+    <string name="cs_page5_9">Kami hanya akan mengumpulkan dan memproses data ini dengan (a) persetujuan Anda; dan (b) bilamana sesuai, hanya bila dibutuhkan oleh Olam dan afiliasi kami untuk melakukan bisnis dan mengejar kepentingan kami yang sah; dan (c) untuk tujuan lain yang masuk akal atau sah, sesuai dengan UU perlindungan data yang berlaku</string>
+    <string name="cs_page5_10">Dengan siapa kami akan berbagi data ini? </string>
+    <string name="cs_page5_11">Kami akan berbagi data Anda dengan anggota lain dari grup Olam, termasuk afiliasi, guna mencapai tujuan yang dijelaskan di atas. Kami juga akan berbagi data Anda dengan otoritas pemerintah dan/atau petugas penegakkan hukum bila dimandatkan oleh hukum, dan kepada pelanggan saat ini dan masa depan, penyedia jasa, pemasok dan mitra bisnis dari Olam dalam mengejar tujuan yang dijelaskan di atas atau sebaliknya dengan persetujuan Anda.</string>
+    <string name="cs_page5_12">Kemana kami akan mengirim data Anda? </string>
+    <string name="cs_page5_13">Selain dari berbagi dengan pemroses pihak ketiga kami untuk tujuan yang dijelaskan di atas, dari waktu ke waktu data Anda bisa saja dipindahkan ke salah satu afiliasi kami di luar negeri. Kami akan mengambil langkah yang masuk akal untuk memastikan bahwa data Anda terlindungi secara mencukup dsesuai dengan UU perlindungan data yang relevan bagi pemrosesan data di negara tersebut. Di saat informasi pribadi Anda dipindahkan di luar EEA ke afiliasi Olam atau sebuah entitas di sebuah negara yang tidak tunduk pada keputusan yang memadai dari Komisi EU, data pribadi Anda akan dilindungi oleh perlindungan lintas-batas yang disetujui oleh Komisi EU termasuk klausul kontrak standar untuk pemindahan data lintas-batas.</string>
+    <string name="cs_page5_14">Langkah-langkah apa saja yang kami miliki untuk melindungi data Anda?</string>
+    <string name="cs_page5_15">Olam memiliki sejumlah pengaman untuk melindungi kerahasiaan, keamanan dan integritas data Anda. Walaupun kami memiliki sejumlah langkah untuk membantu melindungi data Anda dari pengungkapan yang tidak sah, kami tidak bisa menjamin keamanan dari informasi yang tersedia di internet dan tidak bertanggung jawab atas pelanggaran keamanan yang berada di luar kendali kami.</string>
+    <string name="cs_page5_16">Hak apa saja yang Anda miliki sehubungan dengan data Anda?</string>
+    <string name="cs_page5_17">Anda bisa memilih untuk tidak memberikan data yang kami minta. Anda berhak untuk meminta salinan data Anda dari Olam dan untuk melakukan verifikasi, koreski atau membatasi pemrosesan aktif atas data Anda. Anda dapat meminta Olam untuk menghentikan penggunaan gambar Anda kapan saja, di mana hal tersebut tidak akan dipakai dalam publikasi di masa depan namun bisa tetap ada di dalam publikasi yang telah diedarkan. Hak-hak ini mungkin dapat dibatasi oleh hukum. Bila Anda ingin menggunakan hak-hak ini atau memiliki pertanyaan terkait hak-hak tersebut, Anda bisa menghubungi Olam melalui alamat surel yang ada di bawah ini.</string>
+    <string name="cs_page5_18">Berapa lama Olam akan menyimpan data saya? </string>
+    <string name="cs_page5_19">Kecuali diperlukan sebaliknya oleh hukum, Olam akan menyimpan data pribadi Anda selama periode yang diperlukan untuk mencapai tujuan dari pengumpulan data tersebut.</string>
     <string name="cs_page5_20">Detail Kontak</string>
-    <string name="cs_page5_21">Jika Anda memiliki pertanyaan tentang data Anda yang kami miliki, harap kirimkan email kepada kami di <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
+    <string name="cs_page5_21">Pengendali data untuk data Anda adalah Olam International Limited, kecuali sebaliknya dijelaskan oleh entitas Olam yang relevan di negara Anda. Jika Anda memiliki pertanyaan sehubungan dengan data yang kami simpan tentang Anda silakan kirim surel ke kami di <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
+    <string name="cs_page5_22">Pernyataan Privasi Grup Olam yang menjelaskan langkah-langkah tambahan bagaimana kami mengumpulkan dan menggunakan data pribadi dapat ditemukan di <a href="www.olamgroup.com/privacy/indonesia-privacy.html">www.olamgroup.com/privacy/indonesia-privacy.html</a></string>
 
-
-    <string name="cs_page5_22">   </string>
-
-    <string name="consent_statement_pageone2">Data pribadi Anda mencakup nama, usia, informasi kontak (alamat email, nomor telepon, alamat surat-menyurat), pekerjaan, foto, video atau rekaman digital, informasi biografis, sosial dan geografis, informasi pertanian dan hasil pertanian, dan jika berlaku, anak-anak atau tanggungan Anda (“<b>Data Petani</b>”) akan kami kumpulkan dan simpan dan dapat diakses oleh pelanggan kami, mitra bisnis, dan dalam beberapa kasus, dipublikasikan di situs web, media sosial, publikasi elektronik atau tertulis milik ofi. Kami meminta Anda dengan ini menyatakan dan memberikan persetujuan atas pengumpulan, penggunaan dan pengungkapan data pribadi Anda untuk tujuan ini sesuai dengan Pemberitahuan Pengumpulan Informasi Pribadi ini.</string>
-    <string name="consent_statement_pageone1">Anda diminta untuk memberikan Olam Food Ingredients (selanjutnya disebut sebagai “<b>ofi</b>”, atau “<b>kami</b>”) data pribadi guna mendukung upaya ofi untuk mendorong keberlanjutan dan keterselusuran dalam rantai pasokan dan pada gilirannya untuk mendorong perdagangan yang bertanggung jawab dengan petani seperti Anda di seluruh dunia (“<b>Tujuan</b>”).</string>
-
-    <string name="allchilds_name">Nama Anak (jika menyetujui atas nama anak):</string>
-    <string name="full_farmer_name">Nama Lengkap:</string>
+    <string name="full_farmer_name">Nama Lengkap</string>
     <string name="date">Tanggal:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Kontak dari Olam</string>
@@ -592,65 +588,20 @@
     <string name="farmer_signature">Farmer Tanda tangan</string>
     <string name="enum_sign">Staff Tanda tangan</string>
     <string name="enum_name">Enumerator Nama</string>
-    <string name="childs_name">Nama Anak </string>
+    <string name="childs_name">Nama Anak</string>
     <string name="name">Nama:</string>
 
-
-    <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
-
-    <string name="matching_farmer_records">Mencocokkan Catatan Petani</string>
-    <string name="matching_results_found">Hasil yang cocok ditemukan</string>
-    <string name="back_to_search">Kembali ke Pencarian</string>
-    <string name="proceed_to_registration">Lanjutkan untuk mendaftar</string>
-    <string name="back">Kembali</string>
-    <string name="search_by_photo">Telusuri berdasarkan foto</string>
-    <string name="no_matching_results_found">Tidak ada hasil yang cocok</string>
-    <string name="biometric_update">Pembaruan biometrik</string>
-    <string name="activating_license">Mengaktifkan lisensi</string>
-    <string name="proceed_to_register">Lanjutkan Untuk Mendaftar</string>
-    <string name="biometric_enum">Anda sekarang adalah pencacah biometrik</string>
-    <string name="nonbiometric_enum">Anda bukan lagi pencacah biometrik</string>
-    <string name="deactivate_license_setting">Nonaktifkan Lisensi</string>
-    <string name="biometric_license_deactive">Lisensi Biometrik: Nonaktif</string>
-    <string name="biometric_license_partial">Lisensi Biometrik: Sebagian</string>
-    <string name="biometric_license_active">Lisensi Biometrik: Aktif</string>
-    <string name="unable_deactivate_neurotech">Tidak dapat Menonaktifkan. Silakan hubungi Neurotech untuk menonaktifkan</string>
-    <string name="deactivating_license">Menonaktifkan Lisensi ..</string>
-    <string name="biometric_license_failed_in_offline">Lisensi Dinonaktifkan di Offline</string>
-    <string name="biometric_license_failed">Lisensi Biometrik: gagal</string>
-    <string name="biometric_licence_deactivation_queue">Penonaktifan Lisensi Biometrik</string>
-    <string name="face_recognizion">Pengenalan Wajah</string>
-
+    <string name="allchilds_name">Semua nama anak-anak (sebagaimana berlaku)</string>
     <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="please_click_checkbox">Silakan klik semua kotak centang yang sesuai</string>
+    <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
+    <string name="txt_farm_name">Farm Name:</string>
+    <string name="txt_farm_code">Farm Code:</string>
     <string name="attendee_sex">Sex</string>
-    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
-    <string name="cs_page2_title">1.    Penggunaan Data Pribadi</string>
-    <string name="cs_page2_17">2.    Apabila Data Petani Anda dibagikan dengan pihak ketiga seperti pelanggan dan mitra kami sebagai kelanjutan dari Tujuan dan penggunaan khusus yang disetujui di atas, setiap pelanggan dan mitra adalah pengontrol data sesuai hak mereka sendiri dan Anda menyetujui penggunaan data Anda oleh mereka sebagaimana disebutkan dalam Paragraf 1 dan diperinci dalam Pernyataan Privasi. Apabila terdapat pelanggan atau mitra yang memerlukan penggunaan Data Petani di luar Tujuan dan penggunaan khusus yang disebutkan di atas, mereka dapat menghubungi Anda secara langsung untuk meminta persetujuan Anda lebih lanjut</string>
-    <string name="cs_page2_18">3.    Anda dapat menarik persetujuan yang telah diberikan, meminta akses dan/atau koreksi Data Petani Anda, dan/atau meminta informasi yang berkaitan dengan kebijakan dan praktik kami kapan pun dengan menghubungi kami di <a href="privacy@ofi.com">privacy@ofi.com</a>. Meskipun pengungkapan yang diminta tidak bersifat wajib, ketidakmampuan dalam menyediakan Data Petani dan/atau penarikan persetujuan Anda dapat memengaruhi kemampuan kami untuk memberikan layanan tertentu yang dapat Anda minta dari kami secara terpisah (tergantung kasusnya). Sebagai contoh, alamat Anda mungkin diperlukan tidak hanya untuk membantu penelusuran, tetapi juga bagi kami untuk mengirimkan bahan tertentu kepada Anda seperti perlengkapan pertanian. Dalam kasus di mana Anda mencabut persetujuan, kami dapat menyimpan data tersebut untuk memenuhi kewajiban kontrak kami kepada Anda tetapi tidak akan menggunakan data tersebut untuk tujuan lain apa pun</string>
-    <string name="cs_page2_19">4.    Pertanyaan Privasi Data Petani kami tersedia di bawah ini untuk referensi Anda. Penyataan ini menjelaskan cara kami menangani dan melindungi data pribadi. Meskipun Data Petani Anda akan dibagikan dengan orang-orang yang disebutkan di atas, Data Petani Anda yang kami simpan akan dijaga kerahasiaannya dan sesuai dengan undang-undang privasi yang berlaku</string>
-    <string name="cs_page3_2">dengan ini menyatakan bahwa saya telah membaca, memahami dan menyetujui pengumpulan dan penggunaan Data Petani saya sebagaimana yang diatur dalam Pemberitahuan Pengumpulan Informasi Pribadi dan Pernyataan Privasi Data Petani dan bahwa</string>
-    <string name="cs_page3_3">•   Saya telah menunjukkan dengan tanda “✔“ atau “ya” pada Paragraf 1 di mana saya menyetujui penggunaan dan pengumpulan data pribadi saya untuk tujuan khusus yang ditunjukkan di sana.</string>
-    <string name="cs_page3_5">•   Saya memahami bahwa saya tidak akan menerima imbalan finansial atau imbalan lainnya untuk data pribadi apa pun termasuk gambar dan kekayaan intelektual yang ada dalam gambar mana pun yang akan menjadi milik ofi.</string>
-    <string name="cs_page3_6">•   Saya memahami bahwa saya memiliki hak untuk menarik persetujuan bagi saya atau anak saya/anak di bawah umur kapan pun dan bahwa jika persetujuan tersebut ditarik, ofi tidak akan menggunakan gambar atau data pribadi dalam publikasi apa pun di masa mendatang, tetapi dapat terus menggunakan Data Pribadi dalam publikasi yang sudah beredar.</string>
-    <string name="cs_page5_2">Kebijakan privasi ini menjelaskan metode pengumpulan, penggunaan dan pengungkapan informasi Anda yang dikumpulkan dari aplikasi. Kebijakan ini melengkapi, dan harus dibaca bersama dengan Pernyataan Privasi ofi, yang menjelaskan cara lain kami dalam mengumpulkan dan menggunakan data pribadi dan tersedia di <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
-    <string name="cs_page5_4">"Data apa yang kami kumpulkan? "</string>
-    <string name="cs_page5_7">Kami dapat menggunakan data ini untuk tujuan berikut: \n
-        •	Memberikan layanan untuk Anda seperti saran agronomi, bahan pertanian dan akses ke layanan terkait pertanian seperti pembiayaan, asuransi, dan logistik;\n
-        •	Memfasilitasi perdagangan dengan Anda;\n
-        •	Publikasi di channel yang dimiliki oleh ofi termasuk situs web, media sosial dan media cetak;\n
-        •	Mendukung inisiatif keberlanjutan dan keterselusuran kami;\n
-        •	Mengidentifikasi tren di bidang pertanian yang akan memungkinkan kami untuk lebih baik dalam mengoperasikan bisnis kami dan memberikan layanan untuk Anda;\n
-        •	Memasarkan dan mempromosikan produk ofi dan kegiatan perusahaan;\n
-        •	Mendukung inisiatif riset oleh mitra kami untuk mendukung kolaborasi dan kemajuan masyarakat di bidang keberlanjutan dan keterselusuran;\n
-        •	Mendemonstrasikan layanan petani kami kepada calon investor dan mitra; dan \n
-        •	Berkomunikasi dengan Anda, serta mengembangkan dan mengelola hubungan kami dengan Anda dan mitra bisnis kami.</string>
-    <string name="cs_page5_9">Kami hanya akan mengumpulkan dan memproses data ini untuk menjalankan bisnis kami, mewujudkan kepentingan kami yang sah seperti yang diwajibkan oleh ofi dan afiliasi kami, dan mematuhi kewajiban hukum. Kami mengandalkan persetujuan untuk beberapa aktivitas pemrosesan (seperti komunikasi pemasaran) yang dapat ditarik kapan pun subjek data memerlukannya.</string>
-    <string name="occupation_fs">Pekerjaan:</string>
-    <string name="occupation_hint">Pekerjaan</string>
-    <string name="please_click_checkbox">Silakan masuk di dalam kotak batas</string>
+
+
 
 
 
@@ -766,7 +717,7 @@
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
     <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
     <string name="national_id_info">Harap perbarui ID Nasional petani</string>
-    <string name="zero_area_msg">Tidak dapat menyimpan poligon yang direkam dengan 0.0009ha. Silakan coba merekam poligon yang berbeda</string>
+    <string name="zero_area_msg">Luas poligon yang tercatat kurang dari luas minimum yang dikonfigurasi (0,0009 HA). Silakan coba merekam poligon lagi</string>
     <string name="direct_value_below_error">Silakan masukkan nilai pertanyaan %1 d di bawah %2 d</string>
     <string name="direct_value_above_error">Silakan masukkan nilai pertanyaan %1 d di atas %2 d</string>
     <string name="direct_value_greater_than_error">Harap masukkan nilai pertanyaan %1 d di dalam atau sama dengan %2 d</string>
@@ -808,4 +759,12 @@
     <string name="metrics">Metrik:</string>
     <string name="converted_metrics">Metrik yang dikonversi</string>
     <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="advanced_filters"><u>Filter tingkat lanjut</u></string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
+    <string name="view_farmer_information"><u>Lihat Informasi Petani</u></string>
+    <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
+    <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
+    <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
+
 </resources>

@@ -14,6 +14,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
 import org.json.JSONArray;
 
@@ -30,7 +31,7 @@ import retrofit2.http.Query;
 public interface ManageRecords {
 
     @GET("ofistraining/ofis/mobile/course/master/allcourses")
-    Call<Course> getAllCourses(@Query("enumeratorLoginId") String enumeratorLoginId);
+    Call<Course> getAllCourses();
 
     @GET("ofistraining/ofis/mobile/course/module")
     Call<Module> getAllModules(@Query("id") int id);
@@ -64,17 +65,20 @@ public interface ManageRecords {
     Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
 
     //Diagnostic Module
-    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData/{enumerator}")
-    Call<ResponseModel> getAllDiagnosticModuleData(@Path("enumerator") Integer enumeratorId);
+    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData")
+    Call<ResponseModel> getAllDiagnosticModuleData();
 
     @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
     Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
                                                                   @Body String diagnosticModuleSurveyRequestBody);
 
-    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData/{enum_id}")
-    Call<FollowUpResponseModel> getAllFollowUpDMData(@Path("enum_id") Integer enumeratorId);
+    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData")
+    Call<FollowUpResponseModel> getAllFollowUpDMData();
 
 
-    @GET("ofissurvey/survey/getLocalUnitMasterData/{enum_id}")
-    Call<LocalUnitResponseModel> getAllLocalUnitResponseModel(@Path("enum_id") Integer enumeratorId);
+    @GET("ofissurvey/survey/getLocalUnitMasterData")
+    Call<LocalUnitResponseModel> getAllLocalUnitResponseModel();
+
+    @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
+    Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
 }

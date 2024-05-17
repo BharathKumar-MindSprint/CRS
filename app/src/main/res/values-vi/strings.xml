@@ -148,6 +148,17 @@
     <string name="spinner_section_default">Chọn bộ phận</string>
     <string name="spinner_product_default">Chọn sản phẩm</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Quốc gia</string>
+    <string name="spinner_region_view_farmer">vùng</string>
+    <string name="spinner_district_view_farmer">Quận/Huyện</string>
+    <string name="spinner_place_view_farmer">địa điểm</string>
+    <string name="spinner_farmergroup_view_farmer">nhóm Nông hộ</string>
+    <string name="spinner_section_view_farmer">bộ phận</string>
+    <string name="spinner_product_view_farmer">sản phẩm</string>
+    <string name="spinner_subdistrict_view_farmer">Tiểu khu</string>
+    <string name="spinner_age_view_farmer">tuổi</string>
+
     <string-array name="poitypes">
         <item>Trường học</item><!-- sch -->
         <item>Trung tâm Y tế</item><!-- hc -->
@@ -401,6 +412,7 @@
     <string name="mm_transaction_confirm">Xác nhận</string>
     <string name="place_name_not_unique">Tên của địa điểm đã có trong quận/huyện này. Vui lòng chọn địa điểm hiện tại từ danh sách.</string>
     <string name="title_activity_record_polygon">Diện tích lô</string>
+    <string name="title_activity_record_sip_polygon">Ghi đa giác SIP</string>
     <string name="loading">"Đang tải "</string>
     <string name="wait">Xin chờ</string>
     <string name="save_button_text">Lưu</string>
@@ -598,7 +610,7 @@
 
     <string name="allchilds_name">Tất cả tên của trẻ em (nếu có)</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Diện tích đa giác được ghi nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng thử ghi lại đa giác</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -651,4 +663,12 @@
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Số liệu đã chuyển đổi</string>
+    <string name="advanced_filters"><u>Bộ lọc nâng cao</u></string>
+    <string name="spinner_partner_default">Cộng sự</string>
+    <string name="spinner_programme_default">Chương trình</string>
+    <string name="view_farmer_information"><u>Xem thông tin nông dân</u></string>
+    <string name="no_internet_polygon">Vui lòng kích hoạt internet thiết bị của bạn để xem đa giác đã được chụp!</string>
+    <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
+    <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
+
 </resources>

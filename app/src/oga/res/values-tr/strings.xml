@@ -149,6 +149,17 @@
     <string name="spinner_section_default">Bölüm seç</string>
     <string name="spinner_product_default">Ürün seç</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">Ülke</string>
+    <string name="spinner_region_view_farmer">Yöre</string>
+    <string name="spinner_district_view_farmer">Bölge</string>
+    <string name="spinner_place_view_farmer">Yer</string>
+    <string name="spinner_farmergroup_view_farmer">Çiftçi grubu</string>
+    <string name="spinner_section_view_farmer">Bölüm</string>
+    <string name="spinner_product_view_farmer">Ürün</string>
+    <string name="spinner_subdistrict_view_farmer">Alt bölge</string>
+    <string name="spinner_age_view_farmer">yaş</string>
+
     <string-array name="poitypes">
         <item>Okul</item>
         <item>Sağlık Merkezi</item>
@@ -402,6 +413,7 @@
     <string name="mm_transaction_confirm">Onay</string>
     <string name="place_name_not_unique">Bu yer ismi bu bölgede daha önceden bulunmaktadır. Lütfen listeden mevcut yeri seçiniz.</string>
     <string name="title_activity_record_polygon">Bahçe poligonunu kaydet</string>
+    <string name="title_activity_record_sip_polygon">SIP poligonunu kaydet</string>
     <string name="loading">"Yükleniyor "</string>
     <string name="wait">Lütfen bekleyin</string>
     <string name="save_button_text">Kaydet</string>
@@ -658,7 +670,7 @@
     <string name="biometric_licence_deactivation_queue">Biyometrik Lisans Devre Dışı Bırakma</string>
     <string name="face_recognizion">Yüz tanıma</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Kaydedilen çokgen alanı, yapılandırılan minimum alandan (0,0009 HA) azdır. Lütfen poligonu tekrar kaydetmeyi deneyin</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -733,4 +745,8 @@
     <string name="range_hint_A_R_decimal">Menzil: %.2f-%.2f</string>
     <string name="metrics">Ölçüm:</string>
     <string name="converted_metrics">Dönüştürülen metrikler</string>
+    <string name="no_internet_polygon">Halihazırda yakalanan çokgeni görüntülemek için lütfen cihazınızın internetini etkinleştirin!</string>
+    <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>
+    <string name="save_polygon_alertdialog">%1$s\'ı şimdi kaydettiğinizden emin misiniz?</string>
+
 </resources>

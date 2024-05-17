@@ -1,171 +1,341 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/ofis_page_background"
     tools:context="com.olam.digital.ofis.FindFarmerActivity"
     android:id="@+id/layout_find_farmer"
     tools:ignore="Overdraw">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/topSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/topSection"
         android:background="@color/ofis_farmer_screen_actions_background"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <!--        <LinearLayout-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent">-->
+
+        <TextView
+            android:id="@+id/pageTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:text="@string/Select_Farmer"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:text="@string/Select_Farmer"
-                android:id="@+id/pageTitle"
-                android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_large_text"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+        <!--        </LinearLayout>-->
 
         <!-- business groups -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
             android:layout_marginTop="@dimen/margin_10"
+            android:orientation="horizontal"
             android:paddingLeft="0dp"
-            android:paddingRight="0dp">
+            android:paddingRight="0dp"
+            android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
 
             <Spinner
-                android:id="@+id/spinner_farmerGroup"
+                android:id="@+id/spinner_country"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginLeft="0dp"
+                android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:nextFocusDown="@+id/spinner_section"
                 android:nextFocusForward="@+id/spinner_section" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                android:visibility="invisible"
-                app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
-                android:scaleType="center" />
-
             <Spinner
+                android:id="@+id/spinner_product"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_section"
-                android:layout_marginRight="0dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true" />
 
         </LinearLayout>
+
+
         <!-- end business groups -->
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:layout_alignParentEnd="true">
-            <EditText
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:padding="@dimen/margin_10"
-                android:inputType="textCapWords"
-                android:textColorHint="@color/icon_grey_palette_2"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:id="@+id/findFarmerSearchBox"
-                android:layout_weight="1"
-                android:textColor="@color/ofis_base_font_dark"
-                android:hint="@string/Farmer_Name"
-                android:drawableRight="@drawable/ic_searchimg"
-                android:drawablePadding="@dimen/margin_10"
-                android:background="@drawable/edittext_bg_dark"/>
-            <ImageButton
-                android:id="@+id/photoSearchButton"
-                android:layout_width="@dimen/standard_button_width_height"
-                android:layout_height="@dimen/standard_button_width_height"
-                android:adjustViewBounds="false"
-                android:layout_gravity="center"
-                android:layout_marginRight="5dp"
-                android:layout_marginLeft="5dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/Camera"
-                android:padding="0dp"
-                android:scaleType="fitXY"
-                android:layout_alignParentRight="true"
-                app:srcCompat="@drawable/ic_actionbutton_camera" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="4"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/findFarmerSearchBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:drawableRight="@drawable/ic_searchimg"
+                    android:drawablePadding="@dimen/margin_10"
+                    android:hint="@string/Farmer_Name"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_input_field_text" />
+
+                <ImageButton
+                    android:id="@+id/photoSearchButton"
+                    android:layout_width="@dimen/standard_button_width_height"
+                    android:layout_height="@dimen/standard_button_width_height"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:adjustViewBounds="false"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/Camera"
+                    android:padding="0dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_actionbutton_camera" />
+            </LinearLayout>
 
         </RelativeLayout>
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/biometric_layout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="right"-->
-<!--            android:visibility="gone"-->
-<!--            android:orientation="horizontal">-->
+        <TextView
+            android:id="@+id/advancedFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_10"
+            android:clickable="true"
+            android:drawableRight="@drawable/ic_drop_down_collapse"
+            android:onClick="expandOrCollapse"
+            android:text="@string/advanced_filters"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text" />
 
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/search_by_photo"-->
-<!--                android:textColor="@color/ofis_base_font_white"-->
-<!--                android:textSize="@dimen/ofis_med_text"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_marginRight="5dp"-->
-<!--                android:layout_weight="1" />-->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-<!--            <ImageButton-->
-<!--                android:id="@+id/photoSearchButton1"-->
-<!--                android:layout_width="@dimen/standard_button_width_height"-->
-<!--                android:layout_height="@dimen/standard_button_width_height"-->
-<!--                android:adjustViewBounds="false"-->
-<!--                android:background="@android:color/transparent"-->
-<!--                android:contentDescription="@string/Camera"-->
-<!--                android:padding="0dp"-->
-<!--                android:scaleType="fitXY"-->
-<!--                app:srcCompat="@drawable/ic_actionbutton_camera" />-->
+            <LinearLayout
+                android:id="@+id/advancedFilterLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-<!--        </LinearLayout>-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <!--<Spinner
+                        android:id="@+id/spinner_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="-5dp"
+                        android:dropDownWidth="300dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>-->
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_region_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_district_view_farmer" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_place_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_partner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_partner_default" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_program"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_programme_default" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_farmerGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_farmergroup_view_farmer" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin">
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/spinner_section_view_farmer" />
+
+                    <com.olam.digital.ofis.MultiSpinnerSearch
+                        android:id="@+id/spinner_certification"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1"
+                        android:dropDownWidth="300dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingLeft="-5dp"
+                        app:hintText="@string/certification_name" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/bottomSection"
-        android:layout_below="@+id/topSection">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topSection">
 
         <ListView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"/>
+            android:dividerHeight="0dp" />
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

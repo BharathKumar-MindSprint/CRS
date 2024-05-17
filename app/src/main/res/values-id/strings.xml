@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Temukan Petani</string>
     <string name="title_activity_view_farmer">Detail petani</string>
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Debug</string>
@@ -148,6 +147,18 @@
     <string name="spinner_farmergroup_default">Pilih Kelompok Tani</string>
     <string name="spinner_section_default">Pilih Bagian</string>
     <string name="spinner_product_default">Pilih produk</string>
+
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">negara</string>
+    <string name="spinner_region_view_farmer">Provinsi</string>
+    <string name="spinner_district_view_farmer">Kabupaten/Kota</string>
+    <string name="spinner_place_view_farmer">Desa/Kelurahan</string>
+    <string name="spinner_farmergroup_view_farmer">Kelompok Tani</string>
+    <string name="spinner_section_view_farmer">Bagian</string>
+    <string name="spinner_product_view_farmer">produk</string>
+    <string name="spinner_subdistrict_view_farmer">Kecamatan</string>
+    <string name="spinner_age_view_farmer">usia</string>
 
     <string-array name="poitypes">
         <item>Sekolah</item>
@@ -401,6 +412,7 @@
     <string name="mm_transaction_confirm">Konfirmasi</string>
     <string name="place_name_not_unique">Nama tempat ini telah terdaftar di kecamatan. Mohon pilih nama yang telah terdaftar di list</string>
     <string name="title_activity_record_polygon">"Mencatat poligon plot "</string>
+    <string name="title_activity_record_sip_polygon">Rekam poligon SIP</string>
     <string name="loading">"Sedang memuat "</string>
     <string name="wait">"Harap tunggu "</string>
     <string name="save_button_text">Simpan</string>
@@ -706,7 +718,7 @@
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
     <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
     <string name="national_id_info">Harap perbarui ID Nasional petani</string>
-    <string name="zero_area_msg">Tidak dapat menyimpan poligon yang direkam dengan 0.0009ha. Silakan coba merekam poligon yang berbeda</string>
+    <string name="zero_area_msg">Luas poligon yang tercatat kurang dari luas minimum yang dikonfigurasi (0,0009 HA). Silakan coba merekam poligon lagi</string>
     <string name="direct_value_below_error">Silakan masukkan nilai pertanyaan %1 d di bawah %2 d</string>
     <string name="direct_value_above_error">Silakan masukkan nilai pertanyaan %1 d di atas %2 d</string>
     <string name="direct_value_greater_than_error">Harap masukkan nilai pertanyaan %1 d di dalam atau sama dengan %2 d</string>
@@ -748,4 +760,12 @@
     <string name="metrics">Metrik:</string>
     <string name="converted_metrics">Metrik yang dikonversi</string>
     <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="advanced_filters"><u>Filter tingkat lanjut</u></string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
+    <string name="view_farmer_information"><u>Lihat Informasi Petani</u></string>
+    <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
+    <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
+    <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
+
 </resources>

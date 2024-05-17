@@ -148,6 +148,17 @@
     <string name="spinner_section_default">Seleccionar sección</string>
     <string name="spinner_product_default">Seleccionar producto</string>
 
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">país</string>
+    <string name="spinner_region_view_farmer">provincia</string>
+    <string name="spinner_district_view_farmer">canton</string>
+    <string name="spinner_place_view_farmer">parroquia</string>
+    <string name="spinner_farmergroup_view_farmer">grupo de agricultores</string>
+    <string name="spinner_section_view_farmer">sección</string>
+    <string name="spinner_product_view_farmer">producto</string>
+    <string name="spinner_subdistrict_view_farmer">Subdistrito</string>
+    <string name="spinner_age_view_farmer">edad</string>
+
     <string-array name="poitypes">
         <item>Centro Escolar</item>
         <item>Centro de Salud</item>
@@ -403,6 +414,7 @@
     <string name="mm_transaction_confirm">Confirmar</string>
     <string name="place_name_not_unique">Este nombre de sitio ya existe dentro del distrito. Por favor seleccione el sitio existente de la lista</string>
     <string name="title_activity_record_polygon">Registrar polígono del lote</string>
+    <string name="title_activity_record_sip_polygon">Grabar polígono SIP</string>
     <string name="loading">"Cargando "</string>
     <string name="wait">Por favor espere</string>
     <string name="save_button_text">Guardar</string>
@@ -776,7 +788,7 @@
     <string name="please_check_question">Por favor marque la pregunta</string>
     <string name="please_check_dependent_question">ya que su pregunta dependiente se actualiza</string>
     <string name="national_id_info">Actualice la identificación nacional del agricultor</string>
-    <string name="zero_area_msg">No se puede guardar el polígono registrado con 0.0009ha. Intente grabar un polígono diferente</string>
+    <string name="zero_area_msg">El área del polígono registrada es menor que el área mínima configurada (0,0009 HA). Intente grabar el polígono nuevamente.</string>
     <string name="direct_value_below_error">Ingrese el valor de la pregunta %1$d debajo de %2$d</string>
     <string name="direct_value_above_error">Ingrese el valor de la pregunta %1$d arriba de %2$d</string>
     <string name="direct_value_greater_than_error">Ingrese el valor de la pregunta %1$d dentro o igual a %2$d</string>
@@ -805,10 +817,11 @@
     <string name="alert_review">El valor ingresado será enviado para revisión del administrador para una validación adicional</string>
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
+
     <string name="alert_review_hint_decimal">Ingrese el valor dentro del rango %.2f-%.2f</string>
     <string name="range_hint_A_R_decimal">Rango: %.2f-%.2f</string>
     <string name="please_enter_certification_details">Por favor ingrese los detalles de la certificación</string>
-    <string name="update_certification">Certificación de actualización</string>
+    <string name="update_certification">Actualizar certificación</string>
     <string name="certification">Certificación</string>
     <string name="certification_name">Nombre de certificacion</string>
     <string name="select_certification">Seleccione Certificación</string>
@@ -816,6 +829,14 @@
     <string name="please_update_the_certification_of_farmer">Por favor actualice la certificación del agricultor.</string>
     <string name="metrics">Métricas:</string>
     <string name="converted_metrics">Métricas convertidas</string>
+    <string name="advanced_filters"><u>Filtros avanzados</u></string>
+    <string name="spinner_partner_default">Pareja</string>
+    <string name="spinner_programme_default">programa</string>
+    <string name="view_farmer_information"><u>Ver información del agricultor</u></string>
+    <string name="no_internet_polygon">¡Habilite Internet en su dispositivo para ver el polígono ya capturado!</string>
+    <string name="edit_already_logged_plot">¡%1$s ya han iniciado sesión y guardado! ¿Quieres volver a grabar la misma trama?</string>
+    <string name="save_polygon_alertdialog">¿Estás seguro de ahorrar %1$s ahora?</string>
+
 
 </resources>
 

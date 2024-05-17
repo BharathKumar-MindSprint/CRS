@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Recherchez un planteur</string>
     <string name="title_activity_view_farmer">Détails sur le planteur</string>
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Compagnon Debug</string>
@@ -145,6 +144,17 @@
     <string name="spinner_farmergroup_default">Sélectionnez l\'organisation de planteurs</string>
     <string name="spinner_section_default">Sélectionnez la section</string>
     <string name="spinner_product_default">Sélectionnez le produit</string>
+
+    <!-- spinner values add -->
+    <string name="spinner_country_view_farmer">pays</string>
+    <string name="spinner_region_view_farmer">région</string>
+    <string name="spinner_district_view_farmer">quartier</string>
+    <string name="spinner_place_view_farmer">lieu</string>
+    <string name="spinner_farmergroup_view_farmer">organisation de planteurs</string>
+    <string name="spinner_section_view_farmer">section</string>
+    <string name="spinner_product_view_farmer">produit</string>
+    <string name="spinner_subdistrict_view_farmer">Sous-district</string>
+    <string name="spinner_age_view_farmer">âge</string>
 
     <string-array name="poitypes">
         <item>École</item>
@@ -401,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirme</string>
     <string name="place_name_not_unique">Ce lieu existe déjà dans ce district. Veuillez le sélectionner à partir de la liste s\'il vous plait.</string>
     <string name="title_activity_record_polygon">"Enregistrer un polygone de tracé"</string>
+    <string name="title_activity_record_sip_polygon">Enregistrer le polygone SIP</string>
     <string name="loading">"Chargement "</string>
     <string name="wait">"Patientez "</string>
     <string name="save_button_text">"sauvegarder "</string>
@@ -593,26 +604,26 @@
 
     <string name="allchilds_name">Noms de tous les enfants (le cas échéant)</string>
 
-    <string name="restriction_in_submodules">Veuillez répondre à toutes les questions obligatoires avant de continuer</string>
+   <string name="restriction_in_submodules">Veuillez répondre à toutes les questions obligatoires avant de continuer</string>
     <string name="please_respond_mandatory_question">Veuillez répondre à la question obligatoire</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
-    <!-- <string name="txt_farm_name">Farm Name:</string>-->
-    <!-- <string name="txt_farm_code">Farm Code:</string>-->
-    <!-- <string name="attendee_sex">Sex</string>-->
-    <string name="multifarm_not_synced">Veuillez synchroniser les détails de plantation multiple en premier.</string>
-    <!-- <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes
-         de plantation.</string>-->
-    <!--  <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes
-          de la plantation avant de soumettre l\'enquête sur la plantation. </string>-->
+   <!-- <string name="txt_farm_name">Farm Name:</string>-->
+   <!-- <string name="txt_farm_code">Farm Code:</string>-->
+  <!-- <string name="attendee_sex">Sex</string>-->
+   <string name="multifarm_not_synced">Veuillez synchroniser les détails de plantation multiple en premier.</string>
+   <!-- <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes
+        de plantation.</string>-->
+  <!--  <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes
+        de la plantation avant de soumettre l\'enquête sur la plantation. </string>-->
     <string name="consent_duplicate_alert">Un consentement en double a été identifié et ne peut donc pas être synchronisé avec l\'élément sélectionné. Veuillez noter que ces doublons seront supprimés de la file d\'attente ultérieurement.</string>
-    <!--  <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>-->
+  <!--  <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>-->
     <!--<string name="update_farm_information">Mise à jour des informations sur la plantation</string>-->
     <string name="select_from_existing_farm">Sélectionner dans une plantation existante</string>
-    <!-- <string name="create_new_farm">créer une nouvelle plantation</string>
-     <string name="add_farm_Information">Ajouter des informations sur la plantation</string>
-     <string name="search_farmer">Rechercher un producteur</string>-->
+   <!-- <string name="create_new_farm">créer une nouvelle plantation</string>
+    <string name="add_farm_Information">Ajouter des informations sur la plantation</string>
+    <string name="search_farmer">Rechercher un producteur</string>-->
     <string name="multifarm_name_search">Recherche par nom</string>
     <!--<string name="farm_information">Informations sur la plantation</string>
     <string name="farm_name">Nom de la plantation</string>
@@ -626,12 +637,12 @@
     <!--<string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de la plantation</string>
     <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de la plantation.</string>-->
     <string name="record_polygon_location_complete">Polygone capturé</string>
-    <!--   <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
-       <string name="search_existing_farm">Rechercher une plantation existante</string>
-       <string name="select_by_nearest_farm">Recherche par plantation la plus proche</string>
-       <string name="recored_polygon_multifarm_info">Emplacement de la plantation déjà capturé par une partie prenante de votre plantation</string>
-       <string name="recored_polygon_plot_multifarm_info">Polygone de la plantation déjà capturé par une partie prenante de votre plantation</string>
-       <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>-->
+ <!--   <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
+    <string name="search_existing_farm">Rechercher une plantation existante</string>
+    <string name="select_by_nearest_farm">Recherche par plantation la plus proche</string>
+    <string name="recored_polygon_multifarm_info">Emplacement de la plantation déjà capturé par une partie prenante de votre plantation</string>
+    <string name="recored_polygon_plot_multifarm_info">Polygone de la plantation déjà capturé par une partie prenante de votre plantation</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>-->
     <string name="password">mot de passe</string>
     <string name="nid_exp_fill">Veuillez indiquer la date d\'expiration</string>
     <string name="checking_isfl_enumerator">Vérification de l\'enumerateur principal de le producteur</string>
@@ -688,10 +699,10 @@
     <string name="privacy_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la dernière déclaration de confidentialité.</string>
     <string name="privacy_no_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la déclaration de confidentialité.</string>
     <string name="select_country">Veuillez sélectionner le pays</string>
-    <!-- <string name="odid">identifiant Olam Direct</string>-->
+   <!-- <string name="odid">identifiant Olam Direct</string>-->
     <string name="duplicate_survey">Entrée d\'enquête en double</string>
     <string name="removing_duplicate_survey">Suppression de l\'enquête en double</string>
-    <string name="farmer_role">Rôle</string>
+   <string name="farmer_role">Rôle</string>
     <string name="farm_detail_confirmation_text">Veuillez confirmer que les informations sur plantation ci-dessous sont à jour, afin de poursuivre l\'enquête.</string>
     <string name="attendee_name">Nom du participant</string>
     <string name="attendee_age">Âge</string>
@@ -699,21 +710,21 @@
     <string name="add_attendee">Ajouter un participant</string>
     <string name="attendee_name_hint">Entrez le nom du participant</string>
     <string name="attendee_hint_age">Saisir l\'âge</string>
-    <!-- <string name="view_attendees_count">Voir le participant (~V participants)</string>-->
+   <!-- <string name="view_attendees_count">Voir le participant (~V participants)</string>-->
     <string name="add_edit_attendee">Ajouter un participant</string>
     <string name="viewAttendee">Afficher le participant</string>
     <string name="attendee">Participant</string>
     <string name="mandatory_msg">Veuillez remplir tous les détails</string>
     <string name="add_edit">Ajouter/Modifier</string>
     <string name="Attendee">Participant</string>
-    <!--  <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>-->
+  <!--  <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>-->
     <string name="attendee_name1">Nom du participant</string>
-    <!-- <string name="attendee_relationship1">Lien de parenté</string>-->
+   <!-- <string name="attendee_relationship1">Lien de parenté</string>-->
     <!--<string name="attendee_sex1">Genre</string>-->
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
    <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
-    <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0.0009ha. Veuillez essayer d\'enregistrer un autre polygone</string>
+    <string name="zero_area_msg">La superficie du polygone enregistrée est inférieure à la superficie minimale configurée (0,0009 HA). Veuillez réessayer d\'enregistrer le polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
     <string name="direct_value_greater_than_error">Veuillez entrer la valeur de la question %1 d dans ou égale à %2 d</string>
@@ -732,7 +743,7 @@
     <string name="enumerator_location_capture">Capture de l\'emplacement de l\'enumerateur</string>
     <string name="survey_data">Téléchargement des données de l\'enquête</string>
     <string name="update_consent_statement">Mise à jour de la déclaration de consentement </string>
-    <string name="capture_my_location_button_text">Capturer mon emplacement</string>
+   <string name="capture_my_location_button_text">Capturer mon emplacement</string>
     <string name="record_hh_location">Enregistrer la localisation du ménage </string>
     <string name="update_signature">Mettre à jour la signature </string>
     <string name="update_signature_hint">Tapez pour mettre à jour </string>
@@ -1012,34 +1023,34 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="title_privacy_statement">Déclaration de confidentialité</string>
     <string name="msg_ok">OK</string>
 
-    <string name="national_id_info">Veuillez mettre à jour l\'ID national de l\'agriculteur</string>
-    <string name="odid">OD ID :</string>
-    <string name="attendee_sex">Sexe :</string>
-    <string name="view_attendees_count">Afficher le participant (~V participants)</string>
-    <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de l\'agriculteur</string>
-    <string name="update_farm_information">Mettre à jour les informations sur l\'exploitation</string>
-    <string name="create_new_farm">créer une nouvelle ferme</string>
-    <string name="add_farm_Information">Ajouter des informations sur l\'exploitation</string>
-    <string name="search_farmer">Rechercher un agriculteur</string>
-    <string name="farm_information">Informations sur la ferme</string>
-    <string name="farm_name">Nom de la ferme</string>
-    <string name="farm_code">Code de l\'exploitation</string>
-    <string name="add_stakeholder">Ajouter une partie prenante de l\'exploitation</string>
-    <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de l\'exploitation</string>
-    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de l\'exploitation.</string>
-    <string name="farm_type_warning">Veuillez choisir le type de ferme</string>
-    <string name="search_existing_farm">Rechercher une ferme existante</string>
-    <string name="select_by_nearest_farm">Recherche par ferme la plus proche</string>
-    <string name="recored_polygon_multifarm_info">Emplacement de la ferme déjà capturé par une partie prenante de votre ferme</string>
-    <string name="recored_polygon_plot_multifarm_info">Polygone de la ferme déjà capturé par une partie prenante de votre ferme</string>
-    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de l\'exploitation.</string>
-    <string name="txt_farm_name">Nom de la ferme :</string>
-    <string name="txt_farm_code">Code de l\'exploitation :</string>
-    <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe d\'agriculteurs avant d\'ajouter les parties prenantes de l\'exploitation.</string>
-    <string name="sync_farmer_and_multifarm_stakeholders"> Veuillez synchroniser la mise à jour du nouvel agriculteur et des parties prenantes de la multifamille avant de soumettre l\'enquête sur la multifamille .</string>
-    <string name="select_relationship_with_farmer">Sélectionnez la relation avec l\'agriculteur</string>
+     <string name="national_id_info">Veuillez mettre à jour l\'ID national de l\'agriculteur</string>
+     <string name="odid">OD ID :</string>
+     <string name="attendee_sex">Sexe :</string>
+     <string name="view_attendees_count">Afficher le participant (~V participants)</string>
+     <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de l\'agriculteur</string>
+     <string name="update_farm_information">Mettre à jour les informations sur l\'exploitation</string>
+     <string name="create_new_farm">créer une nouvelle ferme</string>
+     <string name="add_farm_Information">Ajouter des informations sur l\'exploitation</string>
+     <string name="search_farmer">Rechercher un agriculteur</string>
+     <string name="farm_information">Informations sur la ferme</string>
+     <string name="farm_name">Nom de la ferme</string>
+     <string name="farm_code">Code de l\'exploitation</string>
+     <string name="add_stakeholder">Ajouter une partie prenante de l\'exploitation</string>
+     <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de l\'exploitation</string>
+     <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de l\'exploitation.</string>
+     <string name="farm_type_warning">Veuillez choisir le type de ferme</string>
+     <string name="search_existing_farm">Rechercher une ferme existante</string>
+     <string name="select_by_nearest_farm">Recherche par ferme la plus proche</string>
+     <string name="recored_polygon_multifarm_info">Emplacement de la ferme déjà capturé par une partie prenante de votre ferme</string>
+     <string name="recored_polygon_plot_multifarm_info">Polygone de la ferme déjà capturé par une partie prenante de votre ferme</string>
+     <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de l\'exploitation.</string>
+     <string name="txt_farm_name">Nom de la ferme :</string>
+     <string name="txt_farm_code">Code de l\'exploitation :</string>
+     <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe d\'agriculteurs avant d\'ajouter les parties prenantes de l\'exploitation.</string>
+     <string name="sync_farmer_and_multifarm_stakeholders"> Veuillez synchroniser la mise à jour du nouvel agriculteur et des parties prenantes de la multifamille avant de soumettre l\'enquête sur la multifamille .</string>
+     <string name="select_relationship_with_farmer">Sélectionnez la relation avec l\'agriculteur</string>
     <string name="attendee_relationship1">Relation</string>
-    <string name="attendee_sex1">Sexe</string>
+     <string name="attendee_sex1">Sexe</string>
 
 
     <string name="reenter_passcode">Déconnexion</string>
@@ -1084,5 +1095,12 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
+    <string name="advanced_filters"><u>Filtres avancés</u></string>
+    <string name="spinner_partner_default">Partenaire</string>
+    <string name="spinner_programme_default">Programme</string>
+    <string name="view_farmer_information"><u>Afficher les informations sur l\'agriculteur</u></string>
+    <string name="no_internet_polygon">Veuillez activer Internet sur votre appareil pour afficher le polygone déjà capturé !</string>
+    <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
+    <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>
 
 </resources>
