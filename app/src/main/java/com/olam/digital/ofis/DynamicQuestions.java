@@ -8399,14 +8399,23 @@ public class DynamicQuestions {
                 final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
 
                 ArrayList<String> repeatOptions = new ArrayList<>(maxrepeats);
-                for (int i = 0; i < maxrepeats; i++) {
-                    /*if (zeroAcceptable){
+                if (zeroAcceptable){
+                    for (int i = 0; i <= maxrepeats; i++) {
+                        repeatOptions.add(String.valueOf(i));
+                    }
+                } else {
+                    for (int i = 1; i <= maxrepeats; i++) {
+                        repeatOptions.add(String.valueOf(i));
+                    }
+                }
+                /*for (int i = 1; i <= maxrepeats; i++) {
+                    *//*if (zeroAcceptable){
                         if (!repeatOptions.contains("0")){
                             repeatOptions.add("0");
                         }
-                    }*/
+                    }*//*
                     repeatOptions.add(String.valueOf(i));
-                }
+                }*/
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, repeatOptions);
                 adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapter);
@@ -8426,9 +8435,9 @@ public class DynamicQuestions {
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        /*if(!zeroAcceptable){
-                            id=1;
-                        }*/
+                        if(!zeroAcceptable){
+                            id +=1;
+                        }
                         if (id > 0 || zeroAcceptable) {
                             int existingItemsSize = repeaterItemsWrapper.getChildCount();
                             removeRepeaterAnswers(questionId);
