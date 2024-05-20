@@ -249,6 +249,8 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE + " TEXT, " +
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_VIEW_MODULE + " INTEGER, " +
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_PLOT_SURVEY + " TEXT, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_FARMER_ROLE_ID + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
 
     private static final String OFIS_FARMERMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerModulesEntry.TABLE_NAME
