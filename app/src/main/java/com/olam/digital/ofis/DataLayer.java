@@ -2657,7 +2657,7 @@ public class DataLayer {
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
                                 environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -3092,7 +3092,7 @@ public class DataLayer {
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
                                 environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -6724,6 +6724,42 @@ public class DataLayer {
         return type;
     }
 
+// OW-4590 Fix
+    public int getNIDTypeIDByName(String type) {
+        int id = 0;
+        try {
+            Cursor nid = getNIDByName(type);
+            if (nid.getCount() > 0) {
+                nid.moveToFirst();
+                id = nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID));
+            } else {
+                Cursor nids = getNIDByNameAnywhere(type);
+                if (nids.getCount() > 0) {
+                    nids.moveToFirst();
+                    id = nids.getInt(nids.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID));
+                }
+                nids.close();
+            }
+            nid.close();
+        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
+        return id;
+    }
+
+    public Cursor getNIDByNameAnywhere(String type) {
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH + " = ?";
+        String[] columns = new String[]{"*"};
+        String[] whereArgs = new String[]{type,type,type,type,type,type,type,type,type};
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
     private long updateNetworkQueueNIDEntry(Context context, long farmerId, int nationalidtype, String farmername) {
         long newEntry;
         ContentValues networkQueueValues = new ContentValues();
@@ -6735,6 +6771,10 @@ public class DataLayer {
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.nationalid));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmername);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, getNidTypebyid(nationalidtype));
+
+       // OW-4590 Fix
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, nationalidtype);
+
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
