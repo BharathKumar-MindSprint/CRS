@@ -4742,8 +4742,64 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     // Subset Question section . Will focus if needed
                                     String subquestion = "";
 
+                                    String datatypeID = "";
+                                    String displayTypeId = "";
+                                    String answerTypeId = "";
+                                    String dataTypeName = "";
+                                    String datatype = "";
 
-                                    String datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                    String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                    datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+                                    if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
+                                        // use answerType
+                                        try{
+                                            answerTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(answerTypeId));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
+                                        }
+
+
+                                    }else{
+                                        // use displayType
+                                        try{
+                                            displayTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(displayTypeId));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
+                                        }
+                                    }
+
+                                    if (dataTypeName != null && datatypeID.equals("6")){
+
+                                        if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
+                                            datatype = "int";
+                                        }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                            datatype = "text";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
+                                            datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
+                                            datatype = "decimal";
+                                        }
+                                    }else {
+                                        datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                    }
+
+
                                     if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
                                         answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     } else if (datatype.equalsIgnoreCase("decimal")) {
