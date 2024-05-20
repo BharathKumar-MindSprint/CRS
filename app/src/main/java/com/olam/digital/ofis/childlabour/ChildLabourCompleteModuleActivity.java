@@ -537,7 +537,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
                 if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                        dynamicQuestions.renderCheckBoxQuestionChild(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
@@ -573,7 +573,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                                dynamicQuestions.renderCheckBoxQuestionChild(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                                dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                                 dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
