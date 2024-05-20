@@ -42,6 +42,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -763,6 +764,21 @@ public  static String base64ConversionForImage(String filepath)  {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String opunit=sharedPreferences.getString("opUnit", "nil");
         return opunit;
+    }
+
+    public static String getColumnNameByLanguage() {
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> "nameEs";
+            case "fr" -> "nameFr";
+            case "id", "in" -> "nameId";
+            case "lo" -> "nameLo";
+            case "pt" -> "namePt";
+            case "th" -> "nameTh";
+            case "tr" -> "nameTr";
+            case "vi" -> "nameVi";
+            default -> "name";
+        };
     }
 
 
