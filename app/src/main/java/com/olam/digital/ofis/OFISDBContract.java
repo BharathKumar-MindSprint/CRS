@@ -2432,14 +2432,14 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "multifarmRoles";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
+        public static final String COLUMN_NAME_NAME_FR = "nameFr";
+        public static final String COLUMN_NAME_NAME_ES = "nameEs";
+        public static final String COLUMN_NAME_NAME_ID = "nameId";
+        public static final String COLUMN_NAME_NAME_PT = "namePt";
+        public static final String COLUMN_NAME_NAME_TR = "nameTr";
+        public static final String COLUMN_NAME_NAME_LO = "nameLo";
+        public static final String COLUMN_NAME_NAME_VI = "nameVi";
+        public static final String COLUMN_NAME_NAME_TH = "nameTh";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -2525,6 +2525,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
         public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
         public static final String COLUMN_NAME_IS_SYNCED = "synced";
+        public static final String COLUMN_NAME_RESPONSIBILITIES = "responsibilities";
 
 
 
@@ -2536,7 +2537,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_ROLE_ID);
                     add(COLUMN_NAME_NAME_FARM_NAME);
                     add(COLUMN_NAME_NAME_FARM_CODE);
-
+                    add(COLUMN_NAME_IS_SYNCED);
+                    add(COLUMN_NAME_RESPONSIBILITIES);
                 }}
         );
     }
@@ -2615,6 +2617,36 @@ public class OFISDBContract {
                     add(COLUMN_NAME_MSG);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_TOTALCOUNT);
+                }}
+        );
+    }
+
+    public static abstract class Responsibility implements BaseColumns {
+        public static final String TABLE_NAME = "responsibilities";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_NAME_FR = "nameFr";
+        public static final String COLUMN_NAME_NAME_ES = "nameEs";
+        public static final String COLUMN_NAME_NAME_ID = "nameId";
+        public static final String COLUMN_NAME_NAME_PT = "namePt";
+        public static final String COLUMN_NAME_NAME_TR = "nameTr";
+        public static final String COLUMN_NAME_NAME_LO = "nameLo";
+        public static final String COLUMN_NAME_NAME_VI = "nameVi";
+        public static final String COLUMN_NAME_NAME_TH = "nameTh";
+
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_NAME);
+                    add(COLUMN_NAME_NAME_FR);
+                    add(COLUMN_NAME_NAME_ES);
+                    add(COLUMN_NAME_NAME_ID);
+                    add(COLUMN_NAME_NAME_PT);
+                    add(COLUMN_NAME_NAME_TR);
+                    add(COLUMN_NAME_NAME_LO);
+                    add(COLUMN_NAME_NAME_VI);
+                    add(COLUMN_NAME_NAME_TH);
                 }}
         );
     }

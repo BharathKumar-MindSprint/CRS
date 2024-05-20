@@ -1102,4 +1102,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
     <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>
 
+    <string name="farmer_roles">Rôles des planteurs</string>
+    <string name="select_level_of_responsibility">Sélectionnez niveau de responsabilité</string>
+
 </resources>

@@ -820,7 +820,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID+ " TEXT, "
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME + " TEXT, "
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE + " TEXT, "
-            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 1)";
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 1," + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES + " TEXT DEFAULT null)";
 
     private static final String OFIS_NOTIFICATION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NotificationAssignments.TABLE_NAME
             + " ( " + OFISDBContract.NotificationAssignments.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -835,6 +835,14 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME + " TEXT, " +
             OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT + " INTEGER, " +
             OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG + " TEXT )";
+
+    private static final String OFIS_RESPONSIBILITY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Responsibility.TABLE_NAME
+            + " ( " + OFISDBContract.Responsibility.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Responsibility.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.Responsibility.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.Responsibility.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.Responsibility.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.Responsibility.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.Responsibility.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.Responsibility.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.Responsibility.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.Responsibility.COLUMN_NAME_NAME_TH + " TEXT)";
+
 
     public static OFISDB getInstance(Context context) {
         /*if (sInstance == null) {
@@ -962,6 +970,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_ANSWERTYPE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_RECURRENCETYPE_TABLE_CREATE);
 
+        //responsibility
+        sqLiteDatabase.execSQL(OFIS_RESPONSIBILITY_TABLE_CREATE);
     }
 
     @Override
@@ -1020,7 +1030,6 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
-
 
        if(oldVersion < 149 ) {
             migrateFromVersionBelow148(sqLiteDatabase);
@@ -1197,6 +1206,12 @@ class OFISDB extends SQLiteOpenHelper {
 
         try{
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_FARMER_ROLE_ID +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME + " ADD COLUMN " + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES + " TEXT default null");
+
+            //responsibility
+            sqLiteDatabase.execSQL(OFIS_RESPONSIBILITY_TABLE_CREATE);
+            sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.MultiFarmRoles.TABLE_NAME);
+            sqLiteDatabase.execSQL(OFIS_MULTIFARM_ROLES_TABLE_CREATE);
             // Module assignment
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_COUNTRY_ID +" INTEGER default null");
             // survey duration
@@ -1204,7 +1219,6 @@ class OFISDB extends SQLiteOpenHelper {
         }catch (Exception e){
             e.printStackTrace();
         }
-
 
     }
 
