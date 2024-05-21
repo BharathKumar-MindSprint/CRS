@@ -36,6 +36,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,6 +111,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
         super.bindView(view, context, cursor);
 
+        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         int currentId = cursor.getInt(cursor.getColumnIndex("_id"));
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
         ImageView imageView = (ImageView) view.findViewById(R.id.moduleListModuleIcon);
@@ -227,7 +229,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             //Ticket-OFISDM-39 newly added
             else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
                 int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));
-                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                 DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
                 String recurrence_type = dmRecurrence.recurrenceType;
                 int recurrence_frequency = dmRecurrence.recurrenceFrequency;
@@ -777,6 +778,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                 String module_ID = cursor.getString(cursor.getColumnIndex("_id"));
                 String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
+                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
                 if (hasSubmittedModules) {
                     try {
                         int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
@@ -898,17 +900,30 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 }
 
                                 if (disable_entry) {
-                                    textView.setText(submittedModuleDetails.getString("created_at"));
-                                    submittedModuleDetails.put("marked", true);
-                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                                    int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
 
-                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    enabledItem.setText("false");
-                                    submitted = true;
-                                    break;
+                                    if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
+                                        enabledItem.setText("true");
+                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                    } else {
+                                        textView.setText(submittedModuleDetails.getString("created_at"));
+                                        submittedModuleDetails.put("marked", true);
+                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+
+                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        enabledItem.setText("false");
+                                        submitted = true;
+                                        break;
+
+                                    }
+
                                 }
+
                             }
                         }
                     } catch (JSONException e) {

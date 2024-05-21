@@ -5,7 +5,6 @@ import static com.olam.digital.ofis.NetworkLayer.TAG;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
@@ -13,7 +12,8 @@ import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
+import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
+import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,7 @@ class UpdateModuleListsTask extends DatabaseTask {
             JSONObject moduleResponse = params[0];
 
             if (moduleResponse.getInt("resultcount") > 0) {
+                OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
 
                 JSONObject response = moduleResponse.getJSONObject("outputdata");
                 JSONObject questionnaireData = moduleResponse.getJSONObject("outputdata").getJSONObject("questionnaireData");
@@ -59,6 +61,7 @@ class UpdateModuleListsTask extends DatabaseTask {
                 JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray, questionTypeArray , answerTypeArray, recurrenceTypeArray;
                 List<ValidationOnRange> validationOnRangeList;
                 List<AssignmentType> assignmentTypeList;
+                List<SurveyDurationType> surveyDurationTypeList = new ArrayList<>();
                 try {
                     moduleArray = response.getJSONArray(OFISDBContract.ModuleEntry.TABLE_NAME);
 /*
@@ -147,10 +150,9 @@ class UpdateModuleListsTask extends DatabaseTask {
                 try {
                     Gson gson = new Gson();
                     JSONArray valiOnRangeArray = questionnaireData.getJSONArray("validationOnRange");
-                    Log.e(TAG,"valiOnRangeArray "+valiOnRangeArray);
+                    Log.e(TAG,"Check logs "+valiOnRangeArray);
                     Type type = new TypeToken<List<ValidationOnRange>>() {}.getType();
                     validationOnRangeList = gson.fromJson(String.valueOf(valiOnRangeArray), type);
-                    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
                     roomDB.validationOnRangeDao().insertAll(validationOnRangeList);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling ValidationOnRange table", e));
@@ -163,10 +165,21 @@ class UpdateModuleListsTask extends DatabaseTask {
                     Log.e(TAG,"AssignmentTypes: " + assignmentTypeArray);
                     Type type = new TypeToken<List<AssignmentType>>() {}.getType();
                     assignmentTypeList = gson.fromJson(String.valueOf(assignmentTypeArray), type);
-                    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
                     roomDB.assignmentTypeDao().insertAll(assignmentTypeList);
                 }catch (JSONException e){
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling AssignmentTypes table", e));
+                    e.printStackTrace();
+                }
+
+                try {
+                    Gson gson = new Gson();
+                    JSONArray surveyDurationTypeArray = questionnaireData.getJSONArray("surveyDurationType");
+                    Log.e(TAG,"Check logs "+surveyDurationTypeArray);
+                    Type type = new TypeToken<List<SurveyDurationType>>() {}.getType();
+                    surveyDurationTypeList = gson.fromJson(String.valueOf(surveyDurationTypeArray), type);
+                    roomDB.surveyDurationTypeDao().insertAll(surveyDurationTypeList);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("surveyDurationType: Error filling surveyDurationType table", e));
                     e.printStackTrace();
                 }
 
