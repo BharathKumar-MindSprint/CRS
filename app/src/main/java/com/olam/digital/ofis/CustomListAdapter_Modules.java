@@ -778,7 +778,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                 String module_ID = cursor.getString(cursor.getColumnIndex("_id"));
                 String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
-                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
                 if (hasSubmittedModules) {
                     try {
                         int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
@@ -901,6 +900,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                                 if (disable_entry) {
                                     int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                    String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
 
                                     if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
                                         enabledItem.setText("true");
