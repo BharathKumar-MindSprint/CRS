@@ -129,6 +129,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_REGISTER_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NEW_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NEW_CHILD);
+// OW-4516 Fix
+        Utilities.checkSystemTime(this,getResources(),this,"AddNewChildActivity");
     }
 
     private void initComponents() {
@@ -310,6 +312,10 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
                 if (resultCode == -1) {
                     gpsTracker.getDeviceLocation();
                 }
+                break;
+            // OW-4516 Fix
+            case Utilities.DATE_TIME_SETTING:
+                Utilities.checkSystemTime(this,getResources(),this,"AddNewChildActivity");
                 break;
                 default:
         }

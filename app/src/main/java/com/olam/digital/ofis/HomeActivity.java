@@ -560,7 +560,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")) {
             OpUnit = "NON OFI";
         } else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
             OpUnit = "OFI";
         } else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {

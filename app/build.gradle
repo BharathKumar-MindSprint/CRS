@@ -178,6 +178,35 @@ android {
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
         }
 
+        preprodoga {
+            applicationId "com.olam.digital.ofispreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            resValue "string", "applicationName", "OFIS Companion"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
+
+        preprodofi {
+            applicationId "com.olam.digital.ofispreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            resValue "string", "applicationName", "OFI PreProd"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-pre-prod/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
         prod {
             applicationId "com.olam.digital.ofis"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
