@@ -2091,7 +2091,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
@@ -4807,7 +4807,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
-                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                         hasPhotos = true;
                                         File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("answer", Utilities.base64ConversionForImage(
@@ -4854,7 +4854,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
