@@ -1662,39 +1662,48 @@ public class DynamicQuestions {
                     }
 
                 } else if (items[item].equals(context.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("image/*");
-                    setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
-                    setCurrentImageView(mCurrentImageView);
-                    if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-                        CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
-                        completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-
-                    } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-
-                        AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
-                        addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                    } else {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-                        try {
-                            ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
-                            reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    // setFullImageFromFilePath(imageURL, mCurrentImageView, "portrait");
-                    // setCapturedImageURI(photoURI);
-                    //setCurrentPhotoPath(photoFile.getPath());
-                    //startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                    // setCurrentImageView(mCurrentImageView);
+                    if (photoFile != null) {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("image/*");
+                        Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", photoFile);
+                        setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                        setCapturedImageURI(photoURI);
+                        setCurrentPhotoPath(photoFile.getPath());
+                        setCurrentImageView(mCurrentImageView);
+                        if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
+                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());
+                            CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
+                            completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                        } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
+                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());
+                            AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
+                            addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                        } else {
+                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());
+                            try {
+                                ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
+                                reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                            } catch (Exception e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            }
+                        }
+                        // setFullImageFromFilePath(imageURL, mCurrentImageView, "portrait");
+                        // setCapturedImageURI(photoURI);
+                        //setCurrentPhotoPath(photoFile.getPath());
+                        //startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                        // setCurrentImageView(mCurrentImageView);
+                    }
+
                 }
                 dialog.dismiss();
             }
@@ -1733,7 +1742,7 @@ public class DynamicQuestions {
                             currentMetaData.optInt("parent_id", 0),
                             currentMetaData.optInt("repeater_position", -1),
                             currentMetaData.getString("data_type"),
-                            savedImagePath, 0, 0, 0
+                            getCurrentPhotoFileName(), 0, 0, 0
                     );
                 }
             } catch (JSONException e) {
