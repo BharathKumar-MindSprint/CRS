@@ -45,9 +45,9 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(180, TimeUnit.SECONDS)
-            .readTimeout(180, TimeUnit.SECONDS)
-            .writeTimeout(180, TimeUnit.SECONDS)
+            .connectTimeout(540, TimeUnit.SECONDS)
+            .readTimeout(540, TimeUnit.SECONDS)
+            .writeTimeout(540, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
             .addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -166,7 +166,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     }
 
     void okHttpGet(Context context, String url, JSONObject params, Callback callback) {
-        okHttpClient.readTimeoutMillis();
+        //okHttpClient.readTimeoutMillis();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String imeiNumber = Utilities.getIMEI(context);
         String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
