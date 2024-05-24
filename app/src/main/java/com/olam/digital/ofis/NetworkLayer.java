@@ -2254,9 +2254,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
             } finally {
-                farmerModule.close();
-                extraInfo.close();
-                moduleAnswers.close();
+                if (farmerModule !=null){
+                    farmerModule.close();
+                }
+                if (extraInfo != null){
+                    extraInfo.close();
+                }
+                if (moduleAnswers != null){
+                    moduleAnswers.close();
+                }
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }

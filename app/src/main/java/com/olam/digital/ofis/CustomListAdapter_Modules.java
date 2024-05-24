@@ -1022,7 +1022,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                     farmerRole = 0;
                                 }
 
-                                if (!Objects.equals(farmerRoleStrList, "[]") && Objects.equals(farmerRoleStr,null) || Objects.equals(farmerRoleStr,"null")){
+                                if (!Objects.equals(farmerRoleStrList, "[]") && Objects.equals(farmerRoleStr,null)){
                                     // Remove square brackets and split the string into an array of strings
                                     String[] stringArray = farmerRoleStrList.substring(1, farmerRoleStrList.length() - 1).split(",");
 
@@ -1233,6 +1233,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 enabledItem.setText("false");
                                             }
+                                        } else if (farmerRole != 0 && roleId == 0) {
+                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            enabledItem.setText("false");
                                         }
                                     } else{
                                         // FARM SURVEY CODE
