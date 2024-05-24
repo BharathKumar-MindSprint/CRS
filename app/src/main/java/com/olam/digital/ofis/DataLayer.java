@@ -3699,7 +3699,8 @@ public class DataLayer {
                         "status_finished",
                         "current_submodule_id",
                         "recorded_lat",
-                        "recorded_lng",""
+                        "recorded_lng",
+                        "surveyDuration"
                 };
                 MatrixCursor mc = new MatrixCursor(mcColumns);
                 Cursor[] cursors = {mc, farmerModules};
