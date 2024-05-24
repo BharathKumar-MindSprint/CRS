@@ -1061,6 +1061,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                     enabledItem.setText("false");
                                                 }
+                                            } else if (newFarmerRole != 0 && roleId == 0) {
+                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                enabledItem.setText("false");
                                             }
                                         } else{
                                             // FARM SURVEY CODE
