@@ -1635,20 +1635,20 @@ public class DynamicQuestions {
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                             setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                             if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());
+                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                                StrictMode.setVmPolicy(builder.build());*/
 
                                 CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                                 completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());
+                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                                StrictMode.setVmPolicy(builder.build());*/
 
                                 AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                                 addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else {
-                                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());
+                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                                StrictMode.setVmPolicy(builder.build());*/
                                 try {
                                     ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                                     reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
@@ -1678,18 +1678,18 @@ public class DynamicQuestions {
                         setCurrentPhotoPath(photoFile.getPath());
                         setCurrentImageView(mCurrentImageView);
                         if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());
+                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());*/
                             CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                             completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());
+                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());*/
                             AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                             addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else {
-                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());
+                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());*/
                             try {
                                 ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                                 reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
