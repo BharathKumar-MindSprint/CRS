@@ -79,6 +79,7 @@
             android:gravity="start"
             android:dropDownWidth="350dp"
             android:focusableInTouchMode="true"
+            android:paddingEnd="10dp"
             />
 
     </LinearLayout>

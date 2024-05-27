@@ -381,10 +381,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                         }
                     }
 
-
                     JSONArray multifarmArray = existingStakeHolder.getStakeholdersInfo();
-                    Log.d("farmId and multifarm", farmerID + " --> " + farmMultiId);
-                    Log.d("stake holder", multifarmArray.toString());
                     String[] roles = rolesList.toArray(new String[rolesList.size()]);
                     if(multifarmArray!=null) {
                         if (multifarmArray.length() > 0) {
@@ -1280,10 +1277,10 @@ public class UpdateMultiFarmActivity extends BaseActivity {
         multiSpinnerSearch.setSearchEnabled(false);
 
         // If you will set the limit, this button will not display automatically.
-        multiSpinnerSearch.setShowSelectAllButton(true);
+        multiSpinnerSearch.setShowSelectAllButton(false);
 
         //A text that will display in clear text button
-        multiSpinnerSearch.setClearText("Clear");
+        multiSpinnerSearch.setClearText(null);
 
         //To set Title and placeholder for dropdown
         multiSpinnerSearch.setHintText(hintText);
