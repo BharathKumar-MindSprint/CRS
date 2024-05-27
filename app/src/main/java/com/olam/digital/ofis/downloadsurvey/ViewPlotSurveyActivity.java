@@ -309,6 +309,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
                         childModuleDto.setIsPlotSurvey(moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey")));
                         childModuleDto.setView_module(moduleAssignments.getString(moduleAssignments.getColumnIndex("view_module")));
+                        childModuleDto.setSurveyDuration(moduleAssignments.getString(moduleAssignments.getColumnIndex("surveyDuration")));
                         childModuleDtoList.add(childModuleDto);
                     }
                 }

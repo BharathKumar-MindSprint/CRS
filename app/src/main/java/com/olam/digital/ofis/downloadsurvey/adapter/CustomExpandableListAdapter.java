@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
@@ -22,6 +23,7 @@ import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +90,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int listPosition, final int expandedListPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
+        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         final ChildModuleDto childModuleDto = (ChildModuleDto) getChild(listPosition, expandedListPosition);
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context
@@ -233,16 +236,27 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                             }
 
                             if (disable_entry) {
-                                textView.setText(submittedModuleDetails.getString("created_at"));
-                                submittedModuleDetails.put("marked", true);
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                                int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                String surveyDuration_string = childModuleDto.getSurveyDuration();
 
-                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                enabledItem.setText("false");
-                                submitted = true;
-                                break;
+                                if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
+                                    enabledItem.setText("true");
+                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                } else {
+                                    textView.setText(submittedModuleDetails.getString("created_at"));
+                                    submittedModuleDetails.put("marked", true);
+                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+
+                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    enabledItem.setText("false");
+                                    submitted = true;
+                                    break;
+                                }
                             }
                         }
                     }
