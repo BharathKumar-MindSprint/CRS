@@ -72,8 +72,11 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -562,7 +565,27 @@ public class CompleteModuleActivity extends BaseActivity {
                     String realPath = ImageFilePath.getPath(CompleteModuleActivity.this, imageReturnedIntent.getData());
                     try {
                         if (realPath != null) {
-                            dynamicQuestions.setFullImageFromFilePath(realPath, "portrait","IMAGE_GALLERY");
+                            File sourceFile = new File(realPath);
+                            File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
+
+                            try {
+                                // Try renaming first (might be more efficient)
+                                if (sourceFile.renameTo(destinationFile)) {
+                                    // Success! File renamed
+                                } else {
+                                    // Renaming failed, try copy-move approach
+                                    FileUtils.copyFile(sourceFile, destinationFile);
+                                    if (sourceFile.delete()) {
+                                        // Success! File moved
+                                    } else {
+                                        // Failed to delete source file
+                                    }
+                                }
+                            } catch (IOException e) {
+                                // Handle IOException
+                                e.printStackTrace();
+                            }
+                            dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
                             // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
                         } else {
                             Toast.makeText(CompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
