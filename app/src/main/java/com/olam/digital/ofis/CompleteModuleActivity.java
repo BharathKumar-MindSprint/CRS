@@ -566,20 +566,20 @@ public class CompleteModuleActivity extends BaseActivity {
                     try {
                         if (realPath != null) {
                             File sourceFile = new File(realPath);
+                            long fileSize = sourceFile.length(); // Get file size in bytes
+
+                            if (fileSize > 5 * 1024 * 1024) {
+                                Toast.makeText(CompleteModuleActivity.this, "Image size exceeds 5MB. Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
 
                             try {
-                                // Try renaming first (might be more efficient)
                                 if (sourceFile.renameTo(destinationFile)) {
                                     // Success! File renamed
                                 } else {
-                                    // Renaming failed, try copy-move approach
                                     FileUtils.copyFile(sourceFile, destinationFile);
-                                    if (sourceFile.delete()) {
-                                        // Success! File moved
-                                    } else {
-                                        // Failed to delete source file
-                                    }
+
                                 }
                             } catch (IOException e) {
                                 // Handle IOException
