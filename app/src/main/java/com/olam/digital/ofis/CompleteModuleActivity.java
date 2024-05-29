@@ -1267,7 +1267,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                             noOtherQuestion = true;
                             dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                             noOtherQuestion = true;
                             renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                     /* try{
@@ -1333,7 +1333,7 @@ public class CompleteModuleActivity extends BaseActivity {
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                     noOtherQuestion = true;
                                     dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                                     noOtherQuestion = true;
                                     renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {

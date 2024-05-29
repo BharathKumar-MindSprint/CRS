@@ -99,6 +99,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -5335,7 +5336,7 @@ public class DynamicQuestions {
 
 
                                     if (answerId != 0) {
-                                        if (Integer.parseInt(lookupID) == Integer.parseInt(dl.radioAnswerValueFromAnswersTable(answerId))) {
+                                        if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
                                             radioButton.setChecked(true);
                                             radioButton.setEnabled(true);
                                             saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
@@ -5400,7 +5401,7 @@ public class DynamicQuestions {
 
 
                                     if (answerId != 0) {
-                                        if (Integer.parseInt(lookupID) == Integer.parseInt(dl.radioAnswerValueFromAnswersTable(answerId))) {
+                                        if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
                                             radioButton.setChecked(true);
                                             radioButton.setEnabled(true);
                                             saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
@@ -5472,7 +5473,7 @@ public class DynamicQuestions {
 
 
                                             if (answerId != 0) {
-                                                if (Integer.parseInt(lookupID) == Integer.parseInt(dl.radioAnswerValueFromAnswersTable(answerId))) {
+                                                if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
                                                     radioButton.setChecked(true);
                                                     radioButton.setEnabled(true);
                                                     saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
