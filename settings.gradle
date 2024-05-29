@@ -1,1 +1,30 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("$artifactory_context_url$artifactory_dev_repo_key")
+            credentials {
+                username = artifactory_user
+                password = artifactory_password
+            }
+        }
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'https://maven.google.com/'
+        }
+        jcenter()
+    }
+}
+rootProject.name = "Olam-ofis-mobile"
 include ':app', ':InAppLib_1.8'
+
