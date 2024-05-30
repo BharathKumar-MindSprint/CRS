@@ -813,7 +813,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         if(!MultiFarmUtils.isMultiFarmEnumerator){
             farmInformationLayout.setVisibility(View.GONE);
@@ -3802,7 +3802,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private int getIndexForFarmerRoleSpinnerList(String roleId) {
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
         int id = Integer.parseInt(roleId);
         for (int i = 0; i < roles.size(); i++) {
