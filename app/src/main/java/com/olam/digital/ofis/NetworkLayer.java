@@ -2016,7 +2016,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
@@ -2024,6 +2024,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "decimal";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                            datatype = "date";
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -4792,7 +4794,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
@@ -4800,6 +4802,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "decimal";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                            datatype = "date";
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));

@@ -2002,7 +2002,7 @@ public class DynamicQuestions {
 
         if (oldDatatype != null) {
             if (oldDatatype.equals("Date Picker")) {
-                datatype = "text";
+                datatype = "date";
             }
         }
 
@@ -9699,7 +9699,7 @@ public class DynamicQuestions {
 
         if (oldDatatype != null) {
             if (oldDatatype.equals("Date Picker")) {
-                datatype = "answer_text";
+                datatype = "date";
             }
         }
 
@@ -9845,7 +9845,7 @@ public class DynamicQuestions {
 
         if (oldDatatype != null) {
             if (oldDatatype.equals("Photo Checkbox")) {
-                datatype = "answer_text";
+                datatype = "int";
             }
         }
 
