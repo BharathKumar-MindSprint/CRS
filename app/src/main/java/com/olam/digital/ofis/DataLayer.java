@@ -7456,12 +7456,16 @@ public class DataLayer {
     }
 
     public List<MultiFarmRoleDTO> getMultiFarmRoles(String locale) {
-        if(locale.equalsIgnoreCase("_en")){
-            locale="";
-        }
+
         List<MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<MultiFarmRoleDTO>();
-        // Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
-        Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + "," +  locale  + " as name " + " FROM multifarmRoles ", null);
+        }
+        catch (Exception e) {
+            cursor = db.rawQuery("select * from multifarmRoles", null);
+        }
+
         if (cursor != null) {
             try {
                 if (cursor.getCount() > 0) {
