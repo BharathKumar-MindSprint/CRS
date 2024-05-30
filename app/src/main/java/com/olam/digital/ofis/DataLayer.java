@@ -7646,6 +7646,28 @@ public class DataLayer {
 
     }
 
+    public String radioAnswerValueFromSavedAnswersTable(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_INT));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
     public String getQuestionTypeValue(int id){
         String value = "";
         Cursor cursor = null;
