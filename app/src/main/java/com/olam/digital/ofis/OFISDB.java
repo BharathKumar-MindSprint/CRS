@@ -1062,6 +1062,10 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow153(sqLiteDatabase);
         }
 
+        if (oldVersion < 155) {
+            migrateFromVersionBelow154(sqLiteDatabase);
+        }
+
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
@@ -1231,7 +1235,16 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.MultiFarmRoles.TABLE_NAME);
         sqLiteDatabase.execSQL(OFIS_MULTIFARM_ROLES_TABLE_CREATE);
     }
+    private void migrateFromVersionBelow154(SQLiteDatabase sqLiteDatabase){
 
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+    }
     private void droptables(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("drop table IF EXISTS modules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS submodules;");

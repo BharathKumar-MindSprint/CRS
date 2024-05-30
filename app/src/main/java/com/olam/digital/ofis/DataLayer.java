@@ -218,7 +218,7 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId) {
+    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId, String plotGpx) {
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
         String[] whereArgs = new String[]{String.valueOf(plotName)};
         db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
@@ -228,6 +228,7 @@ public class DataLayer {
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID, mOlamFarmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID, farmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME, enteredPlotName);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT, plotGpx);
 
         //temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
         if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
@@ -295,10 +296,11 @@ public class DataLayer {
     }
 
 
-    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
+    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx) {
         try {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, plotName);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, plotGpx);
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
                     OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
             String[] whereArgs = new String[]{String.valueOf(mFarmerId),String.valueOf(selectedPlotId)};
@@ -429,6 +431,27 @@ public class DataLayer {
         }
         return plottedName;
     }
+    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName){
+        String centerPlot = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId), plotName};
+            cursor = db.query(OFISDBContract.PlotGeoData.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            centerPlot = null;
+        }finally {
+            cursor.close();
+        }
+        return centerPlot;
+    }
 
     public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
         Cursor plotIdsSynced = syncedPlotIds(farmerId);
@@ -452,6 +475,7 @@ public class DataLayer {
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, getPlottedNameFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
                 long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
