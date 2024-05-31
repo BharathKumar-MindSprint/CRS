@@ -50,14 +50,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModule
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
-import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
-
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SupportFactory;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
@@ -128,25 +124,11 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public static OFISRoomDB getDbInstance(Context context) {
 
         if (INSTANCE == null) {
-//            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
-//                    .allowMainThreadQueries()
-//                    .fallbackToDestructiveMigration()
-//                    .openHelperFactory()
-//                    .build();
-            INSTANCE= getEncryptDB(context);
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
         }
         return INSTANCE;
-    }
-
-    public static OFISRoomDB getEncryptDB(Context context) {
-        SharedPreferenceUtils.getInstance(context).setPassword();
-
-        char[] admin = SharedPreferenceUtils.getInstance(context).getPassword().toCharArray();
-        SupportFactory supportFactory = new SupportFactory(SQLiteDatabase.getBytes(admin));
-        return Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
-                .openHelperFactory(supportFactory)
-                .build();
     }
 }

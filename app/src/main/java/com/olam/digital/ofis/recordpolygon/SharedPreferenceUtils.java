@@ -150,11 +150,4 @@ public class SharedPreferenceUtils {
         }
         return null;
     }
-    public void setPassword() {
-        mSharedPreferencesEditor.putString("pass", AppConstants.ENCR_PASSWORD);
-        mSharedPreferencesEditor.commit();
-    }
-    public String getPassword() {
-        return mSharedPreferences.getString("pass", "");
-    }
 }

@@ -1,9 +1,7 @@
 //apply plugin: 'com.dynatrace.instrumentation'
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'org.jetbrains.kotlin.android'
-apply plugin: 'kotlin-kapt'
+
 
 android {
     signingConfigs {
@@ -28,7 +26,7 @@ android {
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 190
@@ -340,9 +338,6 @@ android {
 
     }
     namespace 'com.olam.digital.ofis'
-    buildFeatures {
-        buildConfig true
-    }
 
 
 }
@@ -408,26 +403,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha10'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
-    implementation 'androidx.room:room-runtime:2.6.1'
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-runtime:2.2.5'
+    annotationProcessor 'androidx.room:room-compiler:2.2.5'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
-
-    implementation 'androidx.sqlite:sqlite:2.4.0'
-    implementation 'net.zetetic:android-database-sqlcipher:4.5.4'
-    implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
-    implementation 'com.mindsprint:room-encryption:0.0.5'
-
-    implementation 'androidx.room:room-ktx:2.6.1'
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
-
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
 apply plugin: 'com.google.gms.google-services'
