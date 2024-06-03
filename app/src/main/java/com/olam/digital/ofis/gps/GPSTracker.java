@@ -2,6 +2,7 @@ package com.olam.digital.ofis.gps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -15,6 +16,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -50,7 +52,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class GPSTracker {
 
     // Component related to UI
-    AppCompatActivity mActivity;
+    Activity mActivity;
     private ProgressDialog progressDialog;
 
     // bunch of location related apis
@@ -79,6 +81,13 @@ public class GPSTracker {
     }
 
     public GPSTracker(AppCompatActivity mActivity, GPSListener gpsListener){
+        this.mActivity= mActivity;
+        this.gpsListener = gpsListener;
+        progressDialog=new ProgressDialog(mActivity);
+        init();
+    }
+    // OW-4574
+    public GPSTracker(FragmentActivity mActivity, GPSListener gpsListener){
         this.mActivity= mActivity;
         this.gpsListener = gpsListener;
         progressDialog=new ProgressDialog(mActivity);

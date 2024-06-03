@@ -30,5 +30,6 @@ public class GPSConstants {
 
   //  public static final String SYNC_END_POINT = "ofismaster/master/enumeratorgpstracking";
     public static final String SYNC_END_POINT = "ofisenumeratorgpstracker/gps-tracking/enumeratorgpstracking";
-
+    //  OW-4574
+    public static final String DIAGNOSTIC_SURVEY = "Diagnostic Survey";
 }
