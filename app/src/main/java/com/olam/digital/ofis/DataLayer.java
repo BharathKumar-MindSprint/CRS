@@ -44,6 +44,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
@@ -78,12 +79,15 @@ public class DataLayer {
 
     private static Resources res;
     private static SQLiteDatabase db;
+    private static OFISRoomDB ofisRoomDB;
+
 
     // constructor - update
     public DataLayer(Resources res_, Context context_) {
         super();
         res = res_;
         db = Utilities.getWriteableDb(context_);
+        ofisRoomDB = OFISRoomDB.getDbInstance(context_);
     }
 
     // data recording tasks
@@ -1866,6 +1870,26 @@ public class DataLayer {
         return newEntry;
     }
 
+    public String getSurveyDurationByModuleId(int moduleId){
+        String surveyDuration = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            cursor = db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    surveyDuration = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return surveyDuration;
+    }
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
@@ -8320,7 +8344,7 @@ public class DataLayer {
 
 
 
-    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId,String multifarmId) throws JSONException {
+    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId,String multifarmId, int moduleId) throws JSONException {
 
         String farmId=getMultifarmfarmId(farmerId);
         MultiFarmDTO multiFarmDTO=null;
@@ -8446,11 +8470,24 @@ public class DataLayer {
                                                                 if (disable_entry) {
 
                                                                     if (submittedModuleDetails.has("farmId") && submittedModuleDetails.getInt("farmId") == Integer.parseInt(farmId)) {
-                                                                        submittedInfo.setSubmitted(true);
-                                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                                        submittedInfo.setNetworkTable(false);
-                                                                        submittedInfo.setAvailableInOtherFarm(false);
-                                                                        return submittedInfo;
+
+                                                                        int surveyDurationId = ofisRoomDB.surveyDurationTypeDao().getSurveyDurationId();
+                                                                        String surveyDuration_string = getSurveyDurationByModuleId(moduleId);
+                                                                        if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
+                                                                            submittedInfo.setSubmitted(false);
+                                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                            submittedInfo.setNetworkTable(false);
+                                                                            submittedInfo.setAvailableInOtherFarm(false);
+                                                                            return submittedInfo;
+                                                                        } else {
+                                                                            submittedInfo.setSubmitted(true);
+                                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                            submittedInfo.setNetworkTable(false);
+                                                                            submittedInfo.setAvailableInOtherFarm(false);
+                                                                            return submittedInfo;
+                                                                        }
+
+
                                                                     }
 
                                                                     //submittedInfoList.add(submittedInfo);
