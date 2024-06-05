@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
@@ -277,16 +278,22 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
         TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
         LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
+        TextView enabledFarmer = (TextView) v.findViewById(R.id.farmerEnabled);
         boolean selectedState = Boolean.parseBoolean(state.getText().toString());
+        boolean enabledState = Boolean.parseBoolean(enabledFarmer.getText().toString());
+
+        if (!enabledState) {
+            return;
+        }
 
         if (selectedState) {
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
-          //  linearLayout.setBackgroundResource(R.drawable.list_item);
+            linearLayout.setBackgroundResource(R.drawable.list_item);
             state.setText("false");
             selectedFarmers.remove(id);
         } else {
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
-          //  linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+            //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             state.setText("true");
             selectedFarmers.add(id);
         }

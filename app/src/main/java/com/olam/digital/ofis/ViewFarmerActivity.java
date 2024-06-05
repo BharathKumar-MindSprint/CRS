@@ -252,6 +252,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     String followUpCount;
     String moduleID;
 
+    boolean aggregatedIndicator;
 
 
 
@@ -495,6 +496,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView plotInfo = (TextView) findViewById(R.id.plotInfo);
         TextView certificationInfo = (TextView) findViewById(R.id.certificationInfo);
 
+        LinearLayout llAggregatedIndicator = (LinearLayout) findViewById(R.id.ll_aggregated_indicator);
+        TextView compliance = (TextView) findViewById(R.id.tv_compliance);
+        TextView nonCompliance = (TextView) findViewById(R.id.tv_non_compliance);
+        ImageView ivCompliance = (ImageView) findViewById(R.id.iv_compliance);
+        ImageView ivNonCompliance = (ImageView) findViewById(R.id.iv_non_compliance);
+
         farmer = dl.getFarmerById(farmerId);
 
         if (farmer.getCount() > 0) {
@@ -658,6 +665,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting module assignments for farmer", e));
                 e.printStackTrace();
+            }
+
+            aggregatedIndicator = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
+            if (aggregatedIndicator) {
+                llAggregatedIndicator.setBackgroundColor(getResources().getColor(R.color.ofis_compliance));
+                ivCompliance.setVisibility(View.VISIBLE);
+                compliance.setVisibility(View.VISIBLE);
+                ivNonCompliance.setVisibility(View.GONE);
+                nonCompliance.setVisibility(View.GONE);
             }
         }
 
@@ -2689,7 +2705,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     context.startActivity(intent);
                 }
             }
-        } else {
+        }
+        else {
             // Deal the Multifarm Item Click
 
             if (MultiFarmUtils.isMultiFarmEnumerator) {

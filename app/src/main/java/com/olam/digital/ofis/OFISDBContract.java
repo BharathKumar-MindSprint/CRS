@@ -1021,6 +1021,12 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
         public static final String COLUMN_NAME_AGE = "age";
 
+        public static final String COLUMN_NAME_COMPLAINCE_FLAG = "complainceFlag";
+        public static final String COLUMN_NAME_ORIGIN_CAPABILITIES = "originCapabilities";
+        public static final String COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF = "conductSurveyForNonCompliant";
+        public static final String COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF = "conductTrainingForNonCompliant";
+        public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1059,6 +1065,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
                     add(COLUMN_NAME_AGE);
+                    add(COLUMN_NAME_COMPLAINCE_FLAG);
+                    add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                    add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                    add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1091,6 +1101,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PARTNER_ID);
                     add(COLUMN_NAME_PROGRAMME_ID);
                     add(COLUMN_NAME_AGE);
+                    add(COLUMN_NAME_COMPLAINCE_FLAG);
+                    add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                    add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                    add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
