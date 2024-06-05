@@ -945,9 +945,7 @@ public class DynamicQuestions {
         }
 
         //For repeater Items mandate check
-//        List<RepeaterItems> questionRepeaterSet = new ArrayList<>();
         List<RepeaterItems> questionRepeaterSet = new ArrayList<>();
-//        List<RepeaterItems> answerRepeaterSet = new ArrayList<>();
         List<RepeaterItems> answerRepeaterSet = new ArrayList<>();
 
         // get the list of mandated by submodules
@@ -1004,7 +1002,6 @@ public class DynamicQuestions {
                                             int index = questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
                                             questionList.remove(index);
                                         } else {
-                                            // Arch
 
                                             // for Repeater Item Question Mandate
                                             Cursor repeaterItemsForQuestion = dl.getRepeaterItemsForQuestion(repeaterParentId);
@@ -1084,7 +1081,6 @@ public class DynamicQuestions {
         if (questionList.size() == 0) {
             match = true;
         } else {
-//            boolean newMatch = new HashSet<>(answeredQuestionList).containsAll(new HashSet<>(questionList));
             if (answeredQuestionList.containsAll(questionList) && repeaterItemAnswered ) {
                 match = true;
             }
