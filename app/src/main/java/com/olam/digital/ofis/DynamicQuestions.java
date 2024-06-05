@@ -1005,7 +1005,7 @@ public class DynamicQuestions {
 
                                             // for Repeater Item Question Mandate
                                             Cursor repeaterItemsForQuestion = dl.getRepeaterItemsForQuestion(repeaterParentId);
-                                            if (repeaterItemsForQuestion != null && repeaterItemsForQuestion.moveToFirst()){
+                                            if (repeaterItemsForQuestion != null && repeaterItemsForQuestion.moveToFirst() && questionFound){
                                                 do {
                                                     JSONObject displayConfigRepeater = new JSONObject(repeaterItemsForQuestion.getString(repeaterItemsForQuestion.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                                                     if (displayConfigRepeater.has("display")){
