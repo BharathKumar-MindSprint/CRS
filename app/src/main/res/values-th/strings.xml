@@ -672,4 +672,6 @@
 
     <string name="farmer_roles">Bthbāth k̄hxng kes̄ʹtrkr</string>
     <string name="select_level_of_responsibility">Leụ̄xk khwām rạbp̄hidchxb</string>
+    <string name="non_compliant">Non-compliant</string>
+    <string name="compliant">Compliant</string>
 </resources>

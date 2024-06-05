@@ -673,5 +673,7 @@
 
     <string name="farmer_roles">vai trò nông dân</string>
     <string name="select_level_of_responsibility">Chọn trách nhiệm</string>
+    <string name="non_compliant">Non-compliant</string>
+    <string name="compliant">Compliant</string>
 
 </resources>
