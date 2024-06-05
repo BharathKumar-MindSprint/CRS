@@ -1114,4 +1114,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to re-record the same plot again ?</string>
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
 
+    <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys</string>
 </resources>
