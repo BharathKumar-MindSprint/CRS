@@ -208,9 +208,10 @@ buildscript {
     }
 }*/
 
-//plugins {
+plugins {
 //    id "org.sonarqube" version "2.7"
-//}
+    id "com.jfrog.artifactory" version "4.21.0"
+}
 
 allprojects {
     repositories {
@@ -221,5 +222,12 @@ allprojects {
             url 'https://maven.google.com/'
         }
         maven { url "https://jitpack.io" }
+        maven {
+            url = uri("$artifactory_context_url$artifactory_dev_repo_key")
+            credentials {
+                username = artifactory_user
+                password = artifactory_password
+            }
+        }
     }
 }

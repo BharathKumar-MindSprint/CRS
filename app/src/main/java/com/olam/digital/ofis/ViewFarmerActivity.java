@@ -482,13 +482,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView pNumberInfo = (TextView) findViewById(R.id.pNumberInfo);
         TextView partnerInfo = (TextView) findViewById(R.id.partnerInfo);
         TextView programInfo = (TextView) findViewById(R.id.programInfo);
-        TextView countryInfo = (TextView) findViewById(R.id.countryInfo);
+//        TextView countryInfo = (TextView) findViewById(R.id.countryInfo);
         TextView regionInfo = (TextView) findViewById(R.id.regionInfo);
         TextView districtInfo = (TextView) findViewById(R.id.districtInfo);
         TextView subDistrictInfo = (TextView) findViewById(R.id.subDistrictInfo);
         TextView placeInfo = (TextView) findViewById(R.id.placeInfo);
         TextView fgInfo = (TextView) findViewById(R.id.fgInfo);
         TextView sectionInfo = (TextView) findViewById(R.id.sectionInfo);
+
+        TextView nationalIdInfo = (TextView) findViewById(R.id.nationalIdInfo);
+        TextView gpsInfo = (TextView) findViewById(R.id.gpsInfo);
+        TextView plotInfo = (TextView) findViewById(R.id.plotInfo);
+        TextView certificationInfo = (TextView) findViewById(R.id.certificationInfo);
 
         farmer = dl.getFarmerById(farmerId);
 
@@ -540,13 +545,36 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
             partnerInfo.setText("- " +ptInfo);
             programInfo.setText("- " +prInfo);
-            countryInfo.setText("- " +dl.getCountryName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)))));
+//            countryInfo.setText("- " +dl.getCountryName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)))));
             regionInfo.setText("- " +dl.getRegionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)))));
             districtInfo.setText("- " +dl.getDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)))));
             subDistrictInfo.setText("- " +dl.getSubDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)))));
             placeInfo.setText("- " +dl.getPlaceName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)))));
             fgInfo.setText("- " +dl.getFGName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
             sectionInfo.setText("- " +dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)))));
+
+            certificationInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT)));
+
+            Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+            try {
+                int i = 0;
+                while (nids.moveToNext()) {
+                    i++;
+                    nationalIdInfo.setText("- " +nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+            int size = plotIdsSynced.getCount();
+            plotInfo.setText("- " + size);
+            if(size > 0){
+                gpsInfo.setText("- Yes");
+            }else {
+                gpsInfo.setText("- No");
+            }
+
             JSONObject submittedModules;
             try {
 

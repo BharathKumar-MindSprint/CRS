@@ -163,7 +163,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_country_view_farmer"
+                    android:text="@string/nationalid"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -171,7 +171,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/countryInfo"
+                    android:id="@+id/nationalIdInfo"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"/>
@@ -316,6 +316,84 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/sectionInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GPS Co-ordinates"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/gpsInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of plots captured"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plotInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Certifications"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/certificationInfo"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"/>
