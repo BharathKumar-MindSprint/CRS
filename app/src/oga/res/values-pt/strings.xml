@@ -823,5 +823,6 @@
     <string name="edit_already_logged_plot">%1$s já logado e salvo! Quer regravar o mesmo enredo novamente?</string>
     <string name="save_polygon_alertdialog">Tem certeza de que deseja economizar %1$s agora?</string>
 
+    <string name="ofis_farmer_and_surveys">Agricultores e Pesquisas</string>
 
 </resources>

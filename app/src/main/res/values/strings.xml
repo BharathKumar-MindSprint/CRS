@@ -89,6 +89,7 @@
     <string name="ofis_first_run_intro">You haven\'t been around here before, have you? May we have some details?</string>
     <string name="ofis_first_run_save_update">Save &amp; Update</string>
 
+
     <!-- Settings screen related -->
     <!-- in XML -->
     <string name="Enumerator_ID">Enumerator ID</string>
@@ -1151,4 +1152,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="farmer_roles">Farmer Role</string>
     <string name="non_compliant">Non-compliant</string>
     <string name="compliant">Compliant</string>
+    <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys></string>
 </resources>

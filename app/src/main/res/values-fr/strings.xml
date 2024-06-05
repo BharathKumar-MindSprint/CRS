@@ -1107,5 +1107,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="select_level_of_responsibility">Sélectionnez niveau de responsabilité</string>
     <string name="non_compliant">Non-compliant</string>
     <string name="compliant">Compliant</string>
+    <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
 </resources>

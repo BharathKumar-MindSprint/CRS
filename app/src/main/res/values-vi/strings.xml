@@ -675,5 +675,6 @@
     <string name="select_level_of_responsibility">Chọn trách nhiệm</string>
     <string name="non_compliant">Non-compliant</string>
     <string name="compliant">Compliant</string>
+    <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
 </resources>

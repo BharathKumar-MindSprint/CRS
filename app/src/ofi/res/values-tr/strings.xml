@@ -761,4 +761,6 @@
     <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>
     <string name="save_polygon_alertdialog">%1$s\'ı şimdi kaydettiğinizden emin misiniz?</string>
 
+    <string name="ofis_farmer_and_surveys">Çiftçiler ve Araştırmalar</string>
+
 </resources>

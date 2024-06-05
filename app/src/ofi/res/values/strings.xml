@@ -1130,5 +1130,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
     <string name="delete_sip_polygon">Are you sure you want to delete saved polygon?</string>
 
+    <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys</string>
+
 
 </resources>
