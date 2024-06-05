@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
@@ -91,6 +92,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,6 +103,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by ben on 02/06/2015.
@@ -929,6 +932,7 @@ public class DynamicQuestions {
 
     public boolean isAllRequiredSubmoduleAnswered(Cursor questions) throws JSONException {
         boolean match = false;
+        Boolean repeaterItemAnswered = false;
 
         // get List from Answered List
         ArrayList<Integer> answeredQuestionList = new ArrayList<>();
@@ -939,6 +943,12 @@ public class DynamicQuestions {
                 answeredQuestionList.add(currentQuestionId);
             }
         }
+
+        //For repeater Items mandate check
+//        List<RepeaterItems> questionRepeaterSet = new ArrayList<>();
+        List<RepeaterItems> questionRepeaterSet = new ArrayList<>();
+//        List<RepeaterItems> answerRepeaterSet = new ArrayList<>();
+        List<RepeaterItems> answerRepeaterSet = new ArrayList<>();
 
         // get the list of mandated by submodules
         ArrayList<Integer> questionList = new ArrayList<>();
@@ -993,6 +1003,63 @@ public class DynamicQuestions {
                                         if (answerRepetaerParent.equalsIgnoreCase("0")) {
                                             int index = questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
                                             questionList.remove(index);
+                                        } else {
+                                            // Arch
+
+                                            // for Repeater Item Question Mandate
+                                            Cursor repeaterItemsForQuestion = dl.getRepeaterItemsForQuestion(repeaterParentId);
+                                            if (repeaterItemsForQuestion != null && repeaterItemsForQuestion.moveToFirst()){
+                                                do {
+                                                    JSONObject displayConfigRepeater = new JSONObject(repeaterItemsForQuestion.getString(repeaterItemsForQuestion.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                                                    if (displayConfigRepeater.has("display")){
+                                                        JSONObject displayRepeater = displayConfigRepeater.getJSONObject("display");
+                                                        if (displayRepeater.optBoolean("requiredfield", false)) {
+                                                            final int questionIdRepeater = repeaterItemsForQuestion.getInt(repeaterItemsForQuestion.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+
+                                                            for (int k = 1; k <=Integer.parseInt(answerRepetaerParent); k++) {
+                                                                RepeaterItems newRepeaterItem = new RepeaterItems(questionIdRepeater, k);
+                                                                boolean isDuplicate = false;
+
+                                                                for (RepeaterItems existingItem : questionRepeaterSet) {
+                                                                    if (newRepeaterItem.equals(existingItem)) {
+                                                                        isDuplicate = true;
+                                                                        break;
+                                                                    }
+                                                                }
+
+                                                                if (!isDuplicate) {
+                                                                    questionRepeaterSet.add(newRepeaterItem);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                } while (repeaterItemsForQuestion.moveToNext());
+                                            }
+
+                                            // For Repeater Item Answer Mandate
+                                            for (int m = 0; m < answerSet.size(); m++) {
+                                                JSONObject currentAnswerRepeater = answerSet.get(m);
+                                                if (currentAnswerRepeater != null) {
+                                                    if (repeaterParentId == currentAnswerRepeater.optInt("parent_question_id")){
+                                                        RepeaterItems newRepeaterItem = new RepeaterItems(currentAnswerRepeater.optInt("question_id"), currentAnswerRepeater.optInt("repeater_item_position"));
+                                                        boolean isDuplicate = false;
+
+                                                        for (RepeaterItems existingItem : answerRepeaterSet) {
+                                                            if (newRepeaterItem.equals(existingItem)) {
+                                                                isDuplicate = true;
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        if (!isDuplicate) {
+                                                            answerRepeaterSet.add(newRepeaterItem);
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+
                                         }
                                     }
                                 }
@@ -1006,12 +1073,19 @@ public class DynamicQuestions {
             } while (questions.moveToNext());
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            List<String> ques = questionRepeaterSet.stream().map(it-> it.questionId+""+it.repeaterPosition).collect(Collectors.toList());
+            List<String> ans = answerRepeaterSet.stream().map(it-> it.questionId+""+it.repeaterPosition).collect(Collectors.toList());
+            repeaterItemAnswered = ans.containsAll(ques);
+
+        }
+
         // Compare the list
         if (questionList.size() == 0) {
             match = true;
         } else {
 //            boolean newMatch = new HashSet<>(answeredQuestionList).containsAll(new HashSet<>(questionList));
-            if (answeredQuestionList.containsAll(questionList)) {
+            if (answeredQuestionList.containsAll(questionList) && repeaterItemAnswered ) {
                 match = true;
             }
         }
