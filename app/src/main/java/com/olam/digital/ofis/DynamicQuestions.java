@@ -2701,7 +2701,13 @@ public class DynamicQuestions {
                 currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
             } else {
                 if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                    currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                    if (Objects.equals(datatype, "decimal")) {
+                        currentAnswerValue = String.valueOf(BigDecimal.valueOf(qCursor.getDouble(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))));
+                    }
+                    else {
+                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                    }
+
                 }
             }
 
