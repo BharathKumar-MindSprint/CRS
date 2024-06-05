@@ -8703,7 +8703,7 @@ public class DynamicQuestions {
                         // add a text view with the item number in it
                         TextView tv = (TextView) repeateritemWrapper.findViewById(R.id.repeater_item_number);
                         tv.setText(String.valueOf(i));
-
+                        Boolean questionPresent = false;
                         while (repeaterQuestions.moveToNext()) {
                             if (repeaterItemMobileVisibility(repeaterQuestions)) {
                                 String displayType = repeaterItemDisplayType(repeaterQuestions);
@@ -8718,30 +8718,91 @@ public class DynamicQuestions {
                                         repeaterAnswers.moveToFirst();
                                     }
 
-                                    if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
-                                        renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, true);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
-                                        renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
-                                        renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
-                                        renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
-                                        renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
-                                        renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                                        renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner, farmerId, farmerModuleId, false, true , i, repeaterAnswers, questionId);
-                                    } else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
-                                        renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId, false, i, repeaterAnswers, questionId);
+                                    final int repeaterItemQuestionId = repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                                    final String questionAssignmentType = dl.getQuestionAssignmentTypeId(repeaterItemQuestionId);
+                                    final String questionAssignmentField = dl.getQuestionAssignmentFieldId(repeaterItemQuestionId);
+                                    if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
+                                        if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                            renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, true);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                                            renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                                            renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                                            renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
+                                            renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                                            renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                            questionPresent = true;
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                                            renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner, farmerId, farmerModuleId, false, true , i, repeaterAnswers, questionId);
+                                            questionPresent = true;
+                                        } else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
+                                            renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId, false, i, repeaterAnswers, questionId);
+                                            questionPresent = true;
+                                        } else {
+                                            questionPresent = false;
+                                        }
+                                    } else {
+                                        String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
+
+                                        // Convert the string array to an integer array
+                                        int[] intArrayQuestion = new int[stringArrayQuestion.length];
+                                        for (int m = 0; m < stringArrayQuestion.length; m++) {
+                                            intArrayQuestion[m] = Integer.parseInt(stringArrayQuestion[m]);
+                                        }
+
+                                        // Iterate through the integer array using a for loop
+                                        for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
+                                            String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
+
+                                            if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
+                                                if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                                    renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, true);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                                                    renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
+                                                    renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                                                    renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                                    questionPresent = true;
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                                                    renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner, farmerId, farmerModuleId, false, true , i, repeaterAnswers, questionId);
+                                                    questionPresent = true;
+                                                } else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
+                                                    renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId, false, i, repeaterAnswers, questionId);
+                                                    questionPresent = true;
+                                                } else {
+                                                    questionPresent = false;
+                                                }
+                                            }
+                                        }
                                     }
+
                                 } finally {
                                     if (repeaterAnswers != null) repeaterAnswers.close();
                                 }
                             }
                         }
 
-                        repeaterItemsWrapper.addView(repeateritemWrapper);
+                        if (questionPresent){
+                            repeaterItemsWrapper.addView(repeateritemWrapper);
+                        }
                         repeaterQuestions.moveToPosition(-1);
                     }
                 }
