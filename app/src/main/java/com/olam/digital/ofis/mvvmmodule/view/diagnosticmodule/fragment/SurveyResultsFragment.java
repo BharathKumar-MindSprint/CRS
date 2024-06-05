@@ -1,7 +1,9 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,6 +27,12 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
@@ -41,6 +49,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +81,10 @@ public class SurveyResultsFragment extends Fragment {
     String resultValue;
     String resultColor;
     int amount = 0;
+    // OW-4574
+    private Location mCurrentCapturedLocation = null;
+    GPSListener gpsListener = null;
+    private GPSTracker gpsTracker = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,12 +105,29 @@ public class SurveyResultsFragment extends Fragment {
         remarks = view.findViewById(R.id.editTextTextMultiLine);
 
         db = OFISRoomDB.getDbInstance(getActivity());
-
+        // OW-4574
+        gpsListener = new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location != null && !GPSUtils.isMockLocation(location)) {
+                    mCurrentCapturedLocation = location;
+                }
+            }
+        };
+        gpsTracker = new GPSTracker(getActivity(), gpsListener);
+        gpsTracker.startLocationUpdateInitially();
 
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // OW-4574
+                    if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
+                    } else {
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }
                 //Call API
 
                 List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
@@ -178,9 +208,12 @@ public class SurveyResultsFragment extends Fragment {
                         Integer.parseInt(currencyId),submittedDate,resultColor,
                         overAllResultComplianceID);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
-
-
                 DataLayer dl = new DataLayer(getResources(), getContext());
+                // OW-4574
+                if(!dl.networkEntryTypeExistsByFarmerModuleId("DMSurvey",Long.parseLong(Constants.FARMER_ID), Constants.MODULE_ID)) {
+                    collectGPSPoint(mCurrentCapturedLocation);
+                    gpsTracker.stopLocationUpdates();
+                }
                 dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "DMSurvey",Constants.MODULE_NAME);
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
                 getContext().startActivity(intent);
@@ -556,5 +589,19 @@ public class SurveyResultsFragment extends Fragment {
         });
 
 
+    }
+    private void collectGPSPoint(Location farmLocation) {
+        TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.DIAGNOSTIC_SURVEY);
+        trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(farmLocation.getAccuracy()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(Constants.FARMER_ID);
+        trackDetailsDTO.setFarmerName(Constants.FARMER_NAME);
+        trackDetailsDTO.setSurveyName(Constants.MODULE_NAME);
+
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(getContext(), geoContentValues);
     }
 }
