@@ -10225,7 +10225,7 @@ public class DataLayer {
         }
     }
 
-    boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
+    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND "
                 + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
