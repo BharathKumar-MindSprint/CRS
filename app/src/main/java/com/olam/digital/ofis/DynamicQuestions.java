@@ -985,7 +985,7 @@ public class DynamicQuestions {
                         }
 
 //                        check the type only for calcualted question. Calculated question FRANKLIN
-                        if (!type.equalsIgnoreCase("Calculated") && questionFound) {
+                        if (!type.equalsIgnoreCase("Calculated") && !type.toLowerCase().replaceAll(" ","").equals("repeateritem") && questionFound) {
                             questionList.add(Integer.parseInt(questionsString));
                         }
 
@@ -6095,9 +6095,17 @@ public class DynamicQuestions {
             }
         } else {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                cbAnswers = dl.getAnswersForQuestionByFarmerRepeaterCheckbox(questionId, farmerId, farmerModuleId, repeaterItemPosition);
+                if (viewAnswer){
+                    cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+                } else {
+                    cbAnswers = dl.getAnswersForQuestionByFarmerRepeaterCheckbox(questionId, farmerId, farmerModuleId, repeaterItemPosition);
+                }
             } else {
-                cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+                if (viewAnswer){
+                    cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+                } else {
+                    cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+                }
             }
             if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 try {
@@ -8508,6 +8516,9 @@ public class DynamicQuestions {
 
                 if (hasAnswers) {
                     int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_" + datatype)) : 0;
+                    if (!questions.isNull(questions.getColumnIndex("answer_" + datatype)) && !zeroAcceptable){
+                        answer = -1;
+                    }
                     spinner.setSelection(answer);
                 }
 
