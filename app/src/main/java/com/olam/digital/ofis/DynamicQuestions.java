@@ -1000,7 +1000,9 @@ public class DynamicQuestions {
                                         answerRepetaerParent = currentAnswer.getString("answer");
                                         if (answerRepetaerParent.equalsIgnoreCase("0")) {
                                             int index = questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
-                                            questionList.remove(index);
+                                            if(questionList.contains(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))))){
+                                                questionList.remove(index);
+                                            }
                                         } else {
 
                                             // for Repeater Item Question Mandate
