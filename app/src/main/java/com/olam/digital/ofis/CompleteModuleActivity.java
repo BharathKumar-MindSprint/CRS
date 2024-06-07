@@ -1422,6 +1422,17 @@ public class CompleteModuleActivity extends BaseActivity {
 
                 }
             });
+            
+            if(dynamicQuestions.viewAnswer){
+                int syncedAnswer = 0;
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    syncedAnswer = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+                textView.setText("Location: " + dl.locationValueFromSavedAnswersTable(syncedAnswer));
+                textView.setClickable(false);
+            } else {
+                textView.setClickable(true);
+            }
 
             questionWrapper.addView(textView);
             parentLayout.addView(questionWrapper);
