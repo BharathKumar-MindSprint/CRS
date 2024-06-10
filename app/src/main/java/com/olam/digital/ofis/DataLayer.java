@@ -2075,7 +2075,7 @@ public class DataLayer {
             String productId =Utilities.productId;
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
-            try {
+            /*try {
                 if (type.equalsIgnoreCase("CHILD_PRODUCT") &&
                         table.equalsIgnoreCase(OFISDBContract.LookupValuesEntry.TABLE_NAME)) {
                     String value = "%\"country_id\":" +
@@ -2088,7 +2088,7 @@ public class DataLayer {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if (OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())) {
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
@@ -3743,7 +3743,7 @@ public class DataLayer {
         String countryId = Utilities.countryId;
         String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
-        try {
+        /*try {
             if (type.equalsIgnoreCase("CHILD_PRODUCT")) {
                 String value = "%\"country_id\":" +
                         Long.parseLong(countryId) +
@@ -3755,7 +3755,7 @@ public class DataLayer {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
         String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
 
 
@@ -5216,13 +5216,13 @@ public class DataLayer {
     }
 
     Cursor getAllAnswersByFarmerChildModuleId(int farmerModuleId) {
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5276,7 +5276,7 @@ public class DataLayer {
     }
 
     Cursor getAnswersByFarmerChildModuleId(int farmerModuleId) {
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", "
@@ -5284,9 +5284,9 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5578,10 +5578,10 @@ public class DataLayer {
 
     // Remove and update after sync
     void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate, String surveyCode) {
-        String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
-        db.delete(OFISDBContract.AnswerChildEntry.TABLE_NAME, whereClause, whereArgs);
+        db.delete(OFISDBContract.AnswerEntry.TABLE_NAME, whereClause, whereArgs);
 
         whereClause = OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_ID + " = ?";
         db.delete(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, whereClause, whereArgs);

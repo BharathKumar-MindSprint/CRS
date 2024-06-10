@@ -263,7 +263,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
             dynamicQuestions.hasAnswers = true;
             dynamicQuestions.viewAnswer = false;
-            questions = dl.getChildQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
+            questions = dl.getQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
 
             moveToCurrentSubModule(subModuleId);
         } else if (subModuleId != 0) {
@@ -412,7 +412,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         }
 
 
-        dl.updateSubModuleChildAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
+        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
 
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();
@@ -556,6 +556,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                        dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
                     }
 
                 } else {
@@ -592,6 +594,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                                dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
                             }
                         }
 
