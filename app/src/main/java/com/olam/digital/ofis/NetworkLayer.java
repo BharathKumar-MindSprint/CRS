@@ -4703,15 +4703,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             if (moduleAnswers.getCount() > 0) {
 
                                 while (moduleAnswers.moveToNext()) {
-                                    questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                    questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                     JSONObject answer = new JSONObject();
-                                    answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                    answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                                    answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+                                    answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
 
-                                    int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID));
+                                    int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID));
 
                                     // As of now didn't consider the subQuestion Answer select ( Any subQuestion Issue please focus here)
-                                    Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
+                                    Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
                                     Set<Integer> sub_questions_included = new TreeSet<>();
 
                                     if (cursor.getCount() > 0) {
@@ -4756,6 +4756,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     String dataTypeName = "";
                                     String datatype = "";
 
+                                    // Arch
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                                     datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
@@ -4830,7 +4831,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                     if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
-                                        Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                        Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
 
                                         if (subAnswers.getCount() > 0) {
                                             JSONArray subAnswersArray = new JSONArray();
@@ -4838,21 +4839,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                             int repeaterItemPosition = 1;
                                             while (subAnswers.moveToNext()) {
-                                                questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                                questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                                 JSONObject subAnswer = new JSONObject();
                                                 JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
-                                                if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
+                                                if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
                                                     // start new subAnswersAnswerArray
                                                     subAnswersArray.put(subAnswersAnswerArray);
                                                     subAnswersAnswerArray = new JSONArray();
                                                 }
 
-                                                repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
+                                                repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
 
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                                 String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                                                 if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
                                                     subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));

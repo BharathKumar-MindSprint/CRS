@@ -825,4 +825,6 @@
     <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
     <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
 
+    <string name="ofis_farmer_and_surveys">Petani dan Survei</string>
+
 </resources>

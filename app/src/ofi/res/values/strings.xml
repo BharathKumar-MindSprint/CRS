@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Find Farmer</string>
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
+    <string name="title_activity_record_sip_polygon">Record SIP polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
     <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
@@ -743,7 +744,7 @@
     <string name="face_recognizion">Face Recognition</string>
 
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Recorded polygon area is less than the minimum configured area (0.0009 HA). Please try recording the polygon again</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
@@ -1127,5 +1128,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to re-record the same plot again ?</string>
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
+    <string name="delete_sip_polygon">Are you sure you want to delete saved polygon?</string>
+
+    <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys</string>
+
 
 </resources>

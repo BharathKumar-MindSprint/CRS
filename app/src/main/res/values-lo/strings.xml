@@ -399,6 +399,7 @@
     <string name="mm_transaction_confirm">ຢືນຢັນ</string>
     <string name="place_name_not_unique">ສະຖານທີ່ມີໃນເມືອງນັ້ນມີຊື່ວ່າ. ກະລຸນາໃຊ້ໃນສະຖານທີ່ທີ່ມີຢູ່ແລ້ວ.</string>
     <string name="title_activity_record_polygon">"ການບັນທຶກຕອນດິນ "</string>
+    <string name="title_activity_record_sip_polygon">ບັນທຶກ SIP polygon</string>
     <string name="loading">"ກຳລັງກວດສອບ "</string>
     <string name="wait">ກະລຸນາລໍຖ້າ</string>
     <string name="save_button_text">ບັນທຶກ</string>
@@ -684,7 +685,7 @@
     <string name="consent_statement">ຄຳສັ່ງ ຍິນຍອມ</string>
         <string name="Please_accept_consent">ທ່ານຕ້ອງຍອມຮັບການຍິນຍອມເພື່ອຊ່ວຍຊາວກະສິກອນ</string>
         <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>
-        <string name="zero_area_msg">ບໍ່ສາມາດບັນທຶກ polygon ທີ່ບັນທຶກໄວ້ດ້ວຍ 0.0009ha. ກະລຸນາລອງບັນທືກ polygon ອຶ່ນ</string>
+    <string name="zero_area_msg">ພື້ນທີ່ polygon ທີ່ບັນທຶກໄວ້ແມ່ນໜ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລອງບັນທຶກ polygon ອີກຄັ້ງ</string>
 
         <string name="direct_value_below_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງລຸ່ມ %2$d</string>
         <string name="direct_value_above_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງເທິງ %2$d</string>
@@ -915,13 +916,13 @@
     <string name="others">Others</string>
     <string name="select_certification">Pilih Sertifikasi</string>
     <string name="please_update_the_certification_of_farmer">kaluna abded kanyangyun khongsauakasikon</string>
-    <string name="view_farmer_information">boeng khomun sauakasikon</string>
+    <string name="view_farmer_information"><u>boeng khomun sauakasikon</u></string>
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
     <string name="metrics">me trik:</string>
     <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
-    <string name="advanced_filters">ຕົວກອງຂັ້ນສູງ</string>
+    <string name="advanced_filters"><u>ຕົວກອງຂັ້ນສູງ</u></string>
     <string name="spinner_partner_default">ຄູ່ຮ່ວມງານ</string>
     <string name="spinner_programme_default">ໂຄງການ</string>
     <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>
@@ -930,5 +931,8 @@
 
     <string name="farmer_roles">bodbad sauakasikon</string>
     <string name="select_level_of_responsibility">leuok khuaamhabphidsob</string>
+    <string name="non_compliant">Non-compliant</string>
+    <string name="compliant">Compliant</string>
+    <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 </resources>
 

@@ -746,4 +746,6 @@
     <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
     <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
 
+    <string name="ofis_farmer_and_surveys">Nông dân và khảo sát</string>
+
 </resources>
