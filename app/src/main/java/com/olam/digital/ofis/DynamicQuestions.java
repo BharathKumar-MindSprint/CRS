@@ -960,32 +960,10 @@ public class DynamicQuestions {
                         String questionsString = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                         String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
-                        boolean questionFound = false;
                         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                        final String questionAssignmentType = dl.getQuestionAssignmentTypeId(questionId);
-                        final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
-                        long farmerId = Utilities.farmerId;
-                        if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
-                            questionFound = true;
-                        } else {
-                            String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
-
-                            // Convert the string array to an integer array
-                            int[] intArrayQuestion = new int[stringArrayQuestion.length];
-                            for (int m = 0; m < stringArrayQuestion.length; m++) {
-                                intArrayQuestion[m] = Integer.parseInt(stringArrayQuestion[m]);
-                            }
-
-                            for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
-                                String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
-                                if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
-                                    questionFound =true;
-                                }
-                            }
-                        }
 
 //                        check the type only for calcualted question. Calculated question FRANKLIN
-                        if (!type.equalsIgnoreCase("Calculated") && !type.toLowerCase().replaceAll(" ","").equals("repeateritem") && questionFound) {
+                        if (!type.equalsIgnoreCase("Calculated") && !type.toLowerCase().replaceAll(" ","").equals("repeateritem") && isMandateQuestionOriginMatched(questionId)) {
                             questionList.add(Integer.parseInt(questionsString));
                         }
 
@@ -1007,7 +985,7 @@ public class DynamicQuestions {
 
                                             // for Repeater Item Question Mandate
                                             Cursor repeaterItemsForQuestion = dl.getRepeaterItemsForQuestion(repeaterParentId);
-                                            if (repeaterItemsForQuestion != null && repeaterItemsForQuestion.moveToFirst() && questionFound){
+                                            if (repeaterItemsForQuestion != null && repeaterItemsForQuestion.moveToFirst()){
                                                 do {
                                                     JSONObject displayConfigRepeater = new JSONObject(repeaterItemsForQuestion.getString(repeaterItemsForQuestion.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                                                     if (displayConfigRepeater.has("display")){
@@ -1026,7 +1004,7 @@ public class DynamicQuestions {
                                                                     }
                                                                 }
 
-                                                                if (!isDuplicate) {
+                                                                if (!isDuplicate && isMandateQuestionOriginMatched(questionIdRepeater)) {
                                                                     questionRepeaterSet.add(newRepeaterItem);
                                                                 }
                                                             }
@@ -1088,6 +1066,33 @@ public class DynamicQuestions {
             }
         }
         return match;
+    }
+
+    public boolean isMandateQuestionOriginMatched(int questionId){
+        boolean questionFound = false;
+        final String questionAssignmentType = dl.getQuestionAssignmentTypeId(questionId);
+        final String questionAssignmentField = dl.getQuestionAssignmentFieldId(questionId);
+        long farmerId = Utilities.farmerId;
+        if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
+            questionFound = true;
+        } else {
+            String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
+
+            // Convert the string array to an integer array
+            int[] intArrayQuestion = new int[stringArrayQuestion.length];
+            for (int m = 0; m < stringArrayQuestion.length; m++) {
+                intArrayQuestion[m] = Integer.parseInt(stringArrayQuestion[m]);
+            }
+
+            for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
+                String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
+                if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
+                    questionFound =true;
+                }
+            }
+        }
+
+        return questionFound;
     }
 
     private String getAnswerMinMaxvalidation(int questionId) {
