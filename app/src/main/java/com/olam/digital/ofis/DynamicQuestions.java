@@ -1058,8 +1058,12 @@ public class DynamicQuestions {
         }
 
         // Compare the list
-        if (questionList.size() == 0) {
-            match = true;
+        if (questionList.isEmpty()) {
+            if (repeaterItemAnswered){
+                match = true;
+            } else {
+                match = false;
+            }
         } else {
             if (answeredQuestionList.containsAll(questionList) && repeaterItemAnswered ) {
                 match = true;
