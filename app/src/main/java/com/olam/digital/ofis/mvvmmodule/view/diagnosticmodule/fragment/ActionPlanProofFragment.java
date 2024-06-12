@@ -1566,7 +1566,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
 
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);

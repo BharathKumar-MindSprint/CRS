@@ -160,7 +160,6 @@ public class FollowUpActionPlan extends Fragment {
         ll_servey_next_followup_actionplan = view.findViewById(R.id.ll_servey_next_followup_actionplan);
         spinner_followup_dmCurrencies = view.findViewById(R.id.spinner_followup_dmCurrencies);
         dm_question_followup_complaint = view.findViewById(R.id.dm_question_followup_complaint);
-
         ll_servey_next_followup_actionplan.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1588,6 +1587,14 @@ public class FollowUpActionPlan extends Fragment {
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
+                    if (filePathimage != null) {
+                        File file = new File(filePathimage);
+                        long fileSize = file.length();
+                        if (fileSize > 5 * 1024 * 1024) {
+                            Toast.makeText(getContext(), "Image size exceeds 5MB. Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -1597,7 +1604,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
 
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
