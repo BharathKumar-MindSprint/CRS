@@ -3171,7 +3171,7 @@ public class DynamicQuestions {
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
-        if (decimelRestrict > 0) {
+        if (decimelRestrict > 0 && datatype.equals("decimal") ) {
             et.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(decimelRestrict)});
         }
         // Decimal 2 digits concept - End
@@ -3193,7 +3193,17 @@ public class DynamicQuestions {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                int length = et.getText().length();
 
+                if (finalDatatype.equals("int") ) {
+                    if (length > 9) {
+                        et.getText().delete(length - 1, length);
+                    }
+                }else if (finalDatatype.equals("decimal") ) {
+                    if (length > 12) {
+                        et.getText().delete(length - 1, length);
+                    }
+                }
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
@@ -7775,7 +7785,7 @@ public class DynamicQuestions {
                 int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
                 tv.setText(photoCheckboxes.getString(columnIndex));
 
-                int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                 if (imageId != 0) {
                     iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                 } else {
@@ -7945,7 +7955,7 @@ public class DynamicQuestions {
 
                                         // need to recheck in testing
                                         while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
@@ -8049,7 +8059,7 @@ public class DynamicQuestions {
 
                                         // need to recheck in testing
                                         while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
@@ -8159,7 +8169,7 @@ public class DynamicQuestions {
 
                                                 // need to recheck in testing
                                                 while (photoCheckboxes.moveToNext()) {
-                                                    int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                                    int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                                                     if (imageId != 0) {
                                                         iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                                     } else {
@@ -8258,7 +8268,7 @@ public class DynamicQuestions {
                             int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
                             tv.setText(photoCheckboxes.getString(columnIndex));
 
-                            int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                             if (imageId != 0) {
                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                             } else {
@@ -8328,7 +8338,7 @@ public class DynamicQuestions {
                         int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
                         tv.setText(photoCheckboxes.getString(columnIndex));
 
-                        int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                        int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                         if (imageId != 0) {
                             iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                         } else {
@@ -8510,7 +8520,7 @@ public class DynamicQuestions {
                     }
                 }
                 /*for (int i = 1; i <= maxrepeats; i++) {
-                    *//*if (zeroAcceptable){
+                 *//*if (zeroAcceptable){
                         if (!repeatOptions.contains("0")){
                             repeatOptions.add("0");
                         }
@@ -10044,7 +10054,7 @@ public class DynamicQuestions {
                 int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
                 tv.setText(photoCheckboxes.getString(columnIndex));
 
-                int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
                 if (imageId != 0) {
                     iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                 } else {

@@ -64,18 +64,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/home_activity_vertical_margin"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="2">
 
         <com.olam.digital.ofis.MultiSpinnerSearch
             android:id="@+id/spinnerSelectLevelOfResponsibility"
-            android:layout_width="340dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:focusable="true"
             android:layout_gravity="start"
             android:gravity="start"
+            android:layout_weight="1.8"
             android:dropDownWidth="350dp"
-            android:focusableInTouchMode="true"/>
+            android:focusableInTouchMode="true"
+            android:paddingEnd="10dp"/>
 
     </LinearLayout>
     <!-- end Select Level Of Responsibility -->

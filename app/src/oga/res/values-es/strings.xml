@@ -411,6 +411,7 @@
     <string name="mm_transaction_confirm">Confirmar</string>
     <string name="place_name_not_unique">Este nombre de sitio ya existe dentro del distrito. Por favor seleccione el sitio existente de la lista</string>
     <string name="title_activity_record_polygon">Registrar polígono del lote</string>
+    <string name="title_activity_record_sip_polygon">Grabar polígono SIP</string>
     <string name="loading">"Cargando "</string>
     <string name="wait">Por favor espere</string>
     <string name="save_button_text">Guardar</string>
@@ -786,7 +787,7 @@
     <string name="please_check_question">Por favor marque la pregunta</string>
     <string name="please_check_dependent_question">ya que su pregunta dependiente se actualiza</string>
     <string name="national_id_info">Actualice la identificación nacional del agricultor</string>
-    <string name="zero_area_msg">No se puede guardar el polígono registrado con 0.0009ha. Intente grabar un polígono diferente</string>
+    <string name="zero_area_msg">El área del polígono registrada es menor que el área mínima configurada (0,0009 HA). Intente grabar el polígono nuevamente.</string>
     <string name="direct_value_below_error">Ingrese el valor de la pregunta %1$d debajo de %2$d</string>
     <string name="direct_value_above_error">Ingrese el valor de la pregunta %1$d arriba de %2$d</string>
     <string name="direct_value_greater_than_error">Ingrese el valor de la pregunta %1$d dentro o igual a %2$d</string>

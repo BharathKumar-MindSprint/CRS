@@ -407,7 +407,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (calculateArea() >= 0.0009){
                         savePolygonToSharedPreference();
                     }else{
-                    areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
+                        areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
                         showZeroAreaDialog();
                     }
                 } else {
@@ -916,12 +916,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
 
 
-                                    showToastMessage(getResources().getString(R.string.location_not_yet_logged));
-                                    pause.setEnabled(false);
-                                    bttnSave.setEnabled(false);
-                                    disableBtn(pause);
-                                    disableBtn(bttnSave);
-                                    setButtonsLoggingState(false);
+                                showToastMessage(getResources().getString(R.string.location_not_yet_logged));
+                                pause.setEnabled(false);
+                                bttnSave.setEnabled(false);
+                                disableBtn(pause);
+                                disableBtn(bttnSave);
+                                setButtonsLoggingState(false);
 
                             }
                         }
@@ -1298,7 +1298,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             map.getOverlays().add(mKmlOverlay);
             map.invalidate();
         }catch (Exception e){
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -1633,7 +1633,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             double lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
-               // lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
+                // lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
                 lTotalArea = roundArea(lTotalArea,2);
                 areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(lTotalArea)));
             }
@@ -1714,21 +1714,21 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
 
     private void collectGPSPoint(String plotDetails) {
-                if (mCapturedLocation!=null) {
-                    TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
-                    trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
-                    trackDetailsDTO.setLatitude(String.valueOf(mCapturedLocation.getLatitude()));
-                    trackDetailsDTO.setLongitude(String.valueOf(mCapturedLocation.getLongitude()));
-                    trackDetailsDTO.setAccuracy(String.valueOf(mCapturedLocation.getAccuracy()));
-                    trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
-                    trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
-                    trackDetailsDTO.setFarmerName(mFarmerName);
-                    trackDetailsDTO.setPolygonPlotDetails(plotDetails);
+        if (mCapturedLocation!=null) {
+            TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
+            trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
+            trackDetailsDTO.setLatitude(String.valueOf(mCapturedLocation.getLatitude()));
+            trackDetailsDTO.setLongitude(String.valueOf(mCapturedLocation.getLongitude()));
+            trackDetailsDTO.setAccuracy(String.valueOf(mCapturedLocation.getAccuracy()));
+            trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+            trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
+            trackDetailsDTO.setFarmerName(mFarmerName);
+            trackDetailsDTO.setPolygonPlotDetails(plotDetails);
 
-                    ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
-                    GpsTrackerLogic gpsTrackerLogic = new GpsTrackerLogic();
-                    gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
-                }
+            ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+            GpsTrackerLogic gpsTrackerLogic = new GpsTrackerLogic();
+            gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
+        }
 
     }
 
@@ -1960,89 +1960,89 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     public void showEditPlotsDialog(View v) {
 //        if(! mIsLoggingStarted) {
-            DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
-            builder.setCancelable(false);
-            LayoutInflater inflater = this.getLayoutInflater();
-            View dialogView = inflater.inflate(R.layout.plot_count_alert_dialog, null);
-            builder.setView(dialogView);
-            TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
-            TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
-            LinearLayout tvAddPlot = (LinearLayout) dialogView.findViewById(R.id.addPlot);
-            plotList = (LinearLayout) dialogView.findViewById(R.id.plotList);
+        AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.plot_count_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
+        LinearLayout tvAddPlot = (LinearLayout) dialogView.findViewById(R.id.addPlot);
+        plotList = (LinearLayout) dialogView.findViewById(R.id.plotList);
 //            EditText edTxtNumberOfPlots = (EditText) dialogView.findViewById(R.id.et_number_plot);
-            tvTitle.setText(this.getResources().getString(R.string.record_polygon_input_title));
-            tvMsg.setText(this.getResources().getString(R.string.record_polygon_input_messege));
-            Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
-            ImageButton plotClose = (ImageButton) dialogView.findViewById(R.id.plotClose);
-            Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
-            AlertDialog alert = builder.create();
-            alert.show();
-            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-            alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            loadPlotLayout(inflater);
+        tvTitle.setText(this.getResources().getString(R.string.record_polygon_input_title));
+        tvMsg.setText(this.getResources().getString(R.string.record_polygon_input_messege));
+        Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+        ImageButton plotClose = (ImageButton) dialogView.findViewById(R.id.plotClose);
+        Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        loadPlotLayout(inflater);
 
-            tvAddPlot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
-                    plotList.addView(plotLayout);
-                    TextView plotCount = plotLayout.findViewById(R.id.plotCount);
-                    EditText plotName = plotLayout.findViewById(R.id.plotName);
-                    LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                    Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
-                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
-                    plotCount.setText("Plot " + plotList.getChildCount());
-                    bindPlotDelete(plotDelete);
-                }
-            });
+        tvAddPlot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+                plotList.addView(plotLayout);
+                TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+                EditText plotName = plotLayout.findViewById(R.id.plotName);
+                LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+                int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
+                plotCount.setText("Plot " + plotList.getChildCount());
+                bindPlotDelete(plotDelete);
+            }
+        });
 
-            plotClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    alert.dismiss();
-                }
-            });
+        plotClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
+            }
+        });
 
 
-            btnNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    alert.dismiss();
-                }
-            });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
+            }
+        });
 
-            btnYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 //                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
-                    ArrayList<String> plotNames = getAllPlotValues();
-                    dl.insertNewPlot(String.valueOf(mFarmerId), plotNames);
+                ArrayList<String> plotNames = getAllPlotValues();
+                dl.insertNewPlot(String.valueOf(mFarmerId), plotNames);
                     /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
                         lPlotCount = Integer.parseInt(lPlotCountString);
                     }*/
-                    int lPlotCount = plotNames.size();
-                    if (lPlotCount > 0) {
-                        spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
-                        for (int i = 0; i < lPlotCount; i++) {
-                            spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
-                        }
-                        spinnerArrayAdapter = new ArrayAdapter<String>
-                                (RecordPolygonActivity.this, android.R.layout.simple_spinner_item,
-                                        spinnerArray);
-                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
-                                .simple_spinner_dropdown_item);
-                        spinnerPlotList.setAdapter(spinnerArrayAdapter);
-                        SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mOlamFarmerId, lPlotCount);
-                        alert.dismiss();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.valid_count_msg, Toast.LENGTH_LONG).show();
+                int lPlotCount = plotNames.size();
+                if (lPlotCount > 0) {
+                    spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
+                    for (int i = 0; i < lPlotCount; i++) {
+                        spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
                     }
+                    spinnerArrayAdapter = new ArrayAdapter<String>
+                            (RecordPolygonActivity.this, android.R.layout.simple_spinner_item,
+                                    spinnerArray);
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                            .simple_spinner_dropdown_item);
+                    spinnerPlotList.setAdapter(spinnerArrayAdapter);
+                    SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mOlamFarmerId, lPlotCount);
+                    alert.dismiss();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.valid_count_msg, Toast.LENGTH_LONG).show();
                 }
-            });
+            }
+        });
 
 //        }else{
 //            showToastMessage("Logging in progess! You can't edit plot data");
@@ -2078,10 +2078,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             for (int i = 1; i <= size; i++) {
                 plotIds.moveToNext();
                 if(position == i){
-                   String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
-                   if(isSynced.equalsIgnoreCase("1")){
-                       status = true;
-                   }
+                    String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
+                    if(isSynced.equalsIgnoreCase("1")){
+                        status = true;
+                    }
                 }
             }
         }
@@ -2332,16 +2332,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return super.onOptionsItemSelected(item);
     }
 
-   private double calculateArea() {
+    private double calculateArea() {
         //record in the track the current location at current time:
 
-       LocationBeanList lLocationBeanList = new LocationBeanList();
-       lLocationBeanList.setLocationBean(mLocationBeanList);
+        LocationBeanList lLocationBeanList = new LocationBeanList();
+        lLocationBeanList.setLocationBean(mLocationBeanList);
 
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         ArrayList<Double> lats = new ArrayList<>();
         ArrayList<Double> lons = new ArrayList<>();
-       // LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(trackId);
+        // LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(trackId);
 
         if (mLocationBeanList != null) {
             for (plot locationBean : mLocationBeanList) {
@@ -2353,7 +2353,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
         double lTotalArea = 0;
         if (lats.size() > 0) {
-             lTotalArea = Utils.getArea(lats, lons);
+            lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
                 // Area rounded in 3 digits
@@ -2417,7 +2417,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
-                 new Handler().postDelayed(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         // Dismiss the dialog after 15 seconds
@@ -2434,7 +2434,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private void getLastLocation() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-           return;
+            return;
         }
 
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);

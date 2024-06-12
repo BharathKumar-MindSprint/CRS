@@ -35,6 +35,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
@@ -45,6 +46,7 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -165,6 +167,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         Constants.questionIds.clear();
         for (int m = 0; m < dmQuestionsModuleList.size(); m++) {
             DmQuestionsModule dmQuestionsModule = dmQuestionsModuleList.get(m);
+            dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -656,7 +659,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
-            list.add(dmLookupValuesItemList.get(k).value);
+            list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesItemList.get(k).allowCustomActionPlan);
@@ -1241,7 +1244,38 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
     }
 
-
+    public String getNamesbyLanguage(DmQuestionsModule dmQuestionsModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.question;
+            case "es" -> dmQuestionsModule.questionEs;
+            case "fr" -> dmQuestionsModule.questionFr;
+            case "id" -> dmQuestionsModule.questionIdn;
+            case "in" -> dmQuestionsModule.questionIdn;
+            case "lo" -> dmQuestionsModule.questionLo;
+            case "pt" -> dmQuestionsModule.questionPt;
+            case "th" -> dmQuestionsModule.questionTh;
+            case "tr" -> dmQuestionsModule.questionTr;
+            case "vi" -> dmQuestionsModule.questionVi;
+            default -> dmQuestionsModule.question;
+        };
+    }
+    public String getLookupValuebyLanguage(DmLookupValuesItem dmLookupValuesItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmLookupValuesItem.value;
+            case "es" -> dmLookupValuesItem.valueEs;
+            case "fr" -> dmLookupValuesItem.valueFr;
+            case "id" -> dmLookupValuesItem.valueId;
+            case "in" -> dmLookupValuesItem.valueId;
+            case "lo" -> dmLookupValuesItem.valueLo;
+            case "pt" -> dmLookupValuesItem.valuePt;
+            case "th" -> dmLookupValuesItem.valueTh;
+            case "tr" -> dmLookupValuesItem.valueTr;
+            case "vi" -> dmLookupValuesItem.valueVi;
+            default -> dmLookupValuesItem.value;
+        };
+    }
 }
 
 

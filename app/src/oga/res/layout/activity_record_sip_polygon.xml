@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".recordpolygon.RecordSipPolygon">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ofis_page_background"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:weightSum="20">
+
+
+        <LinearLayout
+            android:id="@+id/topSectionSip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ofis_farmer_screen_actions_background"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/mapview_magrin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/category_name_sip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                        android:background="@drawable/edittext_bg_dark"
+                        android:padding="@dimen/margin_10"
+                        android:maxLines="1"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:textSize="@dimen/ofis_input_field_text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/name_sip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                        android:background="@drawable/edittext_bg_dark"
+                        android:padding="@dimen/margin_10"
+                        android:maxLines="1"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:textSize="@dimen/ofis_input_field_text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+                <Button
+                    android:id="@+id/pause_recording_sip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/selector_thirdcolor"
+                    android:enabled="false"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:layout_weight=".3"
+                    android:text="@string/pause_button_text"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+                <Button
+                    android:id="@+id/start_stop_recording_sip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight=".3"
+                    android:background="@drawable/selector_consold"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
+                    android:text="@string/start_logging_button_text"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+                <Button
+                    android:id="@+id/delete_plot_sip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="7dp"
+                    android:layout_weight=".3"
+                    android:background="@drawable/selector_consold"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/delete_plot"
+                    android:visibility="gone"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+
+                <ImageView
+                    android:id="@+id/recording_status_sip"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".3"
+                    app:srcCompat="@drawable/ic_recording_stopped"
+                    tools:ignore="VectorDrawableCompat" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/view_map_sip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/topSectionSip"
+            android:layout_marginBottom="5dp"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/expander_sip"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/expander_bgrnd"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/areaInfo_sip"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:textColor="#FF000000"
+                    android:textSize="@dimen/ofis_large_text" />
+
+                <TextView
+                    android:id="@+id/speed_sip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_weight="0"
+                    android:textColor="#FF000000"
+                    android:textSize="@dimen/ofis_large_text" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/mapParent_sip"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/save_recording_sip"
+                android:layout_below="@+id/expander_sip"
+                android:padding="@dimen/mapview_magrin">
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/map_sip"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+
+                <ImageButton
+                    android:id="@+id/buttonTrackingMode_sip"
+                    android:layout_width="@dimen/tracking_mode_button_width_height"
+                    android:layout_height="@dimen/tracking_mode_button_width_height"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="@dimen/mapview_magrin"
+                    android:layout_marginTop="@dimen/mapview_magrin"
+                    android:background="@drawable/btn_tracking_off" />
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/save_recording_sip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/selector"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/save_button_text"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_med_text" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

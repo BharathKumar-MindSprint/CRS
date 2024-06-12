@@ -560,7 +560,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")) {
             OpUnit = "NON OFI";
         } else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
             OpUnit = "OFI";
         } else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
@@ -1816,7 +1816,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Log.e("OD_AccessTOKEN", odAccessToken);
 
                     DownloadFormList("home");
-
+                    if (isEnableDM) {
+                        GetAllDiagnosticModule();
+                    }
                 } else if (response.code() == 400) {
                     progressDialog.hide();
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
