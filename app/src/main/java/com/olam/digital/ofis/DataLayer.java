@@ -342,12 +342,25 @@ public class DataLayer {
         return data;
     }
 
-    public Cursor fetchPlotId(String id) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " != ? ";
-        String[] whereArgs = new String[]{String.valueOf(id),"0"};
-        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        return data;
+
+    public String fetchCenterPlotById(String id) {
+        String centerPlot = "";
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(id),"0"};
+            Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (data != null) {
+                while(data.moveToNext()) {
+                    centerPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT));
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return centerPlot;
     }
 
     public ArrayList<PlotDTO> fetchSyncedPlotIds(String id) {
