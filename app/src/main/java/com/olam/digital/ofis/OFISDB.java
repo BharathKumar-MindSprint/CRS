@@ -283,7 +283,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON + " TEXT, "
-            + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG + " INTEGER )";
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG + " INTEGER, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT + " TEXT default null )";
 
     private static final String OFIS_DATATYPES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DatatypesEntry.TABLE_NAME
             + " ( " + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " TEXT )";
@@ -521,7 +522,8 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " TEXT, " +
             OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME + " TEXT, " +
             OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT, " +
-            OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT + " TEXT )";
+            OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT +" TEXT default null)";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
