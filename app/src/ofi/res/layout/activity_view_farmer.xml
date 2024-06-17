@@ -172,6 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/nationalIdInfo"
+                    android:text="- NA"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"/>
@@ -356,7 +357,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Number of plots captured"
+                    android:text="No of plots captured"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -376,6 +377,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:id="@+id/certificationInfoLayout"
+            android:visibility="gone"
             android:weightSum="2">
             <LinearLayout
                 android:layout_width="wrap_content"

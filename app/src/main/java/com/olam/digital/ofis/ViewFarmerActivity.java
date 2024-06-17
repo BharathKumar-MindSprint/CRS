@@ -84,6 +84,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
+import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
@@ -103,6 +105,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
@@ -495,6 +498,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView gpsInfo = (TextView) findViewById(R.id.gpsInfo);
         TextView plotInfo = (TextView) findViewById(R.id.plotInfo);
         TextView certificationInfo = (TextView) findViewById(R.id.certificationInfo);
+        LinearLayout certificationInfoLayout = (LinearLayout) findViewById(R.id.certificationInfoLayout);
 
         LinearLayout llAggregatedIndicator = (LinearLayout) findViewById(R.id.ll_aggregated_indicator);
         TextView compliance = (TextView) findViewById(R.id.tv_compliance);
@@ -560,15 +564,48 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             fgInfo.setText("- " +dl.getFGName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
             sectionInfo.setText("- " +dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)))));
 
-            certificationInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT)));
+            if(db.certificationsDao().getCertifications().size() > 0) {
+                certificationInfoLayout.setVisibility(View.VISIBLE);
+                String certificationId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                String[] certificateIds = certificationId.split(",");
+                List<String> certificationValue = db.certificationsDao().getTextValues(certificateIds);
+
+                StringBuilder certificationToDisplay = new StringBuilder();
+                for (String certificationValues : certificationValue) {
+                    certificationToDisplay.append(certificationValues).append(", ");
+                }
+                String certificationText = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                if (!Objects.equals(certificationText, "null")){
+                    certificationToDisplay.append(certificationText).append(", ");
+                }
+
+                if (certificationToDisplay.length() > 0) {
+                    certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
+                    certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
+                }
+                if (certificationInfo.length()>0){
+                    certificationInfo.setText("- " + certificationToDisplay.toString());
+                } else {
+                    certificationInfo.setText("- null");
+                }
+
+            }else {
+                certificationInfoLayout.setVisibility(View.GONE);
+            }
 
             Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
             try {
                 int i = 0;
+                StringBuilder nationalID = new StringBuilder();
                 while (nids.moveToNext()) {
                     i++;
-                    nationalIdInfo.setText("- " +nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                    nationalID.append(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER))).append(", ");
                 }
+
+                if (nationalID.length() > 0) {
+                    nationalIdInfo.setText(nationalID.delete(nationalID.length() - 2, nationalID.length()).toString());
+                }
+
             }catch (Exception e) {
                 e.printStackTrace();
             }

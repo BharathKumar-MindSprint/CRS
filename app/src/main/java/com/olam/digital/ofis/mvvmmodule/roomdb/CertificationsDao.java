@@ -29,4 +29,7 @@ public interface CertificationsDao {
 
     @Query("DELETE FROM Certifications")
     void deleteAll();
+
+    @Query("SELECT certificationName FROM Certifications WHERE certificationId IN (:certificateIds)")
+    List<String> getTextValues(String[] certificateIds);
 }
