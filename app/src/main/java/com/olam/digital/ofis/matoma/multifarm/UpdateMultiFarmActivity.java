@@ -159,9 +159,9 @@ public class UpdateMultiFarmActivity extends BaseActivity {
         gpsTracker = new GPSTracker(this, gpsListener);
         gpsTracker.getDeviceLocation();
 
-        multiFarmRoleDTOList=dl.getMultiFarmRoles(Utilities.getLocaleSuffix(res));
+        multiFarmRoleDTOList=dl.getMultiFarmRoles(Utilities.getColumnNameByLanguage());
         rolesList.clear();
-        rolesList.add("Select");
+        rolesList.add(res.getString(R.string.farmer_roles));
         for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
             rolesList.add(multiFarmRoleDTO.getName());
         }
@@ -1287,7 +1287,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
     }
 
     private int getIndexForFarmerRoleSpinnerList(String roleId) {
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
         int id = Integer.parseInt(roleId);
         for (int i = 0; i < roles.size(); i++) {

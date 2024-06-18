@@ -22,19 +22,19 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
+    compileSdk 34
+    buildToolsVersion ="34.0.0"
     flavorDimensions "default"
     defaultConfig {
         applicationId "com.olam.digital.ofis"
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 448
-        versionName "12.6.7"
+        versionCode 454
+        versionName "12.7.3"
 
 
 
@@ -64,7 +64,7 @@ android {
             minifyEnabled false
             shrinkResources false
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
 
         }
     }
@@ -186,6 +186,35 @@ android {
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
         }
 
+        preprodoga {
+            applicationId "com.olam.digital.ofispreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            resValue "string", "applicationName", "OFIS Companion"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
+
+        preprodofi {
+            applicationId "com.olam.digital.ofispreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            resValue "string", "applicationName", "OFI PreProd"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-pre-prod/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
         prod {
             applicationId "com.olam.digital.ofis"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
@@ -296,7 +325,9 @@ android {
         uatofi {
             res.srcDirs = ['src/uatofi/res', 'src/ofi/res']
         }
-
+        preprodofi {
+            res.srcDirs = ['src/preprodofi/res', 'src/ofi/res']
+        }
         prodofi {
             res.srcDirs = ['src/prodofi/res', 'src/ofi/res']
         }
@@ -310,6 +341,9 @@ android {
         }
         uatoga {
             res.srcDirs = ['src/uatoga/res', 'src/oga/res']
+        }
+        preprodoga {
+            res.srcDirs = ['src/preprodoga/res', 'src/oga/res']
         }
         prodoga {
             res.srcDirs = ['src/prodoga/res', 'src/oga/res']
@@ -386,7 +420,13 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
+
+    //Room DB encryption
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.4'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    implementation 'com.mindsprint:room-encryption:0.0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.jfrog.artifactory'

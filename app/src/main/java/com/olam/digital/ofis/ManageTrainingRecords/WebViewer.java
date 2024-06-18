@@ -82,29 +82,29 @@ public class WebViewer extends BaseActivity {
         if(intValue>0){
             ManageRecords Bytes= RetrofitClient.getRetrofit().create(ManageRecords.class);
             Call<ViewFile> call=Bytes.getBytes(intValue);
-           call.enqueue(new Callback<ViewFile>() {
-               @Override
-               public void onResponse(Call<ViewFile> call, Response<ViewFile> response) {
-                   if(response.body().getStatusCode()==200){
-                       Url=response.body().getData();
-                       String finalUrl = null;
-                           try {
-                               finalUrl = "https://docs.google.com/viewer?embedded=true&url=" + URLEncoder.encode(Url, "ISO-8859-1");
-                           } catch (UnsupportedEncodingException e) {
-                               e.printStackTrace();
-                           }
-                           webView.loadUrl(finalUrl);
+            call.enqueue(new Callback<ViewFile>() {
+                @Override
+                public void onResponse(Call<ViewFile> call, Response<ViewFile> response) {
+                    if(response.body().getStatusCode()==200){
+                        Url=response.body().getData();
+                        String finalUrl = null;
+                        try {
+                            finalUrl = "https://docs.google.com/viewer?embedded=true&url=" + URLEncoder.encode(Url, "ISO-8859-1");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        webView.loadUrl(finalUrl);
 
-                   }
+                    }
 
-               }
+                }
 
-               @Override
-               public void onFailure(Call<ViewFile> call, Throwable t) {
-                   Progressbar.setVisibility(View.INVISIBLE);
-                   showAlert(getString(R.string.failed_to_load_document));
-               }
-           });
+                @Override
+                public void onFailure(Call<ViewFile> call, Throwable t) {
+                    Progressbar.setVisibility(View.INVISIBLE);
+                    showAlert(getString(R.string.failed_to_load_document));
+                }
+            });
         }
     }
     private void showAlert(String msg) {
@@ -123,5 +123,4 @@ public class WebViewer extends BaseActivity {
 
     }
 }
-
 

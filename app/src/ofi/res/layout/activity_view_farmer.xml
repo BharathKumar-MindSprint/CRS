@@ -9,7 +9,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="202dp"
         android:id="@+id/topSectionBackground"
         android:background="@color/ofis_farmer_screen_actions_background"
         android:contentDescription="@string/cd_topSectionColour" />
@@ -163,7 +163,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_country_view_farmer"
+                    android:text="@string/nationalid"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -171,7 +171,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/countryInfo"
+                    android:id="@+id/nationalIdInfo"
+                    android:text="- NA"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"/>
@@ -232,7 +233,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/spinner_subdistrict_default"
+                    android:text="@string/spinner_subdistrict_view_farmer"
                     android:textStyle="bold"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
@@ -316,6 +317,86 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/sectionInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GPS Co-ordinates"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/gpsInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No of plots captured"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plotInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/certificationInfoLayout"
+            android:visibility="gone"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Certifications"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/certificationInfo"
                     android:textColor="@color/ofis_base_font_white"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"/>
@@ -545,9 +626,63 @@
     </LinearLayout>
 
     <!-- top section -->
-
-
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:baselineAligned="false"
+        android:paddingBottom="0dp"
+        android:layout_margin="0dp">
+
+        <LinearLayout
+            android:id="@+id/ll_aggregated_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@color/ofis_non_compliance"
+            >
+
+            <ImageView
+                android:id="@+id/iv_non_compliance"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:paddingEnd="@dimen/ofis_med_pad"
+                android:src="@drawable/non_compliance_flag" />
+
+            <ImageView
+                android:id="@+id/iv_compliance"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:paddingEnd="@dimen/ofis_med_pad"
+                android:src="@drawable/compliance_flag"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_non_compliance"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/non_compliant"
+                android:textSize="@dimen/ofis_small_text"
+                />
+
+            <TextView
+                android:id="@+id/tv_compliance"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/compliant"
+                android:textSize="@dimen/ofis_small_text"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -655,6 +790,7 @@
                 tools:ignore="VectorDrawableCompat" />
         </RelativeLayout>
 
+    </LinearLayout>
     </LinearLayout>
    <!-- <LinearLayout
         android:orientation="horizontal"

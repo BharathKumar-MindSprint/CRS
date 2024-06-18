@@ -1,8 +1,11 @@
 package com.olam.digital.ofis;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -11,8 +14,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
@@ -100,6 +107,12 @@ public class Utilities {
 
     public static String CONSENTERROR = "Error in saving FarmerConsent";
     public static String NID_ERROR = "This national ID has already been added to the farmer";
+
+    // OW-4529 Fix
+    public static String DUPLICATE_ERROR = "Dupicate survey entry";
+
+    // OW-4516 Fix
+    public static final int DATE_TIME_SETTING =6575;
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -782,4 +795,27 @@ public  static String base64ConversionForImage(String filepath)  {
     }
 
 
+// OW-4516 Fix
+    public static void checkSystemTime(Context context, Resources res, AppCompatActivity activity, String className) {
+        try {
+            int auto_time_enabled = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AUTO_TIME, 0);
+            int auto_time_zone_enabled = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+            if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(false);
+                builder.setMessage(res.getString(R.string.set_auto_time_message))
+                        .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                                activity.startActivityForResult(intent, DATE_TIME_SETTING);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception(className+": Error getting phone auto time settings", e));
+            e.printStackTrace();
+        }
+    }
 }

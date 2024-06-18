@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -20,8 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -67,6 +70,10 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
+import com.olam.digital.ofis.recordpolygon.AlphanumericFilterSip;
+import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
+import com.olam.digital.ofis.recordpolygon.RecordSipPolygon;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.sql.Timestamp;
@@ -75,6 +82,7 @@ import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity {
@@ -102,7 +110,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     // for GPS location system
     private EditText gpsField;
-    private ImageButton requestLocation;
+    private ImageButton requestLocation, sip_polygon_icon;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
     private String accuracy;
@@ -176,6 +184,12 @@ public class AddInfrastructureActivity extends BaseActivity {
     boolean isSubdistrictCapture;
     LinearLayout layout_geo_old, layout_geo_new;
 
+    private static final String CATEGORY_NAME = "MODULE_NAME";
+    private static final String SIP_NAME = "SIP_NAME";
+    private static final String SIP_CATEGORY_ID = "SIP_CATEGORY_ID";
+
+    private static String sip_polygon_upload_id = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +237,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setVisibility(View.GONE);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
+        sip_polygon_icon = (ImageButton) findViewById(R.id.sip_polygon_icon);
+        sip_polygon_upload_id = "";
         if(!editMode)
             searchingGPS();
 
@@ -455,6 +471,18 @@ public class AddInfrastructureActivity extends BaseActivity {
             setPoiGPS(mCurrentLocation);
         }
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
+
+
+
+
+
+        if (dl.getIfSipAlreadyRecorded(sip_polygon_upload_id)){
+            poiName.setText(dl.getSipNameByUploadId(sip_polygon_upload_id));
+        }
+
+        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(30)});
+
+
     }
 
     private boolean checkPermissions() {
@@ -477,6 +505,8 @@ public class AddInfrastructureActivity extends BaseActivity {
 
 
         String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
+        sip_polygon_upload_id = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT));
+
         modulesSpinner.setSelection(selectedModulePOI);
         moduleId = moduleDTOS.get(selectedModulePOI).getId();
         subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
@@ -665,6 +695,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT, sip_polygon_upload_id);
             if(isSubdistrictCapture) {
                 if (isVillage){
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id1);
@@ -691,6 +722,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, place_id);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE, ChildLabourUtils.FALSE);
+
+                dl.updateSipNameByUploadId(sip_polygon_upload_id, poiName.getText().toString());
             }
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1026,6 +1059,12 @@ public class AddInfrastructureActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 moduleName=subModuleDTOS.get(position).getSipName().trim().toLowerCase();
+                boolean captureSipPolygon = dl.getSipPolygonById(subModuleDTOS.get(position).getId());
+                if (captureSipPolygon){
+                    sip_polygon_icon.setVisibility(View.VISIBLE);
+                }else{
+                    sip_polygon_icon.setVisibility(View.GONE);
+                }
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_SUB_MODULES,  ScreenNameConstants.SPINNER_CHANGED);
                 if (!editMode) {
 //                    swapPoiType(i);
@@ -1052,7 +1091,30 @@ public class AddInfrastructureActivity extends BaseActivity {
                     dynamicQuestions.answerSet.clear();
                     subModuleId = subModuleDTOS.get(position).getId();
                     getSubModuleQuestions(subModuleId);
+
                 }
+                sip_polygon_icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!poiName.getText().toString().equals("")){
+                            Intent sipPolygonIntent = new Intent(context, RecordSipPolygon.class);
+                            sipPolygonIntent.putExtra(CATEGORY_NAME, moduleName);
+                            sipPolygonIntent.putExtra(SIP_NAME, poiName.getText().toString());
+                            sipPolygonIntent.putExtra(SIP_CATEGORY_ID, subModuleDTOS.get(position).getId());
+                            if (dl.getIfSipAlreadyRecorded(sip_polygon_upload_id)){
+                                sipPolygonIntent.putExtra("SIP_UPLOAD_ID", sip_polygon_upload_id);
+                            }else {
+                                sip_polygon_upload_id = UUID.randomUUID().toString().toLowerCase().replace(" ", "-");
+                                sipPolygonIntent.putExtra("SIP_UPLOAD_ID", sip_polygon_upload_id);
+                            }
+
+                            sipPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+                            startActivity(sipPolygonIntent);
+                        }else {
+                            Toast.makeText(AddInfrastructureActivity.this,"Please provide the Sip Name",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
 
             @Override

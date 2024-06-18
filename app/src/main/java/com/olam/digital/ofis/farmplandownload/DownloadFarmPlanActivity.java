@@ -99,7 +99,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         tv_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // getDownloadUrl();
+                // getDownloadUrl();
 
             }
         });
@@ -107,7 +107,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         recyclerView = findViewById(R.id.rvFarmPlanList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-         enumeratorId = Utilities.getFromSharedPrefs(context);
+        enumeratorId = Utilities.getFromSharedPrefs(context);
 
         try {
 
@@ -119,7 +119,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
         }
 
-         /*OD Access Token API*/
+        /*OD Access Token API*/
         if(isOnline(getApplicationContext())){
             GetAccessToken();
         }else {
@@ -129,7 +129,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         }
 
     }
-                              /*Get OdAccessToken*/
+    /*Get OdAccessToken*/
     private void GetAccessToken() {
         final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew,password,system);
 
@@ -171,7 +171,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
     }
 
-                              /*Get Down Load Farm Form List*/
+    /*Get Down Load Farm Form List*/
     private void DownloadFormList() {
         ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Integer.valueOf(enumeratorId),odAccessToken);
@@ -179,8 +179,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
             @Override
             public void onResponse(Call<DownloadFormList> call, Response<DownloadFormList> response) {
-               Log.e("ListOnResponse",response.message());
-               Log.e("ListOnRequest",call.toString());
+                Log.e("ListOnResponse",response.message());
+                Log.e("ListOnRequest",call.toString());
 
                 if(response.code()==200){
                     //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
@@ -202,7 +202,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                         }
                     }else{
                         showAlert(response.body().getStatusMessage());
-                       // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                     }
                 }else if(response.code()==400){
                     progressDialog.hide();
@@ -247,7 +247,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
         String currentString = filepath;
         String[] separated = currentString.split("/");
-         finalFilepath = separated[1].trim();
+        finalFilepath = separated[1].trim();
         String finalrootobject = rootobject;
 
         Log.d("FINALRootObj",finalrootobject);
@@ -268,8 +268,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                 if (response.code()==200) {
                     progressDialog.hide();
-                   // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                   // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
+                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
+                    // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
                     Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
@@ -281,7 +281,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                         mediaStorageDir.mkdirs();*/
 
                         File root = android.os.Environment.getExternalStorageDirectory();
-                         dir = new File (root.getAbsolutePath() +"/"+"OFIS");
+                        dir = new File (root.getAbsolutePath() +"/"+"OFIS");
                         dir.mkdirs();
 
                         File mediaFile = new File(dir + File.separator
@@ -291,8 +291,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                         //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
                         //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
-                         file = new File(dir+"/"+fileNameDownload);
-                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
+                        file = new File(dir+"/"+fileNameDownload);
+                        uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "application/pdf");
@@ -335,62 +335,62 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
 
     private boolean writeResponseBodyToDisk(ResponseBody body) {
-             try {
-                 // todo change the file location/name according to your needs
+        try {
+            // todo change the file location/name according to your needs
                /*  File mediaStorageDir = new File(
                          Environment
                                  .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                          +"/"+"OFIS");
                  mediaStorageDir.mkdirs();*/
 
-                 File root = android.os.Environment.getExternalStorageDirectory();
-                  dir = new File (root.getAbsolutePath() +"/"+"OFIS");
-                 dir.mkdirs();
+            File root = android.os.Environment.getExternalStorageDirectory();
+            dir = new File (root.getAbsolutePath() +"/"+"OFIS");
+            dir.mkdirs();
 
-                 File mediaFile = new File(dir + File.separator
-                         +finalFilepathPdf+ ".pdf");
+            File mediaFile = new File(dir + File.separator
+                    +finalFilepathPdf+ ".pdf");
 /*
                  File mediaFile = new File(mediaStorageDir.getPath() + File.separator
                          +finalFilepathPdf+ ".pdf");*/
 
-                 fileNameDownload = mediaFile.getName();
+            fileNameDownload = mediaFile.getName();
 
-                 //fileNameDownload = "File name" + request.getAccountNumber() + "_from" + time.format("%k : %M : %S") + ".pdf";
-                 //File futureStudioIconFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
-                 File futureStudioIconFile = new File(dir+"/"+fileNameDownload);
-                 InputStream inputStream = null;
-                 OutputStream outputStream = null;
-                 try {
-                     byte[] fileReader = new byte[4096];
-                     long fileSize = body.contentLength();
-                     long fileSizeDownloaded = 0;
-                     inputStream = body.byteStream();
-                     outputStream = new FileOutputStream(futureStudioIconFile);
-                     while (true) {
-                         int read = inputStream.read(fileReader);
-                         if (read == -1) {
-                             break;
-                         }
-                         outputStream.write(fileReader, 0, read);
-                         fileSizeDownloaded += read;
-                         Log.d("FileDownLoad", "file download: " + fileSizeDownloaded + " of " + fileSize);
-                     }
-                     outputStream.flush();
-                     return true;
-                 } catch (IOException e) {
-                     return false;
-                 } finally {
-                     if (inputStream != null) {
-                         inputStream.close();
-                     }
-                     if (outputStream != null) {
-                         outputStream.close();
-                     }
-                 }
-             } catch (IOException e) {
-                 return false;
-             }
-         }
+            //fileNameDownload = "File name" + request.getAccountNumber() + "_from" + time.format("%k : %M : %S") + ".pdf";
+            //File futureStudioIconFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
+            File futureStudioIconFile = new File(dir+"/"+fileNameDownload);
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+            try {
+                byte[] fileReader = new byte[4096];
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+                inputStream = body.byteStream();
+                outputStream = new FileOutputStream(futureStudioIconFile);
+                while (true) {
+                    int read = inputStream.read(fileReader);
+                    if (read == -1) {
+                        break;
+                    }
+                    outputStream.write(fileReader, 0, read);
+                    fileSizeDownloaded += read;
+                    Log.d("FileDownLoad", "file download: " + fileSizeDownloaded + " of " + fileSize);
+                }
+                outputStream.flush();
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
 
 
 
@@ -422,16 +422,16 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     @Override
     public void onClick(String fileUrl, String fileName) {
 
-         rootobject = fileUrl;
-         filepath =fileName;
+        rootobject = fileUrl;
+        filepath =fileName;
 
         String currentString1 = filepath;
         String[] separated1 = currentString1.split("/");
         String finalFilepath1 = separated1[1].trim();
 
 
-       // Log.d("FINALRootObj",finalFilepath1);
-       // Log.d("FINALFilePATH",finalFilepath);
+        // Log.d("FINALRootObj",finalFilepath1);
+        // Log.d("FINALFilePATH",finalFilepath);
 
         String chapterNumbe1r = finalFilepath1;
         int index = chapterNumbe1r.indexOf(".");

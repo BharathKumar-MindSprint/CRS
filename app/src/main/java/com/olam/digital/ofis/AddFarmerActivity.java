@@ -813,7 +813,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         if(!MultiFarmUtils.isMultiFarmEnumerator){
             farmInformationLayout.setVisibility(View.GONE);
@@ -1466,6 +1466,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -3802,7 +3806,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private int getIndexForFarmerRoleSpinnerList(String roleId) {
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
         int id = Integer.parseInt(roleId);
         for (int i = 0; i < roles.size(); i++) {
