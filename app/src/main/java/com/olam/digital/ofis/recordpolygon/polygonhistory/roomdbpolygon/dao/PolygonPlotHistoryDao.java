@@ -31,6 +31,10 @@ public interface PolygonPlotHistoryDao {
     @Query("SELECT positionData FROM POLYGONPLOTHISTORY WHERE id=:id")
     String getPositionData(long id);
 
+
+    @Query("SELECT centerPlot FROM POLYGONPLOTHISTORY WHERE id=:id")
+    String getcenterPlotData(long id);
+
     @Query("SELECT id, plotName FROM PolygonPlotHistory")
     List<PolygonPlotHistoryDao.UnitMapping> getAllPlotCount();
 
