@@ -583,7 +583,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
                     certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
                 }
-                if (certificationInfo.length()>0){
+                if (!Objects.equals(certificationToDisplay.toString(), "")){
                     certificationInfo.setText("- " + certificationToDisplay.toString());
                 } else {
                     certificationInfo.setText("- null");
