@@ -175,7 +175,7 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
         // Multi-farm Utils Polygon
-        if (MultiFarmUtils.isMultiFarmEnumerator){
+        /*if (MultiFarmUtils.isMultiFarmEnumerator){
             String multiFarmId =getMultiFarmLocationbyId(farmerId);
             if(multiFarmId!=null) {
                 ContentValues values1 = new ContentValues();
@@ -185,7 +185,7 @@ public class DataLayer {
                 db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
             }
 
-        }
+        }*/
 
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
