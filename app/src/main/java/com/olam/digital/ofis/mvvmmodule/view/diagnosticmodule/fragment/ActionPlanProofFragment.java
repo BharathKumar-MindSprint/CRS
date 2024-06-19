@@ -34,6 +34,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1548,6 +1549,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
+                    if (filePathimage != null) {
+                        File file = new File(filePathimage);
+                        long fileSize = file.length();
+                        if (fileSize > 5 * 1024 * 1024) {
+                            Toast.makeText(getContext(), "Image size exceeds 5MB. Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -1557,7 +1566,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
 
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
