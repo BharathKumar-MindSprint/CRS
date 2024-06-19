@@ -583,10 +583,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
                     certificationToDisplay.deleteCharAt(certificationToDisplay.length() - 1);
                 }
-                if (certificationInfo.length()>0){
+                if (!Objects.equals(certificationToDisplay.toString(), "")){
                     certificationInfo.setText("- " + certificationToDisplay.toString());
                 } else {
-                    certificationInfo.setText("- null");
+                    certificationInfo.setText("- NA");
                 }
 
             }else {
@@ -603,7 +603,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
 
                 if (nationalID.length() > 0) {
-                    nationalIdInfo.setText(nationalID.delete(nationalID.length() - 2, nationalID.length()).toString());
+                    nationalIdInfo.setText("- " + nationalID.delete(nationalID.length() - 2, nationalID.length()).toString());
                 }
 
             }catch (Exception e) {
