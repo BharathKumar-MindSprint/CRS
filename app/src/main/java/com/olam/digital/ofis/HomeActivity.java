@@ -525,7 +525,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 clientId = KeyCloakInfo.prod_client_Id;
                 clientSecret = KeyCloakInfo.prod_Client_Secret;
                 break;
-
+            case "preprodofi":
+                clientId = KeyCloakInfo.preprod_ofi_client_Id;
+                clientSecret = KeyCloakInfo.preprod_ofi_Client_Secret;
+                break;
             case "prodofi":
                 clientId = KeyCloakInfo.prod_ofi_client_Id;
                 clientSecret = KeyCloakInfo.prod_ofi_Client_Secret;
