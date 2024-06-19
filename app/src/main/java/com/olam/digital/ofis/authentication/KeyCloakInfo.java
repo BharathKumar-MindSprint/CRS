@@ -54,6 +54,10 @@ public interface KeyCloakInfo {
 
     String prod_oga_client_Id = "oga-ofis-mobile";
     String prod_oga_Client_Secret ="e20097c5-527b-4983-bb1c-ca0b21bae371" ;
+
+    String preprod_ofi_client_Id = "ofis-batch-worker-uat";
+    String preprod_ofi_Client_Secret = "H9MJCoqMrveZXUPJAs2dlRoairIiwDf8";
+
 }
 
 
