@@ -54,6 +54,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -192,7 +193,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private Button mStartLoggingButton;
 
     private TextView farmerName, olamFarmerId, txtPlotName;
-    ;
+    private EditText plot_textGpx;
+    private ImageButton capture_latLng;
     private ImageView recordingStatus;
     private Button pause, startStop, bttnSave;
     //private ImageButton currentLocation;
@@ -251,6 +253,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 7;
 
     private Marker currentLocationMarker , farmLocationMarker;
+
+    private boolean isMultiPinEditted = false;
     // boolean flag to toggle the ui
 //    private Boolean mRequestingLocationUpdates;
     @Override
@@ -325,6 +329,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (!TextUtils.isEmpty(mOlamFarmerId)) {
             olamFarmerId.setText(mOlamFarmerId);
         }
+        plot_textGpx = findViewById(R.id.plot_text);
+
         loadPlotName(0);
 
         /*DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
@@ -357,6 +363,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         pause = (Button) findViewById(R.id.pause_recording);
         mStartLoggingButton = (Button) findViewById(R.id.start_stop_recording);
         bttnSave = (Button) findViewById(R.id.save_recording);
+        RelativeLayout plotPinLayout = findViewById(R.id.plotPinLayout);
+        capture_latLng = (ImageButton) findViewById(R.id.get_latlngButton);
+        if(plotPinLayout.getVisibility()== View.VISIBLE){
+          capture_latLng.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  getCurrentLocation();
+              }
+          });
+        }
         //currentLocation = (ImageButton) findViewById(R.id.current_location);
         pause.setEnabled(false);
         bttnSave.setEnabled(false);
@@ -403,8 +419,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
-                if (!checkPlotEntryExistInPreference()) {
-                    if (calculateArea() >= 0.0009){
+                if (!checkPlotEntryExistInPreference() || !checkPlotPinCapturedAlready()) {
+                    if (calculateArea() >= 0.0009 || plot_textGpx.getText().length() > 0 ){
                         savePolygonToSharedPreference();
                     }else{
                         areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
@@ -611,6 +627,37 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
      * If last known location is null then will request GPS and fetch current location to put location marker in center of Map UI.
      * Last Known location data is quickly to get from API and easily to update new location data.
      */
+    private void getCurrentLocation() {
+        if (startLocationUpdates()) {
+            Location location = null;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null)
+                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if (location == null) {
+                showToastMessage("Location not available, Please try again");
+                return;
+            }
+            if ((plot_textGpx.getText().length() > 0 && !bttnSave.isEnabled())) {
+                editPinPlotAlertDialog();
+                if (isMultiPinEditted) {
+                    plot_textGpx.setText(location.getLatitude()+"," + location.getLongitude());
+                    bttnSave.setEnabled(true);
+                    enableSaveBtn(bttnSave);
+                    setButtonsLoggingState(false);
+                    getFarmLocation(location.getLatitude(), location.getLongitude());
+                }
+            }
+            else {
+                plot_textGpx.setText(location.getLatitude()+"," + location.getLongitude());
+                bttnSave.setEnabled(true);
+                enableSaveBtn(bttnSave);
+                setButtonsLoggingState(false);
+                getFarmLocation(location.getLatitude(), location.getLongitude());
+            }
+        }
+    }
     private void centerCurrentLocation() {
         if (startLocationUpdates()) {
             Location location = null;
@@ -680,7 +727,17 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     boolean checkPlotEntryExistInPreference() {
         LocationBeanList LocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(currentTrackname);
-        if (LocationBeanList != null) {
+        if (LocationBeanList != null && !LocationBeanList.getLocationBean().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean checkPlotPinCapturedAlready() {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        String plot = dl.fetchCenterPlotById(String.valueOf(selectedPlotId));
+
+        if (plot != null && !plot.isEmpty()) {
             return true;
         }
         return false;
@@ -714,7 +771,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             for (int i = 0; i < lPlotCount; i++) {
                 LocationBeanList LocationBeanList = SharedPreferenceUtils.
                         getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
-                if (LocationBeanList != null) {
+                if (LocationBeanList != null && !LocationBeanList.getLocationBean().isEmpty()) {
                     count++;
                 }
             }
@@ -1452,6 +1509,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
         currentTrackname = getResources().getString(R.string.plot, (position + 1));
 
+        if (farmLocationMarker != null) {
+            map.getOverlays().remove(farmLocationMarker);
+        }
+
         if(farmPlotCount == 0){
             if (position == 0)
                 previousTrackname = getResources().getString(R.string.plot, (position + 1));
@@ -1546,6 +1607,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             pause.setVisibility(View.GONE);
             bttnSave.setVisibility(View.GONE);
             recordingStatus.setVisibility(View.GONE);
+
+            capture_latLng.setVisibility(View.GONE);
         }else {
             mStartLoggingButton.setVisibility(View.VISIBLE);
             pause.setVisibility(View.VISIBLE);
@@ -1559,6 +1622,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 initializeKMLDocument();
                 loadMapWithPolygon(currentTrackname);
             }
+            capture_latLng.setVisibility(View.VISIBLE);
         }
 
     }
@@ -1669,6 +1733,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             public void onClick(View view) {
                 alert.dismiss();
 
+                LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(currentTrackname);
+                if (mLocationBeanList.isEmpty() && locationBeanList != null) {
+                    mLocationBeanList = locationBeanList.getLocationBean();
+                }
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
 
@@ -1676,7 +1744,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
                 String plotName = txtPlotName.getText().toString();
-                savePlotGeoDataJsonToDatabase(plotGeoJson, plotId, plotName);
+                String plotGpx = plot_textGpx.getText().toString();
+                savePlotGeoDataJsonToDatabase(plotGeoJson, plotId, plotName, plotGpx);
                 JSONObject jObj=new JSONObject();
                 try {
                     String encodedPlotsJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
@@ -1738,14 +1807,18 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
      * @param plotGeoJson plot geo data json
      * @param plotName    plot name is unique name for identifying plot
      */
-    void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName, String enteredPlotName) {
+    void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName, String enteredPlotName , String plotGpx) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotGeoJson != null) {
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
 
             if (plotName != null && plotGeoJson != null) {
-                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName, mFarmerId);
-                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId);
+                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName, mFarmerId,plotGpx);
+                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId, plotGpx);
+            }
+        }else {
+            if (plotName != null ) {
+                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId, plotGpx);
             }
         }
     }
@@ -1780,6 +1853,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
                     plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
                     plotsObj.putOpt("plot_name", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME)));
+                    plotsObj.putOpt("centerPlot", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT)));
                     plotsArray.put(plotsObj);
                 }
 
@@ -2062,6 +2136,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                     selectedPlotId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
                     txtPlotName.setText(name);
+                    String centrePlot = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT));
+                    plot_textGpx.setText(centrePlot);
+                    if (centrePlot != null) {
+                        String[] multiPinPoints = centrePlot.split(",");
+                        if (multiPinPoints.length == 2 && !multiPinPoints[0].isEmpty() && !multiPinPoints[1].isEmpty()) {
+                            getFarmLocation(Double.parseDouble(multiPinPoints[0]), Double.parseDouble(multiPinPoints[1]));
+                        }
+                    }
                 }
             }
         }
@@ -2373,20 +2455,22 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
 
-    private void getFarmLocation() {
-        double farmLatitude = db.polygonHistoryDataDao().getLattitude(mFarmerId);
-        double farmLongitude = db.polygonHistoryDataDao().getLongitude(mFarmerId);
+    private void getFarmLocation(double farmLatitude, double farmLongitude) {
 
         // Create a GeoPoint from the last known location
         GeoPoint farmLocation = new GeoPoint(farmLatitude, farmLongitude);
 
+        if (farmLocationMarker != null) {
+            map.getOverlays().remove(farmLocationMarker);
+        }
+
         // Create a Marker for the current location
         farmLocationMarker = new Marker(map);
         farmLocationMarker.setPosition(farmLocation);
-        farmLocationMarker.setTitle("Farm Location");
+        farmLocationMarker.setTitle("Plot Location");
         farmLocationMarker.setSnippet("Latitude: " + farmLatitude + "\nLongitude: " + farmLongitude); // Set the snippet with lat and long
         farmLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        farmLocationMarker.setIcon(ContextCompat.getDrawable(RecordPolygonActivity.this, R.drawable.location_mark_purple));
+        farmLocationMarker.setIcon(ContextCompat.getDrawable(RecordPolygonActivity.this, R.drawable.location_mark_blue));
         map.getOverlays().add(farmLocationMarker);
 
         farmLocationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
@@ -2571,7 +2655,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             }
                             int plotId = getPlotId(position);
                             plotGraphInMap(plotId);
-                            getFarmLocation();
+                            //getFarmLocation();
                             getLastLocation();
                         }else {
                             try {
@@ -2627,25 +2711,36 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     private void plotGraphInMap(long id){
+        String plotGPX = db.polygonPlotHistoryDao().getcenterPlotData(id);
+        plot_textGpx.setText(plotGPX);
+
         String jsonString = db.polygonPlotHistoryDao().getPositionData(id);
-        ArrayList<GeoPoint> plotPoints = PlotDataParser.parsePlotData(jsonString);
-        IMapController mapController = map.getController();
-        mapController.setZoom(21);
 
-        if (!plotPoints.isEmpty()) {
-            if (polygon != null) {
-                map.getOverlays().remove(polygon);
+        if (jsonString != null) {
+            ArrayList<GeoPoint> plotPoints = PlotDataParser.parsePlotData(jsonString);
+            IMapController mapController = map.getController();
+            mapController.setZoom(21);
+
+            if (!plotPoints.isEmpty()) {
+                if (polygon != null) {
+                    map.getOverlays().remove(polygon);
+                }
+
+                polygon = new Polygon();
+                polygon.setFillColor(Color.GREEN);
+                polygon.setStrokeColor(Color.BLACK);
+                polygon.setStrokeWidth(2);
+                polygon.setPoints(plotPoints);
+                map.getOverlays().add(polygon);
+
+                // Set map center to the first point
+                mapController.setCenter(plotPoints.get(0));
             }
+        }
 
-            polygon = new Polygon();
-            polygon.setFillColor(Color.GREEN);
-            polygon.setStrokeColor(Color.BLACK);
-            polygon.setStrokeWidth(2);
-            polygon.setPoints(plotPoints);
-            map.getOverlays().add(polygon);
-
-            // Set map center to the first point
-            mapController.setCenter(plotPoints.get(0));
+        String[] multiPinPoints = plotGPX.split(",");
+        if (multiPinPoints.length == 2 && !multiPinPoints[0].isEmpty() && !multiPinPoints[1].isEmpty()) {
+            getFarmLocation(Double.parseDouble(multiPinPoints[0]), Double.parseDouble(multiPinPoints[1]));
         }
     }
 
@@ -2690,6 +2785,43 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
 
 
+    }
+
+    private void editPinPlotAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.edit_already_logged_plot, currentTrackname));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setText(getResources().getString(R.string.no));
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(getResources().getString(R.string.yes));
+        AlertDialog alert = builder.create();
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String plotName = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
+                LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(currentTrackname);
+                mLocationBeanList = locationBeanList != null ? locationBeanList.getLocationBean() : mLocationBeanList;
+                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                dl.deletePlotDataFromNetworkQueue(plotName);
+                isMultiPinEditted = true;
+                alert.dismiss();
+            }
+
+        });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isMultiPinEditted = false;
+                alert.dismiss();
+            }
+        });
+        alert.show();
     }
 
 }
