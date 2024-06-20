@@ -455,7 +455,7 @@
     <string name="previous_plot_not_recorded_msg">"Área %1$s não foi registrada. Favor registrar área %1$s primeiro. "</string>
     <string name="send_button">"Enviar "</string>
     <string name="duplicate_phone_number">"Número de telefone duplicado. Favor verificar número. "</string>
-    <string name="record_polygon_input_messege">"Quantas áreas ele possui? "</string>
+    <string name="record_polygon_input_messege">"Quantas parcelas diferentes o agricultor possui? "</string>
     <string name="record_polygon_input_title">"Analise de áreas "</string>
     <string name="record_polygon_input_hint">"Número de areas "</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Galeria. Sistema não funcionará sem a sua permissão de acesso.</string>
@@ -464,7 +464,7 @@
     <string name="permission_permanent_denial_title">"Permissão foi negada. "</string>
     <string name="permission_permanent_denial_msg">"Permissão requerida foi negada. Por favor alterar a permissão nas configurações do aplicativo. "</string>
     <string name="go_to_settings_msg">"Autorizar a permissão das configurações do aplicativo. Ir para Configurações? "</string>
-    <string name="record_farm_polygon">"Gravar propriedade. "</string>
+    <string name="record_farm_polygon">"Registrar localização do gráfico"</string>
     <string name="record_farm_polygon_hint">Clique para gravar.</string>
     <string name="record_farm_polygon_complete">"Gravado. "</string>
     <string name="submit">"Enviar "</string>
@@ -480,7 +480,7 @@
     <string name="updating_sip_training">Pontos de infra estrutura social</string>
     <string name="phone_number_recorded">Número do telefone gravado.</string>
     <string name="loggin_In">Entrando</string>
-    <string name="are_you_ready_to_polygon_record">Você está pronto para gravar o polígono?</string>
+    <string name="are_you_ready_to_polygon_record">Você está pronto para gravar um local de plotagem?</string>
     <string name="data_initialization">Inicialização de dados</string>
     <string name="fetching_location">Buscando localização</string>
     <string name="please_fill_dob">Por favor, preencha a data de aniversário do agricultor</string>
@@ -777,4 +777,10 @@
     <string name="non_compliant">Non-compliant</string>
     <string name="compliant">Compliant</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
+
+    <string name="plot_size">Insira o tamanho do lote</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
+
 </resources>

@@ -455,7 +455,7 @@
     <string name="previous_plot_not_recorded_msg">"Le tracé %1$s n\'a pas été enregistré. Veuillez d\'abord enregistrer le tracé %1$s. "</string>
     <string name="send_button">"Envoyer "</string>
     <string name="duplicate_phone_number">"Le numéro de téléphone en double n\'est pas autorisé. Veuillez vérifier les les numéro de téléphone. "</string>
-    <string name="record_polygon_input_messege">"Combien de parcelles différentes a-t-il ? "</string>
+    <string name="record_polygon_input_messege">"Combien de parcelles différentes l’agriculteur possède-t-il ? "</string>
     <string name="record_polygon_input_title">"Analyse du niveau de parcelle "</string>
     <string name="record_polygon_input_hint">"Entrez le nombre de parcelles "</string>
     <string name="camera_and_gallery_permission_denial_msg">La fonction Caméra &amp; Galerie ne fonctionnera pas sans cette autorisation</string>
@@ -464,7 +464,7 @@
     <string name="permission_permanent_denial_title">"La permission a été définitivement refusée "</string>
     <string name="permission_permanent_denial_msg">"La demande d\'autorisation est définitivement refusée. Veuillez fournir des autorisations à partir des paramètres d\'application. "</string>
     <string name="go_to_settings_msg">"Autoriser l\'autorisation des paramètres de l\'application Aller aux paramètres? "</string>
-    <string name="record_farm_polygon">"Enregistrer le polygone du champ "</string>
+    <string name="record_farm_polygon">"Enregistrer l'emplacement du tracé"</string>
     <string name="record_farm_polygon_hint">"Appuyez pour enregistrer le polygone du champ "</string>
     <string name="record_farm_polygon_complete">"Polygone enregistré "</string>
     <string name="submit">"Soumettre "</string>
@@ -479,7 +479,7 @@
     <string name="enumerator_empty">Veuillez entrer l\'ID valide de l\'énumérateur.</string>
     <string name="please_answer_all_questions">Veuillez répondre à toutes les questions s\'il vous plait.</string>
     <string name="updating_sip_training">Infrastructure sociale.</string>
-    <string name="are_you_ready_to_polygon_record">Êtes-vous prêt à cartographier un champ ?</string>
+    <string name="are_you_ready_to_polygon_record">Êtes-vous prêt à enregistrer l\'emplacement d\'une parcelle ?</string>
     <string name="fetching_location">Récupération des lieu.</string>
     <string name="please_fill_farmer_name">Veuillez fournir le nom du producteur s\'il vous plait.</string>
     <string name="please_fill_dob">Veuillez indiquer la date de naissance du producteur s\'il vous plait.</string>
@@ -1108,5 +1108,10 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="non_compliant">Non-compliant</string>
     <string name="compliant">Compliant</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
+
+    <string name="plot_size">Entrez la taille du tracé</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
 
 </resources>
