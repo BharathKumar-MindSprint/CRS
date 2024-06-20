@@ -9,8 +9,6 @@ import androidx.multidex.MultiDexApplication;
 
 //import com.olam.inapp.InApp;
 
-import com.olam.roomlibrary.PreferenceHelper;
-
 import org.matomo.sdk.Matomo;
 import org.matomo.sdk.Tracker;
 import org.matomo.sdk.TrackerBuilder;
@@ -33,7 +31,6 @@ public class EnableMultiDex extends MultiDexApplication {
 
     static Tracker tracker;
     static EnableMultiDex instance;
-    public static PreferenceHelper preferenceHelper = new PreferenceHelper();
 
     @Override
     public void onCreate() {
@@ -45,7 +42,7 @@ public class EnableMultiDex extends MultiDexApplication {
         if (BuildConfig.MATOMO_ENABLED) {
             getTracker();
         }
-        preferenceHelper.init(this);
+
 
     }
 
@@ -62,10 +59,6 @@ public class EnableMultiDex extends MultiDexApplication {
         return tracker;
     }
 
-    @Override
-    public void onTerminate() {
-        preferenceHelper.clear();
-        super.onTerminate();
-    }
+
 }
 

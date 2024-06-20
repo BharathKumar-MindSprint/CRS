@@ -30,7 +30,7 @@ android {
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 454
@@ -420,13 +420,7 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
-
-    //Room DB encryption
-    implementation 'net.zetetic:android-database-sqlcipher:4.5.4'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    implementation 'com.mindsprint:room-encryption:0.0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.jfrog.artifactory'

@@ -1,7 +1,5 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb;
 
-import static com.olam.digital.ofis.EnableMultiDex.preferenceHelper;
-
 import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -54,16 +52,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModule
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
-import com.olam.digital.ofis.recordpolygon.AppConstants;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
-import com.olam.roomlibrary.PreferenceHelper;
-import com.olam.roomlibrary.SQLCipherUtil;
-
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SupportFactory;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
@@ -133,44 +125,13 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public static volatile OFISRoomDB INSTANCE = null;
 
     public static OFISRoomDB getDbInstance(Context context) {
-//        INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
-//                .allowMainThreadQueries()
-//                .fallbackToDestructiveMigration()
-//                .build();
 
-        preferenceHelper.init(context.getApplicationContext());
-        preferenceHelper.save("key", AppConstants.ENCR_PASSWORD);
-
-        SQLCipherUtil.State dbState = SQLCipherUtil.getDatabaseState(context.getApplicationContext(),DATABASE_NAME);
-        if (INSTANCE != null) {
-            if (dbState.equals(SQLCipherUtil.State.ENCRYPTED)) {
-                return INSTANCE;
-            }
-            if (dbState.equals(SQLCipherUtil.State.UNENCRYPTED)) {
-
-                if (preferenceHelper.get("first_time_opened", 0) == 0) {
-                    INSTANCE = getEncryptDB(context);
-                    preferenceHelper.save("first_time_opened", preferenceHelper.get("first_time_opened", 0) + 1);
-                }
-            } else {
-                INSTANCE = getEncryptDB(context);
-                preferenceHelper.save("first_time_opened", 1);
-            }
-        }else {
-            INSTANCE = getEncryptDB(context);
-            preferenceHelper.save("first_time_opened", 1);
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
         }
         return INSTANCE;
-    }
-    public static OFISRoomDB getEncryptDB(Context context) {
-        context.getDatabasePath(DATABASE_NAME).delete();
-
-        char[] admin = preferenceHelper.get("key","").toCharArray();
-        SupportFactory supportFactory = new SupportFactory(SQLiteDatabase.getBytes(admin));
-        return Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
-                .openHelperFactory(supportFactory)
-                .build();
     }
 }
