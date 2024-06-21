@@ -363,7 +363,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         pause = (Button) findViewById(R.id.pause_recording);
         mStartLoggingButton = (Button) findViewById(R.id.start_stop_recording);
         bttnSave = (Button) findViewById(R.id.save_recording);
-        RelativeLayout plotPinLayout = findViewById(R.id.plotPinLayout);
+        LinearLayout plotPinLayout = findViewById(R.id.plotPinLayout);
         capture_latLng = (ImageButton) findViewById(R.id.get_latlngButton);
         if(plotPinLayout.getVisibility()== View.VISIBLE){
           capture_latLng.setOnClickListener(new View.OnClickListener() {

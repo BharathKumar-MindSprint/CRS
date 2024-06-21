@@ -641,6 +641,16 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 }
                 else {
                     // Multifarm Location
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                    enabledItem.setText("false");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setText(res.getString(R.string.record_farm_location_complete));
+
+                    //Based on BA requirement record farm location is disabled (PC-265)
+/*
                     if (MultiFarmUtils.isMultiFarmEnumerator) {
                         boolean isLocationCaptured = dl.getLocationInfo1(farmerId);
                         if (isLocationCaptured) {
@@ -693,10 +703,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                         }
 
-                    } else {
+                    }
+                    else {
 
                         String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
                         String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
+
                         if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
                             enabledItem.setText("false");
@@ -714,7 +726,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                             textView.setText(res.getString(R.string.record_farm_location_hint));
                         }
+
                     }
+                    */
                 }
             }
             else {

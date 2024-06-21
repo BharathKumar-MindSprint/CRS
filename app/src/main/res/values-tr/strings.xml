@@ -681,5 +681,6 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Grafik boyutu, yapılandırılan minimum alandan (0,0009 HA) daha küçük. Lütfen geçerli bir çizim boyutu belirtin.</string>
+    <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
 
 </resources>
