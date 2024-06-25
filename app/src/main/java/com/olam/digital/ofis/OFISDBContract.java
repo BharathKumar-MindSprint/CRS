@@ -1124,6 +1124,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT_JSON = "plotjson";
         public static final String COLUMN_NAME_PLOT_SYNC_FLAG = "plotsyncflag";
         public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
+        public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1134,6 +1135,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SERVER_ID);
                     add(COLUMN_NAME_PLOT_JSON);
                     add(COLUMN_NAME_PLOT_SYNC_FLAG);
+                    add(COLUMN_NAME_CENTER_PLOT);
+                    add(COLUMN_NAME_PLOT_SIZE);
                 }}
         );
     }
@@ -2617,6 +2620,7 @@ public class OFISDBContract {
         public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final String COLUMN_NAME_CREATED_AT = "created_at";
         public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
+        public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2627,6 +2631,7 @@ public class OFISDBContract {
                     add(COLUMN_IS_SYNCED);
                     add(COLUMN_NAME_CREATED_AT);
                     add(COLUMN_NAME_CENTER_PLOT);
+                    add(COLUMN_NAME_PLOT_SIZE);
                 }}
         );
     }

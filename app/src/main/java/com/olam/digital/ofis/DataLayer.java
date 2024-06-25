@@ -222,7 +222,7 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId, String plotGpx) {
+    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId, String plotGpx, double plotArea) {
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
         String[] whereArgs = new String[]{String.valueOf(plotName)};
         db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
@@ -233,6 +233,7 @@ public class DataLayer {
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID, farmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME, enteredPlotName);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT, plotGpx);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE, plotArea);
 
         //temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
         if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
@@ -300,11 +301,12 @@ public class DataLayer {
     }
 
 
-    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx) {
+    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx, double plotArea) {
         try {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, plotName);
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, plotGpx);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, plotArea);
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
                     OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
             String[] whereArgs = new String[]{String.valueOf(mFarmerId),String.valueOf(selectedPlotId)};
