@@ -3076,8 +3076,6 @@ public class DynamicQuestions {
                         if (!String.valueOf(answerLimit).equals(null)) {
                             et.setHint("Character limit : 0 to " + answerLimit);
                             setAlphabetWithCharacterLimit(et, answerLimit);
-                        } else {
-
                         }
                     }
 
@@ -3416,34 +3414,6 @@ public class DynamicQuestions {
         }
     }
 
-    /*private void setAlphanumericFilter(EditText editText, final int maxCharacters) {
-        InputFilter alphaNumericFilter = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end,
-                                       Spanned dest, int dstart, int dend) {
-                StringBuilder filteredStringBuilder = new StringBuilder();
-                int charactersAdded = 0;
-
-                for (int i = start; i < end; i++) {
-                    char character = source.charAt(i);
-                    if (Character.isLetterOrDigit(character)) {
-                        if (charactersAdded < maxCharacters) {
-                            filteredStringBuilder.append(character);
-                            charactersAdded++;
-                        } else {
-                            // Reached the maximum allowed characters
-                            break;
-                        }
-                    }
-                }
-
-                return filteredStringBuilder.toString();
-            }
-        };
-
-        editText.setFilters(new InputFilter[] { alphaNumericFilter });
-    }*/
-
     private void setAlphanumericFilter(final EditText editText, final int maxCharacterLimit) {
         InputFilter alphaNumericFilter = new InputFilter() {
             @Override
@@ -3463,7 +3433,7 @@ public class DynamicQuestions {
                     StringBuilder filteredStringBuilder = new StringBuilder();
                     for (int i = start; i < end; i++) {
                         char character = source.charAt(i);
-                        if (Character.isLetterOrDigit(character) || Character.isSpaceChar(character)) {
+                        if (Character.isLetterOrDigit(character) || (character == ' ' && (filteredStringBuilder.length() > 0 || dest.length() > 0))) {
                             if (filteredStringBuilder.length() < maxCharacterLimit) {
                                 filteredStringBuilder.append(character);
                             }
@@ -3880,7 +3850,7 @@ public class DynamicQuestions {
                     StringBuilder filteredStringBuilder = new StringBuilder();
                     for (int i = start; i < end; i++) {
                         char character = source.charAt(i);
-                        if (Character.isLetter(character)) {
+                        if (Character.isLetter(character) || (character == ' ' && (filteredStringBuilder.length() > 0 || dest.length() > 0))) {
                             if (filteredStringBuilder.length() < maxCharacterLimit) {
                                 filteredStringBuilder.append(character);
                             }

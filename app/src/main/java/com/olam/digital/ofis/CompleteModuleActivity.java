@@ -74,6 +74,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -162,6 +163,7 @@ public class CompleteModuleActivity extends BaseActivity {
     LinearLayout viewSurveyAnswer;
     int plotId = 0;
     String isPlotSurvey;
+    public ArrayList<JSONObject> backupAnswerSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,6 +264,7 @@ public class CompleteModuleActivity extends BaseActivity {
         viewSurveyAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                backupAnswerSet = new ArrayList<>(dynamicQuestions.answerSet);
                 showPopupSurveyAnswers();
             }
         });
@@ -1365,6 +1368,14 @@ public class CompleteModuleActivity extends BaseActivity {
             public void onClick(View v) {
                 popupWindow.dismiss();
                 dynamicQuestions.viewAnswer = false;
+            }
+        });
+
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                dynamicQuestions.answerSet = new ArrayList<>(backupAnswerSet);
+
             }
         });
     }
