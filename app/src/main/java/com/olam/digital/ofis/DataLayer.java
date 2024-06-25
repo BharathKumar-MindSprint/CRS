@@ -4667,11 +4667,28 @@ public class DataLayer {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
-        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
-        String sortOrder = "CASE " +
+        String columnPosition = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+
+        // code for only making the farm tree density drop down as priority
+        /*String sortOrder = "CASE " +
                 "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
                 "ELSE " + orderBy + " + 2 " +
+                "END END";*/
+
+        String sortOrder = "CASE " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN " +
+                columnPosition + " " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN " +
+                columnPosition + " + 1 " +
+                "ELSE " +
+                "CASE WHEN " + columnPosition + " > " +
+                "(SELECT MAX(" + columnPosition + ") " +
+                "FROM " + OFISDBContract.QuestionEntry.TABLE_NAME + " " +
+                "WHERE " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown')" +
+                " THEN " + columnPosition + " + 2 " +
+                " ELSE " + columnPosition + " + 2 " +
                 "END END";
+
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
