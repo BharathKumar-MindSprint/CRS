@@ -2713,7 +2713,7 @@ public class DynamicQuestions {
             } else {
                 if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
                     if (Objects.equals(datatype, "decimal")) {
-                        currentAnswerValue = String.valueOf(BigDecimal.valueOf(qCursor.getDouble(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))));
+                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))!=null ? String.valueOf(BigDecimal.valueOf(qCursor.getDouble(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)))) : null;
                     }
                     else {
                         currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
