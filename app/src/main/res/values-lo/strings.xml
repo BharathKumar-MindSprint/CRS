@@ -940,6 +940,7 @@
     <string name="save_plot_size">save plot size</string>
 
     <string name="incorrect_plot_size_message">ຂະໜາດຂອງດິນຕອນນ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລະບຸຂະໜາດຂອງດິນຕອນທີ່ຖືກຕ້ອງ.</string>
+    <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
 
 </resources>
 
