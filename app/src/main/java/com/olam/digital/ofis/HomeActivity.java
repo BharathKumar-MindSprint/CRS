@@ -277,6 +277,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         mainHandler = new Handler(Looper.getMainLooper());
         sharedPreferences = getSharedPreferences("com.olam.digital.ofis.app_prefs", MODE_PRIVATE);
 
+
         LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, listView, false);
         listView.addHeaderView(itemsHeader);
 
@@ -331,6 +332,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 enumeratorID.setClickable(false);
             }
         }
+
 
         Account mAccount = CreateSyncAcount();
 
@@ -907,6 +909,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 nomodulestosubmittext.setText(R.string.ofis_update_overdue);
                 nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
             }
+        }
+
+        //Automatic Trigger ASK For Help
+        if (networkQueue != null && networkQueue.getCount() > 0) {
+            triggerAutomaticAskForHelp();
+        }
+        else {
+            Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER", null, false);
+            Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER_SEND_HELP", null, true);
         }
 
     }
@@ -2926,6 +2937,47 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             }
         });
+
+    }
+
+    private void triggerAutomaticAskForHelp() {
+
+        if (!sharedPreferences.getBoolean("FIRST_RUN", true)) {
+            boolean isAutomaticTriggerEnabled = sharedPreferences.getBoolean("AUTO_TRIGGER", true);
+            boolean isAskForHelpSent = sharedPreferences.getBoolean("AUTO_TRIGGER_SEND_HELP", false);
+            String countryCode = Utilities.getdatafromSharedPrefs(context, "COUNTRY_CODE");
+
+            Handler helpHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    String toastMsg = "AUTO TRIGGERED SUCCESSFUL";
+                    try {
+                        if (msg.what == 1) {
+                            toastMsg = "AUTO TRIGGERED SUCCESSFUL";
+                        } else if (msg.what == 2) {
+                            toastMsg = "AUTO TRIGGERED UNSUCCESSFUL";
+                        }
+                    } catch(ClassCastException e) {
+                        toastMsg = "AUTO TRIGGERED UNSUCCESSFUL";
+                    }
+                    finally {
+                        String finalToastMsg = toastMsg;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                Toast.makeText(staticContext, finalToastMsg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            };
+
+            if (isAutomaticTriggerEnabled && !isAskForHelpSent) {
+                nl.sendForHelp("AUTO TRIGGER", countryCode, "", "This is Auto triggered", helpHandler);
+                Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER", null, false);
+                Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER_SEND_HELP", null, true);
+            }
+        }
 
     }
 
