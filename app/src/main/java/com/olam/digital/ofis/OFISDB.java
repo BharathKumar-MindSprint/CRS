@@ -285,7 +285,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG + " INTEGER, "
-            + OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT + " TEXT default null )";
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT + " TEXT default null, "
+            + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL )";
 
     private static final String OFIS_DATATYPES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DatatypesEntry.TABLE_NAME
             + " ( " + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " TEXT )";
@@ -532,7 +533,8 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME + " TEXT, " +
             OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT, " +
             OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT + " TEXT ," +
-            OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT +" TEXT default null)";
+            OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT +" TEXT default null," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL )";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
@@ -1259,6 +1261,8 @@ class OFISDB extends SQLiteOpenHelper {
             // multi-pins centerplot
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN" + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN" + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE + " REAL ");
         }
         catch (Exception e) {
             e.printStackTrace();

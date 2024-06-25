@@ -23,4 +23,7 @@ public class PolygonPlotHistory {
     @ColumnInfo(name = "centerPlot")
     public String centerPlot;
 
+    @ColumnInfo(name = "plotArea")
+    public Double plotArea;
+
 }

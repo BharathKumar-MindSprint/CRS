@@ -115,29 +115,45 @@
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/ofis_large_pad"
+                android:gravity="center">
+
+                <EditText
+                    android:id="@+id/plot_area"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:hint="@string/plot_size"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/plotPinLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="visible">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Plot pin -"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/ofis_large_text" />
                 <EditText
                     android:id="@+id/plot_text"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                     android:background="@drawable/edittext_bg_dark"
-                    android:padding="@dimen/margin_10"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    android:layout_marginTop="30dp"
-                    android:layout_toLeftOf="@+id/get_latlngButton"
+                    android:maxLines="2"
+                    android:hint="@string/click_gpx_icon_to_record_pin"
+                    android:layout_weight="1"
                     android:textColor="@color/ofis_base_font_dark"
                     android:textColorHint="@color/icon_grey_palette_2"
                     android:textSize="@dimen/ofis_large_text"
@@ -150,12 +166,11 @@
                     android:layout_marginLeft="15dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:layout_marginTop="30dp"
                     android:textSize="@dimen/ofis_med_text"
-                    android:layout_alignParentEnd="true"
                     android:visibility="visible"
                     android:background="@drawable/ic_gps_black"/>
-            </RelativeLayout>
+            </LinearLayout>
+
 
         </LinearLayout>
 

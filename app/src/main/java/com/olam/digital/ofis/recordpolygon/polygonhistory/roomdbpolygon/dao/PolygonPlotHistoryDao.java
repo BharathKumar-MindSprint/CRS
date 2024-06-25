@@ -38,6 +38,9 @@ public interface PolygonPlotHistoryDao {
     @Query("SELECT id, plotName FROM PolygonPlotHistory")
     List<PolygonPlotHistoryDao.UnitMapping> getAllPlotCount();
 
+    @Query("SELECT plotArea FROM POLYGONPLOTHISTORY WHERE id=:id")
+    Double getPlotAreaData(long id);
+
     class UnitMapping {
         public int id;
         public String plotName;
