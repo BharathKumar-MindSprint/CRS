@@ -2713,7 +2713,7 @@ public class DynamicQuestions {
             } else {
                 if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
                     if (Objects.equals(datatype, "decimal")) {
-                        currentAnswerValue = String.valueOf(BigDecimal.valueOf(qCursor.getDouble(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))));
+                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))!=null ? String.valueOf(BigDecimal.valueOf(qCursor.getDouble(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)))) : null;
                     }
                     else {
                         currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
@@ -4786,7 +4786,7 @@ public class DynamicQuestions {
             final boolean isDensityQuestion = (dataTypeID == 6 && displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) ? true : (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
 
             if (hasAnswers) {
-                if (datatype.equals("int") && (!isDensityQuestion)) {
+                if (datatype.equals("int")) {
                     Integer currentAnswerInt = -1;
                     if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
                         currentAnswerInt = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
@@ -4892,7 +4892,7 @@ public class DynamicQuestions {
 
                     //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
-                        if (finalDatatype.equals("int") && (!isDensityQuestion)) {
+                        if (finalDatatype.equals("int")) {
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id), selectedGlobalID[0], selectedLocalID[0], 0);
 
                             long h = Long.parseLong("0026");
