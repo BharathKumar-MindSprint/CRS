@@ -4354,7 +4354,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         // dl.updateSyncedStatus(localFarmerId);
                                         dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
-                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId);
+                                        String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
+                                        String conductSurveyForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF));
+                                        String conductTrainingForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF));
+                                        String polygonCaptureForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF));
+
+                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId,
+                                                complainceFlag,conductTrainingForNonCompliant,conductSurveyForNonCompliant,polygonCaptureForNonCompliant);
                                         db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
@@ -4550,7 +4556,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         dl.updateSyncedStatusFixed(finalLocalFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(finalLocalFarmerId, jsonObject1.getInt("id"));
-                                        dl.markFarmerAsSynced(finalLocalFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), finalLocalPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalfarmsId);
+                                        String complainceFlag = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG);
+                                        String conductSurveyForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                                        String conductTrainingForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                                        String polygonCaptureForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
+                                        dl.markFarmerAsSynced(finalLocalFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), finalLocalPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalfarmsId,
+                                                complainceFlag,conductTrainingForNonCompliant,conductSurveyForNonCompliant,polygonCaptureForNonCompliant);
 
 
                                         statusMessage = "Farmer details are updated. Please try to sync again !";

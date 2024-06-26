@@ -5277,7 +5277,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId, String complainceFlag, String conductTrainingForNonCompliant, String conductSurveyForNonCompliant, String polygonCaptureForNonCompliant) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -5291,6 +5291,10 @@ public class DataLayer {
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamId);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID, id);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG, complainceFlag);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, conductSurveyForNonCompliant);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, conductTrainingForNonCompliant);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, polygonCaptureForNonCompliant);
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
