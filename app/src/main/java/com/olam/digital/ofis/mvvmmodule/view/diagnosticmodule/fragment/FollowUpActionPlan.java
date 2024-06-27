@@ -142,6 +142,9 @@ public class FollowUpActionPlan extends Fragment {
     boolean goNextCaptureProof =false;
     boolean goNextActionPlan = true;
 
+    private final long FILE_SIZE = 10485760;
+    private final String errorSizeMessage = "10MB";
+
     public FollowUpActionPlan() {
         // Required empty public constructor
     }
@@ -160,7 +163,6 @@ public class FollowUpActionPlan extends Fragment {
         ll_servey_next_followup_actionplan = view.findViewById(R.id.ll_servey_next_followup_actionplan);
         spinner_followup_dmCurrencies = view.findViewById(R.id.spinner_followup_dmCurrencies);
         dm_question_followup_complaint = view.findViewById(R.id.dm_question_followup_complaint);
-
         ll_servey_next_followup_actionplan.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1231,6 +1233,18 @@ public class FollowUpActionPlan extends Fragment {
                 String filename = getFileName(uri);
                 String fileExtension = getFileExtension(filename);
 
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 byte[] fileByteArray;
                 try {
@@ -1388,7 +1402,8 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
 
-            } else if (mime.equalsIgnoreCase("application/pdf")) {
+            }
+            else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 String fileExtension = getFileExtension(filename);
 
@@ -1411,8 +1426,8 @@ public class FollowUpActionPlan extends Fragment {
 //                10485760  - 10MB
 //                3145728 - 3MB
 
-                if (compressedSize > 3145728) {
-                     Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                if (compressedSize > FILE_SIZE) {
+                     Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
 //                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 //                    byte[] pdfByteArray1;
 //                    try {
@@ -1576,7 +1591,8 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
 
-            } else if (mime.equalsIgnoreCase("image/jpeg")
+            }
+            else if (mime.equalsIgnoreCase("image/jpeg")
                     || mime.equalsIgnoreCase("image/png")){
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
@@ -1588,6 +1604,14 @@ public class FollowUpActionPlan extends Fragment {
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
+                    if (filePathimage != null) {
+                        File file = new File(filePathimage);
+                        long fileSize = file.length();
+                        if (fileSize > FILE_SIZE) {
+                            Toast.makeText(getContext(), "Image size exceeds " + errorSizeMessage + ". Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -1597,7 +1621,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
 
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
@@ -1786,6 +1810,18 @@ public class FollowUpActionPlan extends Fragment {
                 String filename = getFileName(uri);
                 String fileExtension = getFileExtension(filename);
 
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 byte[] fileByteArray;
                 try {
@@ -1967,8 +2003,8 @@ public class FollowUpActionPlan extends Fragment {
 //                10485760  - 10MB
 //                3145728 - 3MB
 
-                if (compressedSize > 3145728) {
-                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
 //                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 //                    byte[] pdfByteArray1;
 //                    try {
