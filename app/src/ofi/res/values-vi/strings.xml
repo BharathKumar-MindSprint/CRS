@@ -468,7 +468,7 @@
     <string name="go_to_settings_msg">"Cho phép từ Cài đặt. Có đi tới Cài đặt không? "</string>
     <string name="record_farm_polygon">"Ghi lại vị trí lô đất "</string>
     <string name="record_farm_polygon_hint">Bấm để ghi diện tích lô</string>
-    <string name="record_farm_polygon_complete">"Đã ghi Diện tích lô "</string>
+    <string name="record_farm_polygon_complete">"vị trí lô đất / Đã ghi Diện tích lô "</string>
     <string name="submit">"Gửi đi "</string>
     <string name="cancel">"Hủy "</string>
     <string name="valid_count_msg">"Nhập số hợp lệ! "</string>
@@ -762,7 +762,7 @@
 
     <string name="ofis_farmer_and_surveys">Nông dân và khảo sát</string>
 
-    <string name="plot_size">Nhập kích thước lô</string>
+    <string name="plot_size">Nhập kích thước lô (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Kích thước lô nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng chỉ định kích thước lô hợp lệ.</string>

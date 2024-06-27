@@ -467,7 +467,7 @@
     <string name="go_to_settings_msg">"Autoriser l\'autorisation des paramètres de l\'application Aller aux paramètres? "</string>
     <string name="record_farm_polygon">"Enregistrer l\'emplacement du tracé"</string>
     <string name="record_farm_polygon_hint">"Appuyez pour enregistrer le polygone du champ "</string>
-    <string name="record_farm_polygon_complete">"Polygone enregistré "</string>
+    <string name="record_farm_polygon_complete">"emplacement de la parcelle / Polygone enregistré"</string>
     <string name="submit">"Soumettre "</string>
     <string name="cancel">"Annuler "</string>
     <string name="valid_count_msg">"Entrez un nombre valide ! "</string>
@@ -1106,7 +1106,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="ofis_farmer_and_surveys">Agriculteurs et enquêtes</string>
 
-    <string name="plot_size">Entrez la taille du tracé</string>
+    <string name="plot_size">Entrez la taille du tracé (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>

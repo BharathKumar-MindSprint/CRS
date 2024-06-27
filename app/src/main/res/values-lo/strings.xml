@@ -453,7 +453,7 @@
     <string name="go_to_settings_msg">"ອະນຸຍາດການຕັ້ງຄ່າລະບົບ. ໄປທີ່ການຕັ້ງຄ່າ? "</string>
     <string name="record_farm_polygon">"ບັນທຶກສະຖານທີ່ຂອງດິນຕອນ"</string>
     <string name="record_farm_polygon_hint">ເແຕະເພື່ອບັນທຶກຕອນສວນ</string>
-    <string name="record_farm_polygon_complete">"ຕອນທີ່ບັນທຶກໄວ້ "</string>
+    <string name="record_farm_polygon_complete">"ທີ່ຕັ້ງຂອງດິນຕອນ / ຕອນທີ່ບັນທຶກໄວ້ "</string>
     <string name="submit">"ສະເໜີ "</string>
     <string name="cancel">"ຍົກເລີກ "</string>
     <string name="valid_count_msg">"ໃສ່ຈໍານວນທີ່ຖືກຕ້ອງ! "</string>
@@ -935,7 +935,7 @@
     <string name="compliant">Compliant</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
-    <string name="plot_size">sai khanadkhong din ton</string>
+    <string name="plot_size">sai khanadkhong din ton (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
 

@@ -467,7 +467,7 @@
     <string name="go_to_settings_msg">"ไปที่การตั้งค่าแอปพลิเคชั่นเพื่อตั้งค่าการให้ความยินยอม "</string>
     <string name="record_farm_polygon">"ที่ตั้งแปลงบันทึก"</string>
     <string name="record_farm_polygon_hint">แตะเพื่อบันทึกขอบเขตพื้นที่แปลง</string>
-    <string name="record_farm_polygon_complete">"บันทึกขอบเขตพื้นที่ "</string>
+    <string name="record_farm_polygon_complete">"ที่ตั้งแปลง / บันทึกขอบเขตพื้นที่ "</string>
     <string name="submit">"ส่ง "</string>
     <string name="cancel">"ยกเลิก "</string>
     <string name="valid_count_msg">"ป้อนจำนวนที่ถูกต้อง "</string>
@@ -749,7 +749,7 @@
     <string name="save_polygon_alertdialog">Khuṇ næ̀cı h̄rụ̄x ẁā cabạn thụk%1$s txn nī̂?</string>
 
     <string name="ofis_farmer_and_surveys">เกษตรกรและการสำรวจ</string>
-    <string name="plot_size">P̂xn k̄hnād phl̆xt</string>
+    <string name="plot_size">P̂xn k̄hnād phl̆xt  (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">ขนาดแปลงเล็กกว่าพื้นที่กำหนดค่าขั้นต่ำ (0.0009 HA) โปรดระบุขนาดแปลงที่ถูกต้อง</string>

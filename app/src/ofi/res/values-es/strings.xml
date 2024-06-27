@@ -468,7 +468,7 @@
     <string name="go_to_settings_msg">"Habilitar permisos desde Configuración de la App. Ir a Configuración? "</string>
     <string name="record_farm_polygon">"Ubicación de la trama de registro"</string>
     <string name="record_farm_polygon_hint">"Pulse para Registrar Polígono de la Finca "</string>
-    <string name="record_farm_polygon_complete">"Polígono registrado "</string>
+    <string name="record_farm_polygon_complete">"ubicación de la parcela / Polígono registrado "</string>
     <string name="submit">"Enviar "</string>
     <string name="cancel">"Cancelar "</string>
     <string name="valid_count_msg">"Ingrese un número válido "</string>
@@ -676,7 +676,7 @@
     <string name="add_child">AGREGAR NIÑO</string>
 
 
-    <string name="plot_size">Introduzca el tamaño de la parcela</string>
+    <string name="plot_size">Introduzca el tamaño de la parcela (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
 
