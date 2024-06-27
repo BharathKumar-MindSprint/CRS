@@ -468,7 +468,7 @@
     <string name="go_to_settings_msg">"Uygulama ayarlarından erişim iznine izin ver. Ayarlara git.  "</string>
     <string name="record_farm_polygon">"Parsel Konumunu Kaydet "</string>
     <string name="record_farm_polygon_hint">Bahçe poligonunu kaydetmek için tıklayın</string>
-    <string name="record_farm_polygon_complete">"Poligon kaydedildi "</string>
+    <string name="record_farm_polygon_complete">"arsa konumu / Poligon kaydedildi "</string>
     <string name="submit">"Gönder "</string>
     <string name="cancel">"Reddet "</string>
     <string name="valid_count_msg">"Geçerli bir sayı gir "</string>
@@ -751,7 +751,7 @@
 
     <string name="ofis_farmer_and_surveys">Çiftçiler ve Araştırmalar</string>
 
-    <string name="plot_size">Arsa boyutunu girin</string>
+    <string name="plot_size">Arsa boyutunu girin  (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Grafik boyutu, yapılandırılan minimum alandan (0,0009 HA) daha küçük. Lütfen geçerli bir çizim boyutu belirtin.</string>

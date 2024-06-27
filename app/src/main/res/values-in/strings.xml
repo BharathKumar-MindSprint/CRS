@@ -465,7 +465,7 @@
     <string name="go_to_settings_msg">"Akses izin dari pengaturan aplikasi. Pergi ke pengaturan? "</string>
     <string name="record_farm_polygon">"Rekam Lokasi Plot"</string>
     <string name="record_farm_polygon_hint">"Ketuk untuk mencatat poligon kebun "</string>
-    <string name="record_farm_polygon_complete">"Poligon telah dicatat "</string>
+    <string name="record_farm_polygon_complete">"lokasi petak / Poligon telah dicatat"</string>
     <string name="submit">"Kirim "</string>
     <string name="cancel">"Batal "</string>
     <string name="valid_count_msg">"Masukkan nomor yang valid! "</string>
@@ -773,7 +773,7 @@
     <string name="compliant">Compliant</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
-    <string name="plot_size">Masukkan ukuran plot</string>
+    <string name="plot_size">Masukkan ukuran plot (HA)</string>
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Ukuran plot lebih kecil dari luas minimum yang dikonfigurasi (0,0009 HA). Harap tentukan ukuran plot yang valid.</string>
