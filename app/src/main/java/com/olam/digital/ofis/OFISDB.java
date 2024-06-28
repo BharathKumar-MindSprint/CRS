@@ -1261,8 +1261,8 @@ class OFISDB extends SQLiteOpenHelper {
             // multi-pins centerplot
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN" + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN" + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE + " REAL ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE + " REAL ");
         }
         catch (Exception e) {
             e.printStackTrace();
