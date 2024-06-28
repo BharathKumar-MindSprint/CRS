@@ -152,8 +152,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     boolean goNextCaptureProof =false;
     boolean goNextActionPlan = true;
 
-    private final long FILE_SIZE = 10485760;
-    private final String errorSizeMessage = "10MB";
+    private final long FILE_SIZE = 5242880;
+    private final String errorSizeMessage = "5MB";
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
