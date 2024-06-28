@@ -142,8 +142,8 @@ public class FollowUpActionPlan extends Fragment {
     boolean goNextCaptureProof =false;
     boolean goNextActionPlan = true;
 
-    private final long FILE_SIZE = 10485760;
-    private final String errorSizeMessage = "10MB";
+    private final long FILE_SIZE = 5242880;
+    private final String errorSizeMessage = "5MB";
 
     public FollowUpActionPlan() {
         // Required empty public constructor
