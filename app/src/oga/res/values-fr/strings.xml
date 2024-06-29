@@ -479,7 +479,7 @@
     <string name="enumerator_empty">Veuillez entrer l\'ID valide de l\'énumérateur.</string>
     <string name="please_answer_all_questions">Veuillez répondre à toutes les questions s\'il vous plait.</string>
     <string name="updating_sip_training">Infrastructure sociale.</string>
-    <string name="are_you_ready_to_polygon_record">Êtes-vous prêt à enregistrer l\'emplacement d'une parcelle ?</string>
+    <string name="are_you_ready_to_polygon_record">Êtes-vous prêt à enregistrer l\'emplacement d\'une parcelle ?</string>
     <string name="fetching_location">Récupération des lieu.</string>
     <string name="please_fill_farmer_name">Veuillez fournir le nom du producteur s\'il vous plait.</string>
     <string name="please_fill_dob">Veuillez indiquer la date de naissance du producteur s\'il vous plait.</string>
