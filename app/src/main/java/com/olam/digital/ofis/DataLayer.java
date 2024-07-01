@@ -44,6 +44,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
@@ -78,12 +79,15 @@ public class DataLayer {
 
     private static Resources res;
     private static SQLiteDatabase db;
+    private static OFISRoomDB ofisRoomDB;
+
 
     // constructor - update
     public DataLayer(Resources res_, Context context_) {
         super();
         res = res_;
         db = Utilities.getWriteableDb(context_);
+        ofisRoomDB = OFISRoomDB.getDbInstance(context_);
     }
 
     // data recording tasks
@@ -171,7 +175,7 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
         // Multi-farm Utils Polygon
-        if (MultiFarmUtils.isMultiFarmEnumerator){
+        /*if (MultiFarmUtils.isMultiFarmEnumerator){
             String multiFarmId =getMultiFarmLocationbyId(farmerId);
             if(multiFarmId!=null) {
                 ContentValues values1 = new ContentValues();
@@ -181,7 +185,7 @@ public class DataLayer {
                 db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
             }
 
-        }
+        }*/
 
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -218,7 +222,7 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId) {
+    public void updatePlotGeoData(String mOlamFarmerId, String plotName, String plotGeoData, String enteredPlotName,long farmerId, String plotGpx, double plotArea) {
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
         String[] whereArgs = new String[]{String.valueOf(plotName)};
         db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
@@ -228,6 +232,8 @@ public class DataLayer {
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID, mOlamFarmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID, farmerId);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME, enteredPlotName);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT, plotGpx);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE, plotArea);
 
         //temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
         if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
@@ -295,10 +301,12 @@ public class DataLayer {
     }
 
 
-    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
+    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx, double plotArea) {
         try {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, plotName);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, plotGpx);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, plotArea);
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
                     OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
             String[] whereArgs = new String[]{String.valueOf(mFarmerId),String.valueOf(selectedPlotId)};
@@ -340,12 +348,25 @@ public class DataLayer {
         return data;
     }
 
-    public Cursor fetchPlotId(String id) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " != ? ";
-        String[] whereArgs = new String[]{String.valueOf(id),"0"};
-        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        return data;
+
+    public String fetchCenterPlotById(String id) {
+        String centerPlot = "";
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(id),"0"};
+            Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (data != null) {
+                while(data.moveToNext()) {
+                    centerPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT));
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return centerPlot;
     }
 
     public ArrayList<PlotDTO> fetchSyncedPlotIds(String id) {
@@ -429,6 +450,27 @@ public class DataLayer {
         }
         return plottedName;
     }
+    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName){
+        String centerPlot = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId), plotName};
+            cursor = db.query(OFISDBContract.PlotGeoData.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            centerPlot = null;
+        }finally {
+            cursor.close();
+        }
+        return centerPlot;
+    }
 
     public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
         Cursor plotIdsSynced = syncedPlotIds(farmerId);
@@ -452,6 +494,7 @@ public class DataLayer {
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, getPlottedNameFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
                 long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
@@ -1992,6 +2035,26 @@ public class DataLayer {
         return rowsUpdated;
     }
 
+    public String getSurveyDurationByModuleId(int moduleId){
+        String surveyDuration = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            cursor = db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    surveyDuration = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return surveyDuration;
+    }
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
@@ -2196,7 +2259,7 @@ public class DataLayer {
             String productId =Utilities.productId;
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
-            try {
+            /*try {
                 if (type.equalsIgnoreCase("CHILD_PRODUCT") &&
                         table.equalsIgnoreCase(OFISDBContract.LookupValuesEntry.TABLE_NAME)) {
                     String value = "%\"country_id\":" +
@@ -2209,7 +2272,7 @@ public class DataLayer {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if (OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())) {
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
@@ -2657,7 +2720,7 @@ public class DataLayer {
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
                                 environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -3092,7 +3155,7 @@ public class DataLayer {
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
                                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
                                 environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -3428,6 +3491,8 @@ public class DataLayer {
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " FROM " +
                 farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
                 " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
@@ -3477,6 +3542,8 @@ public class DataLayer {
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + ", " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " as farmer_module_id, " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " from " +
                 farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
@@ -3652,6 +3719,7 @@ public class DataLayer {
                         "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) AND " +
                         "(farmer_child_modules.child_id = ?)" +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_child_modules.current_submodule_id = submodules.id WHERE " +
+                        "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                         "(moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3666,6 +3734,8 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
                         child_id,
+                        farmer.getString(farmer.getColumnIndex("country_id")),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("region_id")),
                         farmer.getString(farmer.getColumnIndex("district_id")),
@@ -3749,13 +3819,14 @@ public class DataLayer {
                 if (farmSurvey){
                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency,moduleassignments.startDate, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration FROM moduleassignments " +
                             " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
+                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND " +
+                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3768,15 +3839,16 @@ public class DataLayer {
                 }else {
                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency,moduleassignments.startDate, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration FROM moduleassignments " +
                             " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
                             "moduleassignments.isPlotSurvey == 'true' AND "+
-                            "moduleassignments.isFarmSurvey == 'false' AND" +
+                            "moduleassignments.isFarmSurvey == 'false' AND " +
+                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -3790,6 +3862,8 @@ public class DataLayer {
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("country_id")),
                         farmer.getString(farmer.getColumnIndex("region_id")),
                         farmer.getString(farmer.getColumnIndex("district_id")),
@@ -3837,7 +3911,8 @@ public class DataLayer {
                         "status_finished",
                         "current_submodule_id",
                         "recorded_lat",
-                        "recorded_lng"
+                        "recorded_lng",
+                        "surveyDuration"
                 };
                 MatrixCursor mc = new MatrixCursor(mcColumns);
                 Cursor[] cursors = {mc, farmerModules};
@@ -3856,7 +3931,7 @@ public class DataLayer {
         String countryId = Utilities.countryId;
         String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
-        try {
+        /*try {
             if (type.equalsIgnoreCase("CHILD_PRODUCT")) {
                 String value = "%\"country_id\":" +
                         Long.parseLong(countryId) +
@@ -3868,7 +3943,7 @@ public class DataLayer {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
         String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
 
 
@@ -4560,12 +4635,26 @@ public class DataLayer {
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        String orderBy = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
-        String sortOrder = "CASE " +
+        String columnPosition = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+        /*String sortOrder = "CASE " +
                 "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
 //                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' or " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 1 and 2 " +
 //                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
                 "ELSE " + orderBy + " + 2 " +
+                "END END";*/
+
+        String sortOrder = "CASE " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN " +
+                columnPosition + " " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN " +
+                columnPosition + " + 2 " +
+                "ELSE " +
+                "CASE WHEN " + columnPosition + " > " +
+                "(SELECT MAX(" + columnPosition + ") " +
+                "FROM " + OFISDBContract.QuestionEntry.TABLE_NAME + " " +
+                "WHERE " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown')" +
+                " THEN " + columnPosition + " + 2 " +
+                " ELSE " + columnPosition + " + 2 " +
                 "END END";
         String sql = "SELECT " + questionTable + ".*, " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name FROM " + questionTable
                 + " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = "
@@ -4594,6 +4683,28 @@ public class DataLayer {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
+        String columnPosition = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
+
+        // code for only making the farm tree density drop down as priority
+        /*String sortOrder = "CASE " +
+                "WHEN "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN 1 ELSE CASE WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN 2 " +
+                "ELSE " + orderBy + " + 2 " +
+                "END END";*/
+
+        String sortOrder = "CASE " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown' THEN " +
+                columnPosition + " " +
+                "WHEN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density' THEN " +
+                columnPosition + " + 2 " +
+                "ELSE " +
+                "CASE WHEN " + columnPosition + " > " +
+                "(SELECT MAX(" + columnPosition + ") " +
+                "FROM " + OFISDBContract.QuestionEntry.TABLE_NAME + " " +
+                "WHERE " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " = 'farm tree density dropdown')" +
+                " THEN " + columnPosition + " + 2 " +
+                " ELSE " + columnPosition + " + 2 " +
+                "END END";
+
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
@@ -4614,8 +4725,7 @@ public class DataLayer {
                 + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " AND "
                 + farmerQuery + " AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
                 + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? GROUP BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY " + sortOrder;
         String[] whereArgs = new String[]{
                 farmerQueryValue,
                 String.valueOf(farmerModuleId),
@@ -4706,6 +4816,23 @@ public class DataLayer {
                 String.valueOf(questionId),
                 farmerQueryValue,
                 String.valueOf(farmerModuleId)
+        };
+
+        return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    Cursor getAnswersForQuestionByFarmerRepeaterCheckbox(int questionId, long farmerId, long farmerModuleId, int repeaterItemPosition) {
+        String[] columns = new String[]{"*"};
+        String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery + " AND "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue,
+                String.valueOf(farmerModuleId),
+                String.valueOf(repeaterItemPosition)
         };
 
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -5150,7 +5277,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId, String complainceFlag, String conductTrainingForNonCompliant, String conductSurveyForNonCompliant, String polygonCaptureForNonCompliant) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -5164,6 +5291,10 @@ public class DataLayer {
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamId);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID, id);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG, complainceFlag);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, conductSurveyForNonCompliant);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, conductTrainingForNonCompliant);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, polygonCaptureForNonCompliant);
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
@@ -5252,9 +5383,8 @@ public class DataLayer {
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, multifarmArray.getJSONObject(j).get("responsibilities").toString());
                                 valuesList.add(values);
-
-
                             }
                         }
                     }
@@ -5344,13 +5474,13 @@ public class DataLayer {
     }
 
     Cursor getAllAnswersByFarmerChildModuleId(int farmerModuleId) {
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5404,13 +5534,17 @@ public class DataLayer {
     }
 
     Cursor getAnswersByFarmerChildModuleId(int farmerModuleId) {
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
-        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
+                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5702,10 +5836,10 @@ public class DataLayer {
 
     // Remove and update after sync
     void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate, String surveyCode) {
-        String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
-        db.delete(OFISDBContract.AnswerChildEntry.TABLE_NAME, whereClause, whereArgs);
+        db.delete(OFISDBContract.AnswerEntry.TABLE_NAME, whereClause, whereArgs);
 
         whereClause = OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_ID + " = ?";
         db.delete(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, whereClause, whereArgs);
@@ -6708,6 +6842,10 @@ public class DataLayer {
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.nationalid));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmername);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, getNidTypebyid(nationalidtype));
+
+       // OW-4590 Fix
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, nationalidtype);
+
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -6716,6 +6854,43 @@ public class DataLayer {
         newEntry = insertNetworkQueueEntry(networkQueueValues);
         return newEntry;
 
+    }
+
+    // OW-4590 Fix
+    public int getNIDTypeIDByName(String type) {
+        int id = 0;
+        try {
+            Cursor nid = getNIDByName(type);
+            if (nid.getCount() > 0) {
+                nid.moveToFirst();
+                id = nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID));
+            } else {
+                Cursor nids = getNIDByNameAnywhere(type);
+                if (nids.getCount() > 0) {
+                    nids.moveToFirst();
+                    id = nids.getInt(nids.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID));
+                }
+                nids.close();
+            }
+            nid.close();
+        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
+        return id;
+    }
+
+    // OW-4590 Fix
+    public Cursor getNIDByNameAnywhere(String type) {
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI + " = ? OR " +
+                OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH + " = ?";
+        String[] columns = new String[]{"*"};
+        String[] whereArgs = new String[]{type,type,type,type,type,type,type,type,type};
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
 
@@ -7388,12 +7563,16 @@ public class DataLayer {
     }
 
     public List<MultiFarmRoleDTO> getMultiFarmRoles(String locale) {
-        if(locale.equalsIgnoreCase("_en")){
-            locale="";
-        }
+
         List<MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<MultiFarmRoleDTO>();
-        // Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
-        Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + "," +  locale  + " as name " + " FROM multifarmRoles ", null);
+        }
+        catch (Exception e) {
+            cursor = db.rawQuery("select * from multifarmRoles", null);
+        }
+
         if (cursor != null) {
             try {
                 if (cursor.getCount() > 0) {
@@ -7794,6 +7973,50 @@ public class DataLayer {
 
     }
 
+    public String radioAnswerValueFromSavedAnswersTable(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_INT));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String locationValueFromSavedAnswersTable(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_TEXT));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
     public String getQuestionTypeValue(int id){
         String value = "";
         Cursor cursor = null;
@@ -8061,8 +8284,9 @@ public class DataLayer {
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
                         values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, multifarmArray.getJSONObject(j).get("responsibilities").toString());
+                        Log.d("mutlistakeholders", multifarmArray.getJSONObject(j).get("responsibilities").toString());
                         valuesList.add(values);
-
 
                     }
                 }
@@ -8445,7 +8669,7 @@ public class DataLayer {
 
 
 
-    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId,String multifarmId) throws JSONException {
+    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId,String multifarmId, int moduleId) throws JSONException {
 
         String farmId=getMultifarmfarmId(farmerId);
         MultiFarmDTO multiFarmDTO=null;
@@ -8454,149 +8678,162 @@ public class DataLayer {
         }
 
 
-        SubmittedInfo  submittedInfo = new SubmittedInfo();
-        submittedInfo.setSubmitted(false);
-        submittedInfo.setNetworkTable(false);
-        submittedInfo.setAvailableInOtherFarm(true);
-        submittedInfo.setModuleId(cursorId);
-        boolean submitted;
+                            SubmittedInfo  submittedInfo = new SubmittedInfo();
+                            submittedInfo.setSubmitted(false);
+                            submittedInfo.setNetworkTable(false);
+                            submittedInfo.setAvailableInOtherFarm(true);
+                            submittedInfo.setModuleId(cursorId);
+                            boolean submitted;
 
 
-        // Needed Part
-        JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
-        if (jsonArray != null && jsonArray.length() > 0) {
+                            // Needed Part
+                            JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+                            if (jsonArray != null && jsonArray.length() > 0) {
 
-            int length = jsonArray.length();
-            for (int j = 0; j < length; j++) {
+                                int length = jsonArray.length();
+                                for (int j = 0; j < length; j++) {
 
-                try {
-                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+                                    try {
+                                        String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
-                    //Check in NetworkTable
-                    submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,0);
-                    if (submitted) {
-                        submittedInfo.setSubmitted(true);
-                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                        submittedInfo.setNetworkTable(true);
-                        return  submittedInfo;
-                        //  submittedInfoList.add(submittedInfo);
+                                        //Check in NetworkTable
+                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,0);
+                                        if (submitted) {
+                                            submittedInfo.setSubmitted(true);
+                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                            submittedInfo.setNetworkTable(true);
+                                           return  submittedInfo;
+                                            //  submittedInfoList.add(submittedInfo);
 
-                    } else{
+                                        } else{
 
-                        // Check in submitted Modules
-                        Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
-                        if (farmer.getCount() > 0) {
-                            farmer.moveToFirst();
+                                            // Check in submitted Modules
+                                            Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+                                            if (farmer.getCount() > 0) {
+                                                farmer.moveToFirst();
 
-                            JSONObject submittedModules;
-                            String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-                            String Samplestr = String.valueOf("{\"modules\":null}");
-                            if (Samplestr.equals(submittedModulesJSON)) {
-                                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-                            }
-                            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+                                                JSONObject submittedModules;
+                                                String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                                                String Samplestr = String.valueOf("{\"modules\":null}");
+                                                if (Samplestr.equals(submittedModulesJSON)) {
+                                                    submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+                                                }
+                                                submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
 
-                            String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
-                            List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-                            try {
-                                Calendar currentDate = Calendar.getInstance();
-                                int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
-                                String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
-                                Calendar calculationDate = (Calendar) currentDate.clone();
-                                boolean disable_entry = false;
-
-                                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                                for (int i = 0; i < submittedModulesArray.length(); i++) {
-                                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-
-
-
-                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
-
-
-                                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                                            // for recurring
-                                            try {
-                                                // get last submitted date
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                                                Calendar lastSubmittedDate = Calendar.getInstance();
-
-                                                //O20HS-84 - To enable the annual survey.
-                                                calculationDate = (Calendar) currentDate.clone();
-                                                //
-
+                                                String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+                                                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                                                 try {
-                                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                                } catch (ParseException e) {
-                                                }
-                                                if (recurrence_type != null) {
-                                                    if (recurrence_type.equalsIgnoreCase("years")) {
-                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                        calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                        calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                        calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                        calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                                                    } else {
-                                                        // must be days
-                                                        calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                    Calendar currentDate = Calendar.getInstance();
+                                                    int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+                                                    String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+                                                    Calendar calculationDate = (Calendar) currentDate.clone();
+                                                    boolean disable_entry = false;
+
+                                                    JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                                                    for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                                        JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+
+
+
+                                                        if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+
+
+                                                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                                                    // for recurring
+                                                                    try {
+                                                                        // get last submitted date
+                                                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                                                        Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                                                        //O20HS-84 - To enable the annual survey.
+                                                                        calculationDate = (Calendar) currentDate.clone();
+                                                                        //
+
+                                                                        try {
+                                                                            lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                                                        } catch (ParseException e) {
+                                                                        }
+                                                                        if (recurrence_type != null) {
+                                                                            if (recurrence_type.equalsIgnoreCase("years")) {
+                                                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                                            } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                                            } else {
+                                                                                // must be days
+                                                                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                                            }
+
+                                                                            // set the time
+                                                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                                            calculationDate.set(Calendar.MINUTE, 59);
+                                                                            calculationDate.set(Calendar.SECOND, 59);
+                                                                            calculationDate.set(Calendar.MILLISECOND, 999);
+
+                                                                            // force the recalculation
+                                                                            calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                                                                            if (lastSubmittedDate.after(calculationDate)) {
+                                                                                disable_entry = true;
+                                                                            }
+                                                                        }
+                                                                    } catch (Exception e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                } else {
+                                                                    // for non-recurring
+                                                                    disable_entry = true;
+                                                                }
+
+                                                                if (disable_entry) {
+
+                                                                    if (submittedModuleDetails.has("farmId") && submittedModuleDetails.getInt("farmId") == Integer.parseInt(farmId)) {
+
+                                                                        int surveyDurationId = ofisRoomDB.surveyDurationTypeDao().getSurveyDurationId();
+                                                                        String surveyDuration_string = getSurveyDurationByModuleId(moduleId);
+                                                                        if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
+                                                                            submittedInfo.setSubmitted(false);
+                                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                            submittedInfo.setNetworkTable(false);
+                                                                            submittedInfo.setAvailableInOtherFarm(false);
+                                                                            return submittedInfo;
+                                                                        } else {
+                                                                            submittedInfo.setSubmitted(true);
+                                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                            submittedInfo.setNetworkTable(false);
+                                                                            submittedInfo.setAvailableInOtherFarm(false);
+                                                                            return submittedInfo;
+                                                                        }
+
+
+                                                                    }
+
+                                                                    //submittedInfoList.add(submittedInfo);
+
+                                                                }
+                                                            }
                                                     }
-
-                                                    // set the time
-                                                    calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                                    calculationDate.set(Calendar.MINUTE, 59);
-                                                    calculationDate.set(Calendar.SECOND, 59);
-                                                    calculationDate.set(Calendar.MILLISECOND, 999);
-
-                                                    // force the recalculation
-                                                    calculationDate.get(Calendar.DAY_OF_MONTH);
-
-
-                                                    if (lastSubmittedDate.after(calculationDate)) {
-                                                        disable_entry = true;
-                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
                                                 }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
+
                                             }
-                                        } else {
-                                            // for non-recurring
-                                            disable_entry = true;
+                                            farmer.close();
                                         }
-
-                                        if (disable_entry) {
-
-                                            if (submittedModuleDetails.has("farmId") && submittedModuleDetails.getInt("farmId") == Integer.parseInt(farmId)) {
-                                                submittedInfo.setSubmitted(true);
-                                                submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                submittedInfo.setNetworkTable(false);
-                                                submittedInfo.setAvailableInOtherFarm(false);
-                                                return submittedInfo;
-                                            }
-
-                                            //submittedInfoList.add(submittedInfo);
-
-                                        }
+                                    } catch (Exception e) {
                                     }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+
                             }
 
-                        }
-                        farmer.close();
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-        }
-
-        //-----
+                            //-----
 
 
         return submittedInfo;
@@ -10152,7 +10389,7 @@ public class DataLayer {
         }
     }
 
-    boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
+    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND "
                 + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
@@ -10323,6 +10560,16 @@ public class DataLayer {
                 + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
 
         return db.rawQuery(sql, null);
+    }
+
+    public Cursor getResponsibilityDataFromTable(String tableName, String language){
+        try {
+            return db.rawQuery("SELECT id," +  language  + " FROM " + tableName, null);
+        }
+        catch (Exception e) {
+            //if language column didn't found in the table, it will throw exception, so we will return english column values
+            return db.rawQuery("SELECT id, name FROM " + tableName, null);
+        }
     }
 
 }

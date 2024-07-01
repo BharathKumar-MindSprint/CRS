@@ -441,7 +441,7 @@
     <string name="existing_plots_logged">ບັນດາຕອນດິນທີ່ບັນທຶກແລ້ວ %1$d</string>
     <string name="send_button">"ສົ່ງ "</string>
     <string name="duplicate_phone_number">"ເບີໂທລະສັບຊ້ຳ. ກະລຸນາກວດສອບຄືນອີກຄັ້ງ "</string>
-    <string name="record_polygon_input_messege">"ຕອນດິນທີ່ແຕກຕ່າງຂອງລາວມີແນວໃດແດ່? "</string>
+    <string name="record_polygon_input_messege">"ຊາວກະສິກອນມີເນື້ອທີ່ຕ່າງກັນຫຼາຍປານໃດ? "</string>
     <string name="record_polygon_input_title">"ລະດັບເນື້ອທີ່ການວິເຄາະ "</string>
     <string name="record_polygon_input_hint">"ກະລຸນາໃສ່ຈໍານວນຂອງຕອນດິນ "</string>
     <string name="camera_and_gallery_permission_denial_msg">"ກ້ອງຖ່າຍຮູບ ແລະ ຮູບພາບຈະມີຄຸນສົມບັດບໍ່ເຮັດວຽກໂດຍບໍ່ໄດ້ຮັບການອະນຸຍາດ "</string>
@@ -450,9 +450,9 @@
     <string name="permission_permanent_denial_title">"ການອະນຸຍາດຖືກປະຕິເສດ "</string>
     <string name="permission_permanent_denial_msg">"ການອະນຸຍາດແມ່ນຖືກປະຕິເສດ. ກະລຸນາຕັ້ງຄ່າຈາກລະບົບ "</string>
     <string name="go_to_settings_msg">"ອະນຸຍາດການຕັ້ງຄ່າລະບົບ. ໄປທີ່ການຕັ້ງຄ່າ? "</string>
-    <string name="record_farm_polygon">"ການບັນທຶກຕອນສວນ "</string>
+    <string name="record_farm_polygon">"ບັນທຶກສະຖານທີ່ຂອງດິນຕອນ"</string>
     <string name="record_farm_polygon_hint">ເແຕະເພື່ອບັນທຶກຕອນສວນ</string>
-    <string name="record_farm_polygon_complete">"ຕອນທີ່ບັນທຶກໄວ້ "</string>
+    <string name="record_farm_polygon_complete">"ທີ່ຕັ້ງຂອງດິນຕອນ / ຕອນທີ່ບັນທຶກໄວ້ "</string>
     <string name="submit">"ສະເໜີ "</string>
     <string name="cancel">"ຍົກເລີກ "</string>
     <string name="valid_count_msg">"ໃສ່ຈໍານວນທີ່ຖືກຕ້ອງ! "</string>
@@ -465,7 +465,7 @@
     <string name="enumerator_empty">ກະລຸນາໃສ່ລະຫັດໃຫ້ຖືກຕ້ອງ.</string>
     <string name="please_answer_all_questions">ກະລຸນາຕອບຄຳຖາມທັງໜົດ. </string>
     <string name="updating_sip_training">ຈຸດໂຄງສ້າງພື້ນຖານທາງສັງຄົມ.</string>
-    <string name="are_you_ready_to_polygon_record">ທ່ານພ້ອມທີ່ຈະບັນທຶກຫຼາຍຮູບແບບແລ້ວຫຼືຍັງ? </string>
+    <string name="are_you_ready_to_polygon_record">ເຈົ້າພ້ອມທີ່ຈະບັນທຶກສະຖານທີ່ຂອງດິນຕອນບໍ? </string>
     <string name="phone_number_recorded">ບັນທຶກໜາຍເລກໂທລະສັບໄວ້.</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="loggin_In">ເຂົ້າສູ່ລະບົບ.</string>
@@ -724,7 +724,9 @@
 <!--    <string name="multifarm_not_synced">Please sync the multifarm details first.</string>-->
 <!--    <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>-->
 
-
+    <string name="plot_size">sai khanadkhong din ton (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
     <!--    new-->
 
     <string name="Passcode">ລະຫັດຜ່ານ</string>
@@ -1015,5 +1017,7 @@
     <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
     <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>
 
+    <string name="ofis_farmer_and_surveys">ຊາວກະສິກອນ ແລະການສໍາຫຼວດ</string>
+    <string name="incorrect_plot_size_message">ຂະໜາດຂອງດິນຕອນນ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລະບຸຂະໜາດຂອງດິນຕອນທີ່ຖືກຕ້ອງ.</string>
 
 </resources>

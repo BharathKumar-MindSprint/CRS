@@ -148,6 +148,16 @@ public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelList
 		return selectedItemsIds;
 	}
 
+	public String getSelectedValues() {
+		StringBuilder selectedItemsIds = new StringBuilder();
+		for (KeyPairBoolData item : items) {
+			if (item.isSelected()) {
+				selectedItemsIds.append(item.getId()).append(",");
+			}
+		}
+		return selectedItemsIds.toString();
+	}
+
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		// refresh text on spinner
@@ -170,7 +180,7 @@ public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelList
 		else
 			spinnerText = this.getHintText();
 
-		ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getContext(), com.androidbuts.multispinnerfilter.R.layout.textview_for_spinner, new String[]{spinnerText});
+		ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getContext(), R.layout.textview_for_spinner, new String[]{spinnerText});
 		setAdapter(adapterSpinner);
 
 		if (adapter != null)
@@ -291,7 +301,7 @@ public class MultiSpinnerSearch extends AppCompatSpinner implements OnCancelList
 		if (spinnerBuffer.length() > 2)
 			defaultText = spinnerBuffer.toString().substring(0, spinnerBuffer.toString().length() - 2);
 
-		ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getContext(), com.androidbuts.multispinnerfilter.R.layout.textview_for_spinner, new String[]{defaultText});
+		ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getContext(), R.layout.textview_for_spinner, new String[]{defaultText});
 		setAdapter(adapterSpinner);
 	}
 

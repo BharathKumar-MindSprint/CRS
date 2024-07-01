@@ -10,16 +10,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'com.android.tools.build:gradle:8.4.0'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-       // classpath 'com.google.gms:google-services:3.2.0'
-
-//        classpath 'com.google.firebase:firebase-plugins:1.1.5'
-
-       // classpath 'com.dynatrace.tools:android:7.2.+'
-//        classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
+        //classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
 
         classpath 'com.google.gms:google-services:4.3.15'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
@@ -31,6 +24,99 @@ buildscript {
 
 /*dynatrace {
     configurations {
+        prodRelease {
+            variantFilter "prodRelease"
+            autoStart {
+                applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+            }
+        }
+                uatRelease {
+            variantFilter "uatRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+        sitRelease {
+            variantFilter "sitRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        devRelease {
+            variantFilter "devRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        devofiRelease {
+            variantFilter "devofiRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        sitofiRelease {
+            variantFilter "sitofiRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+        uatofiRelease {
+            variantFilter "uatofiRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+
+        prodofiRelease {
+            variantFilter "prodofiRelease"
+            autoStart {
+                applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+            }
+        }
+
+        devogaRelease {
+            variantFilter "devogaRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+        sitogaRelease {
+            variantFilter "sitogaRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+        uatogaRelease {
+            variantFilter "uatogaRelease"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        prodogaRelease {
+            variantFilter "prodogaRelease"
+            autoStart {
+                applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+            }
+        }
+
+
         prod {
             variantFilter "prodDebug"
             autoStart {
@@ -38,6 +124,7 @@ buildscript {
                 beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
             }
         }
+
         uat {
             variantFilter "uatDebug"
             autoStart {

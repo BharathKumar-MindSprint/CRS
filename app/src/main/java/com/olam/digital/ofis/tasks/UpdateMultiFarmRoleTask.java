@@ -2,6 +2,7 @@ package com.olam.digital.ofis.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -34,11 +35,15 @@ public class UpdateMultiFarmRoleTask  extends DatabaseTask {
             JSONObject multiFarmRoleResponse = params[0];
             if (multiFarmRoleResponse != null) {
                 JSONArray multiFarmRoleArray;
+                JSONArray responsibilities;
                 if (multiFarmRoleResponse != null) {
                     // get the various sub lists
                     try {
                         multiFarmRoleArray = multiFarmRoleResponse.getJSONArray("roles");
                         fillTable(multiFarmRoleArray, OFISDBContract.MultiFarmRoles.TABLE_NAME, OFISDBContract.MultiFarmRoles.COLUMN_LIST);
+                        responsibilities = multiFarmRoleResponse.getJSONArray("responsibilities");
+                        fillTable(responsibilities, OFISDBContract.Responsibility.TABLE_NAME, OFISDBContract.Responsibility.COLUMN_LIST);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

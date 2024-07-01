@@ -43,6 +43,7 @@ public class ChildModuleDto implements Serializable {
     private String view_module;
     private String fkFarmerRoleId;
     private int plot_id;
+    private String surveyDuration;
 
     public int getPlot_id() {
         return plot_id;
@@ -359,4 +360,11 @@ public class ChildModuleDto implements Serializable {
     }
 
 
+    public String getSurveyDuration() {
+        return surveyDuration;
+    }
+
+    public void setSurveyDuration(String surveyDuration) {
+        this.surveyDuration = surveyDuration;
+    }
 }

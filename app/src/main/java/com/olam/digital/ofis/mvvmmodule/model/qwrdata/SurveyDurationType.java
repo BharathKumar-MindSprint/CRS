@@ -1,11 +1,11 @@
-package com.olam.digital.ofis.mvvmmodule.model.CBU;
+package com.olam.digital.ofis.mvvmmodule.model.qwrdata;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "ValidationOnRange")
-public class ValidationOnRange {
+@Entity(tableName = "SurveyDurationType")
+public class SurveyDurationType {
 
     @PrimaryKey
     @ColumnInfo(name = "id")

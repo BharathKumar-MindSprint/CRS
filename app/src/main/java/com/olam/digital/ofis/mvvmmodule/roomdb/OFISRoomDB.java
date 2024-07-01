@@ -5,13 +5,15 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
+import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
+import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.AssignmentTypeDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
@@ -65,8 +67,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class},
-        version = 11)
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class},
+        version = 12)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -118,6 +120,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract PolygonPlotHistoryDao polygonPlotHistoryDao();
 
     public abstract AssignmentTypeDao assignmentTypeDao();
+    public abstract SurveyDurationTypeDao surveyDurationTypeDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 

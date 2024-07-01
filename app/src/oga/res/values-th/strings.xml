@@ -456,7 +456,7 @@
     <string name="previous_plot_not_recorded_msg">แปลงที่ %1$s ยังไม่ได้บันทึก กรุณาทำการบันทึกแปลงที่ %1$s ก่อน</string>
     <string name="send_button">"ส่ง "</string>
     <string name="duplicate_phone_number">"หมายเลขโทรศัพท์ซ้ำ โปรดตรวจสอบอีกครั้ง "</string>
-    <string name="record_polygon_input_messege">"มีพื้นที่ทั้งหมดกี่แปลง? "</string>
+    <string name="record_polygon_input_messege">"ชาวนามีแปลงกี่แปลง? "</string>
     <string name="record_polygon_input_title">"การวิเคราะห์ระดับแปลง "</string>
     <string name="record_polygon_input_hint">"ใส่หมายเลขแปลง "</string>
     <string name="camera_and_gallery_permission_denial_msg">"กล้องถ่ายรูปและคลังภาพจะไม่สามารถใช้งานได้หากไม่ได้รับการให้ความยินยอม "</string>
@@ -465,9 +465,9 @@
     <string name="permission_permanent_denial_title">"ปฏิเสธการให้ความยินยอม "</string>
     <string name="permission_permanent_denial_msg">"ท่านได้ปฏิเสธการให้ความยินยอม โปรดไปที่การตั้งค่าแอปพลิเคชั่นเพื่อเปลี่ยนแปลงการให้ความยินยอม "</string>
     <string name="go_to_settings_msg">"ไปที่การตั้งค่าแอปพลิเคชั่นเพื่อตั้งค่าการให้ความยินยอม "</string>
-    <string name="record_farm_polygon">"บันทึกขอบเขตพื้นที่แปลง "</string>
+    <string name="record_farm_polygon">"ที่ตั้งแปลงบันทึก"</string>
     <string name="record_farm_polygon_hint">แตะเพื่อบันทึกขอบเขตพื้นที่แปลง</string>
-    <string name="record_farm_polygon_complete">"บันทึกขอบเขตพื้นที่ "</string>
+    <string name="record_farm_polygon_complete">"ที่ตั้งแปลง / บันทึกขอบเขตพื้นที่ "</string>
     <string name="submit">"ส่ง "</string>
     <string name="cancel">"ยกเลิก "</string>
     <string name="valid_count_msg">"ป้อนจำนวนที่ถูกต้อง "</string>
@@ -479,7 +479,7 @@
     <string name="enumerator_empty">กรุณาใส่หมายเลขประจำตัวผู้บันทึกข้อมูล</string>
     <string name="please_answer_all_questions">กรุณาตอบคำถามให้ครบทุกข้อ</string>
     <string name="updating_sip_training">ตำแหน่งที่ตั้งโครงสร้างพื้นฐาน</string>
-    <string name="are_you_ready_to_polygon_record">คุณพร้อมที่จะบันทึกอาณาเขตแปลงหรือไม่?</string>
+    <string name="are_you_ready_to_polygon_record">คุณพร้อมที่จะบันทึกตำแหน่งพล็อตแล้วหรือยัง?</string>
     <string name="phone_number_recorded">บันทึกเบอร์โทรศัพท์เรียบร้อยแล้ว</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="loggin_In">เข้าสู่ระบบ</string>
@@ -748,5 +748,10 @@
     <string name="edit_already_logged_plot">%1$S k̄hêā s̄ū̀ rabb læa bạnthụk wị̂ læ̂w! Khuṇ t̂xngkār bạn thụk phl̆xt reụ̄̀xng deim xīk khrậng h̄rụ̄x mị̀?</string>
     <string name="save_polygon_alertdialog">Khuṇ næ̀cı h̄rụ̄x ẁā cabạn thụk%1$s txn nī̂?</string>
 
+    <string name="ofis_farmer_and_surveys">เกษตรกรและการสำรวจ</string>
+    <string name="plot_size">P̂xn k̄hnād phl̆xt  (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">ขนาดแปลงเล็กกว่าพื้นที่กำหนดค่าขั้นต่ำ (0.0009 HA) โปรดระบุขนาดแปลงที่ถูกต้อง</string>
 
 </resources>

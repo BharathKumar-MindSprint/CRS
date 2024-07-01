@@ -20,4 +20,10 @@ public class PolygonPlotHistory {
     @ColumnInfo(name = "positionData")
     public String positionData;
 
+    @ColumnInfo(name = "centerPlot")
+    public String centerPlot;
+
+    @ColumnInfo(name = "plotArea")
+    public Double plotArea;
+
 }

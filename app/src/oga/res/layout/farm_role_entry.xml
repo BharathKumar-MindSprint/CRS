@@ -2,54 +2,93 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:weightSum="11">
+    android:paddingBottom="@dimen/home_activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/farmFarmerTV"
-        android:layout_weight="5"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:inputType="textCapWords"
-        android:gravity="center_vertical"
-        android:layout_marginRight="3dp"
-        android:ellipsize="end"
-        android:drawableRight="@drawable/ic_searchimg_small"
-      android:drawablePadding="@dimen/margin_10"
-        android:textColor="@color/ofis_base_font_dark"
-        android:textSize="11sp"
-        android:hint="@string/Farmer_Name"
-        android:layout_gravity="center"
-        android:textColorHint="@color/icon_grey_palette_2"
-        android:background="@drawable/edittext_bg_light"
-        android:paddingLeft="@dimen/margin_10"
-        android:paddingRight="5dp"
-        android:cursorVisible="false" />
-    <Spinner
-        android:id="@+id/farmerRoleSpinner"
-        android:layout_weight="5"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_margin="5dp"
-        android:layout_marginLeft="3dp"
-        android:textColor="@color/ofis_base_font_dark"
-        android:paddingRight="15dp"
-        android:layout_gravity="center"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="11"
+        android:orientation="horizontal">
 
-        android:background="@drawable/spinner_bg_light"/>
+        <TextView
+            android:id="@+id/farmFarmerTV"
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textCapWords"
+            android:gravity="center_vertical"
+            android:layout_marginRight="3dp"
+            android:ellipsize="end"
+            android:drawableRight="@drawable/ic_searchimg_small"
+            android:drawablePadding="@dimen/margin_10"
+            android:textColor="@color/ofis_base_font_dark"
+            android:textSize="11sp"
+            android:hint="@string/Farmer_Name"
+            android:layout_gravity="center"
+            android:textColorHint="@color/icon_grey_palette_2"
+            android:background="@drawable/edittext_bg_light"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="5dp"
+            android:cursorVisible="false" />
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:id="@+id/farmRoleDelete"
-        android:layout_gravity="center"
-        android:padding="5dp"
-        app:srcCompat="@drawable/ic_delete_icon_stake"
-        android:contentDescription="@string/Delete_Item"
-        tools:ignore="VectorDrawableCompat" />
+        <Spinner
+            android:id="@+id/farmerRoleSpinner"
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_marginLeft="3dp"
+            android:textColor="@color/ofis_base_font_dark"
+            android:paddingRight="15dp"
+            android:layout_gravity="center"
+            android:background="@drawable/spinner_bg_light"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:id="@+id/farmRoleDelete"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_delete_item"
+            android:contentDescription="@string/Delete_Item"
+            tools:ignore="VectorDrawableCompat" />
+
+    </LinearLayout>
+    <!-- Start Select Level Of Responsibility -->
+    <LinearLayout
+        android:id="@+id/llSelectLevelOfResponsibility"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/home_activity_vertical_margin"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="2">
+
+        <com.olam.digital.ofis.MultiSpinnerSearch
+            android:id="@+id/spinnerSelectLevelOfResponsibility"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_weight="1.8"
+            android:dropDownWidth="350dp"
+            android:focusableInTouchMode="true"
+            android:paddingEnd="10dp"/>
+
+    </LinearLayout>
+    <!-- end Select Level Of Responsibility -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#DDDDDDDD"
+        android:visibility="visible" />
+
+
 
 </LinearLayout>

@@ -36,6 +36,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,6 +80,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     boolean isAtLeastOnePlotSurveyCaptured;
     String multiFarmId;
 
+    OFISRoomDB db;
+
 
     CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_, int roleId, long farmerId, String multiFarmId, boolean isAtLeastOnePlotSurveyCaptured) throws JSONException {
         super(c, R.layout.listview_module_list, cursor, adapterCols, adapterRowViews, 0);
@@ -110,6 +113,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
         super.bindView(view, context, cursor);
 
+        db = OFISRoomDB.getDbInstance(context);
         int currentId = cursor.getInt(cursor.getColumnIndex("_id"));
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
         ImageView imageView = (ImageView) view.findViewById(R.id.moduleListModuleIcon);
@@ -119,51 +123,58 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         boolean submitted = false;
         String isConsentAvailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
         final boolean isConsentTrue = isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true");
+        boolean isCompliantFarmer = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
+        String polygonCapture = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF));
+        String conductSurvey = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF));
+
+        boolean disablePolygonCaptureForNCF = !isCompliantFarmer && (polygonCapture.equalsIgnoreCase("false") || polygonCapture.isEmpty());
+        boolean disableSurveyForNCF = !isCompliantFarmer && (conductSurvey.equalsIgnoreCase("false") || conductSurvey.isEmpty());
+
         if (currentId == 0) {
 
-            if(isConsentTrue){
-            if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
-                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+            if(isConsentTrue ){
+                if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
+                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
 
 
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    enabledItem.setText("false");
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        enabledItem.setText("false");
 
 
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    try {
-                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
-                            if (dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
-                                textView.setText(res.getString(R.string.phone_number_recorded));
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        try {
+                            if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+                                if (dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
+                                    textView.setText(res.getString(R.string.phone_number_recorded));
+                                } else {
+                                    textView.setText(res.getString(R.string.module_finished));
+                                }
                             } else {
-                                textView.setText(res.getString(R.string.module_finished));
+                                textView.setText(res.getString(R.string.phone_number_recorded));
                             }
-                        } else {
+                        } catch (Exception e) {
                             textView.setText(res.getString(R.string.phone_number_recorded));
                         }
-                    } catch (Exception e) {
-                        textView.setText(res.getString(R.string.phone_number_recorded));
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_phonenumbers));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.update_phone_numbers_hint));
                     }
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_phonenumbers));
-                    enabledItem.setText("true");
-
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.update_phone_numbers_hint));
                 }
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("farmpolygon")) {
-                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmpolygon", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("farmpolygon")) {
+                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmpolygon", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
 
-                //int farmId = currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
-                int farmId = (int) ViewFarmerActivity.farmerId;
+                    //int farmId = currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
+                    int farmId = (int) ViewFarmerActivity.farmerId;
 
-                //boolean isPlotsRecordingFinished = SharedPreferenceUtils.getInstance(mContext).isPlotsRecordingFinished(farmId);
+                    //boolean isPlotsRecordingFinished = SharedPreferenceUtils.getInstance(mContext).isPlotsRecordingFinished(farmId);
                 /*if (isPlotsRecordingFinished) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                     enabledItem.setText("false");
@@ -172,38 +183,52 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setText(res.getString(R.string.plot_recording_module_finished));
                 } else {*/
-                if (MultiFarmUtils.isMultiFarmEnumerator) {
-                    boolean ispolygonCaptured = dl.getPolygonInfo1(farmerId);
-                    int fetchPlotCountByFarmerID = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
-                    if (ispolygonCaptured) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+
+                    if (!disablePolygonCaptureForNCF) {
+                        if (MultiFarmUtils.isMultiFarmEnumerator) {
+                            boolean ispolygonCaptured = dl.getPolygonInfo1(farmerId);
+                            int fetchPlotCountByFarmerID = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
+                            if (ispolygonCaptured) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                                enabledItem.setText("false");
+                                enabledItem.setTag("poly");
+
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setText(res.getString(R.string.record_polygon_location_complete));
+                            } else {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
+                                enabledItem.setText("true");
+
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.update_phone_numbers_hint));
+                            }
+                        } else {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
+                            enabledItem.setText("true");
+
+                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                            textView.setText(res.getString(R.string.update_phone_numbers_hint));
+                        }
+
+                    }
+                    else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
                         enabledItem.setText("false");
-                        enabledItem.setTag("poly");
 
                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setText(res.getString(R.string.record_polygon_location_complete));
-                    } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
-                        enabledItem.setText("true");
-
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                         textView.setText(res.getString(R.string.update_phone_numbers_hint));
                     }
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
-                    enabledItem.setText("true");
 
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.update_phone_numbers_hint));
-                }
-                //}
-            }// polygon history
+                    //}
+                }// polygon history
             /*else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("polygon_history")) {
                 if (false) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
@@ -224,19 +249,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText(res.getString(R.string.view_polygon_history));
                 }
             }*/
-            //Ticket-OFISDM-39 newly added
-            else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
-                int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));
-                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
-                DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
-                String recurrence_type = dmRecurrence.recurrenceType;
-                int recurrence_frequency = dmRecurrence.recurrenceFrequency;
-                boolean disable_entry = false;
-                boolean isCompleted = false;
+                //Ticket-OFISDM-39 newly added
+                else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
+                    int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));
+//                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                    DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
+                    String recurrence_type = dmRecurrence.recurrenceType;
+                    int recurrence_frequency = dmRecurrence.recurrenceFrequency;
+                    boolean disable_entry = false;
+                    boolean isCompleted = false;
 
-                Calendar calendar = Calendar.getInstance();
-                Date currentDate = calendar.getTime();
-                String startDateString = db.dmMainModuleDao().getStartData(moduleId);
+                    Calendar calendar = Calendar.getInstance();
+                    Date currentDate = calendar.getTime();
+                    String startDateString = db.dmMainModuleDao().getStartData(moduleId);
                 /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDateMain = null;
                 try {
@@ -244,436 +269,406 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } catch (android.net.ParseException | java.text.ParseException e) {
                     e.printStackTrace();
                 }*/
-                SimpleDateFormat inputDateFormat = null;
-                SimpleDateFormat inputDateFormatEndDate = null;
+                    SimpleDateFormat inputDateFormat = null;
+                    SimpleDateFormat inputDateFormatEndDate = null;
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                    inputDateFormatEndDate = new SimpleDateFormat("yyyy-MM-dd");
-                }
-                SimpleDateFormat outputDateFormatFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-                // Set the input date's timezone to UTC
-                assert inputDateFormat != null;
-                inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                Date startDateMain = null;
-                String outputDateString = null;
-                try {
-                    if (startDateString != null){
-                        startDateMain = inputDateFormat.parse(startDateString);
-                        outputDateString = outputDateFormatFormatter.format(startDateMain);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                        inputDateFormatEndDate = new SimpleDateFormat("yyyy-MM-dd");
                     }
+                    SimpleDateFormat outputDateFormatFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                    // Set the input date's timezone to UTC
+                    assert inputDateFormat != null;
+                    inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                boolean moduleWithActionPlan = false;
-                boolean moduleWithoutActionPlan = false;
-
-
-                if(db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleId))){
-                    moduleWithoutActionPlan = true;
-                }
-
-                if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleId))){
-                    moduleWithActionPlan = true;
-                }
-
-                /*if (recurrence_frequency > 0) {
-                    // for recurring
+                    Date startDateMain = null;
+                    String outputDateString = null;
                     try {
-                        // get last submitted date
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                        Calendar lastSubmittedDate = Calendar.getInstance();
-                        Calendar calculationDate = (Calendar) currentDate.clone();
-                        isCompleted = true;
-                        try {
-                            String startDate = db.dmMainModuleDao().getStartData(moduleId);
-                            lastSubmittedDate.setTime(sdf.parse(startDate));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        if (startDateString != null){
+                            startDateMain = inputDateFormat.parse(startDateString);
+                            outputDateString = outputDateFormatFormatter.format(startDateMain);
                         }
-                        if (recurrence_type != null) {
-                            if (recurrence_type.equalsIgnoreCase("years")) {
-                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                            } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                            } else {
-                                // must be days
-                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
-                            }
-                            // set the time
-                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                            calculationDate.set(Calendar.MINUTE, 59);
-                            calculationDate.set(Calendar.SECOND, 59);
-                            calculationDate.set(Calendar.MILLISECOND, 999);
-                            // force the recalculation
-                            calculationDate.get(Calendar.DAY_OF_MONTH);
-                            if (lastSubmittedDate.after(calculationDate)) {
-                                isCompleted = false;
-                            }
-                        }
-                    } catch (Exception e) {
+
+                    } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                }
 
-                List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
-                if(followupList.size() == 0){
-                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
-                        int actionPlanId = Integer.parseInt(dmSurveyAnswerTableList.get(i).actionplanId);
-                        String actionPlanText = dmSurveyAnswerTableList.get(i).actionPlanText;
-                        if(actionPlanId != 0 || actionPlanText.length() != 0){
-                            isCompleted = true;
+                    boolean moduleWithActionPlan = false;
+                    boolean moduleWithoutActionPlan = false;
+
+
+                    if(db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleId))){
+                        moduleWithoutActionPlan = true;
+                    }
+
+                    if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleId))){
+                        moduleWithActionPlan = true;
+                    }
+
+
+                    String endDate = "";
+                    int recurrenceCount = 0;
+                    Date newStartDate= null;
+                    Date newEndDate = null;
+                    Date lastReccurenceEndDate = null;
+
+                    if (outputDateString!=null){
+                        endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
+                        try {
+                            recurrenceCount = calculateRecurrenceCount(outputDateString, recurrence_type, recurrence_frequency);
+                            // Get the new start and end dates for the current recurrence
+                            newStartDate = getNewStartDate(outputDateString, recurrence_type, recurrence_frequency, recurrenceCount);
+                            newEndDate = getNewEndDate(newStartDate, recurrence_type, recurrence_frequency);
+                            lastReccurenceEndDate = findLastAttendedDate(startDateMain,newEndDate,recurrence_type,recurrence_frequency,recurrenceCount+1);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
                         }
                     }
-                }else {
-                    List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerId, moduleId);
-                    List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(String.valueOf(farmerId), String.valueOf(moduleId), false);
-                    if(followupUnSyncedItems.size() == 0) {
-                        List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(String.valueOf(farmerId), String.valueOf(moduleId), false, Constants.NOTRESOLVED, followupAttempts.size());
-                        if(followupUnResolvedItems.size() > 0) {
-                            isCompleted = false;
-                        }else{
-                            isCompleted = true;
-                        }
-                    }
-                }*/
+                    Log.d("Module Records" , "Module Id: "+moduleId + " End Date: " + endDate);
+                    Log.d("RecurrenceCount" , "Module Id: "+moduleId + "  ----Recurrence Count: " + recurrenceCount
+                            + "  ----newStartDate " + newStartDate + " ----newEndDate " + newEndDate +
+                            " ----recurrenceType " + recurrence_type + " ----recurrenceFreq " +recurrence_frequency);
+
+                    db.dmMainModuleDao().updateRecurrenceCountStartEndDate(moduleId , String.valueOf(newStartDate) , String.valueOf(newEndDate) , recurrenceCount+1);
 
 
-                String endDate = "";
-                int recurrenceCount = 0;
-                Date newStartDate= null;
-                Date newEndDate = null;
-                Date lastReccurenceEndDate = null;
-
-                if (outputDateString!=null){
-                    endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
+                    Date endDateValue = null;
                     try {
-                        recurrenceCount = calculateRecurrenceCount(outputDateString, recurrence_type, recurrence_frequency);
-                        // Get the new start and end dates for the current recurrence
-                        newStartDate = getNewStartDate(outputDateString, recurrence_type, recurrence_frequency, recurrenceCount);
-                        newEndDate = getNewEndDate(newStartDate, recurrence_type, recurrence_frequency);
-                        lastReccurenceEndDate = findLastAttendedDate(startDateMain,newEndDate,recurrence_type,recurrence_frequency,recurrenceCount+1);
+//                    assert endDate != null;
+                        if (!Objects.equals(endDate, "")){
+                            endDateValue = inputDateFormatEndDate.parse(endDate);
+                        }
+
+
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
-                }
-                Log.d("Module Records" , "Module Id: "+moduleId + " End Date: " + endDate);
-                Log.d("RecurrenceCount" , "Module Id: "+moduleId + "  ----Recurrence Count: " + recurrenceCount
-                        + "  ----newStartDate " + newStartDate + " ----newEndDate " + newEndDate +
-                        " ----recurrenceType " + recurrence_type + " ----recurrenceFreq " +recurrence_frequency);
-
-                db.dmMainModuleDao().updateRecurrenceCountStartEndDate(moduleId , String.valueOf(newStartDate) , String.valueOf(newEndDate) , recurrenceCount+1);
 
 
-                Date endDateValue = null;
-                try {
-//                    assert endDate != null;
-                    if (!Objects.equals(endDate, "")){
-                        endDateValue = inputDateFormatEndDate.parse(endDate);
+                    // delete from answer table if the current date crossed recurrence value
+
+                    if (lastReccurenceEndDate!=null){
+
+
+                        if (currentDate.after(lastReccurenceEndDate) && !areDatesEqual(currentDate,startDateMain) ){
+
+
+                            // clear the answer table based on module
+                            db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
+                            db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
+                        }
+
                     }
 
 
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-
-
-                // delete from answer table if the current date crossed recurrence value
-
-                if (lastReccurenceEndDate!=null){
-
-
-                    if (currentDate.after(lastReccurenceEndDate) && !areDatesEqual(currentDate,startDateMain) ){
-
-
-                        // clear the answer table based on module
-                        db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
-                        db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
-                    }
-
-                }
-
-
-                if (startDateMain!=null){
-                    if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("true");
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("true");
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    } else{
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("false");
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                    }
-                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                    if(dmSurveyAnswerTableList.size() > 0){
-                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                    }else{
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    }
-
-                }
-
-                if (startDateMain!=null){
-                    if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("true");
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("true");
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    } else{
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                        enabledItem.setText("false");
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                    }
-                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                    if(dmSurveyAnswerTableList.size() > 0){
-                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                    }else{
-                        textView.setText(res.getString(R.string.dm_hint_txt));
-                    }
-                }
-
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
-
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
-                enabledItem.setText("true");
-
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.update_childlabour_hint));
-
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
-
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                enabledItem.setText("true");
-
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.ModuleStatus));
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
-
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                enabledItem.setText("true");
-
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.ModuleStatus));
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
-                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Multifarm Update", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
-
-
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    enabledItem.setText("false");
-
-
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    try {
-                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
-                            if (dl.isIdAvailableMultiFarmDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
-                                textView.setText("Multifarm Details Recorded");
-                            } else {
-                                textView.setText(res.getString(R.string.module_finished));
+                    if (startDateMain!=null){
+                        if (!disableSurveyForNCF) {
+                            if(currentDate.after(startDateMain) && moduleWithActionPlan) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.dm_hint_txt));
                             }
-                        } else {
+                            else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.dm_hint_txt));
+                            }
+                            else{
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("false");
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                            }
+                            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                            if(dmSurveyAnswerTableList.size() > 0){
+                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                            }else{
+                                textView.setText(res.getString(R.string.dm_hint_txt));
+                            }
+                        }
+                        else {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                            enabledItem.setText("false");
+
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setText(res.getString(R.string.dm_hint_txt));
+                        }
+
+
+                    }
+
+                    if (startDateMain!=null){
+                        if (!disableSurveyForNCF) {
+                            if(currentDate.after(startDateMain) && moduleWithActionPlan) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.dm_hint_txt));
+                            } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.dm_hint_txt));
+                            } else{
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                enabledItem.setText("false");
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                            }
+                            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                            if(dmSurveyAnswerTableList.size() > 0){
+                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                            }else{
+                                textView.setText(res.getString(R.string.dm_hint_txt));
+                            }
+                        }
+                        else {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                            enabledItem.setText("false");
+
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setText(res.getString(R.string.dm_hint_txt));
+                        }
+
+                    }
+
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
+
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
+                    enabledItem.setText("true");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.update_childlabour_hint));
+
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+
+                    if (!disableSurveyForNCF) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.ModuleStatus));
+                    }
+                    else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("false");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setText(res.getString(R.string.ModuleStatus));
+                    }
+
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
+                    if(disableSurveyForNCF) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("false");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setText(res.getString(R.string.ModuleStatus));
+                    }
+                    else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.ModuleStatus));
+                    }
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
+                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Multifarm Update", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+
+
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        enabledItem.setText("false");
+
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        try {
+                            if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+                                if (dl.isIdAvailableMultiFarmDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
+                                    textView.setText("Multifarm Details Recorded");
+                                } else {
+                                    textView.setText(res.getString(R.string.module_finished));
+                                }
+                            } else {
+                                textView.setText("Multifarm Details Recorded");
+                            }
+                        } catch (Exception e) {
                             textView.setText("Multifarm Details Recorded");
                         }
-                    } catch (Exception e) {
-                        textView.setText("Multifarm Details Recorded");
-                    }
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_farm_information));
-                    enabledItem.setText("true");
-
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText("Multifarm update");
-                }
-
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
-                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                boolean farmerupdateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
-                boolean isSignCaptured = false;
-                if (farmerupdateWaiting) {
-                    isSignCaptured = dl.isSignatureCaptured(farmerId);
-                }
-                if (updateWaiting || isSignCaptured) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    enabledItem.setText("false");
-
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                    enabledItem.setText("true");
-
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.update_signature_hint));
-                }
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
-                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                boolean nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
-                boolean isSynced = dl.getSyncedStatus(farmerId);
-                boolean availstatus = dl.isValueavailable(farmerId);
-
-                if (isSynced) {
-                    textView.setText(res.getString(R.string.view_tab_hint));
-                    moduleTitle.setText(res.getString(R.string.view_nationalid));
-                } else {
-                    if (!availstatus) {
-                        textView.setText(res.getString(R.string.add_tab_hint));
-                        moduleTitle.setText(res.getString(R.string.add_nationalid));
                     } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_farm_information));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText("Multifarm update");
+                    }
+
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
+                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    boolean farmerupdateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                    boolean isSignCaptured = false;
+                    if (farmerupdateWaiting) {
+                        isSignCaptured = dl.isSignatureCaptured(farmerId);
+                    }
+                    if (updateWaiting || isSignCaptured) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        enabledItem.setText("false");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.update_signature_hint));
+                    }
+                }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
+                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    boolean nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                    boolean isSynced = dl.getSyncedStatus(farmerId);
+                    boolean availstatus = dl.isValueavailable(farmerId);
+
+                    if (isSynced) {
+                        textView.setText(res.getString(R.string.view_tab_hint));
+                        moduleTitle.setText(res.getString(R.string.view_nationalid));
+                    } else {
+                        if (!availstatus) {
+                            textView.setText(res.getString(R.string.add_tab_hint));
+                            moduleTitle.setText(res.getString(R.string.add_nationalid));
+                        } else {
+                            textView.setText(res.getString(R.string.update_tab_hint));
+                            moduleTitle.setText(res.getString(R.string.update_nationalid));
+                        }
+
+                    }
+
+                    if (updateWaiting || nidupdateWaiting) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        enabledItem.setText("false");
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                         textView.setText(res.getString(R.string.update_tab_hint));
                         moduleTitle.setText(res.getString(R.string.update_nationalid));
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     }
-
                 }
+                else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.certification))) {
+                    boolean availstatus = dl.isCertificationavailable(farmerId);
 
-                if (updateWaiting || nidupdateWaiting) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    enabledItem.setText("false");
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    textView.setText(res.getString(R.string.update_tab_hint));
-                    moduleTitle.setText(res.getString(R.string.update_nationalid));
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                     enabledItem.setText("true");
+
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    moduleTitle.setText(res.getString(R.string.update_certification));
+                    if (availstatus) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        textView.setText(res.getString(R.string.update_tab_hint));
+                    }else{
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        textView.setText(res.getString(R.string.add_tab_hint));
+                    }
                 }
-            }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.certification))) {
-                boolean availstatus = dl.isCertificationavailable(farmerId);
-
-                enabledItem.setText("true");
-
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                moduleTitle.setText(res.getString(R.string.update_certification));
-                if (availstatus) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    textView.setText(res.getString(R.string.update_tab_hint));
-                }else{
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                    textView.setText(res.getString(R.string.add_tab_hint));
-                }
-            }
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))) {
-                String currenthhLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
-                String currenthhLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
-                if (currenthhLat != null && currenthhLat.length() > 0 && (!currenthhLat.equalsIgnoreCase("null")) && currenthhLng != null && currenthhLng.length() > 0 && (!currenthhLng.equalsIgnoreCase("null"))) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                    enabledItem.setText("false");
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setText(res.getString(R.string.record_farm_location_complete));
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                    enabledItem.setText("true");
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.record_farm_location_hint));
-                }
-            }
-            else {
-                // Multifarm Location
-                if (MultiFarmUtils.isMultiFarmEnumerator) {
-                    boolean isLocationCaptured = dl.getLocationInfo1(farmerId);
-                    if (isLocationCaptured) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))) {
+                    String currenthhLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
+                    String currenthhLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
+                    if (currenthhLat != null && currenthhLat.length() > 0 && (!currenthhLat.equalsIgnoreCase("null")) && currenthhLng != null && currenthhLng.length() > 0 && (!currenthhLng.equalsIgnoreCase("null"))) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                         enabledItem.setText("false");
-                        enabledItem.setTag("loc");
-
-
                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setText(res.getString(R.string.record_farm_location_complete));
                     } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.record_farm_location_hint));
+                    }
+                }
+                else {
+                    // Multifarm Location
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                    enabledItem.setText("false");
 
-                        // Multifarm . But Not in the stakeholder list
-                        String farmId = dl.getMultifarmfarmId(farmerId);
-                        // boolean isAvailableInStakeHolderList= dl.isfarmerIdAvailableMultiFarmDB(farmerId);
-                        if (farmId != null) {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
-                            enabledItem.setText("true");
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setText(res.getString(R.string.record_farm_location_complete));
 
-                            linearLayout.setBackgroundResource(R.drawable.list_item);
-                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                            textView.setText(res.getString(R.string.record_farm_location_hint));
+                    //Based on BA requirement record farm location is disabled (PC-265)
+/*
+                    if (MultiFarmUtils.isMultiFarmEnumerator) {
+                        boolean isLocationCaptured = dl.getLocationInfo1(farmerId);
+                        if (isLocationCaptured) {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                            enabledItem.setText("false");
+                            enabledItem.setTag("loc");
+
+
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setText(res.getString(R.string.record_farm_location_complete));
                         } else {
 
-                            // Not available in multifarm Db . Consider as normal farmer
-                            String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
-                            String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
-                            if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
-                                enabledItem.setText("false");
-
-                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                textView.setText(res.getString(R.string.record_farm_location_complete));
-                            } else {
+                            // Multifarm . But Not in the stakeholder list
+                            String farmId = dl.getMultifarmfarmId(farmerId);
+                            // boolean isAvailableInStakeHolderList= dl.isfarmerIdAvailableMultiFarmDB(farmerId);
+                            if (farmId != null) {
                                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
                                 enabledItem.setText("true");
 
@@ -681,44 +676,70 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                                 textView.setText(res.getString(R.string.record_farm_location_hint));
+                            } else {
+
+                                // Not available in multifarm Db . Consider as normal farmer
+                                String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
+                                String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
+                                if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                                    enabledItem.setText("false");
+
+                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    textView.setText(res.getString(R.string.record_farm_location_complete));
+                                } else {
+                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
+                                    enabledItem.setText("true");
+
+                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                    textView.setText(res.getString(R.string.record_farm_location_hint));
+                                }
+
                             }
 
                         }
 
                     }
+                    else {
 
-                } else {
+                        String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
+                        String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
 
-                    String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
-                    String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
-                    if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
-                        enabledItem.setText("false");
+                        if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                            enabledItem.setText("false");
 
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setText(res.getString(R.string.record_farm_location_complete));
-                    } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
-                        enabledItem.setText("true");
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setText(res.getString(R.string.record_farm_location_complete));
+                        } else {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
+                            enabledItem.setText("true");
 
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText(res.getString(R.string.record_farm_location_hint));
+                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                            textView.setText(res.getString(R.string.record_farm_location_hint));
+                        }
+
                     }
+                    */
                 }
             }
-        }else{
+            else {
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                 enabledItem.setText("false");
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
 
-        }
-        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(Utilities.CONSENTSTATEMENT)) {
+            }
+            if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(Utilities.CONSENTSTATEMENT)) {
                 Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentAvailable);
                 if (isConsentTrue) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
@@ -733,10 +754,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
-        }
+            }
         }
         else if (currentId < 0) {
-           
+
             if (isConsentTrue) {
                 if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
@@ -763,15 +784,17 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.review_farm_management_plan_hint));
                 }
-            }else{
+            }
+            else{
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 enabledItem.setText("false");
                 enabledItem.setTag("hasfarm");
             }
-        } else {
-             if (isAtLeastOnePlotSurveyCaptured && 
+        }
+        else {
+            if (isAtLeastOnePlotSurveyCaptured &&
                     isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true")) {
                 String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
@@ -850,7 +873,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                 // change the va;
                                                 if (Objects.equals(farmerAssignmentField, "48")){
 
-                                                   // set the date according to start date
+                                                    // set the date according to start date
                                                     calculationDate.add(Calendar.YEAR, -recurrence_frequency);
                                                     calculationDate.set(Calendar.MONTH, Calendar.JULY);
                                                     calculationDate.set(Calendar.DAY_OF_MONTH, 31);
@@ -898,17 +921,31 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 }
 
                                 if (disable_entry) {
-                                    textView.setText(submittedModuleDetails.getString("created_at"));
-                                    submittedModuleDetails.put("marked", true);
-                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                                    int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                    String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
 
-                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    enabledItem.setText("false");
-                                    submitted = true;
-                                    break;
+                                    if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
+                                        enabledItem.setText("true");
+                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                    } else {
+                                        textView.setText(submittedModuleDetails.getString("created_at"));
+                                        submittedModuleDetails.put("marked", true);
+                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+
+                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        enabledItem.setText("false");
+                                        submitted = true;
+                                        break;
+
+                                    }
+
                                 }
+
                             }
                         }
                     } catch (JSONException e) {
@@ -919,8 +956,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
                 if (!submitted) {
-                    enabledItem.setText("true");
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    if (!disableSurveyForNCF) {
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
                 /*boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
 //                viewModule = cursor.getString(cursor.getColumnIndex("view_module"));
                 viewModule = cursor.getString(cursor.getColumnIndex("view_module"));
@@ -930,63 +968,71 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 }else{
                     moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                 }*/
-                    long farmerGroupId = dl.getFarmerGroupById(farmerId);
-                    long sectionId = dl.getSectionByFarmerId(farmerId);
-                    boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
-                    if (value) {
-                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
-                        if (viewExistingdata) {
-                            moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                        long farmerGroupId = dl.getFarmerGroupById(farmerId);
+                        long sectionId = dl.getSectionByFarmerId(farmerId);
+                        boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
+                        if (value) {
+                            boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
+                            if (viewExistingdata) {
+                                moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                            } else {
+                                moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                            }
                         } else {
                             moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                         }
-                    } else {
-                        moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-                    }
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
-                        int columnIndex = (cursor.getColumnIndex("submodule_name" + moduleColumnSuffix) == -1) ? cursor.getColumnIndex("submodule_name") : cursor.getColumnIndex("submodule_name" + moduleColumnSuffix);
-                        textView.setText(res.getString(R.string.module_in_progress) + cursor.getString(columnIndex));
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
-                    } else if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1)) {
-                        textView.setText(res.getString(R.string.module_finished));
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                    } else {
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
+                            int columnIndex = (cursor.getColumnIndex("submodule_name" + moduleColumnSuffix) == -1) ? cursor.getColumnIndex("submodule_name") : cursor.getColumnIndex("submodule_name" + moduleColumnSuffix);
+                            textView.setText(res.getString(R.string.module_in_progress) + cursor.getString(columnIndex));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
+                        } else if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1)) {
+                            textView.setText(res.getString(R.string.module_finished));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        } else {
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                        textView.setText(res.getString(R.string.ModuleStatus));
-                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            enabledItem.setText("false");
-                        }
-
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                        Date startDate = null;
-                        try {
-                            if(start_date_string!=null) {
-                                startDate = dateFormat.parse(start_date_string);
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        Date currentDateNew = new Date();
-
-                        if (startDate!=null){
-                            if(currentDateNew.before(startDate)){
+                            textView.setText(res.getString(R.string.ModuleStatus));
+                            if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                 enabledItem.setText("false");
                             }
-                        }
 
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                            Date startDate = null;
+                            try {
+                                if(start_date_string!=null) {
+                                    startDate = dateFormat.parse(start_date_string);
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            Date currentDateNew = new Date();
+
+                            if (startDate!=null){
+                                if(currentDateNew.before(startDate)){
+                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    enabledItem.setText("false");
+                                }
+                            }
+
+                        }
+                    }
+                    else {
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        enabledItem.setText("false");
                     }
                 }
+
                 if (MultiFarmUtils.isMultiFarmEnumerator) {
 
                     try {
@@ -994,7 +1040,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         String farmSurvey = cursor.getString(cursor.getColumnIndex("isFarmSurvey"));
                         boolean isFarmSurvey;
                         String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
-                        int farmerRole;
+                        // add for new QWR and multiple roles are allowed
+                        String farmerRoleStrList = cursor.getString(cursor.getColumnIndex("farmerRoleId"));
+                        int farmerRole = 0;
+
                         if (farmSurvey != null) {
                             try {
                                 isFarmSurvey = Boolean.parseBoolean(farmSurvey);
@@ -1004,169 +1053,453 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                     farmerRole = 0;
                                 }
 
-                                if (!isFarmSurvey) {
-                                    //// FARM-ER SURVEY CODE
-                                    if (farmerRole != 0 && roleId != 0) {
-                                        if (farmerRole == roleId) {
-                                            // Enable
-                                            if (!submitted) {
-                                                enabledItem.setText("true");
-                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                            } else {
+                                if (!Objects.equals(farmerRoleStrList, "[]") && Objects.equals(farmerRoleStr,"null")){
+                                    // Remove square brackets and split the string into an array of strings
+                                    String[] stringArray = farmerRoleStrList.substring(1, farmerRoleStrList.length() - 1).split(",");
+
+                                    // Convert the string array to an integer array
+                                    int[] intArray = new int[stringArray.length];
+                                    for (int m = 0; m < stringArray.length; m++) {
+                                        intArray[m] = Integer.parseInt(stringArray[m]);
+                                    }
+
+                                    for (int newFarmerRole : intArray) {
+                                        if (!isFarmSurvey) {
+                                            //// FARM-ER SURVEY CODE
+                                            if (newFarmerRole != 0 && roleId != 0) {
+                                                if(disableSurveyForNCF) {
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    enabledItem.setText("false");
+                                                }
+                                                else {
+                                                    if (newFarmerRole == roleId) {
+                                                        // Enable
+                                                        if (!submitted) {
+                                                            enabledItem.setText("true");
+                                                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                        } else {
+                                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            enabledItem.setText("false");
+                                                        }
+                                                        break;
+                                                    } else {
+
+                                                        // Can be completed by other stakeholders
+                                                        //  showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+                                                        enabledItem.setTag("farmerS");
+
+                                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                        enabledItem.setText("false");
+                                                    }
+                                                }
+                                            } else if (newFarmerRole != 0 && roleId == 0) {
                                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 enabledItem.setText("false");
                                             }
-                                        } else {
+                                        } else{
+                                            // FARM SURVEY CODE
+//                                ------------START ----------------
+//
+                                            try {
+                                                //                                  SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
+                                                //     SubmittedInfo submittedInfo =farmSubmittedHashMapList.get(currentId);
+                                                SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(cursor, currentId, farmerId, multiFarmId, Integer.parseInt(module_ID));
 
-                                            // Can be completed by other stakeholders
-                                            //  showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
-                                            enabledItem.setTag("farmerS");
+                                                if(disableSurveyForNCF) {
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    enabledItem.setText("false");
+                                                } else {
+                                                    if (newFarmerRole != 0 && roleId != 0) {
+                                                        if (newFarmerRole == roleId) {
+                                                            // Enable
+                                                            if (submittedInfo.isSubmitted()) {
+                                                                boolean surveyDurationBreak = true;
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
 
+
+                                                                if (submittedInfo.isNetworkTable()) {
+                                                                    if (submittedInfo.getFarmerId() == farmerId) {
+                                                                        enabledItem.setText("true");
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                        textView.setText(res.getString(R.string.module_finished));
+                                                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                                                                        surveyDurationBreak = false;
+
+                                                                    } else {
+                                                                        if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                            textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        }
+                                                                        enabledItem.setText("false");
+                                                                        enabledItem.setTag("hasfarm");
+                                                                        surveyDurationBreak = false;
+                                                                    }
+                                                                } else {
+                                                                    if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    }
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                }
+
+                                                                int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                                                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                                if (surveyDurationBreak){
+                                                                    if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId ) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        enabledItem.setText("true");
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    }
+                                                                }
+
+                                                                // has beed completed by other stakeholders
+                                                                //    showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
+
+                                                            } else {
+
+                                                                boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
+                                                                if (othersAttneded) {
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                } else {
+                                                                    enabledItem.setText("true");
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
+                                                            }
+                                                            break;
+                                                        } else {
+                                                            // Disable
+                                                            // Can be completed by other stakeholders
+                                                            // showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+
+                                                            enabledItem.setTag("canfarm");
+
+                                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            enabledItem.setText("false");
+                                                        }
+                                                    }
+                                                    else {
+                                                        // Farm Survey - Role is not defined for the farm stakeholders
+                                                        if (roleId != 0 && newFarmerRole == 0) {
+                                                            if (submittedInfo.isSubmitted()) {
+                                                                boolean surveyDurationBreak = true;
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+
+
+                                                                if (submittedInfo.isNetworkTable()) {
+                                                                    if (submittedInfo.getFarmerId() == farmerId) {
+                                                                        enabledItem.setText("true");
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                        textView.setText(res.getString(R.string.module_finished));
+                                                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                                                                        surveyDurationBreak = false;
+                                                                    } else {
+                                                                        if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                            textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        }
+                                                                        enabledItem.setText("false");
+                                                                        enabledItem.setTag("hasfarm");
+                                                                        surveyDurationBreak = false;
+                                                                    }
+                                                                } else {
+                                                                    if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    }
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                }
+
+                                                                int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                                                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                                if (surveyDurationBreak){
+                                                                    if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId ) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        enabledItem.setText("true");
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    }
+                                                                }
+
+                                                                // Put listener call for the long press
+                                                                //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
+
+                                                            } else {
+                                                                boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
+                                                                if (othersAttneded) {
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                } else {
+                                                                    enabledItem.setText("true");
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+
+//                                ------------END ----------------
+
+                                        }
+                                    }
+                                }else {
+                                    if (!isFarmSurvey) {
+                                        //// FARM-ER SURVEY CODE
+                                        if (farmerRole != 0 && roleId != 0) {
+                                            if(disableSurveyForNCF) {
+                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                enabledItem.setText("false");
+                                            } else {
+                                                if (farmerRole == roleId) {
+                                                    // Enable
+                                                    if (!submitted) {
+                                                        enabledItem.setText("true");
+                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                    } else {
+                                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                        enabledItem.setText("false");
+                                                    }
+                                                } else {
+
+                                                    // Can be completed by other stakeholders
+                                                    //  showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+                                                    enabledItem.setTag("farmerS");
+
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    enabledItem.setText("false");
+                                                }
+                                            }
+
+                                        } else if (farmerRole != 0 && roleId == 0) {
                                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                             enabledItem.setText("false");
                                         }
-                                    }
-                                } else {
-                                    // FARM SURVEY CODE
+                                    } else{
+                                        // FARM SURVEY CODE
 //                                ------------START ----------------
 //
-                                    try {
-                                        //                                  SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
-                                        //     SubmittedInfo submittedInfo =farmSubmittedHashMapList.get(currentId);
-                                        SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(cursor, currentId, farmerId, multiFarmId);
+                                        try {
+                                            //                                  SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
+                                            //     SubmittedInfo submittedInfo =farmSubmittedHashMapList.get(currentId);
+                                            SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(cursor, currentId, farmerId, multiFarmId, Integer.parseInt(module_ID));
 
-                                        if (farmerRole != 0 && roleId != 0) {
-                                            if (farmerRole == roleId) {
-                                                // Enable
-                                                if (submittedInfo.isSubmitted()) {
-                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-
-
-                                                    if (submittedInfo.isNetworkTable()) {
-                                                        if (submittedInfo.getFarmerId() == farmerId) {
-                                                            enabledItem.setText("true");
-                                                            linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                                            textView.setText(res.getString(R.string.module_finished));
-                                                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-
-                                                        } else {
-                                                            if (submittedInfo.isAvailableInOtherFarm()) {
-                                                                textView.setText(res.getString(R.string.ModuleStatus));
-                                                            }
-                                                            enabledItem.setText("false");
-                                                            enabledItem.setTag("hasfarm");
-                                                        }
-                                                    } else {
-                                                        if (submittedInfo.isAvailableInOtherFarm()) {
-                                                            textView.setText(res.getString(R.string.ModuleStatus));
-                                                        }
-                                                        enabledItem.setText("false");
-                                                        enabledItem.setTag("hasfarm");
-                                                    }
-
-                                                    // has beed completed by other stakeholders
-                                                    //    showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
-
-                                                } else {
-
-                                                    boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
-                                                    if (othersAttneded) {
-                                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                        enabledItem.setText("false");
-                                                        enabledItem.setTag("hasfarm");
-                                                    } else {
-                                                        enabledItem.setText("true");
-                                                        textView.setText(res.getString(R.string.ModuleStatus));
-                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                                    }
-                                                }
-                                            } else {
-                                                // Disable
-                                                // Can be completed by other stakeholders
-                                                // showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
-
-                                                enabledItem.setTag("canfarm");
-
+                                            if(disableSurveyForNCF) {
                                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 enabledItem.setText("false");
-                                            }
-                                        } else {
-                                            // Farm Survey - Role is not defined for the farm stakeholders
-                                            if (roleId != 0 && farmerRole == 0) {
-                                                if (submittedInfo.isSubmitted()) {
-                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            } else {
+                                                if (farmerRole != 0 && roleId != 0) {
+                                                    if (farmerRole == roleId) {
+                                                        // Enable
+                                                        if (submittedInfo.isSubmitted()) {
+                                                            boolean surveyDurationBreak = true;
+                                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
 
 
-                                                    if (submittedInfo.isNetworkTable()) {
-                                                        if (submittedInfo.getFarmerId() == farmerId) {
-                                                            enabledItem.setText("true");
-                                                            linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                                            textView.setText(res.getString(R.string.module_finished));
-                                                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                                                        } else {
-                                                            if (submittedInfo.isAvailableInOtherFarm()) {
-                                                                textView.setText(res.getString(R.string.ModuleStatus));
+                                                            if (submittedInfo.isNetworkTable()) {
+                                                                if (submittedInfo.getFarmerId() == farmerId) {
+                                                                    enabledItem.setText("true");
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    textView.setText(res.getString(R.string.module_finished));
+                                                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                                                                    surveyDurationBreak= false;
+                                                                } else {
+                                                                    if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    }
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                    surveyDurationBreak = false;
+                                                                }
+                                                            } else {
+                                                                if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                }
+                                                                enabledItem.setText("false");
+                                                                enabledItem.setTag("hasfarm");
                                                             }
-                                                            enabledItem.setText("false");
-                                                            enabledItem.setTag("hasfarm");
+
+                                                            int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                                            String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                            if (surveyDurationBreak){
+                                                                if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId ) {
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    enabledItem.setText("true");
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
+                                                            }
+
+                                                            // has beed completed by other stakeholders
+                                                            //    showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
+
+                                                        } else {
+
+                                                            boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
+                                                            if (othersAttneded) {
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                enabledItem.setText("false");
+                                                                enabledItem.setTag("hasfarm");
+                                                            } else {
+                                                                enabledItem.setText("true");
+                                                                textView.setText(res.getString(R.string.ModuleStatus));
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                            }
                                                         }
                                                     } else {
-                                                        if (submittedInfo.isAvailableInOtherFarm()) {
-                                                            textView.setText(res.getString(R.string.ModuleStatus));
-                                                        }
-                                                        enabledItem.setText("false");
-                                                        enabledItem.setTag("hasfarm");
-                                                    }
+                                                        // Disable
+                                                        // Can be completed by other stakeholders
+                                                        // showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
 
+                                                        enabledItem.setTag("canfarm");
 
-                                                    // Put listener call for the long press
-                                                    //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
-
-                                                } else {
-                                                    boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
-                                                    if (othersAttneded) {
                                                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                         enabledItem.setText("false");
-                                                        enabledItem.setTag("hasfarm");
-                                                    } else {
-                                                        enabledItem.setText("true");
-                                                        textView.setText(res.getString(R.string.ModuleStatus));
-                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                    }
+                                                }
+                                                else {
+                                                    // Farm Survey - Role is not defined for the farm stakeholders
+                                                    if (roleId != 0 && farmerRole == 0) {
+                                                        if (submittedInfo.isSubmitted()) {
+                                                            boolean surveyDurationBreak = true;
+                                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+
+
+                                                            if (submittedInfo.isNetworkTable()) {
+                                                                if (submittedInfo.getFarmerId() == farmerId) {
+                                                                    enabledItem.setText("true");
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    textView.setText(res.getString(R.string.module_finished));
+                                                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                                                                    surveyDurationBreak = false;
+                                                                } else {
+                                                                    if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    }
+                                                                    enabledItem.setText("false");
+                                                                    enabledItem.setTag("hasfarm");
+                                                                    surveyDurationBreak = false;
+                                                                }
+                                                            } else {
+                                                                if (submittedInfo.isAvailableInOtherFarm()) {
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                }
+                                                                enabledItem.setText("false");
+                                                                enabledItem.setTag("hasfarm");
+                                                            }
+                                                            int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
+                                                            String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                            if (surveyDurationBreak){
+                                                                if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId ) {
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    enabledItem.setText("true");
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
+                                                            }
+
+                                                            // Put listener call for the long press
+                                                            //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
+
+                                                        } else {
+                                                            boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
+                                                            if (othersAttneded) {
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                enabledItem.setText("false");
+                                                                enabledItem.setTag("hasfarm");
+                                                            } else {
+                                                                enabledItem.setText("true");
+                                                                textView.setText(res.getString(R.string.ModuleStatus));
+                                                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
 
 
 //                                ------------END ----------------
 
+                                    }
                                 }
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
@@ -1178,6 +1511,35 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         e.printStackTrace();
                     }
                 }
+                if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    enabledItem.setText("false");
+                }
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                Date startDate = null;
+                try {
+                    if(start_date_string!=null) {
+                        startDate = dateFormat.parse(start_date_string);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Date currentDateNew = new Date();
+
+                if (startDate!=null){
+                    if(currentDateNew.before(startDate)){
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        enabledItem.setText("false");
+                    }
+                }
 
             } else {
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -1186,8 +1548,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 enabledItem.setText("false");
                 enabledItem.setTag("hasfarm");
             }
-            
-            
         }
     }
 

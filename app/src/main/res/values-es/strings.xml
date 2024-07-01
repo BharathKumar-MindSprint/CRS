@@ -454,7 +454,7 @@
     <string name="previous_plot_not_recorded_msg">"Lote %1$s no ha sido registrado. Por favor registre el lote %1$s primero. "</string>
     <string name="send_button">"Enviar "</string>
     <string name="duplicate_phone_number">"No se permiten números de teléfono duplicados. Por favor revise las entradas de teléfonos "</string>
-    <string name="record_polygon_input_messege">"Cuántos lotes diferentes tiene este productor? "</string>
+    <string name="record_polygon_input_messege">"¿Cuántas parcelas diferentes tiene el agricultor? "</string>
     <string name="record_polygon_input_title">"Análisis de lotes "</string>
     <string name="record_polygon_input_hint">"Ingresar Número de Lotes "</string>
     <string name="camera_and_gallery_permission_denial_msg">La cámara y la galería no funcionarán sin este permiso</string>
@@ -463,9 +463,9 @@
     <string name="permission_permanent_denial_title">"El permiso fue negado permanentemente "</string>
     <string name="permission_permanent_denial_msg">"La solicitud de permiso es negada permanentemente. Por favor provea los permisos desde Configuración de la App "</string>
     <string name="go_to_settings_msg">"Habilitar permisos desde Configuración de la App. Ir a Configuración? "</string>
-    <string name="record_farm_polygon">"Registrar polígono de la finca "</string>
+    <string name="record_farm_polygon">"Ubicación de la trama de registro"</string>
     <string name="record_farm_polygon_hint">"Pulse para Registrar Polígono de la Finca "</string>
-    <string name="record_farm_polygon_complete">"Polígono registrado "</string>
+    <string name="record_farm_polygon_complete">"ubicación de la parcela / Polígono registrado"</string>
     <string name="submit">"Enviar "</string>
     <string name="cancel">"Cancelar "</string>
     <string name="valid_count_msg">"Ingrese un número válido "</string>
@@ -479,7 +479,7 @@
     <string name="enumerator_empty">Por favor ingrese ID válido del enumerador.</string>
     <string name="please_answer_all_questions">"Por favour responda todas las preguntas. "</string>
     <string name="updating_sip_training">"Puntos de Infraestructura Social. "</string>
-    <string name="are_you_ready_to_polygon_record">¿Está listo para grabar el polígono?</string>
+    <string name="are_you_ready_to_polygon_record">¿Estás listo para grabar una ubicación de la trama?</string>
     <string name="fetching_location">Buscando ubicación.</string>
     <string name="please_fill_farmer_name">Por favor ingrese el nombre del productor.</string>
     <string name="please_fill_dob">Por favor ingrese la fecha de nacimiento del productor.</string>
@@ -772,6 +772,18 @@
     <string name="no_internet_polygon">¡Habilite Internet en su dispositivo para ver el polígono ya capturado!</string>
     <string name="edit_already_logged_plot">¡%1$s ya han iniciado sesión y guardado! ¿Quieres volver a grabar la misma trama?</string>
     <string name="save_polygon_alertdialog">¿Estás seguro de ahorrar %1$s ahora?</string>
+
+    <string name="farmer_roles">Roles de los agricultores</string>
+    <string name="select_level_of_responsibility">Seleccionar responsabilidad</string>
+    <string name="non_compliant">Non-compliant</string>
+    <string name="compliant">Compliant</string>
+    <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
+
+    <string name="plot_size">Introduzca el tamaño de la parcela (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
+    <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
 
 </resources>
 

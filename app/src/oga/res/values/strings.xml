@@ -130,7 +130,7 @@
     <string name="Farmer_Added">Farmer added!</string>
     <string name="Farmer_Updated">Farmer updated</string>
     <string name="are_you_at_the_farm">Are you at the farm?</string>
-    <string name="record_polygon_input_messege">How many different plots does he have?</string>
+    <string name="record_polygon_input_messege">How many different plots does the farmer have?</string>
     <string name="record_polygon_input_title">Plot Level Analysis</string>
     <string name="record_polygon_input_hint">Enter Number of Plots</string>
 
@@ -169,10 +169,10 @@
     <string name="Farmer_Photo">Farmer Photo</string>
     <string name="Task_list_header">Task List</string>
     <string name="record_farm_location">Record Farm Location</string>
-    <string name="record_farm_polygon">Record Farm Polygon</string>
+    <string name="record_farm_polygon">Record Plot Location</string>
     <string name="record_farm_location_hint">Tap to get GPS</string>
     <string name="record_farm_polygon_hint">Tap to Record Farm Polygon</string>
-    <string name="record_farm_polygon_complete">Polygon recorded</string>
+    <string name="record_farm_polygon_complete">Plot Location / Polygon recorded</string>
     <string name="record_farm_location_complete">Location recorded</string>
     <string name="record_location_timeout">Cannot find location, please try again</string>
     <string name="enabled_string">true</string>
@@ -512,7 +512,7 @@
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>
     <string name="updating_face_templates">Updating Biometric Data</string>
     <string name="updating_faceda_templates">Updating Biometric License Status</string>
-    <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
+    <string name="are_you_ready_to_polygon_record">Are you ready to record a plot location ?</string>
     <string name="fetching_location">Fetching location</string>
     <string name="please_fill_farmer_name">Please fill the farmer name</string>
     <string name="please_fill_dob">Please fill the farmer date of birth</string>
@@ -1106,14 +1106,21 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter value within the range %1$d - %2$d</string>
-    <string name="range_hint_A_R">Range : %1$d-%2$d</string>
+    <string name="range_hint_A_R">Range : %1$d - %2$d</string>
     <string name="alert_review_hint_decimal">Please enter value within the range %.2f - %.2f</string>
-    <string name="range_hint_A_R_decimal">Range : %.2f-%.2f</string>
+    <string name="range_hint_A_R_decimal">Range : %.2f - %.2f</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to re-record the same plot again ?</string>
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
     <string name="delete_sip_polygon">Are you sure you want to delete saved polygon?</string>
+
+    <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys</string>
+
+    <string name="plot_size">Enter plot size (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">Plot size is smaller than the minimum configured area (0.0009 HA). Please specify a valid plot size.</string>
 
 </resources>

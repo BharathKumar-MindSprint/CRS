@@ -456,7 +456,7 @@
     <string name="previous_plot_not_recorded_msg">"Lô số %1$s chưa ghi. Xin hãy ghi Lô số %1$s trước."</string>
     <string name="send_button">"Gửi "</string>
     <string name="duplicate_phone_number">"Không cho phép Số Điện thoại trùng lặp. Vui lòng kiểm tra mục nhập số điện thoại "</string>
-    <string name="record_polygon_input_messege">"Có bao nhiêu lô? "</string>
+    <string name="record_polygon_input_messege">"Người nông dân có bao nhiêu mảnh đất khác nhau? "</string>
     <string name="record_polygon_input_title">"Phân tích mức lô "</string>
     <string name="record_polygon_input_hint">"Nhập số Lô "</string>
     <string name="camera_and_gallery_permission_denial_msg">Cho phép tính năng Máy ảnh và Thư viện hoạt động</string>
@@ -465,9 +465,9 @@
     <string name="permission_permanent_denial_title">"Từ chối vĩnh viễn "</string>
     <string name="permission_permanent_denial_msg">"Từ chối vĩnh viễn. Vui lòng cung cấp quyền từ Cài đặt ứng dụng. "</string>
     <string name="go_to_settings_msg">"Cho phép từ Cài đặt. Có đi tới Cài đặt không? "</string>
-    <string name="record_farm_polygon">"Ghi diện tích lô "</string>
+    <string name="record_farm_polygon">"Ghi lại vị trí lô đất "</string>
     <string name="record_farm_polygon_hint">Bấm để ghi diện tích lô</string>
-    <string name="record_farm_polygon_complete">"Đã ghi Diện tích lô "</string>
+    <string name="record_farm_polygon_complete">"vị trí lô đất / Đã ghi Diện tích lô "</string>
     <string name="submit">"Gửi đi "</string>
     <string name="cancel">"Hủy "</string>
     <string name="valid_count_msg">"Nhập số hợp lệ! "</string>
@@ -478,7 +478,7 @@
     <string name="authentication_failed">Lỗi xác thực . Vui lòng thử lại.</string>
     <string name="enumerator_empty">Nhập ID điều tra viên.</string>
     <string name="please_answer_all_questions">Trả lời tất cả các câu sau.</string>
-    <string name="are_you_ready_to_polygon_record">Bạn sẵn sàng ghi diện tích chưa?</string>
+    <string name="are_you_ready_to_polygon_record">Bạn đã sẵn sàng ghi lại vị trí lô đất chưa?</string>
     <string name="phone_number_recorded">Đã lưu số điện thoại.</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="loggin_In">Đăng nhập.</string>
@@ -746,5 +746,12 @@
     <string name="no_internet_polygon">Vui lòng kích hoạt internet thiết bị của bạn để xem đa giác đã được chụp!</string>
     <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
     <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
+
+    <string name="ofis_farmer_and_surveys">Nông dân và khảo sát</string>
+
+    <string name="plot_size">Nhập kích thước lô (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">Kích thước lô nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng chỉ định kích thước lô hợp lệ.</string>
 
 </resources>

@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
+import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
 
 import java.util.List;
 

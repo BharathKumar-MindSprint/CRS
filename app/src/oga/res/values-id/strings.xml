@@ -454,7 +454,7 @@
     <string name="existing_plots_logged">Plot telah direkam %1$d</string>
     <string name="send_button">"Kirim "</string>
     <string name="duplicate_phone_number">"Duplikat nomor telepon tidak diperbolehkan. Silahkan periksa entri nomor telepon. "</string>
-    <string name="record_polygon_input_messege">"Berapa banyak plot lain yang dia miliki? "</string>
+    <string name="record_polygon_input_messege">"Berapa banyak lahan berbeda yang dimiliki petani tersebut? "</string>
     <string name="record_polygon_input_title">"Analisis Tingkat Plot "</string>
     <string name="record_polygon_input_hint">"Masukkan Jumlah plot "</string>
     <string name="camera_and_gallery_permission_denial_msg">"Fitur kamera dan galeri tidak berfungsi tanpa izin ini! "</string>
@@ -463,9 +463,9 @@
     <string name="permission_permanent_denial_title">"Izin ditolak secara permanen "</string>
     <string name="permission_permanent_denial_msg">"Permintaan izin ditolak. Harap berikan izin dari pengaturan aplikasi. "</string>
     <string name="go_to_settings_msg">"Akses izin dari pengaturan aplikasi. Pergi ke pengaturan? "</string>
-    <string name="record_farm_polygon">"Catat Poligon Kebun "</string>
+    <string name="record_farm_polygon">"Rekam Lokasi Plot"</string>
     <string name="record_farm_polygon_hint">"Ketuk untuk mencatat poligon kebun "</string>
-    <string name="record_farm_polygon_complete">"Poligon telah dicatat "</string>
+    <string name="record_farm_polygon_complete">"lokasi petak / Poligon telah dicatat"</string>
     <string name="submit">"Kirim "</string>
     <string name="cancel">"Batal "</string>
     <string name="valid_count_msg">"Masukkan nomor yang valid! "</string>
@@ -478,7 +478,7 @@
     <string name="enumerator_empty">Please enter the valid enumerator Id</string>
     <string name="please_answer_all_questions">Please answer all questions</string>
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>
-    <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
+    <string name="are_you_ready_to_polygon_record">Apakah Anda siap untuk merekam lokasi plot ?</string>
     <string name="phone_number_recorded">Phone number recorded</string>
     <string name="invalid_imei_msg">Nomor IMEI Anda tidak valid, silakan hubungi kami untuk bantuan</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
@@ -804,7 +804,7 @@
     <string name="are_you_at_the_farmers_hh">Apakah Anda di rumah petani?</string>
     <string name="ofis_request_help">Minta bantuan</string>
 
-    <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
+    <string name="spinner_subdistrict_default">Kecamatan</string>
     <string name="alert_review">Nilai yang dimasukkan di luar rentang yang diizinkan, akan didorong untuk ditinjau administrator</string>
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
@@ -815,5 +815,12 @@
     <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
     <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
     <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
+
+    <string name="ofis_farmer_and_surveys">Petani dan Survei</string>
+
+    <string name="plot_size">Masukkan ukuran plot  (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">Ukuran plot lebih kecil dari luas minimum yang dikonfigurasi (0,0009 HA). Harap tentukan ukuran plot yang valid.</string>
 
 </resources>

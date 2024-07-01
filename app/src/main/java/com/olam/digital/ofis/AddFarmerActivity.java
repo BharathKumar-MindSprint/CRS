@@ -46,6 +46,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -74,6 +75,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidbuts.multispinnerfilter.KeyPairBoolData;
+import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
@@ -94,6 +97,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
+import com.olam.digital.ofis.model.Information;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -225,7 +229,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     List<MultifarmFarmerDTO> mfFarmerMultifarmList;
     ArrayList<MultiSpinnerStatus> listStatus = new ArrayList<>();
-
+    ArrayList<MultiSpinnerStatus> levelOfResponsibilityStatus = new ArrayList<>();
     private OFISRoomDB ofisRoomDB;
 
     /**
@@ -570,6 +574,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
                             farmCodeEdittext.setTag(editFarmId);
 
+                            String responsibilityIds = "";
+                            if (multifarmArray.getJSONObject(j).has("responsibilities")) {
+                                responsibilityIds = multifarmArray.getJSONObject(j).get("responsibilities").toString();
+                            }
+
                             String id=null;
                             if (multifarmArray.getJSONObject(j).has("id")) {
                                 id = (multifarmArray.getJSONObject(j).getString("id"));
@@ -619,13 +628,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 position = false;
                             }
                             // Allowing the Farmer and delete the farmer stakeholder
-                            bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
+                            bindFarmRoleDelete(farmStakeholderRow);
                             bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                            farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                            farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
                             // Set Tag in edit Mode
                             farmRoleSpinner.setTag(roleId);
 
-
+                            bindLevelOfResponsibilitySpinner(farmStakeholderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility), responsibilityIds);
                             farmStakeholderLayout.addView(farmStakeholderRow);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -697,13 +706,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 (farmRoleInclude.findViewById(R.id.farmRoleDelete)).setVisibility(View.GONE);
 
             }else {
-
-                bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
+                bindFarmRoleDelete(farmRoleInclude);
                 bindFarmers(farmRoleInclude.findViewById(R.id.farmFarmerTV));
             }
-            farmStakeholderLayout.addView(farmRoleInclude);
-            bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
 
+            bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
+            bindLevelOfResponsibilitySpinner(farmRoleInclude.findViewById(R.id.spinnerSelectLevelOfResponsibility), "");
+            farmStakeholderLayout.addView(farmRoleInclude);
         });
 
 
@@ -776,12 +785,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void bindFarmRoleDelete(ImageView trashbutton) {
-        trashbutton.setOnClickListener(new View.OnClickListener() {
+    private void bindFarmRoleDelete(LinearLayout llMultiStakeHolder) {
+        llMultiStakeHolder.findViewById(R.id.farmRoleDelete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout numberrow = (LinearLayout) v.getParent();
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                farmStakeholderLayout.removeView(llMultiStakeHolder);
             }
         });
     }
@@ -800,13 +808,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         farmStakeholderLayout=findViewById(R.id.farmStakeholderLayout);
 
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        String localeSuffix = Utilities.getLocaleSuffix(res);
+        String localeSuffix = Utilities.getColumnNameByLanguage();
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         if(!MultiFarmUtils.isMultiFarmEnumerator){
             farmInformationLayout.setVisibility(View.GONE);
@@ -814,7 +821,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             multiFarmRoleDTOList=dl.getMultiFarmRoles(localeSuffix);
             rolesList.clear();
-            rolesList.add("Select");
+            rolesList.add(res.getString(R.string.farmer_roles));
             for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
                 rolesList.add(multiFarmRoleDTO.getName());
             }
@@ -1459,6 +1466,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -3465,7 +3476,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
             (farmRoleInclude.findViewById(R.id.farmRoleDelete)).setVisibility(View.GONE);
             bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
-
+            bindLevelOfResponsibilitySpinner(farmRoleInclude.findViewById(R.id.spinnerSelectLevelOfResponsibility), "");
             farmStakeholderLayout.addView(farmRoleInclude);
             // Removed
 
@@ -3479,8 +3490,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             int length = multifarmArray.length();
             for (int j = 0; j < length; j++) {
                 try {
+
                     String farmname = multifarmArray.getJSONObject(j).get("farmerId").toString();
                     String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
+                    String responsibilityIds = "";
+                    if (multifarmArray.getJSONObject(j).has("responsibilities")) {
+                        responsibilityIds = multifarmArray.getJSONObject(j).get("responsibilities").toString();
+                    }
+
                     String id=null;
                     if (multifarmArray.getJSONObject(j).has("id")) {
                         id = (multifarmArray.getJSONObject(j).getString("id"));
@@ -3519,12 +3536,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     farmCodeEdittext.setText(multifarmArray.getJSONObject(j).get("farmCode").toString());
 
                     // Allowing the Farmer and delete the farmer stakeholder
-                    bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
+                    bindFarmRoleDelete(farmStakeholderRow);
                     bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                    farmRoleSpinner.setSelection(Integer.parseInt(roleId));
+                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
+
                     // Set Tag in edit Mode
                     farmRoleSpinner.setTag(roleId);
 
+                    bindLevelOfResponsibilitySpinner(farmStakeholderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility), responsibilityIds);
 
                     farmStakeholderLayout.addView(farmStakeholderRow);
                 } catch (JSONException e) {
@@ -3565,6 +3584,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
             String farmerStakeHolderId = farmerNameET.getTag().toString();
             String farmerName = farmerNameET.getText().toString().trim();
+            MultiSpinnerSearch levelOfResponsibilitySpinner = stakeHolderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility);
 
             Object id=stakeHolderRow.getTag();
             String StakeholderId=null;
@@ -3577,6 +3597,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 jsonObject.put("farmName",farmName);
 
                 jsonObject.put("farmerRoleId",Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
+                jsonObject.put("responsibilities", levelOfResponsibilitySpinner.getSelectedValues());
                 if (globalFName.equalsIgnoreCase(farmerName)){
                     jsonObject.put("primary",true);
                     jsonObject.put("farmerId",newfarmerId);
@@ -3670,6 +3691,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
             String farmerStakeHolderId = farmerNameET.getTag().toString();
             String farmerName = farmerNameET.getText().toString().trim();
+            MultiSpinnerSearch levelOfResponsibilitySpinner = stakeHolderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility);
 
             Object id=stakeHolderRow.getTag();
             String StakeholderId=null;
@@ -3701,6 +3723,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
 
                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED,0);
+                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, levelOfResponsibilitySpinner.getSelectedValues());
 
             }catch (Exception e){}
 
@@ -3728,6 +3751,70 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+    private void bindLevelOfResponsibilitySpinner(MultiSpinnerSearch levelOfResponsibilitySpinner, String selectedResponsibilityIds) {
+        bindSpinnerSpec(levelOfResponsibilitySpinner, res.getString(R.string.select_level_of_responsibility));
 
+        String locale = Utilities.getColumnNameByLanguage();
+
+        Cursor farmerGroupsCursor = dl.getResponsibilityDataFromTable(OFISDBContract.Responsibility.TABLE_NAME, locale);
+
+        List<Information> farmerGroupArrayList = new ArrayList<>();
+        ArrayList<KeyPairBoolData> list = new ArrayList<>();
+
+        if (farmerGroupsCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                farmerGroupArrayList.add(new Information(
+                        farmerGroupsCursor.getInt(0),
+                        farmerGroupsCursor.getString(1)));
+            } while (farmerGroupsCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        // and returning our array list.
+        farmerGroupsCursor.close();
+        for (int i = 0; i < farmerGroupArrayList.size(); i++) {
+            int id = farmerGroupArrayList.get(i).getId();
+            boolean isSelect = selectedResponsibilityIds.contains(String.valueOf(id));
+            KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+            keyPairBoolData.setId(id);
+            keyPairBoolData.setName(farmerGroupArrayList.get(i).getName());
+            keyPairBoolData.setSelected(isSelect);
+            list.add(keyPairBoolData);
+        }
+
+        levelOfResponsibilitySpinner.setItems(list, new MultiSpinnerListener() {
+            @Override
+            public void onItemsSelected(List<KeyPairBoolData> items) {
+                // after every selection this function is called, no logic is implemented
+            }
+        });
+    }
+
+    public void bindSpinnerSpec(MultiSpinnerSearch multiSpinnerSearch, String hintText){
+        multiSpinnerSearch.setSearchEnabled(false);
+
+        // If you will set the limit, this button will not display automatically.
+        multiSpinnerSearch.setShowSelectAllButton(false);
+
+        //A text that will display in clear text button
+        multiSpinnerSearch.setClearText(null);
+
+        //To set Title and placeholder for dropdown
+        multiSpinnerSearch.setHintText(hintText);
+    }
+
+    private int getIndexForFarmerRoleSpinnerList(String roleId) {
+        String localeSuffix = Utilities.getColumnNameByLanguage();
+        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
+        int id = Integer.parseInt(roleId);
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getId() == id) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
 
 }

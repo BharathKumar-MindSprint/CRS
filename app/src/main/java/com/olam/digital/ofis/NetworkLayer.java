@@ -2016,7 +2016,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
@@ -2024,6 +2024,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
                                             datatype = "decimal";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                            datatype = "date";
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -2036,7 +2038,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
-                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                         hasPhotos = true;
                                         File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("answer", Utilities.base64ConversionForImage(
@@ -2091,7 +2093,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
@@ -2147,7 +2149,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 if (response != null) {
                                                     JSONArray errorObj = response.getJSONArray("errors");
                                                     String errorItem = (String) errorObj.get(0);
-                                                    if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)) {
+                                                    // OW-4529 Fix
+                                                    if (errorItem.equalsIgnoreCase(Utilities.DUPLICATE_ERROR)) {
                                                         // Do the Activity if the duplicate entry is there
                                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                                         dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate, finalFarmId, finalPlotId);
@@ -2155,7 +2158,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         // Update the message
                                                         statusMessage = res.getString(R.string.item_synced);
                                                         msg.obj = statusMessage;
+                                                        msg.what = 9;
                                                         handler.dispatchMessage(msg);
+                                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                popupMsgInfo(res.getString(R.string.duplicate_survey));
+                                                            }
+                                                        });
                                                     } else if (response.getInt("statusCode") == 3035) {
 
                                                         statusMessage = res.getString(R.string.item_synced);
@@ -2254,9 +2264,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
             } finally {
-                farmerModule.close();
-                extraInfo.close();
-                moduleAnswers.close();
+                if (farmerModule !=null){
+                    farmerModule.close();
+                }
+                if (extraInfo != null){
+                    extraInfo.close();
+                }
+                if (moduleAnswers != null){
+                    moduleAnswers.close();
+                }
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }
@@ -3059,13 +3075,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     // get farmer national ids
-    private JSONArray farmernationalids(long farmerId) {
-        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);;
-        /*if(value.equalsIgnoreCase("2")) {
+    // OW-4590 Fix
+    private JSONArray farmernationalids(long farmerId, long nid, String value) {
+        Cursor nids;
+        if(value.equalsIgnoreCase("2")) {
              nids = dl.getnationalidsbyfarmerid(farmerId,nid);
         }else{
              nids = dl.getnationalidsbyfarmerid(farmerId);
-        }*/
+        }
+
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -4184,10 +4202,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
                         .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
-                /*JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");*/
+                // OW-4590 Fix
+                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");
 
-                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 JSONObject consentStatement = farmerConsentStatment(networkQueueItems
                                 .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -4336,7 +4354,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         // dl.updateSyncedStatus(localFarmerId);
                                         dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
-                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId);
+                                        String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
+                                        String conductSurveyForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF));
+                                        String conductTrainingForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF));
+                                        String polygonCaptureForNonCompliant = String.valueOf(jsonObject1.getBoolean(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF));
+
+                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalFarmsId,
+                                                complainceFlag,conductTrainingForNonCompliant,conductSurveyForNonCompliant,polygonCaptureForNonCompliant);
                                         db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
@@ -4532,7 +4556,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         dl.updateSyncedStatusFixed(finalLocalFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(finalLocalFarmerId, jsonObject1.getInt("id"));
-                                        dl.markFarmerAsSynced(finalLocalFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), finalLocalPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalfarmsId);
+                                        String complainceFlag = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG);
+                                        String conductSurveyForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                                        String conductTrainingForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                                        String polygonCaptureForNonCompliant = jsonObject1.getString(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
+                                        dl.markFarmerAsSynced(finalLocalFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), finalLocalPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), isMultiFarm, jsonArrayMultiFarm, finalfarmsId,
+                                                complainceFlag,conductTrainingForNonCompliant,conductSurveyForNonCompliant,polygonCaptureForNonCompliant);
 
 
                                         statusMessage = "Farmer details are updated. Please try to sync again !";
@@ -4702,15 +4731,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             if (moduleAnswers.getCount() > 0) {
 
                                 while (moduleAnswers.moveToNext()) {
-                                    questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                    questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                     JSONObject answer = new JSONObject();
-                                    answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                    answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                                    answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+                                    answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
 
-                                    int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID));
+                                    int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID));
 
                                     // As of now didn't consider the subQuestion Answer select ( Any subQuestion Issue please focus here)
-                                    Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
+                                    Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
                                     Set<Integer> sub_questions_included = new TreeSet<>();
 
                                     if (cursor.getCount() > 0) {
@@ -4749,8 +4778,67 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     // Subset Question section . Will focus if needed
                                     String subquestion = "";
 
+                                    String datatypeID = "";
+                                    String displayTypeId = "";
+                                    String answerTypeId = "";
+                                    String dataTypeName = "";
+                                    String datatype = "";
 
-                                    String datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                    // Arch
+                                    String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                    datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+                                    if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
+                                        // use answerType
+                                        try{
+                                            answerTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(answerTypeId));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
+                                        }
+
+
+                                    }else{
+                                        // use displayType
+                                        try{
+                                            displayTypeId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(displayTypeId));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
+                                        }
+                                    }
+
+                                    if (dataTypeName != null && datatypeID.equals("6")){
+
+                                        if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")){
+                                            datatype = "int";
+                                        }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                            datatype = "text";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
+                                            datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")){
+                                            datatype = "decimal";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                            datatype = "date";
+                                        }
+                                    }else {
+                                        datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                    }
+
+
                                     if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
                                         answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     } else if (datatype.equalsIgnoreCase("decimal")) {
@@ -4758,7 +4846,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
-                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                         hasPhotos = true;
                                         File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("answer", Utilities.base64ConversionForImage(
@@ -4771,7 +4859,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                     if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
-                                        Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                        Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
 
                                         if (subAnswers.getCount() > 0) {
                                             JSONArray subAnswersArray = new JSONArray();
@@ -4779,21 +4867,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                             int repeaterItemPosition = 1;
                                             while (subAnswers.moveToNext()) {
-                                                questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                                questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                                 JSONObject subAnswer = new JSONObject();
                                                 JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
-                                                if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
+                                                if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
                                                     // start new subAnswersAnswerArray
                                                     subAnswersArray.put(subAnswersAnswerArray);
                                                     subAnswersAnswerArray = new JSONArray();
                                                 }
 
-                                                repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
+                                                repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
 
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                                                subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                                 String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                                                 if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
                                                     subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
@@ -4805,7 +4893,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
@@ -5292,10 +5380,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     farmer.moveToFirst();
                     JSONObject jsonObject = new JSONObject();
 
-                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-
-                    /*JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                            networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "2");*/
+                    // OW-4590 Fix
+                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                    final String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                    if (typeID<=0) {
+                        typeID = dl.getNIDTypeIDByName(typeName);
+                    }
+                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                            typeID, "2");
 
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
@@ -5309,14 +5401,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 try {
                                     String statusMessage;
 
+                                    // OW-4590 Fix
+                                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                    String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+
                                     if (postResponse.isSuccessful()) {
                                         //new
                                         JSONObject jsonResponse = new JSONObject(postResponse.body().string());
                                         String response = jsonResponse.getString("responce");
                                         if (response.equalsIgnoreCase("200")) {
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
+
+                                            // OW-4590 Fix
+                                            if (typeID<=0) {
+                                                typeID = dl.getNIDTypeIDByName(typeName);
+                                            }
                                             dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                                    networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                                                    typeID);
+
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
                                             msg.arg1 = total;
@@ -5353,15 +5455,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 msg.arg2 = progress;
                                                 msg.obj = statusMessage;
                                                 handler.dispatchMessage(msg);
-                                                for (int i = 0; i < nationIdList.length(); i++) {
-                                                    JSONObject entry = nationIdList.getJSONObject(i);
-//                                                    int farmer_id = entry.getInt("farmer_id");
-                                                    int id_type = entry.getInt("id_type");
-                                                    dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)) ,id_type );
 
+                                                // OW-4590 Fix
+                                                if (typeID<=0) {
+                                                    typeID = dl.getNIDTypeIDByName(typeName);
+                                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                } else {
+                                                    for (int i = 0; i < nationIdList.length(); i++) {
+                                                        JSONObject entry = nationIdList.getJSONObject(i);
+                                                        int id_type = entry.getInt("id_type");
+                                                        dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+                                                    }
                                                 }
-                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+
                                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override

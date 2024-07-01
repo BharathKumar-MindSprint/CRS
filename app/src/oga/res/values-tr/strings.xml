@@ -457,7 +457,7 @@
     <string name="previous_plot_not_recorded_msg">"Bahçe %1$s Kaydedilemedi. Lütfen İlk %1$s bahçeyi kaydet."</string>
     <string name="send_button">"Gönder "</string>
     <string name="duplicate_phone_number">"Tekrarlanan telefon numaralarına izin verilmez. Lütfen telefon numaralarını kontrol edin "</string>
-    <string name="record_polygon_input_messege">"Kaç adet farklı bahçesi var? "</string>
+    <string name="record_polygon_input_messege">"Çiftçinin kaç farklı parseli var? "</string>
     <string name="record_polygon_input_title">"Bahçe Seviyesi Analizi "</string>
     <string name="record_polygon_input_hint">"Bahçe numarasını gir "</string>
     <string name="camera_and_gallery_permission_denial_msg">Kamera &amp; Galeri özelliği bu izin olmadan çalışmaz </string>
@@ -466,9 +466,9 @@
     <string name="permission_permanent_denial_title">"İzin daimi olarak reddedildi "</string>
     <string name="permission_permanent_denial_msg">"İzin talebi daimi olarak reddedildi. Lütfen uygulama ayarlarından izinleri sağlayın. "</string>
     <string name="go_to_settings_msg">"Uygulama ayarlarından erişim iznine izin ver. Ayarlara git.  "</string>
-    <string name="record_farm_polygon">"Bahçe poligonunu kaydet "</string>
+    <string name="record_farm_polygon">"Parsel Konumunu Kaydet "</string>
     <string name="record_farm_polygon_hint">Bahçe poligonunu kaydetmek için tıklayın</string>
-    <string name="record_farm_polygon_complete">"Poligon kaydedildi "</string>
+    <string name="record_farm_polygon_complete">"arsa konumu / Poligon kaydedildi "</string>
     <string name="submit">"Gönder "</string>
     <string name="cancel">"Reddet "</string>
     <string name="valid_count_msg">"Geçerli bir sayı gir "</string>
@@ -479,7 +479,7 @@
     <string name="authentication_failed">Kimlik doğrulama başarısız. Lütfen tekrar deneyin</string>
     <string name="enumerator_empty">Lütfen kullanıcı ID numaranızı girin</string>
     <string name="please_answer_all_questions">Lütfen tüm soruları cevaplayın</string>
-    <string name="are_you_ready_to_polygon_record">"Poligonu kaydetmeye hazır mısınız? "</string>
+    <string name="are_you_ready_to_polygon_record">"Bir arsa konumunu kaydetmeye hazır mısınız? "</string>
     <string name="phone_number_recorded">Kaydedilen telefon numarası</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="loggin_In">Giriş</string>
@@ -748,5 +748,12 @@
     <string name="no_internet_polygon">Halihazırda yakalanan çokgeni görüntülemek için lütfen cihazınızın internetini etkinleştirin!</string>
     <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>
     <string name="save_polygon_alertdialog">%1$s\'ı şimdi kaydettiğinizden emin misiniz?</string>
+
+    <string name="ofis_farmer_and_surveys">Çiftçiler ve Araştırmalar</string>
+
+    <string name="plot_size">Arsa boyutunu girin  (HA)</string>
+    <string name="plot_pins">"Plot Pin -  "</string>
+    <string name="save_plot_size">save plot size</string>
+    <string name="incorrect_plot_size_message">Grafik boyutu, yapılandırılan minimum alandan (0,0009 HA) daha küçük. Lütfen geçerli bir çizim boyutu belirtin.</string>
 
 </resources>

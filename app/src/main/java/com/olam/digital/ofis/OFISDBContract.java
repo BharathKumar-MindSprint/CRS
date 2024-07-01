@@ -377,6 +377,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_PLOT_SURVEY = "isPlotSurvey";
         public static final String COLUMN_NAME_ROLE_ID = "fkFarmerRoleId";
         public static final String COLUMN_NAME_VIEW_MODULE = "view_module";
+        public static final String COLUMN_NAME_FARMER_ROLE_ID = "farmerRoleId";
+        public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+        public static final String COLUMN_NAME_SURVEY_DURATION = "surveyDuration";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -393,6 +397,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ROLE_ID);
                     add(COLUMN_NAME_VIEW_MODULE);
                     add(COLUMN_NAME_IS_PLOT_SURVEY);
+                    add(COLUMN_NAME_FARMER_ROLE_ID);
+                    add(COLUMN_NAME_COUNTRY_ID);
+                    add(COLUMN_NAME_SURVEY_DURATION);
                 }}
         );
     }
@@ -1017,6 +1024,12 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
         public static final String COLUMN_NAME_AGE = "age";
 
+        public static final String COLUMN_NAME_COMPLAINCE_FLAG = "complainceFlag";
+        public static final String COLUMN_NAME_ORIGIN_CAPABILITIES = "originCapabilities";
+        public static final String COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF = "conductSurveyForNonCompliant";
+        public static final String COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF = "conductTrainingForNonCompliant";
+        public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1055,6 +1068,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
                     add(COLUMN_NAME_AGE);
+                    add(COLUMN_NAME_COMPLAINCE_FLAG);
+                    add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                    add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                    add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1087,6 +1104,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PARTNER_ID);
                     add(COLUMN_NAME_PROGRAMME_ID);
                     add(COLUMN_NAME_AGE);
+                    add(COLUMN_NAME_COMPLAINCE_FLAG);
+                    add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
+                    add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
+                    add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -1102,6 +1123,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SERVER_ID = "server_id";
         public static final String COLUMN_NAME_PLOT_JSON = "plotjson";
         public static final String COLUMN_NAME_PLOT_SYNC_FLAG = "plotsyncflag";
+        public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
+        public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_PLOT_ID);
@@ -1111,6 +1135,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SERVER_ID);
                     add(COLUMN_NAME_PLOT_JSON);
                     add(COLUMN_NAME_PLOT_SYNC_FLAG);
+                    add(COLUMN_NAME_CENTER_PLOT);
+                    add(COLUMN_NAME_PLOT_SIZE);
                 }}
         );
     }
@@ -2452,14 +2478,14 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "multifarmRoles";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
+        public static final String COLUMN_NAME_NAME_FR = "nameFr";
+        public static final String COLUMN_NAME_NAME_ES = "nameEs";
+        public static final String COLUMN_NAME_NAME_ID = "nameId";
+        public static final String COLUMN_NAME_NAME_PT = "namePt";
+        public static final String COLUMN_NAME_NAME_TR = "nameTr";
+        public static final String COLUMN_NAME_NAME_LO = "nameLo";
+        public static final String COLUMN_NAME_NAME_VI = "nameVi";
+        public static final String COLUMN_NAME_NAME_TH = "nameTh";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -2545,6 +2571,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
         public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
         public static final String COLUMN_NAME_IS_SYNCED = "synced";
+        public static final String COLUMN_NAME_RESPONSIBILITIES = "responsibilities";
 
 
 
@@ -2556,7 +2583,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_ROLE_ID);
                     add(COLUMN_NAME_NAME_FARM_NAME);
                     add(COLUMN_NAME_NAME_FARM_CODE);
-
+                    add(COLUMN_NAME_IS_SYNCED);
+                    add(COLUMN_NAME_RESPONSIBILITIES);
                 }}
         );
     }
@@ -2591,6 +2619,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOTTED_NAME = "plottedName";
         public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final String COLUMN_NAME_CREATED_AT = "created_at";
+        public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
+        public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2600,6 +2630,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOTTED_NAME);
                     add(COLUMN_IS_SYNCED);
                     add(COLUMN_NAME_CREATED_AT);
+                    add(COLUMN_NAME_CENTER_PLOT);
+                    add(COLUMN_NAME_PLOT_SIZE);
                 }}
         );
     }
@@ -2635,6 +2667,36 @@ public class OFISDBContract {
                     add(COLUMN_NAME_MSG);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_TOTALCOUNT);
+                }}
+        );
+    }
+
+    public static abstract class Responsibility implements BaseColumns {
+        public static final String TABLE_NAME = "responsibilities";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_NAME_FR = "nameFr";
+        public static final String COLUMN_NAME_NAME_ES = "nameEs";
+        public static final String COLUMN_NAME_NAME_ID = "nameId";
+        public static final String COLUMN_NAME_NAME_PT = "namePt";
+        public static final String COLUMN_NAME_NAME_TR = "nameTr";
+        public static final String COLUMN_NAME_NAME_LO = "nameLo";
+        public static final String COLUMN_NAME_NAME_VI = "nameVi";
+        public static final String COLUMN_NAME_NAME_TH = "nameTh";
+
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_NAME);
+                    add(COLUMN_NAME_NAME_FR);
+                    add(COLUMN_NAME_NAME_ES);
+                    add(COLUMN_NAME_NAME_ID);
+                    add(COLUMN_NAME_NAME_PT);
+                    add(COLUMN_NAME_NAME_TR);
+                    add(COLUMN_NAME_NAME_LO);
+                    add(COLUMN_NAME_NAME_VI);
+                    add(COLUMN_NAME_NAME_TH);
                 }}
         );
     }
