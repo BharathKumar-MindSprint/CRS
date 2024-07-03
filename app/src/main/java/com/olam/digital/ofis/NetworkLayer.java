@@ -4784,7 +4784,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     String dataTypeName = "";
                                     String datatype = "";
 
-                                    // Arch
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                                     datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){

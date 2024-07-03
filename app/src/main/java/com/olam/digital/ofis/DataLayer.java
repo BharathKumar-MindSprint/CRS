@@ -8697,10 +8697,11 @@ public class DataLayer {
                                         String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
                                         //Check in NetworkTable
-                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,0);
+                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmId,0);
                                         if (submitted) {
                                             submittedInfo.setSubmitted(true);
-                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                            long farmerIdFromNetworkTable = Long.parseLong(getFarmerIdFromNetworkTable(cursorId, farmId,0));
+                                            submittedInfo.setFarmerId(farmerIdFromNetworkTable);
                                             submittedInfo.setNetworkTable(true);
                                            return  submittedInfo;
                                             //  submittedInfoList.add(submittedInfo);
@@ -8801,7 +8802,6 @@ public class DataLayer {
                                                                         if (!surveyDuration_string.equals("null") && Integer.parseInt(surveyDuration_string) == surveyDurationId) {
                                                                             submittedInfo.setSubmitted(false);
                                                                             submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                                            submittedInfo.setNetworkTable(false);
                                                                             submittedInfo.setAvailableInOtherFarm(false);
                                                                             return submittedInfo;
                                                                         } else {
@@ -8867,7 +8867,7 @@ public class DataLayer {
                     String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
                     //Check in NetworkTable
-                    submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,plotId);
+                    submitted = getModuledetailsInNetworkQueue1(cursorId,farmId,plotId);
                     if (submitted) {
                         submittedInfo.setSubmitted(true);
                         submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
@@ -9074,16 +9074,15 @@ public class DataLayer {
 
     }
 
-    private boolean getModuledetailsInNetworkQueue1(int currentId, String farmerIdStakeHolder,String farmId, int plotId) {
+    private boolean getModuledetailsInNetworkQueue1(int currentId, String farmId, int plotId) {
 
         boolean available=false;
         String[] columns = new String[]{"*"};
         String whereClause =
                 OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? AND " +
                         OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " +
-                        OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
                         OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(farmerIdStakeHolder),String.valueOf(plotId)};
+        String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(plotId)};
         Cursor cursor=null;
         try {
             cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -9098,6 +9097,30 @@ public class DataLayer {
 
         return available;
 
+    }
+
+    public String getFarmerIdFromNetworkTable(int currentId, String farmId, int plotId){
+        String farmerId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause =
+                    OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? AND " +
+                            OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " +
+                            OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(plotId)};
+            cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    farmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return farmerId;
     }
 
 
