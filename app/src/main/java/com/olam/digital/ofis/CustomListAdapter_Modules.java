@@ -123,12 +123,17 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         boolean submitted = false;
         String isConsentAvailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
         final boolean isConsentTrue = isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true");
-        boolean isCompliantFarmer = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
-        String polygonCapture = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF));
-        String conductSurvey = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF));
 
-        boolean disablePolygonCaptureForNCF = !isCompliantFarmer && (polygonCapture.equalsIgnoreCase("false") || polygonCapture.isEmpty());
-        boolean disableSurveyForNCF = !isCompliantFarmer && (conductSurvey.equalsIgnoreCase("false") || conductSurvey.isEmpty());
+//        business told to remove the condition based on origin capabilities
+//        boolean isCompliantFarmer = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
+//        String polygonCapture = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF));
+//        String conductSurvey = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF));
+//
+//        boolean disablePolygonCaptureForNCF = !isCompliantFarmer && (polygonCapture.equalsIgnoreCase("false") || polygonCapture.isEmpty());
+//        boolean disableSurveyForNCF = !isCompliantFarmer && (conductSurvey.equalsIgnoreCase("false") || conductSurvey.isEmpty());
+
+        boolean disablePolygonCaptureForNCF = false;
+        boolean disableSurveyForNCF = false;
 
         if (currentId == 0) {
 
