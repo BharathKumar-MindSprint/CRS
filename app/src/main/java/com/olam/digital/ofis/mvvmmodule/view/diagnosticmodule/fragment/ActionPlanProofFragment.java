@@ -194,8 +194,30 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
                         justVal.add(qId.get(i));
                     }
-                }
 
+                    long size = FILE_SIZE;
+
+                    for (DmComplaintFileTable complaintFiles : dmComplaintFileTables) {
+                        String path = complaintFiles.getFilePath();
+
+                        try {
+                            File file = new File(path);
+
+                            if (file.exists()) {
+                                size -= file.length();
+                            }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    if (size < 0) {
+                        Toast.makeText(getContext(), "Total File Size Exceeds" + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 
 
                 if (justVal.size()==Constants.questionIds.size()){
@@ -396,7 +418,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         TextView textView = new TextView(getActivity());
-        textView.setText("Capture Proof");
 
         //Important Do not Change the Tag
         textView.setTag(id);
@@ -413,9 +434,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         textView.setLayoutParams(layoutParams);
         textView.setGravity(Gravity.CENTER);
         textView.setPadding(0, 15, 0, 15);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-        }
 
 
         LinearLayout linearLayoutImage = new LinearLayout(getActivity());
@@ -436,7 +454,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         dmComplaintFileTableList.clear();
         dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0);
 
-        // Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
+        boolean isFilesUploaded = false;
 
         if (dmComplaintFileTableList.size() != 0) {
             for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
@@ -456,165 +474,186 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 int finalI = l;
                 ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
                 ArrayList<String> finalRetrievedArray = retrievedArray;
-                remove.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                        builder1.setMessage("Do you want to remove this report");
-                        builder1.setTitle("Alert");
-                        builder1.setCancelable(false);
-                        builder1.setPositiveButton(
-                                "YES",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
+                isFilesUploaded = isFilesUploaded || dmComplaintFileTableList.get(l).getIsFileSynced() == 1;
+                if (isFilesUploaded) {
+                    remove.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    remove.setVisibility(View.VISIBLE);
+                    remove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                                        //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                            builder1.setMessage("Do you want to remove this report");
+                            builder1.setTitle("Alert");
+                            builder1.setCancelable(false);
+                            builder1.setPositiveButton(
+                                    "YES",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
-                                        dm_question_complaint.removeAllViews();
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
-                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                                            dm_question_complaint.removeAllViews();
+
+                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                                                }
                                             }
+
                                         }
+                                    });
+                            builder1.setNegativeButton(
+                                    "NO",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
 
-                                    }
-                                });
-                        builder1.setNegativeButton(
-                                "NO",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
 
-                        AlertDialog alert11 = builder1.create();
-                        alert11.show();
-
-                    }
-                });
+                        }
+                    });
+                }
             }
         }
 
+        if (isFilesUploaded) {
+            textView.setText("Capture Proof Uploaded");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
+            }
+        }
+        else {
+            textView.setText("Capture Proof");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+            }
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0).size() >= 5) {
-                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                    if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0).size() >= 5) {
+                        Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
 
-                } else {
+                    } else {
 
-                    CharSequence[] options = new CharSequence[0];
+                        CharSequence[] options = new CharSequence[0];
 
 
-                    try {
-                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
-                        if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
-                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                        try {
+                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
+                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                        } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
-                            options = new CharSequence[]{"Choose from Gallery", "Cancel"};
+                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                                options = new CharSequence[]{"Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
-                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
-                    CharSequence[] finalOptions = options;
+                        CharSequence[] finalOptions = options;
 
 
 //                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Add Photo!");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Add Photo!");
 
-                    builder.setItems(options, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int item) {
-                            if (finalOptions[item].equals("Take Photo")) {
-                                if (isStoragePermissionCameraGranted()) {
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (finalOptions[item].equals("Take Photo")) {
+                                    if (isStoragePermissionCameraGranted()) {
 //                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
-                                    GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    // Ensure that there's a camera activity to handle the intent
-                                    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                        // Create the File where the photo should go
-                                        File photoFile = null;
-                                        try {
-                                            photoFile = createImageFile();
-                                        } catch (IOException ex) {
-                                            // Error occurred while creating the File
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        // Ensure that there's a camera activity to handle the intent
+                                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                            // Create the File where the photo should go
+                                            File photoFile = null;
+                                            try {
+                                                photoFile = createImageFile();
+                                            } catch (IOException ex) {
+                                                // Error occurred while creating the File
 
+                                            }
+                                            // Continue only if the File was successfully created
+                                            if (photoFile != null) {
+                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                                        FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
+                                                                new File(mCurrentPhotoPath)));
+                                                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+                                            }
                                         }
-                                        // Continue only if the File was successfully created
-                                        if (photoFile != null) {
-                                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                    FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
-                                                            new File(mCurrentPhotoPath)));
-                                            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-                                        }
+
+
                                     }
 
+                                } else if (finalOptions[item].equals("Choose from Gallery")) {
 
-                                }
+                                    if (isStoragePermissionGalleryGranted()) {
 
-                            } else if (finalOptions[item].equals("Choose from Gallery")) {
-
-                                if (isStoragePermissionGalleryGranted()) {
-
-                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                                    String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
-                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
+                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
-                                        Intent galleryIntent = new Intent();
-                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
-                                        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                                        galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                                        galleryIntent.setType("*/*");
-                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
-                                    } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                                            Intent galleryIntent = new Intent();
+                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                            galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                                            galleryIntent.setType("*/*");
+                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
+                                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
-                                        Intent galleryIntent = new Intent();
-                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
-                                        galleryIntent.setType("*/*");
-                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                    } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                            Intent galleryIntent = new Intent();
+                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
+                                            galleryIntent.setType("*/*");
+                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
-                                        Intent galleryIntent = new Intent();
-                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
-                                        galleryIntent.setType("*/*");
-                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                            Intent galleryIntent = new Intent();
+                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
+                                            galleryIntent.setType("*/*");
+                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                        }
+
+
                                     }
-
-
+                                } else if (finalOptions[item].equals("Cancel")) {
+                                    dialog.dismiss();
                                 }
-                            } else if (finalOptions[item].equals("Cancel")) {
-                                dialog.dismiss();
                             }
-                        }
-                    });
-                    builder.show();
+                        });
+                        builder.show();
+
+                    }
+
 
                 }
+            });
 
-
-            }
-        });
+        }
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();

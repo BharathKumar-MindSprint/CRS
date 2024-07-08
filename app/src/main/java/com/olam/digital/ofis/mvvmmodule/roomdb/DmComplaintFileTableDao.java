@@ -20,8 +20,8 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
     List<DmComplaintFileTable> getFilesById(int id, String farmerId, int attempt);
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType FROM DmComplaintFileTable WHERE  isFileSynced = 0")
-    List<DmComplaintFileTable> getUnSyncedFile();
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType FROM DmComplaintFileTable WHERE  farmerId = :farmerId AND questionId =:questionId AND isFileSynced = 0")
+    List<DmComplaintFileTable> getUnSyncedFile(String farmerId, String questionId);
 
     @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
     List<DmComplaintFileTable> getQuestionFilesById(int id, String farmerId, int attempt);
