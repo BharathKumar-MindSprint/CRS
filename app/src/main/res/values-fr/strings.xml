@@ -1105,8 +1105,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="farmer_roles">Rôles des planteurs</string>
     <string name="select_level_of_responsibility">Sélectionnez niveau de responsabilité</string>
-    <string name="non_compliant">Attribute Unknown</string>
-    <string name="compliant">EUDR Compliant</string>
+    <string name="non_compliant">Attribution inconnue</string>
+    <string name="compliant">EUDR Conforme</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
     <string name="plot_size">Entrez la taille du tracé (HA)</string>
