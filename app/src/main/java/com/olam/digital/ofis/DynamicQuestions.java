@@ -4691,11 +4691,11 @@ public class DynamicQuestions {
                                 if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                        String checkBoxVal = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
 
                                         if (spinnervalues.moveToFirst()) {
                                             do {
-                                                String value = spinnervalues.getString(spinnervalues.getColumnIndex("value"));
+                                                String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
                                                 if (value.equals(checkBoxVal)) {
                                                     Object[] rowData = new Object[columnNames.length];
                                                     for (int j = 0; j < columnNames.length; j++) {
@@ -4715,11 +4715,11 @@ public class DynamicQuestions {
 
                                 if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                        String checkBoxVal = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
 
                                         if (spinnervalues.moveToFirst()) {
                                             do {
-                                                String value = spinnervalues.getString(spinnervalues.getColumnIndex("value"));
+                                                String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
                                                 if (value.equals(checkBoxVal)) {
                                                     Object[] rowData = new Object[columnNames.length];
                                                     for (int j = 0; j < columnNames.length; j++) {
@@ -4746,11 +4746,11 @@ public class DynamicQuestions {
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
 
                                             if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                                String checkBoxVal = dl.getValueByLookUpID(lookupID);
+                                                String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
 
                                                 if (spinnervalues.moveToFirst()) {
                                                     do {
-                                                        String value = spinnervalues.getString(spinnervalues.getColumnIndex("value"));
+                                                        String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
                                                         if (value.equals(checkBoxVal)) {
                                                             Object[] rowData = new Object[columnNames.length];
                                                             for (int j = 0; j < columnNames.length; j++) {
@@ -5383,7 +5383,7 @@ public class DynamicQuestions {
                                     //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
 //                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
-                                    String radioName = dl.getValueByLookUpID(lookupID);
+                                    String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                     RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
                                     if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                         radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -5448,7 +5448,7 @@ public class DynamicQuestions {
                                     //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
 //                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
-                                    String radioName = dl.getValueByLookUpID(lookupID);
+                                    String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                     RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
                                     if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                         radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -5520,7 +5520,7 @@ public class DynamicQuestions {
                                             //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
 //                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
-                                            String radioName = dl.getValueByLookUpID(lookupID);
+                                            String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                             RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
                                             if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                 radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -6446,7 +6446,7 @@ public class DynamicQuestions {
 //                                      int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
 
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tvId.setText(lookupID);
                                         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                             tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -6676,7 +6676,7 @@ public class DynamicQuestions {
                                         TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                         CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tvId.setText(lookupID);
                                         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                             tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -6907,7 +6907,7 @@ public class DynamicQuestions {
                                                 TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                                 CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-                                                String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                                String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                                 tvId.setText(lookupID);
                                                 if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                     tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
@@ -7924,7 +7924,7 @@ public class DynamicQuestions {
 
 //                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 //                            tv.setText(photoCheckboxes.getString(columnIndex));
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
 
                                         // need to recheck in testing
@@ -8028,7 +8028,7 @@ public class DynamicQuestions {
 
 //                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 //                            tv.setText(photoCheckboxes.getString(columnIndex));
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
 
                                         // need to recheck in testing
@@ -8138,7 +8138,7 @@ public class DynamicQuestions {
 
 //                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 //                            tv.setText(photoCheckboxes.getString(columnIndex));
-                                                String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                                String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                                 tv.setText(checkBoxName);
 
                                                 // need to recheck in testing

@@ -931,8 +931,8 @@
 
     <string name="farmer_roles">bodbad sauakasikon</string>
     <string name="select_level_of_responsibility">leuok khuaamhabphidsob</string>
-    <string name="non_compliant">Non-compliant</string>
-    <string name="compliant">Compliant</string>
+    <string name="non_compliant">Attribute Unknown</string>
+    <string name="compliant">EUDR Compliant</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
     <string name="plot_size">sai khanadkhong din ton (HA)</string>
