@@ -1150,8 +1150,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="select_level_of_responsibility">Select level of responsibility</string>
     <string name="farmer_roles">Farmer Role</string>
-    <string name="non_compliant">Non-compliant</string>
-    <string name="compliant">Compliant</string>
+    <string name="non_compliant">Attribution Unknown</string>
+    <string name="compliant">EUDR Compliant</string>
     <string name="ofis_farmer_and_surveys">Farmers &amp; Surveys></string>
 
     <string name="plot_size">Enter plot size (HA)</string>
