@@ -450,7 +450,7 @@ public class DataLayer {
         }
         return plottedName;
     }
-    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName){
+    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName, boolean isPlotArea){
         String centerPlot = "";
         Cursor cursor = null;
         try {
@@ -460,7 +460,12 @@ public class DataLayer {
             cursor = db.query(OFISDBContract.PlotGeoData.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
             if(cursor != null){
                 while(cursor.moveToNext()){
-                    centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT));
+                    if (isPlotArea) {
+                        centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE));
+                    }
+                    else {
+                        centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_CENTER_PLOT));
+                    }
                 }
             }
         }catch (Exception e){
@@ -494,7 +499,8 @@ public class DataLayer {
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, getPlottedNameFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
-                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), false));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), true));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
                 long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
@@ -5277,7 +5283,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId, String complainceFlag, String conductTrainingForNonCompliant, String conductSurveyForNonCompliant, String polygonCaptureForNonCompliant) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId, String complainceFlag) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -5292,9 +5298,6 @@ public class DataLayer {
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID, id);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG, complainceFlag);
-            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, conductSurveyForNonCompliant);
-            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, conductTrainingForNonCompliant);
-            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, polygonCaptureForNonCompliant);
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
@@ -7800,9 +7803,10 @@ public class DataLayer {
         return  farmerName;
     }
 
-    String getValueByLookUpID(String lookupId){
+    String getValueByLookUpID(String lookupId, Cursor qCursor, String questionColumnSuffix){
         String lookupValue = "";
         Cursor farmerCursor = null;
+        final String columnName = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
         try {
             String[] columns = new String[]{"*"};
             String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " =?";
@@ -7810,7 +7814,7 @@ public class DataLayer {
             farmerCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null,null);
             if (farmerCursor != null){
                 while(farmerCursor.moveToNext()){
-                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE));
+                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(columnName));
                 }
             }
         }catch (Exception e) {

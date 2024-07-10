@@ -75,30 +75,18 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
             ImageView cbImage = (ImageView) view.findViewById(R.id.cbImage);
             LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
             TextView state = (TextView) view.findViewById(R.id.attendeeStatus);
-            TextView enabledFarmer = (TextView) view.findViewById(R.id.farmerEnabled);
 
-            boolean isTrainingDisable = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF)).equals("false");
-            boolean isComplianceFarmer = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equals("true");
+            if (trainingAttendees.selectedFarmers.contains(id)) {
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
+                //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+                state.setText("true");
 
-            if (!isComplianceFarmer && isTrainingDisable) {
-                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_disable));
-                enabledFarmer.setText("false");
+            } else {
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+                //linearLayout.setBackgroundResource(R.drawable.list_item);
+                state.setText("false");
             }
-            else {
-                if (trainingAttendees.selectedFarmers.contains(id)) {
-                    cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
-                    //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    state.setText("true");
-                    enabledFarmer.setText("true");
-                } else {
-                    cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    state.setText("false");
-                    enabledFarmer.setText("true");
-                }
-            }
+
 
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("CustomListAdapter_Attendees: Error setting row value", e));
