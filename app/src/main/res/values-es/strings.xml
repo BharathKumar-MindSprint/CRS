@@ -775,8 +775,8 @@
 
     <string name="farmer_roles">Roles de los agricultores</string>
     <string name="select_level_of_responsibility">Seleccionar responsabilidad</string>
-    <string name="non_compliant">Non-compliant</string>
-    <string name="compliant">Compliant</string>
+    <string name="non_compliant">Atribución desconocida</string>
+    <string name="compliant">EUDR Obediente</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
     <string name="plot_size">Introduzca el tamaño de la parcela (HA)</string>
