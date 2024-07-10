@@ -7803,9 +7803,10 @@ public class DataLayer {
         return  farmerName;
     }
 
-    String getValueByLookUpID(String lookupId){
+    String getValueByLookUpID(String lookupId, Cursor qCursor, String questionColumnSuffix){
         String lookupValue = "";
         Cursor farmerCursor = null;
+        final String columnName = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
         try {
             String[] columns = new String[]{"*"};
             String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " =?";
@@ -7813,7 +7814,7 @@ public class DataLayer {
             farmerCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null,null);
             if (farmerCursor != null){
                 while(farmerCursor.moveToNext()){
-                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE));
+                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(columnName));
                 }
             }
         }catch (Exception e) {
