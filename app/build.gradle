@@ -33,8 +33,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 78
-        versionName "10.7.1"
+        versionCode 79
+        versionName "10.7.2"
 
         javaCompileOptions {
             annotationProcessorOptions {
