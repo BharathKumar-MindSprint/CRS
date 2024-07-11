@@ -774,7 +774,7 @@
 
     <string name="farmer_roles">Funções do Agricultor</string>
     <string name="select_level_of_responsibility">Selecione a responsabilidade</string>
-    <string name="non_compliant">Atribuição desconhecida</string>
+    <string name="non_compliant">Atributo desconhecido</string>
     <string name="compliant">EUDR Compatível</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 

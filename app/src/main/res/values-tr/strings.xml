@@ -673,7 +673,7 @@
 
     <string name="farmer_roles">Çiftçi Rolleri</string>
     <string name="select_level_of_responsibility">Sorumluluğu seçin</string>
-    <string name="non_compliant">Atıf Bilinmiyor</string>
+    <string name="non_compliant">Özellik Bilinmiyor</string>
     <string name="compliant">EUDR Uysal</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 

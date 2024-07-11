@@ -770,7 +770,7 @@
 
     <string name="farmer_roles">Peran Petani</string>
     <string name="select_level_of_responsibility">Pilih tanggung jawab</string>
-    <string name="non_compliant">Atribusi Tidak Diketahui</string>
+    <string name="non_compliant">Atribut Tidak Diketahui</string>
     <string name="compliant">EUDR Sesuai</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
