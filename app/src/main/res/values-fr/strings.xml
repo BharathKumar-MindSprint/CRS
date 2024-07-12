@@ -1114,5 +1114,19 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
+    <string name="existing_module">Module existant</string>
+    <string name="dm_survey">enquête</string>
+    <string name="dm_actionplan_proof">Plan d\'action et preuve</string>
+    <string name="dm_survey_results">Résultats de l’enquête</string>
+    <string name="over_all_result">Résultats globaux</string>
+    <string name="total_compliant_answers">Total des réponses conformes</string>
+    <string name="total_non_compliant_answers">Total des réponses non conformes</string>
+    <string name="total_satisfactory_answers">Total des réponses satisfaisantes</string>
+    <string name="total_action_plans_proposed">Total des plans d\'action proposés</string>
+    <string name="total_budget_proposed">Budget total proposé</string>
+    <string name="dm_compliant">Conforme</string>
+    <string name="dm_satisfactory">Satisfaisant</string>
+    <string name="dm_non_compliant">Non Conforme</string>
+    <string name="dm_capture_proof">enregistrer la preuve</string>
 
 </resources>

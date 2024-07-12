@@ -308,7 +308,13 @@ public class FollowUpActionPlan extends Fragment {
             dm_question_followup_complaint.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
-            selected_imgName.setText(complianceName);
+            if (Objects.equals(complianceName,"Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
+            } else if (Objects.equals(complianceName,"Non Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
+            } else if (Objects.equals(complianceName,"Satisfactory")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
+            }
 
 
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
@@ -561,7 +567,7 @@ public class FollowUpActionPlan extends Fragment {
             }
         }
         else {
-            textView.setText("Capture Proof");
+            textView.setText(getResources().getString(R.string.dm_capture_proof));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
             }

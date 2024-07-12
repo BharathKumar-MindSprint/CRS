@@ -784,6 +784,16 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-
+    <string name="existing_module">Existing Module</string>
+    <string name="over_all_result">Over all Result</string>
+    <string name="total_compliant_answers">Total Compliant answers</string>
+    <string name="total_non_compliant_answers">Total Non-Compliant answers</string>
+    <string name="total_satisfactory_answers">Total Satisfactory answers</string>
+    <string name="total_action_plans_proposed">Total Action plans proposed</string>
+    <string name="total_budget_proposed">Total Budget proposed</string>
+    <string name="dm_compliant">Compliant</string>
+    <string name="dm_satisfactory">Satisfactory</string>
+    <string name="dm_non_compliant">Non Compliant</string>
+    <string name="dm_capture_proof">Capture Proof</string>
 </resources>
 
