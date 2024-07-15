@@ -1,6 +1,9 @@
 package com.olam.digital.ofis.RetrofitServices;
 
 import com.olam.digital.ofis.BuildConfig;
+
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -11,6 +14,9 @@ public class RetrofitClient {
     public static Retrofit getRetrofit(){
         Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
          OkHttpClient okHttpClient=new OkHttpClient.Builder()
+                 .connectTimeout(90, TimeUnit.SECONDS)
+                 .readTimeout(720, TimeUnit.SECONDS)
+                 .writeTimeout(720, TimeUnit.SECONDS)
                  .addInterceptor(interceptor)
                  .build();
 

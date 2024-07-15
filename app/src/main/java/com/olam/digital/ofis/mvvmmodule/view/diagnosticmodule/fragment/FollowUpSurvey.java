@@ -99,7 +99,13 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             dm_question_complaint_followup_survey.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
-            selected_imgName.setText(complianceName);
+            if (Objects.equals(complianceName,"Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
+            } else if (Objects.equals(complianceName,"Non Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
+            } else if (Objects.equals(complianceName,"Satisfactory")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
+            }
 
 
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;

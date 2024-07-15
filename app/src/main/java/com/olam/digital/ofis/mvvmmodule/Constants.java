@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule;
 
+import com.olam.digital.ofis.R;
+
 import java.util.ArrayList;
 
 public class Constants {
@@ -41,8 +43,6 @@ public class Constants {
     public static int capture_count;
 
     public static ArrayList<String> questionIdsFollowUp = new ArrayList<>();
-
-    public static String EXISTINGMODULE = "Existing Module";
 
     public static String FOLLOWUP = "Follow-up survey ";
 
