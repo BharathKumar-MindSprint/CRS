@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.Utilities.datatypeIdCLMRS;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -2265,8 +2267,8 @@ public class DataLayer {
             String productId =Utilities.productId;
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
-            /*try {
-                if (type.equalsIgnoreCase("CHILD_PRODUCT") &&
+            try {
+                if (type.equalsIgnoreCase("CHILD_PRODUCT") &&  datatypeIdCLMRS != 6 &&
                         table.equalsIgnoreCase(OFISDBContract.LookupValuesEntry.TABLE_NAME)) {
                     String value = "%\"country_id\":" +
                             Long.parseLong(countryId) +
@@ -2278,7 +2280,7 @@ public class DataLayer {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-            }*/
+            }
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if (OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())) {
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
@@ -3931,15 +3933,15 @@ public class DataLayer {
     }
 
     // modules tasks
-    Cursor getLookupValuesForQuestion(int questionId, String questionColumn) {
+    Cursor getLookupValuesForQuestion(int questionId, String questionColumn, int dataypeId) {
         String type = Utilities.type;
         String productId = Utilities.productId;
         String countryId = Utilities.countryId;
         String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
-        /*try {
-            if (type.equalsIgnoreCase("CHILD_PRODUCT")) {
-                String value = "%\"country_id\":" +
+        try {
+            if (type.equalsIgnoreCase("CHILD_PRODUCT") && dataypeId != 6) {
+                String value = "% \"country_id\":" +
                         Long.parseLong(countryId) +
                         ",\"product_id\":" +
                         Long.parseLong(productId) + "%";
@@ -3949,7 +3951,7 @@ public class DataLayer {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }*/
+        }
         String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
 
 
