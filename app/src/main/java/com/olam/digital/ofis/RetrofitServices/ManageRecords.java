@@ -14,6 +14,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
 import org.json.JSONArray;
@@ -81,4 +82,9 @@ public interface ManageRecords {
 
     @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
     Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
+
+    @GET("ofissurvey/survey/getPhotoCheckboxImages")
+    Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate);
+
+
 }

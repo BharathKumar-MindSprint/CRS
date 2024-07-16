@@ -150,4 +150,22 @@ public class SharedPreferenceUtils {
         }
         return null;
     }
+
+    public void setPhotoCheckBoxContainer(String value) {
+        mSharedPreferencesEditor.putString(AppConstants.CONTAINER_QWR, value);
+        mSharedPreferencesEditor.commit();
+    }
+
+    public String getPhotoCheckBoxContainer() {
+        return mSharedPreferences.getString(AppConstants.CONTAINER_QWR, "");
+    }
+
+    public void setPhotoCheckBoxSyncDate(String value) {
+        mSharedPreferencesEditor.putString(AppConstants.SYNC_DATE_QWR, value);
+        mSharedPreferencesEditor.commit();
+    }
+
+    public String getPhotoCheckBoxSyncDate() {
+        return mSharedPreferences.getString(AppConstants.SYNC_DATE_QWR, "");
+    }
 }

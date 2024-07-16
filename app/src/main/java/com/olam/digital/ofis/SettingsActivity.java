@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,17 +39,29 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
@@ -58,7 +71,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private Resources res;
     private DataLayer dl;
     private ProgressDialog m_ProgressDialog;
-    Button buttonSave;
+    Button buttonSave, buttonPhotoCheckbox;
+    private static ProgressDialog progressDialog;
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private boolean updateData=false;
@@ -66,7 +80,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX = 1111;
+    private final static int MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX = 2222;
     Button buttonPrivacyConsent, buttonReenterPasscode;
+    OFISRoomDB roomDB;
+
     private long lastClickTime = 0;
     TextView deviceid;
 
@@ -78,11 +96,16 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         dl = new DataLayer(res, context);
+        roomDB = OFISRoomDB.getDbInstance(context);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.PleaseWait));
+        progressDialog.setMessage(getString(R.string.Loading));
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonPhotoCheckbox = (Button) findViewById(R.id.buttonPhotoCheckbox);
         TextView deviceid = (TextView) findViewById(R.id.deviceid);
         deviceid.setText(getResources().getString(R.string.android_id) + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         buttonPrivacyConsent=(Button) findViewById(R.id.buttonPrivacyConsent);
@@ -142,6 +165,53 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 }
             }
                 lastClickTime=SystemClock.elapsedRealtime();
+            }
+        });
+
+        buttonPhotoCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    if (ContextCompat.checkSelfPermission(SettingsActivity.this, android.Manifest.permission.CAMERA) +
+                            ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_AUDIO) +
+                            ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_VIDEO) +
+                            ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(SettingsActivity.this,
+                                new String[]{
+                                        android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_MEDIA_AUDIO,
+                                        android.Manifest.permission.READ_MEDIA_VIDEO,
+                                        android.Manifest.permission.READ_MEDIA_IMAGES},
+                                REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX);
+                    }else {
+                        // Permission already granted
+                        photoCheckboxDownload();
+                    }
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(SettingsActivity.this,
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
+                            .checkSelfPermission(SettingsActivity.this,
+                                    android.Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        ActivityCompat.requestPermissions(SettingsActivity.this,
+                                new String[]{android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.READ_PHONE_STATE,
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        android.Manifest.permission.RECORD_AUDIO,
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                        android.Manifest.permission.READ_PHONE_STATE},
+                                MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX);
+                    } else {
+                        photoCheckboxDownload();
+                    }
+                } else {
+                    // Call methods directly for Android versions lower than Marshmallow
+                    photoCheckboxDownload();
+                }
+
             }
         });
 
@@ -433,6 +503,63 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     e.printStackTrace();
                 }
             }
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[3] == PackageManager.PERMISSION_GRANTED ) {
+                        // Permissions granted, proceed with your code
+                        photoCheckboxDownload();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                            || !shouldShowRequestPermissionRationale(permissions[3])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX: {
+
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[3] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[4] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[5] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[6] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[7] == PackageManager.PERMISSION_GRANTED) {
+                        photoCheckboxDownload();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                            || !shouldShowRequestPermissionRationale(permissions[3])
+                            || !shouldShowRequestPermissionRationale(permissions[4])
+                            || !shouldShowRequestPermissionRationale(permissions[5])
+                            || !shouldShowRequestPermissionRationale(permissions[6])
+                            || !shouldShowRequestPermissionRationale(permissions[7])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
@@ -559,5 +686,107 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     }
 
+    public void photoCheckboxDownload(){
+        if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
+
+
+            if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(false);
+                LayoutInflater inflater = this.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+                builder.setView(dialogView);
+                TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+                tvMsg.setText(res.getString(R.string.ready_to_download_photo_checkbox));
+                Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+                Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+                AlertDialog alert = builder.create();
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alert.dismiss();
+                    }
+                });
+
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                        try {
+                            while (photoData.moveToNext()) {
+                                progressDialog.show();
+                                long id = photoData.getLong(photoData.getColumnIndex("id"));
+                                long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
+                                long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
+                                String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                                PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                            }
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        } finally {
+                            photoData.close();
+                            progressDialog.hide();
+                            Toast.makeText(SettingsActivity.this,"Photo Downloaded", Toast.LENGTH_SHORT).show();
+
+                        }
+                        alert.dismiss();
+                    }
+                });
+
+                alert.show();
+            } else {
+                Toast.makeText(context, "No Image Available to Download", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(getApplicationContext()).getPhotoCheckBoxContainer(),fileName);
+        retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+
+        call.enqueue(new retrofit2.Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        ResponseBody body = response.body();
+                        byte[] imageBytes = body.bytes();
+
+                        File internalStorageDir = getApplicationContext().getFilesDir();
+
+                        File imageFile = new File(internalStorageDir, fileName);
+
+                        FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                        fileWrite.write(imageBytes);
+                        fileWrite.close();
+
+                        roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+
+
+                        Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+                    } else {
+                        Log.e("ImageDownload", "Error downloading image: " + response.code());
+                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("TAGFailure", "Network request failed", t);
+            }
+        });
+    }
 
 }

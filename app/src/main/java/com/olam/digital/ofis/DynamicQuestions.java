@@ -11,7 +11,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
@@ -7937,6 +7939,37 @@ public class DynamicQuestions {
                                             }
                                         }
 
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+
+                                                BitmapFactory.Options options = new BitmapFactory.Options();
+                                                options.inJustDecodeBounds = true;
+                                                BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+                                                int reqWidth = 500;
+                                                int reqHeight = 500;
+
+                                                Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+
+                                                float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
+                                                int newWidth;
+                                                int newHeight;
+
+                                                if (aspectRatio > 1) {
+                                                    newWidth = reqWidth;
+                                                    newHeight = Math.round(reqWidth / aspectRatio);
+                                                } else {
+                                                    newHeight = reqHeight;
+                                                    newWidth = Math.round(reqHeight * aspectRatio);
+                                                }
+
+                                                Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+                                                iv.setImageBitmap(resizedBitmap);
+                                            }
+                                        }
+
 
                                         tl.addView(tr);
 
@@ -8041,6 +8074,36 @@ public class DynamicQuestions {
                                             }
                                         }
 
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+
+                                                BitmapFactory.Options options = new BitmapFactory.Options();
+                                                options.inJustDecodeBounds = true;
+                                                BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+                                                int reqWidth = 500;
+                                                int reqHeight = 500;
+
+                                                Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+
+                                                float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
+                                                int newWidth;
+                                                int newHeight;
+
+                                                if (aspectRatio > 1) {
+                                                    newWidth = reqWidth;
+                                                    newHeight = Math.round(reqWidth / aspectRatio);
+                                                } else {
+                                                    newHeight = reqHeight;
+                                                    newWidth = Math.round(reqHeight * aspectRatio);
+                                                }
+
+                                                Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+                                                iv.setImageBitmap(resizedBitmap);
+                                            }
+                                        }
 
                                         tl.addView(tr);
 
@@ -8151,6 +8214,36 @@ public class DynamicQuestions {
                                                     }
                                                 }
 
+                                                String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                                if (photoLocation!=null){
+                                                    File imageFile = new File(photoLocation);
+                                                    if (imageFile.exists()) {
+
+                                                        BitmapFactory.Options options = new BitmapFactory.Options();
+                                                        options.inJustDecodeBounds = true;
+                                                        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+                                                        int reqWidth = 500;
+                                                        int reqHeight = 500;
+
+                                                        Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+
+                                                        float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
+                                                        int newWidth;
+                                                        int newHeight;
+
+                                                        if (aspectRatio > 1) {
+                                                            newWidth = reqWidth;
+                                                            newHeight = Math.round(reqWidth / aspectRatio);
+                                                        } else {
+                                                            newHeight = reqHeight;
+                                                            newWidth = Math.round(reqHeight * aspectRatio);
+                                                        }
+
+                                                        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+                                                        iv.setImageBitmap(resizedBitmap);
+                                                    }
+                                                }
 
                                                 tl.addView(tr);
 

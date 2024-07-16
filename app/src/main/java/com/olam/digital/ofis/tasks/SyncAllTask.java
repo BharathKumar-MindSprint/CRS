@@ -7,9 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
@@ -32,6 +38,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
+import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
@@ -39,12 +46,18 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -54,6 +67,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by ben on 24/02/16.
@@ -96,6 +110,8 @@ public class SyncAllTask extends SyncTask {
     AnswerRequestDTO answerRequestDTO;
     int notificationModuleId;
     int repeaterCount ;
+
+    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
     public SyncAllTask(Context context) {
         super(context);
     }
@@ -246,6 +262,17 @@ public class SyncAllTask extends SyncTask {
                 notificationModuleId = Integer.parseInt(ids[0]);
                 syncSmartNotification(notificationModuleId,1);
             } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if ( op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
+            try {
+                if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)){
+                    syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
+                } else {
+                    syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
+                }
+
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -465,9 +492,11 @@ public class SyncAllTask extends SyncTask {
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 deleteRoomDbValues();
                 HomeActivity.completeFirstSetup();
+                photoCheckboxDownload();
             }else{
                 deleteRoomDbValues();
                 SettingsActivity.completeSetup();
+                photoCheckboxDownload();
             }
 
             /*if (pd != null && pd.isShowing()) {
@@ -1042,26 +1071,86 @@ public class SyncAllTask extends SyncTask {
                         e.printStackTrace();
                     }
 
-                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
-                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
 
                 } else {
-                    // Handle unsuccessful response here
-                    // You might want to check the response code and handle errors
+                    String finalEndPoint = call.request().url().toString();
+                    int statusCode = response.code();
+                    String networkResponse = response.body().toString();
+                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+
                 }
             }
 
             @Override
             public void onFailure(retrofit2.Call<LocalUnitResponseModel> call, Throwable t) {
-                // Handle the failure here
-                if (t instanceof IOException) {
-                    // Network or conversion error
-                    // You might want to display a message to the user or log the error
-                } else {
-                    // Unexpected error
-                    // Log the error for debugging purposes
-                    t.printStackTrace();
+
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
                 }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+
+    }
+
+    public void syncPhotoCheckBoxData(String syncDate) throws JSONException{
+        ManageRecords getPhotoCheckBoxData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<PhotoCheckBoxResponseModel> call = getPhotoCheckBoxData.getAllPhotoCheckBoxData(1, syncDate);
+
+        call.enqueue(new retrofit2.Callback<PhotoCheckBoxResponseModel>() {
+            @Override
+            public void onResponse(retrofit2.Call<PhotoCheckBoxResponseModel> call, retrofit2.Response<PhotoCheckBoxResponseModel> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                    try {
+
+                        if (response.body() != null && response.body().getPhotoCheckBoxList() != null) {
+
+                            SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxContainer(response.body().getContainer());
+                            SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxSyncDate(response.body().getSyncDate());
+
+                            ArrayList<PhotoCheckBoxData> outputData = response.body().getPhotoCheckBoxList();
+
+                            if (outputData != null) {
+
+                                for (PhotoCheckBoxData photoData : outputData) {
+                                    db.photoCheckBoxDataDao().insertAll(photoData);
+
+                                }
+
+                            }
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
+
+                } /*else {
+                    String finalEndPoint = call.request().url().toString();
+                    int statusCode = response.code();
+                    String networkResponse = response.body().toString();
+                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                }*/
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<PhotoCheckBoxResponseModel> call, Throwable t) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
             }
         });
 
@@ -2000,6 +2089,103 @@ public class SyncAllTask extends SyncTask {
 
             }
 
+        });
+    }
+
+    public void photoCheckboxDownload(){
+        if (InternetConnectionHelper.isInternetAvailable(context)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+            builder.setView(dialogView);
+            TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+            tvMsg.setText(res.getString(R.string.ready_to_download_photo_checkbox));
+            Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+            Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+            AlertDialog alert = builder.create();
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alert.dismiss();
+                }
+            });
+
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                    try {
+                        while (photoData.moveToNext()) {
+                            pd.setTitle(context.getString(R.string.PleaseWait));
+                            pd.setMessage(context.getString(R.string.Loading));
+                            pd.show();
+                            long id = photoData.getLong(photoData.getColumnIndex("id"));
+                            long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
+                            long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
+                            String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                            PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    } finally {
+                        photoData.close();
+                        pd.hide();
+                        Toast.makeText(context,"Photo Downloaded", Toast.LENGTH_SHORT).show();
+
+                    }
+                    alert.dismiss();
+                }
+            });
+
+            alert.show();
+        } else {
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(),fileName);
+        retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+
+        call.enqueue(new retrofit2.Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                try {
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        ResponseBody body = response.body();
+                        byte[] imageBytes = body.bytes();
+
+                        File internalStorageDir = context.getFilesDir();
+
+                        File imageFile = new File(internalStorageDir, fileName);
+
+                        FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                        fileWrite.write(imageBytes);
+                        fileWrite.close();
+
+                        roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+
+
+                        Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+                    } else {
+                        Log.e("ImageDownload", "Error downloading image: " + response.code());
+                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
+                Log.d("TAGFailure", "Network request failed", t);
+            }
         });
     }
 }
