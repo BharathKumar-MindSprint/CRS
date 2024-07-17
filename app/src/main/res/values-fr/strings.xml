@@ -1129,8 +1129,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_non_compliant">Non Conforme</string>
     <string name="dm_capture_proof">enregistrer la preuve</string>
     <string name="back">Arrière</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Sélectionnez la devise du plan d\'action</string>
+    <string name="dm_select_currency_txt">Sélectionnez la devise du plan d\'action</string>
+    <string name="dm_header_txt">Plan d\'action et preuve du module de diagnostic</string>
 
 
 </resources>

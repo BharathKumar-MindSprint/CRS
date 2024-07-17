@@ -1098,7 +1098,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
     <string name="back">Arrière</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Sélectionnez la devise du plan d\'action</string>
+    <string name="dm_select_currency_txt">Sélectionnez la devise du plan d\'action</string>
+    <string name="dm_header_txt">Plan d\'action et preuve du module de diagnostic</string>
 
 </resources>
