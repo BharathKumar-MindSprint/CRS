@@ -492,11 +492,15 @@ public class SyncAllTask extends SyncTask {
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 deleteRoomDbValues();
                 HomeActivity.completeFirstSetup();
-                photoCheckboxDownload();
+                if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+                    photoCheckboxDownload();
+                }
             }else{
                 deleteRoomDbValues();
                 SettingsActivity.completeSetup();
-                photoCheckboxDownload();
+                if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+                    photoCheckboxDownload();
+                }
             }
 
             /*if (pd != null && pd.isShowing()) {
