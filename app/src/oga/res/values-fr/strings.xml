@@ -1100,5 +1100,10 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="back">Arrière</string>
     <string name="dm_select_currency_txt">Sélectionnez la devise du plan d\'action</string>
     <string name="dm_header_txt">Plan d\'action et preuve du module de diagnostic</string>
+    <string name="follow_up_farmer_details">Suivi des détails de l\'agriculteur</string>
+    <string name="dm_hint_txt">Module de diagnostic</string>
+    <string name="dm_diognostic_module_subtitle">Suivi généré</string>
+    <string name="follow_up_survey">Enquête de suivi</string>
+    <string name="diagnostic_survey">Enquête sur le module de diagnostic</string>
 
 </resources>

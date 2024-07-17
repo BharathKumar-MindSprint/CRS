@@ -44,7 +44,6 @@ public class Constants {
 
     public static ArrayList<String> questionIdsFollowUp = new ArrayList<>();
 
-    public static String FOLLOWUP = "Follow-up survey ";
 
 
 }

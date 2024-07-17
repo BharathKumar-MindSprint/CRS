@@ -767,5 +767,10 @@
     <string name="incorrect_plot_size_message">ขนาดแปลงเล็กกว่าพื้นที่กำหนดค่าขั้นต่ำ (0.0009 HA) โปรดระบุขนาดแปลงที่ถูกต้อง</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
     <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
 
 </resources>

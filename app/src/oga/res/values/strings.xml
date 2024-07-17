@@ -1121,5 +1121,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Plot size is smaller than the minimum configured area (0.0009 HA). Please specify a valid plot size.</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
 
 </resources>

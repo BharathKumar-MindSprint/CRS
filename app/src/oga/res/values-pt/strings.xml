@@ -830,5 +830,10 @@
     <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
     <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
 
 </resources>
