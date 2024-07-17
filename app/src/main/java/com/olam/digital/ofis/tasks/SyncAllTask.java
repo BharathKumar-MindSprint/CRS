@@ -2135,7 +2135,7 @@ public class SyncAllTask extends SyncTask {
                     } finally {
                         photoData.close();
                         pd.hide();
-                        Toast.makeText(context,"Photo Downloaded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
 
                     }
                     alert.dismiss();

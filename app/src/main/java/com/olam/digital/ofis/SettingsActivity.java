@@ -727,7 +727,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                         } finally {
                             photoData.close();
                             progressDialog.hide();
-                            Toast.makeText(SettingsActivity.this,"Photo Downloaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
 
                         }
                         alert.dismiss();
@@ -736,7 +736,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                 alert.show();
             } else {
-                Toast.makeText(context, "No Image Available to Download", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
             }
 
         } else {
