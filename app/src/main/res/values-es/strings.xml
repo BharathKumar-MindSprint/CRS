@@ -795,5 +795,6 @@
     <string name="dm_satisfactory">Satisfactory</string>
     <string name="dm_non_compliant">Non Compliant</string>
     <string name="dm_capture_proof">Capture Proof</string>
+    <string name="back">Espalda</string>
 </resources>
 

@@ -298,7 +298,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Save"
+                        android:text="@string/Save"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
                 </LinearLayout>
