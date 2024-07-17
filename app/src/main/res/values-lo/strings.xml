@@ -953,6 +953,9 @@
     <string name="dm_non_compliant">Non Compliant</string>
     <string name="dm_capture_proof">Capture Proof</string>
     <string name="back">ກັບໄປ</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+
 
 </resources>
 

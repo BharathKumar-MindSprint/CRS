@@ -981,5 +981,7 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">ຂະໜາດຂອງດິນຕອນນ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລະບຸຂະໜາດຂອງດິນຕອນທີ່ຖືກຕ້ອງ.</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
 
 </resources>

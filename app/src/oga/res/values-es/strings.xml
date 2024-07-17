@@ -829,6 +829,8 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
 
 </resources>
 

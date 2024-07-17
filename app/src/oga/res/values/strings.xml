@@ -1102,7 +1102,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_diognostic_module">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter value within the range %1$d - %2$d</string>

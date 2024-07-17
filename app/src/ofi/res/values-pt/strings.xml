@@ -841,5 +841,7 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
 
 </resources>
