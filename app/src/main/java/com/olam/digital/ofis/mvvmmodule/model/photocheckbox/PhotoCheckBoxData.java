@@ -27,4 +27,7 @@ public class PhotoCheckBoxData {
     @ColumnInfo(name = "photoLocation")
     public String photoLocation ;
 
+    @ColumnInfo(name = "active")
+    public boolean active;
+
 }

@@ -2083,6 +2083,9 @@ public class SyncAllTask extends SyncTask {
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // delete all data where active is false
+                   roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+
                     Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                     try {
                         while (photoData.moveToNext()) {

@@ -711,6 +711,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
 
                         Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                         try {
@@ -736,6 +737,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                 alert.show();
             } else {
+                roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
                 Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
             }
 

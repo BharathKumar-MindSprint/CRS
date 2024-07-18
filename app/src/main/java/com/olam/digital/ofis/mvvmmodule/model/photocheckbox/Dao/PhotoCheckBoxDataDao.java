@@ -35,5 +35,8 @@ public interface PhotoCheckBoxDataDao {
     @Query("SELECT id, questionId, lookupId, fileName FROM photocheckboxdata WHERE isDownload = :isDownloaded")
     Cursor getNoPhotoData(boolean isDownloaded);
 
+    @Query("DELETE FROM photocheckboxdata where active=:active")
+    void deleteDeactivatedPhoto(boolean active);
+
 }
 
