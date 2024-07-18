@@ -97,6 +97,7 @@ public class SyncAllTask extends SyncTask {
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
+    public static JSONObject localUnitResponse, photoCheckBoxResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
@@ -488,6 +489,12 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
+
+            LocalUnitResponse(localUnitResponse);
+            localUnitResponse = null;
+
+            PhotoCheckBoxResponse(photoCheckBoxResponse);
+            photoCheckBoxResponse = null;
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 deleteRoomDbValues();
@@ -1038,38 +1045,11 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(retrofit2.Call<LocalUnitResponseModel> call, retrofit2.Response<LocalUnitResponseModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                     try {
-
-                        if (response.body() != null && response.body().getOutputData() != null) {
-                            OutputData outputData = response.body().getOutputData();
-                            db.localUnitDao().deleteAll();
-                            db.globalUnitDao().deleteAll();
-                            if (outputData != null) {
-                                ArrayList<GlobalUnit> globalUnits = outputData.getGlobalUnits();
-
-                                for (GlobalUnit globalUnit : globalUnits) {
-                                    // Insert global unit into the database
-                                    db.globalUnitDao().insertAll(globalUnit);
-
-                                    // Fetch the associated local units directly from OutputData
-                                    ArrayList<LocalUnit> localUnits = globalUnit.getLocalUnit();
-                                    if (localUnits != null && !localUnits.isEmpty()) {
-                                        for (LocalUnit localUnit : localUnits) {
-                                            // Set the foreign key
-//                                            localUnit.setGlobalUnitFk(globalUnit.getGlobalUnitId());
-
-                                            // store the data in a loop
-                                            db.localUnitDao().insert(localUnit);
-                                        }
-                                        // store in a single stretch
-//                                        db.localUnitDao().insertAll(localUnits);
-                                    }
-                                }
-
-                            }
-                        }
-
+                        LocalUnitResponseModel responseBody = response.body();
+                        Gson gson = new Gson();
+                        String jsonString = gson.toJson(responseBody);
+                        localUnitResponse = new JSONObject(jsonString);
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -1109,27 +1089,12 @@ public class SyncAllTask extends SyncTask {
         call.enqueue(new retrofit2.Callback<PhotoCheckBoxResponseModel>() {
             @Override
             public void onResponse(retrofit2.Call<PhotoCheckBoxResponseModel> call, retrofit2.Response<PhotoCheckBoxResponseModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                if (response.isSuccessful() && response.body() != null && response.body().getPhotoCheckBoxList() != null ) {
                     try {
-
-                        if (response.body() != null && response.body().getPhotoCheckBoxList() != null) {
-
-                            SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxContainer(response.body().getContainer());
-                            SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxSyncDate(response.body().getSyncDate());
-
-                            ArrayList<PhotoCheckBoxData> outputData = response.body().getPhotoCheckBoxList();
-
-                            if (outputData != null) {
-
-                                for (PhotoCheckBoxData photoData : outputData) {
-                                    db.photoCheckBoxDataDao().insertAll(photoData);
-
-                                }
-
-                            }
-                        }
-
+                        PhotoCheckBoxResponseModel responseBody = response.body();
+                        Gson gson = new Gson();
+                        String jsonString = gson.toJson(responseBody);
+                        photoCheckBoxResponse = new JSONObject(jsonString);
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -2192,4 +2157,69 @@ public class SyncAllTask extends SyncTask {
             }
         });
     }
+
+    private void LocalUnitResponse(JSONObject localUnitResponse){
+        try {
+            Gson gson = new Gson();
+            LocalUnitResponseModel model = gson.fromJson(String.valueOf(localUnitResponse), LocalUnitResponseModel.class);
+            if (localUnitResponse != null && model.getOutputData() != null) {
+                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                OutputData outputData = model.getOutputData();
+                db.localUnitDao().deleteAll();
+                db.globalUnitDao().deleteAll();
+                if (outputData != null) {
+                    ArrayList<GlobalUnit> globalUnits = outputData.getGlobalUnits();
+
+                    for (GlobalUnit globalUnit : globalUnits) {
+                        // Insert global unit into the database
+                        db.globalUnitDao().insertAll(globalUnit);
+
+                        ArrayList<LocalUnit> localUnits = globalUnit.getLocalUnit();
+                        if (localUnits != null && !localUnits.isEmpty()) {
+                            for (LocalUnit localUnit : localUnits) {
+                                // Set the foreign key
+                                // localUnit.setGlobalUnitFk(globalUnit.getGlobalUnitId());
+
+                                // store the data in a loop
+                                db.localUnitDao().insert(localUnit);
+                            }
+                                // store in a single stretch
+                                // db.localUnitDao().insertAll(localUnits);
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void PhotoCheckBoxResponse(JSONObject photoCheckBoxResponse) {
+        try {
+            Gson gson = new Gson();
+            PhotoCheckBoxResponseModel model = gson.fromJson(photoCheckBoxResponse.toString(), PhotoCheckBoxResponseModel.class);
+            if (model != null && model.getPhotoCheckBoxList() != null) {
+                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxContainer(model.getContainer());
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxSyncDate(model.getSyncDate());
+
+                ArrayList<PhotoCheckBoxData> outputData = model.getPhotoCheckBoxList();
+
+                if (outputData != null) {
+
+                    for (PhotoCheckBoxData photoData : outputData) {
+                        db.photoCheckBoxDataDao().insert(photoData);
+                    }
+
+                }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }
