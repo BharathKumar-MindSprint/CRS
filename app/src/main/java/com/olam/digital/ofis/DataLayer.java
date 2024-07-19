@@ -3941,7 +3941,7 @@ public class DataLayer {
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
         try {
             if (type.equalsIgnoreCase("CHILD_PRODUCT") && dataypeId != 6) {
-                String value = "% \"country_id\":" +
+                String value = "%\"country_id\":" +
                         Long.parseLong(countryId) +
                         ",\"product_id\":" +
                         Long.parseLong(productId) + "%";
