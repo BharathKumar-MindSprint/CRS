@@ -14,9 +14,6 @@ public class RetrofitClient {
     public static Retrofit getRetrofit(){
         Interceptor interceptor=new com.olam.digital.ofis.ManageTrainingRecords.Services.Interceptor();
          OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                 .connectTimeout(540, TimeUnit.SECONDS)
-                 .readTimeout(540, TimeUnit.SECONDS)
-                 .writeTimeout(540, TimeUnit.SECONDS)
                  .addInterceptor(interceptor)
                  .build();
 
