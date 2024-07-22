@@ -577,19 +577,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                     boolean isSynced = dl.getSyncedStatus(farmerId);
                     boolean availstatus = dl.isValueavailable(farmerId);
+                    boolean isUpdateNationalId = dl.isUpdateNationalIdAvailable(farmerId);
+                    if (!nidupdateWaiting) {
+                        nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("Update_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    }
 
-                    if (isSynced) {
+                    if (isSynced && !isUpdateNationalId) {
                         textView.setText(res.getString(R.string.view_tab_hint));
                         moduleTitle.setText(res.getString(R.string.view_nationalid));
                     } else {
-                        if (!availstatus) {
+                        if (!availstatus && !isUpdateNationalId) {
                             textView.setText(res.getString(R.string.add_tab_hint));
                             moduleTitle.setText(res.getString(R.string.add_nationalid));
                         } else {
                             textView.setText(res.getString(R.string.update_tab_hint));
                             moduleTitle.setText(res.getString(R.string.update_nationalid));
                         }
-
                     }
 
                     if (updateWaiting || nidupdateWaiting) {
