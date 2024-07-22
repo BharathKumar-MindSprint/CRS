@@ -231,7 +231,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         final List<String> complianceIds = new ArrayList<String>();
         complianceIds.clear();
 
-        list.add("Answer");
+        list.add(getResources().getString(R.string.ModuleAnswerHint));
         ids.add("0");
         complianceIds.add("0");
         allowCustomActionPlan.add(false);
@@ -652,7 +652,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         final List<Boolean> isCaptureProof = new ArrayList<Boolean>();
         isCaptureProof.clear();
 
-        list.add("Answer");
+        list.add(getResources().getString(R.string.ModuleAnswerHint));
         ids.add("0");
         complianceIds.add("0");
         allowCustomActionPlan.add(false);
