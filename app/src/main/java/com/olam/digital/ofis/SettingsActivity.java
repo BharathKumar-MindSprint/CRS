@@ -48,6 +48,7 @@ import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
@@ -711,6 +712,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        deleteAllInActivePhotoData();
                         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
 
                         Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
@@ -737,12 +739,28 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                 alert.show();
             } else {
+                deleteAllInActivePhotoData();
                 roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
                 Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
             }
 
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void deleteAllInActivePhotoData() {
+        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+        if (inActivePhoto.size()>0){
+            for (int i = 0; i < inActivePhoto.size(); i++) {
+                String fileName = inActivePhoto.get(i).fileName;
+                File internalStorageDir = getApplicationContext().getFilesDir();
+                File imageFile = new File(internalStorageDir, fileName);
+
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
         }
     }
 

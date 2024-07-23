@@ -10,6 +10,9 @@ import androidx.room.Query;
 
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Dao
 public interface PhotoCheckBoxDataDao {
 
@@ -34,6 +37,9 @@ public interface PhotoCheckBoxDataDao {
 
     @Query("SELECT id, questionId, lookupId, fileName FROM photocheckboxdata WHERE isDownload = :isDownloaded")
     Cursor getNoPhotoData(boolean isDownloaded);
+
+    @Query("SELECT * FROM PhotoCheckBoxData WHERE active=:active")
+    List<PhotoCheckBoxData> getInactivePhoto(boolean active);
 
     @Query("DELETE FROM photocheckboxdata where active=:active")
     void deleteDeactivatedPhoto(boolean active);
