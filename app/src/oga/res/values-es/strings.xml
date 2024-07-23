@@ -830,5 +830,9 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
 
+    <string name="ofis_photo_checkbox_download">Descargar imágenes de casillas de verificación de fotos</string>
+    <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
+    <string name="no_images_to_be_downloaded">No hay imágenes para descargar.</string>
+    <string name="image_downloaded">Imagen descargada</string>
 </resources>
 

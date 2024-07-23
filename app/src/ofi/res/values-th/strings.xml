@@ -766,4 +766,8 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">ขนาดแปลงเล็กกว่าพื้นที่กำหนดค่าขั้นต่ำ (0.0009 HA) โปรดระบุขนาดแปลงที่ถูกต้อง</string>
 
+    <string name="ofis_photo_checkbox_download">ดาวน์โหลดรูปภาพช่องทำเครื่องหมายภาพถ่าย</string>
+    <string name="ready_to_download_photo_checkbox">มีรูปภาพที่ต้องดาวน์โหลดสำหรับคำถามในช่องทำเครื่องหมายรูปภาพ คุณต้องการดาวน์โหลดภาพต่อไปหรือไม่?</string>
+    <string name="no_images_to_be_downloaded">ไม่มีรูปภาพให้ดาวน์โหลด</string>
+    <string name="image_downloaded">ไม่มีรูปภาพให้ดาวน์โหลด</string>
 </resources>

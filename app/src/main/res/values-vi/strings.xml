@@ -682,5 +682,8 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Kích thước lô nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng chỉ định kích thước lô hợp lệ.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-
+    <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
+    <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
+    <string name="no_images_to_be_downloaded">Không có hình ảnh nào để tải xuống</string>
+    <string name="image_downloaded">Đã tải xuống hình ảnh</string>
 </resources>

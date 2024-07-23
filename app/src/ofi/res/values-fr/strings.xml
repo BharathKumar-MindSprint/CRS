@@ -1110,5 +1110,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
-
+    <string name="ofis_photo_checkbox_download">Télécharger des images de cases à cocher pour photos</string>
+    <string name="ready_to_download_photo_checkbox">Certaines images doivent être téléchargées pour les questions sur les cases à cocher photo. Voulez-vous continuer à télécharger les images maintenant ?</string>
+    <string name="no_images_to_be_downloaded">Il n\'y a aucune image à télécharger</string>
+    <string name="image_downloaded">Image téléchargée</string>
 </resources>

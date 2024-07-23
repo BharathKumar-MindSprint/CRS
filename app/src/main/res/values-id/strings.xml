@@ -779,5 +779,8 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Ukuran plot lebih kecil dari luas minimum yang dikonfigurasi (0,0009 HA). Harap tentukan ukuran plot yang valid.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-
+    <string name="ofis_photo_checkbox_download">Unduh Gambar Kotak Centang Foto</string>
+    <string name="ready_to_download_photo_checkbox">Ada gambar yang perlu diunduh untuk pertanyaan kotak centang foto. Apakah Anda ingin terus mendownload gambar sekarang?</string>
+    <string name="no_images_to_be_downloaded">Tidak ada gambar yang dapat diunduh</string>
+    <string name="image_downloaded">Gambar Diunduh</string>
 </resources>

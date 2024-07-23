@@ -942,5 +942,9 @@
     <string name="incorrect_plot_size_message">ຂະໜາດຂອງດິນຕອນນ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລະບຸຂະໜາດຂອງດິນຕອນທີ່ຖືກຕ້ອງ.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
 
+    <string name="ofis_photo_checkbox_download">ດາວໂຫລດຮູບພາບ Checkbox ຮູບພາບ</string>
+    <string name="ready_to_download_photo_checkbox">ມີ​ຮູບ​ພາບ​ທີ່​ຈໍາ​ເປັນ​ຕ້ອງ​ໄດ້​ຮັບ​ການ​ດາວ​ໂຫຼດ​ສໍາ​ລັບ​ຄໍາ​ຖາມ checkbox ຮູບ​ພາບ​ແມ່ນ​. ທ່ານຕ້ອງການສືບຕໍ່ດາວໂຫຼດຮູບພາບດຽວນີ້ບໍ?</string>
+    <string name="no_images_to_be_downloaded">ບໍ່ມີຮູບພາບທີ່ຈະດາວໂຫລດ</string>
+    <string name="image_downloaded">ດາວໂຫຼດຮູບແລ້ວ</string>
 </resources>
 

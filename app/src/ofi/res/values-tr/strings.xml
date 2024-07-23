@@ -767,5 +767,8 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Grafik boyutu, yapılandırılan minimum alandan (0,0009 HA) daha küçük. Lütfen geçerli bir çizim boyutu belirtin.</string>
-
+    <string name="ofis_photo_checkbox_download">Fotoğraf Onay Kutusu Resimlerini İndir</string>
+    <string name="ready_to_download_photo_checkbox">Fotoğraf onay kutusu soruları için indirilmesi gereken resimler var. Resimleri indirmeye şimdi devam etmek istiyor musunuz?</string>
+    <string name="no_images_to_be_downloaded">İndirilecek resim yok</string>
+    <string name="image_downloaded">Resim İndirildi</string>
 </resources>
