@@ -1118,7 +1118,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_diognostic_module_subtitle">Suivi généré</string>
     <string name="follow_up_survey">Enquête de suivi</string>
     <string name="diagnostic_survey">Enquête sur le module de diagnostic</string>
-
+    <string name="dm_not_resolved">Non Résolu</string>
+    <string name="dm_resolved">Résolue</string>
 
 
 </resources>

@@ -960,7 +960,7 @@ public class FollowUpActionPlan extends Fragment {
                 String resolved = dmSurveyAnswerTableList1.get(0).status;
                 if(resolved!=null) {
                     if (resolved.equalsIgnoreCase(Constants.RESOLVED)) {
-                        notResolveText.setText(Constants.RESOLVED);
+                        notResolveText.setText(getResources().getString(R.string.dm_resolved));
                         notResolveText.setTextColor(getResources().getColor(R.color.colorPrimary));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_resolved));
@@ -971,7 +971,7 @@ public class FollowUpActionPlan extends Fragment {
 //                        }
 
                     } else if (resolved.equalsIgnoreCase(Constants.NOTRESOLVED)) {
-                        notResolveText.setText(Constants.NOTRESOLVED);
+                        notResolveText.setText(getResources().getString(R.string.dm_resolved));
                         notResolveText.setTextColor(getResources().getColor(R.color.notResolved));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_not_resolved));

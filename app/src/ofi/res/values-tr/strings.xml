@@ -774,5 +774,6 @@
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
-
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
 </resources>

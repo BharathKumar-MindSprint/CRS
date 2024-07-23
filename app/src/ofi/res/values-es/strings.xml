@@ -850,6 +850,7 @@
 
     <string name="ofis_farmer_and_surveys">Agricultores y encuestas</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
-
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
 </resources>
 

@@ -1172,5 +1172,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_capture_proof">Capture Proof</string>
     <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
     <string name="follow_up_survey">Follow-up survey</string>
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
 
 </resources>
