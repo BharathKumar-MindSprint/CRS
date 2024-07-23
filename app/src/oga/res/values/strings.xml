@@ -1125,5 +1125,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_hint_txt">Diagnostic Module</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
-
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
 </resources>
