@@ -1,6 +1,9 @@
 package com.olam.digital.ofis.ManageTrainingRecords.Services;
 
 import com.olam.digital.ofis.BuildConfig;
+
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
