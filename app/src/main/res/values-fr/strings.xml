@@ -1105,7 +1105,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="farmer_roles">Rôles des planteurs</string>
     <string name="select_level_of_responsibility">Sélectionnez niveau de responsabilité</string>
-    <string name="non_compliant">Attribution inconnue</string>
+    <string name="non_compliant">Attribut inconnu</string>
     <string name="compliant">EUDR Conforme</string>
     <string name="ofis_farmer_and_surveys"><![CDATA[Farmers & Surveys]]></string>
 
@@ -1114,5 +1114,29 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
+    <string name="existing_module">Module existant</string>
+    <string name="dm_survey">enquête</string>
+    <string name="dm_actionplan_proof">Plan d\'action et preuve</string>
+    <string name="dm_survey_results">Résultats de l’enquête</string>
+    <string name="over_all_result">Résultats globaux</string>
+    <string name="total_compliant_answers">Total des réponses conformes</string>
+    <string name="total_non_compliant_answers">Total des réponses non conformes</string>
+    <string name="total_satisfactory_answers">Total des réponses satisfaisantes</string>
+    <string name="total_action_plans_proposed">Total des plans d\'action proposés</string>
+    <string name="total_budget_proposed">Budget total proposé</string>
+    <string name="dm_compliant">Conforme</string>
+    <string name="dm_satisfactory">Satisfaisant</string>
+    <string name="dm_non_compliant">Non Conforme</string>
+    <string name="dm_capture_proof">enregistrer la preuve</string>
+    <string name="back">Arrière</string>
+    <string name="dm_select_currency_txt">Sélectionnez la devise du plan d\'action</string>
+    <string name="dm_header_txt">Plan d\'action et preuve du module de diagnostic</string>
+    <string name="follow_up_farmer_details">Suivi des détails de l\'agriculteur</string>
+    <string name="dm_hint_txt">Module de diagnostic</string>
+    <string name="dm_diognostic_module_subtitle">Suivi généré</string>
+    <string name="follow_up_survey">Enquête de suivi</string>
+    <string name="diagnostic_survey">Enquête sur le module de diagnostic</string>
+    <string name="dm_not_resolved">Non Résolu</string>
+    <string name="dm_resolved">Résolue</string>
 
 </resources>

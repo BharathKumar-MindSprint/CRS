@@ -139,11 +139,11 @@ public class DiagnosticModuleActivity extends BaseActivity  {
     private String getTabTitle(int position) {
         switch (position) {
             case 0:
-                return "SURVEY";
+                return getApplicationContext().getString(R.string.dm_survey);
             case 1:
-                return "ACTION PLAN AND PROOF";
+                return getApplicationContext().getString(R.string.dm_actionplan_proof);
             case 2:
-                return "SURVEY RESULTS";
+                return getApplicationContext().getString(R.string.dm_survey_results);
             default:
                 return "";
         }

@@ -645,6 +645,14 @@
     <string name="biometric_license_failed">Licencia biométrica: ha fallado</string>
     <string name="biometric_licence_deactivation_queue">Desactivación de la licencia biométrica</string>
     <string name="face_recognizion">Reconocimiento facial</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
+
 
     <string name="restriction_in_submodules">Responda a todas las preguntas obligatorias para continuar</string>
     <string name="please_respond_mandatory_question">Responde a la pregunta obligatoria</string>
@@ -842,6 +850,7 @@
 
     <string name="ofis_farmer_and_surveys">Agricultores y encuestas</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
-
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
 </resources>
 
