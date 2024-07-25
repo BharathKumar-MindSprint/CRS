@@ -7943,30 +7943,7 @@ public class DynamicQuestions {
                                         if (photoLocation!=null){
                                             File imageFile = new File(photoLocation);
                                             if (imageFile.exists()) {
-
-                                                BitmapFactory.Options options = new BitmapFactory.Options();
-                                                options.inJustDecodeBounds = true;
-                                                BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-
-                                                int reqWidth = 500;
-                                                int reqHeight = 500;
-
-                                                Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-
-                                                float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
-                                                int newWidth;
-                                                int newHeight;
-
-                                                if (aspectRatio > 1) {
-                                                    newWidth = reqWidth;
-                                                    newHeight = Math.round(reqWidth / aspectRatio);
-                                                } else {
-                                                    newHeight = reqHeight;
-                                                    newWidth = Math.round(reqHeight * aspectRatio);
-                                                }
-
-                                                Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
-                                                iv.setImageBitmap(resizedBitmap);
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
                                             }
                                         }
 
@@ -8078,30 +8055,7 @@ public class DynamicQuestions {
                                         if (photoLocation!=null){
                                             File imageFile = new File(photoLocation);
                                             if (imageFile.exists()) {
-
-                                                BitmapFactory.Options options = new BitmapFactory.Options();
-                                                options.inJustDecodeBounds = true;
-                                                BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-
-                                                int reqWidth = 500;
-                                                int reqHeight = 500;
-
-                                                Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-
-                                                float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
-                                                int newWidth;
-                                                int newHeight;
-
-                                                if (aspectRatio > 1) {
-                                                    newWidth = reqWidth;
-                                                    newHeight = Math.round(reqWidth / aspectRatio);
-                                                } else {
-                                                    newHeight = reqHeight;
-                                                    newWidth = Math.round(reqHeight * aspectRatio);
-                                                }
-
-                                                Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
-                                                iv.setImageBitmap(resizedBitmap);
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
                                             }
                                         }
 
@@ -8218,30 +8172,7 @@ public class DynamicQuestions {
                                                 if (photoLocation!=null){
                                                     File imageFile = new File(photoLocation);
                                                     if (imageFile.exists()) {
-
-                                                        BitmapFactory.Options options = new BitmapFactory.Options();
-                                                        options.inJustDecodeBounds = true;
-                                                        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-
-                                                        int reqWidth = 500;
-                                                        int reqHeight = 500;
-
-                                                        Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-
-                                                        float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
-                                                        int newWidth;
-                                                        int newHeight;
-
-                                                        if (aspectRatio > 1) {
-                                                            newWidth = reqWidth;
-                                                            newHeight = Math.round(reqWidth / aspectRatio);
-                                                        } else {
-                                                            newHeight = reqHeight;
-                                                            newWidth = Math.round(reqHeight * aspectRatio);
-                                                        }
-
-                                                        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
-                                                        iv.setImageBitmap(resizedBitmap);
+                                                        iv.setImageBitmap(bitmapImageResize(imageFile));
                                                     }
                                                 }
 
@@ -8539,6 +8470,30 @@ public class DynamicQuestions {
 
     }
 
+    public Bitmap bitmapImageResize(File imageFile){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        int reqWidth = 500;
+        int reqHeight = 500;
+
+        Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+
+        float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
+        int newWidth;
+        int newHeight;
+
+        if (aspectRatio > 1) {
+            newWidth = reqWidth;
+            newHeight = Math.round(reqWidth / aspectRatio);
+        } else {
+            newHeight = reqHeight;
+            newWidth = Math.round(reqHeight * aspectRatio);
+        }
+
+        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+    }
 
     public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
