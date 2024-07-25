@@ -14,9 +14,9 @@ public class RetrofitClient {
     public static Retrofit getRetrofit(){
         Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
          OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                 .connectTimeout(90, TimeUnit.SECONDS)
-                 .readTimeout(720, TimeUnit.SECONDS)
-                 .writeTimeout(720, TimeUnit.SECONDS)
+                 .connectTimeout(540, TimeUnit.SECONDS)
+                 .readTimeout(540, TimeUnit.SECONDS)
+                 .writeTimeout(540, TimeUnit.SECONDS)
                  .addInterceptor(interceptor)
                  .build();
 
@@ -31,6 +31,9 @@ public class RetrofitClient {
     public static Retrofit getRetrofitImage(){
         Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
         OkHttpClient okHttpClient=new OkHttpClient.Builder()
+                .connectTimeout(180, TimeUnit.SECONDS)
+                .readTimeout(540, TimeUnit.SECONDS)
+                .writeTimeout(540, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
 

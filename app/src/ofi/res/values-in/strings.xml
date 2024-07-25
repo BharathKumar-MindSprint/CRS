@@ -773,6 +773,17 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Ukuran plot lebih kecil dari luas minimum yang dikonfigurasi (0,0009 HA). Harap tentukan ukuran plot yang valid.</string>
+    <string name="back">Kembali</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
+
     <string name="ofis_photo_checkbox_download">Unduh Gambar Kotak Centang Foto</string>
     <string name="ready_to_download_photo_checkbox">Ada gambar yang perlu diunduh untuk pertanyaan kotak centang foto. Apakah Anda ingin terus mendownload gambar sekarang?</string>
     <string name="no_images_to_be_downloaded">Tidak ada gambar yang dapat diunduh</string>

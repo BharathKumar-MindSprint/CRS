@@ -1102,7 +1102,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_diognostic_module">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter value within the range %1$d - %2$d</string>
@@ -1122,6 +1121,12 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Plot size is smaller than the minimum configured area (0.0009 HA). Please specify a valid plot size.</string>
+    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="follow_up_survey">Follow-up survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
+    <string name="dm_not_resolved">Not Resolved</string>
+    <string name="dm_resolved">Resolved</string>
     <string name="ofis_photo_checkbox_download">Download Photo\nCheckbox Images</string>
     <string name="ready_to_download_photo_checkbox">There are images which need to be downloaded for photo checkbox questions. Do you want to continue to download the images now?</string>
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>

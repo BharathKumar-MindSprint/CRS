@@ -842,7 +842,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         // verify the farmer & children in network Queue and sync
         initGPSSync();
-        syncCapturedFileData();
+        //syncCapturedFileData();
         if (itemType.equalsIgnoreCase("infrastructure")) {
             postInfrastructure(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("farmer")) {
@@ -891,9 +891,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("Multifarm Update")) {
             postMultiFarmUpdate(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("DMSurvey")) {
-            postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "DMSurvey");
+            //postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
-            postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "FollowUpSurvey");
+            //postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
         }
 
 
@@ -6055,7 +6057,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     e.printStackTrace();
                                     // Handle JSON parsing error
                                 }
-                                syncCapturedFileData();
+                                //syncCapturedFileData();
 
                             } else {
                                 try {
@@ -6219,7 +6221,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     e.printStackTrace();
                                     // Handle JSON parsing error
                                 }
-                                syncCapturedFileData();
+                                //syncCapturedFileData();
 
                             } else {
                                 try {
@@ -6283,79 +6285,124 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    public void syncCapturedFileData() {
-//        Toast.makeText(context, "File Upload SuccessFul Entry", Toast.LENGTH_SHORT).show();
+    public void syncCapturedFileData(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) {
         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         try {
+            long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofissurvey/image/upload";
-            // Get the file paths of the files to upload
-            List<String> filePaths = new ArrayList<>();
-            List<String> fileName = new ArrayList<>();
 
-            List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-            dmComplaintFileTableList.clear();
-            dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile();
-            List<Long> ids = new ArrayList<>();
-            if (dmComplaintFileTableList.size() != 0) {
-                for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                    filePaths.add(dmComplaintFileTableList.get(l).getFilePath());
-                    fileName.add(dmComplaintFileTableList.get(l).getOfisFileName());
-                    ids.add(dmComplaintFileTableList.get(l).getUid());
+            final boolean[] isSyncedAllFiles = {true};
+            boolean isFilesExists = false;
+
+            for (int k = 0; k < dmSurveyAnswerTableList.size(); k++) {
+                String questionId = dmSurveyAnswerTableList.get(k).questionID;
+                List<String> filePaths = new ArrayList<>();
+                List<String> fileName = new ArrayList<>();
+                List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
+                dmComplaintFileTableList.clear();
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(String.valueOf(farmerId), questionId);
+                List<Long> ids = new ArrayList<>();
+                if (dmComplaintFileTableList.size() != 0) {
+                    for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
+                        filePaths.add(dmComplaintFileTableList.get(l).getFilePath());
+                        fileName.add(dmComplaintFileTableList.get(l).getOfisFileName());
+                        ids.add(dmComplaintFileTableList.get(l).getUid());
+                    }
+                    isFilesExists = true;
+                }
+
+                if (filePaths.isEmpty()) {
+                    continue;
+                }
+
+                List<MultipartBody.Part> parts = new ArrayList<>();
+                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                for (int i = 0; i < filePaths.size(); i++) {
+                    File file = new File(filePaths.get(i));
+                    RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                    builder.addFormDataPart("files", fileName.get(i), fileBody);
+                }
+                builder.addFormDataPart("type", "DM");
+
+                RequestBody requestBody = builder.build();
+
+                if (endpoint.length() > 0) {
+                    int finalK = k;
+                    okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response postResponse) {
+                            Log.d("UPLOAD_FILE_SUCCESS", "1");
+
+                            if (postResponse.isSuccessful()) {
+                                Log.d("UPLOAD_FILE_SUCCESS", "2");
+                                //                            Toast.makeText(context, "File Upload Inside Success Resp", Toast.LENGTH_SHORT).show();
+                                for (int i = 0; i < ids.size(); i++) {
+                                    db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
+                                }
+
+                                if (finalK == dmSurveyAnswerTableList.size() - 1 && isSyncedAllFiles[0]) {
+                                    if(itemType.equalsIgnoreCase("DMSurvey")) {
+                                        postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                                    }
+                                    else {
+                                        postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                                    }
+                                }
+
+                            } else {
+
+                                // Added
+                                if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                    try {
+                                        FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting farm location");
+                                    } catch (Exception e) {
+                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                    }
+                                    Log.d("UPLOAD_FILE_FAILURE", "1");
+                                } else {
+                                    isSyncedAllFiles[0] = false;
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
+                                    Log.d("Error in Upload Docs", postResponse.toString());
+                                }
+                            }
+                            postResponse.close();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.d("UPLOAD_FILE_FAILURE", e.toString());
+
+                            isSyncedAllFiles[0] = false;
+                            try {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            } catch (Exception onfailEx) {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                onfailEx.printStackTrace();
+                            }
+                        }
+                    });
+
                 }
             }
 
-            List<MultipartBody.Part> parts = new ArrayList<>();
-            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-             for (int i=0; i < filePaths.size(); i++) {
-                File file = new File(filePaths.get(i));
-                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-                builder.addFormDataPart("files", fileName.get(i), fileBody);
+            if(!isFilesExists && isSyncedAllFiles[0]) {
+                if(itemType.equalsIgnoreCase("DMSurvey")) {
+                    postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                }
+                else {
+                    postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                }
             }
-            builder.addFormDataPart("type" , "DM");
 
-            RequestBody requestBody = builder.build();
-
-//            Log.d("UPLOAD_RequestBody",requestBody.toString());
-            if (endpoint.length() > 0) {
-
-                okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response postResponse) {
-                        Log.d("UPLOAD_FILE_SUCCESS","1");
-//                        Toast.makeText(context, "File Upload Inside Response", Toast.LENGTH_SHORT).show();
-
-                        if (postResponse.isSuccessful()) {
-                            Log.d("UPLOAD_FILE_SUCCESS","2");
-//                            Toast.makeText(context, "File Upload Inside Success Resp", Toast.LENGTH_SHORT).show();
-                            for(int i=0;i<ids.size();i++) {
-                                db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
-                            }
-//                            db.dmComplaintFileTableDao().deleteAll();
-                        } else {
-
-                            // Added
-                            if (postResponse.code() == 401) {
-                                try {
-                                    FailureGetRefreshToken();
-                                } catch (Exception e) {
-                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                }
-                                Log.d("UPLOAD_FILE_FAILURE","1");
-//                                Toast.makeText(context, "Inside 401", Toast.LENGTH_SHORT).show();
-                            } else {
-                            }
-                        }
-                        postResponse.close();
-                    }
-
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-//                        Toast.makeText(context, "Inside Failing", Toast.LENGTH_SHORT).show();
-                        Log.d("UPLOAD_FILE_FAILURE",e.toString());
-                    }
-                });
-            }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
