@@ -703,5 +703,7 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="file_exceeds">Kích thước tập tin vượt quá </string>
+    <string name="total_file_size">Tổng kích thước tệp vượt quá 5 MB. Vui lòng tải lên kích thước tệp nhỏ hơn </string>
 
 </resources>
