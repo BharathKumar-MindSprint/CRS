@@ -93,7 +93,32 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE + " TEXT, "
-            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN + " TEXT)";
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN + " TEXT)";
 
     //Child Labour Table end
 

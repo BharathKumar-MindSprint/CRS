@@ -3999,6 +3999,13 @@ public class DataLayer {
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, null, null, null, null, orderBy);
     }
 
+    public Cursor getAssignedCountries() {
+        String[] columns = new String[]{"*"};
+        String orderBy = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.CountriesEntry.TABLE_NAME, columns, null, null, null, null, orderBy);
+    }
+
     public void updateSyncedStatus(long farmerid, long nIdType) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);

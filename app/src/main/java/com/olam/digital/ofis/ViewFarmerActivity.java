@@ -257,7 +257,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     boolean aggregatedIndicator;
 
-
+    private int countryID ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,10 +276,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
-
-
-
-
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
@@ -510,6 +506,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         if (farmer.getCount() > 0) {
             farmer.moveToFirst();
+            countryID = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
             farmerNameStr = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
             olamFarmerIdStr = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
             farmerName.setText(farmerNameStr);
@@ -2692,6 +2689,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ConsentStatementActivity.class);
+                        if(countryID == 27 && BuildConfig.FLAVOR.contains("ofi")){
+                            in = new Intent(this, ConsentStatementOFIsBrazilActivity.class);
+                        }
                         Bundle bundle = new Bundle();
                         bundle.putString("displayFarmerId", olamFarmerIdStr);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));

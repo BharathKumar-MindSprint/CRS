@@ -237,6 +237,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      *
      * @return long value representing UUID
      */
+    String flavor = BuildConfig.FLAVOR;
 
     private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -396,6 +397,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
+        Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
 
         countrySpinner = this.findViewById(R.id.spinner_country);
         regionSpinner = this.findViewById(R.id.spinner_region);
@@ -2006,10 +2008,31 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     farmerName.setText("");
                     Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
                     return;
-
-
                 }
-                Intent in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                get1stCountryId();
+                if(selectedCountry == 0){
+                    Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent in ;
+                if((selectedCountry+"").equals("27") ){
+                    in = switch (flavor) {
+                        case "prodofi" ->
+                                new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                        case "uatofi" ->
+                                new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                        case "sitofi" ->
+                                new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                        case "devofi" ->
+                                new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                        default ->
+                                new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                    };
+                }else {
+                    Log.e("selectedCountry","---------------");
+                    in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                }
+
                 Bundle bundle=new Bundle();
                 bundle.putString("type", NEW);
                 bundle.putString("displayFarmerId", "");
@@ -2537,6 +2560,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         alert.show();
     }
 
+    private void get1stCountryId() {
+        Cursor cursor = dl.getAssignedCountries();
+        if (cursor.getCount()>0) {
+            while (cursor.moveToNext()) {
+                selectedCountry = cursor.getInt(cursor.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ID));
+                break;
+            }
+        }
+        cursor.close();
+    }
     private ArrayList<NationalIdTypeDTO> getModules() {
         nidtypelist = new ArrayList<NationalIdTypeDTO>();
 
