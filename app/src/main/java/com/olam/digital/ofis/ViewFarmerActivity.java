@@ -2689,7 +2689,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ConsentStatementActivity.class);
-                        if(countryID == 27 && BuildConfig.FLAVOR.contains("ofi")){
+                        if(countryID == 27 && Utilities.getOperatingUnitSharedPrefs(this).equals("OFI") ){
                             in = new Intent(this, ConsentStatementOFIsBrazilActivity.class);
                         }
                         Bundle bundle = new Bundle();

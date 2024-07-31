@@ -202,7 +202,6 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
     }
 
     private void loadpage() {
-        scrollView.fullScroll(ScrollView.FOCUS_UP);
 
         if(page == 1){
             prevbtn.setVisibility(View.GONE);
@@ -245,6 +244,8 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
             consentStatement5.setVisibility(View.VISIBLE);
             nextsavebtn.setText(getResources().getString(R.string.confirm));
         }
+        scrollView.fullScroll(ScrollView.FOCUS_UP);
+        scrollView.smoothScrollTo(0,0);
     }
 
 

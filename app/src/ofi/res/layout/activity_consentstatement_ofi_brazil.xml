@@ -41,7 +41,7 @@
 
 
                     <LinearLayout
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:id="@+id/consentStatement1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -94,6 +94,7 @@
                                 <EditText
                                     android:paddingTop="5dp"
                                     android:inputType="text"
+                                    android:maxLength="20"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
                                     android:id="@+id/et_maritalstatus"
@@ -121,6 +122,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -141,6 +143,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="number"
+                                    android:maxLength="20"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -168,7 +171,7 @@
                                 <TextView
                                     android:layout_gravity="center_vertical"
                                     android:paddingTop="5dp"
-                                    android:layout_weight="4.2"
+                                    android:layout_weight="4.5"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -176,11 +179,12 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="number"
+                                    android:maxLength="20"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
                                     android:id="@+id/et_rgNumber"
-                                    android:layout_weight="5.3"
+                                    android:layout_weight="5"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -203,7 +207,7 @@
                                 <TextView
                                     android:layout_gravity="center_vertical"
                                     android:paddingTop="5dp"
-                                    android:layout_weight="4.5"
+                                    android:layout_weight="4.8"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -211,11 +215,12 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="500"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
                                     android:id="@+id/et_fulladdress"
-                                    android:layout_weight="5.3"
+                                    android:layout_weight="5"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -239,6 +244,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -259,6 +265,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -305,8 +312,6 @@
                             </TableRow>
 
                         </TableLayout>
-
-
 
                     </LinearLayout>
 
@@ -789,6 +794,7 @@
                         android:id="@+id/consentStatement3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="vertical">
 
                         <TableLayout
@@ -796,7 +802,8 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/ofis_large_pad"
                             android:paddingRight="@dimen/ofis_large_pad"
-                            android:paddingTop="@dimen/ofis_large_pad">
+                            android:paddingTop="@dimen/ofis_large_pad"
+                            android:paddingBottom="@dimen/ofis_large_pad">
                             <LinearLayout
                                 android:orientation="horizontal"
                                 android:layout_width="match_parent"
@@ -819,7 +826,8 @@
                                     android:layout_weight="9"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:layout_width="0dp"
-                                    android:layout_height="wrap_content"/>
+                                    android:layout_height="wrap_content"
+                                    android:focusable="true"/>
                                 <TextView
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
@@ -917,6 +925,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -930,7 +939,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="0.3"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -947,6 +955,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -960,7 +969,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="0.2"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -968,6 +976,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="20"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -998,6 +1007,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1011,7 +1021,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="4.8"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1019,6 +1028,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="number"
+                                    android:maxLength="20"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1032,7 +1042,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="0.2"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1050,7 +1059,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="4"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1058,6 +1066,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="number"
+                                    android:maxLength="20"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1071,7 +1080,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="2.8"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1089,7 +1097,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="2.3"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1097,6 +1104,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="500"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1110,7 +1118,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="0.2"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1126,6 +1133,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1139,7 +1147,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="0.2"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1147,6 +1154,7 @@
                                 <EditText
                                     android:autofillHints="null"
                                     android:inputType="text"
+                                    android:maxLength="50"
                                     android:paddingTop="5dp"
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -1160,7 +1168,6 @@
                                     android:layout_gravity="center"
                                     android:paddingTop="5dp"
                                     android:layout_weight="4.3"
-                                    android:visibility="visible"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
@@ -1264,7 +1271,7 @@
                                 android:hint="@string/cs_page3_hint1"
                                 android:inputType="textPersonName"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="50"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1297,7 +1304,7 @@
                                 android:hint="@string/cs_page1_hint2"
                                 android:inputType="textPersonName"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="50"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1424,7 +1431,7 @@
                                 android:hint="@string/cs_page4_4_brazil"
                                 android:inputType="number"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="20"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1470,7 +1477,7 @@
                                 android:background="@drawable/border_grey_bg"
                                 android:hint="@string/cs_page4_7_brazil"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="50"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1501,7 +1508,7 @@
                                 android:hint="@string/cs_page4_8_brazil"
                                 android:inputType="number"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="20"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1532,7 +1539,7 @@
                                 android:hint="@string/cs_page4_9_brazil"
                                 android:inputType="number"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="20"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1610,7 +1617,7 @@
                                 android:background="@drawable/border_grey_bg"
                                 android:hint="@string/cs_page4_7_brazil"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="50"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1641,7 +1648,7 @@
                                 android:hint="@string/cs_page4_8_brazil"
                                 android:inputType="number"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="20"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
@@ -1672,7 +1679,7 @@
                                 android:hint="@string/cs_page4_9_brazil"
                                 android:inputType="number"
                                 android:paddingLeft="10dp"
-                                android:maxLength="1500"
+                                android:maxLength="20"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 

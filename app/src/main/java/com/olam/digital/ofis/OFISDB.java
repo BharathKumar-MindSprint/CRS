@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 154;
+    private static final int DATABASE_VERSION = 155;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -1099,6 +1100,9 @@ class OFISDB extends SQLiteOpenHelper {
         if(oldVersion < 154){
             migrateFromVersionBelow153(sqLiteDatabase);
         }
+        if(oldVersion < 155){
+            migrateFromVersionBelow154(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1295,7 +1299,37 @@ class OFISDB extends SQLiteOpenHelper {
 
     }
 
-
+    private void migrateFromVersionBelow154(SQLiteDatabase sqLiteDatabase){
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN + " TEXT ");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("drop table IF EXISTS modules;");
