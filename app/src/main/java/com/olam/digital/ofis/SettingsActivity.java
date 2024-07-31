@@ -57,8 +57,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -99,9 +106,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         dl = new DataLayer(res, context);
         roomDB = OFISRoomDB.getDbInstance(context);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getString(R.string.PleaseWait));
-        progressDialog.setMessage(getString(R.string.Loading));
-
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -718,22 +722,22 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                         Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                         try {
                             while (photoData.moveToNext()) {
-                                progressDialog.show();
                                 long id = photoData.getLong(photoData.getColumnIndex("id"));
                                 long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
                                 long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
                                 String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                                alert.dismiss();
                                 PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                             }
+
                         } catch (Exception e){
                             e.printStackTrace();
                         } finally {
                             photoData.close();
-                            progressDialog.hide();
-                            Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+\                            Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
 
                         }
-                        alert.dismiss();
+
                     }
                 });
 
@@ -767,46 +771,34 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
         ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
         DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(getApplicationContext()).getPhotoCheckBoxContainer(),fileName);
-        retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
 
-        call.enqueue(new retrofit2.Callback<ResponseBody>() {
+        //Synchronous API call for PhotoCheckbox Data
+        try {
+            Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
 
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
+                File internalStorageDir = getApplicationContext().getFilesDir();
 
-                    if (response.isSuccessful() && response.body() != null) {
-                        ResponseBody body = response.body();
-                        byte[] imageBytes = body.bytes();
+                File imageFile = new File(internalStorageDir, fileName);
 
-                        File internalStorageDir = getApplicationContext().getFilesDir();
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(imageBytes);
+                fileWrite.close();
 
-                        File imageFile = new File(internalStorageDir, fileName);
-
-                        FileOutputStream fileWrite = new FileOutputStream(imageFile);
-                        fileWrite.write(imageBytes);
-                        fileWrite.close();
-
-                        roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+                roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
 
 
-                        Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
-                    } else {
-                        Log.e("ImageDownload", "Error downloading image: " + response.code());
-                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
-                    }
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
-
-
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
             }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("TAGFailure", "Network request failed", t);
-            }
-        });
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }

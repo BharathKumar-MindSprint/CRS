@@ -111,6 +111,7 @@ public class SyncAllTask extends SyncTask {
     AnswerRequestDTO answerRequestDTO;
     int notificationModuleId;
     int repeaterCount ;
+    ProgressDialog progressDialog;
 
     OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
     public SyncAllTask(Context context) {
@@ -2100,10 +2101,8 @@ public class SyncAllTask extends SyncTask {
 
                     Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                     try {
+                        progressDialog = new ProgressDialog(context);
                         while (photoData.moveToNext()) {
-                            pd.setTitle(context.getString(R.string.PleaseWait));
-                            pd.setMessage(context.getString(R.string.Loading));
-                            pd.show();
                             long id = photoData.getLong(photoData.getColumnIndex("id"));
                             long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
                             long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
@@ -2114,7 +2113,6 @@ public class SyncAllTask extends SyncTask {
                         e.printStackTrace();
                     } finally {
                         photoData.close();
-                        pd.hide();
                         Toast.makeText(context,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
 
                     }
@@ -2131,46 +2129,34 @@ public class SyncAllTask extends SyncTask {
     private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
         ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
         DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(),fileName);
-        retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
 
-        call.enqueue(new retrofit2.Callback<ResponseBody>() {
+        //Synchronous API call for PhotoCheckbox Data
+        try {
+            retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            retrofit2.Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
 
-            @Override
-            public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                try {
+                File internalStorageDir = context.getFilesDir();
 
-                    if (response.isSuccessful() && response.body() != null) {
-                        ResponseBody body = response.body();
-                        byte[] imageBytes = body.bytes();
+                File imageFile = new File(internalStorageDir, fileName);
 
-                        File internalStorageDir = context.getFilesDir();
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(imageBytes);
+                fileWrite.close();
 
-                        File imageFile = new File(internalStorageDir, fileName);
-
-                        FileOutputStream fileWrite = new FileOutputStream(imageFile);
-                        fileWrite.write(imageBytes);
-                        fileWrite.close();
-
-                        roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+                roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
 
 
-                        Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
-                    } else {
-                        Log.e("ImageDownload", "Error downloading image: " + response.code());
-                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
-                    }
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
-
-
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
             }
-
-            @Override
-            public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
-                Log.d("TAGFailure", "Network request failed", t);
-            }
-        });
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void LocalUnitResponse(JSONObject localUnitResponse){
