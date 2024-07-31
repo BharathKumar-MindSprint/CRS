@@ -2084,39 +2084,44 @@ public class SyncAllTask extends SyncTask {
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // delete all data where active is false
-                    List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
-                    if (inActivePhoto.size()>0){
-                        for (int i = 0; i < inActivePhoto.size(); i++) {
-                            String fileName = inActivePhoto.get(i).fileName;
-                            File internalStorageDir = context.getFilesDir();
-                            File imageFile = new File(internalStorageDir, fileName);
+                    if (InternetConnectionHelper.isInternetAvailable(context)) {
+                        // delete all data where active is false
+                        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+                        if (inActivePhoto.size()>0){
+                            for (int i = 0; i < inActivePhoto.size(); i++) {
+                                String fileName = inActivePhoto.get(i).fileName;
+                                File internalStorageDir = context.getFilesDir();
+                                File imageFile = new File(internalStorageDir, fileName);
 
-                            if (imageFile.exists()) {
-                                imageFile.delete();
+                                if (imageFile.exists()) {
+                                    imageFile.delete();
+                                }
                             }
                         }
-                    }
-                   roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+                        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
 
-                    Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                    try {
-                        progressDialog = new ProgressDialog(context);
-                        while (photoData.moveToNext()) {
-                            long id = photoData.getLong(photoData.getColumnIndex("id"));
-                            long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
-                            long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
-                            String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
-                            PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                        Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                        try {
+                            progressDialog = new ProgressDialog(context);
+                            while (photoData.moveToNext()) {
+                                long id = photoData.getLong(photoData.getColumnIndex("id"));
+                                long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
+                                long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
+                                String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                                alert.dismiss();
+                                PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                            }
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        } finally {
+                            photoData.close();
+                            Toast.makeText(context,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+
                         }
-                    } catch (Exception e){
-                        e.printStackTrace();
-                    } finally {
-                        photoData.close();
-                        Toast.makeText(context,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
-
+                    } else {
+                        alert.dismiss();
+                        Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                     }
-                    alert.dismiss();
                 }
             });
 

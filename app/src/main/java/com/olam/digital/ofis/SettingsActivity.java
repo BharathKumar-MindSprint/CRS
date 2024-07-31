@@ -716,26 +716,29 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        deleteAllInActivePhotoData();
-                        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+                        if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
+                            deleteAllInActivePhotoData();
+                            roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
 
-                        Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                        try {
-                            while (photoData.moveToNext()) {
-                                long id = photoData.getLong(photoData.getColumnIndex("id"));
-                                long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
-                                long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
-                                String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
-                                alert.dismiss();
-                                PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                            Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                            try {
+                                while (photoData.moveToNext()) {
+                                    long id = photoData.getLong(photoData.getColumnIndex("id"));
+                                    long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
+                                    long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
+                                    String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                                    alert.dismiss();
+                                    PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                                }
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            } finally {
+                                photoData.close();
+                                Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
                             }
-
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        } finally {
-                            photoData.close();
-\                            Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
-
+                        } else {
+                            alert.dismiss();
+                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         }
 
                     }
