@@ -378,7 +378,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
 
-        get1stCountryId();
+        getCountryId();
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -2549,7 +2549,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         alert.show();
     }
 
-    private void get1stCountryId() {
+    private void getCountryId() {
         Cursor cursor = dl.getEnumeratorCountries();
         if (cursor.getCount()>0) {
             while (cursor.moveToNext()) {
