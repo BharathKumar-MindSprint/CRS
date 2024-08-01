@@ -8,8 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +60,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -2132,13 +2137,35 @@ public class SyncAllTask extends SyncTask {
             if (response.isSuccessful()) {
                 ResponseBody responseBody = response.body();
                 byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                bitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
                 File internalStorageDir = context.getFilesDir();
 
                 File imageFile = new File(internalStorageDir, fileName);
 
                 FileOutputStream fileWrite = new FileOutputStream(imageFile);
-                fileWrite.write(imageBytes);
+                fileWrite.write(compressedImageBytes);
                 fileWrite.close();
 
                 roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
@@ -2151,6 +2178,16 @@ public class SyncAllTask extends SyncTask {
             }
         } catch (IOException e){
             e.printStackTrace();
+        }
+    }
+    private String getImageType(byte[] imageBytes) {
+        String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
+            return "png";
+        } else if (base64EncodedImage.startsWith("/9j/")) {
+            return "jpeg";
+        } else {
+            return "unknown";
         }
     }
 

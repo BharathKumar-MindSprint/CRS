@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,17 +58,12 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelp
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -741,13 +739,35 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             if (response.isSuccessful()) {
                 ResponseBody responseBody = response.body();
                 byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                bitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
                 File internalStorageDir = getApplicationContext().getFilesDir();
 
                 File imageFile = new File(internalStorageDir, fileName);
 
                 FileOutputStream fileWrite = new FileOutputStream(imageFile);
-                fileWrite.write(imageBytes);
+                fileWrite.write(compressedImageBytes);
                 fileWrite.close();
 
                 roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
@@ -762,5 +782,17 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             e.printStackTrace();
         }
     }
+
+    private static String getImageType(byte[] imageBytes) {
+        String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
+            return "png";
+        } else if (base64EncodedImage.startsWith("/9j/")) {
+            return "jpeg";
+        } else {
+            return "unknown";
+        }
+    }
+
 
 }
