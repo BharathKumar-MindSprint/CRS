@@ -661,9 +661,9 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     }
 
     public void photoCheckboxDownload(){
+        deleteAllInActivePhotoData();
+        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
-
-
             if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(false);
@@ -686,9 +686,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     @Override
                     public void onClick(View view) {
                         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
-                            deleteAllInActivePhotoData();
-                            roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
-
                             Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                             try {
                                 while (photoData.moveToNext()) {
@@ -715,8 +712,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                 alert.show();
             } else {
-                deleteAllInActivePhotoData();
-                roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
                 Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
             }
 

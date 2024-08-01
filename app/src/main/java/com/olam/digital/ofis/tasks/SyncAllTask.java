@@ -500,15 +500,12 @@ public class SyncAllTask extends SyncTask {
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 deleteRoomDbValues();
                 HomeActivity.completeFirstSetup();
-                if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
-                    photoCheckboxDownload();
-                }
             }else{
                 deleteRoomDbValues();
                 SettingsActivity.completeSetup();
-                if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
-                    photoCheckboxDownload();
-                }
+            }
+            if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+                photoCheckboxDownload();
             }
 
             /*if (pd != null && pd.isShowing()) {
@@ -2063,6 +2060,20 @@ public class SyncAllTask extends SyncTask {
     }
 
     public void photoCheckboxDownload(){
+        // delete all data where active is false
+        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+        if (inActivePhoto.size()>0){
+            for (int i = 0; i < inActivePhoto.size(); i++) {
+                String fileName = inActivePhoto.get(i).fileName;
+                File internalStorageDir = context.getFilesDir();
+                File imageFile = new File(internalStorageDir, fileName);
+
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
+        }
+        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
         if (InternetConnectionHelper.isInternetAvailable(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
@@ -2085,21 +2096,6 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     if (InternetConnectionHelper.isInternetAvailable(context)) {
-                        // delete all data where active is false
-                        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
-                        if (inActivePhoto.size()>0){
-                            for (int i = 0; i < inActivePhoto.size(); i++) {
-                                String fileName = inActivePhoto.get(i).fileName;
-                                File internalStorageDir = context.getFilesDir();
-                                File imageFile = new File(internalStorageDir, fileName);
-
-                                if (imageFile.exists()) {
-                                    imageFile.delete();
-                                }
-                            }
-                        }
-                        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
-
                         Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
                         try {
                             progressDialog = new ProgressDialog(context);
