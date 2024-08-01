@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/scrollView"
-            tools:ignore="UselessParent">
+            tools:ignore="UselessParent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -41,7 +42,7 @@
 
 
                     <LinearLayout
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:id="@+id/consentStatement1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -284,7 +285,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="," />
                             </LinearLayout>
-                              <TableRow
+                            <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
@@ -304,7 +305,8 @@
                                 android:weightSum="10"
                                 android:gravity="top">
                                 <TextView
-                                    android:layout_width="0dp"
+                                    android:visibility="visible"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="10"
                                     android:textSize="@dimen/ofis_med_text"

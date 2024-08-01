@@ -395,31 +395,57 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN,staffSign);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION,true);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,olamfarmername);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,olamfarmername);
 
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL,maritalstatus);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION,profession);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO,cpfNumber);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO,rgNumber);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS,fulladdress);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY,city);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE,state);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME,subname);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY,subnationality);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL,submaritalsts);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION,subProfessinal);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO,subCpf);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO,subRg);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS,subAddress);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT,contactOfiStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME,witness1NameStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG,witness1RGStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF,witness1CPFStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN,witness1_sign);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME,witness2NameStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG,witness2RGStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF,witness2CPFStr);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN,witness2_sign);
+                if(! maritalstatus.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL,maritalstatus);
+                if(! profession.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION,profession);
+                if(! cpfNumber.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO,cpfNumber);
+                if(! rgNumber.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO,rgNumber);
+                if(! fulladdress.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS,fulladdress);
+                if(! city.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY,city);
+                if(! state.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE,state);
+                if(! subname.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME,subname);
+                if(! subnationality.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY,subnationality);
+                if(! submaritalsts.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL,submaritalsts);
+                if(! subProfessinal.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION,subProfessinal);
+                if(! subCpf.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO,subCpf);
+                if(! subRg.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO,subRg);
+                if(! subAddress.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS,subAddress);
+                if(! subCity.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY,subCity);
+                if(! subState.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE,subState);
+                if(! contactOfiStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT,contactOfiStr);
+                if(! witness1NameStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME,witness1NameStr);
+                if(! witness1RGStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG,witness1RGStr);
+                if(! witness1CPFStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF,witness1CPFStr);
+                if(! witness1_sign.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN,witness1_sign);
+                if(! witness2NameStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME,witness2NameStr);
+                if(! witness2RGStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG,witness2RGStr);
+                if(! witness2CPFStr.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF,witness2CPFStr);
+                if(! witness2_sign.isEmpty())
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN,witness2_sign);
 
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
