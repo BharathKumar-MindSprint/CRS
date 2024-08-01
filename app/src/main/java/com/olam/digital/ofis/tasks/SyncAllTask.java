@@ -272,16 +272,7 @@ public class SyncAllTask extends SyncTask {
                 e.printStackTrace();
             }
         } else if ( op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
-            try {
-                if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)){
-                    syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
-                } else {
-                    syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
-                }
-
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+            syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
         }
 
         return null;
@@ -1085,7 +1076,7 @@ public class SyncAllTask extends SyncTask {
 
     }
 
-    public void syncPhotoCheckBoxData(String syncDate) throws JSONException{
+    public void syncPhotoCheckBoxData(String syncDate) {
         ManageRecords getPhotoCheckBoxData = RetrofitClient.getRetrofit().create(ManageRecords.class);
         retrofit2.Call<PhotoCheckBoxResponseModel> call = getPhotoCheckBoxData.getAllPhotoCheckBoxData(1, syncDate);
 
