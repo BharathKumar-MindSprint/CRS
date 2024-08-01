@@ -35,8 +35,8 @@ public interface PhotoCheckBoxDataDao {
     String getPhotoLocation(String lookupId, int questionId);
 
 
-    @Query("SELECT id, questionId, lookupId, fileName FROM photocheckboxdata WHERE isDownload = :isDownloaded")
-    Cursor getNoPhotoData(boolean isDownloaded);
+    @Query("SELECT * FROM photocheckboxdata WHERE isDownload = :isDownloaded")
+    List<PhotoCheckBoxData> getNoPhotoData(boolean isDownloaded);
 
     @Query("SELECT * FROM PhotoCheckBoxData WHERE active=:active")
     List<PhotoCheckBoxData> getInactivePhoto(boolean active);

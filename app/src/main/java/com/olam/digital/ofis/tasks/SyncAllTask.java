@@ -504,7 +504,7 @@ public class SyncAllTask extends SyncTask {
                 deleteRoomDbValues();
                 SettingsActivity.completeSetup();
             }
-            if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+            if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 photoCheckboxDownload();
             }
 
@@ -2062,7 +2062,7 @@ public class SyncAllTask extends SyncTask {
     public void photoCheckboxDownload(){
         // delete all data where active is false
         List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
-        if (inActivePhoto.size()>0){
+        if (!inActivePhoto.isEmpty()){
             for (int i = 0; i < inActivePhoto.size(); i++) {
                 String fileName = inActivePhoto.get(i).fileName;
                 File internalStorageDir = context.getFilesDir();
@@ -2096,23 +2096,17 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     if (InternetConnectionHelper.isInternetAvailable(context)) {
-                        Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                        try {
-                            progressDialog = new ProgressDialog(context);
-                            while (photoData.moveToNext()) {
-                                long id = photoData.getLong(photoData.getColumnIndex("id"));
-                                long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
-                                long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
-                                String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                        List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                        if (!photoData.isEmpty()) {
+                            for (int i=0; i < photoData.size(); i++) {
+                                long id = photoData.get(i).id;
+                                long questionId = Long.parseLong(photoData.get(i).questionId);
+                                long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                                String fileName = photoData.get(i).fileName;
                                 alert.dismiss();
                                 PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                             }
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        } finally {
-                            photoData.close();
-                            Toast.makeText(context,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         }
                     } else {
                         alert.dismiss();

@@ -664,7 +664,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         deleteAllInActivePhotoData();
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
-            if (roomDB.photoCheckBoxDataDao().getNoPhotoData(false).getCount()>0){
+            if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(false);
                 LayoutInflater inflater = this.getLayoutInflater();
@@ -686,25 +686,20 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     @Override
                     public void onClick(View view) {
                         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
-                            Cursor photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                            try {
-                                while (photoData.moveToNext()) {
-                                    long id = photoData.getLong(photoData.getColumnIndex("id"));
-                                    long questionId = photoData.getLong(photoData.getColumnIndex("questionId"));
-                                    long lookupId = photoData.getLong(photoData.getColumnIndex("lookupId"));
-                                    String fileName = photoData.getString(photoData.getColumnIndex("fileName"));
+                            List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                            if (!photoData.isEmpty()){
+                                for (int i=0; i < photoData.size(); i++) {
+                                    long id = photoData.get(i).id;
+                                    long questionId = Long.parseLong(photoData.get(i).questionId);
+                                    long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                                    String fileName = photoData.get(i).fileName;
                                     alert.dismiss();
                                     PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                                 }
-                            } catch (Exception e){
-                                e.printStackTrace();
-                            } finally {
-                                photoData.close();
-                                Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                             }
                         } else {
                             alert.dismiss();
-                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         }
 
                     }
@@ -722,7 +717,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     private void deleteAllInActivePhotoData() {
         List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
-        if (inActivePhoto.size()>0){
+        if (!inActivePhoto.isEmpty()){
             for (int i = 0; i < inActivePhoto.size(); i++) {
                 String fileName = inActivePhoto.get(i).fileName;
                 File internalStorageDir = getApplicationContext().getFilesDir();
