@@ -804,5 +804,7 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="file_exceeds">O tamanho do arquivo excede </string>
+    <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
 
 </resources>

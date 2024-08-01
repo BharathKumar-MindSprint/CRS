@@ -1174,5 +1174,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="file_exceeds">File size exceeds </string>
+    <string name="total_file_size">"Total files size exceeds 5MB. Please upload file size less than "</string>
 
 </resources>
