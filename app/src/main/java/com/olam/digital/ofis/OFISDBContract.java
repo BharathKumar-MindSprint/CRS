@@ -922,6 +922,32 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_OLAM_FARMER_NAME = "olamfarmername";
         public static final String COLUMN_NAME_CONFIRMED_DATE = "confirmedDate";
         public static final String COLUMN_NAME_OCCUPATION = "occupation";
+        // For Brazil
+        public static final String COLUMN_NAME_MARITAL = "maritalStatus";
+        public static final String COLUMN_NAME_PROFESSION = "profession";
+        public static final String COLUMN_NAME_CPF_NO = "cpfNumber";
+        public static final String COLUMN_NAME_RG_NO = "rgNumber";
+        public static final String COLUMN_NAME_FULL_ADDRESS = "fullAddress";
+        public static final String COLUMN_NAME_CITY = "city";
+        public static final String COLUMN_NAME_STATE = "state";
+        public static final String COLUMN_NAME_SUBNAME = "subName";
+        public static final String COLUMN_NAME_SUBNATIONALITY = "subNationality";
+        public static final String COLUMN_NAME_SUBMARITAL = "submaritalStatus";
+        public static final String COLUMN_NAME_SUBPROFESSION = "subProfession";
+        public static final String COLUMN_NAME_SUBCPF_NO = "subCpfNumber";
+        public static final String COLUMN_NAME_SUBRG_NO = "subRgNumber";
+        public static final String COLUMN_NAME_SUBFULL_ADDRESS = "subFullAddress";
+        public static final String COLUMN_NAME_SUBCITY= "subCity";
+        public static final String COLUMN_NAME_SUBSTATE= "subState";
+        public static final String COLUMN_NAME_CONTACT= "contact";
+        public static final String COLUMN_NAME_WIT1_NAME= "witness1Name";
+        public static final String COLUMN_NAME_WIT1_CPF= "witness1CPF";
+        public static final String COLUMN_NAME_WIT1_RG= "witness1RG";
+        public static final String COLUMN_NAME_WIT1_SIGN= "witness1Sign";
+        public static final String COLUMN_NAME_WIT2_NAME= "witness2Name";
+        public static final String COLUMN_NAME_WIT2_CPF= "witness2CPF";
+        public static final String COLUMN_NAME_WIT2_RG= "witness2RG";
+        public static final String COLUMN_NAME_WIT2_SIGN= "witness2Sign";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -935,6 +961,31 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ENUM_SIGN);
                     add(COLUMN_NAME_CONFIRMED_DATE);
                     add(COLUMN_NAME_OCCUPATION);
+                    add(COLUMN_NAME_MARITAL);
+                    add(COLUMN_NAME_PROFESSION);
+                    add(COLUMN_NAME_CPF_NO);
+                    add(COLUMN_NAME_RG_NO);
+                    add(COLUMN_NAME_FULL_ADDRESS);
+                    add(COLUMN_NAME_CITY);
+                    add(COLUMN_NAME_STATE);
+                    add(COLUMN_NAME_SUBNAME);
+                    add(COLUMN_NAME_SUBNATIONALITY);
+                    add(COLUMN_NAME_SUBMARITAL);
+                    add(COLUMN_NAME_SUBPROFESSION);
+                    add(COLUMN_NAME_SUBCPF_NO);
+                    add(COLUMN_NAME_SUBRG_NO);
+                    add(COLUMN_NAME_SUBFULL_ADDRESS);
+                    add(COLUMN_NAME_SUBCITY);
+                    add(COLUMN_NAME_SUBSTATE);
+                    add(COLUMN_NAME_CONTACT);
+                    add(COLUMN_NAME_WIT1_NAME);
+                    add(COLUMN_NAME_WIT1_CPF);
+                    add(COLUMN_NAME_WIT1_RG);
+                    add(COLUMN_NAME_WIT1_SIGN);
+                    add(COLUMN_NAME_WIT2_NAME);
+                    add(COLUMN_NAME_WIT2_CPF);
+                    add(COLUMN_NAME_WIT2_RG);
+                    add(COLUMN_NAME_WIT2_SIGN);
                 }}
         );
     }
