@@ -2910,6 +2910,49 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             }
                             params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
+
+                            //for only Brazil
+                            params.put("maritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL)));
+                            params.put("profession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION)));
+                            params.put("cpfNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO)));
+                            params.put("rgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO)));
+                            params.put("fullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS)));
+                            params.put("city", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY)));
+                            params.put("state", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE)));
+                            params.put("subName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME)));
+                            params.put("subNationality", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY)));
+                            params.put("submaritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL)));
+                            params.put("subProfession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION)));
+                            params.put("subCpfNumber",child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO)));
+                            params.put("subRgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO)));
+                            params.put("subFullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS)));
+                            params.put("subCity", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY)));
+                            params.put("subState", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE)));
+                            params.put("contact", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT)));
+                            params.put("witness1Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME)));
+                            params.put("witness1CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF)));
+                            params.put("witness1RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG)));
+                            String witness1SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN));
+                            if (witness1SignPath != null && witness1SignPath.length() > 0) {
+                                try {
+                                    String encodedImage = Utilities.base64ConversionForImage(witness1SignPath);
+                                    params.put("witness1Sign", encodedImage);
+                                } catch (Exception e) {
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
+                            }
+                            params.put("witness2Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME)));
+                            params.put("witness2CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF)));
+                            params.put("witness2RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG)));
+                            String witness2SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN));
+                            if (witness2SignPath != null && witness2SignPath.length() > 0) {
+                                try {
+                                    String encodedImage = Utilities.base64ConversionForImage(witness2SignPath);
+                                    params.put("witness2Sign", encodedImage);
+                                } catch (Exception e) {
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
+                            }
                         } catch (Exception e) {
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
@@ -3208,6 +3251,49 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
 
                     params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
+
+                    //for only Brazil
+                    params.put("maritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL)));
+                    params.put("profession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION)));
+                    params.put("cpfNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO)));
+                    params.put("rgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO)));
+                    params.put("fullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS)));
+                    params.put("city", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY)));
+                    params.put("state", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE)));
+                    params.put("subName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME)));
+                    params.put("subNationality", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY)));
+                    params.put("submaritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL)));
+                    params.put("subProfession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION)));
+                    params.put("subCpfNumber",child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO)));
+                    params.put("subRgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO)));
+                    params.put("subFullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS)));
+                    params.put("subCity", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY)));
+                    params.put("subState", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE)));
+                    params.put("contact", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT)));
+                    params.put("witness1Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME)));
+                    params.put("witness1CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF)));
+                    params.put("witness1RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG)));
+                    String witness1SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN));
+                    if (witness1SignPath != null && witness1SignPath.length() > 0) {
+                        try {
+                            String encodedImage = Utilities.base64ConversionForImage(witness1SignPath);
+                            params.put("witness1Sign", encodedImage);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
+                        }
+                    }
+                    params.put("witness2Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME)));
+                    params.put("witness2CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF)));
+                    params.put("witness2RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG)));
+                    String witness2SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN));
+                    if (witness2SignPath != null && witness2SignPath.length() > 0) {
+                        try {
+                            String encodedImage = Utilities.base64ConversionForImage(witness2SignPath);
+                            params.put("witness2Sign", encodedImage);
+                        } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
+                        }
+                    }
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
