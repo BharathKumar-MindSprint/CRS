@@ -2115,7 +2115,7 @@ public class SyncAllTask extends SyncTask {
                                 PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                             }
                             progressDialog.dismiss();
-                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, res.getString(R.string.image_downloaded), Toast.LENGTH_LONG).show();
                         }
                     } else {
                         alert.dismiss();
