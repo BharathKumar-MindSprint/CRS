@@ -66,6 +66,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
+import org.json.JSONException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -352,6 +353,21 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         }
                         }
                     }catch (Exception e){}
+
+                    boolean isMandated = false, isMinVal = false;
+                    try {
+                        isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
+                        isMinVal = dynamicQuestions.CheckMinMaxforQuestion(questions);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (!isMandated) {
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, res.getString(R.string.restriction_in_submodules), Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (!isMinVal) {
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, res.getString(R.string.valid_range), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
