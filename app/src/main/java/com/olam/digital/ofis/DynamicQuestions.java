@@ -7494,7 +7494,7 @@ public class DynamicQuestions {
                 // pre-fill checkboxes that have been previously ticked
                 if (hasAnswers && cbAnswers.getCount() > 0) {
                     while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
                             cb.setChecked(true);
                         }
                     }
