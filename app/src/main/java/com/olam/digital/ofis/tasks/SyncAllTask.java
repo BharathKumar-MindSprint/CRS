@@ -2054,22 +2054,27 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
-
-    public void photoCheckboxDownload(){
-        // delete all data where active is false
+    private void deleteAllInActivePhotoData() {
         List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
         if (!inActivePhoto.isEmpty()){
             for (int i = 0; i < inActivePhoto.size(); i++) {
                 String fileName = inActivePhoto.get(i).fileName;
                 File internalStorageDir = context.getFilesDir();
                 File imageFile = new File(internalStorageDir, fileName);
-
                 if (imageFile.exists()) {
                     imageFile.delete();
                 }
             }
         }
+    }
+    public void photoCheckboxDownload(){
+        deleteAllInActivePhotoData();
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(context.getString(R.string.image_download_start));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         if (InternetConnectionHelper.isInternetAvailable(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
@@ -2085,6 +2090,7 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
+                    progressDialog.dismiss();
                 }
             });
 
@@ -2093,6 +2099,8 @@ public class SyncAllTask extends SyncTask {
                 public void onClick(View view) {
                     if (InternetConnectionHelper.isInternetAvailable(context)) {
                         List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                        int totalRecords = photoData.size();
+                        int currentRecord = 0;
                         if (!photoData.isEmpty()) {
                             for (int i=0; i < photoData.size(); i++) {
                                 long id = photoData.get(i).id;
@@ -2100,12 +2108,18 @@ public class SyncAllTask extends SyncTask {
                                 long lookupId = Long.parseLong(photoData.get(i).lookupId);
                                 String fileName = photoData.get(i).fileName;
                                 alert.dismiss();
+                                currentRecord++;
+                                Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                                String message = context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords;
+                                progressDialog.setMessage(message);
                                 PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                             }
+                            progressDialog.dismiss();
                             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         }
                     } else {
                         alert.dismiss();
+                        progressDialog.dismiss();
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -2130,6 +2144,7 @@ public class SyncAllTask extends SyncTask {
                 byte[] imageBytes = responseBody.bytes();
                 // image compression
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
                 int quality = 80;
@@ -2149,7 +2164,7 @@ public class SyncAllTask extends SyncTask {
                     default:
                         throw new IllegalArgumentException("Unsupported image format: " + imageType);
                 }
-                bitmap.compress(format, quality, outputStream);
+                resizedBitmap.compress(format, quality, outputStream);
                 byte[] compressedImageBytes = outputStream.toByteArray();
                 File internalStorageDir = context.getFilesDir();
 

@@ -1130,6 +1130,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="ofis_photo_checkbox_download">Download Photo\nCheckbox Images</string>
     <string name="ready_to_download_photo_checkbox">There are images which need to be downloaded for photo checkbox questions. Do you want to continue to download the images now?</string>
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
-    <string name="image_downloaded">Image Downloaded!</string>
+    <string name="image_downloaded">Images successfully downloaded</string>
+    <string name="image_download_start">Downloading Images for photo checkbox questions</string>
+
 
 </resources>

@@ -8479,8 +8479,9 @@ public class DynamicQuestions {
         int reqHeight = 500;
 
         Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 200, 200, false);
 
-        float aspectRatio = (float) originalBitmap.getWidth() / (float) originalBitmap.getHeight();
+        float aspectRatio = (float) resizedBitmap.getWidth() / (float) resizedBitmap.getHeight();
         int newWidth;
         int newHeight;
 
@@ -8492,7 +8493,8 @@ public class DynamicQuestions {
             newWidth = Math.round(reqHeight * aspectRatio);
         }
 
-        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+//        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+        return Utilities.loadSizedBitmap(imageFile.getAbsolutePath(),newWidth,newHeight);
     }
 
     public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res, boolean isSavedAns) {

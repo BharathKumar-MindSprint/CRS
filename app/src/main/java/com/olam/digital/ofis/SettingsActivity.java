@@ -661,6 +661,10 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     public void photoCheckboxDownload(){
         deleteAllInActivePhotoData();
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+        progressDialog.setMessage(context.getString(R.string.image_download_start));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
             if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -677,6 +681,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     @Override
                     public void onClick(View view) {
                         alert.dismiss();
+                        progressDialog.dismiss();
                     }
                 });
 
@@ -685,6 +690,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     public void onClick(View view) {
                         if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
                             List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                            int totalRecords = photoData.size();
+                            int currentRecord = 0;
                             if (!photoData.isEmpty()){
                                 for (int i=0; i < photoData.size(); i++) {
                                     long id = photoData.get(i).id;
@@ -692,12 +699,19 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                                     long lookupId = Long.parseLong(photoData.get(i).lookupId);
                                     String fileName = photoData.get(i).fileName;
                                     alert.dismiss();
+                                    currentRecord++;
+                                    Log.d("PHOTOOOOOOOOO", getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                                    String message = getString(R.string.download) + ": " + currentRecord + " of " + totalRecords;
+                                    progressDialog.setMessage(message);
                                     PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
                                 }
-                                Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                                progressDialog.dismiss();
+                                Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             alert.dismiss();
+                            progressDialog.dismiss();
+                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         }
 
                     }
@@ -741,6 +755,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 byte[] imageBytes = responseBody.bytes();
                 // image compression
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
                 int quality = 80;
@@ -760,7 +775,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     default:
                         throw new IllegalArgumentException("Unsupported image format: " + imageType);
                 }
-                bitmap.compress(format, quality, outputStream);
+                resizedBitmap.compress(format, quality, outputStream);
                 byte[] compressedImageBytes = outputStream.toByteArray();
                 File internalStorageDir = getApplicationContext().getFilesDir();
 
