@@ -658,8 +658,35 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     }
 
+    private void deleteInActiveModuleIdData(){
+        if (!roomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
+            ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
+            for (int i=0; i < moduleNotInUse.size(); i++) {
+                // delete file
+                int moduleId = moduleNotInUse.get(i);
+                List<PhotoCheckBoxData> fileNamesModuleId = roomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
+                if (!fileNamesModuleId.isEmpty()){
+                    for (int j=0; j<fileNamesModuleId.size(); j++) {
+
+                        // get list of filenames
+                        File internalStorageDir = context.getFilesDir();
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(i).fileName);
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                    }
+                }
+
+                // delete data in db
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(i);
+            }
+        }
+
+    }
+
     public void photoCheckboxDownload(){
         deleteAllInActivePhotoData();
+        deleteInActiveModuleIdData();
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
         progressDialog.setMessage(context.getString(R.string.image_download_start));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

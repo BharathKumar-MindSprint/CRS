@@ -2,8 +2,10 @@ package com.olam.digital.ofis.recordpolygon;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,5 +169,23 @@ public class SharedPreferenceUtils {
 
     public String getPhotoCheckBoxSyncDate() {
         return mSharedPreferences.getString(AppConstants.SYNC_DATE_PHOTOCHECKBOX, null);
+    }
+
+    public void setPhotoCheckBoxModuleNotInUse(ArrayList<Integer> value) {
+        String moduleNotInUse = new Gson().toJson(value);
+        mSharedPreferencesEditor.putString(AppConstants.MODULE_NOT_IN_USE_PHOTOCHECKBOX, moduleNotInUse);
+        mSharedPreferencesEditor.commit();
+    }
+
+    public ArrayList<Integer> getPhotoCheckBoxModuleNotInUse() {
+        String moduleNotInUse = mSharedPreferences.getString(AppConstants.MODULE_NOT_IN_USE_PHOTOCHECKBOX, null);
+        if (moduleNotInUse != null) {
+            try {
+                return new Gson().fromJson(moduleNotInUse, new TypeToken<List<Integer>>() {}.getType());
+            } catch (Exception e) {
+                Log.e("TAG", "Error retrieving module not in use list", e);
+            }
+        }
+        return new ArrayList<>();
     }
 }

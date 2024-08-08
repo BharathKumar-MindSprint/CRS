@@ -15,4 +15,5 @@ public class AppConstants {
 
     public static String SYNC_DATE_PHOTOCHECKBOX = "photoCheckboxSyncDate";
     public static String CONTAINER_PHOTOCHECKBOX = "photoCheckboxContainer";
+    public static String MODULE_NOT_IN_USE_PHOTOCHECKBOX = "photoCheckboxModuleNotInUse";
 }

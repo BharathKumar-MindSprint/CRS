@@ -67,10 +67,14 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -1078,7 +1082,23 @@ public class SyncAllTask extends SyncTask {
 
     public void syncPhotoCheckBoxData(String syncDate) {
         ManageRecords getPhotoCheckBoxData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        retrofit2.Call<PhotoCheckBoxResponseModel> call = getPhotoCheckBoxData.getAllPhotoCheckBoxData(1, syncDate);
+        List<PhotoCheckBoxData> photoModule = roomDB.photoCheckBoxDataDao().getPhotoModuleId();
+
+        List<Integer> allModuleId = new ArrayList<>();
+        if (!photoModule.isEmpty()) {
+            for (int i = 0; i < photoModule.size(); i++) {
+                int moduleId = Integer.parseInt(photoModule.get(i).moduleId);
+                allModuleId.add(moduleId);
+            }
+        }
+
+        Map<String, Object> photoModuleList = new HashMap<>();
+        photoModuleList.put("lastSyncModuleId", allModuleId);
+
+        String finalJson = new Gson().toJson(photoModuleList);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), finalJson);
+
+        retrofit2.Call<PhotoCheckBoxResponseModel> call = getPhotoCheckBoxData.getAllPhotoCheckBoxData(1, syncDate, requestBody);
 
         call.enqueue(new retrofit2.Callback<PhotoCheckBoxResponseModel>() {
             @Override
@@ -2067,8 +2087,35 @@ public class SyncAllTask extends SyncTask {
             }
         }
     }
+
+    private void deleteInActiveModuleIdData(){
+        if (!roomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
+            ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
+            for (int i=0; i < moduleNotInUse.size(); i++) {
+                // delete file
+                int moduleId = moduleNotInUse.get(i);
+                List<PhotoCheckBoxData> fileNamesModuleId = roomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
+                if (!fileNamesModuleId.isEmpty()){
+                    for (int j=0; j<fileNamesModuleId.size(); j++) {
+
+                        // get list of filenames
+                        File internalStorageDir = context.getFilesDir();
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(i).fileName);
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                    }
+                }
+
+                // delete data in db
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(i);
+            }
+        }
+
+    }
     public void photoCheckboxDownload(){
         deleteAllInActivePhotoData();
+        deleteInActiveModuleIdData();
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
         progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -2244,6 +2291,7 @@ public class SyncAllTask extends SyncTask {
                 OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                 SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxContainer(model.getContainer());
                 SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxSyncDate(model.getSyncDate());
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxModuleNotInUse(model.getModuleNotInUse());
 
                 ArrayList<PhotoCheckBoxData> outputData = model.getPhotoCheckBoxList();
 

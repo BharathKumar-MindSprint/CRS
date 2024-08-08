@@ -30,4 +30,6 @@ public class PhotoCheckBoxData {
     @ColumnInfo(name = "active")
     public boolean active;
 
+    @ColumnInfo(name = "moduleId")
+    public String moduleId;
 }

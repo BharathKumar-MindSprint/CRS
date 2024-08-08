@@ -20,6 +20,10 @@ public class PhotoCheckBoxResponseModel {
     @Expose
     public ArrayList<PhotoCheckBoxData> photoCheckBoxList;
 
+    @SerializedName("moduleNotInUse")
+    @Expose
+    public ArrayList<Integer> moduleNotInUse;
+
     @SerializedName("count")
     @Expose
     public String count;
@@ -48,6 +52,14 @@ public class PhotoCheckBoxResponseModel {
         this.photoCheckBoxList = photoCheckBoxList;
     }
 
+    public ArrayList<Integer> getModuleNotInUse() {
+        return moduleNotInUse;
+    }
+
+    public void setModuleNotInUse(ArrayList<Integer> moduleNotInUse) {
+        this.moduleNotInUse = moduleNotInUse;
+    }
+
     public String getCount() {
         return count;
     }
@@ -56,10 +68,11 @@ public class PhotoCheckBoxResponseModel {
         this.count = count;
     }
 
-    public PhotoCheckBoxResponseModel(String syncDate, String container, ArrayList<PhotoCheckBoxData> photoCheckBoxList, String count) {
+    public PhotoCheckBoxResponseModel(String syncDate, String container, ArrayList<PhotoCheckBoxData> photoCheckBoxList, ArrayList<Integer> moduleNotInUse, String count) {
         this.syncDate = syncDate;
         this.container = container;
         this.photoCheckBoxList = photoCheckBoxList;
+        this.moduleNotInUse = moduleNotInUse;
         this.count = count;
     }
 }

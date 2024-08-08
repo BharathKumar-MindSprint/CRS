@@ -19,6 +19,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.
 
 import org.json.JSONArray;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -83,8 +84,8 @@ public interface ManageRecords {
     @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
     Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
 
-    @GET("ofissurvey/survey/getPhotoCheckboxImages")
-    Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate);
+    @POST("ofissurvey/survey/getPhotoCheckboxImages")
+    Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate, @Body RequestBody photoModuleList);
 
 
 }

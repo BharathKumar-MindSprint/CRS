@@ -44,5 +44,13 @@ public interface PhotoCheckBoxDataDao {
     @Query("DELETE FROM photocheckboxdata where active=:active")
     void deleteDeactivatedPhoto(boolean active);
 
+    @Query("SELECT * FROM PhotoCheckBoxData group by moduleId")
+    List<PhotoCheckBoxData> getPhotoModuleId();
+
+    @Query("DELETE FROM photocheckboxdata where moduleId=:moduleId")
+    void deleteInActiveModulePhoto(int moduleId);
+
+    @Query("SELECT * FROM PhotoCheckBoxData WHERE moduleId=:moduleId")
+    List<PhotoCheckBoxData> getFileNameByModuleId(int moduleId);
 }
 
