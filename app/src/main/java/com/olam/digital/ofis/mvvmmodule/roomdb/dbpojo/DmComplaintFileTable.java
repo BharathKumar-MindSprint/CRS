@@ -61,9 +61,6 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "filePath")
     private String filePath;
 
-    @ColumnInfo(name = "fileSize")
-    private Integer fileSize;
-
     public int getAttempt() {
         return attempt;
     }
@@ -122,13 +119,5 @@ public class DmComplaintFileTable {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
-    }
-
-    public void setFileSize(Integer fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public Integer getFileSize() {
-        return fileSize;
     }
 }

@@ -152,7 +152,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     boolean goNextCaptureProof =false;
     boolean goNextActionPlan = true;
 
-    private final int FILE_SIZE = 5242880;
+    private final long FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
 
     public ActionPlanProofFragment() {
@@ -193,6 +193,29 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         justVal.add(qId.get(i));
                     } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
                         justVal.add(qId.get(i));
+                    }
+
+                    long size = FILE_SIZE;
+
+                    for (DmComplaintFileTable complaintFiles : dmComplaintFileTables) {
+                        String path = complaintFiles.getFilePath();
+
+                        try {
+                            File file = new File(path);
+
+                            if (file.exists()) {
+                                size -= file.length();
+                            }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    if (size < 0) {
+                        Toast.makeText(getContext(), "Total File Size Exceeds" + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
 
@@ -1013,8 +1036,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        int totalSizeUntilNow = db.dmComplaintFileTableDao().getTotalUnsyncFileSizeByQuestionId(String.valueOf(GALLERY_QUESTION_ID), Constants.FARMER_ID, "ParentSurvey");
-
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
 
             final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -1037,16 +1058,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageBytes = baos.toByteArray();
 
-            if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
-                return;
-            }
-
+            //db.dmComplaintFileTableDao().deleteAll();
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
             String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
             dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
             dmComplaintFileTable.setIsFileSynced(0);
+//            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1056,7 +1075,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
             dmComplaintFileTable.setAttempt(0);
-            dmComplaintFileTable.setFileSize(imageBytes.length);
+            // Get an array of app-specific external storage directories
             File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
             // The first element of the array will be the primary external storage directory
@@ -1195,11 +1214,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             Uri uri = data.getData();
             ContentResolver cr = getActivity().getContentResolver();
             String mime = cr.getType(uri);
+//            Toast.makeText(getActivity(), "" + GALLERY_PICK, Toast.LENGTH_SHORT).show();
+
             String valueCode = String.valueOf(GALLERY_PICK);
+
 
             StringBuffer sb = new StringBuffer(valueCode);
             sb.deleteCharAt(sb.length() - 1);
+
+//            int questionId = Integer.parseInt(sb.toString());
+
             int questionId = GALLERY_QUESTION_ID;
+//            Toast.makeText(getActivity(), "" + questionId, Toast.LENGTH_SHORT).show();
+
 
             if (mime.equalsIgnoreCase("application/vnd.ms-excel")
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -1208,6 +1235,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
 
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                }
+
                 byte[] fileByteArray;
                 try {
                     fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
@@ -1215,9 +1254,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     throw new RuntimeException(e);
                 }
 
-                if (validateFileSize(fileByteArray.length, totalSizeUntilNow)) {
-                    return;
-                }
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
@@ -1226,6 +1262,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1235,8 +1272,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                dmComplaintFileTable.setFileSize(fileByteArray.length);
-
                 // Get an array of app-specific external storage directories
                 File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
@@ -1255,14 +1290,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
                 String destinationFilePath = destinationFile.getAbsolutePath();
                 dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
                 dynamicArrayName = "imageArray" + questionId;
+
                 dynamicArrayNameFile = "fileArray" + questionId;
+
                 dynamicArrayFile.clear();
                 dynamicArray.clear();
 
@@ -1270,12 +1307,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 retrievedArray.clear();
 
                 ArrayList<Long> retrievedArrayFile = new ArrayList<>();
+
                 retrievedArrayFile.clear();
+
                 dynamicArrays.clear();
                 dynamicArraysFile.clear();
 
+
                 View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
                 LinearLayout linearLayoutImage = (LinearLayout) desiredView;
+
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
@@ -1291,9 +1332,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
                 dynamicArrays.put(dynamicArrayName, dynamicArray);
+
                 dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
 
+                //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
+
                 linearLayoutImage.removeAllViews();
+
                 for (int i = 0; i < retrievedArray.size(); i++) {
 
                     LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -1361,164 +1406,194 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                Uri uri1 = Uri.fromFile(compressPdf(uri));
 
-                byte[] pdfByteArray2;
+                // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
                 try {
-                    pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
-                } catch (IOException e) {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+                long compressedSize = fileDescriptor.getLength();
 
-                if (validateFileSize(pdfByteArray2.length, totalSizeUntilNow)) {
-                    return;
-                }
+                // Display the file size
+                String fileSize = getFormattedFileSize(compressedSize);
+                String message = "PDF Size: " + fileSize;
+                // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
-                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
-                getFileWithDate(filename,fileSaperator,formatNew);
-                String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
-                dmComplaintFileTable.setFile_name(newFileFormat);
-                dmComplaintFileTable.setSurveyType("ParentSurvey");
-                dmComplaintFileTable.setIsFileSynced(0);
+//                5,242,880 - 5MB
+//                10485760  - 10MB
+//                3145728 - 3MB
 
-                dmComplaintFileTable.setFileData(pdfByteArray2);
-                Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
-                dmComplaintFileTable.setOfisFileName(OFISFileName);
-                dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
-                dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
-                dmComplaintFileTable.setAttempt(0);
-                dmComplaintFileTable.setFileSize(pdfByteArray2.length);
-
-                // Get an array of app-specific external storage directories
-                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
-
-                // The first element of the array will be the primary external storage directory
-                File primaryExternalStorageDir = externalStorageDirs[0];
-                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
-                if (!destinationFolder.exists()) {
-                    destinationFolder.mkdirs();
-                }
-                File destinationFile = new File(destinationFolder, OFISFileName);
-
-                try {
-                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
-                    outputStream.write(pdfByteArray2);
-                    outputStream.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                String destinationFilePath = destinationFile.getAbsolutePath();
-                dmComplaintFileTable.setFilePath(destinationFilePath);
-                db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
-
-                long id = db.dmComplaintFileTableDao().getLastInsertedId();
-
-                dynamicArrayName = "imageArray" + questionId;
-                dynamicArrayNameFile = "fileArray" + questionId;
-
-                dynamicArrayFile.clear();
-                dynamicArray.clear();
-
-                ArrayList<String> retrievedArray = new ArrayList<>();
-                retrievedArray.clear();
-
-                ArrayList<Long> retrievedArrayFile = new ArrayList<>();
-                retrievedArrayFile.clear();
-
-                dynamicArrays.clear();
-                dynamicArraysFile.clear();
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), compressedSize + "", Toast.LENGTH_SHORT).show();
+//                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+//                    byte[] pdfByteArray1;
+//                    try {
+//                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
 
-                View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
-                LinearLayout linearLayoutImage = (LinearLayout) desiredView;
+                } else {
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 
-
-                List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-                dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
-                    for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                        retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
-
-                        dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                    byte[] pdfByteArray2;
+                    try {
+                        pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }
+                    //db.dmComplaintFileTableDao().deleteAll();
 
-                dynamicArrays.put(dynamicArrayName, dynamicArray);
+                    DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                    String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
+                    getFileWithDate(filename,fileSaperator,formatNew);
+                    String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
+                    dmComplaintFileTable.setFile_name(newFileFormat);
+                    dmComplaintFileTable.setSurveyType("ParentSurvey");
+                    dmComplaintFileTable.setIsFileSynced(0);
 
-                dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
+//                    dmComplaintFileTable.setFilePath(uri.getPath());
+                    dmComplaintFileTable.setFileData(pdfByteArray2);
+                    Date today = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    String currentTime = format.format(today);
+                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                    dmComplaintFileTable.setOfisFileName(OFISFileName);
+                    dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                    dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                    dmComplaintFileTable.setAttempt(0);
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
-                //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
 
-                linearLayoutImage.removeAllViews();
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
+                    db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
-                for (int i = 0; i < retrievedArray.size(); i++) {
+                    long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
-                    LayoutInflater inflater = LayoutInflater.from(getActivity());
-                    final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                    final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                    final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+                    dynamicArrayName = "imageArray" + questionId;
+                    dynamicArrayNameFile = "fileArray" + questionId;
 
-                    linearLayoutImage.addView(convertView);
-                    convertView.setTag(i);
-                    remove.setTag(i);
-                    selected_imgName.setText(retrievedArray.get(i));
+                    dynamicArrayFile.clear();
+                    dynamicArray.clear();
+
+                    ArrayList<String> retrievedArray = new ArrayList<>();
+                    retrievedArray.clear();
+
+                    ArrayList<Long> retrievedArrayFile = new ArrayList<>();
+                    retrievedArrayFile.clear();
+
+                    dynamicArrays.clear();
+                    dynamicArraysFile.clear();
 
 
-                    int finalI = i;
-                    ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
-                    ArrayList<String> finalRetrievedArray = retrievedArray;
-                    remove.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
+                    LinearLayout linearLayoutImage = (LinearLayout) desiredView;
 
-                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
-                            builder1.setCancelable(false);
-                            builder1.setPositiveButton(
-                                    "YES",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
 
-                                            linearLayoutImage.removeAllViews();
+                    List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
+                    dmComplaintFileTableList.clear();
+                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
+                    if (dmComplaintFileTableList.size() != 0) {
+                        for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
+                            retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                            dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        }
+                    }
 
-                                            dm_question_complaint.removeAllViews();
+                    dynamicArrays.put(dynamicArrayName, dynamicArray);
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                    dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
+
+                    //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
+
+                    linearLayoutImage.removeAllViews();
+
+                    for (int i = 0; i < retrievedArray.size(); i++) {
+
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
+                        final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
+                        final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+
+                        linearLayoutImage.addView(convertView);
+                        convertView.setTag(i);
+                        remove.setTag(i);
+                        selected_imgName.setText(retrievedArray.get(i));
+
+
+                        int finalI = i;
+                        ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
+                        ArrayList<String> finalRetrievedArray = retrievedArray;
+                        remove.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                                builder1.setMessage("Do you want to remove this report");
+                                builder1.setTitle("Alert");
+                                builder1.setCancelable(false);
+                                builder1.setPositiveButton(
+                                        "YES",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+
+                                                linearLayoutImage.removeAllViews();
+
+                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+
+                                                dm_question_complaint.removeAllViews();
+
+                                                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
-                            builder1.setNegativeButton(
-                                    "NO",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
+                                        });
+                                builder1.setNegativeButton(
+                                        "NO",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
 
-                            AlertDialog alert11 = builder1.create();
-                            alert11.show();
+                                AlertDialog alert11 = builder1.create();
+                                alert11.show();
 
-                        }
-                    });
+                            }
+                        });
 
+
+                    }
 
                 }
-
-
 
 
             }
@@ -1534,6 +1609,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
+                    if (filePathimage != null) {
+                        File file = new File(filePathimage);
+                        long fileSize = file.length();
+                        if (fileSize > FILE_SIZE) {
+                            Toast.makeText(getContext(), "Image size exceeds " + errorSizeMessage +  ". Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -1553,10 +1636,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] imageBytes = baos.toByteArray();
 
-                if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
-                    return;
-                }
-
+                //db.dmComplaintFileTableDao().deleteAll();
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
                 getFileWithDate(filename,fileSaperator,formatNew);
@@ -1565,6 +1645,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
 
+//                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1574,8 +1655,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                dmComplaintFileTable.setFileSize(imageBytes.length);
-
                 // Get an array of app-specific external storage directories
                 File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
@@ -1705,6 +1784,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
             }
 
+
         }
 
 
@@ -1714,10 +1794,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             Uri uri = data.getData();
             ContentResolver cr = getActivity().getContentResolver();
             String mime = cr.getType(uri);
+//            Toast.makeText(getActivity(), "" + GALLERY_PICK, Toast.LENGTH_SHORT).show();
+
             String valueCode = String.valueOf(GALLERY_PICK_DOCX);
+
+
             StringBuffer sb = new StringBuffer(valueCode);
             sb.deleteCharAt(sb.length() - 1);
+
+//            int questionId = Integer.parseInt(sb.toString());
+
             int questionId = GALLERY_QUESTION_ID;
+//            Toast.makeText(getActivity(), "" + questionId, Toast.LENGTH_SHORT).show();
 
 
             if (mime.equalsIgnoreCase("application/vnd.ms-excel")
@@ -1727,6 +1815,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
 
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 byte[] fileByteArray;
                 try {
                     fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
@@ -1734,14 +1835,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     throw new RuntimeException(e);
                 }
 
-                if (validateFileSize(fileByteArray.length, totalSizeUntilNow)) {
-                    return;
-                }
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(fileByteArray);
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1750,7 +1849,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                dmComplaintFileTable.setFileSize(fileByteArray.length);
                 // Get an array of app-specific external storage directories
                 File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
@@ -1885,157 +1983,188 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                Uri uri1 = Uri.fromFile(compressPdf(uri));
 
-                byte[] pdfByteArray2;
+                // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
                 try {
-                    pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
-                } catch (IOException e) {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+                long compressedSize = fileDescriptor.getLength();
 
-                if (validateFileSize(pdfByteArray2.length, totalSizeUntilNow)) {
-                    return;
-                }
+                // Display the file size
+                String fileSize = getFormattedFileSize(compressedSize);
+                String message = "PDF Size: " + fileSize;
+                // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
-                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                dmComplaintFileTable.setFile_name(filename);
-                dmComplaintFileTable.setSurveyType("ParentSurvey");
-                dmComplaintFileTable.setFileData(pdfByteArray2);
-                Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
-                dmComplaintFileTable.setOfisFileName(OFISFileName);
-                dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
-                dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
-                dmComplaintFileTable.setAttempt(0);
-                dmComplaintFileTable.setFileSize(pdfByteArray2.length);
-                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+//                5,242,880 - 5MB
+//                10485760  - 10MB
+//                3145728 - 3MB
 
-                // The first element of the array will be the primary external storage directory
-                File primaryExternalStorageDir = externalStorageDirs[0];
-                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
-                if (!destinationFolder.exists()) {
-                    destinationFolder.mkdirs();
-                }
-                File destinationFile = new File(destinationFolder, OFISFileName);
-
-                try {
-                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
-                    outputStream.write(pdfByteArray2);
-                    outputStream.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                String destinationFilePath = destinationFile.getAbsolutePath();
-                dmComplaintFileTable.setFilePath(destinationFilePath);
-                db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
-
-                long id = db.dmComplaintFileTableDao().getLastInsertedId();
-
-                dynamicArrayName = "imageArray" + questionId;
-                dynamicArrayNameFile = "fileArray" + questionId;
-
-                dynamicArrayFile.clear();
-                dynamicArray.clear();
-
-                ArrayList<String> retrievedArray = new ArrayList<>();
-                retrievedArray.clear();
-
-                ArrayList<Long> retrievedArrayFile = new ArrayList<>();
-                retrievedArrayFile.clear();
-
-                dynamicArrays.clear();
-                dynamicArraysFile.clear();
+                if (compressedSize > FILE_SIZE) {
+                    Toast.makeText(getContext(), "Sizer is greater than " + errorSizeMessage, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), compressedSize + "", Toast.LENGTH_SHORT).show();
+//                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+//                    byte[] pdfByteArray1;
+//                    try {
+//                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
 
-                View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
-                LinearLayout linearLayoutImage = (LinearLayout) desiredView;
+                } else {
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 
-
-                List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-                dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
-                    for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                        retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
-
-                        dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                    byte[] pdfByteArray2;
+                    try {
+                        pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }
+                    //db.dmComplaintFileTableDao().deleteAll();
 
-                dynamicArrays.put(dynamicArrayName, dynamicArray);
+                    DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                    dmComplaintFileTable.setFile_name(filename);
+//                    dmComplaintFileTable.setFilePath(uri1.getPath());
+                    dmComplaintFileTable.setSurveyType("ParentSurvey");
+                    dmComplaintFileTable.setFileData(pdfByteArray2);
+                    Date today = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    String currentTime = format.format(today);
+                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                    dmComplaintFileTable.setOfisFileName(OFISFileName);
+                    dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                    dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                    dmComplaintFileTable.setAttempt(0);
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
-                dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
 
-                //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
+                    db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
-                linearLayoutImage.removeAllViews();
+                    long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
-                for (int i = 0; i < retrievedArray.size(); i++) {
+                    dynamicArrayName = "imageArray" + questionId;
+                    dynamicArrayNameFile = "fileArray" + questionId;
 
-                    LayoutInflater inflater = LayoutInflater.from(getActivity());
-                    final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                    final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                    final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+                    dynamicArrayFile.clear();
+                    dynamicArray.clear();
 
-                    linearLayoutImage.addView(convertView);
-                    convertView.setTag(i);
-                    remove.setTag(i);
-                    selected_imgName.setText(retrievedArray.get(i));
+                    ArrayList<String> retrievedArray = new ArrayList<>();
+                    retrievedArray.clear();
+
+                    ArrayList<Long> retrievedArrayFile = new ArrayList<>();
+                    retrievedArrayFile.clear();
+
+                    dynamicArrays.clear();
+                    dynamicArraysFile.clear();
 
 
-                    int finalI = i;
-                    ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
-                    ArrayList<String> finalRetrievedArray = retrievedArray;
-                    remove.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
+                    LinearLayout linearLayoutImage = (LinearLayout) desiredView;
 
-                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
-                            builder1.setCancelable(false);
-                            builder1.setPositiveButton(
-                                    "YES",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
 
-                                            linearLayoutImage.removeAllViews();
+                    List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
+                    dmComplaintFileTableList.clear();
+                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
+                    if (dmComplaintFileTableList.size() != 0) {
+                        for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
+                            retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                            dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        }
+                    }
 
-                                            dm_question_complaint.removeAllViews();
+                    dynamicArrays.put(dynamicArrayName, dynamicArray);
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                    dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
+
+                    //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
+
+                    linearLayoutImage.removeAllViews();
+
+                    for (int i = 0; i < retrievedArray.size(); i++) {
+
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
+                        final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
+                        final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+
+                        linearLayoutImage.addView(convertView);
+                        convertView.setTag(i);
+                        remove.setTag(i);
+                        selected_imgName.setText(retrievedArray.get(i));
+
+
+                        int finalI = i;
+                        ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
+                        ArrayList<String> finalRetrievedArray = retrievedArray;
+                        remove.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                                builder1.setMessage("Do you want to remove this report");
+                                builder1.setTitle("Alert");
+                                builder1.setCancelable(false);
+                                builder1.setPositiveButton(
+                                        "YES",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+
+                                                linearLayoutImage.removeAllViews();
+
+                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+
+                                                dm_question_complaint.removeAllViews();
+
+                                                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
-                            builder1.setNegativeButton(
-                                    "NO",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
+                                        });
+                                builder1.setNegativeButton(
+                                        "NO",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
 
-                            AlertDialog alert11 = builder1.create();
-                            alert11.show();
+                                AlertDialog alert11 = builder1.create();
+                                alert11.show();
 
-                        }
-                    });
+                            }
+                        });
 
+
+                    }
 
                 }
-
-
 
 
             }
@@ -2503,26 +2632,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public static String getFileWithDate(String fileName, String fileSaperator, String dateFormat) {
         String FileNamePrefix = fileName.substring(0, fileName.lastIndexOf(fileSaperator));
         String FileNameSuffix = fileName.substring(fileName.lastIndexOf(fileSaperator)+1, fileName.length());
+        //System.out.println("File= Prefix~Suffix:"+FileNamePrefix +"~"+FileNameSuffix);
 
         String newFileName = new SimpleDateFormat("'"+FileNamePrefix+"_'"+dateFormat+"'"+fileSaperator+FileNameSuffix+"'").format(new Date());
         System.out.println("New File:"+newFileName);
         return newFileName;
     }
-
-    public boolean validateFileSize(int size, int totalSizeUntilNow) {
-
-        if (size > FILE_SIZE) {
-            Toast.makeText(getContext(), getString(R.string.file_exceeds) + errorSizeMessage, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        if (totalSizeUntilNow + size > FILE_SIZE) {
-            String sizeInString = getFormattedFileSize(FILE_SIZE - totalSizeUntilNow);
-            Toast.makeText(getContext(), getString(R.string.total_file_size) + sizeInString, Toast.LENGTH_LONG).show();
-            return true;
-        }
-
-        return false;
-    }
-
 }
