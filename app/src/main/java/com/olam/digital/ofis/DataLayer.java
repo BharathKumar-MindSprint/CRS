@@ -4864,18 +4864,18 @@ public class DataLayer {
     // get the child answers from dropdown
     Cursor getAnswersForQuestionByChild(int questionId, long farmerId, long farmerModuleId) {
         String[] columns = new String[]{"*"};
-        String farmerQuery = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String farmerQueryValue = String.valueOf(farmerId);
 
-        String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery + " AND "
-                + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery + " AND "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
                 farmerQueryValue,
                 String.valueOf(farmerModuleId)
         };
 
-        return db.query(OFISDBContract.AnswerChildEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
 
@@ -5489,7 +5489,13 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
-    public Cursor getAnswersByFarmerModuleId(int farmerModuleId) {
+    public Cursor getAnswersByFarmerModuleId(int farmerModuleId, ArrayList<Integer> submoduleList) {
+        StringBuilder submoduleIds = new StringBuilder();
+        for (int subId : submoduleList) {
+            submoduleIds.append(subId).append(",");
+        }
+        String submoduleIdsString = submoduleIds.length() > 0 ? submoduleIds.substring(0, submoduleIds.length() - 1) : "";
+
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
@@ -5499,7 +5505,7 @@ public class DataLayer {
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5536,7 +5542,13 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    Cursor getAnswersByFarmerChildModuleId(int farmerModuleId) {
+    Cursor getAnswersByFarmerChildModuleId(int farmerModuleId, ArrayList<Integer> submoduleList) {
+        StringBuilder submoduleIds = new StringBuilder();
+        for (int subId : submoduleList) {
+            submoduleIds.append(subId).append(",");
+        }
+        String submoduleIdsString = submoduleIds.length() > 0 ? submoduleIds.substring(0, submoduleIds.length() - 1) : "";
+
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
@@ -5547,7 +5559,7 @@ public class DataLayer {
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
@@ -5584,14 +5596,14 @@ public class DataLayer {
     }
 
     Cursor getChildAnswersByModuleIdAndParentQuestionId(int farmerModuleId, int parentQuestionId) {
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = ? AND " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " ASC, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " ASC, " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{
                 String.valueOf(parentQuestionId),
                 String.valueOf(farmerModuleId)
@@ -5784,7 +5796,13 @@ public class DataLayer {
     }
 
     void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate,int farmId, int plotId) {
-        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        ArrayList<Integer> getAllSubModulesId = getAllSubmodulesByModuleId(moduleId);
+        StringBuilder submoduleIds = new StringBuilder();
+        for (int subId : getAllSubModulesId) {
+            submoduleIds.append(subId).append(",");
+        }
+        String submoduleIdsString = submoduleIds.length() > 0 ? submoduleIds.substring(0, submoduleIds.length() - 1) : "";
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") " ;
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         try {
@@ -5839,7 +5857,13 @@ public class DataLayer {
 
     // Remove and update after sync
     void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate, String surveyCode) {
-        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        ArrayList<Integer> getAllSubModulesId = getAllSubmodulesByModuleId(moduleId);
+        StringBuilder submoduleIds = new StringBuilder();
+        for (int subId : getAllSubModulesId) {
+            submoduleIds.append(subId).append(",");
+        }
+        String submoduleIdsString = submoduleIds.length() > 0 ? submoduleIds.substring(0, submoduleIds.length() - 1) : "" ;
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") ";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         db.delete(OFISDBContract.AnswerEntry.TABLE_NAME, whereClause, whereArgs);
@@ -7289,6 +7313,26 @@ public class DataLayer {
         return questionList;
     }
 
+    public ArrayList<Integer> getAllSubmodulesByModuleId(int moduleId) {
+        ArrayList<Integer> submoduleList = new ArrayList<>();
+
+        String selection = "module_id = ?";
+        String[] selectionArgs = {String.valueOf(moduleId)};
+
+        Cursor cursor = db.query(OFISDBContract.SubmoduleEntry.TABLE_NAME, new String[]{OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID},
+                selection, selectionArgs,null,
+                null,
+                null);
+
+        while (cursor.moveToNext()) {
+            int subId = cursor.getInt(cursor.getColumnIndexOrThrow(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
+            submoduleList.add(subId);
+        }
+
+        cursor.close();
+
+        return submoduleList;
+    }
 
     public String getProductInfo() {
         String productdetails="";

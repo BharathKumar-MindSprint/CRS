@@ -1895,7 +1895,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                             }
 
-                            moduleAnswers = dl.getAnswersByFarmerModuleId(farmerModuleId);
+                            ArrayList<Integer> getAllSubModulesId = dl.getAllSubmodulesByModuleId(moduleId);
+                            moduleAnswers = dl.getAnswersByFarmerModuleId(farmerModuleId,getAllSubModulesId);
 
                             if (moduleAnswers.getCount() > 0) {
 
@@ -4806,7 +4807,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                             }
 
-                            moduleAnswers = dl.getAnswersByFarmerChildModuleId(farmerModuleId);
+                            ArrayList<Integer> getAllSubModulesId = dl.getAllSubmodulesByModuleId(moduleId);
+                            moduleAnswers = dl.getAnswersByFarmerChildModuleId(farmerModuleId, getAllSubModulesId);
 
                             if (moduleAnswers.getCount() > 0) {
 
@@ -4864,7 +4866,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     String dataTypeName = "";
                                     String datatype = "";
 
-                                    // Arch
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                                     datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
