@@ -358,7 +358,7 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                         }
                         else if(witness2RGStr.matches("")){
                             Toast.makeText(ConsentStatementOFIsBrazilActivity.this, getResources().getString(R.string.please_enter_witness2_RG), Toast.LENGTH_LONG).show();
-                            witness1RG.requestFocus();
+                            witness2RG.requestFocus();
                         }
                         else if(witness2_sign.matches("")){
                             Toast.makeText(ConsentStatementOFIsBrazilActivity.this, getResources().getString(R.string.witness2_sign_required), Toast.LENGTH_LONG).show();
@@ -559,9 +559,9 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                                 Uri fileUri = Uri.fromFile(photoFile);
                                 if(signedby.equalsIgnoreCase(getResources().getString(R.string.farmer))){
                                     farmerSign = fileUri.getPath();
-                                }if(signedby.equalsIgnoreCase("witness1")){
+                                }else if(signedby.equalsIgnoreCase("witness1")){
                                     witness1_sign = fileUri.getPath();
-                                }if(signedby.equalsIgnoreCase("witness2")){
+                                }else if(signedby.equalsIgnoreCase("witness2")){
                                     witness2_sign = fileUri.getPath();
                                 }else {
                                     staffSign = fileUri.getPath();
