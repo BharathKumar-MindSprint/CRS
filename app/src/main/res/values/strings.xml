@@ -1175,6 +1175,120 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
 
+    <!-- OFI Consent Consent Brazil-->
+    <string name="farmer_consent_brazil">CONSENTIMENTO DO AGRICULTOR</string>
+    <string name="personal_info_collection_brazil">"AVISO DE COLETA DE INFORMAÇÕES PESSOAIS "</string>
+    <string name="cs_page1_1_brazil">É solicitado que você,</string>
+    <string name="cs_page1_2_brazil">Brazilian,</string>
+    <string name="cs_page1_3_brazil">, maior de idade,</string>
+    <string name="cs_page1_4_brazil">, inscrito no CPF n° </string>
+    <string name="cs_page1_5_brazil">portador(a) do RG n° </string>
+    <string name="cs_page1_6_brazil">residente e domiciliado</string>
+    <string name="cs_page1_7_brazil">(“Agricultor”), forneça à \"<b>OLAM AGRÍCOLA LTDA</b>\", inscrita no CNPJ sob nº 07.028.528/0001-18, com sede na Rodovia Br 491, n.º 2005 C, Vila Teixeira - Alfenas/MG, CEP 37132-411, e suas filiais (“\"<b>ofi</b>\"”), seus dados pessoais em apoio aos esforços da \"<b>ofi</b>\" para promover a sustentabilidade e a rastreabilidade na cadeia de abastecimento abastecimentos e, por sua vez, para promover o comércio responsável com agricultores como vocês em todo o mundo (o “\"<b>Objetivo</b>\"”). </string>
+    <string name="cs_page1_8_brazil">Os seus dados pessoais, incluindo o seu nome, idade, informações de contato (endereço electrónico, número de telefone, endereço postal), fotografias, vídeos ou gravações digitais, informações biográficas, informações biométricas, sociais e geográficas, informações financeiras sobre agricultura e produção, seus comentários e, quando aplicável, informações sobre seus filhos ou dependentes (“\"<b>ofi</b>\"Dados do Agricultor”) serão coletados e armazenados por nós e disponibilizados aos nossos clientes, parceiros de negócios e, em alguns casos, tornados públicos nos  nossos sites da \"<b>ofi</b>\", meios de comunicação social, publicações eletrônicas ou escritas. Isso inclui o Sistema de Informação do Agricultor Olam (Olam Farmer Information System (“\"<b>OFIS</b>\"”) e/ou a plataforma AtSource (“\"<b>AtSource</b>\"”), que são bancos de dados e ferramentas on-line que contêm dados relacionados ao agricultor usados por nós e por nossos clientes e parceiros. Pedimos que você reconheça e conceda consentimento com a coleta, o uso e a divulgação de seus dados pessoais para esses propósitos, de acordo com este Aviso de Recolha de Informações Pessoais.</string>
+
+    <string name="cs_page1_hint1">estado civil</string>
+    <string name="cs_page1_hint2">Profissão</string>
+    <string name="cs_page1_hint3">número</string>
+    <string name="cs_page1_hint4">inserir endereço completo</string>
+    <string name="cs_page1_hint5">cidade</string>
+    <string name="cs_page1_hint6">estado</string>
+
+    <string name="cs_page2_brazil">1. Uso de Dados Pessoais </string>
+    <string name="cs_page2_1_brazil">Usaremos e partilharemos seus dados pessoais da seguinte maneira</string>
+    <string name="cs_page2_2_brazil">Concorda? Marque \"✔ \" ou "sim"</string>
+    <string name="cs_page2_3_brazil">Análise de Dados e Insights de Negócios</string>
+    <string name="cs_page2_4_brazil">Data fornecido por você será analisado para dar insights importantes, como tendências e problemas que podem afetar a cadeia de suprimentos. Para isso, os funcionários da \<b>ofi</b>\ e suas afiliadas em todo o mundo e certos processadores de terceiros terão acesso aos seus Dados do Agricultor.  Esses bancos de dados e as informações neles podem ser compartilhadas com nossos afiliados, parceiros e clientes.</string>
+    <string name="cs_page2_5_brazil">Fornecimento de Rastreabilidade ao Mercado</string>
+    <string name="cs_page2_6_brazil">Partilharemos os Dados do Agricultor que nos fornecerem com nossos clientes e parceiros (que também partilharão os Dados do Agricultor com seus clientes e parceiros), a fim de fornecer informações sobre a origem dos alimentos e quem os produz. Essa transparência permite que os compradores tomem decisões de compra informadas e responsáveis.</string>
+    <string name="cs_page2_7_brazil">Vendas e Desenvolvimento de Agricultoresz</string>
+    <string name="cs_page2_8_brazil">Usaremos os seus Dados do Agricultor e dados do OFIS agregados para ajudar a identificar oportunidades para o crescimento dos seus negócios e operações. Se surgir a oportunidade apropriada, poderemos apresentar à você oportunidades de obter financiamento, máquinas, conselhos de gestão agrícola, abastecimentos agrícolas e seguros, para além de oportunidades de vendas; todos os quais serão fornecidos diretamente por nós ou por terceiros indicados por nós. Consequentemente, esses terceiros terão acesso aos seus Dados do Agricultor.</string>
+    <string name="cs_page2_9_brazil">Promoção da Rastreabilidade</string>
+    <string name="cs_page2_10_brazil">Usaremos seus Dados do Agricultor para promover os programas de rastreabilidade que executamos, incluindo ou através do OFIS, o AtSource e outros meios de comunicação, como nossos sites afiliados bem como em comunicações diretas. Isso significa que usaremos os Dados do Agricultor em materiais informativos e apresentações partilhadas entre nós, os nossos clientes (e potenciais clientes) e parceiros (e potenciais parceiros) que podem ajudar a melhorar a rastreabilidade e a sustentabilidade.</string>
+    <string name="cs_page2_11_brazil">Publicidade e Promoção Pública </string>
+    <string name="cs_page2_12_brazil">A <b>ofi</b> e seus clientes e parceiros usarão os Dados do Agricultor a, incluindo nomes, fotografias, informações sobre localização, informações sobre produtos e entrevistas (se fornecidas) em materiais de publicidade que serão partilhados publicamente, como em sites, publicações escritas e produtos. O objetivo é promover a compra de produtos como os produzidos pelos nossos parceiros agricultores e promover também nossas iniciativas de rastreabilidade e sustentabilidade.</string>
+    <string name="cs_page2_13_brazil">Pesquisa</string>
+    <string name="cs_page2_14_brazil">Partilharemos seus Dados do Agricultor em apoio a estudos de organizações educacionais, governamentais e não governamentais focadas em agricultores locais, comunidades, agricultura, cadeia de abastecimentos, rastreabilidade, sustentabilidade e estudos socialmente conscientes relacionados, a fim de promover a cooperação e o desenvolvimento da comunidade num espaço de sustentabilidade e rastreabilidade. Essas organizações também podem usar seus Dados do Agricultor em suas próprias comunicações eletrônicas ou publicadas.</string>
+    <string name="cs_page2_15_brazil"><b>2.</b>  Quando seus Dados do Agricultor são partilhados com terceiros, como nossos clientes e parceiros, para fins do Objetivo e para os usos específicos consentidos acima, cada um desses clientes e parceiros torna-se controlador de dados por direito e o utilizador consente na utilização dos seus dados conforme estabelecido acima no Parágrafo 1 e conforme detalhado na Declaração de Privacidade.</string>
+    <string name="cs_page2_16_brazil"><b>3.</b>  Pode retirar o consentimento dado, solicitar acesso e/ou correção de seus Dados do Agricultor e/ou solicitar informações sobre nossas políticas e práticas a qualquer momento entrando em contato conosco pelo correio electrónico <a href="privacy@ofi.com">privacy@ofi.com</a>. Embora nenhuma divulgação solicitada seja obrigatória, a falha em fornecer seus Dados do Agricultor e/ou a retirada subsequente do seu consentimento podem afetar nossa capacidade de fornecer determinados serviços que o utilizador possa ter solicitado de nós de maneira separada (conforme o caso). Por exemplo, seu endereço pode ser necessário não apenas para ajudar na rastreabilidade, mas também para fornecermos certos materiais, como abastecimentos agrícolas. Nos casos em que o cliente revogue o consentimento, poderemos reter esses dados para cumprir as nossas obrigações contratuais para com o cliente, mas não utilizaremos tais dados para qualquer outro fim. </string>
+    <string name="cs_page2_17_brazil"><b>4.</b>  A nossa Declaração de Privacidade de Dados do Agricultor é fornecida para sua referência abaixo. Explica como lidamos e protegemos dados pessoais. Embora seus Dados do Agricultor sejam partilhados com as pessoas indicadas acima, seus Dados do Agricultor nas nossas posses serão mantidos em sigilo e serão armazenados nos nossos servidores de acordo com as leis de privacidade aplicáveis.</string>
+
+    <string name="cs_page3_1_brazil">Eu,</string>
+    <string name="cs_page3_2_brazil">reconheço que um funcionário designado pela <b> ofi </b>, leu de forma clara os termos propostos, e entendi e concordo com as disposições deste Aviso de Recolha de Informações Pessoais e da Declaração de Privacidade de Dados do Agricultor e que: </string>
+    <string name="cs_page3_3_brazil"><b>•</b>	 Confirmo com um “✔” ou “sim” no Parágrafo 1, que concordo com o uso e a recolha dos meus dados pessoais para os fins específicos apresentados. </string>
+    <string name="cs_page3_4_brazil"><b>•</b>	 Entendo que não receberei nenhuma remuneração financeira ou de outro tipo por quaisquer dados pessoais, incluindo quaisquer imagens e qualquer propriedade intelectual que subsista em qualquer imagem, e estas pertencerão à <b>ofi</b>. </string>
+    <string name="cs_page3_5_brazil"><b>•</b>	 Entendo que tenho o direito de retirar o consentimento a qualquer momento e que, quando esse consentimento for retirado, a <b>ofi</b> não utilizará nenhuma imagem ou Dados Pessoais em futuras publicações, mas poderá continuar a usar esses Dados Pessoais em publicações já em circulação. </string>
+    <string name="cs_page3_6_brazil"><b>•</b>	 Quando o Agricultor for pessoa maior e capaz que não sabe assinar ou não pode assinar por algum</string>
+    <string name="cs_page3_7_brazil"> motivo justificável, </string>
+    <string name="cs_page3_8_brazil">, maior de idade,</string>
+    <string name="cs_page3_9_brazil">, inscrito no CPF sob o n°</string>
+    <string name="cs_page3_10_brazil">portador(a) do RG n°</string>
+    <string name="cs_page3_11_brazil"> , residente e </string>
+    <string name="cs_page3_12_brazil">domiciliado</string>
+    <string name="cs_page3_13_brazil">, declaro que assino</string>
+    <string name="cs_page3_14_brazil">a rogo do(a) Agricultor(a) identificado acima, conforme sua livre manifestação de vontade que me declarou que entendeu e concorda com as disposições deste Aviso de Coleta de Informações Pessoais e da Declaração de Privacidade de Dados do Agricultor, na presença de 2 (duas) testemunhas abaixo, para que este Aviso de Coleta de Informações Pessoais possa produzir seus efeitos legais e jurídicos;</string>
+    <string name="cs_page3_15_brazil"><b>•</b>	 Quando o Agricultor for pessoa maior e capaz que não sabe assinar, ou não pode assinar por algum motivo justificável, e não estiver acompanhado de um terceiro para assinar a rogo, o representante da ofi declara que leu as disposições deste Aviso de Coleta de Informações Pessoais e da Declaração de Privacidade de Dados do Agricultor e que o Agricultor compreendeu, consentiu com os termos deste documento e optou por formalizar sua concordância com este documento apondo sua impressão digital abaixo na presença de 2 (duas) testemunhas que assinam ao final.</string>
+    <string name="cs_page3_hint1">Nome da pessoa que assina a rogo</string>
+    <string name="cs_page3_hint2">nacionalidade</string>
+
+    <string name="cs_page4_1_brazil">Nome completo</string>
+    <string name="cs_page4_2_brazil">Nome da pessoa que assina a rogo pelo Agricultor (quando ele não pode ou não sabe ler e escrever):</string>
+    <string name="cs_page4_3_brazil">Data</string>
+    <string name="cs_page4_4_brazil">Contato na <b>ofi</b></string>
+    <string name="cs_page4_5_brazil">Testemunha 1</string>
+    <string name="cs_page4_6_brazil">Testemunha 2</string>
+    <string name="cs_page4_7_brazil">Nome</string>
+    <string name="cs_page4_8_brazil">CPF n°</string>
+    <string name="cs_page4_9_brazil">RG n°</string>
+    <string name="cs_page4_10_brazil">Assinatura</string>
+    <string name="cs_page4_11_brazil">NOS CASOS EM QUE O AVISO É LIDO AO INDIVÍDUO PELO PESSOAL/REPRESENTANTE DA ofi: </string>
+    <string name="cs_page4_12_brazil">Confirmo que o Participante me ouviu a ler o Aviso de Recolha de Informações Pessoais e que expressamente deu seu consentimento para a recolha, uso, transferência para fora da jurisdição e divulgação de seus dados pessoais pela <b>ofi</b> para os fins aí expostos. </string>
+    <string name="cs_page4_13_brazil">Assinatura da equipe</string>
+
+    <string name="cs_page5_1_brazil">Declaração de Privacidade de Dados do Agricultor</string>
+    <string name="cs_page5_2_brazil">Esta política descreve o uso pela <b>ofi</b> e suas filiais dos seus Dados do Agricultor, recolhidos de acordo com o Aviso de Recolha de Informações Pessoais e assinado por si (“<b>Aviso</b>”). Esta declaração é complementar e deve ser lido juntamente com o Aviso e a Declaração de Privacidade do Grupo <b>ofi</b>, disponível no <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a>. Na hipótese de alguma inconsistência, o <b>Aviso</b> prevalecerá sobre esta Declaração de Privacidade de Dados do Agricultor e a Declaração de Privacidade do Grupo <b>ofi</b> (nessa ordem).</string>
+    <string name="cs_page5_3_brazil">É política da <b>ofi</b> cumprir todas as leis de privacidade e proteção de dados aplicáveis. A <b>ofi</b> recolherá e usará seus dados apenas para fins especificados e legítimos, processará esses dados de maneira consistente com tais propósitos, tomará medidas razoáveis para garantir que seus dados sejam precisos, completos e atualizados (quando necessário) e tomará as medidas apropriadas para fornecer proteção adequada aos seus dados.</string>
+    <string name="cs_page5_4_brazil">Que dados recolhemos?</string>
+    <string name="cs_page5_5_brazil">Recolhemos e processamos dados pessoais sobre si, incluindo, mas não limitados a:\n
+        •	Fotografias, vídeos e outras imagens (nos quais sua identidade pessoal é claramente identificável);\n
+        •	Nome e sobrenome;\n
+        •	Produção e infraestrutura agrícola;\n
+        •	Suas respostas que podem incluir dados pessoais;\n
+        •	Informações sociais, financeiras, geográficas e biográficas;\n
+        •	País de residência e outros detalhes de contato; e \n
+        •	Profissão</string>
+    <string name="cs_page5_6_brazil">Para que propósitos usamos seus dados?</string>
+    <string name="cs_page5_7_brazil">Usamos esses dados para os seguintes propósitos:\n
+        •	Prestar-lhe serviços;\n
+        •	Comunicação;\n
+        •	Promoção de nossas iniciativas de sustentabilidade e rastreabilidade;\n
+        •	Comercialização e promoção de produtos e atividades corporativas da <b>ofi</b> nos canais de propriedade da <b>ofi</b>, incluindo sites, meios de comunicação sociais e impressões, e divulgação proativa de conteúdo em publicações de meios de comunicação sociais externas (impressas e online);\n
+        •	Apoio de iniciativas de pesquisa de nossos parceiros que dão suporte à cooperação e aos avanços da comunidade nas áreas de sustentabilidade e rastreabilidade;\n
+        •	Identificação de tendências, problemas e riscos nos mercados agrícolas e na cadeia de abastecimento; e\n
+        •	Desenvolver e gerir as nossas relações consigo e com os nossos parceiros comerciais.</string>
+    <string name="cs_page5_8_brazil">Qual é a nossa base legal para recolher e processar seus dados?</string>
+    <string name="cs_page5_9_brazil">"Apenas recolheremos e processaremos esses dados com (a) seu consentimento; (b) quando aplicável, conforme exigido pela <b>ofi</b> e nossas filiais para conduzir nossos negócios e buscar nossos interesses legítimos; e (c) para quaisquer fins razoavelmente esperados ou legítimos, de acordo com a legislação de proteção de dados aplicável."</string>
+    <string name="cs_page5_10_brazil">Com quem partilharemos esses dados? </string>
+    <string name="cs_page5_11_brazil">Partilharemos seus dados com outros membros do grupo da c<b>ofi</b> , incluindo quaisquer filiais, para atingir os objetivos descritos acima. Também partilharemos seus dados com autoridades governamentais e/ou agentes da lei, se exigidos por lei, e quaisquer clientes atuais ou futuros, prestadores de serviços, fornecedores e parceiros de negócios da <b>ofi</b> na prossecução dos propósitos descritos acima ou com o seu consentimento.</string>
+    <string name="cs_page5_12_brazil">Para onde enviaremos seus dados? </string>
+    <string name="cs_page5_13_brazil">Além de partilhar com nossos processadores de terceiros para os fins listados acima, de tempos em tempos seus dados podem ser transferidos para uma das nossas filiais noutro país. Tomaremos medidas razoáveis para garantir que seus dados sejam protegidos adequadamente de acordo com a legislação relevante de proteção de dados que trata do processamento de dados naquele país. Quando suas informações pessoais forem transferidas fora do EEE para uma filial da <b>ofi</b> ou uma entidade num país que não esteja sujeito a uma decisão de adequação da Comissão da UE, seus dados pessoais serão protegidos por salvaguardas transfronteiriças aprovadas pela Comissão da UE, incluindo cláusulas contratuais padrão para transferência de dados transfronteiriça.</string>
+    <string name="cs_page5_14_brazil">Que medidas tomamos para proteger seus dados?</string>
+    <string name="cs_page5_15_brazil">A <b>ofi</b> mantém salvaguardas razoáveis para proteger a confidencialidade, segurança e integridade dos seus dados. Embora usemos medidas de segurança para ajudar a proteger seus dados contra divulgação não autorizada, não podemos garantir a segurança das informações fornecidas pela Internet e não seremos responsáveis por violações da segurança além do nosso controlo razoável.</string>
+    <string name="cs_page5_16_brazil">Que direitos tem em relação aos seus dados? </string>
+    <string name="cs_page5_17_brazil">Pode optar por não fornecer os dados solicitados. Tem o direito de solicitar uma cópia dos seus dados à <b>ofi</b> e de verificar, corrigir ou restringir o processamento ativo dos seus dados. Pode solicitar à <b>ofi</b> que pare de usar suas imagens a qualquer momento; nesse caso, elas não serão usadas em publicações futuras, mas poderão continuar aparecendo em publicações já em circulação. Esses direitos podem ser limitados por lei. Se desejar exercer esses direitos ou tiver quaisquer perguntas sobre os mesmos, pode contactar a <b>ofi</b> no endereço de correio electrónico fornecido abaixo.</string>
+    <string name="cs_page5_18_brazil">Por quanto tempo seus dados serão retidos? </string>
+    <string name="cs_page5_19_brazil">Salvo disposição legal em contrário, a <b>ofi</b> reterá seus dados pessoais durante o período necessário para os fins para os quais os dados foram recolhidos.</string>
+    <string name="cs_page5_20_brazil">Dados de Contato</string>
+    <string name="cs_page5_21_brazil">O controlador de dados para os seus dados é a Olam International Limited, a menos que especificado de outra forma pela entidade pertinente da <b>ofi</b> no seu país. Se tiver alguma dúvida relacionada aos dados que mantemos sobre si, envie um e-mail para <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
+    <string name="cs_page5_22_brazil">A Declaração de Privacidade do Grupo ofi, que explica maneiras adicionais de recolher e usar dados pessoais, pode ser encontrada em www.ofi.com/privacy.html  </string>
+    <string name="witness1_sign_required">Por favor, seja assinado pela testemunha 1</string>
+    <string name="witness2_sign_required">Por favor, seja assinado pela testemunha 2</string>
+    <string name="please_enter_witness1_name">Por favor insira o nome da testemunha 1</string>
+    <string name="please_enter_witness2_name">Por favor insira o nome da testemunha 2</string>
+    <string name="please_enter_witness1_CPF">Por favor insira o CPF da testemunha 1</string>
+    <string name="please_enter_witness2_CPF">Por favor insira o CPF da testemunha 2</string>
+    <string name="please_enter_witness1_RG">Por favor insira o RG da testemunha 1</string>
+    <string name="please_enter_witness2_RG">Por favor insira o RG da testemunha 2</string>
     <string name="ofis_photo_checkbox_download">Download Photo\nCheckbox Images</string>
     <string name="ready_to_download_photo_checkbox">There are images which need to be downloaded for photo checkbox questions. Do you want to continue to download the images now?</string>
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
