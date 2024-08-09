@@ -670,7 +670,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                         // get list of filenames
                         File internalStorageDir = context.getFilesDir();
-                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(i).fileName);
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(j).fileName);
                         if (imageFile.exists()) {
                             imageFile.delete();
                         }
@@ -678,7 +678,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 }
 
                 // delete data in db
-                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(i);
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
             }
         }
 
@@ -746,10 +746,12 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
                 alert.show();
             } else {
+                progressDialog.dismiss();
                 Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
             }
 
         } else {
+            progressDialog.dismiss();
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
     }

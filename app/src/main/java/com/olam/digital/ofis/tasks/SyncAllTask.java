@@ -2100,7 +2100,7 @@ public class SyncAllTask extends SyncTask {
 
                         // get list of filenames
                         File internalStorageDir = context.getFilesDir();
-                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(i).fileName);
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(j).fileName);
                         if (imageFile.exists()) {
                             imageFile.delete();
                         }
@@ -2108,7 +2108,7 @@ public class SyncAllTask extends SyncTask {
                 }
 
                 // delete data in db
-                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(i);
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
             }
         }
 
@@ -2174,6 +2174,7 @@ public class SyncAllTask extends SyncTask {
 
             alert.show();
         } else {
+            progressDialog.dismiss();
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
     }
