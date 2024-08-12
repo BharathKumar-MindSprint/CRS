@@ -3515,12 +3515,7 @@ public class DynamicQuestions {
                                     }
                                 } else {
                                     if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                        if(number < startLimit){
-                                            editText.setError(String.format(context.getString(R.string.alert_review_hint), startLimit, endLimit));
-                                        }else {
-                                            editText.setError(context.getString(R.string.alert_review));
-                                        }
-
+                                        editText.setError(context.getString(R.string.alert_review));
                                     } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                         int vr_min = rangeArray.optInt("vr_min");
                                         int vr_max = rangeArray.optInt("vr_max");
@@ -3639,12 +3634,7 @@ public class DynamicQuestions {
                                     }
                                 }else {
                                     if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                        if(number < minLimit){
-                                            editText.setError(String.format(context.getString(R.string.alert_review_hint), minLimit, maxLimit));
-                                        }else {
-                                            editText.setError(context.getString(R.string.alert_review));
-                                        }
-
+                                        editText.setError(context.getString(R.string.alert_review));
                                     } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                         int vr_min = rangeArray.optInt("vr_min");
                                         int vr_max = rangeArray.optInt("vr_max");
@@ -3942,11 +3932,7 @@ public class DynamicQuestions {
                                     }
                                 } else {
                                     if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-                                        if(number < minValue){
-                                            editText.setError(String.format(context.getString(R.string.alert_review_hint_decimal), minValue, maxValue));
-                                        }else {
-                                            editText.setError(context.getString(R.string.alert_review));
-                                        }
+                                        editText.setError(context.getString(R.string.alert_review));
                                     } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
                                         double vr_min = rangeArray.optDouble("vr_min");
                                         double vr_max = rangeArray.optDouble("vr_max");
@@ -4650,7 +4636,7 @@ public class DynamicQuestions {
                     spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
                 }
             } else {
-                spinnervalues = dl.getLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName);
+                spinnervalues = dl.getLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName, dataTypeID);
             }
 
 //            MatrixCursor newSpinnerValue = new MatrixCursor(new String[]{"value"});
@@ -5880,6 +5866,7 @@ public class DynamicQuestions {
 
         final int questionId = questionIddouplicate;
         final String datatype = datatypeduplicate;
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
 
         int answerIdTemp = 0;
@@ -5930,7 +5917,7 @@ public class DynamicQuestions {
             if (displayConfig.has("lookuptable")) {
                 spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
             } else {
-                spinnervalues = dl.getLookupValuesForQuestion(lookupvalue, columnName);
+                spinnervalues = dl.getLookupValuesForQuestion(lookupvalue, columnName,dataTypeID);
             }
 
             final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
@@ -6055,7 +6042,7 @@ public class DynamicQuestions {
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
 //        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-
+        Utilities.datatypeIdCLMRS =dataTypeID;
 
         String oldDatatype = null;
 
@@ -7494,7 +7481,7 @@ public class DynamicQuestions {
                 // pre-fill checkboxes that have been previously ticked
                 if (hasAnswers && cbAnswers.getCount() > 0) {
                     while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
                             cb.setChecked(true);
                         }
                     }
@@ -9615,7 +9602,7 @@ public class DynamicQuestions {
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) spinner.getLayoutParams();
             lp.setMargins(0, (i == 0 ? res.getDimensionPixelSize(R.dimen.ofis_small_pad) : 0), 0, res.getDimensionPixelSize(R.dimen.ofis_large_pad));
             spinner.setLayoutParams(lp);
-            Cursor spinnervalues = dl.getLookupValuesForQuestion(questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName);
+            Cursor spinnervalues = dl.getLookupValuesForQuestion(questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName,dataTypeID);
 
             dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
 

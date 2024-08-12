@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -137,6 +138,15 @@ public class BaseActivity extends AppCompatActivity {
     public boolean getNIDPhotostatusByType(String type, long editFarmerId) {
         boolean photostatus = false;
         Cursor nid = dl.getNIDPhotostatusByType(type, editFarmerId);
+        if (nid.getCount() > 0) {
+            photostatus = true;
+        }
+        return photostatus;
+    }
+
+    public boolean getUpdateNIDPhotoStatusByType(String type, long editFarmerId) {
+        boolean photostatus = false;
+        Cursor nid = dl.getUpdateNIDPhotoStatusByType(type, editFarmerId);
         if (nid.getCount() > 0) {
             photostatus = true;
         }
