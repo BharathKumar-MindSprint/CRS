@@ -1,0 +1,2357 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.ConsentStatementOFIsBrazilActivity"
+    android:focusableInTouchMode="true"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topSection"
+        >
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView"
+            tools:ignore="UselessParent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bottomSection"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dynamic_content"
+                    android:background="@drawable/border_white_cs"
+                    android:paddingBottom="60dp">
+
+
+                    <LinearLayout
+                        android:visibility="visible"
+                        android:id="@+id/consentStatement1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/ofis_large_pad"
+                            android:paddingRight="@dimen/ofis_large_pad"
+                            android:paddingTop="@dimen/ofis_large_pad">
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="11"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_1_brazil"/>
+                                <TextView
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_farmername_first"
+                                    android:layout_weight="6"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:maxLines="1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_2_brazil" />
+                                <EditText
+                                    android:paddingTop="5dp"
+                                    android:inputType="text"
+                                    android:maxLength="20"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_maritalstatus"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint1"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="3.5"
+                                    android:visibility="visible"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_3_brazil" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_profession"
+                                    android:layout_weight="3.5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint2"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_4_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="number"
+                                    android:maxLength="20"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_cpfNumber"
+                                    android:layout_weight="2.5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint3"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4.5"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_5_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="number"
+                                    android:maxLength="20"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_rgNumber"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint3"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4.8"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_6_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="500"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_fulladdress"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint4"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="11"
+                                android:gravity="top">
+
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_city"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint5"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_state"
+                                    android:layout_weight="5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint6"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_7_brazil"/>
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:visibility="visible"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page1_8_brazil"/>
+                            </TableRow>
+
+                        </TableLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/consentStatement2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/ofis_large_pad"
+                            android:paddingRight="@dimen/ofis_large_pad"
+                            android:paddingTop="@dimen/ofis_large_pad">
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_large_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page2_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page2_1_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page2_2_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_3_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_4_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc7"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_5_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_6_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc1"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:visibility="gone"
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_7"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_8"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc2"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_7_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_8_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc3"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:visibility="gone"
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_11"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_12"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc4"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:checked="true"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_9_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_10_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc5"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_11_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_12_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc6"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:gravity="top">
+
+                                <LinearLayout
+                                    android:paddingTop="@dimen/ofis_large_pad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:weightSum="10"
+                                    android:orientation="horizontal" >
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="8.5"
+                                        android:orientation="vertical" >
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="10"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:textStyle="bold"
+                                            android:textColor="@color/cs_color"
+                                            android:text="@string/cs_page2_13_brazil"/>
+
+                                        <TextView
+                                            android:paddingTop="@dimen/ofis_large_pad"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/ofis_med_text"
+                                            android:text="@string/cs_page2_14_brazil"/>
+
+                                    </LinearLayout>
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/cb_sc8"
+                                        android:theme="@style/CheckboxStyle"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:gravity="center"
+                                        android:layout_gravity="center"
+                                        android:layout_height="wrap_content"/>
+                                </LinearLayout>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page2_15_brazil" />
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:autoLink="email"
+                                    android:text="@string/cs_page2_16_brazil" />
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page2_17_brazil" />
+                            </TableRow>
+
+                        </TableLayout>
+
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+
+                        android:id="@+id/consentStatement3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/ofis_large_pad"
+                            android:paddingRight="@dimen/ofis_large_pad"
+                            android:paddingTop="@dimen/ofis_large_pad"
+                            android:paddingBottom="@dimen/ofis_large_pad">
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_1_brazil" />
+                                <TextView
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_farmername"
+                                    android:layout_weight="9"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:focusable="true"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.5"
+                                    android:visibility="invisible"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_2_brazil"/>
+                            </TableRow>
+                             <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_3_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_4_brazil"/>
+                            </TableRow>
+                             <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_5_brazil"/>
+                            </TableRow>
+                             <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_6_brazil"/>
+                            </TableRow>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="3.7"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_7_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subname"
+                                    android:layout_weight="6"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page3_hint1"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subnationality"
+                                    android:layout_weight="3.3"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page3_hint2"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="20"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_submaritalsts"
+                                    android:layout_weight="3"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint1"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="3.5"
+                                    android:visibility="visible"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_8_brazil" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subProfessinal"
+                                    android:layout_weight="3"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint2"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4.8"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_9_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="number"
+                                    android:maxLength="20"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subCpf"
+                                    android:layout_weight="2.5"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint3"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_10_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="number"
+                                    android:maxLength="20"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subRg"
+                                    android:layout_weight="3.2"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint3"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="2.8"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_11_brazil" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="2.3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_12_brazil" />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="500"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subAddress"
+                                    android:layout_weight="7.2"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint4"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10.5"
+                                android:gravity="top">
+
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subCity"
+                                    android:layout_weight="3"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint5"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="0.2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="," />
+                                <EditText
+                                    android:autofillHints="null"
+                                    android:inputType="text"
+                                    android:maxLength="50"
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:id="@+id/et_subState"
+                                    android:layout_weight="3"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/cs_page1_hint6"/>
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:layout_weight="4.3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_13_brazil" />
+                            </LinearLayout>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_14_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page3_15_brazil"/>
+                            </TableRow>
+
+                            </TableLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/consentStatement4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:background="@drawable/border_white_cs"
+                        >
+
+
+                        <LinearLayout
+                            android:id="@+id/fullnameLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/farmer_name_title"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_1_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/farmer_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/Farmer_Name"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/title_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:layout_gravity="center"
+                                android:text="@string/cs_page4_2_brazil"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/childname"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page3_hint1"
+                                android:inputType="textPersonName"
+                                android:paddingLeft="10dp"
+                                android:maxLength="50"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/occupation_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:layout_gravity="center"
+                                android:text="@string/cs_page1_hint2"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/occupationET"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page1_hint2"
+                                android:inputType="textPersonName"
+                                android:paddingLeft="10dp"
+                                android:maxLength="50"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+
+
+
+
+                        <!--<LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_large_text"
+                                android:text="@string/olam_contact"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/olam_contact"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/olam_contact"
+                                android:inputType="textPersonName"
+                                android:paddingLeft="10dp"
+                                android:maxLength="150"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>-->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/farmer_signature"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textStyle="bold"
+                                android:paddingTop="20dp"
+                                android:paddingBottom="20dp"
+                                android:gravity="center"
+                                android:background="@color/btnColorThird"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:visibility="visible"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_3_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/currentdate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="XX"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:visibility="visible"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_4_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/contactOfi"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_4_brazil"
+                                android:inputType="number"
+                                android:paddingLeft="10dp"
+                                android:maxLength="20"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+                        <TableRow
+                            android:padding="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="10"
+                            android:gravity="top">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="10"
+                                android:textStyle="bold"
+                                android:textColor="@color/cs_color"
+                                android:textSize="16sp"
+                                android:text="@string/cs_page4_5_brazil" />
+                        </TableRow>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_7_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness1Name"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_7_brazil"
+                                android:paddingLeft="10dp"
+                                android:maxLength="50"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_8_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness1CPF"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_8_brazil"
+                                android:inputType="number"
+                                android:paddingLeft="10dp"
+                                android:maxLength="20"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_9_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness1RG"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_9_brazil"
+                                android:inputType="number"
+                                android:paddingLeft="10dp"
+                                android:maxLength="20"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/witness1_signature"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:background="@color/btnColorThird"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <TableRow
+                            android:padding="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="10"
+                            android:gravity="top">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="10"
+                                android:textStyle="bold"
+                                android:textColor="@color/cs_color"
+                                android:textSize="16sp"
+                                android:text="@string/cs_page4_6_brazil" />
+                        </TableRow>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_7_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness2Name"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_7_brazil"
+                                android:paddingLeft="10dp"
+                                android:maxLength="50"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_8_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness2CPF"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_8_brazil"
+                                android:inputType="number"
+                                android:paddingLeft="10dp"
+                                android:maxLength="20"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_9_brazil"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/witness2RG"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="@string/cs_page4_9_brazil"
+                                android:inputType="number"
+                                android:paddingLeft="10dp"
+                                android:maxLength="20"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/witness2_signature"
+                                android:layout_width="match_parent"
+                                android:layout_height="42dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/cs_page4_10_brazil"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:background="@color/btnColorThird"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TableLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="@dimen/ofis_large_pad"
+                                android:paddingRight="@dimen/ofis_large_pad"
+                                android:paddingTop="@dimen/ofis_large_pad">
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                    android:weightSum="10"
+                                    android:gravity="top">
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="10" android:textStyle="bold"
+                                        android:textColor="@color/cs_color"
+                                        android:textSize="@dimen/ofis_med_text"
+                                        android:text="@string/cs_page4_11_brazil" />
+                                </TableRow>
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                    android:weightSum="10"
+                                    android:gravity="top">
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="10"
+                                        android:textSize="@dimen/ofis_med_text"
+                                        android:text="@string/cs_page4_12_brazil"/>
+                                </TableRow>
+
+                            </TableLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:weightSum="2"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="@string/cs_page4_7_brazil"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/clmrs_tv_grey" />
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/enum_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="@string/enum_name"
+                                    android:textStyle="bold"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:weightSum="2"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight="1"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page4_10_brazil"
+                                    android:textColor="@color/clmrs_tv_grey" />
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/enum_signature"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="@string/cs_page4_13_brazil"
+                                    android:textStyle="bold"
+                                    android:paddingTop="20dp"
+                                    android:paddingBottom="20dp"
+                                    android:gravity="center"
+                                    android:background="@color/btnColorThird"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/white" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:weightSum="2"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="@string/cs_page4_3_brazil"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/clmrs_tv_grey" />
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/currentdate2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="XX"
+                                    android:textStyle="bold"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/consentStatement5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/ofis_large_pad"
+                            android:paddingRight="@dimen/ofis_large_pad"
+                            android:paddingTop="@dimen/ofis_large_pad">
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_1_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:autoLink="web"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_2_brazil"/>
+                            </TableRow>
+                            <TableRow
+                                android:paddingTop="@dimen/margin_10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_3_brazil"/>
+                            </TableRow>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="15dp"
+                                />
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_4_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_5_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_6_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_7_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_8_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_9_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_10_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_11_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_12_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_13_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_14_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_15_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_16_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_17_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_18_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_19_brazil"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_20_brazil" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:autoLink="email"
+                                    android:text="@string/cs_page5_21_brazil"/>
+                            </TableRow>
+
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:autoLink="web"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_22_brazil" />
+                            </TableRow>
+
+
+                            <TableRow
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_23" />
+                            </TableRow>
+
+                            <TableRow
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_24"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_25"/>
+                            </TableRow>
+                            <TableRow
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/cs_page5_26"/>
+                            </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"/>
+                        </TableLayout>
+
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/footer"
+        android:background="@drawable/border_white_background"
+        android:layout_alignParentBottom="true"
+        android:padding="@dimen/activity_vertical_margin"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/prevbtn"
+            android:background="@color/btn_secondary_background"
+            android:text="@string/ModuleBackButton"
+            android:textColor="@color/ofis_base_font_white"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nextsavebtn"
+            android:background="@color/ofis_action_button_background"
+            android:text="@string/ModuleNextButton"
+            android:textColor="@color/ofis_base_font_white"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            tools:ignore="RelativeOverlap" />
+
+    </RelativeLayout>
+
+    <!-- top section -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:baselineAligned="false"
+        android:paddingBottom="0dp"
+        android:layout_margin="0dp"
+        android:weightSum="10">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:id="@+id/completeModuleModuleTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="0dp"
+                android:text="@string/farmer_consent_brazil"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_large_text" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/personal_info_collection_brazil"
+                android:id="@+id/completeModuleSubModuleTitle"
+                android:textColor="@color/ofis_base_font_white"
+                android:layout_marginTop="@dimen/mapview_magrin"
+                android:paddingRight="0dp"
+                android:paddingLeft="5dp"
+                android:textSize="@dimen/ofis_small_text"
+                tools:ignore="RtlHardcoded" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

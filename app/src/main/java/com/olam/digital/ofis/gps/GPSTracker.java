@@ -10,12 +10,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.widget.Toast;
 
@@ -49,7 +51,7 @@ import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class GPSTracker {
+public class GPSTracker extends AppCompatActivity {
 
     // Component related to UI
     Activity mActivity;
@@ -75,6 +77,11 @@ public class GPSTracker {
     public static final int PRIORITY_BALANCED_POWER_ACCURACY = 102;
     public static final int PRIORITY_LOW_POWER = 104;
     public static final int PRIORITY_NO_POWER = 105;
+
+    private final static int MY_PERMISSIONS_REQUEST_MARSHMALLOW = 9999;
+
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
+                    private FusedLocationProviderClient fusedLocationClient;
 
     public GPSTracker(AppCompatActivity mActivity){
         this.mActivity=mActivity;
@@ -181,8 +188,34 @@ public class GPSTracker {
      * Location update method would be called if permission accepted already
      *If permission denied, settings page will open.
      */
-    public void getDeviceLocation(){
-        Dexter.withActivity(mActivity)
+    public void getDeviceLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) +
+                    ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity,
+                        new String[]{
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
+            } else {
+                startLocationUpdates();
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    + ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(mActivity,
+                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_MARSHMALLOW);
+            } else {
+                startLocationUpdates();
+            }
+        } else {
+            startLocationUpdates();
+        }
+        /*Dexter.withActivity(mActivity)
                 .withPermissions(
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -215,9 +248,61 @@ public class GPSTracker {
                     }
                 })
                 .onSameThread()
-                .check();
+                .check();*/
     }
 
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        startLocationUpdates();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                    )) {
+                        if (progressDialog != null && progressDialog.getWindow().getDecorView().getWindowToken() != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        openSettings();
+
+                    } else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_MARSHMALLOW: {
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        startLocationUpdates();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                    )) {
+                        if (progressDialog != null && progressDialog.getWindow().getDecorView().getWindowToken() != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        openSettings();
+                    } else {
+                        Toast.makeText(this, R.string.location_permission_alertdialog_title, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
 
     /**
      * Starting location updates only gps is turned off.
@@ -274,6 +359,19 @@ public class GPSTracker {
      * location updates will be requested
      */
     public void startLocationUpdates() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    mCurrentLocation = location;
+                }
+            }
+        });
         mSettingsClient
                 .checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(mActivity, new OnSuccessListener<LocationSettingsResponse>() {

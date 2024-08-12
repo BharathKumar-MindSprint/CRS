@@ -370,7 +370,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     if (startDateMain!=null){
                         if (!disableSurveyForNCF) {
                             if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("true");
                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
@@ -378,7 +378,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 textView.setText(res.getString(R.string.dm_hint_txt));
                             }
                             else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("true");
                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
@@ -386,7 +386,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 textView.setText(res.getString(R.string.dm_hint_txt));
                             }
                             else{
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("false");
                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -401,7 +401,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                             }
                         }
                         else {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                             enabledItem.setText("false");
 
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -416,21 +416,21 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     if (startDateMain!=null){
                         if (!disableSurveyForNCF) {
                             if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("true");
                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                                 textView.setText(res.getString(R.string.dm_hint_txt));
                             } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("true");
                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                                 textView.setText(res.getString(R.string.dm_hint_txt));
                             } else{
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("false");
                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -445,7 +445,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                             }
                         }
                         else {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                             enabledItem.setText("false");
 
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -577,19 +577,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                     boolean isSynced = dl.getSyncedStatus(farmerId);
                     boolean availstatus = dl.isValueavailable(farmerId);
+                    boolean isUpdateNationalId = dl.isUpdateNationalIdAvailable(farmerId);
+                    if (!nidupdateWaiting) {
+                        nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("Update_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    }
 
-                    if (isSynced) {
+                    if (isSynced && !isUpdateNationalId) {
                         textView.setText(res.getString(R.string.view_tab_hint));
                         moduleTitle.setText(res.getString(R.string.view_nationalid));
                     } else {
-                        if (!availstatus) {
+                        if (!availstatus && !isUpdateNationalId) {
                             textView.setText(res.getString(R.string.add_tab_hint));
                             moduleTitle.setText(res.getString(R.string.add_nationalid));
                         } else {
                             textView.setText(res.getString(R.string.update_tab_hint));
                             moduleTitle.setText(res.getString(R.string.update_nationalid));
                         }
-
                     }
 
                     if (updateWaiting || nidupdateWaiting) {

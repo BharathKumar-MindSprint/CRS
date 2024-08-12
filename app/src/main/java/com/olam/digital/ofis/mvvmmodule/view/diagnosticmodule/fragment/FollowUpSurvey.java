@@ -99,7 +99,13 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             dm_question_complaint_followup_survey.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
-            selected_imgName.setText(complianceName);
+            if (Objects.equals(complianceName,"Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
+            } else if (Objects.equals(complianceName,"Non Compliant")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
+            } else if (Objects.equals(complianceName,"Satisfactory")) {
+                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
+            }
 
 
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
@@ -220,7 +226,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 editText.setText(answerIdDb);
 
                 TextView notResolveText = new TextView(getContext());
-                notResolveText.setText("Not Resolved");
+                notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
                 notResolveText.setTextColor(getResources().getColor(R.color.gray));
                 notResolveText.setTag("rb1" + questionIdDb);
                 notResolveText.setPadding(70, 25, 70, 25);
@@ -229,7 +235,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
                 }
                 TextView resolveText = new TextView(getContext());
-                resolveText.setText("Resolved");
+                resolveText.setText(getResources().getString(R.string.dm_resolved));
                 resolveText.setTag("rb2" + questionIdDb);
                 resolveText.setTextColor(getResources().getColor(R.color.gray));
                 resolveText.setPadding(110, 25, 110, 25);

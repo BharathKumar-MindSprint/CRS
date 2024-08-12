@@ -257,7 +257,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     boolean aggregatedIndicator;
 
-
+    private int countryID ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,10 +276,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
-
-
-
-
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
@@ -510,6 +506,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         if (farmer.getCount() > 0) {
             farmer.moveToFirst();
+            countryID = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
             farmerNameStr = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
             olamFarmerIdStr = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
             farmerName.setText(farmerNameStr);
@@ -2692,6 +2689,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ConsentStatementActivity.class);
+                        if(countryID == 27 && Utilities.getOperatingUnitSharedPrefs(this).equals("OFI") ){
+                            in = new Intent(this, ConsentStatementOFIsBrazilActivity.class);
+                        }
                         Bundle bundle = new Bundle();
                         bundle.putString("displayFarmerId", olamFarmerIdStr);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
@@ -3113,7 +3113,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.setCancelable(false);
         ArrayList<String> recyclerViewData = new ArrayList<>();
 
-        recyclerViewData.add(Constants.EXISTINGMODULE);
+        recyclerViewData.add(getResources().getString(R.string.existing_module));
 //        recyclerViewData.add("Follow up " + 1);
 
         if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
@@ -3150,12 +3150,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             if(followupList.size() == 0){
                 List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
                 if(dmSurveyAnswerTableList.size() != 0) {
-                    recyclerViewData.add("Follow-up survey " + 1);
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + 1);
                 }
             }else {
                 List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
                 for (int i = 1; i <= followupAttempts.size(); i++) {
-                    recyclerViewData.add("Follow-up survey " + i);
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + i);
                 }
                 List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
                 if(followupUnSyncedItems.size() == 0) {
@@ -3174,22 +3174,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                            count = db.dmMainModuleDao().getFollowUpAttempts(moduleID);
                             if (count.replaceAll(" ", "").toLowerCase().equals("max")){
                                 if (followUpDurationDisable){
-                                    recyclerViewData.add("Follow-up survey " + val);
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = false;
 
                                 }else {
-                                    recyclerViewData.add("Follow-up survey " + val);
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = true;
                                     Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                                 }
                             }else if (val < Integer.parseInt(count) + 1 ){
 
                                 if (followUpDurationDisable){
-                                    recyclerViewData.add("Follow-up survey " + val);
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = false;
 
                                 }else {
-                                    recyclerViewData.add("Follow-up survey " + val);
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = true;
                                     Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                                 }
@@ -3204,7 +3204,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 }
                             }
                         }else {
-                            recyclerViewData.add("Follow-up survey " + val);
+                            recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                             if (!followUpDurationDisable){
                                 isCompleted = true;
                                 Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();

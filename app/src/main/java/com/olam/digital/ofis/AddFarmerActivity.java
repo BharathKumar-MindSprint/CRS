@@ -378,6 +378,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
 
+        getCountryId();
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -396,6 +397,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
+        Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
 
         countrySpinner = this.findViewById(R.id.spinner_country);
         regionSpinner = this.findViewById(R.id.spinner_region);
@@ -2006,10 +2008,20 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     farmerName.setText("");
                     Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
                     return;
-
-
                 }
-                Intent in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                selectedCountry = (int) countrySpinner.getSelectedItemId();
+
+                if(selectedCountry == 0){
+                    Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent in ;
+                if(selectedCountry == 27 && Utilities.getOperatingUnitSharedPrefs(AddFarmerActivity.this).equals("OFI") ){
+                    in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                }else {
+                    in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                }
+
                 Bundle bundle=new Bundle();
                 bundle.putString("type", NEW);
                 bundle.putString("displayFarmerId", "");
@@ -2537,6 +2549,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         alert.show();
     }
 
+    private void getCountryId() {
+        Cursor cursor = dl.getEnumeratorCountries();
+        if (cursor.getCount()>0) {
+            while (cursor.moveToNext()) {
+                selectedCountry = cursor.getInt(cursor.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ID));
+                return;
+            }
+        }
+        cursor.close();
+    }
     private ArrayList<NationalIdTypeDTO> getModules() {
         nidtypelist = new ArrayList<NationalIdTypeDTO>();
 
