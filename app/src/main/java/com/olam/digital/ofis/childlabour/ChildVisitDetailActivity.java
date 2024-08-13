@@ -274,6 +274,15 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
                     }else {
                         inspectionCheckBox.setEnabled(true);
                     }
+                }else if (value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE).equalsIgnoreCase("3")) {
+                    followUpCheckBox.setChecked(true);
+                    if(value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED).equalsIgnoreCase("1")){
+                        followUpCheckBox.setEnabled(false);
+                    }else {
+                        followUpCheckBox.setEnabled(true);
+                        houseHoldCheckBox.setEnabled(false);
+                        inspectionCheckBox.setEnabled(false);
+                    }
                 }
 
 
