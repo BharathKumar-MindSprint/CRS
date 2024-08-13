@@ -5048,16 +5048,38 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
                                     if (postResponse.isSuccessful()) {
-                                        // should pass the Child Id instead of farmer ID
-                                        dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
-                                        statusMessage = res.getString(R.string.item_synced);
-                                        msg.what = 1;
-                                        msg.arg1 = total;
-                                        msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                        msg.obj = statusMessage;
-                                        handler.dispatchMessage(msg);
-                                        syncNetworkQueue(originalSyncRequestItemId, handler);
+
+                                        int error = 0;
+                                        try {
+                                            assert postResponse.body() != null;
+                                            JSONObject jsonObject = new JSONObject(postResponse.body().string());
+                                            String errorCode = jsonObject.optString("errorCode");
+                                            String errorItem = jsonObject.optString("error");
+                                            if (errorCode.equalsIgnoreCase("3035")) {
+                                                error = 1;
+                                                handler.postDelayed(() -> {
+                                                    // Your task goes here
+//                                                        popupMsgInfo(errorItem);
+                                                    msg.obj = errorItem;
+                                                    handler.dispatchMessage(msg);
+                                                    return;
+                                                }, 500);
+                                            }
+                                        }
+                                        catch (Exception e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        if(error == 0){
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
+                                            statusMessage = res.getString(R.string.item_synced);
+                                            msg.what = 1;
+                                            msg.arg1 = total;
+                                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                            msg.obj = statusMessage;
+                                            handler.dispatchMessage(msg);
+                                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                                        }
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : " + postResponse.networkResponse().toString(), context);
