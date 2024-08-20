@@ -11,7 +11,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
@@ -7924,6 +7926,14 @@ public class DynamicQuestions {
                                             }
                                         }
 
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
+                                            }
+                                        }
+
 
                                         tl.addView(tr);
 
@@ -8028,6 +8038,13 @@ public class DynamicQuestions {
                                             }
                                         }
 
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
+                                            }
+                                        }
 
                                         tl.addView(tr);
 
@@ -8138,6 +8155,13 @@ public class DynamicQuestions {
                                                     }
                                                 }
 
+                                                String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                                if (photoLocation!=null){
+                                                    File imageFile = new File(photoLocation);
+                                                    if (imageFile.exists()) {
+                                                        iv.setImageBitmap(bitmapImageResize(imageFile));
+                                                    }
+                                                }
 
                                                 tl.addView(tr);
 
@@ -8433,6 +8457,32 @@ public class DynamicQuestions {
 
     }
 
+    public Bitmap bitmapImageResize(File imageFile){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        int reqWidth = 500;
+        int reqHeight = 500;
+
+        Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 200, 200, false);
+
+        float aspectRatio = (float) resizedBitmap.getWidth() / (float) resizedBitmap.getHeight();
+        int newWidth;
+        int newHeight;
+
+        if (aspectRatio > 1) {
+            newWidth = reqWidth;
+            newHeight = Math.round(reqWidth / aspectRatio);
+        } else {
+            newHeight = reqHeight;
+            newWidth = Math.round(reqHeight * aspectRatio);
+        }
+
+//        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+        return Utilities.loadSizedBitmap(imageFile.getAbsolutePath(),newWidth,newHeight);
+    }
 
     public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);

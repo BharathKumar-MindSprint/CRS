@@ -764,4 +764,8 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="ofis_photo_checkbox_download">Fotoğraf Onay Kutusu Resimlerini İndir</string>
+    <string name="ready_to_download_photo_checkbox">Fotoğraf onay kutusu soruları için indirilmesi gereken resimler var. Resimleri indirmeye şimdi devam etmek istiyor musunuz?</string>
+    <string name="no_images_to_be_downloaded">İndirilecek resim yok</string>
+    <string name="image_downloaded">Resim İndirildi</string>
 </resources>

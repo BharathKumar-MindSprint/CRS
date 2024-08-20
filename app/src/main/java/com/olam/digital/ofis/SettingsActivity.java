@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,17 +42,32 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
@@ -58,7 +77,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private Resources res;
     private DataLayer dl;
     private ProgressDialog m_ProgressDialog;
-    Button buttonSave;
+    Button buttonSave, buttonPhotoCheckbox;
+    private static ProgressDialog progressDialog;
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private boolean updateData=false;
@@ -66,7 +86,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX = 1111;
+    private final static int MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX = 2222;
     Button buttonPrivacyConsent, buttonReenterPasscode;
+    OFISRoomDB roomDB;
+
     private long lastClickTime = 0;
     TextView deviceid;
 
@@ -78,11 +102,13 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         dl = new DataLayer(res, context);
-
+        roomDB = OFISRoomDB.getDbInstance(context);
+        progressDialog = new ProgressDialog(this);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonPhotoCheckbox = (Button) findViewById(R.id.buttonPhotoCheckbox);
         TextView deviceid = (TextView) findViewById(R.id.deviceid);
         deviceid.setText(getResources().getString(R.string.android_id) + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         buttonPrivacyConsent=(Button) findViewById(R.id.buttonPrivacyConsent);
@@ -142,6 +168,40 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 }
             }
                 lastClickTime=SystemClock.elapsedRealtime();
+            }
+        });
+
+        buttonPhotoCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    if (ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(SettingsActivity.this,
+                                new String[]{
+                                        android.Manifest.permission.READ_MEDIA_IMAGES},
+                                REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX);
+                    }else {
+                        // Permission already granted
+                        photoCheckboxDownload();
+                    }
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            + ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        ActivityCompat.requestPermissions(SettingsActivity.this,
+                                new String[]{
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX);
+                    } else {
+                        photoCheckboxDownload();
+                    }
+                } else {
+                    // Call methods directly for Android versions lower than Marshmallow
+                    photoCheckboxDownload();
+                }
+
             }
         });
 
@@ -433,6 +493,45 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     e.printStackTrace();
                 }
             }
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                        // Permissions granted, proceed with your code
+                        photoCheckboxDownload();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX: {
+
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        photoCheckboxDownload();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
@@ -557,6 +656,186 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     public static void completeSetup() {
         HomeActivity.GetAccessToken("settings");
 
+    }
+
+    private void deleteInActiveModuleIdData(){
+        if (!roomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
+            ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
+            for (int i=0; i < moduleNotInUse.size(); i++) {
+                // delete file
+                int moduleId = moduleNotInUse.get(i);
+                List<PhotoCheckBoxData> fileNamesModuleId = roomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
+                if (!fileNamesModuleId.isEmpty()){
+                    for (int j=0; j<fileNamesModuleId.size(); j++) {
+
+                        // get list of filenames
+                        File internalStorageDir = context.getFilesDir();
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(j).fileName);
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                    }
+                }
+
+                // delete data in db
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
+            }
+        }
+
+    }
+
+    public void photoCheckboxDownload(){
+        deleteAllInActivePhotoData();
+        deleteInActiveModuleIdData();
+        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+        progressDialog.setMessage(context.getString(R.string.image_download_start));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
+            if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(false);
+                LayoutInflater inflater = this.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+                builder.setView(dialogView);
+                TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+                tvMsg.setText(res.getString(R.string.ready_to_download_photo_checkbox));
+                Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+                Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+                AlertDialog alert = builder.create();
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alert.dismiss();
+                        progressDialog.dismiss();
+                    }
+                });
+
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
+                            List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                            int totalRecords = photoData.size();
+                            int currentRecord = 0;
+                            if (!photoData.isEmpty()){
+                                for (int i=0; i < photoData.size(); i++) {
+                                    long id = photoData.get(i).id;
+                                    long questionId = Long.parseLong(photoData.get(i).questionId);
+                                    long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                                    String fileName = photoData.get(i).fileName;
+                                    alert.dismiss();
+                                    currentRecord++;
+                                    Log.d("PHOTOOOOOOOOO", getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                                    String message = getString(R.string.download) + ": " + currentRecord + " of " + totalRecords;
+                                    progressDialog.setMessage(message);
+                                    PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                                }
+                                progressDialog.dismiss();
+                                Toast.makeText(SettingsActivity.this,res.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            alert.dismiss();
+                            progressDialog.dismiss();
+                            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+
+                alert.show();
+            } else {
+                progressDialog.dismiss();
+                Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void deleteAllInActivePhotoData() {
+        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+        if (!inActivePhoto.isEmpty()){
+            for (int i = 0; i < inActivePhoto.size(); i++) {
+                String fileName = inActivePhoto.get(i).fileName;
+                File internalStorageDir = getApplicationContext().getFilesDir();
+                File imageFile = new File(internalStorageDir, fileName);
+
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
+        }
+    }
+
+    private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(getApplicationContext()).getPhotoCheckBoxContainer(),fileName);
+
+        //Synchronous API call for PhotoCheckbox Data
+        try {
+            Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                resizedBitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
+                File internalStorageDir = getApplicationContext().getFilesDir();
+
+                File imageFile = new File(internalStorageDir, fileName);
+
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(compressedImageBytes);
+                fileWrite.close();
+
+                roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+
+
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private static String getImageType(byte[] imageBytes) {
+        String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
+            return "png";
+        } else if (base64EncodedImage.startsWith("/9j/")) {
+            return "jpeg";
+        } else {
+            return "unknown";
+        }
     }
 
 

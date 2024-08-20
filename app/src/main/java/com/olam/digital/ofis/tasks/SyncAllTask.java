@@ -7,9 +7,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
@@ -32,6 +42,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
+import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
@@ -39,21 +50,33 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by ben on 24/02/16.
@@ -83,6 +106,7 @@ public class SyncAllTask extends SyncTask {
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
+    public static JSONObject localUnitResponse, photoCheckBoxResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
@@ -96,6 +120,9 @@ public class SyncAllTask extends SyncTask {
     AnswerRequestDTO answerRequestDTO;
     int notificationModuleId;
     int repeaterCount ;
+    ProgressDialog progressDialog;
+
+    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
     public SyncAllTask(Context context) {
         super(context);
     }
@@ -248,6 +275,8 @@ public class SyncAllTask extends SyncTask {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if ( op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
+            syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
         }
 
         return null;
@@ -462,12 +491,21 @@ public class SyncAllTask extends SyncTask {
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
 
+            LocalUnitResponse(localUnitResponse);
+            localUnitResponse = null;
+
+            PhotoCheckBoxResponse(photoCheckBoxResponse);
+            photoCheckBoxResponse = null;
+
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 deleteRoomDbValues();
                 HomeActivity.completeFirstSetup();
             }else{
                 deleteRoomDbValues();
                 SettingsActivity.completeSetup();
+            }
+            if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
+                photoCheckboxDownload();
             }
 
             /*if (pd != null && pd.isShowing()) {
@@ -1005,38 +1043,72 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(retrofit2.Call<LocalUnitResponseModel> call, retrofit2.Response<LocalUnitResponseModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                     try {
+                        LocalUnitResponseModel responseBody = response.body();
+                        Gson gson = new Gson();
+                        String jsonString = gson.toJson(responseBody);
+                        localUnitResponse = new JSONObject(jsonString);
 
-                        if (response.body() != null && response.body().getOutputData() != null) {
-                            OutputData outputData = response.body().getOutputData();
-                            db.localUnitDao().deleteAll();
-                            db.globalUnitDao().deleteAll();
-                            if (outputData != null) {
-                                ArrayList<GlobalUnit> globalUnits = outputData.getGlobalUnits();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
-                                for (GlobalUnit globalUnit : globalUnits) {
-                                    // Insert global unit into the database
-                                    db.globalUnitDao().insertAll(globalUnit);
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
 
-                                    // Fetch the associated local units directly from OutputData
-                                    ArrayList<LocalUnit> localUnits = globalUnit.getLocalUnit();
-                                    if (localUnits != null && !localUnits.isEmpty()) {
-                                        for (LocalUnit localUnit : localUnits) {
-                                            // Set the foreign key
-//                                            localUnit.setGlobalUnitFk(globalUnit.getGlobalUnitId());
+                } else {
+                    String finalEndPoint = call.request().url().toString();
+                    int statusCode = response.code();
+                    String networkResponse = response.body().toString();
+                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
 
-                                            // store the data in a loop
-                                            db.localUnitDao().insert(localUnit);
-                                        }
-                                        // store in a single stretch
-//                                        db.localUnitDao().insertAll(localUnits);
-                                    }
-                                }
+                }
+            }
 
-                            }
-                        }
+            @Override
+            public void onFailure(retrofit2.Call<LocalUnitResponseModel> call, Throwable t) {
 
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+
+    }
+
+    public void syncPhotoCheckBoxData(String syncDate) {
+        ManageRecords getPhotoCheckBoxData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        List<PhotoCheckBoxData> photoModule = roomDB.photoCheckBoxDataDao().getPhotoModuleId();
+
+        List<Integer> allModuleId = new ArrayList<>();
+        if (!photoModule.isEmpty()) {
+            for (int i = 0; i < photoModule.size(); i++) {
+                int moduleId = Integer.parseInt(photoModule.get(i).moduleId);
+                allModuleId.add(moduleId);
+            }
+        }
+
+        Map<String, Object> photoModuleList = new HashMap<>();
+        photoModuleList.put("lastSyncModuleId", allModuleId);
+
+        String finalJson = new Gson().toJson(photoModuleList);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), finalJson);
+
+        retrofit2.Call<PhotoCheckBoxResponseModel> call = getPhotoCheckBoxData.getAllPhotoCheckBoxData(1, syncDate, requestBody);
+
+        call.enqueue(new retrofit2.Callback<PhotoCheckBoxResponseModel>() {
+            @Override
+            public void onResponse(retrofit2.Call<PhotoCheckBoxResponseModel> call, retrofit2.Response<PhotoCheckBoxResponseModel> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getPhotoCheckBoxList() != null ) {
+                    try {
+                        PhotoCheckBoxResponseModel responseBody = response.body();
+                        Gson gson = new Gson();
+                        String jsonString = gson.toJson(responseBody);
+                        photoCheckBoxResponse = new JSONObject(jsonString);
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -1045,23 +1117,23 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 
-                } else {
-                    // Handle unsuccessful response here
-                    // You might want to check the response code and handle errors
-                }
+                } /*else {
+                    String finalEndPoint = call.request().url().toString();
+                    int statusCode = response.code();
+                    String networkResponse = response.body().toString();
+                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                }*/
             }
 
             @Override
-            public void onFailure(retrofit2.Call<LocalUnitResponseModel> call, Throwable t) {
-                // Handle the failure here
-                if (t instanceof IOException) {
-                    // Network or conversion error
-                    // You might want to display a message to the user or log the error
-                } else {
-                    // Unexpected error
-                    // Log the error for debugging purposes
-                    t.printStackTrace();
+            public void onFailure(retrofit2.Call<PhotoCheckBoxResponseModel> call, Throwable t) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
                 }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
             }
         });
 
@@ -2002,4 +2074,240 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
+    private void deleteAllInActivePhotoData() {
+        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+        if (!inActivePhoto.isEmpty()){
+            for (int i = 0; i < inActivePhoto.size(); i++) {
+                String fileName = inActivePhoto.get(i).fileName;
+                File internalStorageDir = context.getFilesDir();
+                File imageFile = new File(internalStorageDir, fileName);
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
+        }
+    }
+
+    private void deleteInActiveModuleIdData(){
+        if (!roomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
+            ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
+            for (int i=0; i < moduleNotInUse.size(); i++) {
+                // delete file
+                int moduleId = moduleNotInUse.get(i);
+                List<PhotoCheckBoxData> fileNamesModuleId = roomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
+                if (!fileNamesModuleId.isEmpty()){
+                    for (int j=0; j<fileNamesModuleId.size(); j++) {
+
+                        // get list of filenames
+                        File internalStorageDir = context.getFilesDir();
+                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(j).fileName);
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                    }
+                }
+
+                // delete data in db
+                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
+            }
+        }
+
+    }
+    public void photoCheckboxDownload(){
+        deleteAllInActivePhotoData();
+        deleteInActiveModuleIdData();
+        roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(context.getString(R.string.image_download_start));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        if (InternetConnectionHelper.isInternetAvailable(context)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+            builder.setView(dialogView);
+            TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+            tvMsg.setText(res.getString(R.string.ready_to_download_photo_checkbox));
+            Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+            Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+            AlertDialog alert = builder.create();
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alert.dismiss();
+                    progressDialog.dismiss();
+                }
+            });
+
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (InternetConnectionHelper.isInternetAvailable(context)) {
+                        List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                        int totalRecords = photoData.size();
+                        int currentRecord = 0;
+                        if (!photoData.isEmpty()) {
+                            for (int i=0; i < photoData.size(); i++) {
+                                long id = photoData.get(i).id;
+                                long questionId = Long.parseLong(photoData.get(i).questionId);
+                                long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                                String fileName = photoData.get(i).fileName;
+                                alert.dismiss();
+                                currentRecord++;
+                                Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                                String message = context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords;
+                                progressDialog.setMessage(message);
+                                PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
+                            }
+                            progressDialog.dismiss();
+                            Toast.makeText(context, res.getString(R.string.image_downloaded), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        alert.dismiss();
+                        progressDialog.dismiss();
+                        Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            alert.show();
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(),fileName);
+
+        //Synchronous API call for PhotoCheckbox Data
+        try {
+            retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            retrofit2.Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                resizedBitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
+                File internalStorageDir = context.getFilesDir();
+
+                File imageFile = new File(internalStorageDir, fileName);
+
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(compressedImageBytes);
+                fileWrite.close();
+
+                roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+
+
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    private String getImageType(byte[] imageBytes) {
+        String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
+            return "png";
+        } else if (base64EncodedImage.startsWith("/9j/")) {
+            return "jpeg";
+        } else {
+            return "unknown";
+        }
+    }
+
+    private void LocalUnitResponse(JSONObject localUnitResponse){
+        try {
+            Gson gson = new Gson();
+            LocalUnitResponseModel model = gson.fromJson(String.valueOf(localUnitResponse), LocalUnitResponseModel.class);
+            if (localUnitResponse != null && model.getOutputData() != null) {
+                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                OutputData outputData = model.getOutputData();
+                db.localUnitDao().deleteAll();
+                db.globalUnitDao().deleteAll();
+                if (outputData != null) {
+                    ArrayList<GlobalUnit> globalUnits = outputData.getGlobalUnits();
+
+                    for (GlobalUnit globalUnit : globalUnits) {
+                        // Insert global unit into the database
+                        db.globalUnitDao().insertAll(globalUnit);
+
+                        ArrayList<LocalUnit> localUnits = globalUnit.getLocalUnit();
+                        if (localUnits != null && !localUnits.isEmpty()) {
+                            for (LocalUnit localUnit : localUnits) {
+                                // Set the foreign key
+                                // localUnit.setGlobalUnitFk(globalUnit.getGlobalUnitId());
+
+                                // store the data in a loop
+                                db.localUnitDao().insert(localUnit);
+                            }
+                                // store in a single stretch
+                                // db.localUnitDao().insertAll(localUnits);
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void PhotoCheckBoxResponse(JSONObject photoCheckBoxResponse) {
+        try {
+            Gson gson = new Gson();
+            PhotoCheckBoxResponseModel model = gson.fromJson(photoCheckBoxResponse.toString(), PhotoCheckBoxResponseModel.class);
+            if (model != null && model.getPhotoCheckBoxList() != null) {
+                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxContainer(model.getContainer());
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxSyncDate(model.getSyncDate());
+                SharedPreferenceUtils.getInstance(context.getApplicationContext()).setPhotoCheckBoxModuleNotInUse(model.getModuleNotInUse());
+
+                ArrayList<PhotoCheckBoxData> outputData = model.getPhotoCheckBoxList();
+
+                if (outputData != null) {
+
+                    for (PhotoCheckBoxData photoData : outputData) {
+                        db.photoCheckBoxDataDao().insert(photoData);
+                    }
+
+                }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }

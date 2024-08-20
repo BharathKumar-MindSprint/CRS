@@ -990,4 +990,8 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="ofis_photo_checkbox_download">ດາວໂຫລດຮູບພາບ Checkbox ຮູບພາບ</string>
+    <string name="ready_to_download_photo_checkbox">ມີ​ຮູບ​ພາບ​ທີ່​ຈໍາ​ເປັນ​ຕ້ອງ​ໄດ້​ຮັບ​ການ​ດາວ​ໂຫຼດ​ສໍາ​ລັບ​ຄໍາ​ຖາມ checkbox ຮູບ​ພາບ​ແມ່ນ​. ທ່ານຕ້ອງການສືບຕໍ່ດາວໂຫຼດຮູບພາບດຽວນີ້ບໍ?</string>
+    <string name="no_images_to_be_downloaded">ບໍ່ມີຮູບພາບທີ່ຈະດາວໂຫລດ</string>
+    <string name="image_downloaded">ດາວໂຫຼດຮູບແລ້ວ</string>
 </resources>
