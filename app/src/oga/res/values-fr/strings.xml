@@ -1110,5 +1110,5 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="ofis_photo_checkbox_download">Télécharger des images de cases à cocher pour photos</string>
     <string name="ready_to_download_photo_checkbox">Certaines images doivent être téléchargées pour les questions sur les cases à cocher photo. Voulez-vous continuer à télécharger les images maintenant ?</string>
     <string name="no_images_to_be_downloaded">Il n\'y a aucune image à télécharger</string>
-    <string name="image_downloaded">Image téléchargée</string>
+    <string name="image_downloaded">Images téléchargées avec succès</string>
 </resources>

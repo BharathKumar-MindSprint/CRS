@@ -835,5 +835,5 @@
     <string name="ofis_photo_checkbox_download">Unduh Gambar Kotak Centang Foto</string>
     <string name="ready_to_download_photo_checkbox">Ada gambar yang perlu diunduh untuk pertanyaan kotak centang foto. Apakah Anda ingin terus mendownload gambar sekarang?</string>
     <string name="no_images_to_be_downloaded">Tidak ada gambar yang dapat diunduh</string>
-    <string name="image_downloaded">Gambar Diunduh</string>
+    <string name="image_downloaded">Gambar berhasil diunduh</string>
 </resources>

@@ -2172,7 +2172,7 @@ public class SyncAllTask extends SyncTask {
                         String fileName = photoData.get(i).fileName;
                         currentRecord++;
                         Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
-                        String message = context.getString(R.string.downloading) + " : " + currentRecord + " of " + totalRecords;
+                        String message = context.getString(R.string.downloading) + currentRecord + " of " + totalRecords;
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
