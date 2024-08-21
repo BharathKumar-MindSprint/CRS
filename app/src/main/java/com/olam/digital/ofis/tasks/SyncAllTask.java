@@ -57,6 +57,7 @@ import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONArray;
+import android.os.Handler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -120,7 +121,6 @@ public class SyncAllTask extends SyncTask {
     AnswerRequestDTO answerRequestDTO;
     int notificationModuleId;
     int repeaterCount ;
-    ProgressDialog progressDialog;
 
     OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
     public SyncAllTask(Context context) {
@@ -2074,8 +2074,8 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
-    private void deleteAllInActivePhotoData() {
-        List<PhotoCheckBoxData> inActivePhoto = roomDB.photoCheckBoxDataDao().getInactivePhoto(false);
+    public static void deleteAllInActivePhotoData(OFISRoomDB ofisRoomDB, Context context) {
+        List<PhotoCheckBoxData> inActivePhoto = ofisRoomDB.photoCheckBoxDataDao().getInactivePhoto(false);
         if (!inActivePhoto.isEmpty()){
             for (int i = 0; i < inActivePhoto.size(); i++) {
                 String fileName = inActivePhoto.get(i).fileName;
@@ -2088,13 +2088,13 @@ public class SyncAllTask extends SyncTask {
         }
     }
 
-    private void deleteInActiveModuleIdData(){
-        if (!roomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
+    public static void deleteInActiveModuleIdData(OFISRoomDB ofisRoomDB, Context context){
+        if (!ofisRoomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
             ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
             for (int i=0; i < moduleNotInUse.size(); i++) {
                 // delete file
                 int moduleId = moduleNotInUse.get(i);
-                List<PhotoCheckBoxData> fileNamesModuleId = roomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
+                List<PhotoCheckBoxData> fileNamesModuleId = ofisRoomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
                 if (!fileNamesModuleId.isEmpty()){
                     for (int j=0; j<fileNamesModuleId.size(); j++) {
 
@@ -2108,21 +2108,17 @@ public class SyncAllTask extends SyncTask {
                 }
 
                 // delete data in db
-                roomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
+                ofisRoomDB.photoCheckBoxDataDao().deleteInActiveModulePhoto(moduleId);
             }
         }
 
     }
     public void photoCheckboxDownload(){
-        deleteAllInActivePhotoData();
-        deleteInActiveModuleIdData();
+        deleteAllInActivePhotoData(roomDB, context);
+        deleteInActiveModuleIdData(roomDB, context);
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage(context.getString(R.string.image_download_start));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        if (InternetConnectionHelper.isInternetAvailable(context)) {
+
+        if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -2137,49 +2133,69 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
-                    progressDialog.dismiss();
                 }
             });
 
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (InternetConnectionHelper.isInternetAvailable(context)) {
-                        List<PhotoCheckBoxData> photoData = roomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                        int totalRecords = photoData.size();
-                        int currentRecord = 0;
-                        if (!photoData.isEmpty()) {
-                            for (int i=0; i < photoData.size(); i++) {
-                                long id = photoData.get(i).id;
-                                long questionId = Long.parseLong(photoData.get(i).questionId);
-                                long lookupId = Long.parseLong(photoData.get(i).lookupId);
-                                String fileName = photoData.get(i).fileName;
-                                alert.dismiss();
-                                currentRecord++;
-                                Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
-                                String message = context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords;
-                                progressDialog.setMessage(message);
-                                PhotoCheckboxAPICALL(id, questionId, lookupId, fileName);
-                            }
-                            progressDialog.dismiss();
-                            Toast.makeText(context, res.getString(R.string.image_downloaded), Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        alert.dismiss();
-                        progressDialog.dismiss();
+                    alert.dismiss();
+                    if (!InternetConnectionHelper.isInternetAvailable(context)) {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                        return;
                     }
+                    photoCheckboxThreadCall(new ProgressDialog(context), context, roomDB, new Handler());
                 }
             });
-
             alert.show();
         } else {
-            progressDialog.dismiss();
-            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.no_images_to_be_downloaded), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName) {
+    public static void photoCheckboxThreadCall(ProgressDialog progressDialog, Context context, OFISRoomDB ofisRoomDB, Handler handler) {
+        progressDialog.setMessage(context.getString(R.string.image_download_start));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<PhotoCheckBoxData> photoData = ofisRoomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+                int totalRecords = photoData.size();
+                int currentRecord = 0;
+                if (!photoData.isEmpty()){
+                    for (int i=0; i < photoData.size(); i++) {
+                        long id = photoData.get(i).id;
+                        long questionId = Long.parseLong(photoData.get(i).questionId);
+                        long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                        String fileName = photoData.get(i).fileName;
+                        currentRecord++;
+                        Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                        String message = context.getString(R.string.downloading) + " : " + currentRecord + " of " + totalRecords;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.setMessage(message);
+                            }
+                        });
+                        SyncAllTask.PhotoCheckboxAPICALL(id, questionId, lookupId, fileName, context, ofisRoomDB);
+                    }
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        Toast.makeText(context,context.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        thread.start();
+    }
+
+    public static void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName, Context context, OFISRoomDB roomDBPhoto) {
         ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
         DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(),fileName);
 
@@ -2222,7 +2238,7 @@ public class SyncAllTask extends SyncTask {
                 fileWrite.write(compressedImageBytes);
                 fileWrite.close();
 
-                roomDB.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+                roomDBPhoto.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
 
 
                 Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
@@ -2234,7 +2250,7 @@ public class SyncAllTask extends SyncTask {
             e.printStackTrace();
         }
     }
-    private String getImageType(byte[] imageBytes) {
+    private static String getImageType(byte[] imageBytes) {
         String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
             return "png";
