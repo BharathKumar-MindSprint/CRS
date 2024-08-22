@@ -842,6 +842,6 @@
     <string name="ofis_photo_checkbox_download">Descargar imágenes de casillas de verificación de fotos</string>
     <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
     <string name="no_images_to_be_downloaded">No hay imágenes para descargar.</string>
-    <string name="image_downloaded">Imagen descargada</string>
+    <string name="image_downloaded">Imágenes descargadas con éxito</string>
 </resources>
 

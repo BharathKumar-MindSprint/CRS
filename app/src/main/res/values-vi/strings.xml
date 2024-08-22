@@ -707,5 +707,5 @@
     <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
     <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
     <string name="no_images_to_be_downloaded">Không có hình ảnh nào để tải xuống</string>
-    <string name="image_downloaded">Đã tải xuống hình ảnh</string>
+    <string name="image_downloaded">Hình ảnh tải xuống thành công</string>
 </resources>
