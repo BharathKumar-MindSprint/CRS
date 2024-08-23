@@ -7814,7 +7814,7 @@ public class DynamicQuestions {
 
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+            final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
 //        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
@@ -7906,19 +7906,13 @@ public class DynamicQuestions {
                                         TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                         ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                         tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
-
-                                        // need to recheck in testing
-                                        while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                        if (!Objects.equals(photoName,null)) {
+                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
@@ -7933,7 +7927,6 @@ public class DynamicQuestions {
                                                 iv.setImageBitmap(bitmapImageResize(imageFile));
                                             }
                                         }
-
 
                                         tl.addView(tr);
 
@@ -8018,25 +8011,20 @@ public class DynamicQuestions {
                                         TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                         ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                         tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
-
-                                        // need to recheck in testing
-                                        while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                        if (!Objects.equals(photoName,null)) {
+                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
                                             }
                                         }
+
 
                                         String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
                                         if (photoLocation!=null){
@@ -8134,26 +8122,20 @@ public class DynamicQuestions {
                                                 TextView tvId = (TextView) tr.findViewById(R.id.cbId);
                                                 TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                                 ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                                 tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                                 String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                                 tv.setText(checkBoxName);
-
-                                                // need to recheck in testing
-                                                while (photoCheckboxes.moveToNext()) {
-                                                    int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                                String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                                if (!Objects.equals(photoName,null)) {
+                                                    int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                                     if (imageId != 0) {
                                                         iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                                     } else {
                                                         iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
                                                     }
                                                 }
+
 
                                                 String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
                                                 if (photoLocation!=null){
