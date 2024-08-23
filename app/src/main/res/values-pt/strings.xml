@@ -805,4 +805,8 @@
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
 
+    <string name="ofis_photo_checkbox_download">Baixar imagens da caixa de seleção de fotos</string>
+    <string name="ready_to_download_photo_checkbox">Existem imagens que precisam ser baixadas para perguntas da caixa de seleção de fotos. Deseja continuar baixando as imagens agora?</string>
+    <string name="no_images_to_be_downloaded">Não há imagens para baixar</string>
+    <string name="image_downloaded">Imagens baixadas com sucesso</string>
 </resources>

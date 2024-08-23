@@ -28,4 +28,21 @@ public class RetrofitClient {
         return retrofit;
 
     }
+    public static Retrofit getRetrofitImage(){
+        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
+        OkHttpClient okHttpClient=new OkHttpClient.Builder()
+                .connectTimeout(180, TimeUnit.SECONDS)
+                .readTimeout(540, TimeUnit.SECONDS)
+                .writeTimeout(540, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        Retrofit retrofit =new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl( BuildConfig.DOWNLOADURL )
+                .client(okHttpClient)
+                .build();
+        return retrofit;
+
+    }
 }

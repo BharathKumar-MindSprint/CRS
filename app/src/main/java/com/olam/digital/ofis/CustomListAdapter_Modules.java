@@ -738,7 +738,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                     */
                 }
-            }
+                }
             else {
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                 enabledItem.setText("false");
@@ -1008,29 +1008,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 enabledItem.setText("false");
                             }
 
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                            Date startDate = null;
-                            try {
-                                if(start_date_string!=null) {
-                                    startDate = dateFormat.parse(start_date_string);
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                            Date currentDateNew = new Date();
-
-                            if (startDate!=null){
-                                if(currentDateNew.before(startDate)){
-                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                    enabledItem.setText("false");
-                                }
-                            }
-
                         }
                     }
                     else {
@@ -1191,11 +1168,26 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                                     enabledItem.setText("false");
                                                                     enabledItem.setTag("hasfarm");
                                                                 } else {
-                                                                    enabledItem.setText("true");
+
+                                                                    int oneTimeSurveyDurationId = db.surveyDurationTypeDao().getOneTimeSurveyDurationId();
+                                                                    String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+                                                                    if (Objects.equals(String.valueOf(oneTimeSurveyDurationId),surveyDuration_string) && submittedInfo.isSubmitted()){
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                        enabledItem.setText("false");
+                                                                    } else {
+                                                                        enabledItem.setText("true");
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    }
+                                                                    /*enabledItem.setText("true");
                                                                     textView.setText(res.getString(R.string.ModuleStatus));
                                                                     linearLayout.setBackgroundResource(R.drawable.list_item);
                                                                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));*/
                                                                 }
                                                             }
                                                             break;
@@ -1272,11 +1264,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                                     enabledItem.setText("false");
                                                                     enabledItem.setTag("hasfarm");
                                                                 } else {
-                                                                    enabledItem.setText("true");
-                                                                    textView.setText(res.getString(R.string.ModuleStatus));
-                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+
+                                                                    int oneTimeSurveyDurationId = db.surveyDurationTypeDao().getOneTimeSurveyDurationId();
+                                                                    String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                                    if (Objects.equals(String.valueOf(oneTimeSurveyDurationId),surveyDuration_string) && submittedInfo.isSubmitted()){
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                        enabledItem.setText("false");
+                                                                    } else {
+                                                                        enabledItem.setText("true");
+                                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1410,11 +1413,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                                 enabledItem.setText("false");
                                                                 enabledItem.setTag("hasfarm");
                                                             } else {
-                                                                enabledItem.setText("true");
-                                                                textView.setText(res.getString(R.string.ModuleStatus));
-                                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+
+                                                                int oneTimeSurveyDurationId = db.surveyDurationTypeDao().getOneTimeSurveyDurationId();
+                                                                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                                if (Objects.equals(String.valueOf(oneTimeSurveyDurationId),surveyDuration_string) && submittedInfo.isSubmitted()){
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    enabledItem.setText("false");
+                                                                } else {
+                                                                    enabledItem.setText("true");
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
                                                             }
                                                         }
                                                     } else {
@@ -1489,11 +1503,21 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                                 enabledItem.setText("false");
                                                                 enabledItem.setTag("hasfarm");
                                                             } else {
-                                                                enabledItem.setText("true");
-                                                                textView.setText(res.getString(R.string.ModuleStatus));
-                                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                int oneTimeSurveyDurationId = db.surveyDurationTypeDao().getOneTimeSurveyDurationId();
+                                                                String surveyDuration_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
+
+                                                                if (Objects.equals(String.valueOf(oneTimeSurveyDurationId),surveyDuration_string) && submittedInfo.isSubmitted()){
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                                    enabledItem.setText("false");
+                                                                } else {
+                                                                    enabledItem.setText("true");
+                                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -1526,13 +1550,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     enabledItem.setText("false");
                 }
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = null;
                 try {
                     if(start_date_string!=null) {
-                        startDate = dateFormat.parse(start_date_string);
+                        startDate = dateFormat.parse(start_date_string.split("T")[0]);
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
