@@ -702,7 +702,7 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
-
+    <string name="account_locked">Bạỵchī k̄hxng khuṇ t̄hūk l̆xkh pord lxng xīk khrậng nı p̣hāy h̄lạng</string>
     <string name="ofis_photo_checkbox_download">ดาวน์โหลดรูปภาพช่องทำเครื่องหมายภาพถ่าย</string>
     <string name="ready_to_download_photo_checkbox">มีรูปภาพที่ต้องดาวน์โหลดสำหรับคำถามในช่องทำเครื่องหมายรูปภาพ คุณต้องการดาวน์โหลดภาพต่อไปหรือไม่?</string>
     <string name="no_images_to_be_downloaded">ไม่มีรูปภาพให้ดาวน์โหลด</string>

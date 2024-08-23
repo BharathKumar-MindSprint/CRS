@@ -703,6 +703,7 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="account_locked">Tài khoản của bạn bị khóa, vui lòng thử lại sau</string>
 
     <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
     <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
