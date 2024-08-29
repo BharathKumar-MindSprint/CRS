@@ -707,4 +707,7 @@
     <string name="ready_to_download_photo_checkbox">มีรูปภาพที่ต้องดาวน์โหลดสำหรับคำถามในช่องทำเครื่องหมายรูปภาพ คุณต้องการดาวน์โหลดภาพต่อไปหรือไม่?</string>
     <string name="no_images_to_be_downloaded">ไม่มีรูปภาพให้ดาวน์โหลด</string>
     <string name="image_downloaded">ดาวน์โหลดรูปภาพสําเร็จแล้ว</string>
+    <string name="file_exceeds">K̄hnād fịl̒ kein </string>
+    <string name="total_file_size">K̄hnād fịl̒ rwm kein 5MB kruṇā xạphh̄old fịl̒ thī̀ mī k̄hnād n̂xy kẁā </string>
+
 </resources>

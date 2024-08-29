@@ -809,4 +809,7 @@
     <string name="ready_to_download_photo_checkbox">Existem imagens que precisam ser baixadas para perguntas da caixa de seleção de fotos. Deseja continuar baixando as imagens agora?</string>
     <string name="no_images_to_be_downloaded">Não há imagens para baixar</string>
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
+    <string name="file_exceeds">O tamanho do arquivo excede </string>
+    <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
+
 </resources>
