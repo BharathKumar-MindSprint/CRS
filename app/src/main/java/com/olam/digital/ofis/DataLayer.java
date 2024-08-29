@@ -7923,6 +7923,27 @@ public class DataLayer {
         return lookupValue;
     }
 
+    public String getphotoNameByLookUpId(String lookupId) {
+        String photoName = "";
+        Cursor photoCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(lookupId)};
+            photoCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (photoCursor != null) {
+                while (photoCursor.moveToNext()) {
+                    photoName = photoCursor.getString(photoCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            photoCursor.close();
+        }
+        return photoName;
+    }
+
     public String getChildNamefromDb(Long childId) {
         String childName="";
         Cursor cursor=null;
@@ -9628,6 +9649,183 @@ public class DataLayer {
         return  available;
     }
 
+    public boolean isSurveyAttendedByOtherFarms(String multiFarmId,long farmerId,int cursorId, int plotId, Calendar currentDate,Cursor cursorData) {
+
+        Cursor cursor=db.rawQuery("select * from farmers where submitted_modules like "+"'%"+multiFarmId+"%'",null);
+        String farmId=getMultifarmfarmId(farmerId);
+        int recurrence_frequency = cursorData.getInt(cursorData.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+        String recurrence_type = cursorData.getString(cursorData.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+        Calendar calculationDate = (Calendar) currentDate.clone();
+        String disabled_months_string = cursorData.getString(cursorData.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+        List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+        MultiFarmDTO multiFarmDTO=null;
+        if (farmId!=null){
+            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+        }
+
+        List<String> farmerIds=new ArrayList<String>();
+        JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+        if (jsonArray != null) {
+            int length = jsonArray.length();
+            for (int j = 0; j < length; j++) {
+
+                try {
+                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+                    farmerIds.add(farmerIdStakeHolder);
+                }catch (Exception e){}
+            }
+        }
+
+
+        try {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+
+                    // Start
+                    String submittedModulesJSON = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                    String farmerIdDEb = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                    if (farmerIds.contains(farmerIdDEb)) {
+                        JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+                        JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                        for (int i = 0; i < submittedModulesArray.length(); i++) {
+                            JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                            JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                            if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+                                if(plotId != 0) {
+                                    if (submittedModuleDetails.has("plotId")) {
+                                        try {
+                                            int plot_id = submittedModuleDetails.getInt("plotId");
+                                            if (plot_id == plotId) {
+                                                return true;
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } else {
+
+                                    if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                        // for recurring
+                                        try {
+                                            // get last submitted date
+                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                            Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                            //O20HS-84 - To enable the annual survey.
+                                            calculationDate = (Calendar) currentDate.clone();
+                                            //
+
+                                            try {
+                                                lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                            } catch (ParseException e) {
+                                                FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                                                e.printStackTrace();
+                                            }
+
+                                            // code for india spices survey
+                                            String assignmentTypeColumn = "";
+                                            String assignmentType = "1";
+
+                                            switch (assignmentType){
+                                                case "1" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                                    break;
+                                                case "2" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                                    break;
+                                                case "3" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                                    break;
+                                                case "4" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                                    break;
+                                                case "5" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                                    break;
+                                                case "6" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                                    break;
+                                                case "7" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                                    break;
+                                                case "8" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                                    break;
+                                                case "9" :
+                                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                                    break;
+                                            }
+
+                                            String farmerAssignmentField = getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                                            if (recurrence_type != null) {
+                                                if (recurrence_type.equalsIgnoreCase("years")) {
+
+                                                    // change the va;
+                                                    if (Objects.equals(farmerAssignmentField, "48")){
+
+                                                        // set the date according to start date
+                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                        calculationDate.set(Calendar.MONTH, Calendar.JULY);
+                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+//                                                    lastSubmittedDate.setTime(sdf.parse("2022-07-23 07:55:12"));
+
+                                                    }else {
+                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                    }
+//                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+//                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+//                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                    calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                    calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                    calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                } else {
+                                                    // must be days
+                                                    calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                }
+
+                                                // set the time
+                                                calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                calculationDate.set(Calendar.MINUTE, 59);
+                                                calculationDate.set(Calendar.SECOND, 59);
+                                                calculationDate.set(Calendar.MILLISECOND, 999);
+
+                                                // force the recalculation
+                                                calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                                                if (lastSubmittedDate.after(calculationDate)) {
+                                                    return true;
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        // for non-recurring
+                                        return true;
+                                    }
+//                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        return  false;
+    }
+
+
     public boolean isSurveyAttendedByOther(String multiFarmId,long farmerId,int cursorId, int plotId) {
 
         Cursor cursor=db.rawQuery("select * from farmers where submitted_modules like "+"'%"+multiFarmId+"%'",null);
@@ -10055,7 +10253,7 @@ public class DataLayer {
             result = sb.deleteCharAt(sb.length() - 1).toString();
         }
         Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.SectionsEntry.TABLE_NAME +
-                " WHERE " + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID
+                " WHERE " + OFISDBContract.SectionsEntry.COLUMN_NAME_ID
                 + " IN (" + result + ")"  ,null);
         try {
             while (nids.moveToNext()) {
