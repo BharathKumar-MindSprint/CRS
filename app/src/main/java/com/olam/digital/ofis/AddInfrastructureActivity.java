@@ -205,6 +205,21 @@ public class AddInfrastructureActivity extends BaseActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    mCurrentLocation = location;
+                    if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
+                        setPoiGPS(mCurrentLocation);
+                }
+            }
+        });
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
