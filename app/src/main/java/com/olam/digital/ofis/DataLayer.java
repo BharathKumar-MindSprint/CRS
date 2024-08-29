@@ -10253,7 +10253,7 @@ public class DataLayer {
             result = sb.deleteCharAt(sb.length() - 1).toString();
         }
         Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.SectionsEntry.TABLE_NAME +
-                " WHERE " + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID
+                " WHERE " + OFISDBContract.SectionsEntry.COLUMN_NAME_ID
                 + " IN (" + result + ")"  ,null);
         try {
             while (nids.moveToNext()) {
