@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.mvvmmodule.model.photocheckbox;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -21,7 +22,7 @@ public class PhotoCheckBoxData {
     @ColumnInfo(name = "fileName")
     public String fileName;
 
-    @ColumnInfo(name = "isDownload", defaultValue = "false")
+    @ColumnInfo(name = "isDownload", defaultValue = "0")
     public boolean isDownload;
 
     @ColumnInfo(name = "photoLocation")
