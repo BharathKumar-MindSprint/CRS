@@ -34,7 +34,7 @@ android {
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 83
-        versionName "10.7.5"
+        versionName "10.7.6"
 
         javaCompileOptions {
             annotationProcessorOptions {
