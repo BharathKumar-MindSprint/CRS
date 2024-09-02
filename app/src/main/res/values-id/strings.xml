@@ -800,5 +800,12 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="account_locked">Akun Anda terkunci, Silakan coba beberapa saat lagi</string>
+    <string name="ofis_photo_checkbox_download">Unduh Gambar Kotak Centang Foto</string>
+    <string name="ready_to_download_photo_checkbox">Ada gambar yang perlu diunduh untuk pertanyaan kotak centang foto. Apakah Anda ingin terus mendownload gambar sekarang?</string>
+    <string name="no_images_to_be_downloaded">Tidak ada gambar yang dapat diunduh</string>
+    <string name="image_downloaded">Gambar berhasil diunduh</string>
+    <string name="file_exceeds">Ukuran file melebihi </string>
+    <string name="total_file_size">Total ukuran file melebihi 5MB. Harap unggah file berukuran kurang dari </string>
 
 </resources>

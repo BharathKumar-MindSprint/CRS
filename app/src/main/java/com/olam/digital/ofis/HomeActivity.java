@@ -588,10 +588,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         String userpasscode = passcode.getText().toString().trim();
         if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("") &&
                 userpasscode != null && !userpasscode.equalsIgnoreCase("")) {
-            showProgress(true);
+
             // Current OFIS Authentication
             // doAuthentication(userEnumerator,userpasscode);
 
+            if (isAccountLocked()) {
+                Toast.makeText(context, getString(R.string.account_locked), Toast.LENGTH_LONG).show();
+                return;
+            }
+            showProgress(true);
             // KeyCloak Authentication
             doKeyCloakAuthentication(userEnumerator, passcode.getText().toString().trim());
 
@@ -1409,6 +1414,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onResponse(Call<AuthenticationDTO> call, Response<AuthenticationDTO> response) {
         showProgress(false);
         if (response.isSuccessful()) {
+            Utilities.removeFromSharedPrefs(context, Utilities.LOGIN_ATTEMPTS);
+            Utilities.removeFromSharedPrefs(context, Utilities.PREVIOUS_ENTERED_USERNAME);
             AuthenticationDTO authenticationDTO = response.body();
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
@@ -1429,12 +1436,46 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } catch (Exception e) {
             }
             enableSync();
+            if (response.code() == 401) {
+                validateLoginAttempts();
+            }
             Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
-//            Answers.getInstance().logLogin(new LoginEvent()
-//                    .putMethod("first")
-//                    .putCustomAttribute("reason", "wrong credentials")
-//                    .putSuccess(false));
         }
+    }
+
+    private void validateLoginAttempts() {
+        String previousEnteredUsername = Utilities.getPreviousEnteredUsernameSharedPrefs(context);
+        String currentEnteredUsername = enumeratorID.getText().toString().trim();
+
+        if (!previousEnteredUsername.equals(currentEnteredUsername)) {
+            Utilities.removeFromSharedPrefs(context, Utilities.LOGIN_ATTEMPTS);
+            Utilities.setPreviousEnteredUsernameSharedPrefs(context, currentEnteredUsername);
+        }
+
+        int LoginAttempts = Utilities.getLoginAttemptsFromSharedPrefs(context);
+
+        if (LoginAttempts >= 4) {
+            Utilities.setLockoutTimeFromSharedPrefs(context);
+            return;
+        }
+
+        Utilities.setLoginAttemptsFromSharedPrefs(context, LoginAttempts + 1);
+    }
+
+    private boolean isAccountLocked() {
+        Long lastLockedOutTime = Utilities.getLockoutTimeFromSharedPrefs(context);
+
+        if (lastLockedOutTime != -1L) {
+            Long currentTime = Utilities.currentTimeInMilliSeconds();
+
+            if(currentTime - lastLockedOutTime < 900000 && currentTime - lastLockedOutTime > 0) {
+                return true;
+            }
+            else {
+                Utilities.removeFromSharedPrefs(context, Utilities.LOCKOUT_TIME);
+            }
+        }
+        return false;
     }
 
     @Override

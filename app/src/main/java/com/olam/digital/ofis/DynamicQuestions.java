@@ -11,7 +11,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
@@ -7812,7 +7814,7 @@ public class DynamicQuestions {
 
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+            final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
 //        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
@@ -7904,19 +7906,13 @@ public class DynamicQuestions {
                                         TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                         ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                         tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
-
-                                        // need to recheck in testing
-                                        while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                        if (!Objects.equals(photoName,null)) {
+                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
@@ -7924,6 +7920,13 @@ public class DynamicQuestions {
                                             }
                                         }
 
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
+                                            }
+                                        }
 
                                         tl.addView(tr);
 
@@ -8008,19 +8011,13 @@ public class DynamicQuestions {
                                         TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                         ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                         tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         tv.setText(checkBoxName);
-
-                                        // need to recheck in testing
-                                        while (photoCheckboxes.moveToNext()) {
-                                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                        if (!Objects.equals(photoName,null)) {
+                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                             if (imageId != 0) {
                                                 iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                             } else {
@@ -8028,6 +8025,14 @@ public class DynamicQuestions {
                                             }
                                         }
 
+
+                                        String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                        if (photoLocation!=null){
+                                            File imageFile = new File(photoLocation);
+                                            if (imageFile.exists()) {
+                                                iv.setImageBitmap(bitmapImageResize(imageFile));
+                                            }
+                                        }
 
                                         tl.addView(tr);
 
@@ -8117,20 +8122,13 @@ public class DynamicQuestions {
                                                 TextView tvId = (TextView) tr.findViewById(R.id.cbId);
                                                 TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
                                                 ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-//                            tvId.setText(String.valueOf(cbId));
                                                 tvId.setText(lookupID);
 
-//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-//                            tv.setText(photoCheckboxes.getString(columnIndex));
                                                 String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                                 tv.setText(checkBoxName);
-
-                                                // need to recheck in testing
-                                                while (photoCheckboxes.moveToNext()) {
-                                                    int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                                String photoName = dl.getphotoNameByLookUpId(lookupID);
+                                                if (!Objects.equals(photoName,null)) {
+                                                    int imageId = res.getIdentifier(photoName, "drawable", packageName);
                                                     if (imageId != 0) {
                                                         iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                                     } else {
@@ -8138,6 +8136,14 @@ public class DynamicQuestions {
                                                     }
                                                 }
 
+
+                                                String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
+                                                if (photoLocation!=null){
+                                                    File imageFile = new File(photoLocation);
+                                                    if (imageFile.exists()) {
+                                                        iv.setImageBitmap(bitmapImageResize(imageFile));
+                                                    }
+                                                }
 
                                                 tl.addView(tr);
 
@@ -8433,6 +8439,32 @@ public class DynamicQuestions {
 
     }
 
+    public Bitmap bitmapImageResize(File imageFile){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        int reqWidth = 500;
+        int reqHeight = 500;
+
+        Bitmap originalBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 200, 200, false);
+
+        float aspectRatio = (float) resizedBitmap.getWidth() / (float) resizedBitmap.getHeight();
+        int newWidth;
+        int newHeight;
+
+        if (aspectRatio > 1) {
+            newWidth = reqWidth;
+            newHeight = Math.round(reqWidth / aspectRatio);
+        } else {
+            newHeight = reqHeight;
+            newWidth = Math.round(reqHeight * aspectRatio);
+        }
+
+//        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
+        return Utilities.loadSizedBitmap(imageFile.getAbsolutePath(),newWidth,newHeight);
+    }
 
     public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);

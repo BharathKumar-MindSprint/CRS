@@ -1174,6 +1174,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="file_exceeds">File size exceeds </string>
+    <string name="total_file_size">"Total files size exceeds 5MB. Please upload file size less than "</string>
 
     <!-- OFI Consent Consent Brazil-->
     <string name="farmer_consent_brazil">CONSENTIMENTO DO AGRICULTOR</string>
@@ -1289,4 +1291,11 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="please_enter_witness2_CPF">Por favor insira o CPF da testemunha 2</string>
     <string name="please_enter_witness1_RG">Por favor insira o RG da testemunha 1</string>
     <string name="please_enter_witness2_RG">Por favor insira o RG da testemunha 2</string>
+    <string name="account_locked">Your account is locked, Please try after sometime</string>
+    <string name="ofis_photo_checkbox_download">Download Photo\nCheckbox Images</string>
+    <string name="ready_to_download_photo_checkbox">There are images which need to be downloaded for photo checkbox questions. Do you want to continue to download the images now?</string>
+    <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
+    <string name="image_downloaded">Images successfully downloaded</string>
+    <string name="image_download_start">Downloading Images for photo checkbox questions</string>
+
 </resources>

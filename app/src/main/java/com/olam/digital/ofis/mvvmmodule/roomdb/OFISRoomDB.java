@@ -4,7 +4,11 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
+import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
@@ -57,6 +61,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonP
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
+import kotlin.jvm.Volatile;
+
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
@@ -67,8 +73,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class},
-        version = 12)
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class},
+        version = 13)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -122,13 +128,24 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract AssignmentTypeDao assignmentTypeDao();
     public abstract SurveyDurationTypeDao surveyDurationTypeDao();
 
+    public abstract PhotoCheckBoxDataDao photoCheckBoxDataDao();
+
     public static volatile OFISRoomDB INSTANCE = null;
 
     public static OFISRoomDB getDbInstance(Context context) {
 
+        final Migration MIGRATION_12_13 = new Migration(12, 13) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                database.execSQL("ALTER TABLE DmComplaintFileTable ADD COLUMN fileSize INTEGER default 0");
+                database.execSQL("CREATE TABLE IF NOT EXISTS PhotoCheckBoxData ( id INTEGER PRIMARY KEY NOT NULL, questionId TEXT, lookupId TEXT, fileName TEXT, isDownload INTEGER DEFAULT 0 NOT NULL, photoLocation TEXT, active INTEGER NOT NULL, moduleId TEXT)");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
+                    .addMigrations(MIGRATION_12_13)
                     .fallbackToDestructiveMigration()
                     .build();
         }

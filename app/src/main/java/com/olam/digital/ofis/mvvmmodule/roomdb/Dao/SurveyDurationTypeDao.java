@@ -29,6 +29,9 @@ public interface SurveyDurationTypeDao {
     @Query("SELECT id FROM SurveyDurationType WHERE value =  \"Perpetual Survey\" ")
     int getSurveyDurationId();
 
+    @Query("SELECT id FROM SurveyDurationType WHERE value =  \"One-time Survey\" ")
+    int getOneTimeSurveyDurationId();
+
     @Delete
     void delete(SurveyDurationType surveyDurationType);
 

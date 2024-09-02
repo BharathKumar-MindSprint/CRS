@@ -115,6 +115,13 @@ public class Utilities {
     // OW-4516 Fix
     public static final int DATE_TIME_SETTING =6575;
 
+    public static final String LOGIN_ATTEMPTS = "loginAttempts";
+
+    public static final String LOCKOUT_TIME = "lockoutTime";
+
+    public static final String PREVIOUS_ENTERED_USERNAME = "previousEnteredUsername";
+
+
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
     try {
@@ -779,6 +786,42 @@ public  static String base64ConversionForImage(String filepath)  {
         String opunit=sharedPreferences.getString("opUnit", "nil");
         return opunit;
     }
+
+    public static int getLoginAttemptsFromSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(LOGIN_ATTEMPTS, 0);
+    }
+
+    public static void setLoginAttemptsFromSharedPrefs(Context context, int prefValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putInt(LOGIN_ATTEMPTS, prefValue);
+        editor.apply();
+    }
+
+    public static Long getLockoutTimeFromSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(LOCKOUT_TIME, -1L);
+    }
+
+    public static void setLockoutTimeFromSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putLong(LOCKOUT_TIME, currentTimeInMilliSeconds());
+        editor.apply();
+    }
+
+    public static void setPreviousEnteredUsernameSharedPrefs(Context context,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(PREVIOUS_ENTERED_USERNAME, prefValue);
+        editor.apply();
+    }
+    public static String getPreviousEnteredUsernameSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(PREVIOUS_ENTERED_USERNAME, "");
+    }
+
 
     public static String getColumnNameByLanguage() {
         String language = Locale.getDefault().getLanguage();

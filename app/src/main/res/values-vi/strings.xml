@@ -703,5 +703,12 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_not_resolved">Not Resolved</string>
     <string name="dm_resolved">Resolved</string>
+    <string name="account_locked">Tài khoản của bạn bị khóa, vui lòng thử lại sau</string>
+    <string name="file_exceeds">Kích thước tập tin vượt quá </string>
+    <string name="total_file_size">Tổng kích thước tệp vượt quá 5 MB. Vui lòng tải lên kích thước tệp nhỏ hơn </string>
 
+    <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
+    <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
+    <string name="no_images_to_be_downloaded">Không có hình ảnh nào để tải xuống</string>
+    <string name="image_downloaded">Hình ảnh tải xuống thành công</string>
 </resources>
