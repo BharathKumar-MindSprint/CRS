@@ -9,6 +9,9 @@ public class PlotDTO implements Serializable {
     private String plotName;
     private String plotActualName;
     private int plotId;
+    private boolean isDeforestationPlot;
+    private boolean isPALegalityFlag;
+
 
     public String getPlotActualName() {
         return plotActualName;
@@ -32,5 +35,21 @@ public class PlotDTO implements Serializable {
 
     public void setPlotId(int plotId) {
         this.plotId = plotId;
+    }
+
+    public boolean isDeforestationPlot() {
+        return isDeforestationPlot;
+    }
+
+    public void setDeforestationPlot(boolean deforestationPlot) {
+        isDeforestationPlot = deforestationPlot;
+    }
+
+    public boolean isPALegalityFlag() {
+        return isPALegalityFlag;
+    }
+
+    public void setPALegalityFlag(boolean PALegalityFlag) {
+        isPALegalityFlag = PALegalityFlag;
     }
 }

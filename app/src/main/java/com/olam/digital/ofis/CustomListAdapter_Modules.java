@@ -647,6 +647,15 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         textView.setText(res.getString(R.string.record_farm_location_hint));
                     }
                 }
+                else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(res.getString(R.string.dm_plot_survey))) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
+                    enabledItem.setText("true");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.ModuleStatus));
+                }
                 else {
                     // Multifarm Location
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));

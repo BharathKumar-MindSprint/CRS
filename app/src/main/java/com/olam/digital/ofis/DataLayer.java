@@ -47,6 +47,8 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
@@ -386,6 +388,8 @@ public class DataLayer {
             plotDTO.setPlotId(plotId);
             plotDTO.setPlotName(plotName);
             plotDTO.setPlotActualName(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME)));
+            plotDTO.setDeforestationPlot(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT)).equalsIgnoreCase("true"));
+            plotDTO.setPALegalityFlag(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT)).equalsIgnoreCase("true"));
             plotDTOArrayList.add(plotDTO);
         }
 

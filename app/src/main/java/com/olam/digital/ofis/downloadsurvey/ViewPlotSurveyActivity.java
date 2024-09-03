@@ -1,15 +1,25 @@
 package com.olam.digital.ofis.downloadsurvey;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.CompleteModuleActivity;
@@ -24,14 +34,26 @@ import com.olam.digital.ofis.downloadsurvey.adapter.CustomExpandableListAdapter;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 // Handles and shows the child list in the screen before taking the survey
 
 public class ViewPlotSurveyActivity extends BaseActivity {
@@ -69,13 +91,22 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     public static boolean farmSurvey;
     String multiFarmId=null;
 
+    private boolean isDiagnosticsPlotSurvey;
+    OFISRoomDB db;
+    String dmSurveyName;
+    String  dmSubTitle;
+    String followUpCount;
+    String moduleID;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_plot_survey);
         initComponents();
+        db = OFISRoomDB.getDbInstance(context);
         try {
             farmerID=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
+            isDiagnosticsPlotSurvey = getIntent().getBooleanExtra(res.getString(R.string.dm_plot_survey), false);
         }catch (Exception e){e.printStackTrace();}
         getChildDetailsById();
         try {
@@ -143,7 +174,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             expandableListTitle = new ArrayList<PlotDTO>(expandableListDetail.keySet());
             expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListDetail,
                     submittedModules,farmerDTO,getResources(),
-                    roleId,multiFarmId);
+                    roleId, multiFarmId);
             expandableListView.setAdapter(expandableListAdapter);
 
             expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -171,16 +202,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v,
                                             int groupPosition, int childPosition, long id) {
-                    /*Toast.makeText(
-                            getApplicationContext(),
-                            expandableListTitle.get(groupPosition)
-                                    + " -> "
-                                    + expandableListDetail.get(
-                                    expandableListTitle.get(groupPosition)).get(
-                                    childPosition), Toast.LENGTH_SHORT
-                    ).show();*/
-//                    TextView txtView=view.findViewById(R.id.moduleListModuleName);
-//                    moduleName=txtView.getText().toString();
+
                     TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
                     if (enabled.getText().toString().equalsIgnoreCase("true")) {
                         PlotDTO plotDTO = expandableListTitle.get(groupPosition);
@@ -193,55 +215,32 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         bundle.putSerializable("childModule", childModuleDto);
                         bundle.putSerializable("farmerDTO", farmerDTO);
 
-                        Intent intent = new Intent(ViewPlotSurveyActivity.this, CompleteModuleActivity.class);
-                        intent.putExtras(bundle);
-                        setRequiredData(intent, childModuleDto, plotDTO);
-                        // show the list of surveys
-                        if (DynamicQuestions.getInstance() != null) {
-                            DynamicQuestions.clearInstance();
+                        if (childModuleDto.getRecorded_lng().equalsIgnoreCase(res.getString(R.string.dm_plot_survey))) {
+                            Constants.MODULE_ID = childModuleDto.getCurrent_submodule_id();
+                            Constants.MODULE_NAME = childModuleDto.getName();
+                            Constants.FARMER_ID = String.valueOf(farmerID);
+                            Constants.FARMER_NAME = farmerDTO.getName();
+                            Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerID));;
+                            Constants.PLOT_ID = plotDTO.getPlotId();
+
+                            showPopupDialog(Constants.PLOT_ID, Constants.MODULE_ID);
+
                         }
-                        startActivity(intent);
+                        else {
+                            Intent intent = new Intent(ViewPlotSurveyActivity.this, CompleteModuleActivity.class);
+                            intent.putExtras(bundle);
+                            setRequiredData(intent, childModuleDto, plotDTO);
+                            // show the list of surveys
+                            if (DynamicQuestions.getInstance() != null) {
+                                DynamicQuestions.clearInstance();
+                            }
+                            startActivity(intent);
+                        }
                     }
                     return false;
                 }
             });
-
-           /* try {
-                childSurveyRecyclerAdapter = new PlotSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,farmerDTO);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
-            surveyChildLabourRecycleView.setLayoutManager(reLayoutManager);
-            surveyChildLabourRecycleView.setItemAnimator(new DefaultItemAnimator());
-            ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
-            surveyChildLabourRecycleView.setAdapter(childSurveyRecyclerAdapter);
-
-            childSurveyRecyclerAdapter.setOnItemSurveyClickListener(new OnItemSurveyListener() {
-                @Override
-                public void onChildClick(View view, int position, ChildModuleDto childModuleDto) {
-
-                    TextView txtView=view.findViewById(R.id.surveyName);
-                    moduleName=txtView.getText().toString();
-                    Bundle bundle=new Bundle();
-                    bundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerID));
-                    bundle.putSerializable("childModule", childModuleDto);
-                    bundle.putSerializable("farmerDTO", farmerDTO);
-
-                    Intent intent=new Intent(ViewPlotSurveyActivity.this, CompleteModuleActivity.class);
-                    intent.putExtras(bundle);
-                    setRequiredData(intent,childModuleDto);
-                    // show the list of surveys
-                    if (DynamicQuestions.getInstance() != null) {
-                        DynamicQuestions.clearInstance();
-                    }
-                    startActivity(intent);
-                }
-            });*/
-
-
         }
-
     }
 
     private LinkedHashMap<PlotDTO, List<ChildModuleDto>> loadListWithPlots(List<ChildModuleDto> childModuleDtoList) {
@@ -279,13 +278,20 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     public List<ChildModuleDto> getChildSurveyModuleList() {
 
         List<ChildModuleDto> childModuleDtoList = new ArrayList<ChildModuleDto>();
-        Cursor moduleAssignments = dl.getFarmerModules(farmerID,farmSurvey);
+        Cursor moduleAssignments = null;
+        if (!isDiagnosticsPlotSurvey) {
+            moduleAssignments = dl.getFarmerModules(farmerID,farmSurvey);
+        }
+        else {
+            moduleAssignments = getDiagnosticPlotSurveyModules();
+        }
+
         String moduleNameSuffix = Utilities.getLocaleSuffix(this.getResources());
 
         if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
             try {
                 while (moduleAssignments.moveToNext()) {
-                    String isPlotSurvey=moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey"));
+                    String isPlotSurvey = moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey"));
                     if (isPlotSurvey.equalsIgnoreCase("true")) {
                         ChildModuleDto childModuleDto = new ChildModuleDto();
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
@@ -387,5 +393,231 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    public Cursor getDiagnosticPlotSurveyModules() {
+
+        try {
+            String[] mcColumns = new String[]{
+                    "_id",
+                    "name",
+                    "name_fr",
+                    "name_es",
+                    "name_id",
+                    "name_pt",
+                    "name_tr",
+                    "name_lo",
+                    "name_vi",
+                    "name_th",
+                    "annual_survey",
+                    "submodule_name",
+                    "submodule_name_fr",
+                    "submodule_name_es",
+                    "submodule_name_id",
+                    "submodule_name_pt",
+                    "submodule_name_tr",
+                    "submodule_name_lo",
+                    "submodule_name_vi",
+                    "submodule_name_th",
+                    "expires",
+                    "recurrence_frequency",
+                    "recurrence_type",
+                    "disabled_months",
+                    "startDate",
+                    "isFarmSurvey",
+                    "isPlotSurvey",
+                    "view_module",
+                    "fkFarmerRoleId",
+                    "farmer_module_id",
+                    "status_started",
+                    "status_finished",
+                    "current_submodule_id",
+                    "recorded_lat",
+                    "recorded_lng",
+                    "surveyDuration"
+            };
+
+            MatrixCursor mc = new MatrixCursor(mcColumns);
+
+            List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+
+            for (int i = 0; i < dmQuestionsModuleList.size(); i++){
+                dmSurveyName = Utilities.getNamesByLanguage(dmQuestionsModuleList.get(i));
+                dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
+                moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
+                followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
+
+                mc.addRow(new String[]{
+                        "0",
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        "0",
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "true",
+                        "",
+                        "",
+                        "",
+                        "", "", moduleID,
+                        "",
+                        res.getString(R.string.dm_plot_survey),""
+                });
+
+            }
+
+            return new MergeCursor(new Cursor[]{mc});
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void showPopupDialog(int plotId, String moduleID) {
+        Intent intent = new Intent(this, DiagnosticModuleActivity.class);
+
+        boolean isCompleted = false;
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.followup_diagnostic_popup);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+
+        ArrayList<String> recyclerViewData = new ArrayList<>();
+        recyclerViewData.add(getResources().getString(R.string.existing_module));
+
+        if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
+            String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1), String.valueOf(farmerID));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            boolean followUpDurationDisable = false;
+            String followUpDuration = null;
+
+            Date endFollowUpDurationDate = null;
+            if (startDateString != null){
+                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDurationVal(moduleID) , "days");
+            }
+
+
+            try {
+                if (followUpDuration != null) {
+                    endFollowUpDurationDate = dateFormat.parse(followUpDuration);
+                }
+            } catch (android.net.ParseException | java.text.ParseException e) {
+                e.printStackTrace();
+            }
+
+            // creating the followUp for surveys
+            List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerID, Integer.parseInt(moduleID));
+            if(followupList.isEmpty()){
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerID), true);
+                if(!dmSurveyAnswerTableList.isEmpty()) {
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + 1);
+                }
+            }else {
+                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerID, Integer.parseInt(moduleID));
+                for (int i = 1; i <= followupAttempts.size(); i++) {
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + i);
+                }
+
+                List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(String.valueOf(farmerID), moduleID, false);
+                if(followupUnSyncedItems.isEmpty()) {
+                    List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(String.valueOf(farmerID), moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
+                    if(!followupUnResolvedItems.isEmpty()) {
+                        int val = followupAttempts.size() + 1;
+
+                        if (endFollowUpDurationDate!=null){
+                            if (currentDate.before(endFollowUpDurationDate)){
+                                followUpDurationDisable = true;
+                            }
+                        }
+
+                        String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
+                        if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
+                            if (count.replaceAll(" ", "").equalsIgnoreCase("max")){
+                                recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                if (followUpDurationDisable){
+                                    isCompleted = false;
+                                }else {
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+                            }else if (val < Integer.parseInt(count) + 1 ){
+
+                                if (followUpDurationDisable){
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                    isCompleted = false;
+
+                                }else {
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }else {
+                                if (followUpDurationDisable){
+                                    isCompleted = false;
+
+                                }else {
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }else {
+                            recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                            if (!followUpDurationDisable){
+                                isCompleted = true;
+                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }else{
+                        isCompleted = true;
+                    }
+                }
+            }
+        }
+        else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerID), true);
+            if(!dmSurveyAnswerTableList.isEmpty()) {
+                isCompleted = true;
+            }
+        }
+
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),0 , intent, isCompleted , moduleID);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+
+        ImageView closeButton = dialog.findViewById(R.id.imageView);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }

@@ -259,6 +259,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private int countryID ;
 
+    boolean isDeforestationFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -709,6 +711,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 ivNonCompliance.setVisibility(View.GONE);
                 nonCompliance.setVisibility(View.GONE);
             }
+
+            isDeforestationFlag = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_DEFORESTATION_FLAG)).equalsIgnoreCase("true");
         }
 
 
@@ -1448,6 +1452,41 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
+                List<DmMainModule> dmPlotQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+
+                if (!isDeforestationFlag && farmPlotCount > 0 && !dmPlotQuestionsModuleList.isEmpty()) {
+                    mc.addRow(new String[]{
+                            "0",
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            res.getString(R.string.dm_plot_survey),
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            "",
+                            "",
+                            "", "", "","", "", "", "","" , "",
+                            res.getString(R.string.dm_plot_survey),
+                            ""
+                    });
+                }
+
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey",""});
@@ -2633,7 +2672,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                        startActivity(in);
 
                         int newCount;
-                        if (Objects.equals(followUpCount, "0")){
+                        if (Objects.equals(followUpCount, "0")) {
                             newCount = 0;
                         }else {
                             newCount=Integer.parseInt(followUpCount);
@@ -2720,7 +2759,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         in.putExtras(bundle);
                         startActivity(in);
-                    } else {
+                    }
+                    else if (recordedLng != null && recordedLng.getText().equals(res.getString(R.string.dm_plot_survey))) {
+                        Intent in = new Intent(this, ViewPlotSurveyActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putBoolean(res.getString(R.string.dm_plot_survey),true);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    }
+                    else {
                         polygon = false;
                         household = false;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
@@ -3116,12 +3164,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         recyclerViewData.add(getResources().getString(R.string.existing_module));
 //        recyclerViewData.add("Follow up " + 1);
 
-        if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
+        if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
 
             // getting the seventh day which restricts in generating the followup
             Calendar calendar = Calendar.getInstance();
             Date currentDate = calendar.getTime();
-            String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1),farmerID);
+            String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1), farmerID);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             boolean followUpDurationDisable = false;
             String followUpDuration = null;
@@ -3130,8 +3178,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
             Date endFollowUpDurationDate = null;
-            if (startDateString != null){
-                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDurationVal(moduleID) , "days");
+            if (startDateString != null) {
+                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDurationVal(moduleID), "days");
 //                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
             }
 
@@ -3147,87 +3195,86 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
             // creating the followUp for surveys
             List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
-            if(followupList.size() == 0){
+            if (followupList.size() == 0) {
                 List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-                if(dmSurveyAnswerTableList.size() != 0) {
-                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + 1);
+                if (dmSurveyAnswerTableList.size() != 0) {
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + 1);
                 }
-            }else {
+            } else {
                 List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
                 for (int i = 1; i <= followupAttempts.size(); i++) {
-                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + i);
+                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + i);
                 }
                 List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
-                if(followupUnSyncedItems.size() == 0) {
+                if (followupUnSyncedItems.size() == 0) {
                     List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
-                    if(followupUnResolvedItems.size() > 0) {
+                    if (followupUnResolvedItems.size() > 0) {
                         int val = followupAttempts.size() + 1;
 
-                        if (endFollowUpDurationDate!=null){
-                            if (currentDate.before(endFollowUpDurationDate)){
+                        if (endFollowUpDurationDate != null) {
+                            if (currentDate.before(endFollowUpDurationDate)) {
                                 followUpDurationDisable = true;
                             }
                         }
 
                         String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
-                        if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
+                        if (!Objects.equals(count, "0") && !Objects.equals(count, null)) {
 //                            count = db.dmMainModuleDao().getFollowUpAttempts(moduleID);
-                            if (count.replaceAll(" ", "").toLowerCase().equals("max")){
-                                if (followUpDurationDisable){
-                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                            if (count.replaceAll(" ", "").toLowerCase().equals("max")) {
+                                if (followUpDurationDisable) {
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + val);
                                     isCompleted = false;
 
-                                }else {
-                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                } else {
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + val);
                                     isCompleted = true;
                                     Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                                 }
-                            }else if (val < Integer.parseInt(count) + 1 ){
+                            } else if (val < Integer.parseInt(count) + 1) {
 
-                                if (followUpDurationDisable){
-                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                if (followUpDurationDisable) {
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + val);
                                     isCompleted = false;
 
-                                }else {
-                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
+                                } else {
+                                    recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + val);
                                     isCompleted = true;
                                     Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }else {
-                                if (followUpDurationDisable){
+                            } else {
+                                if (followUpDurationDisable) {
                                     isCompleted = false;
 
-                                }else {
+                                } else {
                                     isCompleted = true;
                                     Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }else {
-                            recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
-                            if (!followUpDurationDisable){
+                        } else {
+                            recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + val);
+                            if (!followUpDurationDisable) {
                                 isCompleted = true;
                                 Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
                             }
                         }
 
 
-
-                    }else{
+                    } else {
                         isCompleted = true;
                     }
                 }
             }
 
-        }else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+        } else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-            if(dmSurveyAnswerTableList.size() != 0) {
+            if (dmSurveyAnswerTableList.size() != 0) {
                 isCompleted = true;
             }
         }
 
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
-        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in, isCompleted , moduleID);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData, getApplicationContext(), newFollowUpCount, in, isCompleted, moduleID);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
@@ -3283,7 +3330,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-    public String getNamesbyLanguage(DmMainModule dmMainModule){
+    public static String getNamesbyLanguage(DmMainModule dmMainModule){
         String language = Locale.getDefault().getLanguage();
         return switch (language) {
             case "en" -> dmMainModule.name;

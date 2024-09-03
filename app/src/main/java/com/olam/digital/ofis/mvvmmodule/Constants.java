@@ -44,6 +44,8 @@ public class Constants {
 
     public static ArrayList<String> questionIdsFollowUp = new ArrayList<>();
 
+    public static int PLOT_ID = 0;
+
 
 
 }

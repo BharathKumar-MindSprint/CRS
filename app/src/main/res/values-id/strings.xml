@@ -808,4 +808,6 @@
     <string name="file_exceeds">Ukuran file melebihi </string>
     <string name="total_file_size">Total ukuran file melebihi 5MB. Harap unggah file berukuran kurang dari </string>
 
+    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+
 </resources>

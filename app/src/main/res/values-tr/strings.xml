@@ -711,4 +711,6 @@
     <string name="file_exceeds">Dosya boyutu aşılıyor </string>
     <string name="total_file_size">Toplam dosya boyutu 5 MB\'ı aşıyor. Lütfen dosya boyutunun altında yükleyin </string>
 
+    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+
 </resources>

@@ -36,6 +36,7 @@ import android.widget.Spinner;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;
@@ -836,6 +837,24 @@ public  static String base64ConversionForImage(String filepath)  {
             case "vi" -> "nameVi";
             default -> "name";
         };
+    }
+
+    public static String getNamesByLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.name;
+            case "es" -> dmMainModule.nameEs;
+            case "fr" -> dmMainModule.nameFr;
+            case "id" -> dmMainModule.nameIdn;
+            case "in" -> dmMainModule.nameIdn;
+            case "lo" -> dmMainModule.nameLo;
+            case "pt" -> dmMainModule.namePt;
+            case "th" -> dmMainModule.nameTh;
+            case "tr" -> dmMainModule.nameTr;
+            case "vi" -> dmMainModule.nameVi;
+            default -> dmMainModule.name;
+        };
+
     }
 
 

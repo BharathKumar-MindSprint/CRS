@@ -1146,4 +1146,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="file_exceeds">La taille du fichier dépasse </string>
     <string name="total_file_size">La taille totale des fichiers dépasse 5 Mo. Veuillez télécharger un fichier d\'une taille inférieure à </string>
 
+    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+
 </resources>
