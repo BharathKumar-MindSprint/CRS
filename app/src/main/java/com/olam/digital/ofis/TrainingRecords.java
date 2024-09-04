@@ -14,13 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
-
 public class TrainingRecords extends BaseListActivity implements AdapterView.OnItemClickListener {
 
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -58,7 +53,6 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORDS_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORDS);
     }
 
     private void getTrainingRecords() {
@@ -135,7 +129,6 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
         addTrainingRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
                 Intent intent = new Intent(context, TrainingRecord.class);
                 context.startActivity(intent);
             }

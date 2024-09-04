@@ -61,7 +61,6 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonP
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
-import kotlin.jvm.Volatile;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
