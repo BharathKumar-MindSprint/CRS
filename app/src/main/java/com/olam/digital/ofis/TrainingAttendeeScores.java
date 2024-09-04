@@ -21,8 +21,6 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +80,6 @@ public class TrainingAttendeeScores extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_ATTENDEE_SCORES_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_ATTENDEE_SCORE);
     }
 
     private void getTrainingRecord() {

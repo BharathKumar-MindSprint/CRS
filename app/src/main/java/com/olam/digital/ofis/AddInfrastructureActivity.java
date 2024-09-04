@@ -66,8 +66,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
 import com.olam.digital.ofis.recordpolygon.AlphanumericFilterSip;
@@ -313,7 +311,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_VILLAGE,  ScreenNameConstants.SPINNER_CHANGED);
                 if (position>0) {
                     villageDetails = villageList.get(position-1);
                 }
@@ -485,7 +482,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
             setPoiGPS(mCurrentLocation);
         }
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
 
 
 
@@ -758,7 +754,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_INFRASTRUCTURE,  ScreenNameConstants.BUTTON_CLICKED);
                 if (!isVillage) {
 
                     if (poiName.getText().toString().trim().length() == 0) {
@@ -922,7 +917,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         requestLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_GPS,  ScreenNameConstants.BUTTON_CLICKED);
                 searchingGPS();
             }
         });
@@ -1080,7 +1074,6 @@ public class AddInfrastructureActivity extends BaseActivity {
                 }else{
                     sip_polygon_icon.setVisibility(View.GONE);
                 }
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_SUB_MODULES,  ScreenNameConstants.SPINNER_CHANGED);
                 if (!editMode) {
 //                    swapPoiType(i);
 //                }

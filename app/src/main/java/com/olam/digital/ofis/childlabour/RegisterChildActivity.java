@@ -23,15 +23,12 @@ import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.util.List;
 
 // Handles the child register activities in screen
 public class RegisterChildActivity extends BaseActivity implements View.OnClickListener{
 
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private RecyclerView childRecyclerView;
     private RelativeLayout addChildButton;
     private  RelativeLayout childVisitDetailButton;
@@ -72,7 +69,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_REGISTER_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_REGISTER_CHILD);
 
     }
 
@@ -132,7 +128,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
         childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
 
         if(v.getId() == R.id.addChildButton){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
             if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
                 Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
                 return;
@@ -143,7 +138,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                 startActivity(newChildIntent);
 
         }else if(v.getId()==R.id.childVisitDetailButton){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_VISIT_DETAIL,  ScreenNameConstants.BUTTON_CLICKED);
             Intent childVisitIntent=new Intent(RegisterChildActivity.this,ChildVisitDetailActivity.class);
             childVisitIntent.putExtras(childBundle);
             startActivity(childVisitIntent);
