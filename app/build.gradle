@@ -408,7 +408,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.xw.repo:bubbleseekbar:3.20'
+    implementation 'com.github.koliong:BubbleSeekBar:2.1.1'
     implementation 'com.google.android.material:material:1.1.0-alpha10'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'

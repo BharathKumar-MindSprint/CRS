@@ -3371,8 +3371,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-                // Toast.makeText(AddFarmerActivity.this, progress+" frank",Toast.LENGTH_LONG).show();
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
             }
 
             @Override
@@ -3381,7 +3381,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             @Override
-            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
                 progressFinal[0] =progress;
             }
         });

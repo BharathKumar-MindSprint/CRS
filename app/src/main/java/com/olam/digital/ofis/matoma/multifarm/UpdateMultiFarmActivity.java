@@ -781,7 +781,8 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
                 bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
                     @Override
-                    public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                    public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
                     }
 
                     @Override
@@ -790,10 +791,10 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-
+                    public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
                         progressFinal[0] =progress;
                     }
+
                 });
 
 
