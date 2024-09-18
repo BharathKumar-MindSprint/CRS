@@ -38,8 +38,6 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +55,6 @@ import java.util.Locale;
 
 public class TrainingRecord extends BaseListActivity{
 
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -144,7 +141,6 @@ public class TrainingRecord extends BaseListActivity{
                 @Override
                 public void onClick(View view) {
                     // Request Permission only for Android Version Marshmallow and above
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_TRAINING_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                         if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) +
                                 ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_AUDIO) +
@@ -478,7 +474,6 @@ public class TrainingRecord extends BaseListActivity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_COURSE_MODULE,  ScreenNameConstants.SPINNER_CHANGED);
                 Cursor trainingModules = dl.getSimpleSpinnerData(OFISDBContract.TrainingModule.TABLE_NAME,
                         true,
                         OFISDBContract.TrainingModule.COLUMN_NAME_COURSE_ID,
@@ -544,7 +539,6 @@ public class TrainingRecord extends BaseListActivity{
         trainingModuleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_TRAINING_MODULE,  ScreenNameConstants.SPINNER_CHANGED);
                 boolean hasSwapped = (trainingModuleId != id);
                 trainingModuleId = id;
 
@@ -641,7 +635,6 @@ public class TrainingRecord extends BaseListActivity{
             addTrainingAttendees.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_TRAINING_ATTENDEES,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     } else {
@@ -665,7 +658,6 @@ public class TrainingRecord extends BaseListActivity{
             saveTrainingRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId != 0 && trainingModuleId != 0 && mCurrentPhotoPath != null) {
                         addOrUpdateTrainingRecord();
                     } else {
@@ -689,7 +681,6 @@ public class TrainingRecord extends BaseListActivity{
             addAttendeeScores.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_ATTENDEE_SCORES,  ScreenNameConstants.BUTTON_CLICKED);
                     if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else {
@@ -709,7 +700,6 @@ public class TrainingRecord extends BaseListActivity{
             completeTrainingRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
@@ -728,7 +718,6 @@ public class TrainingRecord extends BaseListActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORDS_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD);
         if (editMode) {
          //   getTrainingRecord();
             getTrainingAttendees();

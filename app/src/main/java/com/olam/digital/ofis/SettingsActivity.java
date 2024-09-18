@@ -48,8 +48,6 @@ import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -224,7 +222,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     protected void onResume()
     {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_SETTINGS_ACTIVITY, ScreenNameConstants.SCREEN_SETTINGS);
         String enumerator_id = Utilities.getFromSharedPrefs(context);
         if (enumerator_id.length() > 0) {
             enumeratorID.setText(enumerator_id);

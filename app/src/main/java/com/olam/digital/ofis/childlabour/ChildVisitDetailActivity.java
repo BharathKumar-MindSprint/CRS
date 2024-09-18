@@ -29,8 +29,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -38,7 +36,6 @@ import java.util.List;
 // Handles the child visit details in screen.
 public class ChildVisitDetailActivity  extends BaseActivity implements View.OnClickListener{
 
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private AppCompatButton saveVisitDetailButton;
     private CheckBox houseHoldCheckBox, inspectionCheckBox, followUpCheckBox;
     private int household=0;
@@ -135,7 +132,6 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.saveVisitDetailButton){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_VISIT_DETAIL,  ScreenNameConstants.BUTTON_CLICKED);
             saveVisitDetails();
         }
     }
@@ -150,23 +146,18 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         }
 
         if(houseHoldCheckBox.isChecked()){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.CHECKBOX_HOUSEHOLD,  ScreenNameConstants.CHECKBOX_CHECKED);
             household=1;
         }
         if(inspectionCheckBox.isChecked()){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.CHECKBOX_INSPECTION,  ScreenNameConstants.CHECKBOX_CHECKED);
             inspection=1;
         }
         if(followUpCheckBox.isChecked()){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.CHECKBOX_FOLLOWUP,  ScreenNameConstants.CHECKBOX_CHECKED);
             followup=1;
         }
         if(! b_household){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.CHECKBOX_HOUSEHOLD,  ScreenNameConstants.CHECKBOX_UNCHECKED);
             household = 0;
         }
         if(! b_inspection){
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.CHECKBOX_INSPECTION,  ScreenNameConstants.CHECKBOX_UNCHECKED);
             inspection = 0;
         }
         long value =  new ChildLabourLogic().deleteVisitDetails(this, farmerId);
@@ -298,7 +289,6 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_REGISTER_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_VISIT_DETAIL_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_VISIT_DETAIL);
         getBundleValues();
         getSubmittedSurveyDetails();
 
