@@ -4745,6 +4745,7 @@ public class DynamicQuestions {
                                                                 rowData[j] = spinnervalues.getString(j);
                                                             }
                                                             newCursor.addRow(rowData);
+                                                            break;
                                                         }
                                                     } while (spinnervalues.moveToNext());
                                                 }
