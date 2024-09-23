@@ -1185,7 +1185,9 @@ public class DynamicQuestions {
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
         String infoVal = null;
         try {
-            infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+            if (!viewAnswer){
+                infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -9613,72 +9615,84 @@ public class DynamicQuestions {
         densityMainSection = (LinearLayout) inflater.inflate(R.layout.module_density_layout, questionWrapper, false);
 
         // get existing calculated answer, if any
-        if (hasAnswers) {
+        if (viewAnswer){
+
             calcAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
 
-            String currentAnswerValue;
-            currentAnswerValue = questions.getString(questions.getColumnIndex("answer_text"));
+            final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, questionWrapper, false);
+            et.setText(calcAnswerValue);
+            questionWrapper.addView(et);
+            questionsSection.addView(questionWrapper);
 
-            if (questions.getColumnIndex("answer_id") != -1) {
-                densityAnswerId = questions.getInt(questions.getColumnIndex("answer_id"));
-            }
-
-            // convert sub answers to an array from pipe separated
-            if (currentAnswerValue != null) {
-                densitySubAnswers = currentAnswerValue.split(":");
-            }
-        }
-
-        // create first five fields for density measurements
-        for (int i = 0; i < 5; i++) {
-            final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, densityMainSection, false);
-            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) spinner.getLayoutParams();
-            lp.setMargins(0, (i == 0 ? res.getDimensionPixelSize(R.dimen.ofis_small_pad) : 0), 0, res.getDimensionPixelSize(R.dimen.ofis_large_pad));
-            spinner.setLayoutParams(lp);
-            Cursor spinnervalues = dl.getLookupValuesForQuestion(questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName,dataTypeID);
-
-            dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
-
-            densityMainSection.addView(spinner);
+        } else {
 
             if (hasAnswers) {
-                if (densitySubAnswers.length > i) {
-                    spinner.setSelection(Integer.valueOf(densitySubAnswers[i]));
+                calcAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
+
+                String currentAnswerValue;
+                currentAnswerValue = questions.getString(questions.getColumnIndex("answer_text"));
+
+                if (questions.getColumnIndex("answer_id") != -1) {
+                    densityAnswerId = questions.getInt(questions.getColumnIndex("answer_id"));
+                }
+
+                // convert sub answers to an array from pipe separated
+                if (currentAnswerValue != null) {
+                    densitySubAnswers = currentAnswerValue.split(":");
                 }
             }
 
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    recalculateDensity(res);
+            // create first five fields for density measurements
+            for (int i = 0; i < 5; i++) {
+                final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, densityMainSection, false);
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) spinner.getLayoutParams();
+                lp.setMargins(0, (i == 0 ? res.getDimensionPixelSize(R.dimen.ofis_small_pad) : 0), 0, res.getDimensionPixelSize(R.dimen.ofis_large_pad));
+                spinner.setLayoutParams(lp);
+                Cursor spinnervalues = dl.getLookupValuesForQuestion(questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName,dataTypeID);
+
+                dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
+
+                densityMainSection.addView(spinner);
+
+                if (hasAnswers) {
+                    if (densitySubAnswers.length > i) {
+                        spinner.setSelection(Integer.valueOf(densitySubAnswers[i]));
+                    }
                 }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    recalculateDensity(res);
-                }
-            });
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                        recalculateDensity(res);
+                    }
 
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                        recalculateDensity(res);
+                    }
+                });
+
+            }
+
+            densityResult = (TextView) inflater.inflate(R.layout.module_question, densityMainSection, false);
+            densityResult.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
+            densityResult.setTypeface(null, Typeface.BOLD);
+            densityResult.setText(res.getString(R.string.module_density_plot_question_result_intro) + " " + calcAnswerValue);
+            densityMainSection.addView(densityResult);
+
+            questionWrapper.addView(densityMainSection);
+
+            plotsHeader = (TextView) inflater.inflate(R.layout.module_question, questionWrapper, false);
+            plotsHeader.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
+            plotsHeader.setText(res.getString(R.string.module_density_plot_question_intro));
+            plotsHeader.setVisibility(View.GONE);
+
+            questionWrapper.addView(plotsHeader);
+
+            densityPlotSection = (LinearLayout) inflater.inflate(R.layout.module_repeater_container, questionWrapper, false);
+            questionWrapper.addView(densityPlotSection);
+            questionsSection.addView(questionWrapper);
         }
-
-        densityResult = (TextView) inflater.inflate(R.layout.module_question, densityMainSection, false);
-        densityResult.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
-        densityResult.setTypeface(null, Typeface.BOLD);
-        densityResult.setText(res.getString(R.string.module_density_plot_question_result_intro) + " " + calcAnswerValue);
-        densityMainSection.addView(densityResult);
-
-        questionWrapper.addView(densityMainSection);
-
-        plotsHeader = (TextView) inflater.inflate(R.layout.module_question, questionWrapper, false);
-        plotsHeader.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
-        plotsHeader.setText(res.getString(R.string.module_density_plot_question_intro));
-        plotsHeader.setVisibility(View.GONE);
-
-        questionWrapper.addView(plotsHeader);
-
-        densityPlotSection = (LinearLayout) inflater.inflate(R.layout.module_repeater_container, questionWrapper, false);
-        questionWrapper.addView(densityPlotSection);
-        questionsSection.addView(questionWrapper);
 
     }
 
