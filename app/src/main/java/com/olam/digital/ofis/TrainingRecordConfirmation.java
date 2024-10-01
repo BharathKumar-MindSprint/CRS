@@ -29,8 +29,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +38,6 @@ import java.util.Hashtable;
 
 public class TrainingRecordConfirmation extends BaseListActivity {
 
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -105,7 +102,6 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION);
     }
 
     private void getTrainingRecord() {
@@ -225,7 +221,6 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     }
                 }, 3000);
                 // add transaction to network queue
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
 
                 if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)){}else {
                     if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
