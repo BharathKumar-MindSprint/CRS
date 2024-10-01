@@ -74,8 +74,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
 
@@ -329,7 +327,6 @@ public class RecordSipPolygon extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 logger.addRecordToLog("mStartLoggingButton");
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_START_LOGGING,  ScreenNameConstants.BUTTON_CLICKED);
                 if(pause_recording_sip.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -345,7 +342,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         bttnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
@@ -1387,7 +1383,6 @@ public class RecordSipPolygon extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         map.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_SIP_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_SIP_PLOT_POLYGON);
     }
 
     public void onLocationChanged(final Location pLoc) {

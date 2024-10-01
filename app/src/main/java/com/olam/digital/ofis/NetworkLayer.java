@@ -808,6 +808,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
+    void syncNetworkQueueDuplicateError(Integer itemId, Handler handler,String error) {
+        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
+            if (networkQueueItems.moveToNext()) {
+                syncNetworkQueueItem(itemId, handler);
+            } else {
+                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), error);
+                handler.dispatchMessage(msg);
+
+            }
+        } else {
+            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), error);
+            handler.dispatchMessage(msg);
+        }
+
+    }
+
     void syncNetworkQueueFromHome(Integer itemId, Handler handler) {
         if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
             if (networkQueueItems.moveToNext()) {
@@ -5048,16 +5064,43 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
                                     if (postResponse.isSuccessful()) {
-                                        // should pass the Child Id instead of farmer ID
-                                        dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
-                                        statusMessage = res.getString(R.string.item_synced);
-                                        msg.what = 1;
-                                        msg.arg1 = total;
-                                        msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                        msg.obj = statusMessage;
-                                        handler.dispatchMessage(msg);
-                                        syncNetworkQueue(originalSyncRequestItemId, handler);
+
+                                        int error = 0;
+                                        try {
+                                            assert postResponse.body() != null;
+                                            JSONObject jsonObject = new JSONObject(postResponse.body().string());
+                                            String errorCode = jsonObject.optString("errorCode");
+                                            String errorItem = jsonObject.optString("error");
+                                            if (errorCode.equalsIgnoreCase("3035")) {
+                                                error = 1;
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
+                                                handler.postDelayed(() -> {
+                                                    msg.obj = errorItem;
+                                                    msg.what = 1;
+                                                    msg.arg1 = total;
+                                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                                    handler.dispatchMessage(msg);
+
+                                                    syncNetworkQueueDuplicateError(originalSyncRequestItemId, handler, errorItem);
+                                                }, 5000);
+
+                                            }
+                                        }
+                                        catch (Exception e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        if(error == 0){
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
+                                            statusMessage = res.getString(R.string.item_synced);
+                                            msg.what = 1;
+                                            msg.arg1 = total;
+                                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                            msg.obj = statusMessage;
+                                            handler.dispatchMessage(msg);
+                                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                                        }
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : " + postResponse.networkResponse().toString(), context);
