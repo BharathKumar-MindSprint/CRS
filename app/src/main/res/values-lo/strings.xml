@@ -970,7 +970,8 @@
     <string name="file_exceeds">khanad fail koen </string>
     <string name="total_file_size">khanad fail thangmodkoen 5MB  kaluna abold fail khanadnony kva </string>
 
-    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+    <string name="dm_plot_survey">ການສໍາຫຼວດແຜນຜັງການວິນິດໄສ</string>
+    <string name="dm_plot_survey_completed">ສຳເລັດການສຳຫຼວດແຜນການວິນິໄສ</string>
 
 </resources>
 

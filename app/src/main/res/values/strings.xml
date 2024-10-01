@@ -1298,4 +1298,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="image_downloaded">Images successfully downloaded</string>
     <string name="image_download_start">Downloading Images for photo checkbox questions</string>
     <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+    <string name="dm_plot_survey_completed">Diagnostic Plot Survey Completed</string>
 </resources>

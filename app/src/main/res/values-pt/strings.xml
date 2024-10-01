@@ -812,6 +812,7 @@
     <string name="file_exceeds">O tamanho do arquivo excede </string>
     <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
 
-    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+    <string name="dm_plot_survey">Levantamento de Parcelas Diagnósticas</string>
+    <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
 
 </resources>

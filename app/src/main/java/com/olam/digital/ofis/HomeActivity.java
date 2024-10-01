@@ -101,6 +101,7 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicat
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
@@ -126,6 +127,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
@@ -281,6 +283,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         mainSection = (RelativeLayout) findViewById(R.id.mainWrapper);
         captureMyLocationWrapper = (CardView) findViewById(R.id.captureLocationWrapper);
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
+        passcode = (EditText) findViewById(R.id.passcode);
+        saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
+        topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
+        downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
 
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
@@ -295,28 +301,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         if (!enumeratorId.equalsIgnoreCase("")) {
             if (DynatraceHelper.isAppClosed) {
-//                Dynatrace.identifyUser(enumeratorId);
-//                DynatraceHelper.isAppClosed=false;
-//                DynatraceHelper.findNetworkSpeed(this);
+
             }
         }
-//        Passcode added - Penetration testing
-        passcode = (EditText) findViewById(R.id.passcode);
-        saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
-        topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
-        downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
+
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         // checkTime();
         bindNetworkQueue(true);
-        //  if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
         // Removed the check migrate existing enumerator while update Manna version
         String environment = BuildConfig.FLAVOR;
         setKeycloakCredentials(environment);
         setOperatingUnit(environment);
         setCommodity();
-        //  }
         if (sharedPreferences.getBoolean("FIRST_RUN", true)) {
             firstRunSection.setVisibility(View.VISIBLE);
             if (!enumeratorId.equalsIgnoreCase("")) {
@@ -628,25 +626,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             try {
                 ProviderInstaller.installIfNeeded(HomeActivity.this);
 
-//                ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
-//                    @Override
-//                    public void onProviderInstalled() {
-//                        SSLContext sslContext = null;
-//                        try {
-//                            sslContext = SSLContext.getInstance("TLSv1.2");
-//                            sslContext.init(null, null, null);
-//                            SSLEngine engine = sslContext.createSSLEngine();
-//                        } catch (NoSuchAlgorithmException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyManagementException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onProviderInstallFailed(int i, Intent intent) {
-//                    }
-//                });
                 SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
                 sslContext.init(null, null, null);
                 SSLEngine engine = sslContext.createSSLEngine();
@@ -836,12 +815,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             notificationButton.setVisible(true);
         }
 
-//        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
-//        if (!can_transact) {
-//            recordTransactionWrapper.setVisibility(View.GONE);
-//            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-//            lp.setMargins(0,0,0,0);
-//        }
 
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
@@ -1034,28 +1007,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     public void startItemSyncAuth(int itemId) {
-
-       /* if (SystemClock.elapsedRealtime() - lastitemClickTime < 3000){
-            return;
-        }else {*/
-       /* syncAll.setEnabled(false);
-        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));*/
         setupSyncAllBtn(false);
         bindNetworkQueue(false);
         this.itemId = itemId;
         syncOptionAll = false;
         checkAuthenticate();
-       /* final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-                syncAll.setEnabled(true);
-            }
-        }, 5000);*/
-
-//        }
-//        lastitemClickTime = SystemClock.elapsedRealtime();
     }
 
     public void startItemSync(int itemId) {
@@ -1093,12 +1049,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
                             Log.d("HomeActivity", "msg.arg1 : " + msg.arg1 + ",msg.arg2 : " + ",networkQueue.getCount() : " + networkQueue.getCount());
-//                            int storedCount=Utilities.minProgressID;
-//                            int min = storedCount+1;
-//                            int max = networkQueue.getCount();
-//                            m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, max, min, pdUpdate);
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
-
                         }
                     } else if (msg.what == 2) {
                         finishItemSync(msg);
@@ -1141,12 +1092,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                     String pdUpdate = msg.obj.toString();
                     m_ProgressDialog.setMessage(pdUpdate);
-                    //  String pdUpdate = msg.obj.toString();
-                    //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();
-//                customListAdapter_networkQueue.swapCursor(networkQueue);
                 enableSync();
                 networkQueue = dl.getNetworkQueue();
                 String queueTotal = Integer.toString(networkQueue.getCount());
@@ -1168,7 +1116,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.closeProgressDialog(m_ProgressDialog, 200);
                 }
                 networkQueue.close();
-//                customListAdapter_networkQueue.swapCursor(networkQueue);
                 enableSync();
                 networkQueue = dl.getNetworkQueue();
                 String queueTotal = Integer.toString(networkQueue.getCount());
@@ -2020,6 +1967,28 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (response.code() == 200) {
                         deleteRoomDbValues();
 
+                        int diagnosticType = 0;
+                        int eudrGroundVerificationSurveyId = 0;
+
+                        if (response.body().getDmMasterData() != null) {
+                            for (DmMasterDataModel dmMasterDataModel : response.body().getDmMasterData()) {
+                                DmMasterData dmMasterData = new DmMasterData();
+                                dmMasterData.setId(dmMasterDataModel.getId());
+                                dmMasterData.setType(dmMasterDataModel.getType());
+                                dmMasterData.setValue(dmMasterDataModel.getValue());
+
+                                if (dmMasterDataModel.getValue().equalsIgnoreCase("Plot")) {
+                                    diagnosticType = dmMasterDataModel.getId();
+                                }
+
+                                if (dmMasterDataModel.getValue().equalsIgnoreCase("EUDR Ground Verification Survey")) {
+                                    eudrGroundVerificationSurveyId = dmMasterDataModel.getId();
+                                }
+
+                                db.dmMasterDataDao().insert(dmMasterData);
+                            }
+                        }
+
                         if (response.body().getDiagnosticModules() != null) {
                             ArrayList<DiagnosticModulesList> mainResponseList = new ArrayList<>();
                             mainResponseList.clear();
@@ -2055,7 +2024,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     String startDate = mainResponseList.get(i).getStartDate();
                                     String displayLogic = mainResponseList.get(i).getDisplayLogic();
                                     int maxScore = mainResponseList.get(i).getMaxScore();
-//                                    String assessmentResultType =String.valueOf(mainResponseList.get(i).getAssessmentResultType());
+                                    Integer diagnosticTypeId = mainResponseList.get(i).getDiagnosticTypeId();
+                                    Integer plotSurveyType = mainResponseList.get(i).getPlotSurveyType();
+                                    List<Integer> submittedPlotIds = mainResponseList.get(i).getSubmittedPlotIds();
+                                    String captureLocation = mainResponseList.get(i).getCaptureLocation();
+
 
                                     List<AssessmentResultTypeItems> assessmentResultTypeItemsList = new ArrayList<>();
                                     assessmentResultTypeItemsList.clear();
@@ -2108,9 +2081,23 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     user.maxScore = maxScore;
                                     user.followUpAttemptsVal = followUpAttemptsVal;
                                     user.followUpDurationVal = followUpDurationVal;
-//                                    user.assessmentResultType = assessmentResultType;
+                                    user.diagnosticTypeId = diagnosticTypeId;
+                                    user.plotSurveyType = plotSurveyType;
+                                    user.captureLocation = captureLocation;
 
                                     db.dmMainModuleDao().insert(user);
+
+                                    if (diagnosticTypeId != null && diagnosticTypeId == diagnosticType && !submittedPlotIds.isEmpty()) {
+                                        int finalEudrGroundVerificationSurveyId = eudrGroundVerificationSurveyId;
+                                        Log.d("podaaa2", "okokok");
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Log.d("podaaa3", "okokok");
+                                                dl.updateSurveyCapturedForPlots(plotSurveyType == finalEudrGroundVerificationSurveyId, submittedPlotIds);
+                                            }
+                                        }, 3000);
+                                    }
 
                                     try {
                                         for (int a = 0;a<assessmentResultTypeItemsList.size();a++){
@@ -2750,12 +2737,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     db.dmCurrenciesItemDao().insert(dmCurrenciesItem);
 
                                 }
-
-
                             }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
                         GetAllFollowUpDMData();
 
                     } else if (response.code() == 400) {
@@ -2804,6 +2791,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         db.dmCurrencyDao().deleteAll();
         db.dmRangeActionPlansItemsDao().deleteAll();
         db.dmSurveyAnswerTableDao().deleteAll();
+        db.dmMasterDataDao().deleteAll();
+        db.dmRecurrenceDao().deleteAll();
     }
 
     public static void GetAllFollowUpDMData() {
@@ -2846,10 +2835,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         String createdAt = followUpItemArrayList.get(j).getCreatedAt();
                                         String createdBy = followUpItemArrayList.get(j).getCreatedBy();
                                         List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
-                                    /*JSONArray captureProof = new JSONArray();
-                                    for (int k = 0; k < captureProofList.size(); k++) {
-                                        captureProof.put(captureProofList.get(k));
-                                    }*/
                                         String status = followUpItemArrayList.get(j).getStatus().trim();
                                         String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
                                         String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
@@ -2893,7 +2878,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         int moduleId = existingModuleItemArrayList.get(k).getModuleId();
                                         int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
                                         ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
-                                        answersItemArrayList.clear();
                                         answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
                                         Result result = existingModuleItemArrayList.get(k).getResult();
 
@@ -2914,10 +2898,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
                                             dmSurveyAnswerTable.questionID = String.valueOf(questionId);
                                             dmSurveyAnswerTable.answer = answerValue;
-//                                        dmSurveyAnswerTable.isCaptureProof = captureProofs;
                                             dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
                                             dmSurveyAnswerTable.actionPlanText = actionPlanText;
                                             dmSurveyAnswerTable.isSynced = true;
+                                            dmSurveyAnswerTable.plotId = 0;
                                             dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
                                             db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                         }
@@ -2932,19 +2916,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                 result.getResultRemarks(),
                                                 farmerId,moduleId,
                                                 farmerGroupId,
-                                                currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
+                                                currencyId,
+                                                submissionDate,
+                                                result.getResultColour(),
+                                                result.getOverAllResult(), 0);
                                         db.dmSurveyReportDao().insert(dmSurveyReport);
                                     }
                                 }
-
-
                             }
-
                         }
-
-//                        Toast.makeText(staticContext, "FollowUp Available", Toast.LENGTH_SHORT).show();
-                        Log.d("FollowUPRespon-", "Followup data here");
-
                     } else if (response.code() == 400) {
 
                         Log.d("BadRequest-", response.message());

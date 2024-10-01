@@ -806,6 +806,7 @@
     <string name="image_downloaded">Gambar berhasil diunduh</string>
     <string name="file_exceeds">Ukuran file melebihi </string>
     <string name="total_file_size">Total ukuran file melebihi 5MB. Harap unggah file berukuran kurang dari </string>
-    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+    <string name="dm_plot_survey">Survei Plot Diagnostik</string>
+    <string name="dm_plot_survey_completed">Survei Plot Diagnostik Selesai</string>
 
 </resources>

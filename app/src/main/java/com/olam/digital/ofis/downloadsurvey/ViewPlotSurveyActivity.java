@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 // Handles and shows the child list in the screen before taking the survey
 
 public class ViewPlotSurveyActivity extends BaseActivity {
@@ -215,7 +216,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         bundle.putSerializable("childModule", childModuleDto);
                         bundle.putSerializable("farmerDTO", farmerDTO);
 
-                        if (childModuleDto.getRecorded_lng().equalsIgnoreCase(res.getString(R.string.dm_plot_survey))) {
+                        if (childModuleDto.getRecorded_lng() != null && childModuleDto.getRecorded_lng().equalsIgnoreCase(res.getString(R.string.dm_plot_survey))) {
                             Constants.MODULE_ID = childModuleDto.getCurrent_submodule_id();
                             Constants.MODULE_NAME = childModuleDto.getName();
                             Constants.FARMER_ID = String.valueOf(farmerID);
@@ -223,7 +224,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                             Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerID));;
                             Constants.PLOT_ID = plotDTO.getPlotId();
 
-                            showPopupDialog(Constants.PLOT_ID, Constants.MODULE_ID);
+                            showPopupDialog(plotDTO, Constants.MODULE_ID, childModuleDto.getAnnual_survey().equalsIgnoreCase("true"));
 
                         }
                         else {
@@ -248,7 +249,9 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         try {
             ArrayList<PlotDTO> plotList = dl.fetchSyncedPlotIds(String.valueOf(farmerID));
             for (PlotDTO plotDTO : plotList) {
-                hmModuleList.put(plotDTO,childModuleDtoList);
+                if (!isDiagnosticsPlotSurvey || isPlotDisplayed(plotDTO)) {
+                    hmModuleList.put(plotDTO,childModuleDtoList);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -256,6 +259,11 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
        return hmModuleList;
     }
+
+    private boolean isPlotDisplayed(PlotDTO plotDTO) {
+        return !plotDTO.getCleansedStatus().equalsIgnoreCase("Open") && (plotDTO.isPALegalitySurveyCompleted() || plotDTO.isEUDRSurveyCompleted() || !plotDTO.isPALegalityPlot() || !plotDTO.isDeforestationPlot());
+    }
+
 
     private List<ChildModuleDto> generateModuleList(ArrayList<PlotDTO> plotList, List<ChildModuleDto> finalModuleDtoList) {
         List<ChildModuleDto> moduleList = new ArrayList<>();
@@ -316,6 +324,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setIsPlotSurvey(moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey")));
                         childModuleDto.setView_module(moduleAssignments.getString(moduleAssignments.getColumnIndex("view_module")));
                         childModuleDto.setSurveyDuration(moduleAssignments.getString(moduleAssignments.getColumnIndex("surveyDuration")));
+                        childModuleDto.setAnnual_survey(moduleAssignments.getString(moduleAssignments.getColumnIndex("annual_survey")));
                         childModuleDtoList.add(childModuleDto);
                     }
                 }
@@ -439,13 +448,17 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
             MatrixCursor mc = new MatrixCursor(mcColumns);
 
-            List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+            int diagnosticTypeId = db.dmMasterDataDao().getDiagnosticPlotTypeId("Plot");
+            int EUDRGroundVerificationSurveyId = db.dmMasterDataDao().getDiagnosticPlotTypeId("EUDR Ground Verification Survey");
 
-            for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-                dmSurveyName = Utilities.getNamesByLanguage(dmQuestionsModuleList.get(i));
-                dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
-                moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
-                followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
+            List<DmMainModule> dmPlotModuleData = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
+
+            for (int i = 0; i < dmPlotModuleData.size(); i++){
+                dmSurveyName = Utilities.getNamesByLanguage(dmPlotModuleData.get(i));
+                dmSubTitle = dmPlotModuleData.get(i).assessmentType;
+                moduleID = String.valueOf(dmPlotModuleData.get(i).id);
+                followUpCount = String.valueOf(dmPlotModuleData.get(i).followUpAttempts);
+                String isEUDRGroundVerificationSurvey = String.valueOf(EUDRGroundVerificationSurveyId == dmPlotModuleData.get(i).plotSurveyType);
 
                 mc.addRow(new String[]{
                         "0",
@@ -458,7 +471,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         dmSurveyName,
                         dmSurveyName,
                         dmSurveyName,
-                        "0",
+                        isEUDRGroundVerificationSurvey,
                         res.getString(R.string.dm_diognostic_module_subtitle),
                         res.getString(R.string.dm_diognostic_module_subtitle),
                         res.getString(R.string.dm_diognostic_module_subtitle),
@@ -494,7 +507,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         }
     }
 
-    private void showPopupDialog(int plotId, String moduleID) {
+    private void showPopupDialog(PlotDTO plot, String moduleID, boolean isDeforestationSurvey) {
         Intent intent = new Intent(this, DiagnosticModuleActivity.class);
 
         boolean isCompleted = false;
@@ -505,14 +518,18 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
         ArrayList<String> recyclerViewData = new ArrayList<>();
         recyclerViewData.add(getResources().getString(R.string.existing_module));
+        String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDmPlotDataByModuleIdAndPlotId(String.valueOf(moduleID), String.valueOf(farmerID), true, plot.getPlotId());
 
-        if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
+        if(count != null && db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
             Calendar calendar = Calendar.getInstance();
             Date currentDate = calendar.getTime();
+
             String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1), String.valueOf(farmerID));
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             boolean followUpDurationDisable = false;
             String followUpDuration = null;
+
 
             Date endFollowUpDurationDate = null;
             if (startDateString != null){
@@ -531,7 +548,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             // creating the followUp for surveys
             List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerID, Integer.parseInt(moduleID));
             if(followupList.isEmpty()){
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerID), true);
                 if(!dmSurveyAnswerTableList.isEmpty()) {
                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + 1);
                 }
@@ -553,7 +569,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                             }
                         }
 
-                        String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
                         if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
                             if (count.replaceAll(" ", "").equalsIgnoreCase("max")){
                                 recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
@@ -597,9 +612,8 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                 }
             }
         }
-        else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerID), true);
-            if(!dmSurveyAnswerTableList.isEmpty()) {
+        else if (count == null || db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+            if((isDeforestationSurvey && plot.isEUDRSurveyCompleted()) || (!isDeforestationSurvey && plot.isPALegalitySurveyCompleted())) {
                 isCompleted = true;
             }
         }

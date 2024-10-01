@@ -10,7 +10,14 @@ public class PlotDTO implements Serializable {
     private String plotActualName;
     private int plotId;
     private boolean isDeforestationPlot;
-    private boolean isPALegalityFlag;
+    private boolean isPALegalityPlot;
+    private String cleansedStatus;
+
+    private boolean isEUDRSurveyCompleted;
+    private boolean isPALegalitySurveyCompleted;
+
+    private String geoDbFlagStatus;
+
 
 
     public String getPlotActualName() {
@@ -45,11 +52,43 @@ public class PlotDTO implements Serializable {
         isDeforestationPlot = deforestationPlot;
     }
 
-    public boolean isPALegalityFlag() {
-        return isPALegalityFlag;
+    public void setCleansedStatus(String cleansedStatus) {
+        this.cleansedStatus = cleansedStatus;
     }
 
-    public void setPALegalityFlag(boolean PALegalityFlag) {
-        isPALegalityFlag = PALegalityFlag;
+    public boolean isPALegalityPlot() {
+        return isPALegalityPlot;
+    }
+
+    public void setPALegalityPlot(boolean PALegalityPlot) {
+        isPALegalityPlot = PALegalityPlot;
+    }
+
+    public String getCleansedStatus() {
+        return cleansedStatus;
+    }
+
+    public boolean isEUDRSurveyCompleted() {
+        return isEUDRSurveyCompleted;
+    }
+
+    public void setEUDRSurveyCompleted(boolean EUDRSurveyCompleted) {
+        isEUDRSurveyCompleted = EUDRSurveyCompleted;
+    }
+
+    public boolean isPALegalitySurveyCompleted() {
+        return isPALegalitySurveyCompleted;
+    }
+
+    public void setPALegalitySurveyCompleted(boolean PALegalitySurveyCompleted) {
+        isPALegalitySurveyCompleted = PALegalitySurveyCompleted;
+    }
+
+    public String getGeoDbFlagStatus() {
+        return geoDbFlagStatus;
+    }
+
+    public void setGeoDbFlagStatus(String geoDbFlagStatus) {
+        this.geoDbFlagStatus = geoDbFlagStatus;
     }
 }

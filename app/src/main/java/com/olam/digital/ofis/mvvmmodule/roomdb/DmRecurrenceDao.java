@@ -25,4 +25,7 @@ public interface DmRecurrenceDao {
 
     @Query("SELECT * FROM DmRecurrence WHERE moduleId =:id")
     DmRecurrence getRecurrenceByModuleId(String id);
+
+    @Query("DELETE FROM DmRecurrence")
+    void deleteAll();
 }

@@ -124,6 +124,18 @@ public class DiagnosticModulesList {
 	@SerializedName("recurrenceEndDate")
 	public String recurrenceEndDate;
 
+	@SerializedName("diagnosticTypeId")
+	public Integer diagnosticTypeId;
+
+	@SerializedName("eudrSpecificSurveyTypeId")
+	public Integer plotSurveyType;
+
+	@SerializedName("plotIds")
+	public List<Integer> submittedPlotIds;
+
+	@SerializedName("captureLocation")
+	public String captureLocation;
+
 	public String getRecurrenceStartDate() {
 		return recurrenceStartDate;
 	}
@@ -415,7 +427,40 @@ public class DiagnosticModulesList {
 	public void setFollowUpDurationVal(String followUpDurationVal) {
 		this.followUpDurationVal = followUpDurationVal;
 	}
-	public DiagnosticModulesList(int followUpDuration, String assessmentType, String descriptionPt, String nameFr, List<QuestionsItem> questions, String description, String nameIdn, String descriptionFr, List<ComplianceIndicatorItem> complianceIndicator, String namePt, String nameLo, String nameTr, List<CurrencyItem> currency, int id, int surveyType, String nameTh, String nameVi, int followUpAttempts, String nameEs, String descriptionVi, String descriptionEs, List<SectionsItem> sections, Recurrence recurrence, String descriptionTh, String name, String descriptionLo, String descriptionIdn, String descriptionTr , String recurrenceCount , String recurrenceStartDate , String recurrenceEndDate , String followUpAttemptsVal, String followUpDurationVal) {
+
+	public Integer getDiagnosticTypeId() {
+		return diagnosticTypeId;
+	}
+
+	public void setDiagnosticTypeId(Integer diagnosticTypeId) {
+		this.diagnosticTypeId = diagnosticTypeId;
+	}
+
+	public Integer getPlotSurveyType() {
+		return plotSurveyType;
+	}
+
+	public void setPlotSurveyType(Integer plotSurveyType) {
+		this.plotSurveyType = plotSurveyType;
+	}
+
+	public List<Integer> getSubmittedPlotIds() {
+		return submittedPlotIds;
+	}
+
+	public void setSubmittedPlotIds(List<Integer> submittedPlotIds) {
+		this.submittedPlotIds = submittedPlotIds;
+	}
+
+	public String getCaptureLocation() {
+		return captureLocation;
+	}
+
+	public void setCaptureLocation(String captureLocation) {
+		this.captureLocation = captureLocation;
+	}
+
+	public DiagnosticModulesList(int followUpDuration, String assessmentType, String descriptionPt, String nameFr, List<QuestionsItem> questions, String description, String nameIdn, String descriptionFr, List<ComplianceIndicatorItem> complianceIndicator, String namePt, String nameLo, String nameTr, List<CurrencyItem> currency, int id, int surveyType, String nameTh, String nameVi, int followUpAttempts, String nameEs, String descriptionVi, String descriptionEs, List<SectionsItem> sections, Recurrence recurrence, String descriptionTh, String name, String descriptionLo, String descriptionIdn, String descriptionTr , String recurrenceCount , String recurrenceStartDate , String recurrenceEndDate , String followUpAttemptsVal, String followUpDurationVal, int diagnosticType, int plotSurveyType, List<Integer> submittedPlotIds, String captureLocation) {
 		this.followUpDuration = followUpDuration;
 		this.assessmentType = assessmentType;
 		this.descriptionPt = descriptionPt;
@@ -449,6 +494,10 @@ public class DiagnosticModulesList {
 		this.recurrenceEndDate = recurrenceEndDate;
 		this.followUpAttemptsVal = followUpAttemptsVal;
 		this.followUpDurationVal = followUpDurationVal;
+		this.diagnosticTypeId = diagnosticType;
+		this.plotSurveyType = plotSurveyType;
+		this.submittedPlotIds = submittedPlotIds;
+		this.captureLocation = captureLocation;
 	}
 
 

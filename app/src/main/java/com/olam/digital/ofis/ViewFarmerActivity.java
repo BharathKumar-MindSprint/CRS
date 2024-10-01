@@ -256,8 +256,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private int countryID ;
 
-    boolean isDeforestationFlag;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -708,8 +706,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 ivNonCompliance.setVisibility(View.GONE);
                 nonCompliance.setVisibility(View.GONE);
             }
-
-            isDeforestationFlag = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_DEFORESTATION_FLAG)).equalsIgnoreCase("true");
         }
 
 
@@ -1399,7 +1395,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 //ticket-OFISDM-39 add new record diagnostic module task
 
                 db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
-                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+                int diagnosticTypeId = db.dmMasterDataDao().getDiagnosticPlotTypeId("Plot");
+                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule(diagnosticTypeId);
 
                 for (int i = 0; i < dmQuestionsModuleList.size(); i++){
 //                    dmSurveyName = dmQuestionsModuleList.get(i).nameFr;
@@ -1444,12 +1441,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 }
 
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId), aggregatedIndicator);
+                List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
 
-
-                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
-                List<DmMainModule> dmPlotQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
-
-                if (!isDeforestationFlag && farmPlotCount > 0 && !dmPlotQuestionsModuleList.isEmpty()) {
+                if (farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
                     mc.addRow(new String[]{
                             "0",
                             res.getString(R.string.dm_plot_survey),
@@ -2649,7 +2644,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Constants.FARMER_NAME = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
                         String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                         long farmerGroupId = dl.getFarmerGroupById(farmerId);
-                        Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerId));;
+                        Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerId));
+                        Constants.PLOT_ID = 0;
 
                         Intent in = new Intent(this, DiagnosticModuleActivity.class);
                         in.putExtra("SUB_TITLE",dmSubTitle);
@@ -2746,7 +2742,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Intent in = new Intent(this, ViewPlotSurveyActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
-                        bundle.putBoolean(res.getString(R.string.dm_plot_survey),true);
+                        bundle.putBoolean(res.getString(R.string.dm_plot_survey), true);
                         in.putExtras(bundle);
                         startActivity(in);
                     }

@@ -813,6 +813,7 @@
     <string name="file_exceeds">El tamaño del archivo excede </string>
     <string name="total_file_size">El tamaño total de los archivos supera los 5 MB. Sube un archivo con un tamaño inferior a </string>
 
-    <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
+    <string name="dm_plot_survey">Estudio diagnóstico de parcelas</string>
+    <string name="dm_plot_survey_completed">Estudio diagnóstico de parcelas</string>
 </resources>
 

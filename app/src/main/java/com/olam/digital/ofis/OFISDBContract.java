@@ -1081,9 +1081,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF = "conductTrainingForNonCompliant";
         public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
 
-        public static final String COLUMN_NAME_IS_DEFORESTATION_FLAG = "isDeforestationFlag";
-        public static final String COLUMN_NAME_IS_PA_LEGALITY_FLAG = "isPALegalityFlag";
-
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1126,8 +1123,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
                     add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
-                    add(COLUMN_NAME_IS_DEFORESTATION_FLAG);
-                    add(COLUMN_NAME_IS_PA_LEGALITY_FLAG);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1164,8 +1159,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
                     add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
-                    add(COLUMN_NAME_IS_DEFORESTATION_FLAG);
-                    add(COLUMN_NAME_IS_PA_LEGALITY_FLAG);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -2679,8 +2672,12 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CREATED_AT = "created_at";
         public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
         public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
-        public static final String COLUMN_NAME_IS_DEFORESTATION_PLOT = "isDeforestationPlot";
-        public static final String COLUMN_NAME_IS_PA_LEGALITY_PLOT = "isPALegalityPlot";
+        public static final String COLUMN_NAME_IS_DEFORESTATION_PLOT = "deforestationFlag";
+        public static final String COLUMN_NAME_IS_PA_LEGALITY_PLOT = "paLegalityFlag";
+        public static final String COLUMN_NAME_IS_CLEANSED_STATUS = "cleansedStatus";
+        public static final String COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED = "isEUDRSurveyCompleted";
+        public static final String COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED = "isPALegalityCompleted";
+        public static final String COLUMN_NAME_GEO_DB_FLAG_STATUS = "geoDbFlagStatus";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2694,6 +2691,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT_SIZE);
                     add(COLUMN_NAME_IS_DEFORESTATION_PLOT);
                     add(COLUMN_NAME_IS_PA_LEGALITY_PLOT);
+                    add(COLUMN_NAME_IS_CLEANSED_STATUS);
+                    add(COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED);
+                    add(COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED);
+                    add(COLUMN_NAME_GEO_DB_FLAG_STATUS);
                 }}
         );
     }

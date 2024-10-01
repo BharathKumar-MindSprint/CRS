@@ -12,8 +12,8 @@ import java.util.List;
 @Dao
 public interface DmMainModuleDao {
 
-    @Query("SELECT * FROM DmMainModule")
-    List<DmMainModule> getDMmodule();
+    @Query("SELECT * FROM DmMainModule WHERE diagnosticTypeId != :diagnosticTypeId")
+    List<DmMainModule> getDMmodule(int diagnosticTypeId);
 
     @Insert
     void insert(DmMainModule... dmModule);
@@ -41,7 +41,13 @@ public interface DmMainModuleDao {
     @Query("SELECT followUpAttemptsVal FROM DmMainModule WHERE id=:moduleId")
     String getFollowUpAttemptsVal(String moduleId);
 
-
     @Query("UPDATE DmMainModule SET recurrenceCount =:recurrenceCount, recurrenceStartDate = :startDate, recurrenceEndDate =:endDate WHERE id = :moduleId")
     void updateRecurrenceCountStartEndDate(int moduleId , String startDate , String endDate , int recurrenceCount);
+
+    @Query("SELECT * FROM DmMainModule WHERE diagnosticTypeId = :diagnosticTypeId")
+    List<DmMainModule> getDmPlotModuleByDiagnosticTypeId(int diagnosticTypeId);
+
+    @Query("SELECT * FROM DmMainModule WHERE id = :moduleId")
+    DmMainModule getDmMainModule(int moduleId);
+
 }

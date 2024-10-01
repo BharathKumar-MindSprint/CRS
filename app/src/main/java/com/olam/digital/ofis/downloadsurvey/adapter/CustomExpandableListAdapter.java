@@ -39,9 +39,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
@@ -102,25 +104,36 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_item, null);
         }
-//        TextView expandedListTextView = (TextView) convertView.findViewById(R.id.moduleListModuleName);
-//        TextView status = (TextView) convertView.findViewById(R.id.moduleListModuleStatus);
+
         LinearLayout linearLayout = (LinearLayout) convertView.findViewById(R.id.rowlin);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.moduleListModuleIcon);
         TextView moduleTitle = (TextView) convertView.findViewById(R.id.moduleListModuleName);
         TextView textView = (TextView) convertView.findViewById(R.id.moduleListModuleStatus);
         TextView enabledItem = (TextView) convertView.findViewById(R.id.moduleListEnabled);
         boolean submitted = false;
-//        expandedListTextView.setText(expandedListText);
         moduleTitle.setText(childModuleDto.getName());
         textView.setText(res.getString(R.string.ModuleStatus));
         int currentId = Integer.parseInt(childModuleDto.get_id());
         int status_started = 0;
         int status_finished = 0;
+        boolean isDeforestationPlot = false;
+        boolean isPALegalityPlot = false;
+        boolean isEUDRSurveyCompleted = false;
+        boolean isPALegalitySurveyCompleted = false;
+        Set<String> flagsReceived = new HashSet<>();
+        int plotID = 0;
+
         try {
             PlotDTO plotDTO = expandableListTitle.get(listPosition);
+            isDeforestationPlot = plotDTO.isDeforestationPlot();
+            isPALegalityPlot = plotDTO.isPALegalityPlot();
+            isEUDRSurveyCompleted = plotDTO.isEUDRSurveyCompleted();
+            isPALegalitySurveyCompleted = plotDTO.isPALegalitySurveyCompleted();
+            String flags = plotDTO.getGeoDbFlagStatus() != null ? plotDTO.getGeoDbFlagStatus() : "";
+            flagsReceived.addAll(Arrays.asList(flags.split(",")));
+            plotID = plotDTO.getPlotId();
+
             ChildModuleDto moduleDto = dl.getFarmerModuleDetailsByPlotId(Long.parseLong(childModuleDto.get_id()),farmerId,plotDTO.getPlotId());
-//            String statusStarted = childModuleDto.getStatus_started();
-//            String statusFinished = childModuleDto.getStatus_finished();
             String statusStarted = moduleDto.getStatus_started();
             String statusFinished = moduleDto.getStatus_finished();
             boolean hasPlotData = dl.getModuledetailsByPlotId(currentId, farmerId, plotDTO.getPlotId());
@@ -165,36 +178,43 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.review_farm_management_plan_hint));
             }
-        } else {
-
-            if (childModuleDto.getRecorded_lng().equalsIgnoreCase("diagnosticPlotSurvey")) {
+        }
+        else {
+            if (childModuleDto.getRecorded_lng() != null && childModuleDto.getRecorded_lng().equalsIgnoreCase(res.getString(R.string.dm_plot_survey))) {
                 String moduleId = childModuleDto.getCurrent_submodule_id();
-                Date[] dates = evaluateDiagnosticPlotSurvey(db, moduleId);
+                Date[] dates = evaluateDiagnosticPlotSurvey(db, moduleId, plotID);
+                boolean isDeforestationSurvey = childModuleDto.getAnnual_survey().equalsIgnoreCase("true");
+                boolean enableEUDRSurvey = isDeforestationSurvey && (isEUDRSurveyCompleted || !isDeforestationPlot) && flagsReceived.contains("DF");
+                boolean enablePALegalitySurvey = !isDeforestationSurvey &&(isPALegalitySurveyCompleted || !isPALegalityPlot) && flagsReceived.contains("PA");
 
-                if (dates[1].after(dates[0])) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                if ((enableEUDRSurvey  || enablePALegalitySurvey) && dates[1].after(dates[0])) {
+
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
 
+                    if ((isDeforestationSurvey && isEUDRSurveyCompleted) || (!isDeforestationSurvey && isPALegalitySurveyCompleted)) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                        textView.setText(R.string.dm_plot_survey_completed);
+                    }
+                    else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        textView.setText(res.getString(R.string.dm_plot_survey));
+                    }
+
+                    return convertView;
                 }
-                else{
+                else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("false");
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                }
-
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(moduleId, String.valueOf(farmerId), true);
-                if(!dmSurveyAnswerTableList.isEmpty()){
-                    textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                }else{
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.dm_plot_survey));
+                    return convertView;
                 }
 
-                return convertView;
             }
             else {
                 String disabled_months_string = childModuleDto.getDisabled_months();
@@ -576,11 +596,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    private Date[] evaluateDiagnosticPlotSurvey(OFISRoomDB db, String moduleId) {
-        DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
-        String recurrence_type = dmRecurrence.recurrenceType;
-        int recurrence_frequency = dmRecurrence.recurrenceFrequency;
-
+    private Date[] evaluateDiagnosticPlotSurvey(OFISRoomDB db, String moduleId, int plotId) {
         String startDateString = db.dmMainModuleDao().getStartData(Integer.parseInt(moduleId));
         SimpleDateFormat inputDateFormat = null;
 
@@ -588,56 +604,18 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
             inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         }
 
-        SimpleDateFormat outputDateFormatFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
         // Set the input date's timezone to UTC
         assert inputDateFormat != null;
         inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date startDateMain = null;
-        String outputDateString = null;
         try {
             if (startDateString != null){
                 startDateMain = inputDateFormat.parse(startDateString);
-                outputDateString = outputDateFormatFormatter.format(startDateMain);
             }
 
         } catch (ParseException e) {
             e.printStackTrace();
-        }
-
-        String endDate = "";
-        int recurrenceCount = 0;
-        Date newStartDate= null;
-        Date newEndDate = null;
-        Date lastReccurenceEndDate = null;
-
-        if (outputDateString!=null){
-            endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
-            try {
-                recurrenceCount = RecurrenceUtils.calculateRecurrenceCount(outputDateString, recurrence_type, recurrence_frequency);
-                newStartDate = RecurrenceUtils.getNewStartDate(outputDateString, recurrence_type, recurrence_frequency, recurrenceCount);
-                newEndDate = RecurrenceUtils.getNewEndDate(newStartDate, recurrence_type, recurrence_frequency);
-                lastReccurenceEndDate = RecurrenceUtils.findLastAttendedDate(startDateMain,newEndDate,recurrence_type,recurrence_frequency,recurrenceCount+1);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        Log.d("Module Records" , "Module Id: "+moduleId + " End Date: " + endDate);
-        Log.d("RecurrenceCount" , "Module Id: "+moduleId + "  ----Recurrence Count: " + recurrenceCount
-                + "  ----newStartDate " + newStartDate + " ----newEndDate " + newEndDate +
-                " ----recurrenceType " + recurrence_type + " ----recurrenceFreq " +recurrence_frequency);
-
-        db.dmMainModuleDao().updateRecurrenceCountStartEndDate(Integer.parseInt(moduleId), String.valueOf(newStartDate) , String.valueOf(newEndDate) , recurrenceCount+1);
-
-        // delete from answer table if the current date crossed recurrence value
-        if (lastReccurenceEndDate!=null){
-            if (currentDate.getTime().after(lastReccurenceEndDate) && !RecurrenceUtils.areDatesEqual(currentDate.getTime(),startDateMain) ){
-                // clear the answer table based on module
-                db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
-                db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
-            }
         }
 
         return new Date[]{startDateMain, currentDate.getTime()};

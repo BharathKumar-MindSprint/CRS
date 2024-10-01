@@ -360,7 +360,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
 
                             // clear the answer table based on module
-                            db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
+                            db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId), 0);
                             db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
                         }
 
@@ -756,6 +756,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
 
             }
+
             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(Utilities.CONSENTSTATEMENT)) {
                 Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentAvailable);
                 if (isConsentTrue) {
