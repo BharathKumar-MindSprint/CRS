@@ -52,8 +52,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
@@ -78,7 +76,6 @@ import java.util.Objects;
 
 
 public class AddNationalidActivity extends BaseActivity implements View.OnClickListener {
-    private final String MATOMOTAG = this.getClass().getSimpleName();
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
 
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 9925;
@@ -194,7 +191,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NATIONAL_ID_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NATIONAL_ID);
     }
 
     @Override
@@ -553,7 +549,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_TRASH_NATIONALID,  ScreenNameConstants.BUTTON_CLICKED);
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 removeSpinnerItem(numberrow);
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
@@ -695,7 +690,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         int id = v.getId();
 
         if (id == R.id.addnid) {
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -813,7 +807,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         }
         else if (id == R.id.save) {
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
 
             // check the current location
             if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)){

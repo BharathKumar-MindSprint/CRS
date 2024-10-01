@@ -808,6 +808,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
+    void syncNetworkQueueDuplicateError(Integer itemId, Handler handler,String error) {
+        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
+            if (networkQueueItems.moveToNext()) {
+                syncNetworkQueueItem(itemId, handler);
+            } else {
+                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), error);
+                handler.dispatchMessage(msg);
+
+            }
+        } else {
+            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), error);
+            handler.dispatchMessage(msg);
+        }
+
+    }
+
     void syncNetworkQueueFromHome(Integer itemId, Handler handler) {
         if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
             if (networkQueueItems.moveToNext()) {
@@ -5057,13 +5073,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             String errorItem = jsonObject.optString("error");
                                             if (errorCode.equalsIgnoreCase("3035")) {
                                                 error = 1;
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate, surveyCode);
                                                 handler.postDelayed(() -> {
-                                                    // Your task goes here
-//                                                        popupMsgInfo(errorItem);
                                                     msg.obj = errorItem;
+                                                    msg.what = 1;
+                                                    msg.arg1 = total;
+                                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
                                                     handler.dispatchMessage(msg);
-                                                    return;
-                                                }, 500);
+
+                                                    syncNetworkQueueDuplicateError(originalSyncRequestItemId, handler, errorItem);
+                                                }, 5000);
+
                                             }
                                         }
                                         catch (Exception e) {
