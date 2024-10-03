@@ -3440,6 +3440,9 @@ public class DynamicQuestions {
     }
 
     private void setAlphanumericFilter(final EditText editText, final int maxCharacterLimit) {
+        final int[] spaceCount = {0};
+        final int[] previousLength = {0};
+        final boolean[] backSpace = new boolean[1];
         InputFilter alphaNumericFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
@@ -3449,7 +3452,7 @@ public class DynamicQuestions {
                     SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
                     for (int i = end - 1; i >= start; i--) {
                         char currentChar = source.charAt(i);
-                        if (!Character.isLetterOrDigit(currentChar) && !Character.isSpaceChar(currentChar)) {
+                        if (!Character.isWhitespace(currentChar)) {
                             sourceAsSpannableBuilder.delete(i, i + 1);
                         }
                     }
@@ -3458,12 +3461,53 @@ public class DynamicQuestions {
                     StringBuilder filteredStringBuilder = new StringBuilder();
                     for (int i = start; i < end; i++) {
                         char character = source.charAt(i);
-                        if (Character.isLetterOrDigit(character) || (character == ' ' && (filteredStringBuilder.length() > 0 || dest.length() > 0))) {
+                        if (Character.isLetterOrDigit(character) || Character.isWhitespace(character) || isSymbol(character) || character == '\b') {
                             if (filteredStringBuilder.length() < maxCharacterLimit) {
+                                if (character == ' ' && spaceCount[0] >= 1) {
+                                    continue;
+                                }
+
                                 filteredStringBuilder.append(character);
+                                if (character == ' ') {
+                                    spaceCount[0]++;
+                                } else {
+                                    spaceCount[0] = 0;
+                                }
                             }
                         }
                     }
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            previousLength[0] = charSequence.length();
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            backSpace[0] = previousLength[0] > editable.length();
+
+                            if (backSpace[0]) {
+                                if (spaceCount[0] > 0) {
+                                    spaceCount[0]--;
+                                } else if (filteredStringBuilder.length() > 0) {
+                                    filteredStringBuilder.deleteCharAt(filteredStringBuilder.length() - 1);
+                                    spaceCount[0] = -1;
+                                }
+                            }
+                        }
+                    });
+
+                    if (filteredStringBuilder.length() > 0 && filteredStringBuilder.charAt(filteredStringBuilder.length() - 1) == ' ' && spaceCount[0] == -1) {
+                        filteredStringBuilder.deleteCharAt(filteredStringBuilder.length() - 1);
+                        spaceCount[0] = 0;
+                    }
+
                     int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
                     if (remainingCharacters <= 0) {
                         editText.setError("Character limit reached");
@@ -3486,6 +3530,10 @@ public class DynamicQuestions {
     }
 
 
+    private boolean isSymbol(char character) {
+        String symbolRegex = "[\\p{Punct}]";
+        return Character.toString(character).matches(symbolRegex);
+    }
     private void setIntegerPositiveRangeFilter(final EditText editText, final int startLimit, final int endLimit, int validationOnRange, JSONObject rangeArray) {
         InputFilter integerRangeFilter = new InputFilter() {
             @Override
