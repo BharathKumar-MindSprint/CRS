@@ -141,6 +141,7 @@ public class DynamicQuestions {
     private TextView plotsHeader, densityResult;
     private Hashtable<String, String> plotvariants;
     public Set<Integer> surveySet = new HashSet<>();
+    public Set<Integer> surveySetRadio = new HashSet<>();
     public Set<Integer> constraintsSet = new HashSet<>();
     public Set<Integer> editQuestionSet = new HashSet<>();
     private static DynamicQuestions instance = null;
@@ -458,7 +459,10 @@ public class DynamicQuestions {
         }*/
     }
 
-    private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType, LinearLayout linearLayout, int repeaterItemPosition, Integer globalMetricId, Integer localMetricId, int metricsValue, Spinner spinner, Map<Integer, String> spinnerData, ArrayAdapter<String> spinnerAdapter, LinearLayout previewLayout, TextView contentTextView) {
+    private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType,
+                                              LinearLayout linearLayout, int repeaterItemPosition, Integer globalMetricId, Integer localMetricId, int metricsValue,
+                                              Spinner spinner, Map<Integer, String> spinnerData, ArrayAdapter<String> spinnerAdapter,
+                                              LinearLayout previewLayout, TextView contentTextView, LinearLayout questionWrapper,int finalSwitchId, TextView finalYesNoConstraint ) {
 
         final Integer[] radioGlobalMetrics = {globalMetricId};
         final Integer[] radioLocalMetrics = {localMetricId};
@@ -587,6 +591,23 @@ public class DynamicQuestions {
 //                Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
 //                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
 
+                // If id =2 , survey-completion-check
+                String getNoValue = dl.getValueByLookUpIDRadio(String.valueOf(checkedId));
+                int surveyCompletion = 0;
+                if (Objects.equals(getNoValue.toLowerCase(),"no")){
+                    surveyCompletion = 2;
+
+                } else if (Objects.equals(getNoValue.toLowerCase(),"yes")) {
+                    surveyCompletion = 1;
+                }
+                if (surveyCompletion == finalSwitchId) {
+                    questionWrapper.addView(finalYesNoConstraint);
+                    surveySetRadio.add(questionId);
+                    finalYesNoConstraint.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
+                } else {
+                    surveySetRadio.remove(questionId);
+                    questionWrapper.removeView(finalYesNoConstraint);
+                }
 
                 if (repeaterItemPosition == -1) {
                     if (answerSet != null) {
@@ -5336,6 +5357,41 @@ public class DynamicQuestions {
 
         // code end
 
+        int finalSwitchId = 0;
+        TextView finalYesNoConstraint = null;
+        try {
+            JSONObject displayConfigCheck = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfigCheck.has("display")) {
+                JSONObject displayCheck = displayConfigCheck.getJSONObject("display");
+                // Error Message for constraints
+                String constraintType = "", errorMsg = "";
+                int switchId = 0;
+                try {
+                    if(displayConfigCheck.has("calculation")) {
+                        JSONObject jsonObject = displayConfigCheck.getJSONObject(CoffeeConstants.CALCULATION);
+                        switchId = jsonObject.getInt("switch");
+                        constraintType = jsonObject.getString("type");
+                        errorMsg = jsonObject.getJSONObject("errorMsg").getString("error" + CommonUtilities.getLocaleSuffix(context.getResources()));
+                    }
+                } catch (JSONException e) {
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+
+                }
+                TextView yesNoConstraint = null;
+                if (constraintType.equalsIgnoreCase(CoffeeConstants.SURVEY_COMPLETION_CHECK)) {
+                    yesNoConstraint = new TextView(context);
+                    yesNoConstraint.setText(errorMsg);
+                    yesNoConstraint.setTextColor(ContextCompat.getColor(context, R.color.ofis_red));
+
+                }
+                finalSwitchId = switchId;
+                finalYesNoConstraint = yesNoConstraint;
+
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         if (radio != null && radio.getCount() > 0) {
             LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.activity_radio_group, null);
             RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
@@ -5599,96 +5655,7 @@ public class DynamicQuestions {
                 parentLayout.addView(questionWrapper);
             }
 
-
-
-            /*if (otherChoice.equals("true")) {
-                final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                setAlphanumericFilter(et , 10);
-
-                et.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        if (s.length() == 0){
-                            // delete the input data
-                            if (answerSet!=null){
-                                for (int i = 0; i < answerSet.size(); i++) {
-                                    JSONObject currentAnswer = answerSet.get(i);
-                                    if (currentAnswer != null) {
-                                        if (currentAnswer.optInt("question_id") == questionId){
-                                            answerSet.remove(i);
-                                        }
-                                    }
-                                }
-                            }
-                        }else {
-                            // update the input
-                            String input = et.getText().toString().trim();
-                            if (input != null){
-                                String newDatatype = "text";
-                                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                                    @Override
-                                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                        // This method is called when any RadioButton within the RadioGroup is checked
-                                        // Uncheck other RadioButtons in the same RadioGroup
-                                        for (int i = 0; i < group.getChildCount(); i++) {
-                                            RadioButton radioButton = (RadioButton) group.getChildAt(i);
-                                            radioButton.setChecked(radioButton.getId() == checkedId);
-                                        }
-
-                                        // Get the value (text) of the checked RadioButton
-                                        RadioButton checkedRadioButton = group.findViewById(checkedId);
-                                        String selectedText = checkedRadioButton.getText().toString();
-                                        int j = checkedRadioButton.getId();
-//                                      Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
-//                                      Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
-
-                                        if (answerSet!=null){
-                                            for (int i = 0; i < answerSet.size(); i++) {
-                                                JSONObject currentAnswer = answerSet.get(i);
-                                                if (currentAnswer != null) {
-                                                    if (currentAnswer.optInt("question_id") == questionId){
-                                                        answerSet.remove(i);
-                                                    }
-                                                }
-                                            }
-                                        }
-
-
-
-                                        saveAnswerEntry(questionId, j, 0, -1, newDatatype, String.valueOf(checkedId));
-                                    }
-                                });
-
-//                                saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, newdatatype, lookupID);
-
-                            }
-                        }
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
-                if (isRepeaterItem) {
-                    parentLayout.addView(et);
-                } else {
-                    questionWrapper.addView(et);
-                    parentLayout.addView(questionWrapper);
-                }
-            }else {
-                parentLayout.addView(questionWrapper);
-            }*/
-
-
-            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView);
+            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView, questionWrapper, finalSwitchId, finalYesNoConstraint);
 
         }
 

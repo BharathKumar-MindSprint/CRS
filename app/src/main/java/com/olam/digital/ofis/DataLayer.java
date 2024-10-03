@@ -7923,6 +7923,27 @@ public class DataLayer {
         return lookupValue;
     }
 
+    String getValueByLookUpIDRadio(String lookupId){
+        String lookupValue = "";
+        Cursor farmerCursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " =?";
+            String[] whereArgs = new String[]{lookupId};
+            farmerCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null,null);
+            if (farmerCursor != null){
+                while(farmerCursor.moveToNext()){
+                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            farmerCursor.close();
+        }
+        return lookupValue;
+    }
+
     public String getphotoNameByLookUpId(String lookupId) {
         String photoName = "";
         Cursor photoCursor=null;
