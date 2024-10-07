@@ -2011,6 +2011,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
                 }else {
                     in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                    in.putExtra("COUNTRY_ID_INDO", selectedCountry);
                 }
 
                 Bundle bundle=new Bundle();

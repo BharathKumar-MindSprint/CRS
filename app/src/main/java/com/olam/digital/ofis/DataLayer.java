@@ -6520,6 +6520,21 @@ public class DataLayer {
         return cursor;
     }
 
+    public int getEnumeratorProduct() {
+        Cursor productCursor;
+        int productId = 0;
+        try {
+            productCursor = db.rawQuery("SELECT id FROM products", null);
+            if (productCursor.getCount() > 0) {
+                productCursor.moveToNext();
+                productId = productCursor.getInt(productCursor.getColumnIndex("id"));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return productId;
+    }
+
     public long insertChild(Context context, ContentValues contentValues, String name) {
         long newChildId;
         newChildId = db.insert(OFISDBContract.ChildEntry.TABLE_NAME, null, contentValues);

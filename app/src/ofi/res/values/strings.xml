@@ -663,6 +663,9 @@
     <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
     <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
 
+    // Indonesia - Rubber consent requirement
+    <string name="cs_page5_27">I hereby declare that all information provided is true to the best of my knowledge</string>
+
     <string name="consent_statement_pageone2">Your personal data including your name, age, contact information (e-mail address, phone number, mailing address), occupation, photographs, videos or digital recordings, biographical, social and geographical information, farming and output information, and where applicable, those of your children or dependants (“<b>Farmer Data</b>”) will be collected and stored by us and made accessible to our customers, business partners and in some cases, made public on ofi’s websites, social media, electronic or written publications. We ask that you hereby acknowledge and provide consent to the collection, use and disclosure of your personal data for this purpose in accordance with this Personal Information Collection Notice. </string>
     <string name="consent_statement_pageone1">It is requested for you to supply Olam Food Ingredients (hereafter referred to as “<b>ofi</b>” ,“<b>us</b>” ,or “<b>we</b>”) with personal data in support of ofi’s efforts to promote sustainability and traceability in the supply chain and in-turn to promote responsible trade with farmers such as yourself around the globe (the “<b>Purpose</b>”). </string>
 
