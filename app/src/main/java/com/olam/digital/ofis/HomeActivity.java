@@ -2089,14 +2089,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                     if (diagnosticTypeId != null && diagnosticTypeId == diagnosticType && !submittedPlotIds.isEmpty()) {
                                         int finalEudrGroundVerificationSurveyId = eudrGroundVerificationSurveyId;
-                                        Log.d("podaaa2", "okokok");
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Log.d("podaaa3", "okokok");
                                                 dl.updateSurveyCapturedForPlots(plotSurveyType == finalEudrGroundVerificationSurveyId, submittedPlotIds);
                                             }
-                                        }, 3000);
+                                        }, 5000);
                                     }
 
                                     try {

@@ -71,6 +71,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -752,16 +753,17 @@ public class SyncAllTask extends SyncTask {
                                 item = countryArray.getJSONObject(j);
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
+                                boolean calculateCompositeFlag = item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
+                                Utilities.saveToSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, null, calculateCompositeFlag);
+
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
                                     isoCodes.add(code);
                                     String countryId = item.getString("countryId");
                                     countryIds.add(countryId);
                                 }
-
-//                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
                             }
                             assignmentCheckResponse = response;
                             Gson gson = new Gson();
@@ -2317,7 +2319,7 @@ public class SyncAllTask extends SyncTask {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

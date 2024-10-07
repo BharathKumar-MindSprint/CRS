@@ -168,9 +168,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private Animation mSlideBottomDown;
     private View phoneNumbersListItem, clickedLocationItem;
     private long farmerPlaceId;
-
-    // for GPS location system
-//    private GoogleApiClient googleApiClient;
     private ProgressDialog pd;
     private LocationListener locationListener;
 
@@ -254,7 +251,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     boolean aggregatedIndicator;
 
-    private int countryID ;
+    private int countryID;
+
+    boolean calculateComplianceFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,6 +267,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+        calculateComplianceFlag = Utilities.getBoolFromSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, false);
 
         db = OFISRoomDB.getDbInstance(context);
         res = getResources();
@@ -470,8 +470,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView farmerName = (TextView) findViewById(R.id.viewFarmerFarmerName);
         TextView farmerOlamId = (TextView) findViewById(R.id.viewFarmerOlamFarmerID);
         ImageView farmerPhoto = (ImageView) findViewById(R.id.viewFarmerFarmerPhoto);
-//        ImageView infoSectionBackground = (ImageView) findViewById(R.id.infoSectionBackground);
-        //View farmer info
         TextView viewFarmerInfo = (TextView) findViewById(R.id.viewFarmerInfo);
         LinearLayout linear_viewInfo = (LinearLayout) findViewById(R.id.linear_viewInfo);
         TextView genderInfo = (TextView) findViewById(R.id.genderInfo);
@@ -479,7 +477,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView pNumberInfo = (TextView) findViewById(R.id.pNumberInfo);
         TextView partnerInfo = (TextView) findViewById(R.id.partnerInfo);
         TextView programInfo = (TextView) findViewById(R.id.programInfo);
-//        TextView countryInfo = (TextView) findViewById(R.id.countryInfo);
         TextView regionInfo = (TextView) findViewById(R.id.regionInfo);
         TextView districtInfo = (TextView) findViewById(R.id.districtInfo);
         TextView subDistrictInfo = (TextView) findViewById(R.id.subDistrictInfo);
@@ -632,18 +629,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else{
                         farmSurvey=false;
                     }
-//                            ispolygonCaptured=dl.getPolygonInfo1(farmerId);
-//                             isLocationCaptured=dl.getLocationInfo1(farmerId);
-//                              String farmId= dl.getMultifarmfarmId(farmerId);
-//                              if (farmId!=null){
-//                                  isAvailableInStakeHolderList=true;
-//                              }else {
-//                                  isAvailableInStakeHolderList = false;
-//                              }
-//
-//                             farmSubmittedHashMapList=dl.isAvailableinSubmittedModules1(moduleAssignments,farmerId);
-                    //                             Log.i("FRANK EVANA", "SomeText: " + new Gson().toJson(farmSubmittedHashMapList));
-
                 }else{
                     farmSurvey=false;
                 }
@@ -698,6 +683,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 e.printStackTrace();
             }
 
+            llAggregatedIndicator.setVisibility(calculateComplianceFlag ? View.VISIBLE : View.GONE);
             aggregatedIndicator = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
             if (aggregatedIndicator) {
                 llAggregatedIndicator.setBackgroundColor(getResources().getColor(R.color.ofis_compliance));
@@ -1444,7 +1430,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId), aggregatedIndicator);
                 List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
 
-                if (farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
+                if (calculateComplianceFlag && farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
                     mc.addRow(new String[]{
                             "0",
                             res.getString(R.string.dm_plot_survey),

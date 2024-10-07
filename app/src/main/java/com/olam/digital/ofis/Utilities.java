@@ -66,6 +66,8 @@ public class Utilities {
     public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
     public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
 
+    public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
+
     public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
     public static int syctask=0;
 
