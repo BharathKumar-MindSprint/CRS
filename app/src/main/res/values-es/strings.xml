@@ -12,9 +12,8 @@
     <string name="title_activity_add_farmer">Agregar nuevo agricultor</string>
     <string name="title_activity_add_infrastructure">Añadir infraestructura comunitaria</string>
     <string name="title_activity_find_farmer">Encontrar agricultor</string>
-    <string name="title_activity_view_farmer">Detalles del agricultor</string>
+    <string name="title_activity_view_farmer">Detalles del Productor</string>
     <string name="title_activity_complete_module">Completar cuestionario</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS - Asistente en Campo Debug</string>
@@ -784,22 +783,22 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-    <string name="existing_module">Existing Module</string>
-    <string name="over_all_result">Over all Result</string>
-    <string name="total_compliant_answers">Total Compliant answers</string>
-    <string name="total_non_compliant_answers">Total Non-Compliant answers</string>
-    <string name="total_satisfactory_answers">Total Satisfactory answers</string>
-    <string name="total_action_plans_proposed">Total Action plans proposed</string>
-    <string name="total_budget_proposed">Total Budget proposed</string>
-    <string name="dm_compliant">Compliant</string>
-    <string name="dm_satisfactory">Satisfactory</string>
-    <string name="dm_non_compliant">Non Compliant</string>
-    <string name="dm_capture_proof">Capture Proof</string>
-    <string name="back">Espalda</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="existing_module">Módulo Existente</string>
+    <string name="over_all_result">Resultado General</string>
+    <string name="total_compliant_answers">Total respuestas Cumplimiento</string>
+    <string name="total_non_compliant_answers">Total respuestas No cumplimiento</string>
+    <string name="total_satisfactory_answers">Total respuestas Satisfactorias</string>
+    <string name="total_action_plans_proposed">Total Planes de Acción propuestos</string>
+    <string name="total_budget_proposed">Total Presupuesto propuesto</string>
+    <string name="dm_compliant">Cumplimiento</string>
+    <string name="dm_satisfactory">Satisfactorio</string>
+    <string name="dm_non_compliant">No cumplimiento</string>
+    <string name="dm_capture_proof">Capturar prueba</string>
+    <string name="back">Atrás</string>
+    <string name="dm_select_currency_txt">Seleccione la moneda para el plan de acción</string>
+    <string name="dm_header_txt">Pruebas y Planes de Acción del Módulo de Diagnóstico</string>
     <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_hint_txt">Módulo de Diagnóstico</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
@@ -812,6 +811,11 @@
     <string name="image_downloaded">Imágenes descargadas con éxito</string>
     <string name="file_exceeds">El tamaño del archivo excede </string>
     <string name="total_file_size">El tamaño total de los archivos supera los 5 MB. Sube un archivo con un tamaño inferior a </string>
+    <string name="select_module">Seleccione el Módulo</string>
+    <string name="dm_survey">Encuesta</string>
+    <string name="dm_actionplan_proof">Prueba y Plan de Acción</string>
+    <string name="dm_survey_results">Resultados de Encuestas</string>
+    <string name="dm_select_action_plan">Seleccionar Plan de Acción</string>
 
 </resources>
 
