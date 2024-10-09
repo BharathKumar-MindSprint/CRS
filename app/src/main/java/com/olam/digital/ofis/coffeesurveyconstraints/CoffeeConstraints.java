@@ -125,28 +125,6 @@ public class CoffeeConstraints {
         return errorMsg+" "+questions;
     }
 
-    public String getConstraintExceedMsgRadio(Context context,DataLayer dl) {
-        String errorMsg=context.getResources().getString(R.string.please_check_question);
-        Set<Integer> constraintQuestions= Objects.requireNonNull(DynamicQuestions.getInstance()).constraintsSet;
-        Set<Integer> surveyQuestions= Objects.requireNonNull(DynamicQuestions.getInstance()).surveySetRadio;
-        String questions = "";
-        if (constraintQuestions.size()>0 || surveyQuestions.size()>0){
-            StringBuilder csvBuilder = new StringBuilder();
-            for(Integer question : surveyQuestions){
-                csvBuilder.append(dl.getQuestionSurveyCompletion(String.valueOf(question)));
-                csvBuilder.append(",");
-            }
-            for(Integer question : constraintQuestions){
-                csvBuilder.append(dl.getQuestionNo(String.valueOf(question)));
-                csvBuilder.append(",");
-            }
-            questions= csvBuilder.toString();
-            questions = questions.substring(0, questions.length() - ",".length());
-        }
-
-        return errorMsg+" "+questions;
-    }
-
     public String getAffectedQuestionMsg(Context context,DataLayer dl,ArrayList<Integer> affectedQuestionList) {
         String errorMsg=context.getResources().getString(R.string.please_check_question);
         String dependedMsg=context.getResources().getString(R.string.please_check_dependent_question);

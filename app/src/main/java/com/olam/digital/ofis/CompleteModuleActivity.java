@@ -776,7 +776,6 @@ public class CompleteModuleActivity extends BaseActivity {
                 saveSubModule("back");
                 DynamicQuestions.getInstance().constraintsSet.clear();
                 DynamicQuestions.getInstance().surveySet.clear();
-                DynamicQuestions.getInstance().surveySetRadio.clear();
             }
         });
 
@@ -793,12 +792,6 @@ public class CompleteModuleActivity extends BaseActivity {
 //                    }
                     if (DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0) {
                         String constraintMsg = new CoffeeConstraints().getConstraintExceedMsg(context, dl);
-                        Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    if (DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySetRadio.size() > 0) {
-                        String constraintMsg = new CoffeeConstraints().getConstraintExceedMsgRadio(context, dl);
                         Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
                         return;
                     }

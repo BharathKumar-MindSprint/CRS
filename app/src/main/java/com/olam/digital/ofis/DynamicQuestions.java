@@ -141,7 +141,6 @@ public class DynamicQuestions {
     private TextView plotsHeader, densityResult;
     private Hashtable<String, String> plotvariants;
     public Set<Integer> surveySet = new HashSet<>();
-    public Set<Integer> surveySetRadio = new HashSet<>();
     public Set<Integer> constraintsSet = new HashSet<>();
     public Set<Integer> editQuestionSet = new HashSet<>();
     private static DynamicQuestions instance = null;
@@ -602,10 +601,10 @@ public class DynamicQuestions {
                 }
                 if (surveyCompletion == finalSwitchId) {
                     questionWrapper.addView(finalYesNoConstraint);
-                    surveySetRadio.add(questionId);
+                    surveySet.add(questionId);
                     finalYesNoConstraint.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
                 } else {
-                    surveySetRadio.remove(questionId);
+                    surveySet.remove(questionId);
                     questionWrapper.removeView(finalYesNoConstraint);
                 }
 
