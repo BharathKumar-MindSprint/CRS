@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -463,7 +464,11 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(MyReceiver,mIntentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(MyReceiver,mIntentFilter,RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(MyReceiver,mIntentFilter);
+        }
     }
 
     @Override
@@ -475,7 +480,11 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     @Override
     protected void onRestart() {
         super.onRestart();
-        registerReceiver(MyReceiver,mIntentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(MyReceiver,mIntentFilter,RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(MyReceiver,mIntentFilter);
+        }
     }
 
     @Override
