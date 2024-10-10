@@ -753,7 +753,7 @@ public class SyncAllTask extends SyncTask {
                                 item = countryArray.getJSONObject(j);
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
-                                boolean calculateCompositeFlag = item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
+                                boolean calculateCompositeFlag = item.has(Utilities.CALCULATE_COMPOSITE_FLAG) && item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
                                 Utilities.saveToSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, null, calculateCompositeFlag);

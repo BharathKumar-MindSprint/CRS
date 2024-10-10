@@ -6380,7 +6380,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         DmMainModule dmMainModule = db.dmMainModuleDao().getDmMainModule(moduleId);
 
                                         if (plotId != 0) {
-                                            boolean isDeforestationSurvey = db.dmMasterDataDao().getDiagnosticPlotTypeId("EUDR Ground Verification Survey") == dmMainModule.plotSurveyType;
+                                            boolean isDeforestationSurvey = db.dmMasterDataDao().getDiagnosticPlotTypeId(Utilities.EUDR_GROUND_VERIFICATION_SURVEY) == dmMainModule.plotSurveyType;
                                             dl.updatePlotFlagsAndSurveyCapture(isDeforestationSurvey, plotId);
                                         }
                                     }

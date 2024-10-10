@@ -449,7 +449,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             MatrixCursor mc = new MatrixCursor(mcColumns);
 
             int diagnosticTypeId = db.dmMasterDataDao().getDiagnosticPlotTypeId("Plot");
-            int EUDRGroundVerificationSurveyId = db.dmMasterDataDao().getDiagnosticPlotTypeId("EUDR Ground Verification Survey");
+            int EUDRGroundVerificationSurveyId = db.dmMasterDataDao().getDiagnosticPlotTypeId(Utilities.EUDR_GROUND_VERIFICATION_SURVEY);
 
             List<DmMainModule> dmPlotModuleData = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
 

@@ -1981,7 +1981,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     diagnosticType = dmMasterDataModel.getId();
                                 }
 
-                                if (dmMasterDataModel.getValue().equalsIgnoreCase("EUDR Ground Verification Survey")) {
+                                if (dmMasterDataModel.getValue().equalsIgnoreCase(Utilities.EUDR_GROUND_VERIFICATION_SURVEY)) {
                                     eudrGroundVerificationSurveyId = dmMasterDataModel.getId();
                                 }
 
