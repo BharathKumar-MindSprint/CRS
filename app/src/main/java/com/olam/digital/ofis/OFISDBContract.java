@@ -2590,7 +2590,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_FARM_ID = "farm_id";
         public static final String COLUMN_NAME_EXISTING_FARM_TYPE = "farmType";
         public static final String COLUMN_NAME_RECORDED_PLOTS= "positionData";
-        // public static final String COLUMN_NAME_NAME_IS_FARM_AVAILABLE = "farm_available";
         public static final String COLUMN_NAME_NAME_LATITUDE = "primary_lat";
         public static final String COLUMN_NAME_NAME_LONGITUDE = "primary_lng";
         public static final String COLUMN_NAME_NAME_STAKE_HOLDERS = "stakeHolders";

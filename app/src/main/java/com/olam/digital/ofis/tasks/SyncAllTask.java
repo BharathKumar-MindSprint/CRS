@@ -425,11 +425,6 @@ public class SyncAllTask extends SyncTask {
             }
             DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO,ansCount);
         } else if (operation == SyncOperation.START_IMPORT) {
-            /*if (pd != null && pd.isShowing()) {
-                String pdUpdate = (String) values[1];
-                pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
-            }
-*/
             Log.e("UpdateSpinnerListsTask:","before async");
             // Goes directly to the AsyncTask
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
@@ -450,16 +445,6 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
             multifarmFarmResponse = null;
-
-            // Goes directly to the AsyncTask
-
-            // not in this scope
-//            new UpdateFmpTask(context).execute(fmpResponse);
-//            fmpResponse = null;
-
-            // Goes directly to the AsyncTask
-            //new UpdateTransactionListsTask(context).execute(transactionResponse);
-            //transactionResponse = null;
 
             // Goes directly to the AsyncTask
             new UpdateTrainingListsTask(context).execute(trainingResponse);
