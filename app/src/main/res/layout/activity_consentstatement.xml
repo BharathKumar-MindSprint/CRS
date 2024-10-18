@@ -1384,6 +1384,23 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page5_26"/>
                             </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/statement_rubber_indo"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:visibility="gone"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page5_27" />
+                            </TableRow>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="50dp"/>
