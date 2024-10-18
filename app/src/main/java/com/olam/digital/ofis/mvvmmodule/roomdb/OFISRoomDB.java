@@ -35,6 +35,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
@@ -74,8 +75,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class},
-        version = 14)
+        DmMasterData.class, DmModuleAssignments.class},
+        version = 15)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -133,6 +134,8 @@ public abstract class OFISRoomDB extends RoomDatabase {
 
     public abstract DmMasterDataDao dmMasterDataDao();
 
+    public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
+
     public static volatile OFISRoomDB INSTANCE = null;
 
     public static OFISRoomDB getDbInstance(Context context) {
@@ -159,10 +162,17 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
+        final Migration MIGRATION_14_15 = new Migration(14, 15) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS DmModuleAssignments ( uid INTEGER PRIMARY KEY NOT NULL, moduleId INTEGER, assignmentType TEXT, assignmentId INTEGER)");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
                     .fallbackToDestructiveMigration()
                     .build();
         }

@@ -59,8 +59,6 @@ import java.util.Set;
 
 public class ViewPlotSurveyActivity extends BaseActivity {
 
-//    private RecyclerView surveyChildLabourRecycleView;
-//    private PlotSurveyRecyclerAdapter childSurveyRecyclerAdapter;
     private FarmerDTO farmerDTO;
     public static Long farmerID;
 
@@ -99,6 +97,8 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     String followUpCount;
     String moduleID;
 
+    private Cursor farmer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +116,10 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             e.printStackTrace();
         }
         DynamicQuestions.farmerGeo=dl.getFarmerInfo(this,farmerID);
+
+        if(isDiagnosticsPlotSurvey) {
+            setTitle(R.string.dm_plot_survey);
+        }
     }
 
     @Override
@@ -406,7 +410,32 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
     public Cursor getDiagnosticPlotSurveyModules() {
 
+        String countryId = "";
+        String regionId = "";
+        String districtId = "";
+        String placeId = "";
+        String farmerGroupId = "";
+        String sectionId = "";
+        String programmeId = "";
+        String productId = "";
+        String partnerId = "";
+
         try {
+            farmer = dl.getFarmerById(farmerID);
+            if (farmer.getCount() > 0) {
+                farmer.moveToFirst();
+                countryId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
+                regionId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID));
+                districtId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID));
+                placeId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
+                farmerGroupId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID));
+                sectionId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID));
+                programmeId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID));
+                productId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
+                partnerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID));
+            }
+
+
             String[] mcColumns = new String[]{
                     "_id",
                     "name",
@@ -451,7 +480,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             int diagnosticTypeId = db.dmMasterDataDao().getDiagnosticPlotTypeId("Plot");
             int EUDRGroundVerificationSurveyId = db.dmMasterDataDao().getDiagnosticPlotTypeId(Utilities.EUDR_GROUND_VERIFICATION_SURVEY);
 
-            List<DmMainModule> dmPlotModuleData = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
+            List<DmMainModule> dmPlotModuleData = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
             for (int i = 0; i < dmPlotModuleData.size(); i++){
                 dmSurveyName = Utilities.getNamesByLanguage(dmPlotModuleData.get(i));

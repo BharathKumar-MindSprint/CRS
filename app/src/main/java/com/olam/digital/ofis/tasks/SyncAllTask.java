@@ -595,6 +595,7 @@ public class SyncAllTask extends SyncTask {
             db.dmCurrencyDao().deleteAll();
             db.dmRangeActionPlansItemsDao().deleteAll();
             db.dmSurveyAnswerTableDao().deleteAll();
+            db.dmModuleAssignmentsDao().deleteAll();
         }catch (Exception e){
             e.printStackTrace();
         }

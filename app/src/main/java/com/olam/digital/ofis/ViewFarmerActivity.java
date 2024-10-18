@@ -1041,12 +1041,32 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     public Cursor getFarmerModules(long id, Context context, boolean farmSurvey) {
         Cursor farmer = null;
 
+        String countryId = "";
+        String regionId = "";
+        String districtId = "";
+        String placeId = "";
+        String farmerGroupId = "";
+        String sectionId = "";
+        String programmeId = "";
+        String productId = "";
+        String partnerId = "";
+
         try {
             farmer = dl.getFlattenedFarmer(id);
             Cursor output = null;
-
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
+
+                countryId = farmer.getString(farmer.getColumnIndex("country_id"));
+                regionId = farmer.getString(farmer.getColumnIndex("region_id"));
+                districtId = farmer.getString(farmer.getColumnIndex("district_id"));
+                placeId = farmer.getString(farmer.getColumnIndex("place_id"));
+                farmerGroupId = farmer.getString(farmer.getColumnIndex("farmergroup_id"));
+                sectionId = farmer.getString(farmer.getColumnIndex("section_id"));
+                programmeId = farmer.getString(farmer.getColumnIndex("programme_id"));
+                productId = farmer.getString(farmer.getColumnIndex("product_id"));
+                partnerId = farmer.getString(farmer.getColumnIndex("partner_id"));
+
                 String modulesQuery="";
                 if (farmSurvey){
                      modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
@@ -1095,17 +1115,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
-                        farmer.getString(farmer.getColumnIndex("country_id")),
-                        farmer.getString(farmer.getColumnIndex("country_id")),
-                        farmer.getString(farmer.getColumnIndex("country_id")),
-                        farmer.getString(farmer.getColumnIndex("region_id")),
-                        farmer.getString(farmer.getColumnIndex("district_id")),
-                        farmer.getString(farmer.getColumnIndex("place_id")),
-                        farmer.getString(farmer.getColumnIndex("farmergroup_id")),
-                        farmer.getString(farmer.getColumnIndex("section_id")),
-                        farmer.getString(farmer.getColumnIndex("programme_id")),
-                        farmer.getString(farmer.getColumnIndex("product_id")),
-                        farmer.getString(farmer.getColumnIndex("partner_id"))
+                        countryId,
+                        countryId,
+                        countryId,
+                        regionId,
+                        districtId,
+                        placeId,
+                        farmerGroupId,
+                        sectionId,
+                        programmeId,
+                        productId,
+                        partnerId
                 };
 //                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
                 @SuppressLint("Recycle") Cursor farmerModules = dl.getfarmerModules(modulesQuery, modulesQueryValues);
@@ -1382,10 +1402,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
                 int diagnosticTypeId = db.dmMasterDataDao().getDiagnosticPlotTypeId("Plot");
-                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule(diagnosticTypeId);
+                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDmMainModuleByAssignments(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
                 for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-//                    dmSurveyName = dmQuestionsModuleList.get(i).nameFr;
                     dmSurveyName = getNamesbyLanguage(dmQuestionsModuleList.get(i));
                     dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
                     moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
@@ -1428,7 +1447,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
 
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId), aggregatedIndicator);
-                List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmPlotModuleByDiagnosticTypeId(diagnosticTypeId);
+                List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
                 if (calculateComplianceFlag && farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
                     mc.addRow(new String[]{

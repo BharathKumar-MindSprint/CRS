@@ -97,6 +97,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
@@ -128,6 +129,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
@@ -2028,6 +2030,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     Integer plotSurveyType = mainResponseList.get(i).getPlotSurveyType();
                                     List<Integer> submittedPlotIds = mainResponseList.get(i).getSubmittedPlotIds();
                                     String captureLocation = mainResponseList.get(i).getCaptureLocation();
+                                    List<AssignmentsModel> assignmentsModel = mainResponseList.get(i).getAssignments();
 
 
                                     List<AssessmentResultTypeItems> assessmentResultTypeItemsList = new ArrayList<>();
@@ -2095,6 +2098,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                 dl.updateSurveyCapturedForPlots(plotSurveyType == finalEudrGroundVerificationSurveyId, submittedPlotIds);
                                             }
                                         }, 5000);
+                                    }
+
+
+                                    List<DmModuleAssignments> dmModuleAssignments = generateModuleAssignments(assignmentsModel, id);
+
+                                    if (!dmModuleAssignments.isEmpty()) {
+                                        db.dmModuleAssignmentsDao().insertDmModuleAssignMents(dmModuleAssignments);
                                     }
 
                                     try {
@@ -2791,6 +2801,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         db.dmSurveyAnswerTableDao().deleteAll();
         db.dmMasterDataDao().deleteAll();
         db.dmRecurrenceDao().deleteAll();
+        db.dmModuleAssignmentsDao().deleteAll();
     }
 
     public static void GetAllFollowUpDMData() {
@@ -2986,6 +2997,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
 
+    }
+
+    private static List<DmModuleAssignments> generateModuleAssignments(List<AssignmentsModel> assignmentsModels, int moduleId) {
+        List<DmModuleAssignments> dmModuleAssignments = new ArrayList<>();
+
+        for (AssignmentsModel assignmentsModel : assignmentsModels) {
+            String assignmentType = assignmentsModel.getAssignmentType();
+
+            for (int id : assignmentsModel.getAssignmentId()) {
+                dmModuleAssignments.add(new DmModuleAssignments(moduleId, assignmentType, id));
+            }
+        }
+
+        return dmModuleAssignments;
     }
 
 }

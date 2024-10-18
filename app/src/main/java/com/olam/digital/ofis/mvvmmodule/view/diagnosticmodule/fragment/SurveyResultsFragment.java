@@ -193,7 +193,7 @@ public class SurveyResultsFragment extends Fragment {
                     }
                 }
 
-                db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID));
+                db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID), Constants.PLOT_ID);
 
                 DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
                         Integer.parseInt(Constants.satisfactorySize),

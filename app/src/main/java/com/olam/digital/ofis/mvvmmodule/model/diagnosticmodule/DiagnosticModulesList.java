@@ -136,6 +136,9 @@ public class DiagnosticModulesList {
 	@SerializedName("captureLocation")
 	public String captureLocation;
 
+	@SerializedName("assignments")
+	public List<AssignmentsModel> assignments;
+
 	public String getRecurrenceStartDate() {
 		return recurrenceStartDate;
 	}
@@ -454,6 +457,14 @@ public class DiagnosticModulesList {
 
 	public String getCaptureLocation() {
 		return captureLocation;
+	}
+
+	public List<AssignmentsModel> getAssignments() {
+		return assignments;
+	}
+
+	public void setAssignments(List<AssignmentsModel> assignments) {
+		this.assignments = assignments;
 	}
 
 	public void setCaptureLocation(String captureLocation) {
