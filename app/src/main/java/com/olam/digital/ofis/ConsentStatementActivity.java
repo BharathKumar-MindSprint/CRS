@@ -99,7 +99,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
 
         // Indonesia rubber Requirement
         statement_rubber_indo = (TableRow) findViewById(R.id.statement_rubber_indo);
-        countryId = Objects.requireNonNull(getIntent().getExtras()).getInt("COUNTRY_ID_INDO");
+        countryId = Objects.requireNonNull(getIntent().getExtras()).getInt("COUNTRY_ID");
         productId = dl.getEnumeratorProduct();
 
         nextsavebtn.setOnClickListener(this);

@@ -2674,7 +2674,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         if(countryID == 27 && Utilities.getOperatingUnitSharedPrefs(this).equals("OFI") ){
                             in = new Intent(this, ConsentStatementOFIsBrazilActivity.class);
                         }
-                        in.putExtra("COUNTRY_ID_INDO", countryID);
+                        in.putExtra("COUNTRY_ID", countryID);
                         Bundle bundle = new Bundle();
                         bundle.putString("displayFarmerId", olamFarmerIdStr);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
