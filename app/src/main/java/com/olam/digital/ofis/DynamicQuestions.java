@@ -141,7 +141,6 @@ public class DynamicQuestions {
     private TextView plotsHeader, densityResult;
     private Hashtable<String, String> plotvariants;
     public Set<Integer> surveySet = new HashSet<>();
-    public Set<Integer> surveySetRadio = new HashSet<>();
     public Set<Integer> constraintsSet = new HashSet<>();
     public Set<Integer> editQuestionSet = new HashSet<>();
     private static DynamicQuestions instance = null;
@@ -462,7 +461,8 @@ public class DynamicQuestions {
     private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType,
                                               LinearLayout linearLayout, int repeaterItemPosition, Integer globalMetricId, Integer localMetricId, int metricsValue,
                                               Spinner spinner, Map<Integer, String> spinnerData, ArrayAdapter<String> spinnerAdapter,
-                                              LinearLayout previewLayout, TextView contentTextView, LinearLayout questionWrapper,int finalSwitchId, TextView finalYesNoConstraint ) {
+                                              LinearLayout previewLayout, TextView contentTextView, LinearLayout questionWrapper,
+                                              int finalSwitchId, TextView finalYesNoConstraint, Cursor questions ) {
 
         final Integer[] radioGlobalMetrics = {globalMetricId};
         final Integer[] radioLocalMetrics = {localMetricId};
@@ -592,7 +592,7 @@ public class DynamicQuestions {
 //                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
 
                 // If id =2 , survey-completion-check
-                String getNoValue = dl.getValueByLookUpIDRadio(String.valueOf(checkedId));
+                String getNoValue = dl.getValueByLookUpID(String.valueOf(checkedId), questions, "_en");
                 int surveyCompletion = 0;
                 if (Objects.equals(getNoValue.toLowerCase(),"no")){
                     surveyCompletion = 2;
@@ -602,10 +602,10 @@ public class DynamicQuestions {
                 }
                 if (surveyCompletion == finalSwitchId) {
                     questionWrapper.addView(finalYesNoConstraint);
-                    surveySetRadio.add(questionId);
+                    surveySet.add(questionId);
                     finalYesNoConstraint.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
                 } else {
-                    surveySetRadio.remove(questionId);
+                    surveySet.remove(questionId);
                     questionWrapper.removeView(finalYesNoConstraint);
                 }
 
@@ -5703,7 +5703,7 @@ public class DynamicQuestions {
                 parentLayout.addView(questionWrapper);
             }
 
-            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView, questionWrapper, finalSwitchId, finalYesNoConstraint);
+            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView, questionWrapper, finalSwitchId, finalYesNoConstraint,questions);
 
         }
 
