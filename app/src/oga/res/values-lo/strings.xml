@@ -12,7 +12,7 @@
     <string name="title_activity_add_farmer">ເພີມ​ຊື່​ຊາວ​ສວນ</string>
     <string name="title_activity_add_infrastructure">ເພີມ​ພື້ນ​ຖານ​ໂຄງ​ລາງ​ສັງ​ຄົມ</string>
     <string name="title_activity_find_farmer">ຊອກ​ຫາ​ສວນ</string>
-    <string name="title_activity_view_farmer">ລາຍ​ລະ​ອ່ຽດ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="title_activity_view_farmer">ລາຍລະອຽດຂອງຊາວສວນ</string>
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
 
     <!-- main stuff -->
@@ -93,7 +93,7 @@
     <string name="New_place_name">​ຊື່​ສະ​ຖານ​ທີ​ໃໝ່</string>
     <string name="new_place_name_placeholder">​ສ​ະ​ຖານ​ທີ​ໃໝ່</string>
     <string name="Olam_Farmer_ID">ເລກ​ບັດ​ຊາວ​ສວນ​ໂອ​ລາມ</string>
-    <string name="Save">ເສັບ</string>
+<!--    <string name="Save">ເສັບ</string>-->
     <string name="Add_Signature">ລາຍ​ເຊັນ:</string>
     <string name="Signature">ລາຍ​ເຊັນ</string>
 
@@ -631,7 +631,7 @@
     <string name="matching_results_found">ຜົນການຄົ້ນຫາທີ່ກົງກັນ</string>
     <string name="back_to_search">ກັບໄປຫາການຄົ້ນຫາ</string>
     <string name="proceed_to_registration">ດຳ ເນີນການລົງທະບຽນ</string>
-    <string name="back">ກັບໄປ</string>
+<!--    <string name="back">ກັບໄປ</string>-->
     <string name="search_by_photo">ຄົ້ນຫາຕາມຮູບ</string>
     <string name="no_matching_results_found">ບໍ່ພົບຜົນການຊອກຫາທີ່ກົງກັນ</string>
     <string name="biometric_update">ການປັບປຸງທາງຊີວະພາບ</string>
@@ -951,7 +951,6 @@
     <string name="Alert_message_to_contact_administrator">ອຸຍ!!! ມີບາງຢ່າງຜິດພາດ. ກະລຸນາຕິດຕໍ່ຜູ້ເບິ່ງແຍງລະບົບ.</string>
     <string name="error">ຜິດພາດ</string>
     <string name="no_data_found">ບໍ່ພົບຂໍ້ມູນ</string>
-    <string name="select_module">ເລືອກໂມດູນ</string>
     <string name="selecting_course">ເລືອກຫຼັກສູດ</string>
     <string name="document_viewer">ຕົວເບິ່ງເອກະສານ</string>
     <string name="failed_to_load_document">ໂຫຼດເອກະສານບໍ່ສຳເລັດ</string>
@@ -981,10 +980,7 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">ຂະໜາດຂອງດິນຕອນນ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລະບຸຂະໜາດຂອງດິນຕອນທີ່ຖືກຕ້ອງ.</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
     <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
@@ -994,4 +990,26 @@
     <string name="ready_to_download_photo_checkbox">ມີ​ຮູບ​ພາບ​ທີ່​ຈໍາ​ເປັນ​ຕ້ອງ​ໄດ້​ຮັບ​ການ​ດາວ​ໂຫຼດ​ສໍາ​ລັບ​ຄໍາ​ຖາມ checkbox ຮູບ​ພາບ​ແມ່ນ​. ທ່ານຕ້ອງການສືບຕໍ່ດາວໂຫຼດຮູບພາບດຽວນີ້ບໍ?</string>
     <string name="no_images_to_be_downloaded">ບໍ່ມີຮູບພາບທີ່ຈະດາວໂຫລດ</string>
     <string name="image_downloaded">ດາວໂຫຼດຮູບພາບສໍາເລັດ</string>
+
+    <string name="dm_hint_txt">ໂມດູນການວິໃຈ</string>
+    <string name="select_module">ເລືອກໂມດູນ</string>
+    <string name="existing_module">ໂມດູນທີ່ມີຢູ່</string>
+    <string name="dm_header_txt">ແຜນປະຕິບັດງານໂມດູນວິນິດໄສ ແລະຫຼັກຖານ</string>
+    <string name="dm_survey">ການສໍາຫຼວດ</string>
+    <string name="dm_actionplan_proof">ແຜນປະຕິບັດງານ ແລະຫຼັກຖານ</string>
+    <string name="dm_survey_results">ຜົນການສຳຫຼວດ</string>
+    <string name="dm_select_currency_txt">ເລືອກສະກຸນເງິນສໍາລັບແຜນປະຕິບັດງານ</string>
+    <string name="dm_compliant">ການຮ້ອງທຸກ</string>
+    <string name="dm_satisfactory">ເປັນທີ່ພໍໃຈ</string>
+    <string name="dm_non_compliant">ບໍ່ຮ້ອງທຸກ</string>
+    <string name="over_all_result">ຜົນໄດ້ຮັບໂດຍລວມ</string>
+    <string name="total_compliant_answers">ຄໍາຕອບຄໍາຮ້ອງທຸກທັງຫມົດ</string>
+    <string name="total_non_compliant_answers">ຄໍາຕອບທີ່ບໍ່ແມ່ນຄໍາຮ້ອງທຸກທັງຫມົດ</string>
+    <string name="total_satisfactory_answers">ຄໍາຕອບທີ່ພໍໃຈທັງໝົດ</string>
+    <string name="total_action_plans_proposed">ສະເໜີແຜນການດຳເນີນງານທັງໝົດ</string>
+    <string name="total_budget_proposed">ສະເໜີງົບປະມານທັງໝົດ</string>
+    <string name="dm_capture_proof">ບັນທຶກຫຼັກຖານ</string>
+    <string name="back">ກັບຄືນ</string>
+    <string name="Save">ບັນທຶກ</string>
+    <string name="dm_select_action_plan">ເລືອກແຜນປະຕິບັດງານ</string>
 </resources>
