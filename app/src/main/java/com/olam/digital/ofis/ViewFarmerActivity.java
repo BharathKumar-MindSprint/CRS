@@ -1446,7 +1446,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 }
 
-                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId), aggregatedIndicator);
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
                 List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
                 if (calculateComplianceFlag && farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
