@@ -71,6 +71,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -425,6 +426,11 @@ public class SyncAllTask extends SyncTask {
             }
             DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO,ansCount);
         } else if (operation == SyncOperation.START_IMPORT) {
+            // Goes directly to the AsyncTask
+            Log.d("Update","before async");
+            new UpdateFarmersTask(context).execute(farmerResponse);
+            farmerResponse = null;
+
             Log.e("UpdateSpinnerListsTask:","before async");
             // Goes directly to the AsyncTask
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
@@ -453,10 +459,6 @@ public class SyncAllTask extends SyncTask {
             // Goes directly to the AsyncTask
             new UpdateTasksListsTask(context).execute(tasksResponse);
             tasksResponse = null;
-
-            // Goes directly to the AsyncTask
-            new UpdateFarmersTask(context).execute(farmerResponse);
-            farmerResponse = null;
 
             new UpdateChildrenTask(context).execute(childResponse);
             childResponse = null;
@@ -583,6 +585,7 @@ public class SyncAllTask extends SyncTask {
             db.dmCurrencyDao().deleteAll();
             db.dmRangeActionPlansItemsDao().deleteAll();
             db.dmSurveyAnswerTableDao().deleteAll();
+            db.dmModuleAssignmentsDao().deleteAll();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -741,16 +744,17 @@ public class SyncAllTask extends SyncTask {
                                 item = countryArray.getJSONObject(j);
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
+                                boolean calculateCompositeFlag = item.has(Utilities.CALCULATE_COMPOSITE_FLAG) && item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
+                                Utilities.saveToSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, null, calculateCompositeFlag);
+
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
                                     isoCodes.add(code);
                                     String countryId = item.getString("countryId");
                                     countryIds.add(countryId);
                                 }
-
-//                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
                             }
                             assignmentCheckResponse = response;
                             Gson gson = new Gson();
@@ -2306,7 +2310,7 @@ public class SyncAllTask extends SyncTask {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -12,7 +12,7 @@
     <string name="title_activity_add_farmer">Agregar nuevo agricultor</string>
     <string name="title_activity_add_infrastructure">Añadir infraestructura comunitaria</string>
     <string name="title_activity_find_farmer">Encontrar agricultor</string>
-    <string name="title_activity_view_farmer">Detalles del agricultor</string>
+    <string name="title_activity_view_farmer">Detalles del Productor</string>
     <string name="title_activity_complete_module">Completar cuestionario</string>
 
     <!-- main stuff -->
@@ -623,7 +623,7 @@
     <string name="matching_results_found">Se encontraron resultados coincidentes</string>
     <string name="back_to_search">Volver a la búsqueda</string>
     <string name="proceed_to_registration">Proceda a registrarse</string>
-    <string name="back">Espalda</string>
+    <string name="back">Atrás</string>
     <string name="search_by_photo">Buscar por foto</string>
     <string name="no_matching_results_found">No se encontraron resultados coincidentes</string>
     <string name="biometric_update">Actualización biométrica</string>
@@ -829,10 +829,10 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">El tamaño de la parcela es menor que el área mínima configurada (0,0009 HA). Especifique un tamaño de parcela válido.</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="dm_select_currency_txt">Seleccione la moneda para el plan de acción</string>
+    <string name="dm_header_txt">Pruebas y Planes de Acción del Módulo de Diagnóstico</string>
     <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_hint_txt">Módulo de Diagnóstico</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
@@ -843,5 +843,22 @@
     <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
     <string name="no_images_to_be_downloaded">No hay imágenes para descargar.</string>
     <string name="image_downloaded">Imágenes descargadas con éxito</string>
+    <string name="select_module">Seleccione el Módulo</string>
+    <string name="existing_module">Módulo Existente</string>
+    <string name="dm_survey">Encuesta</string>
+    <string name="dm_actionplan_proof">Prueba y Plan de Acción</string>
+    <string name="dm_survey_results">Resultados de Encuestas</string>
+    <string name="dm_compliant">Cumplimiento</string>
+    <string name="dm_satisfactory">Satisfactorio</string>
+    <string name="dm_non_compliant">No cumplimiento</string>
+    <string name="dm_capture_proof">Capturar prueba</string>
+    <string name="over_all_result">Resultado General</string>
+    <string name="total_compliant_answers">Total respuestas Cumplimiento</string>
+    <string name="total_non_compliant_answers">Total respuestas No cumplimiento</string>
+    <string name="total_satisfactory_answers">Total respuestas Satisfactorias</string>
+    <string name="total_action_plans_proposed">Total Planes de Acción propuestos</string>
+    <string name="total_budget_proposed">Total Presupuesto propuesto</string>
+    <string name="dm_select_action_plan">Seleccionar Plan de Acción</string>
+
 </resources>
 

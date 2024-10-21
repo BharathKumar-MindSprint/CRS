@@ -59,6 +59,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -6270,7 +6271,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                     int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
-                    DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(farmerId, moduleId);
+                    int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+                    String location = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
+                    DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(farmerId, moduleId, plotId);
 
                     JSONObject hashMap = new JSONObject();
                     hashMap.put("farmerId", dmSurveyReport.getFarmerId());
@@ -6280,10 +6283,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
                     hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
                     hashMap.put("isMobile", true);
+                    hashMap.put("location", location);
+
+                    if (plotId != 0) {
+                        hashMap.put("plotId", plotId);
+                    }
 
                     JSONArray answers = new JSONArray();
 
-                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
 
                     String totalAmount = "0";
 
@@ -6304,13 +6312,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             complaintFileTableList.clear();
 
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0);
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0, plotId);
 
-//                            List<String> files = new ArrayList<>();
-//                            files.clear();
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
-//                                files.add(complaintFileTableList.get(j).getFile_name());
                                 jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
                             }
 
@@ -6370,7 +6375,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 }, 500);
                                             }
                                         }
-                                        db.dmSurveyAnswerTableDao().updateSyncStatus(String.valueOf(moduleId), String.valueOf(farmerId), true, jsonObject.optInt("id"));
+                                        db.dmSurveyAnswerTableDao().updateSyncStatus(String.valueOf(moduleId), String.valueOf(farmerId), true, jsonObject.optInt("id"), plotId);
+
+                                        DmMainModule dmMainModule = db.dmMainModuleDao().getDmMainModule(moduleId);
+
+                                        if (plotId != 0) {
+                                            boolean isDeforestationSurvey = db.dmMasterDataDao().getDiagnosticPlotTypeId(Utilities.EUDR_GROUND_VERIFICATION_SURVEY) == dmMainModule.plotSurveyType;
+                                            dl.updatePlotFlagsAndSurveyCapture(isDeforestationSurvey, plotId);
+                                        }
                                     }
 
                                     dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -6465,11 +6477,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                     int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+                    int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+                    String location = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
+
                     JSONArray answers = new JSONArray();
                     JSONObject followUpData = new JSONObject();
                     followUpData.put("farmerId", farmerId);
                     followUpData.put("moduleId", moduleId);
-                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
+                    followUpData.put("location", location);
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                     followUpData.put("submittedModuleId", dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
                     if (followupList.size() != 0) {
@@ -6477,7 +6493,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             JSONObject ans = new JSONObject();
 //                            ans.put("id", followupList.get(i).id);
 //                            ans.put("moduleId", followupList.get(i).moduleId);
-//                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
+//                            ans.put("dmSubModId", followupList.get(i).dmSubModId);12.985743,80.2464469
                             ans.put("questionId", followupList.get(i).questionId);
                             ans.put("actionPlanId", followupList.get(i).actionPlanId);
                             ans.put("actionPlan", followupList.get(i).actionPlanText);
@@ -6493,7 +6509,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             complaintFileTableList.clear();
 
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt);
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt, plotId);
 
 //                            List<String> files = new ArrayList<>();
 //                            files.clear();
@@ -6619,7 +6635,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
+            int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofissurvey/image/upload";
 
@@ -6632,7 +6650,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 List<String> fileName = new ArrayList<>();
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(String.valueOf(farmerId), questionId);
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(String.valueOf(farmerId), questionId, plotId);
                 List<Long> ids = new ArrayList<>();
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {

@@ -36,6 +36,7 @@ import android.widget.Spinner;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;
@@ -64,6 +65,8 @@ public class Utilities {
     public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
     public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
     public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
+
+    public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
     public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
     public static int syctask=0;
@@ -120,6 +123,8 @@ public class Utilities {
     public static final String LOCKOUT_TIME = "lockoutTime";
 
     public static final String PREVIOUS_ENTERED_USERNAME = "previousEnteredUsername";
+
+    public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -836,6 +841,24 @@ public  static String base64ConversionForImage(String filepath)  {
             case "vi" -> "nameVi";
             default -> "name";
         };
+    }
+
+    public static String getNamesByLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.name;
+            case "es" -> dmMainModule.nameEs;
+            case "fr" -> dmMainModule.nameFr;
+            case "id" -> dmMainModule.nameIdn;
+            case "in" -> dmMainModule.nameIdn;
+            case "lo" -> dmMainModule.nameLo;
+            case "pt" -> dmMainModule.namePt;
+            case "th" -> dmMainModule.nameTh;
+            case "tr" -> dmMainModule.nameTr;
+            case "vi" -> dmMainModule.nameVi;
+            default -> dmMainModule.name;
+        };
+
     }
 
 

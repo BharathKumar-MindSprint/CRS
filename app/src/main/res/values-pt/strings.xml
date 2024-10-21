@@ -92,7 +92,7 @@
     <string name="New_place_name">Nome do novo local</string>
     <string name="new_place_name_placeholder">Novo local</string>
     <string name="Olam_Farmer_ID">ID Olam do produtor</string>
-    <string name="Save">Salve</string>
+<!--    <string name="Save">Salve</string>-->
     <string name="Add_Signature">Assinatura:</string>
     <string name="Signature">Assinatura</string>
 
@@ -783,22 +783,7 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-    <string name="existing_module">Existing Module</string>
-    <string name="over_all_result">Over all Result</string>
-    <string name="total_compliant_answers">Total Compliant answers</string>
-    <string name="total_non_compliant_answers">Total Non-Compliant answers</string>
-    <string name="total_satisfactory_answers">Total Satisfactory answers</string>
-    <string name="total_action_plans_proposed">Total Action plans proposed</string>
-    <string name="total_budget_proposed">Total Budget proposed</string>
-    <string name="dm_compliant">Compliant</string>
-    <string name="dm_satisfactory">Satisfactory</string>
-    <string name="dm_non_compliant">Non Compliant</string>
-    <string name="dm_capture_proof">Capture Proof</string>
-    <string name="back">Costas</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
     <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="follow_up_survey">Follow-up survey</string>
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
@@ -811,5 +796,31 @@
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
     <string name="file_exceeds">O tamanho do arquivo excede </string>
     <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
+
+
+    <string name="dm_hint_txt">Módulo de diagnóstico</string>
+    <string name="select_module">Selecione Módulo</string>
+    <string name="existing_module">Módulo Existente</string>
+    <string name="dm_header_txt">Comprovações e Plano de Ação do Módulo de Diagnóstico</string>
+    <string name="dm_survey">Pesquisa</string>
+    <string name="dm_actionplan_proof">Comprovação e Plano de ação</string>
+    <string name="dm_survey_results">Resultados da pesquisa</string>
+    <string name="dm_select_currency_txt">Selecione a moeda do plano de ação</string>
+    <string name="dm_compliant">Em conformidade</string>
+    <string name="dm_satisfactory">Satisfatório</string>
+    <string name="dm_non_compliant">Não conforme</string>
+    <string name="over_all_result">Resultado geral</string>
+    <string name="total_compliant_answers">Total de respostas em conformidade</string>
+    <string name="total_non_compliant_answers">Total de respostas não conformes</string>
+    <string name="total_satisfactory_answers">Total de respostas satisfatórias</string>
+    <string name="total_action_plans_proposed">Total de Planos de ação propostos</string>
+    <string name="total_budget_proposed">Total de Orçamento proposto</string>
+    <string name="dm_capture_proof">Coletar comprovação</string>
+    <string name="back">Voltar</string>
+    <string name="Save">Salvar</string>
+    <string name="dm_select_action_plan">Selecione o plano de ação</string>
+
+    <string name="dm_plot_survey">Levantamento de Parcelas Diagnósticas</string>
+    <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
 
 </resources>

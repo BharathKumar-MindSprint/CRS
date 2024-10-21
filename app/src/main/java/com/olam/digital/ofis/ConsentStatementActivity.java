@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.content.ContextCompat;
@@ -50,6 +52,9 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     int page = 1;
     ScrollView scrollView;
     DataLayer dataLayer;
+    TableRow statement_rubber_indo;
+    int countryId;
+    int productId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,12 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         nextsavebtn = (Button) findViewById(R.id.nextsavebtn);
         prevbtn = (Button) findViewById(R.id.prevbtn);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
+
+        // Indonesia rubber Requirement
+        statement_rubber_indo = (TableRow) findViewById(R.id.statement_rubber_indo);
+        countryId = Objects.requireNonNull(getIntent().getExtras()).getInt("COUNTRY_ID");
+        productId = dl.getEnumeratorProduct();
+
         nextsavebtn.setOnClickListener(this);
         prevbtn.setOnClickListener(this);
         farmer_signature.setOnClickListener(this);
@@ -204,6 +215,13 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement3.setVisibility(View.GONE);
             consentStatement4.setVisibility(View.GONE);
             consentStatement5.setVisibility(View.VISIBLE);
+
+            // Indonesia Rubber requirement
+            if(countryId == 11 && productId == 4 && Utilities.getOperatingUnitSharedPrefs(this).equals("OGA")){
+                statement_rubber_indo.setVisibility(View.VISIBLE);
+            } else {
+                statement_rubber_indo.setVisibility(View.GONE);
+            }
             nextsavebtn.setText(getResources().getString(R.string.confirm));
         }
     }

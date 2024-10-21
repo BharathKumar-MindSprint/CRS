@@ -180,30 +180,19 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             insertHelper.prepareForInsert();
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
-//                try {
                 if (columnList.get(k).toString() != null) {
-                       /* if("countryLookUpValues".equals(tableName) && "name".equals(columnList.get(k))){
-//                            item = new JSONObject("\"name\":\"Country "+ j + "\"");;
-                            insertHelper.bind(columnKeys.get(k), "Country" + j);
-                        }else*/
-                    {
-                        if (tableName.equals(OFISDBContract.FarmerEntry.TABLE_NAME)) {
-                            if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID) {
-                                insertHelper.bind(columnKeys.get(k), item.optString("partnerId"));
-                            } else if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID) {
-                                insertHelper.bind(columnKeys.get(k), item.optString("programId"));
-                            } else {
-                                insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
-                            }
+                    if (tableName.equals(OFISDBContract.FarmerEntry.TABLE_NAME)) {
+                        if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID) {
+                            insertHelper.bind(columnKeys.get(k), item.optString("partnerId"));
+                        } else if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID) {
+                            insertHelper.bind(columnKeys.get(k), item.optString("programId"));
                         } else {
                             insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                         }
+                    } else {
+                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                     }
                 }
-//                } catch (JSONException e) {
-//                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
-//                    e.printStackTrace();
-//                }
             }
 
             insertHelper.execute();

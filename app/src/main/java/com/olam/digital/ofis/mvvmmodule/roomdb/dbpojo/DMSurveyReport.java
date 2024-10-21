@@ -71,6 +71,9 @@ public class DMSurveyReport {
     @ColumnInfo(name = "overAllResult")
     private String overAllResult;
 
+    @ColumnInfo(name = "plotId", defaultValue = "0")
+    private Integer plotId;
+
     public String getOverAllResult() {
         return overAllResult;
     }
@@ -106,7 +109,7 @@ public class DMSurveyReport {
 
     public DMSurveyReport(int totalComplaint, int totalSatisfactory, int totalNonComplaint, int totalActionPlan,
                           double totalBudget, String resultType, String resultValue, String resultRemarks ,long farmerId,
-                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour,String overAllResult) {
+                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour,String overAllResult, int plotId) {
         this.totalComplaint = totalComplaint;
         this.totalSatisfactory = totalSatisfactory;
         this.totalNonComplaint = totalNonComplaint;
@@ -122,6 +125,7 @@ public class DMSurveyReport {
         this.submissionDate = submissionDate;
         this.resultColour = resultColour;
         this.overAllResult = overAllResult;
+        this.plotId = plotId;
     }
 
     // Getters and setters for the properties
@@ -206,4 +210,13 @@ public class DMSurveyReport {
     public void setFarmerId(long farmerId) {
         this.farmerId = farmerId;
     }
+
+    public Integer getPlotId() {
+        return plotId;
+    }
+
+    public void setPlotId(Integer plotId) {
+        this.plotId = plotId;
+    }
+
 }

@@ -14,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 156;
+    private static final int DATABASE_VERSION = 155;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -547,7 +547,13 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT, " +
             OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT + " TEXT ," +
             OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT +" TEXT default null," +
-            OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL )";
+            OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT + " TEXT DEFAULT 'false' ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT + " TEXT DEFAULT 'false' ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " TEXT DEFAULT 'Open' ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false')";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
@@ -1049,6 +1055,10 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow155(sqLiteDatabase);
         }
 
+        if (oldVersion < 157) {
+            migrateFromVersionBelow155(sqLiteDatabase);
+        }
+
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1274,6 +1284,20 @@ class OFISDB extends SQLiteOpenHelper {
     }
 
     private void migrateFromVersionBelow155(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT + " TEXT DEFAULT 'false' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT + " TEXT DEFAULT 'false' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " TEXT DEFAULT 'Open' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS + " TEXT ");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFromVersionBelow156(SQLiteDatabase sqLiteDatabase) {
         try {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS multifarmFarms");
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS stakeHolders");
