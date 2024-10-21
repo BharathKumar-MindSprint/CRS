@@ -222,7 +222,7 @@ public class FollowUpActionPlan extends Fragment {
                         if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, Constants.ATTEMPT),"NOT Resolved")){
                             List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
                             if(dmComplaintFiles.size() == 0){
-                                Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
                                 goNextCaptureProof = false;
                                 break;
                             }else if (dmComplaintFiles.size() > 0){
@@ -241,7 +241,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 for (int j=0; j<qId.size(); j++) {
                     if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID ,Constants.NOTRESOLVED ), "0")){
-                        Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                         goNextActionPlan = false;
                         break;
                     }else {
@@ -518,11 +518,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -543,7 +543,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -576,7 +576,7 @@ public class FollowUpActionPlan extends Fragment {
                 public void onClick(View view) {
 
                     if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID, Constants.ATTEMPT, Constants.PLOT_ID).size()>=5){
-                        Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_maximum_5_files_can_be_uploaded), Toast.LENGTH_SHORT).show();
 
                     }else {
 
@@ -587,13 +587,13 @@ public class FollowUpActionPlan extends Fragment {
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
                             String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
-                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
-                                options = new CharSequence[]{"Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
-                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             }
                         }catch (Exception e){
@@ -605,12 +605,12 @@ public class FollowUpActionPlan extends Fragment {
 
 //                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Add Photo!");
+                        builder.setTitle(getResources().getString(R.string.dm_add_photo));
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
-                                if (finalOptions[item].equals("Take Photo")) {
+                                if (finalOptions[item].equals(getResources().getString(R.string.take_photo))) {
                                     if (isStoragePermissionCameraGranted()) {
 //                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
                                         GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
@@ -637,7 +637,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                     }
 
-                                } else if (finalOptions[item].equals("Choose from Gallery")) {
+                                } else if (finalOptions[item].equals(getResources().getString(R.string.dm_choose_from_gallery))) {
 
                                     if (isStoragePermissionGalleryGranted()) {
 
@@ -673,7 +673,7 @@ public class FollowUpActionPlan extends Fragment {
 
 
                                     }
-                                } else if (finalOptions[item].equals("Cancel")) {
+                                } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
                                 }
                             }
@@ -703,7 +703,7 @@ public class FollowUpActionPlan extends Fragment {
         ids.clear();
 
 
-        list.add("Select ActionPlan");
+        list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
         String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).answer;
         String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(id)).get(0).displayType;
@@ -717,7 +717,7 @@ public class FollowUpActionPlan extends Fragment {
         }
         boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
         if (allowCustomActionPlan) {
-            list.add("Custom ActionPlan");
+            list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
 
@@ -813,7 +813,7 @@ public class FollowUpActionPlan extends Fragment {
         LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
 
         EditText actionPlan = new EditText(getActivity());
-        actionPlan.setHint("Edit action plan details");
+        actionPlan.setHint(getResources().getString(R.string.dm_edit_action_plan_details));
         actionPlan.setFilters(new InputFilter[] { new InputFilter.LengthFilter(2000) });
         actionPlan.setTextSize(14);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -925,7 +925,7 @@ public class FollowUpActionPlan extends Fragment {
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     db.followUpItemMainTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
-                } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
+                } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
 //                  db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
@@ -1200,11 +1200,11 @@ public class FollowUpActionPlan extends Fragment {
                     public void onClick(View v) {
 
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                        builder1.setMessage("Do you want to remove this report");
-                        builder1.setTitle("Alert");
+                        builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                        builder1.setTitle(getResources().getString(R.string.Alert_txt));
                         builder1.setCancelable(false);
                         builder1.setPositiveButton(
-                                "YES",
+                                getResources().getString(R.string.yes),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
@@ -1227,7 +1227,7 @@ public class FollowUpActionPlan extends Fragment {
                                     }
                                 });
                         builder1.setNegativeButton(
-                                "NO",
+                                getResources().getString(R.string.no),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
@@ -1372,11 +1372,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1399,7 +1399,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1528,11 +1528,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1552,7 +1552,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1694,11 +1694,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1721,7 +1721,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1862,11 +1862,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1889,7 +1889,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -2013,11 +2013,11 @@ public class FollowUpActionPlan extends Fragment {
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -2037,7 +2037,7 @@ public class FollowUpActionPlan extends Fragment {
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -2328,7 +2328,7 @@ public class FollowUpActionPlan extends Fragment {
                 //Toast.makeText(PatientReasonActivity.this, R.string.camera_perm_granted, Toast.LENGTH_LONG).show();
                 //openCamera();
             } else {
-                Toast.makeText(getActivity(), "Please give camera permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_camera_permission), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -2337,7 +2337,7 @@ public class FollowUpActionPlan extends Fragment {
                 //Toast.makeText(PatientReasonActivity.this, R.string.cs, Toast.LENGTH_LONG).show();
                 //openGallery();
             } else {
-                Toast.makeText(getActivity(), "Please give gallery permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),getResources().getString(R.string.dm_please_give_gallery_permission), Toast.LENGTH_LONG).show();
             }
         }
 

@@ -446,11 +446,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -466,7 +466,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -499,8 +499,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 public void onClick(View view) {
 
                     if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0, Constants.PLOT_ID).size() >= 5) {
-                        Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_maximum_5_files_can_be_uploaded), Toast.LENGTH_SHORT).show();
                     } else {
                         CharSequence[] options = new CharSequence[0];
 
@@ -508,11 +507,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
                             String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
-                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
-                                options = new CharSequence[]{"Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
-                                options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+                                options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -520,12 +519,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                         CharSequence[] finalOptions = options;
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Add Photo!");
+                        builder.setTitle(getResources().getString(R.string.dm_add_photo));
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
-                                if (finalOptions[item].equals("Take Photo")) {
+                                if (finalOptions[item].equals(getResources().getString(R.string.take_photo))) {
                                     if (isStoragePermissionCameraGranted()) {
 //                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
                                         GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
@@ -552,7 +551,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                     }
 
-                                } else if (finalOptions[item].equals("Choose from Gallery")) {
+                                } else if (finalOptions[item].equals( getResources().getString(R.string.dm_choose_from_gallery))) {
 
                                     if (isStoragePermissionGalleryGranted()) {
 
@@ -588,7 +587,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
                                     }
-                                } else if (finalOptions[item].equals("Cancel")) {
+                                } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
                                 }
                             }
@@ -615,11 +614,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         ids.clear();
 
 
-        list.add("Select ActionPlan");
+        list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
 
         if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
-            list.add("Custom ActionPlan");
+            list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
 
@@ -709,7 +708,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
 
         EditText actionPlan = new EditText(getActivity());
-        actionPlan.setHint("Edit action plan details");
+        actionPlan.setHint(getResources().getString(R.string.dm_edit_action_plan_details));
         actionPlan.setFilters(new InputFilter[]{new InputFilter.LengthFilter(2000)});
         actionPlan.setTextSize(14);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -829,7 +828,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
-                } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
+                } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
@@ -1096,11 +1095,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     public void onClick(View v) {
 
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                        builder1.setMessage("Do you want to remove this report");
-                        builder1.setTitle("Alert");
+                        builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                        builder1.setTitle(getResources().getString(R.string.Alert_txt));
                         builder1.setCancelable(false);
                         builder1.setPositiveButton(
-                                "YES",
+                                getResources().getString(R.string.yes),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
@@ -1122,7 +1121,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     }
                                 });
                         builder1.setNegativeButton(
-                                "NO",
+                                getResources().getString(R.string.no),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
@@ -1268,11 +1267,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1294,7 +1293,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1433,11 +1432,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1456,7 +1455,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1617,11 +1616,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1643,7 +1642,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1795,11 +1794,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1821,7 +1820,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1953,11 +1952,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         public void onClick(View v) {
 
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                            builder1.setMessage("Do you want to remove this report");
-                            builder1.setTitle("Alert");
+                            builder1.setMessage(getResources().getString(R.string.dm_do_you_want_to_remove_this_report));
+                            builder1.setTitle(getResources().getString(R.string.Alert_txt));
                             builder1.setCancelable(false);
                             builder1.setPositiveButton(
-                                    "YES",
+                                    getResources().getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -1976,7 +1975,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
                                     });
                             builder1.setNegativeButton(
-                                    "NO",
+                                    getResources().getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -2274,7 +2273,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 //Toast.makeText(PatientReasonActivity.this, R.string.camera_perm_granted, Toast.LENGTH_LONG).show();
                 //openCamera();
             } else {
-                Toast.makeText(getActivity(), "Please give camera permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_camera_permission), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -2283,7 +2282,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 //Toast.makeText(PatientReasonActivity.this, R.string.cs, Toast.LENGTH_LONG).show();
                 //openGallery();
             } else {
-                Toast.makeText(getActivity(), "Please give gallery permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_gallery_permission), Toast.LENGTH_LONG).show();
             }
         }
 

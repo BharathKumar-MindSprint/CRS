@@ -659,6 +659,9 @@
     <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
     <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
 
+    // Indonesia - Rubber consent requirement
+    <string name="cs_page5_27">I hereby declare that all information provided is true to the best of my knowledge</string>
+
     <string name="checking_biometric_enumerator">Checking Biometric Enumerator</string>
     <string name="validating_facial_match">Validating for facial match</string>
     <string name="back_to_registration">Back to Registration</string>
@@ -1297,6 +1300,18 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
     <string name="image_downloaded">Images successfully downloaded</string>
     <string name="image_download_start">Downloading Images for photo checkbox questions</string>
+    <string name="dm_select_action_plan">Select Action Plan</string>
+    <string name="dm_custom_action_plan">Custom Action Plan</string>
+    <string name="dm_edit_action_plan_details">Edit action plan details</string>
+    <string name="dm_add_photo">Add Photo!</string>
+    <string name="dm_choose_from_gallery">Choose from Gallery</string>
+    <string name="dm_do_you_want_to_remove_this_report">Do you want to remove this report</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Maximum 5 files can be uploaded.</string>
+    <string name="dm_capture_proof_is_missing">Capture Proof is missing</string>
+    <string name="dm_action_plan_is_missing">Action Plan is missing!</string>
+    <string name="dm_please_give_camera_permission">Please give camera permission</string>
+    <string name="dm_please_give_gallery_permission">Please give gallery permission</string>
+
     <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
     <string name="dm_plot_survey_completed">Diagnostic Plot Survey Completed</string>
 </resources>
