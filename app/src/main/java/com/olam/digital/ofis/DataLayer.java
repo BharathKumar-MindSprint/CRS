@@ -10958,8 +10958,11 @@ public class DataLayer {
         while (data.getCount() > 0 && data.moveToNext()) {
             boolean isDeforestationSurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED)).equalsIgnoreCase("true");
             boolean isPaLegalitySurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED)).equalsIgnoreCase("true");
+            boolean isDeforestationPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT)).equalsIgnoreCase("false");
+            boolean isPaLegalityPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT)).equalsIgnoreCase("false");
 
-            if (isDeforestationSurveyCaptured || isPaLegalitySurveyCaptured) {
+
+            if (isDeforestationPlot || isPaLegalityPlot ||isDeforestationSurveyCaptured || isPaLegalitySurveyCaptured) {
                 return 1;
             }
         }
