@@ -432,6 +432,112 @@
                 </LinearLayout>
                 <!-- geography groups -->
 
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/ofis_large_pad"
+                android:paddingRight="@dimen/ofis_large_pad"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/border_white_background"
+                android:layout_marginTop="@dimen/ofis_med_pad"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ofis_text_field"
+                    android:textSize="@dimen/ofis_small_text"
+                    android:text="@string/farm_information"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                <LinearLayout
+                    android:id="@+id/newFarmLayout"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/farm_holding_name"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmHoldingName"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:hint="@string/farm_holding_name"
+                        android:maxLength="100"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+
+                    <TextView
+                        android:text="@string/farm_holding_code"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmHoldingCode"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:hint="@string/farm_holding_code"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        android:text="@string/role_farmer"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmerRole"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:visibility="gone"
+                        android:text="@string/primary_farmer"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="10dp"/>
+
+                    <Spinner
+                        android:id="@+id/farmerRoleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:visibility="gone"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:layout_gravity="center"
+                        android:background="@drawable/spinner_bg_light"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
                 <!-- display farmer lead-->
                 <LinearLayout
                     android:visibility="gone"

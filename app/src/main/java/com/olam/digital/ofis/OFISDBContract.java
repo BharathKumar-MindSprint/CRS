@@ -1080,6 +1080,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF = "conductSurveyForNonCompliant";
         public static final String COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF = "conductTrainingForNonCompliant";
         public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
+        public static final String COLUMN_NAME_FARM_HOLDING_CODE = "farmHoldingCode";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1123,6 +1124,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
                     add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
+                    add(COLUMN_NAME_FARM_HOLDING_CODE);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1159,6 +1161,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF);
                     add(COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF);
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
+                    add(COLUMN_NAME_FARM_HOLDING_CODE);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";

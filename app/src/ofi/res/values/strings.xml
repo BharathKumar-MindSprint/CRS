@@ -9,7 +9,7 @@
     <string name="ofis_action_bar_home">Home</string>
     <string name="ofis_action_bar_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_add_farmer">Add New Farmer</string>
+    <string name="title_activity_add_farmer">Add New Farmer &amp; Farm Holding</string>
     <string name="title_activity_add_infrastructure">Add Social Infrastructure</string>
     <string name="title_activity_find_farmer">Find Farmer</string>
     <string name="title_activity_view_farmer">Farmer Details</string>
@@ -82,7 +82,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Complete Questionnaire Module</string>
     <string name="ofis_add_infrastructure">Add Social Infrastructure</string>
-    <string name="ofis_add_new_farmer">Add New Farmer</string>
+    <string name="ofis_add_new_farmer">Add New Farmer &amp; Farm Holding</string>
     <string name="Modules_to_submit">Items to Submit</string>
     <string name="item_synced">Item(s) synced successfully.</string>
     <string name="item_sync_error">Error syncing. Please contact us for help</string>
@@ -1150,7 +1150,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="add_farm_Information">Add Farm Information</string>
     <string name="search_farmer">Search Farmer</string>
     <string name="multifarm_name_search">Search by Name</string>
-    <string name="farm_information">Farm Information</string>
+    <string name="farm_information">Farm Holding Information</string>
     <string name="farm_name">Farm Name</string>
     <string name="farm_code">Farm Code</string>
     <string name="add_stakeholder">Add Farm Stakeholder</string>

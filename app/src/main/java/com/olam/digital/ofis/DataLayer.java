@@ -178,19 +178,6 @@ public class DataLayer {
         updated = db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
         db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
-        // Multi-farm Utils Polygon
-        /*if (MultiFarmUtils.isMultiFarmEnumerator){
-            String multiFarmId =getMultiFarmLocationbyId(farmerId);
-            if(multiFarmId!=null) {
-                ContentValues values1 = new ContentValues();
-                values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-                String whereClause1 = OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
-                String[] whereArgs1 = new String[]{String.valueOf(multiFarmId)};
-                db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
-            }
-
-        }*/
-
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", farmerId);
@@ -2209,11 +2196,6 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-   /* void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
-        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
-        addLocalFarmerNationalids(storeableNationalids);
-    }*/
-
     void deletelocalfarmervalues(int id) {
         String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
@@ -2868,8 +2850,6 @@ public class DataLayer {
 
                         }
                     }
-
-
                 }
 
                 @Override
@@ -5322,7 +5302,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId,boolean isMultifarm,JSONArray multifarmArray,String existFarmId, String complainceFlag) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId, String complainceFlag) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -7459,9 +7439,10 @@ public class DataLayer {
         return list;
     }
 
-    public List<MultiFarmRoleDTO> getMultiFarmRoles(String locale) {
+    public List<FarmerRoleDto> getFarmerRoles(String locale) {
 
-        List<MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<MultiFarmRoleDTO>();
+        List<FarmerRoleDto> farmerRoleDTOList = new ArrayList<>();
+
         Cursor cursor = null;
         try {
             cursor = db.rawQuery("SELECT " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + "," +  locale  + " as name " + " FROM multifarmRoles ", null);
@@ -7474,10 +7455,14 @@ public class DataLayer {
             try {
                 if (cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
-                        MultiFarmRoleDTO multiFarmRoleDTO = new MultiFarmRoleDTO();
-                        multiFarmRoleDTO.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID))));
-                        multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME)));
-                        multiFarmRoleDTOList.add(multiFarmRoleDTO);
+                        FarmerRoleDto farmerRoleDTO = new FarmerRoleDto();
+                        int roleId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID)));
+                        String name = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME));
+                        if (roleId > 1) {
+                            farmerRoleDTO.setId(roleId);
+                            farmerRoleDTO.setName(name);
+                            farmerRoleDTOList.add(farmerRoleDTO);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -7487,7 +7472,7 @@ public class DataLayer {
             cursor.close();
         }
 
-        return multiFarmRoleDTOList;
+        return farmerRoleDTOList;
     }
 
     public List<MultiFarmDTO> getfarmList() {

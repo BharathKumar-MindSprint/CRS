@@ -74,6 +74,7 @@
  import com.olam.digital.ofis.model.FarmerLeadDTO;
  import com.olam.digital.ofis.model.NationalIdDTO;
  import com.olam.digital.ofis.model.NationalIdTypeDTO;
+ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
  import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
  import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 
@@ -95,8 +96,9 @@
  import java.util.Hashtable;
  import java.util.List;
  import java.util.Locale;
+ import java.util.Random;
 
-// update
+ // update
 public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
 
     private final String MATOMOTAG = this.getClass().getSimpleName();
@@ -196,111 +198,66 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             farmerDOB.setText(humanDate);
         }
     };
-    private EditText farmerIdPrefix;
+    private EditText farmerIdPrefix, etFarmHoldingName, etFarmHoldingCode, farmerName;
     private LinearLayout phonenumbers;
     private LinearLayout nationalids;
     private LayoutInflater inflater;
     private JSONArray storeableNumbers;
     private JSONArray storeableNationalids = new JSONArray();
     private String blockCharacterSet = "~#^|$%&*!'\"";
-    private InputFilter filter = new InputFilter() {
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            return null;
-        }
-    };
-    private InputFilter flFilter = new InputFilter() {
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            for (int i = start; i < end; i++) {
-                int type = Character.getType(source.charAt(i));
-                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
-                    return "";
-                }
-            }
-            return null;
-        }
-    };
 
     // Location captured related variable
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
     private int nidvalue;
 
+    private boolean isAddStakeHolder = false;
+    private TextView titleText;
+    private Spinner farmerRoleSpinner;
+    private EditText etFarmerRole;
+    private LinearLayout llFarmerGroup, llGeographyDetails;
 
-    private static String getFilePathUri(Context context, Uri uri) {
-        Uri filePathUri = uri;
-        if (uri.getScheme().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            assert cursor != null;
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
-            }
-            cursor.close();
-        }
-        return filePathUri + "";
-    }
+    private List<String> farmerRolesList;
+     private List<FarmerRoleDto> farmerRoleDTOList;
+    private String localeSuffixColumn;
 
-    public static void dimBehind(PopupWindow popupWindow) {
-        View container;
-        if (popupWindow.getBackground() == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                container = (View) popupWindow.getContentView().getParent();
-            } else {
-                container = popupWindow.getContentView();
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                container = (View) popupWindow.getContentView().getParent().getParent();
-            } else {
-                container = (View) popupWindow.getContentView().getParent();
-            }
-        }
-        Context context = popupWindow.getContentView().getContext();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
-        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        p.dimAmount = 0.7f;
-        wm.updateViewLayout(container, p);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_farmer);
 
+
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         editFarmerId = intent.getLongExtra(EDIT_FARMER_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
-
+        isAddStakeHolder = intent.getBooleanExtra(Utilities.STAKE_HOLDER_REGISTRATION, false);
         //roomdb
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
 
         String localeSuffix = Utilities.getLocaleSuffix(res);
+        localeSuffixColumn = Utilities.getColumnNameByLanguage();
+
         csStatus = false;
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
+        titleText = findViewById(R.id.pageTitle);
+        farmerRoleSpinner = findViewById(R.id.farmerRoleSpinner);
+        etFarmHoldingName = findViewById(R.id.etFarmHoldingName);
+        etFarmHoldingCode = findViewById(R.id.etFarmHoldingCode);
+        etFarmerRole = findViewById(R.id.etFarmerRole);
+        farmerName = findViewById(R.id.farmerName);
+        llFarmerGroup = findViewById(R.id.llFarmerGroup);
+        llGeographyDetails = findViewById(R.id.llGeographyDetails);
+
         ll_nidview = findViewById(R.id.ll_nidview);
         isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
-        if (!isNIDAvailable) {
-            ll_nidview.setVisibility(View.GONE);
-        } else {
-            ll_nidview.setVisibility(View.VISIBLE);
-        }
+        ll_nidview.setVisibility(isNIDAvailable ? View.VISIBLE : View.GONE);
+
         farmerIdPrefix = findViewById(R.id.olamFarmerIdStart);
         phonenumbers = findViewById(R.id.phonenumbers);
         nationalids = findViewById(R.id.nationalids);
@@ -331,18 +288,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
-        Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-
-        countrySpinner = this.findViewById(R.id.spinner_country);
-        regionSpinner = this.findViewById(R.id.spinner_region);
-        districtSpinner = this.findViewById(R.id.spinner_district);
-        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
-        placeSpinner = this.findViewById(R.id.spinner_place);
-        farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
-        sectionSpinner = this.findViewById(R.id.spinner_section);
-
-        dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
 
         farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -448,6 +393,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void farmerNameInFirstNowEdit() {
+
         EditText farmerName = findViewById(R.id.farmerName);
         farmerName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -472,7 +418,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        farmerNameInFirstNowEdit();
     }
 
     @Override
@@ -589,8 +534,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void populateExistingValues(final Cursor existingItem) {
-        EditText farmerName = findViewById(R.id.farmerName);
-        farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+        String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+        farmerName.setText(name);
+        etFarmHoldingName.setText(name);
+        etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
@@ -789,23 +736,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         Long time = System.currentTimeMillis();
         String olamFarmerId = String.valueOf(username + time);
 
-//        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
-
-        EditText farmerName = findViewById(R.id.farmerName);
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+        String farmHoldingCode = etFarmHoldingCode.getText().toString().trim();
+
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
             return values;
-
-
         }
 
         if (dateStrToSend == null || dateStrToSend.equals("")) {
-
             Toast.makeText(context, res.getString(R.string.please_fill_dob), Toast.LENGTH_LONG).show();
             return values;
-
         }
         genderspinner = findViewById(R.id.farmerGender);
         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
@@ -815,9 +757,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         Spinner spinner_section = findViewById(R.id.spinner_section);
         long section_id = spinner_section.getSelectedItemId();
 
-
         if (section_id < 1) {
-
             selectedCountry = (int) countrySpinner.getSelectedItemId();
             selectedRegion = (int) regionSpinner.getSelectedItemId();
             selectedDistrict = (int) districtSpinner.getSelectedItemId();
@@ -853,7 +793,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
 
-//            Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             return values;
         }
@@ -981,10 +920,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                     }
                 }
-            }catch (Exception e){}
+            }
+            catch (Exception e){
 
-
-
+            }
         }
         if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
             if(certificationNameSpinner.getTag()==null){
@@ -1038,8 +977,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         try {
-            if (edit_signature)
+            if (edit_signature) {
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
+            }
+
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
@@ -1064,6 +1005,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE, farmHoldingCode);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -2777,4 +2719,133 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-}
+     private void stakeHolderUiChanges() {
+         setTitle(R.string.add_farm_stake_holder);
+         titleText.setText(R.string.add_farm_stake_holder);
+         farmerRoleSpinner.setVisibility(View.VISIBLE);
+         farmerName.setHint(R.string.stake_holder_name);
+
+         farmerRolesList = new ArrayList<>();
+         farmerRoleDTOList = new ArrayList<>();
+
+         farmerRoleDTOList = dl.getFarmerRoles(localeSuffixColumn);
+         farmerRolesList.add(res.getString(R.string.farmer_roles));
+         for (FarmerRoleDto farmerRoleDTO : farmerRoleDTOList){
+             farmerRolesList.add(farmerRoleDTO.getName());
+         }
+         bindFarmerRoles();
+     }
+
+     private void addFarmerRegistrationUiChanges() {
+         etFarmerRole.setVisibility(View.VISIBLE);
+         llFarmerGroup.setVisibility(View.VISIBLE);
+         llGeographyDetails.setVisibility(View.VISIBLE);
+         linear_certifications.setVisibility(View.VISIBLE);
+
+         countrySpinner = this.findViewById(R.id.spinner_country);
+         regionSpinner = this.findViewById(R.id.spinner_region);
+         districtSpinner = this.findViewById(R.id.spinner_district);
+         subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
+         placeSpinner = this.findViewById(R.id.spinner_place);
+         farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
+         sectionSpinner = this.findViewById(R.id.spinner_section);
+
+         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
+         dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
+         bindCertificationNameSpinner();
+
+         farmerName.addTextChangedListener(new TextWatcher() {
+             @Override
+             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+             }
+
+             @Override
+             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+             }
+
+             @Override
+             public void afterTextChanged(Editable s) {
+                 populateFarmDetails(s.toString().trim());
+                 if(editMode) {
+                     dl.updateConsentValue(s.toString().trim(),editFarmerId);
+                 }
+             }
+         });
+
+         if (isFLEnumerator) {
+             farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+             boolean isMultiCountries = dl.isMultipleCountries();
+
+             if(isMultiCountries) {
+                 boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
+
+                 if(isODOrigin) {
+                     showFarmerLead();
+                 }
+                 else {
+                     farmerLeadDisplayLayout.setVisibility(View.GONE);
+                 }
+             }
+             else {
+                 showFarmerLead();
+             }
+         }
+     }
+
+     private void populateFarmDetails(String farmerName) {
+         etFarmHoldingName.setText(farmerName);
+         etFarmHoldingName.addTextChangedListener(new TextWatcher() {
+             public void afterTextChanged(Editable s) {
+                 String farmCodeContent = etFarmHoldingName.getText().toString().trim();
+                 if (farmCodeContent.equalsIgnoreCase("")){
+                     etFarmHoldingCode.setText("");
+                 }
+                 else{
+                     etFarmHoldingCode.setText(farmCodeContent + "-" + String.format("%04d", new Random().nextInt(10000)));
+                 }
+                 etFarmHoldingCode.setEnabled(false);
+             }
+
+             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+             public void onTextChanged(CharSequence s, int start, int before, int count) {}
+         });
+     }
+
+     private void bindFarmerRoles() {
+
+         String[] farmerRoles = farmerRolesList.toArray(new String[farmerRolesList.size()]);
+         ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, farmerRoles);
+         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+         farmerRoleSpinner.setAdapter(adapter);
+
+         farmerRoleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+             @Override
+             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                 if (position==0){
+                     farmerRoleSpinner.setTag("null");
+                 }else {
+                     FarmerRoleDto farmRoleDTO = farmerRoleDTOList.get(position - 1);
+                     farmerRoleSpinner.setTag(farmRoleDTO.getId());
+                 }
+             }
+
+             @Override
+             public void onNothingSelected(AdapterView<?> parent) {
+
+             }
+         });
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() != android.R.id.home) {
+            return super.onOptionsItemSelected(item);
+        }
+
+        finish();
+        return true;
+     }
+ }

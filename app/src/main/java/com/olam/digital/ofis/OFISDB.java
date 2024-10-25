@@ -427,7 +427,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0,"
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0 )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE + " TEXT )";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
@@ -460,7 +461,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0,"
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0 )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE + " TEXT )";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
 
@@ -1302,6 +1304,8 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS multifarmFarms");
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS stakeHolders");
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS responsibilities");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE + " TEXT ");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE +" TEXT ");
         }
         catch (SQLException e) {
             e.printStackTrace();
