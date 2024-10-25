@@ -10708,23 +10708,23 @@ public class DataLayer {
         db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String id, boolean aggregatedIndicator) {
+    public int fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
                 + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " != ? AND "
+                + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " != ? AND "
                 + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(id), "Open", "1"};
+        String[] whereArgs = new String[]{String.valueOf(id), "Open", "Initiated", "1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-        if (!aggregatedIndicator) {
-            return data.getCount();
-        }
 
         while (data.getCount() > 0 && data.moveToNext()) {
             boolean isDeforestationSurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED)).equalsIgnoreCase("true");
             boolean isPaLegalitySurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED)).equalsIgnoreCase("true");
+            boolean isDeforestationPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT)).equalsIgnoreCase("false");
+            boolean isPaLegalityPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT)).equalsIgnoreCase("false");
 
-            if (isDeforestationSurveyCaptured || isPaLegalitySurveyCaptured) {
+
+            if (isDeforestationPlot || isPaLegalityPlot ||isDeforestationSurveyCaptured || isPaLegalitySurveyCaptured) {
                 return 1;
             }
         }
