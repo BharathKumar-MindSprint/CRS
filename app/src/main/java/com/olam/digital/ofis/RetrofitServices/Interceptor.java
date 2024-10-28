@@ -16,6 +16,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Interceptor implements okhttp3.Interceptor {
     private static String accessToken;

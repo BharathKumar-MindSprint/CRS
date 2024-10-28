@@ -977,5 +977,8 @@
     <string name="dm_select_action_plan">ເລືອກແຜນປະຕິບັດງານ</string>
 
 
+    <string name="dm_plot_survey">ການສໍາຫຼວດແຜນຜັງການວິນິດໄສ</string>
+    <string name="dm_plot_survey_completed">ສຳເລັດການສຳຫຼວດແຜນການວິນິໄສ</string>
+
 </resources>
 

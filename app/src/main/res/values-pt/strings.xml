@@ -820,4 +820,7 @@
     <string name="Save">Salvar</string>
     <string name="dm_select_action_plan">Selecione o plano de ação</string>
 
+    <string name="dm_plot_survey">Levantamento de Parcelas Diagnósticas</string>
+    <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
+
 </resources>

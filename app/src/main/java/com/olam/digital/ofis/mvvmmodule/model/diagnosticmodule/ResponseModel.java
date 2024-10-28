@@ -37,6 +37,10 @@ public class ResponseModel {
     @Expose
     private String errorMessage;
 
+    @SerializedName("plotMasterData")
+    @Expose
+    private List<DmMasterDataModel> DmMasterData;
+
     public ArrayList<AnswerTypesItem> getAnswerTypes() {
         return answerTypes;
     }
@@ -74,5 +78,11 @@ public class ResponseModel {
         this.diagnosticModules = diagnosticModules;
     }
 
+    public List<DmMasterDataModel> getDmMasterData() {
+        return DmMasterData;
+    }
 
+    public void setDmMasterData(List<DmMasterDataModel> dmMasterData) {
+        DmMasterData = dmMasterData;
+    }
 }
