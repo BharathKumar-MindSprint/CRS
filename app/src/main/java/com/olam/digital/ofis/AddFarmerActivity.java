@@ -94,8 +94,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.Information;
 import com.olam.digital.ofis.model.NationalIdDTO;
@@ -414,7 +412,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARMER_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                     if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
@@ -830,8 +827,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             farmerNameInFirstNowEdit();
             bindMultiFarm();
         }
-
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER);
     }
 
     @Override
@@ -978,7 +973,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             public void onFinish() {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_GENDER,  ScreenNameConstants.SPINNER_CHANGED);
                 String existingGender = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER));
                 String existingGenderKey = existingGender + Utilities.getLocaleSuffix(res);
                 if (genders.containsKey(existingGenderKey)) {
@@ -1519,7 +1513,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PHONE_NO_DELETE,  ScreenNameConstants.BUTTON_CLICKED);
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
             }
@@ -1929,7 +1922,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindnationlidcapturephoto(Spinner spinner, ImageButton actionbutton) {
-        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NATIONAL_ID_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
         actionbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1999,8 +1991,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         showConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
-//                consentHolder.setVisibility(View.VISIBLE);
+                //                consentHolder.setVisibility(View.VISIBLE);
 //                consentHolder.startAnimation(mSlideBottomUp);
                 EditText farmerName = findViewById(R.id.farmerName);
                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
@@ -2020,6 +2011,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
                 }else {
                     in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                    in.putExtra("COUNTRY_ID", selectedCountry);
                 }
 
                 Bundle bundle=new Bundle();
@@ -2040,7 +2032,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         hideConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_HIDE_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
                 consentHolder.startAnimation(mSlideBottomDown);
             }
         });
@@ -2069,7 +2060,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
 
                 if (isNIDAvailable) {
                     if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
@@ -2362,7 +2352,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARMER_DOB,  ScreenNameConstants.BUTTON_CLICKED);
                 final Calendar c = Calendar.getInstance();
                 c.add(Calendar.YEAR, -16);
                 int year = c.get(Calendar.YEAR);
@@ -2779,7 +2768,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     public void showSignatureDialog(View v) {
-        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_SIGNATEURE,  ScreenNameConstants.BUTTON_CLICKED);
         isSigned = false;
 
         final Dialog signatureDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
@@ -2796,14 +2784,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         bt_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
             }
         });
         bt_clear.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
                 return false;
             }
@@ -2833,7 +2819,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 signatureDialog.dismiss();
 
 
@@ -2844,7 +2829,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         bt_confirm.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 try {
                     if (isSigned) {
                         farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
@@ -2887,7 +2871,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 try {
 
                     if (isSigned) {
@@ -2950,7 +2933,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         int id = v.getId();
 
         if (id == R.id.addnid) {
-            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -3390,8 +3372,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-                // Toast.makeText(AddFarmerActivity.this, progress+" frank",Toast.LENGTH_LONG).show();
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
             }
 
             @Override
@@ -3400,7 +3382,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             @Override
-            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
                 progressFinal[0] =progress;
             }
         });

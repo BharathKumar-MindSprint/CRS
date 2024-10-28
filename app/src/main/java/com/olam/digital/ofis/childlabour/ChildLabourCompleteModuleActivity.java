@@ -63,8 +63,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import java.sql.Timestamp;
@@ -159,7 +157,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_SURVEY_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_COMPLETE_MODULE_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_LABOUR_COMPLETE_MODULE_SURVEY);
         checkTime();
     }
 

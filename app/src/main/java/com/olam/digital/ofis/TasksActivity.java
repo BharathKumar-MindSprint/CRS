@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.TasksDTO;
 
 import java.util.ArrayList;
@@ -215,7 +213,7 @@ ListView listView;
     @Override
     protected void onResume() {
         super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_TASKS_ACTIVITY, ScreenNameConstants.SCREEN_TASKS);
+
     }
 
     @Override
