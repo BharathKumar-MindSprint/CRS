@@ -2336,11 +2336,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         MultiFarmDTO multifarmDTO = new MultiFarmDTO();
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        if (MultiFarmUtils.isMultiFarmEnumerator) {
-            multifarmDTO = dl.getMultiFarmPolygonSync(farmerID1);
-        } else {
-            multifarmDTO.setSynced(1);
-        }
+        multifarmDTO.setSynced(1);
+
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;

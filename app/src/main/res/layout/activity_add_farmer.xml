@@ -116,7 +116,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="10.8"
-
                         android:orientation="vertical">
 
                         <TextView
@@ -264,6 +263,7 @@
 
                 <!-- geography groups -->
                 <LinearLayout
+                    android:id="@+id/llGeographyDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/ofis_large_pad"
@@ -272,7 +272,8 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -589,6 +590,7 @@
 
                 <!-- business groups -->
                 <LinearLayout
+                    android:id="@+id/llFarmerGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/ofis_large_pad"
@@ -597,6 +599,7 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -659,6 +662,7 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView

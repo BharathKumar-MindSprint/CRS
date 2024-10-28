@@ -28,6 +28,7 @@
  import android.text.format.DateFormat;
  import android.view.Gravity;
  import android.view.LayoutInflater;
+ import android.view.MenuItem;
  import android.view.MotionEvent;
  import android.view.View;
  import android.view.ViewGroup;
@@ -65,6 +66,7 @@
  import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
  import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
  import com.olam.digital.ofis.authentication.AuthenticationHelper;
+ import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
  import com.olam.digital.ofis.gps.GPSListener;
  import com.olam.digital.ofis.gps.GPSTracker;
  import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -342,8 +344,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         bindDateField();
         bindSaveButton();
         bindConsentButton();
-        bindCertificationNameSpinner();
-
 
         gpsListener = new GPSListener() {
             @Override
@@ -353,27 +353,71 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         };
+
         gpsTracker = new GPSTracker(this, gpsListener);
         gpsTracker.startLocationUpdateInitially();
 
-
-        showFarmerLead();
-        if(!isFLEnumerator){
-            farmerLeadDisplayLayout.setVisibility(View.GONE);
-        }else {
-            boolean isMultiCountries = dl.isMultipleCountries();
-            if(isMultiCountries){
-                boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
-                if(isODOrigin){
-                    showFarmerLead();
-                }else {
-                    farmerLeadDisplayLayout.setVisibility(View.GONE);
-                }
-            }else {
-                showFarmerLead();
-            }
+        if (isAddStakeHolder) {
+            stakeHolderUiChanges();
+        }
+        else {
+            addFarmerRegistrationUiChanges();
         }
 
+
+    }
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
+
+    private InputFilter flFilter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
     }
 
     private void showFarmerLead() {
@@ -420,82 +464,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        if (mCurrentPhotoPath != null) {
-            savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY, mCurrentPhotoPath);
-        }
-        if (mCapturedImageURI != null) {
-            savedInstanceState.putString(CAPTURED_PHOTO_URI_KEY, mCapturedImageURI.toString());
-        }
-        if (mCurrentSignaturePhotoPath != null) {
-            savedInstanceState.putString(CAPTURED_SIGNATURE_PHOTO_PATH_KEY, mCurrentSignaturePhotoPath);
-        }
-        if (mCapturedSignatureImageURI != null) {
-            savedInstanceState.putString(CAPTURED_SIGNATURE_PHOTO_URI_KEY, mCapturedSignatureImageURI.toString());
-        }
-        if (dateStrToSend != null) {
-            savedInstanceState.putString(CAPTURED_DATE_STR_TO_SEND, dateStrToSend);
-        }
-
-        selectedCountry = (int) countrySpinner.getSelectedItemId();
-        selectedRegion = (int) regionSpinner.getSelectedItemId();
-        selectedDistrict = (int) districtSpinner.getSelectedItemId();
-        selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
-        selectedPlace = (int) placeSpinner.getSelectedItemId();
-        selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
-        selectedSection = (int) sectionSpinner.getSelectedItemId();
-
-
-        savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
-        savedInstanceState.putInt(CAPTURED_SELECTED_REGION, selectedRegion);
-        savedInstanceState.putInt(CAPTURED_SELECTED_DISTRICT, selectedDistrict);
-        savedInstanceState.putInt(CAPTURED_SELECTED_SUBDISTRICT, selectedSubDistrict);
-        savedInstanceState.putInt(CAPTURED_SELECTED_PLACE, selectedPlace);
-        savedInstanceState.putInt(CAPTURED_SELECTED_FARMERGROUP, selectedFarmerGroup);
-        savedInstanceState.putInt(CAPTURED_SELECTED_SECTION, selectedSection);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        ImageButton farmerPhotoButton = findViewById(R.id.farmerPhoto);
-        ImageButton farmerSignatureButton = findViewById(R.id.farmerSignature);
-
-        if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
-            mCurrentPhotoPath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
-        }
-        if (savedInstanceState.containsKey(CAPTURED_PHOTO_URI_KEY)) {
-            mCapturedImageURI = Uri.parse(savedInstanceState.getString(CAPTURED_PHOTO_URI_KEY));
-        }
-        if (savedInstanceState.containsKey(CAPTURED_SIGNATURE_PHOTO_PATH_KEY)) {
-            mCurrentSignaturePhotoPath = savedInstanceState.getString(CAPTURED_SIGNATURE_PHOTO_PATH_KEY);
-        }
-        if (savedInstanceState.containsKey(CAPTURED_SIGNATURE_PHOTO_URI_KEY)) {
-            mCapturedSignatureImageURI = Uri.parse(savedInstanceState.getString(CAPTURED_SIGNATURE_PHOTO_URI_KEY));
-        }
-        if (savedInstanceState.containsKey(CAPTURED_DATE_STR_TO_SEND)) {
-            dateStrToSend = savedInstanceState.getString(CAPTURED_DATE_STR_TO_SEND);
-        }
-        if (mCurrentPhotoPath != null) {
-            displayBitmap(mCurrentPhotoPath, "portrait", farmerPhotoButton);
-        }
-        if (mCurrentSignaturePhotoPath != null) {
-            displayBitmap(mCurrentSignaturePhotoPath, "signature", farmerSignatureButton);
-        }
-        selectedCountry = savedInstanceState.getInt(CAPTURED_SELECTED_COUNTRY, 0);
-        selectedRegion = savedInstanceState.getInt(CAPTURED_SELECTED_REGION, 0);
-        selectedDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_DISTRICT, 0);
-        selectedSubDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_SUBDISTRICT, 0);
-        selectedPlace = savedInstanceState.getInt(CAPTURED_SELECTED_PLACE, 0);
-        selectedFarmerGroup = savedInstanceState.getInt(CAPTURED_SELECTED_FARMERGROUP, 0);
-        selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
-
-        dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true, 1);
-        showFarmerLead();
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 
     private String getCurrentPhotoPath() {
         return mCurrentPhotoPath;
@@ -925,7 +893,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             }
         }
-        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+
+        if(!ofisRoomDB.certificationsDao().getCertifications().isEmpty()) {
             if(certificationNameSpinner.getTag()==null){
                 Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
                 return values;
@@ -1783,7 +1752,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             // insert National Id update
             trackDetailsDTO.setModule(GPSConstants.MODULE_ADD_NATIONAL_ID);
             // collecting in independent records
-            if(nationalIdTypes.size()>0) {
+            if(!nationalIdTypes.isEmpty()) {
                 ArrayList<String> nationalIdTypeNames = gpsTrackerLogic.getNationalIdNamesnyIds(this, nationalIdTypes);
                 for (String type : nationalIdTypeNames) {
                     trackDetailsDTO.setNationalId(type);
@@ -2617,7 +2586,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     }
-
 
 
 
