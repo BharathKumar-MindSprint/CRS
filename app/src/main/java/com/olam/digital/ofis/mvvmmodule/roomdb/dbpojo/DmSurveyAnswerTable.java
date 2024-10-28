@@ -56,4 +56,7 @@ public class DmSurveyAnswerTable {
     @ColumnInfo(name = "submittedModuleId")
     public int submittedModuleId;
 
+    @ColumnInfo(name = "plotId", defaultValue = "0")
+    public Integer plotId;
+
 }

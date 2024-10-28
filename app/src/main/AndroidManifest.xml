@@ -32,6 +32,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -52,13 +53,23 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
         <activity
+            android:name=".farmstakeholder.AddFarmStakeHolderActivity"
+            android:label="@string/add_farm_stake_holder"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+        <activity
             android:name=".recordpolygon.RecordSipPolygon"
+            android:exported="false"
             android:label="@string/title_activity_record_sip_polygon"
             android:parentActivityName=".AddInfrastructureActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            tools:ignore="UnusedAttribute"
-            android:exported="false">
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.AddInfrastructureActivity" />
@@ -190,12 +201,8 @@
         <activity
             android:name=".AddFarmerActivity"
             android:label="@string/title_activity_add_farmer"
-            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
             android:name=".AddInfrastructureActivity"

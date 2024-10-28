@@ -709,5 +709,16 @@
     <string name="image_downloaded">ดาวน์โหลดรูปภาพสําเร็จแล้ว</string>
     <string name="file_exceeds">K̄hnād fịl̒ kein </string>
     <string name="total_file_size">K̄hnād fịl̒ rwm kein 5MB kruṇā xạphh̄old fịl̒ thī̀ mī k̄hnād n̂xy kẁā </string>
+    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
+    <string name="farm_holding_name">Farm Holding Name</string>
+    <string name="farm_holding_code">Farm Holding Code</string>
+    <string name="role_farmer">Farmer Role</string>
+    <string name="primary_farmer">Primary Farmer</string>
+    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
+
+    <string name="dm_plot_survey">การสำรวจแปลงวินิจฉัย</string>
+    <string name="dm_plot_survey_completed">การสำรวจแปลงวินิจฉัยเสร็จสมบูรณ์</string>
+    <string name="stakeholder_list">StakeHolders List</string>
+    <string name="stake_holder_name">Stakeholder Name</string>
 
 </resources>

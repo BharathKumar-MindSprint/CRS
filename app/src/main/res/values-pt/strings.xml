@@ -796,6 +796,12 @@
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
     <string name="file_exceeds">O tamanho do arquivo excede </string>
     <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
+    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
+    <string name="farm_holding_name">Farm Holding Name</string>
+    <string name="farm_holding_code">Farm Holding Code</string>
+    <string name="role_farmer">Farmer Role</string>
+    <string name="primary_farmer">Primary Farmer</string>
+    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
 
 
     <string name="dm_hint_txt">Módulo de diagnóstico</string>
@@ -819,5 +825,10 @@
     <string name="back">Voltar</string>
     <string name="Save">Salvar</string>
     <string name="dm_select_action_plan">Selecione o plano de ação</string>
+
+    <string name="dm_plot_survey">Levantamento de Parcelas Diagnósticas</string>
+    <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
+    <string name="stakeholder_list">StakeHolders List</string>
+    <string name="stake_holder_name">Stakeholder Name</string>
 
 </resources>
