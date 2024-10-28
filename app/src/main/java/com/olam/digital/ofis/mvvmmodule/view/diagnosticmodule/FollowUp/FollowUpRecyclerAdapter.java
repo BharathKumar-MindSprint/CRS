@@ -108,8 +108,6 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
             if (selectedPosition== 0 ) {
-//            if (selectedPosition== 0 && items.size() == 1) {
-//                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                 in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if(items.size() == 1 && !isCompleted){
                     Constants.EDITABLE = true;
@@ -119,8 +117,6 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 }else if (isCompleted && db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
                     Constants.EDITABLE = false;
                 }
-
-//            }else if (selectedPosition != 0 && selectedPosition == items.size()-1){
             }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
                 intent.putExtra("FollowUpPosition", selectedPosition);
@@ -132,9 +128,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 }else{
                     Constants.EDITABLE = false;
                 }
-
             }
-
 
         }
     }

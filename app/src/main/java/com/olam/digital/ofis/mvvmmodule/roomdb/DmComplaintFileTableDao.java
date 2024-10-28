@@ -17,14 +17,14 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable")
     List<DmComplaintFileTable> getDmComplaintFileTable();
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
-    List<DmComplaintFileTable> getFilesById(int id, String farmerId, int attempt);
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize, plotId FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND plotId = :plotId")
+    List<DmComplaintFileTable> getFilesById(int id, String farmerId, int attempt, int plotId);
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize FROM DmComplaintFileTable WHERE  farmerId = :farmerId AND questionId =:questionId AND isFileSynced = 0")
-    List<DmComplaintFileTable> getUnSyncedFile(String farmerId, String questionId);
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize, plotId FROM DmComplaintFileTable WHERE  farmerId = :farmerId AND questionId =:questionId AND isFileSynced = 0 AND plotId = :plotId")
+    List<DmComplaintFileTable> getUnSyncedFile(String farmerId, String questionId, int plotId);
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
-    List<DmComplaintFileTable> getQuestionFilesById(int id, String farmerId, int attempt);
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize, plotId FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND plotId = :plotId")
+    List<DmComplaintFileTable> getQuestionFilesById(int id, String farmerId, int attempt, int plotId);
 
    /* @Insert
     void insertAll(List<DmComplaintFileTable> dmComplaintFileTablesAll);*/
@@ -41,27 +41,27 @@ public interface DmComplaintFileTableDao {
     @Query("DELETE FROM DmComplaintFileTable WHERE file_name =:filename")
     void deleteByFileName(String filename);
 
-    @Query("DELETE FROM DmComplaintFileTable WHERE uid =:id AND farmerId = :farmerId AND attempt = :attempt")
-    void deleteById(long id, String farmerId, int attempt);
+    @Query("DELETE FROM DmComplaintFileTable WHERE uid =:id AND farmerId = :farmerId AND attempt = :attempt AND plotId = :plotId")
+    void deleteById(long id, String farmerId, int attempt, int plotId);
 
     @Query("DELETE FROM DmComplaintFileTable")
     void deleteAll();
 
-    @Query("DELETE FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID AND attempt = :attempt")
-    void deleteRowsByFarmerAndQuestionID(String questionID , String farmerID , int attempt);
+    @Query("DELETE FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID AND attempt = :attempt AND plotId =:plotId")
+    void deleteRowsByFarmerAndQuestionID(String questionID , String farmerID , int attempt, int plotId);
 
     @Query("UPDATE DmComplaintFileTable SET isFileSynced= :value WHERE uid = :uid")
     void updateSyncData(Long uid, boolean value);
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
-    List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID );
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize, plotId FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID AND plotId =:plotId")
+    List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID, int plotId);
 
-    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND surveyType=:surveyType")
+    @Query("SELECT uid, file_name, questionId, farmerId, attempt, filePath, isFileSynced, ofisFileName, surveyType, fileSize, plotId FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND surveyType=:surveyType")
     List<DmComplaintFileTable> getTotalFollowCount(int id, String farmerId, int attempt , String surveyType);
 
     @Query("SELECT filePath FROM DmComplaintFileTable WHERE uid =:id AND farmerId = :farmerId AND attempt = :attempt")
     String getFilePathToDelete(long id, String farmerId, int attempt);
 
-    @Query("SELECT SUM(fileSize) FROM DmComplaintFileTable WHERE farmerId = :farmerId AND questionId = :id AND surveyType=:surveyType AND isFileSynced = 0")
-    int getTotalUnsyncFileSizeByQuestionId(String id, String farmerId, String surveyType);
+    @Query("SELECT SUM(fileSize) FROM DmComplaintFileTable WHERE farmerId = :farmerId AND questionId = :id AND surveyType=:surveyType AND plotId = :plotId AND isFileSynced = 0")
+    int getTotalUnSyncFileSizeByQuestionId(String id, String farmerId, String surveyType, int plotId);
 }

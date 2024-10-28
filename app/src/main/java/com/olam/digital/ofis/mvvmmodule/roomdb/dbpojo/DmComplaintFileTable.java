@@ -64,6 +64,9 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "fileSize")
     private Integer fileSize;
 
+    @ColumnInfo(name = "plotId", defaultValue = "0")
+    private Integer plotId;
+
     public int getAttempt() {
         return attempt;
     }
@@ -130,5 +133,13 @@ public class DmComplaintFileTable {
 
     public Integer getFileSize() {
         return fileSize;
+    }
+
+    public Integer getPlotId() {
+        return plotId;
+    }
+
+    public void setPlotId(Integer plotId) {
+        this.plotId = plotId;
     }
 }

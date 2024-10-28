@@ -2,6 +2,7 @@ package com.olam.digital.ofis.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonArray;
@@ -77,12 +78,16 @@ class UpdateFarmersTask extends DatabaseTask {
                             JSONObject plotObject = plotArray.getJSONObject(i);
                             plotObject.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID,farmerObject.get("id"));
                             plotObject.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED,"1");
+                            plotObject.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED, "false");
+                            plotObject.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED, "false");
                             plotsArray.put(plotObject);
                         }
                     }
+
                     if(plotsArray.length() > 0 ) {
                         fillTable(plotsArray, OFISDBContract.PlotEntry.TABLE_NAME, OFISDBContract.PlotEntry.COLUMN_LIST);
                     }
+
                 }catch (Exception e){
                   e.printStackTrace();
                 }

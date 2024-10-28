@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -104,4 +105,15 @@ public class DmMainModule {
 
     @ColumnInfo(name = "recurrenceEndDate")
     public String recurrenceEndDate;
+
+    @ColumnInfo(name = "diagnosticTypeId")
+    public Integer diagnosticTypeId;
+
+    @ColumnInfo(name = "plotSurveyType")
+    public Integer plotSurveyType;
+
+    @ColumnInfo(name = "captureLocation")
+    public String captureLocation;
+
+
 }

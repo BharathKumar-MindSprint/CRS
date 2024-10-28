@@ -20,4 +20,6 @@ public class DmCurrenciesItem {
 
     @ColumnInfo(name = "name")
     public String name;
+
+
 }
