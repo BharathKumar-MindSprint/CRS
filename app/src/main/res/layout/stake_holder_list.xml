@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/itemCardView"
+        android:paddingBottom="5dp"
+        app:contentPaddingRight="10dp"
+        app:contentPaddingLeft="18dp"
+        android:elevation="8dp"
+        android:layout_marginVertical="5dp"
+        app:cardBackgroundColor="@color/ofis_base_font_white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingLeft="18dp"
+        android:background="@android:color/transparent">
+
+        <TextView
+            android:id="@+id/tvStakeHolderName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/btn_secondary_background"
+            android:textSize="@dimen/ofis_input_field_text"
+            android:textStyle="bold"
+            android:text="@string/Farmer_Name"
+            android:layout_marginBottom="6dp"
+        />
+
+        <TextView
+            android:id="@+id/tvFarmerRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/edit_text_hint"
+            android:textSize="@dimen/ofis_small_text"
+            android:text="@string/Farmer_Name"
+        />
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+</RelativeLayout>

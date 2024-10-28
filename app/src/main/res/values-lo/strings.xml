@@ -953,6 +953,12 @@
     <string name="image_downloaded">ດາວໂຫຼດຮູບພາບສໍາເລັດ</string>
     <string name="file_exceeds">khanad fail koen </string>
     <string name="total_file_size">khanad fail thangmodkoen 5MB  kaluna abold fail khanadnony kva </string>
+    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
+    <string name="farm_holding_name">Farm Holding Name</string>
+    <string name="farm_holding_code">Farm Holding Code</string>
+    <string name="role_farmer">Farmer Role</string>
+    <string name="primary_farmer">Primary Farmer</string>
+    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
 
     <string name="dm_hint_txt">ໂມດູນການວິໃຈ</string>
     <string name="select_module">ເລືອກໂມດູນ</string>
@@ -979,6 +985,8 @@
 
     <string name="dm_plot_survey">ການສໍາຫຼວດແຜນຜັງການວິນິດໄສ</string>
     <string name="dm_plot_survey_completed">ສຳເລັດການສຳຫຼວດແຜນການວິນິໄສ</string>
+    <string name="stakeholder_list">StakeHolders List</string>
+    <string name="stake_holder_name">Stakeholder Name</string>
 
 </resources>
 

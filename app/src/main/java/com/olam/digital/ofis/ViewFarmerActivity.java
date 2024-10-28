@@ -90,6 +90,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
 import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
+import com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -1225,8 +1226,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 mc.addRow(new String[]{
                         "0",
-                        res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "","", "",
-                            "", "", "", "", "multifarm",""});
+                        res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), res.getString(R.string.add_farm_stake_holders), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "","", "", "","", "",
+                            "", "", "", "", "addFarmStakeholders",""});
 
 
                 // add new phone number updating task
@@ -2523,13 +2524,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         household = true;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
                     }
-                    else if (recordedLng != null && recordedLng.getText().equals("multifarm")) {
-                        Intent in = new Intent(this, UpdateMultiFarmActivity.class);
+                    else if (recordedLng != null && recordedLng.getText().equals("addFarmStakeholders")) {
+                        Intent in = new Intent(this, AddFarmStakeHolderActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong("farmerId", farmerId);
-                        bundle.putBoolean("editMode",false);
-                        bundle.putBoolean("isSurveyEnabled",false);
-                        bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putString("olamFarmerName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        bundle.putString("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE)));
                         in.putExtras(bundle);
                         startActivity(in);
                     }

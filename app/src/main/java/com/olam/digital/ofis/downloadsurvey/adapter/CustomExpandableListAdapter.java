@@ -236,41 +236,41 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                             PlotDTO plotDTO = expandableListTitle.get(listPosition);
                             int plotId = plotDTO.getPlotId();
 
-                        if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId && submittedModuleDetails.getInt("plotId") == plotId ) {
+                            if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId && submittedModuleDetails.getInt("plotId") == plotId) {
 
-                            if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                                // for recurring
-                                try {
-                                    // get last submitted date
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                                    Calendar lastSubmittedDate = Calendar.getInstance();
+                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                    // for recurring
+                                    try {
+                                        // get last submitted date
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                        Calendar lastSubmittedDate = Calendar.getInstance();
 
                                         //O20HS-84 - To enable the annual survey.
                                         calculationDate = (Calendar) currentDate.clone();
                                         //
 
-                                    try {
-                                        lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                    } catch (ParseException e) {
-                                        FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
-                                        e.printStackTrace();
-                                    }
-
-                                    if (recurrence_type != null) {
-                                        if (recurrence_type.equalsIgnoreCase("years")) {
-                                            calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                            calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                            calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                                        } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                            calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                            calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                                        } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                            calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                            calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                                        } else {
-                                            // must be days
-                                            calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                        try {
+                                            lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                        } catch (ParseException e) {
+                                            FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                                            e.printStackTrace();
                                         }
+
+                                        if (recurrence_type != null) {
+                                            if (recurrence_type.equalsIgnoreCase("years")) {
+                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                            } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                            } else {
+                                                // must be days
+                                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                            }
 
                                             // set the time
                                             calculationDate.set(Calendar.HOUR_OF_DAY, 23);
@@ -282,18 +282,17 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                                             calculationDate.get(Calendar.DAY_OF_MONTH);
 
 
-                                        if (lastSubmittedDate.after(calculationDate)) {
-                                            disable_entry = true;
+                                            if (lastSubmittedDate.after(calculationDate)) {
+                                                disable_entry = true;
+                                            }
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } else {
+                                    // for non-recurring
+                                    disable_entry = true;
                                 }
-                            }
-                            else {
-                                // for non-recurring
-                                disable_entry = true;
-                            }
 
                                 if (disable_entry) {
                                     int surveyDurationId = db.surveyDurationTypeDao().getSurveyDurationId();
@@ -328,48 +327,51 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                     }
                 }
 
-            if (!submitted) {
-                enabledItem.setText("true");
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                long farmerGroupId = dl.getFarmerGroupById(farmerId);
-                long sectionId = dl.getSectionByFarmerId(farmerId);
-                boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
+                if (!submitted) {
+                    enabledItem.setText("true");
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    long farmerGroupId = dl.getFarmerGroupById(farmerId);
+                    long sectionId = dl.getSectionByFarmerId(farmerId);
+                    boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
 
-                if (value) {
-                    boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
-                    if (viewExistingdata) {
-                        moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                    if (value) {
+                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
+                        if (viewExistingdata) {
+                            moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                        } else {
+                            moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        }
                     } else {
                         moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                     }
-                } else {
-                    moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-                }
 
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                PlotDTO plotDTO = expandableListTitle.get(listPosition);
-                int plotId = plotDTO.getPlotId();
-                boolean hasPlotData = dl.getModuledetailsByPlotId(currentId, farmerId, plotId);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    PlotDTO plotDTO = expandableListTitle.get(listPosition);
+                    int plotId = plotDTO.getPlotId();
+                    boolean hasPlotData = dl.getModuledetailsByPlotId(currentId, farmerId, plotId);
 
-                if (status_started == 1 && status_finished == 0 && hasPlotData) {
-                    textView.setText(res.getString(R.string.module_in_progress) + childModuleDto.getSubmodule_name());
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
-                } else if (status_started == 1 && status_finished == 1 && hasPlotData) {
-                    textView.setText(res.getString(R.string.module_finished));
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                } else {
-                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                     textView.setText(res.getString(R.string.ModuleStatus));
-                     if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        enabledItem.setText("false");
+                    if (status_started == 1 && status_finished == 0 && hasPlotData) {
+                        textView.setText(res.getString(R.string.module_in_progress) + childModuleDto.getSubmodule_name());
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
+                    } else if (status_started == 1 && status_finished == 1 && hasPlotData) {
+                        textView.setText(res.getString(R.string.module_finished));
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
+                        textView.setText(res.getString(R.string.ModuleStatus));
+                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            enabledItem.setText("false");
 
-                     }
+                        }
+                    }
                 }
             }
+
+
 
             try {
 

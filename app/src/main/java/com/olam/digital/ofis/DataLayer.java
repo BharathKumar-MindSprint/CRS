@@ -30,11 +30,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
+import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
+import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
@@ -2670,7 +2672,8 @@ public class DataLayer {
 
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
-        if(item == 3){
+
+        if(item == 3) {
             countrySpinner.setEnabled(false);
         }
 
@@ -10727,6 +10730,16 @@ public class DataLayer {
 
         db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, "id = ?", new String[] {String.valueOf(plotId)});
 
+    }
+
+    public List<StakeHolderDto> getAllStakeHolderListByFarmerId(Long farmerId) {
+        List<StakeHolderDto> stakeHolderDtoList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            stakeHolderDtoList.add(new StakeHolderDto(String.valueOf(i), "Stake Holder " + i, "Farm Manger"));
+        }
+
+        return stakeHolderDtoList;
     }
 
 

@@ -126,6 +126,9 @@ public class Utilities {
 
     public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
 
+    public static final String STAKE_HOLDER_ID = "stakeHolderId";
+    public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";

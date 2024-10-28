@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
-import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 
 import java.util.ArrayList;
 import java.util.List;
