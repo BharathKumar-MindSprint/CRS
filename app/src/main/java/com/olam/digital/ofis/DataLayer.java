@@ -10742,5 +10742,24 @@ public class DataLayer {
         return stakeHolderDtoList;
     }
 
+    public String getDiallingCodeByFarmerId(long  farmerId) {
+        String selectQuery = "SELECT country_id FROM farmers WHERE id = ?";
+        Cursor farmer = db.rawQuery(selectQuery, new String[]{String.valueOf(farmerId)});
+
+        String countryId = "";
+        if (farmer.moveToFirst()) {
+            countryId = farmer.getString(0);
+            farmer.close();
+        }
+        String selectDialingCodeQuery = "SELECT dialling_code FROM countries WHERE id = ?";
+        Cursor countries = db.rawQuery(selectDialingCodeQuery, new String[]{countryId});
+
+        String dialingCode = "";
+        if (countries.moveToFirst()) {
+            dialingCode = countries.getString(0);
+            countries.close();
+        }
+        return dialingCode;
+    }
 
 }

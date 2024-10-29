@@ -68,6 +68,9 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString(Utilities.STAKE_HOLDER_ID, null);
                 bundle.putBoolean(Utilities.STAKE_HOLDER_REGISTRATION, true);
+                bundle.putLong(Utilities.FARMER_ID, farmerId);
+                bundle.putString(Utilities.FARM_HOLDING_CODE, farmHoldingCode);
+                bundle.putString(Utilities.FARMER_NAME, farmerName);
                 startActivity(new Intent(AddFarmStakeHolderActivity.this, AddFarmerActivity.class).putExtras(bundle));
             }
         });

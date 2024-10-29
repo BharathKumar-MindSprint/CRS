@@ -177,6 +177,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     ArrayList<MultiSpinnerStatus> listStatus = new ArrayList<>();
     private OFISRoomDB ofisRoomDB;
 
+    String stakeholderId;
+    long farmerIdMs;
+    String farmHoldingCodeMs;
+    String farmerNameMs;
+
+
     /**
      * Generate unique ID from UUID.
      *
@@ -358,7 +364,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         gpsTracker.startLocationUpdateInitially();
 
         if (isAddStakeHolder) {
-            stakeHolderUiChanges();
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                stakeholderId = extras.getString(Utilities.STAKE_HOLDER_ID);
+                farmerIdMs = extras.getLong(Utilities.FARMER_ID);
+                farmHoldingCodeMs = extras.getString(Utilities.FARM_HOLDING_CODE);
+                farmerNameMs = extras.getString(Utilities.FARMER_NAME);
+            }
+            stakeHolderUiChanges(farmerNameMs, farmHoldingCodeMs, farmerIdMs);
         }
         else {
             addFarmerRegistrationUiChanges();
@@ -2687,11 +2700,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-     private void stakeHolderUiChanges() {
+     private void stakeHolderUiChanges(String farmerNameMs, String farmHoldingCodeMs, long farmerIdMs) {
          setTitle(R.string.add_farm_stake_holder);
          titleText.setText(R.string.add_farm_stake_holder);
          farmerRoleSpinner.setVisibility(View.VISIBLE);
          farmerName.setHint(R.string.stake_holder_name);
+         etFarmHoldingName.setText(farmerNameMs);
+         etFarmHoldingCode.setText(farmHoldingCodeMs);
+
+         LinearLayout phoneNumber = (LinearLayout) phonenumbers.getChildAt(0);
+         EditText diallingCode = (EditText) phoneNumber.findViewById(R.id.dialling_code);
+         String dialling_code = dl.getDiallingCodeByFarmerId(farmerIdMs);
+         diallingCode.setText(dialling_code);
+
 
          farmerRolesList = new ArrayList<>();
          farmerRoleDTOList = new ArrayList<>();
