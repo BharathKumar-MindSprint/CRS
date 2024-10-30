@@ -20,6 +20,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -282,6 +283,15 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         }
 
+        final boolean[] isUserInteraction = {false};
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                isUserInteraction[0] = true;
+                return false;
+            }
+        });
+
         spinner.setSelection(selectedPosition);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -339,8 +349,11 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+
+                        if (isUserInteraction[0]) {
+                            if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                            }
                         }
                     }
                 }
@@ -680,6 +693,15 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         }
 
+        final boolean[] isUserInteraction = {false};
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                isUserInteraction[0] = true;
+                return false;
+            }
+        });
+
         spinner.setSelection(selectedPosition);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -736,8 +758,11 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+
+                        if (isUserInteraction[0]) {
+                            if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                            }
                         }
                     }
                 }
