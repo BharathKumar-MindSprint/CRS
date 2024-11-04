@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
@@ -75,8 +77,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class},
-        version = 15)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class},
+        version = 16)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -135,6 +137,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmMasterDataDao dmMasterDataDao();
 
     public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
+    public abstract MultiStakeHolderDao multiStakeHolderDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -169,10 +172,17 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
+        final Migration MIGRATION_15_16 = new Migration(15, 16) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (id INTEGER PRIMARY KEY NOT NULL, farmerId INTEGER, stakeHolderName TEXT, gender TEXT, photoLocation TEXT, dob TEXT, nationalId TEXT, phoneNumber TEXT, consentFarmer TEXT, consentOthers TEXT, signature TEXT, farmHoldingCode TEXT, stakeHolderRole TEXT)");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16)
                     .fallbackToDestructiveMigration()
                     .build();
         }
