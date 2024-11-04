@@ -129,6 +129,10 @@ public class Utilities {
     public static final String STAKE_HOLDER_ID = "stakeHolderId";
     public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";
 
+    public static final String FARMER_ID = "farmerId";
+    public static final String FARM_HOLDING_CODE = "farmHoldingCode";
+    public static final String FARMER_NAME = "farmerName";
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
