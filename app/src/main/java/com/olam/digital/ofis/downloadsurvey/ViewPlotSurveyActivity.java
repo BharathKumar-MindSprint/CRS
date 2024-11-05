@@ -265,7 +265,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     }
 
     private boolean isPlotDisplayed(PlotDTO plotDTO) {
-        return !(plotDTO.getCleansedStatus().equalsIgnoreCase("Open") || plotDTO.getCleansedStatus().equalsIgnoreCase("Initiated"))  && (plotDTO.isPALegalitySurveyCompleted() || plotDTO.isEUDRSurveyCompleted() || !plotDTO.isPALegalityPlot() || !plotDTO.isDeforestationPlot());
+        return (plotDTO.getCleansedStatus().equalsIgnoreCase("updated") || plotDTO.getCleansedStatus().equalsIgnoreCase("repaired"))  && (plotDTO.isPALegalitySurveyCompleted() || plotDTO.isEUDRSurveyCompleted() || !plotDTO.isPALegalityPlot() || !plotDTO.isDeforestationPlot());
     }
 
 

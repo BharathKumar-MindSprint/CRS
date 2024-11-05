@@ -85,6 +85,8 @@ public class SurveyResultsFragment extends Fragment {
     private Location mCurrentCapturedLocation = null;
     GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
+    int complaint = 0, nonComplaint = 0, satisfactory = 0;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -195,9 +197,9 @@ public class SurveyResultsFragment extends Fragment {
 
                 db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID), Constants.PLOT_ID);
 
-                DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
-                        Integer.parseInt(Constants.satisfactorySize),
-                        Integer.parseInt(Constants.noncomplaintSize),
+                DMSurveyReport dmSurveyReport = new DMSurveyReport(complaint,
+                        satisfactory,
+                        nonComplaint,
                         Integer.parseInt(Constants.TotalActionPlanCount),
                         Double.parseDouble(String.valueOf(amount)),
                         finalAssessmentValue,
@@ -239,7 +241,9 @@ public class SurveyResultsFragment extends Fragment {
         Boolean val = false;
         double totalWeightages = 0;
         double finalScore = 0;
-        int complaint = 0, nonComplaint = 0, satisfactory = 0;
+        complaint = 0;
+        nonComplaint = 0;
+        satisfactory = 0;
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
         dmSurveyAnswerTableList1.clear();
         dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
