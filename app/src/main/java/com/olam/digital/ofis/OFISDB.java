@@ -506,7 +506,8 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_FARMERASSIGNMENTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerAssignments.TABLE_NAME
             + " ( " +  OFISDBContract.FarmerAssignments.COLUMN_PRODUCT_ID + " INTEGER, "
             + OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " INTEGER, " + OFISDBContract.FarmerAssignments.COLUMN_ISODORIGIN + " TEXT, "
-            + OFISDBContract.FarmerAssignments.COLUMN_COUNTRYISOCODE + " TEXT )";
+            + OFISDBContract.FarmerAssignments.COLUMN_COUNTRYISOCODE + " TEXT,"
+            + OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG + " TEXT )";
 
     private static final String OFIS_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountriesEntry.TABLE_NAME
             + " ( " + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountriesEntry.COLUMN_NAME_CODE + " TEXT, "  + OFISDBContract.CountriesEntry.COLUMN_NAME_ISOCODE + " TEXT, "
@@ -1349,6 +1350,7 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerAssignments.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG + " TEXT ");
         }
         catch (SQLException e) {
             e.printStackTrace();

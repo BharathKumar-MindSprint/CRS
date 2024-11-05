@@ -10982,5 +10982,22 @@ public class DataLayer {
 
     }
 
+    public boolean getCompositeFlagByCountryId(int countryId) {
+        Cursor farmerAssignments = getassignmentbyCountryId(countryId);
+
+        try {
+            if (farmerAssignments != null) {
+                farmerAssignments.moveToFirst();
+                return farmerAssignments.getString(farmerAssignments.getColumnIndex(OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG)).equalsIgnoreCase("true");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            farmerAssignments.close();
+        }
+
+        return false;
+    }
+
 
 }
