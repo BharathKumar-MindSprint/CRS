@@ -267,14 +267,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        calculateComplianceFlag = Utilities.getBoolFromSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, false);
 
         db = OFISRoomDB.getDbInstance(context);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
 
-        //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
         setupGPS();
         setupUI();
@@ -683,6 +681,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 e.printStackTrace();
             }
 
+            calculateComplianceFlag = dl.getCompositeFlagByCountryId(countryID);
             llAggregatedIndicator.setVisibility(calculateComplianceFlag ? View.VISIBLE : View.GONE);
             aggregatedIndicator = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
             if (aggregatedIndicator) {
