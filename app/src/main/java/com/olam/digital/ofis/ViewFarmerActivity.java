@@ -1446,10 +1446,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 }
 
-                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
+                int farmPlotCountDM = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
                 List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
-                if (calculateComplianceFlag && farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
+                if (calculateComplianceFlag && farmPlotCountDM > 0 && !dmPlotModules.isEmpty()) {
                     mc.addRow(new String[]{
                             "0",
                             res.getString(R.string.dm_plot_survey),
@@ -1483,6 +1483,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
 
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey",""});
                 }
