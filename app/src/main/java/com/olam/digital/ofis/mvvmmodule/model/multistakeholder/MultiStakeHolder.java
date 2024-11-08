@@ -8,45 +8,78 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "MultiStakeHolder")
 public class MultiStakeHolder {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name = "id")
-    public Long id;
+    @ColumnInfo(name = "msId")
+    public Long msId;
+
+    @ColumnInfo(name = "msTempId")
+    public Long msTempId;
 
     @ColumnInfo(name = "farmerId")
     public Long farmerId;
 
-    @ColumnInfo(name = "stakeHolderName")
-    public String stakeHolderName;
+    @ColumnInfo(name = "msName")
+    public String msName;
 
-    @ColumnInfo(name = "gender")
-    public String gender;
+    @ColumnInfo(name = "farmHoldingName")
+    public String farmHoldingName;
 
-    @ColumnInfo(name = "photoLocation")
-    public String photoLocation;
+    @ColumnInfo(name = "farmId")
+    public String farmId;
 
-    @ColumnInfo(name = "dob")
-    public String dob;
+    @ColumnInfo(name = "msGender")
+    public String msGender;
 
-    @ColumnInfo(name = "nationalId")
-    public String nationalId ;
+    @ColumnInfo(name = "age")
+    public String age;
 
-    @ColumnInfo(name = "phoneNumber")
-    public String phoneNumber;
+    @ColumnInfo(name = "msPhoto")
+    public String msPhoto;
+
+    @ColumnInfo(name = "msDOB")
+    public String msDOB;
 
     @ColumnInfo(name = "consentFarmer")
-    public String consentFarmer;
+    public int consentFarmer;
 
     @ColumnInfo(name = "consentOthers")
-    public String consentOthers;
+    public int consentOthers;
 
-    @ColumnInfo(name = "signature")
-    public String signature;
+    @ColumnInfo(name = "msSignature")
+    public String msSignature;
+
+    @ColumnInfo(name = "msDisplayId")
+    public String msDisplayId;
+
+    @ColumnInfo(name = "olamMultiStakeholderId")
+    public String olamMultiStakeholderId;
 
     @ColumnInfo(name = "farmHoldingCode")
     public String farmHoldingCode;
 
-    @ColumnInfo(name = "stakeHolderRole")
-    public String stakeHolderRole;
+    @ColumnInfo(name = "msRoleId")
+    public String msRoleId;
+
+    @ColumnInfo(name = "synced")
+    public int synced;
+
+    @ColumnInfo(name = "primary_lat")
+    public String primary_lat;
+
+    @ColumnInfo(name = "primary_lng")
+    public String primary_lng;
+
+    @ColumnInfo(name = "registeredDate")
+    public String registeredDate;
+
+    @ColumnInfo(name = "isConsentAvailable")
+    public String isConsentAvailable;
+
+    @ColumnInfo(name = "submitted_modules")
+    public String submitted_modules;
+
+    @ColumnInfo(name = "created_locally")
+    public int created_locally;
 
 }

@@ -369,7 +369,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
     private void bindNationalidValues() {
         if (farmerId != 0) {
-            Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+            Cursor nids = dl.getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
             try {
                 int i = 0;

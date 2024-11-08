@@ -25,7 +25,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
 
     public DataLayer dl;
     private Long farmerId;
-    private String farmerName;
+    private String farmerName, farmId;
     private String farmHoldingCode;
     private StakeHolderRecyclerAdapter stakeHolderRecyclerAdapter;
     private RecyclerView stakeHolderRecyclerView;
@@ -41,8 +41,9 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
         dl = new DataLayer(res, context);
 
         farmerId = getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
-        farmerName = getIntent().getExtras().getString("olamFarmerName", res.getString(R.string.farmer));
-        farmHoldingCode = getIntent().getExtras().getString("farmHoldingCode", res.getString(R.string.farm_holding_code));
+        farmerName = dl.getFarmerName(farmerId);
+        farmHoldingCode = dl.getFarmHoldingCodeByFarmerId(farmerId);
+        farmId = String.valueOf(dl.getFarmId(Math.toIntExact(farmerId)));
 
         stakeHolderRecyclerView = findViewById(R.id.stakeHolderRecyclerView);
         etFarmerName = findViewById(R.id.etFarmerName);
@@ -71,11 +72,12 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
                 bundle.putLong(Utilities.FARMER_ID, farmerId);
                 bundle.putString(Utilities.FARM_HOLDING_CODE, farmHoldingCode);
                 bundle.putString(Utilities.FARMER_NAME, farmerName);
+                bundle.putString(Utilities.FARM_ID, farmId);
                 startActivity(new Intent(AddFarmStakeHolderActivity.this, AddFarmerActivity.class).putExtras(bundle));
             }
         });
     }
-    
+
     private void loadStakeHolderList() {
         List<StakeHolderDto> stakeHolderList = dl.getAllStakeHolderListByFarmerId(farmerId);
 

@@ -144,6 +144,15 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
+    public boolean getNIDPhotoStatusByTypeMs(String type, long stakeholderId) {
+        boolean photostatus = false;
+        Cursor nid = dl.getNIDPhotoStatusByTypeMs(type, stakeholderId);
+        if (nid.getCount() > 0) {
+            photostatus = true;
+        }
+        return photostatus;
+    }
+
     public boolean getUpdateNIDPhotoStatusByType(String type, long editFarmerId) {
         boolean photostatus = false;
         Cursor nid = dl.getUpdateNIDPhotoStatusByType(type, editFarmerId);
@@ -156,6 +165,16 @@ public class BaseActivity extends AppCompatActivity {
     public String getNIDPhotoByType(String type, long farmerid) {
         String photo = null;
         Cursor nid = dl.getNIDPhotostatusByType(type, farmerid);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
+        }
+        return photo;
+    }
+
+    public String getNIDPhotoByTypeMs(String type, long stakeholderId) {
+        String photo = null;
+        Cursor nid = dl.getNIDPhotoStatusByTypeMs(type, stakeholderId);
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));

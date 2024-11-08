@@ -1274,4 +1274,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_action_plan_is_missing">Action Plan is missing!</string>
     <string name="dm_please_give_camera_permission">Please give camera permission</string>
     <string name="dm_please_give_gallery_permission">Please give gallery permission</string>
+    <string name="Stakeholder_Updated">Stakeholder Updated</string>
+    <string name="Stakeholder_Added">Stakeholder Added</string>
+    <string name="new_stakeholder">New StakeHolder</string>
 </resources>

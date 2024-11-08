@@ -175,7 +175,32 @@ public abstract class OFISRoomDB extends RoomDatabase {
         final Migration MIGRATION_15_16 = new Migration(15, 16) {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (id INTEGER PRIMARY KEY NOT NULL, farmerId INTEGER, stakeHolderName TEXT, gender TEXT, photoLocation TEXT, dob TEXT, nationalId TEXT, phoneNumber TEXT, consentFarmer TEXT, consentOthers TEXT, signature TEXT, farmHoldingCode TEXT, stakeHolderRole TEXT)");
+                database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (" +
+                "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "msTempId INTEGER," +
+                        "farmerId INTEGER," +
+                        "msName TEXT," +
+                        "farmHoldingName TEXT," +
+                        "farmId TEXT," +
+                        "msGender TEXT," +
+                        "age TEXT," +
+                        "msPhoto TEXT," +
+                        "msDOB TEXT," +
+                        "consentFarmer INTEGER," +
+                        "consentOthers INTEGER," +
+                        "msSignature TEXT," +
+                        "msDisplayId TEXT," +
+                        "olamMultiStakeholderId TEXT," +
+                        "farmHoldingCode TEXT," +
+                        "msRoleId TEXT," +
+                        "synced INTEGER," +
+                        "primary_lat TEXT," +
+                        "primary_lng TEXT," +
+                        "registeredDate TEXT," +
+                        "isConsentAvailable TEXT," +
+                        "submitted_modules TEXT," +
+                        "created_locally INTEGER" +
+                        ")");
             }
         };
 

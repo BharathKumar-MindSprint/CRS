@@ -574,7 +574,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 certificationInfoLayout.setVisibility(View.GONE);
             }
 
-            Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+            Cursor nids = dl.getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             try {
                 int i = 0;
                 StringBuilder nationalID = new StringBuilder();
@@ -2528,8 +2528,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Intent in = new Intent(this, AddFarmStakeHolderActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
-                        bundle.putString("olamFarmerName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                        bundle.putString("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE)));
                         in.putExtras(bundle);
                         startActivity(in);
                     }
