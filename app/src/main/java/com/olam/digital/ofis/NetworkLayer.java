@@ -4657,7 +4657,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
 
                     tempOlamFarmerID = multiStakeHolder.olamMultiStakeholderId;
-                    jsonObject.put("tempFarmerId", tempOlamFarmerID);
+                    jsonObject.put("tempMsId", tempOlamFarmerID);
                     jsonObject.put("farmerId", multiStakeHolder.farmerId);
                     jsonObject.put("farmId", multiStakeHolder.farmId);
                     jsonObject.put("msName", multiStakeHolder.msName);
@@ -4745,7 +4745,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
                     if (isNIDAvailable) {
                         if (nidstosend != null) {
-                            jsonObject.put("nationalIDs", nidstosend);
+                            jsonObject.put("nationalIds", nidstosend);
                         }
                     }
 
