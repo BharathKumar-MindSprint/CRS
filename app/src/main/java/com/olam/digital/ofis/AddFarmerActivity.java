@@ -381,6 +381,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         farmerIdMs = stakeHolder.farmerId;
                         farmHoldingCodeMs = stakeHolder.farmHoldingCode;
                         farmerNameMs = stakeHolder.farmHoldingName;
+                        farmId = stakeHolder.farmId;
                         populateExistingValuesMs(stakeHolder);
                     }
                 }
