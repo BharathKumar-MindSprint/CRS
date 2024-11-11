@@ -515,7 +515,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
 
             //setting farmer info
-            Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false);
+            Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
             StringBuilder phonenumberinfo = new StringBuilder();
             String ptInfo = null , prInfo=null;
 
@@ -1959,7 +1959,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private void populatephoneNumberDialog() {
         phonenumbers.removeAllViews();
 
-        Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false);
+        Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
 
         if (existingNumbers.getCount() > 0) {
             boolean firstNumber = true;
@@ -2120,7 +2120,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if (!hasNumber || !hasMainNumber) {
                         Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
                     } else {
-                        dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
+                        dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
                         ContentValues nqiValues = new ContentValues();
                         if (mCurrentCapturedLocation != null) {
                             collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);

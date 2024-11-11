@@ -618,7 +618,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
                 else {
-                    if (!(getNIDPhotostatusByType(String.valueOf(type), farmerId) || getPhotostatusByType(String.valueOf(type)))) {
+                    if (!(getNIDPhotostatusByType(String.valueOf(type), farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID) || getPhotostatusByType(String.valueOf(type)))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
@@ -640,7 +640,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     if (!editmode || isUpdateNationalIdAvailable) {
                         photopath = getPhotobytype(type);
                     } else {
-                        photopath = getNIDPhotoByType(String.valueOf(type), farmerId);
+                        photopath = getNIDPhotoByType(String.valueOf(type), farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                     }
                     idDTO.setPhoto(photopath);
                 } else {
@@ -840,10 +840,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             storeableNationalids = fetchnationalidvalues();
             boolean statusmoduration;
             if (isUpdateNationalIdAvailable) {
-                statusmoduration = dl.updateFarmerNationalids(context, farmerId, storeableNationalids, "updateNationalId", farmername);
+                statusmoduration = dl.updateFarmerNationalids(context, farmerId, null, storeableNationalids, "updateNationalId", farmername, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             }
             else {
-                statusmoduration = dl.updateFarmerNationalids(context, farmerId, storeableNationalids, "2", farmername);
+                statusmoduration = dl.updateFarmerNationalids(context, farmerId, null, storeableNationalids, "2", farmername, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             }
 
             // collect the national id types

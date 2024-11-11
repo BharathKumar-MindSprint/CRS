@@ -3124,8 +3124,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     // get farmer phone numbers
-    private JSONArray farmerPhoneNumbers(long farmerId) {
-        Cursor phonenumbers = dl.getFarmerPhoneNumbers(farmerId, false);
+    private JSONArray farmerPhoneNumbers(long id, String columnName) {
+        Cursor phonenumbers = dl.getFarmerPhoneNumbers(id, false, columnName);
         JSONArray numbersarray = new JSONArray();
 
         // New Code
@@ -3163,38 +3163,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return null;
     }
 
-    private JSONArray farmerPhoneNumbersMs(long stakeholderId) {
-        Cursor phonenumbers = dl.getFarmerPhoneNumbersMs(stakeholderId, false);
-        JSONArray numbersarray = new JSONArray();
-
-
-        try {
-            while (phonenumbers.moveToNext()) {
-                JSONObject phonenumber = new JSONObject();
-
-                phonenumber.put("farmerId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
-                phonenumber.put("countryId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))));
-                phonenumber.put("phoneNumber", phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
-                phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
-
-                numbersarray.put(phonenumber);
-
-            }
-            return numbersarray;
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object " + e.getMessage());
-        }
-        return null;
-    }
 
     // get farmer national ids
     // OW-4590 Fix
-    private JSONArray farmernationalids(long farmerId, long nid, String value) {
+    private JSONArray farmernationalids(long farmerId, long nid, String value, String columnName) {
         Cursor nids;
         if(value.equalsIgnoreCase("2") || value.equals("updateNationalId")) {
-             nids = dl.getnationalidsbyfarmerid(farmerId,nid, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+             nids = dl.getnationalidsbyfarmerid(farmerId,nid, columnName);
         }else{
-             nids = dl.getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+             nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
         }
 
         JSONArray numbersarray = new JSONArray();
@@ -3240,59 +3217,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return null;
     }
 
-    private JSONArray farmernationalidsMS(long farmerId, long nid, String value) {
-        Cursor nids;
-        if(value.equalsIgnoreCase("2") || value.equals("updateNationalId")) {
-            nids = dl.getnationalidsbyfarmerid(farmerId,nid, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-        }else{
-            nids = dl.getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-        }
-
-        JSONArray numbersarray = new JSONArray();
-
-        try {
-            while (nids.moveToNext()) {
-                JSONObject nationalids = new JSONObject();
-                if (value.equals("updateNationalId")) {
-                    nationalids.put("id", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID))));
-                }
-                nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
-                nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
-                nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-                if (nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)) != null) {
-                    nationalids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
-                }
-
-                String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
-                if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
-
-                    try {
-                        String encodedImage = Utilities.base64ConversionForImage(farmerNIDPath);
-                        nationalids.put("photo", encodedImage);
-                    } catch (Exception e) {
-                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                    }
-
-                }
 
 
-                numbersarray.put(nationalids);
-            }
-            return numbersarray;
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object" + e.getMessage());
-
-        }
-        return null;
-    }
-
-
-    private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId) {
+    private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId, String columnName) {
         final JSONObject params = new JSONObject();
 
         Cursor child = null;
         try {
-            child = dl.getConsentStatementById(farmerId, OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID);
+            child = dl.getConsentStatementById(farmerId, columnName);
             if (child.getCount() > 0) {
                 child.moveToFirst();
                 try {
@@ -3387,108 +3319,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
         return params;
     }
-
-    private JSONObject farmerConsentStatmentMs(long farmerId, String displayFarmerId) {
-        final JSONObject params = new JSONObject();
-
-        Cursor child = null;
-        try {
-            child = dl.getConsentStatementById(farmerId, OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
-            if (child.getCount() > 0) {
-                child.moveToFirst();
-                try {
-                    String enumeratorId = Utilities.getFromSharedPrefs(context);
-                    params.put("enumeratorName", Utilities.getEnumeratorNameSharedPrefs(context));
-                    if (enumeratorId != null) {
-                        params.put("enumeratorId", enumeratorId);
-                    }
-                    params.put("farmerName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER)));
-                    params.put("displayFarmerId", displayFarmerId);
-                    params.put("farmerConfirmation", true);
-                    params.put("childName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME)));
-                    params.put("occupation", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION)));
-
-                    //                         params.put("farmerConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN)));
-//                         params.put("enumeratorConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN)));
-
-
-                    String farmerSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN));
-                    String enumSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN));
-                    if (farmerSignaturePath != null && farmerSignaturePath.length() > 0) {
-                        try {
-                            String encodedImage = Utilities.base64ConversionForImage(farmerSignaturePath);
-                            params.put("farmerConsentSignature", encodedImage);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-
-                    }
-                    if (enumSignaturePath != null && enumSignaturePath.length() > 0) {
-                        try {
-                            String encodedImage = Utilities.base64ConversionForImage(enumSignaturePath);
-                            params.put("enumeratorConsentSignature", encodedImage);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-
-                    }
-
-                    params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
-
-                    //for only Brazil
-                    params.put("maritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL)));
-                    params.put("profession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION)));
-                    params.put("cpfNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO)));
-                    params.put("rgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO)));
-                    params.put("fullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS)));
-                    params.put("city", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY)));
-                    params.put("state", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE)));
-                    params.put("subName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME)));
-                    params.put("subNationality", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY)));
-                    params.put("submaritalStatus", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL)));
-                    params.put("subProfession", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION)));
-                    params.put("subCpfNumber",child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO)));
-                    params.put("subRgNumber", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO)));
-                    params.put("subFullAddress", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS)));
-                    params.put("subCity", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY)));
-                    params.put("subState", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE)));
-                    params.put("contact", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT)));
-                    params.put("witness1Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME)));
-                    params.put("witness1CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF)));
-                    params.put("witness1RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG)));
-                    String witness1SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN));
-                    if (witness1SignPath != null && witness1SignPath.length() > 0) {
-                        try {
-                            String encodedImage = Utilities.base64ConversionForImage(witness1SignPath);
-                            params.put("witness1Sign", encodedImage);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-                    }
-                    params.put("witness2Name", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME)));
-                    params.put("witness2CPF", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF)));
-                    params.put("witness2RG", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG)));
-                    String witness2SignPath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN));
-                    if (witness2SignPath != null && witness2SignPath.length() > 0) {
-                        try {
-                            String encodedImage = Utilities.base64ConversionForImage(witness2SignPath);
-                            params.put("witness2Sign", encodedImage);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-                    }
-                } catch (Exception e) {
-                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                }
-            }
-        } finally {
-            if (child != null) {
-                child.close();
-            }
-        }
-        return params;
-    }
-
 
     private void postPhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
 
@@ -3498,7 +3328,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // new end point
         endpoint = "ofisfarmer/farmer/updatephonenumbers";
         final JSONObject params = new JSONObject();
-        JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+        JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
 
 //        List<FarmerRegistrationPhoneNumberDTO> farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
@@ -4502,15 +4332,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 final int localFarmerId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                 JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
-                        .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                        .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
 
                 // OW-4590 Fix
                 JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");
+                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
 
                 JSONObject consentStatement = farmerConsentStatment(networkQueueItems
                                 .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                        farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                        farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)), OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID);
                 try {
                     jsonObject.put("consentStatement", consentStatement);
                 } catch (JSONException e) {
@@ -4719,14 +4549,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
                 final long localFarmerId = multiStakeHolder.msId;
-                JSONArray numberstosend = farmerPhoneNumbersMs(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)));
+                JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
 
-                JSONArray nidstosend = farmernationalidsMS(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)),
-                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");
+                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)),
+                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
 
-                JSONObject consentStatement = farmerConsentStatmentMs(networkQueueItems
+                JSONObject consentStatement = farmerConsentStatment(networkQueueItems
                                 .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)),
-                        multiStakeHolder.olamMultiStakeholderId);
+                        multiStakeHolder.olamMultiStakeholderId, OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
                 try {
                     jsonObject.put("consentStatement", consentStatement);
                 } catch (JSONException e) {
@@ -5826,7 +5656,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         typeID = dl.getNIDTypeIDByName(typeName);
                     }
                     JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                            typeID, "2");
+                            typeID, "2", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
 
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
@@ -5987,7 +5817,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         typeID = dl.getNIDTypeIDByName(typeName);
                     }
                     JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                            typeID, "updateNationalId");
+                            typeID, "updateNationalId", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
 
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);

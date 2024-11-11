@@ -1146,6 +1146,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      private MultiStakeHolder validateValuesMs(long farmerIdMs) {
 
          MultiStakeHolder multiStakeHolder = stakeHolder;
+         multiStakeHolder.msTempId = null;
 
 
          Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
@@ -1246,7 +1247,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              multiStakeHolder.farmId = farmId;
              multiStakeHolder.farmHoldingName = farmerNameMs;
              multiStakeHolder.msDisplayId = olamFarmerId;
-             multiStakeHolder.msTempId = Long.valueOf(olamFarmerId);
+
              multiStakeHolder.created_locally = 1;
              multiStakeHolder.msDOB = dateStrToSend;
              multiStakeHolder.msGender=genderValue;
@@ -1259,7 +1260,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              multiStakeHolder.farmHoldingCode = farmHoldingCode;
              multiStakeHolder.msRoleId = farmerRoleSpinner.getTag().toString();
              multiStakeHolder.msSignature = getCurrentSignaturePhotoPath();
-
+             multiStakeHolder.msTempId = Long.valueOf(olamFarmerId);
 
              Date today = new Date();
              SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1268,6 +1269,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
          } catch (Exception e) {
+             multiStakeHolder = null;
              e.printStackTrace();
              FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
          }
@@ -1343,9 +1345,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if (editMode) {
             Cursor existingNumbers = null;
             if (isAddStakeHolder){
-                existingNumbers = dl.getFarmerPhoneNumbersMs(editFarmerId, false);
+                existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
             } else {
-                existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false);
+                existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
             }
             boolean firstNumber = true;
 
@@ -1925,9 +1927,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                             String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                             new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
-                            dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
+                            dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                             if (isNIDAvailable) {
-                                boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
+                                boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                 if (moduretationstatus) {
                                     statusmoduration = true;
                                 }
@@ -1955,7 +1957,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                            long newFarmerId = dl.insertFarmer(values);
 
                             if (newFarmerId != -1) {
-                                dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
+                                dl.updateFarmerPhoneNumbers(newFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
                                 EditText farmerName = findViewById(R.id.farmerName);
                                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,newFarmerId);
@@ -1964,7 +1966,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                                 dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
                                 if (isNIDAvailable) {
-                                    boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
+                                    boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                     if (moduretationstatus) {
                                         statusmoduration = true;
                                     }
@@ -2002,7 +2004,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              @Override
              public void onClick(View view) {
                  MultiStakeHolder multiStakeHolder = validateValuesMs(farmerIdMs);
-                 if (multiStakeHolder.msTempId!=null) {
+                 if (multiStakeHolder!=null && multiStakeHolder.msTempId!=null) {
                      if (editMode) {
                          long updFarmerId = editFarmerId;
                          dl.updateFarmerMs(multiStakeHolder, editFarmerId);
@@ -2011,9 +2013,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                          String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                          new GpsTrackerLogic().updateFarmerDetails(context,multiStakeHolder.msId,farmerNameValue,genderValue);
-                         dl.updateFarmerPhoneNumbersMs(multiStakeHolder.msId, farmerIdMs, storeableNumbers);
+                         dl.updateFarmerPhoneNumbers(farmerIdMs, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
                          if (isNIDAvailable) {
-                             dl.updateFarmerNationalidsMS(context,farmerIdMs ,multiStakeHolder.msId, storeableNationalids, "1", "name");
+                             dl.updateFarmerNationalids(context,farmerIdMs , String.valueOf(multiStakeHolder.msId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
 
                          }
 
@@ -2038,7 +2040,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          long newStakeholderId = dl.insertStakeHolder(multiStakeHolder);
 
                          if (newStakeholderId != -1) {
-                             dl.updateFarmerPhoneNumbersMs(newStakeholderId, farmerIdMs, storeableNumbers);
+                             dl.updateFarmerPhoneNumbers(farmerIdMs, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
                              EditText farmerName = findViewById(R.id.farmerName);
                              String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                              consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerIdMs);
@@ -2048,7 +2050,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                              dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
                              if (isNIDAvailable) {
-                                 dl.updateFarmerNationalidsMS(context, farmerIdMs, newStakeholderId, storeableNationalids, "1", "name");
+                                 dl.updateFarmerNationalids(context, farmerIdMs, String.valueOf(newStakeholderId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
 
                              }
                              saveButton.setEnabled(false);
@@ -2960,7 +2962,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         return false;
                     }
                 } else {
-                    if (!(getNIDPhotostatusByType(String.valueOf(type), editFarmerId) || getPhotostatusByType(String.valueOf(type)))) {
+                    if (!(getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID) || getPhotostatusByType(String.valueOf(type)))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
@@ -2977,8 +2979,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (!editMode) {
                         photopath = getPhotobytype(type);
                     } else {
-                        if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId)) {
-                            photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId);
+                        if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID)) {
+                            photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                         } else {
                             photopath = getPhotobytype(type);
                         }
@@ -3027,8 +3029,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                  if (!editMode) {
                      photopath = getPhotobytype(type);
                  } else {
-                     if (getNIDPhotoStatusByTypeMs(String.valueOf(type), editFarmerId)) {
-                         photopath = getNIDPhotoByTypeMs(String.valueOf(type), editFarmerId);
+                     if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+                         photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId,OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
                      } else {
                          photopath = getPhotobytype(type);
                      }

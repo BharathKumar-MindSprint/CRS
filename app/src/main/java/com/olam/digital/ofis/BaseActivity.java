@@ -135,23 +135,15 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean getNIDPhotostatusByType(String type, long editFarmerId) {
+    public boolean getNIDPhotostatusByType(String type, long editFarmerId, String columnName) {
         boolean photostatus = false;
-        Cursor nid = dl.getNIDPhotostatusByType(type, editFarmerId);
+        Cursor nid = dl.getNIDPhotostatusByType(type, editFarmerId, columnName);
         if (nid.getCount() > 0) {
             photostatus = true;
         }
         return photostatus;
     }
 
-    public boolean getNIDPhotoStatusByTypeMs(String type, long stakeholderId) {
-        boolean photostatus = false;
-        Cursor nid = dl.getNIDPhotoStatusByTypeMs(type, stakeholderId);
-        if (nid.getCount() > 0) {
-            photostatus = true;
-        }
-        return photostatus;
-    }
 
     public boolean getUpdateNIDPhotoStatusByType(String type, long editFarmerId) {
         boolean photostatus = false;
@@ -162,9 +154,9 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
-    public String getNIDPhotoByType(String type, long farmerid) {
+    public String getNIDPhotoByType(String type, long farmerid, String columnName) {
         String photo = null;
-        Cursor nid = dl.getNIDPhotostatusByType(type, farmerid);
+        Cursor nid = dl.getNIDPhotostatusByType(type, farmerid, columnName);
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
@@ -172,15 +164,7 @@ public class BaseActivity extends AppCompatActivity {
         return photo;
     }
 
-    public String getNIDPhotoByTypeMs(String type, long stakeholderId) {
-        String photo = null;
-        Cursor nid = dl.getNIDPhotoStatusByTypeMs(type, stakeholderId);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
-        }
-        return photo;
-    }
+
 
     public ArrayList<Integer> getAllphotoTypes() {
         ArrayList<Integer> types = new ArrayList<>();
