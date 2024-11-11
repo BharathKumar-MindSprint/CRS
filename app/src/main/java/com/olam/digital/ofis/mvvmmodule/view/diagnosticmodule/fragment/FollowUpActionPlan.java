@@ -784,7 +784,7 @@ public class FollowUpActionPlan extends Fragment {
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
         LinearLayout.LayoutParams layoutParamsActionTxt = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
         layoutParams.setMargins(0, 15, 0, 15);
 

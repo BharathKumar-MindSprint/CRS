@@ -1333,12 +1333,14 @@ public class OFISDBContract {
         public static final String COLUMN_COUNTRY_iD = "countryId";
         public static final String COLUMN_ISODORIGIN = "isODOrigin";
         public static final String COLUMN_COUNTRYISOCODE = "countryIsoCode";
+        public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_PRODUCT_ID);
                     add(COLUMN_COUNTRY_iD);
                     add(COLUMN_ISODORIGIN);
                     add(COLUMN_COUNTRYISOCODE);
+                    add(CALCULATE_COMPOSITE_FLAG);
                 }}
         );
     }

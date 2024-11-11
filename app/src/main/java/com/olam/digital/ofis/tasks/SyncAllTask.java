@@ -747,7 +747,6 @@ public class SyncAllTask extends SyncTask {
                                 boolean calculateCompositeFlag = item.has(Utilities.CALCULATE_COMPOSITE_FLAG) && item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
-                                Utilities.saveToSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, null, calculateCompositeFlag);
 
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);

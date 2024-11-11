@@ -10827,11 +10827,11 @@ public class DataLayer {
 
     public int fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String id) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
-                + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " != ? AND "
-                + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " != ? AND "
-                + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(id), "Open", "Initiated", "1"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND ("
+                + "LOWER(" + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + ") = ? OR "
+                + "LOWER(" + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + ") = ?) AND "
+                + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id), "updated", "repaired", "1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
 
         while (data.getCount() > 0 && data.moveToNext()) {
@@ -10859,6 +10859,23 @@ public class DataLayer {
 
         db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, "id = ?", new String[] {String.valueOf(plotId)});
 
+    }
+
+    public boolean getCompositeFlagByCountryId(int countryId) {
+        Cursor farmerAssignments = getassignmentbyCountryId(countryId);
+
+        try {
+            if (farmerAssignments != null) {
+                farmerAssignments.moveToFirst();
+                return farmerAssignments.getString(farmerAssignments.getColumnIndex(OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG)).equalsIgnoreCase("true");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            farmerAssignments.close();
+        }
+
+        return false;
     }
 
     public List<StakeHolderDto> getAllStakeHolderListByFarmerId(Long farmerId) {
