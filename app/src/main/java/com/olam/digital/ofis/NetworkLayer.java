@@ -4272,9 +4272,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
 
                     jsonObject.put("enumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
-                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE)));
-                    jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                    jsonObject.put("farmerRoleId", 1); // only for backend (MultiStakeholder)
+                    jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)));
+                    jsonObject.put("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
+                    jsonObject.put("farmerRoleId", 1);
 
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -4537,8 +4537,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-
                     }
 
 
@@ -4762,26 +4760,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
-                String farmsId = null;
-                boolean isMultiFarm = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-                if (isMultiFarm) {
-                    try {
-                        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                        farmsId = multiFarmDTO.getFarmId();
-                    } catch (Exception e) {
-                    }
 
-                }
                 final JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
 
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
                 if (endpoint.length() > 0) {
-
-                    final String finalTempOlamFarmerID = tempOlamFarmerID;
-                    final String finalfarmsId = farmsId;
-
-
                     int finalLocalFarmerId = localFarmerId;
                     int finalLocalPlaceId = localPlaceId;
                     okHttpArrayPost(context, endpoint, jsonArray, new Callback() {

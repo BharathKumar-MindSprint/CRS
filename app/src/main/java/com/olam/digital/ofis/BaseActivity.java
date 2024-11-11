@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -507,6 +509,18 @@ public class BaseActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    public int getIndexForFarmerRoleSpinnerList(String roleId) {
+        String localeSuffix = Utilities.getColumnNameByLanguage();
+        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
+        int id = Integer.parseInt(roleId);
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getId() == id) {
+                return i;
+            }
+        }
+        return 0;
     }
 
 

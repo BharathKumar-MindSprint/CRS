@@ -44,8 +44,8 @@ public class StakeHolderRecyclerAdapter extends RecyclerView.Adapter<StakeHolder
     public void onBindViewHolder(@NonNull StakeHolder holder, int position) {
         StakeHolderDto stakeHolderDto = stakeHolderList.get(position);
 
-        holder.stakeHolderName.setText(stakeHolderDto.getStakeHolderName());
-        holder.farmerRole.setText(stakeHolderDto.getFarmerRole());
+        holder.stakeHolderName.setText(stakeHolderDto.getMsName());
+        holder.farmerRole.setText(stakeHolderDto.getMsRoleId());
 
         holder.item.setOnClickListener(new View.OnClickListener() {
             @Override

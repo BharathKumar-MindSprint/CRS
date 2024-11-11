@@ -2,37 +2,50 @@ package com.olam.digital.ofis.childlabour.dto;
 
 public class StakeHolderDto {
 
-    private String stakeHolderId;
-    private String stakeHolderName;
-    private String farmerRole;
+    private String msId;
+    private String msName;
+    private String msRoleId;
 
-    public StakeHolderDto(String stakeHolderId, String stakeHolderName, String farmerRole) {
-        this.stakeHolderId = stakeHolderId;
-        this.stakeHolderName = stakeHolderName;
-        this.farmerRole = farmerRole;
+    private String olamMultiStakeholderId;
+
+    public StakeHolderDto() {}
+
+    public StakeHolderDto(String msId, String msName, String msRoleId, String olamMultiStakeholderId) {
+        this.msId = msId;
+        this.msName = msName;
+        this.msRoleId = msRoleId;
+        this.olamMultiStakeholderId = olamMultiStakeholderId;
     }
 
-    public String getStakeHolderName() {
-        return stakeHolderName;
+    public String getMsId() {
+        return msId;
     }
 
-    public void setStakeHolderName(String stakeHolderName) {
-        this.stakeHolderName = stakeHolderName;
+    public void setMsId(String msId) {
+        this.msId = msId;
     }
 
-    public String getFarmerRole() {
-        return farmerRole;
+    public String getMsName() {
+        return msName;
     }
 
-    public void setFarmerRole(String farmerRole) {
-        this.farmerRole = farmerRole;
+    public void setMsName(String msName) {
+        this.msName = msName;
     }
 
-    public String getStakeHolderId() {
-        return stakeHolderId;
+    public String getMsRoleId() {
+        return msRoleId;
     }
 
-    public void setStakeHolderId(String stakeHolderId) {
-        this.stakeHolderId = stakeHolderId;
+    public void setMsRoleId(String msRoleId) {
+        this.msRoleId = msRoleId;
+    }
+
+    public String getOlamMultiStakeholderId() {
+        return olamMultiStakeholderId;
+    }
+
+    public void setOlamMultiStakeholderId(String olamMultiStakeholderId) {
+        this.olamMultiStakeholderId = olamMultiStakeholderId;
     }
 }
