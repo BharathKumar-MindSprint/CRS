@@ -913,7 +913,7 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "consentstatement";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "multistakeholder_id";
+        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "msId";
         public static final String COLUMN_NAME_FARMER = "farmerName";
         public static final String COLUMN_NAME_DISPLAYFARMER_ID = "displayFarmerId";
         public static final String COLUMN_NAME_FARMER_CONFIRMATION = "farmerConfirmation";
@@ -1202,14 +1202,37 @@ public class OFISDBContract {
 
     public static abstract class PhoneNumber implements BaseColumns {
         public static final String TABLE_NAME = "phonenumbers";
+        public static final String COLUMN_NAME_PHONE_NUMBER_ID = "phoneNumberId";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
-        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "multistakeholder_id";
+        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "msId";
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final String COLUMN_NAME_NUMBER = "phonenumber";
         public static final String COLUMN_NAME_PRIMARY = "primary_number";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                    add(COLUMN_NAME_COUNTRY_ID);
+                    add(COLUMN_NAME_NUMBER);
+                    add(COLUMN_NAME_PRIMARY);
+                }}
+        );
+    }
+
+    public static abstract class PhoneNumberCopy implements BaseColumns {
+        public static final String TABLE_NAME = "phoneNumbersCopy";
+        public static final String COLUMN_NAME_PHONE_NUMBER_ID = "phoneNumberId";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "msId";
+        public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+        public static final String COLUMN_NAME_NUMBER = "phonenumber";
+        public static final String COLUMN_NAME_PRIMARY = "primary_number";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_PHONE_NUMBER_ID);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_MULTI_STAKEHOLDER_ID);
@@ -1252,9 +1275,37 @@ public class OFISDBContract {
     }
     public static abstract class FarmerNationalIDs implements BaseColumns {
         public static final String TABLE_NAME = "farmernationalids";
+        public static final String COLUMN_NATIONAL_ID = "nationalId";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholderId";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "msId";
+        public static final String COLUMN_NID_TYPE = "nationalIdType";
+        public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
+        public static final String COLUMN_NID_PHOTO = "photo";
+        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
+        public static final String COLUMN_IS_SYNCED = "isSynced";
+        //        public static final String COLUMN_CREATEDDATE = "createddate";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NID_TYPE);
+                    add(COLUMN_NID_NUMBER);
+                    add(COLUMN_NID_PHOTO);
+                    add(COLUMN_NID_EXPIRY_DATE);
+                    add(COLUMN_IS_SYNCED);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
+//                    add(COLUMN_CREATEDDATE);
+                }}
+        );
+    }
+
+    public static abstract class FarmerNationalIdCopy implements BaseColumns {
+        public static final String TABLE_NAME = "farmerNationalIdCopy";
+        public static final String COLUMN_NATIONAL_ID = "nationalId";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "msId";
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";

@@ -41,10 +41,10 @@ public class MultiStakeHolder {
     public String msDOB;
 
     @ColumnInfo(name = "consentFarmer")
-    public int consentFarmer;
+    public Integer consentFarmer;
 
     @ColumnInfo(name = "consentOthers")
-    public int consentOthers;
+    public Integer consentOthers;
 
     @ColumnInfo(name = "msSignature")
     public String msSignature;
@@ -62,7 +62,7 @@ public class MultiStakeHolder {
     public String msRoleId;
 
     @ColumnInfo(name = "synced")
-    public int synced;
+    public Integer synced;
 
     @ColumnInfo(name = "primary_lat")
     public String primary_lat;
@@ -80,6 +80,6 @@ public class MultiStakeHolder {
     public String submitted_modules;
 
     @ColumnInfo(name = "created_locally")
-    public int created_locally;
+    public Integer created_locally;
 
 }
