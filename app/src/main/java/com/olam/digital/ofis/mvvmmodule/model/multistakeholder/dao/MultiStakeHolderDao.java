@@ -37,7 +37,7 @@ public interface MultiStakeHolderDao {
     @Update
     int updateStakeholder(MultiStakeHolder multiStakeholder);
 
-    @Query("UPDATE MULTISTAKEHOLDER SET msId=:msId, farmId=:farmId, olamMultiStakeholderId=:olamFarmerId, synced=:syncedStatus WHERE msId=:localFarmerId")
+    @Query("UPDATE MULTISTAKEHOLDER SET msId=:msId, farmId=:farmId, olamMultiStakeholderId=:olamFarmerId, msDisplayId=:olamFarmerId, synced=:syncedStatus WHERE msId=:localFarmerId")
     int updateStakeholderAfterSync(long localFarmerId, long msId, String farmId, long olamFarmerId, int syncedStatus);
 
 }

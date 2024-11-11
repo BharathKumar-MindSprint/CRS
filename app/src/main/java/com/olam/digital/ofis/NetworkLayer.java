@@ -4480,7 +4480,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             multiStakeHolder = db.multiStakeHolderDao().getStakeHolderById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)));
             final boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR, false);
-            final String endpoint = "multiStakeHolder/farmer/stakeHolderRegistration";
+            final String endpoint = "ofisfarmer/multiStakeHolder/farmer/stakeHolderRegistration";
             String tempOlamFarmerID = null;
             if (multiStakeHolder != null) {
                 JSONObject jsonObject = new JSONObject();
@@ -4610,7 +4610,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
                                     } else {
                                         dl.updateSyncedStatusFixed(localFarmerId, stakeholder.getInt("msId"), OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-                                        dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getLong("olamFarmerId"));
+                                        dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getLong("olamMultiStakeHolderId"));
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);
