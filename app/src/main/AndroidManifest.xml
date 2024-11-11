@@ -53,6 +53,16 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
         <activity
+            android:name=".farmstakeholder.ViewStakeHolderActivity"
+            android:label="@string/stake_holder_details"
+            android:parentActivityName=".farmstakeholder.AddFarmStakeHolderActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".farmstakeholder.AddFarmStakeHolderActivity" />
+        </activity>
+        <activity
             android:name=".farmstakeholder.AddFarmStakeHolderActivity"
             android:label="@string/add_farm_stake_holder"
             android:parentActivityName=".ViewFarmerActivity"
@@ -202,8 +212,7 @@
             android:name=".AddFarmerActivity"
             android:label="@string/title_activity_add_farmer"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute">
-        </activity>
+            tools:ignore="UnusedAttribute"></activity>
         <activity
             android:name=".AddInfrastructureActivity"
             android:label="@string/title_activity_add_infrastructure"

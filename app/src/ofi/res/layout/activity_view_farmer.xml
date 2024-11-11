@@ -691,106 +691,106 @@
         android:paddingBottom="0dp"
         android:layout_margin="0dp">
 
-        <!-- add farmer white input fields and heading - updated -->
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/View_Farmer"
-                android:id="@+id/pageTitle"
-                android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_large_text"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                android:paddingLeft="5dp"
-                android:maxLines="1" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:layout_marginTop="6dp"
-                android:id="@+id/viewFarmerFarmerName"
-                android:textColor="@color/ofis_base_font_dark"
-                android:background="@drawable/edittext_bg_dark"
-                android:padding="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                android:maxLines="1" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:id="@+id/viewFarmerOlamFarmerID"
-                android:textColor="@color/ofis_base_font_dark"
-                android:background="@drawable/edittext_bg_dark"
-                android:padding="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                android:maxLines="1" />
-
-            <TextView
+            <!-- add farmer white input fields and heading - updated -->
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/ofis_large_text"
-                android:id="@+id/viewFarmerInfo"
-                android:textColor="@color/ofis_base_font_white"
-                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
-                android:text="@string/view_farmer_information"
-                android:drawableEnd="@drawable/ic_drop_down_collapse"
-                android:maxLines="1" />
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/View_Farmer"
+                    android:id="@+id/pageTitle"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:paddingRight="0dp"
+                    android:paddingEnd="0dp"
+                    android:paddingLeft="5dp"
+                    android:maxLines="1" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:layout_marginTop="6dp"
+                    android:id="@+id/viewFarmerFarmerName"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:padding="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:maxLines="1" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:id="@+id/viewFarmerOlamFarmerID"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:padding="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:id="@+id/viewFarmerInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:text="@string/view_farmer_information"
+                    android:drawableEnd="@drawable/ic_drop_down_collapse"
+                    android:maxLines="1" />
+            </LinearLayout>
+            <!-- end add farmer white input fields and heading -->
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.8"
+                android:paddingLeft="10dp"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical"
+                android:id="@+id/wrapper_farmerPhoto">
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="112dp"
+                    android:contentDescription="@string/Farmer_Photo"
+                    android:id="@+id/viewFarmerFarmerPhoto"
+                    app:srcCompat="@drawable/empty_farmer_icon"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitStart"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentBottom="true"/>
+
+                <ImageButton
+                    android:layout_width="@dimen/standard_button_width_height"
+                    android:layout_height="@dimen/standard_button_width_height"
+                    android:id="@+id/farmerPhotoActionButton"
+                    android:contentDescription="@string/Camera"
+                    app:srcCompat="@drawable/ic_actionbutton_camera"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:padding="0dp"
+                    android:adjustViewBounds="false"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitXY"
+                    tools:ignore="VectorDrawableCompat" />
+            </RelativeLayout>
+
         </LinearLayout>
-        <!-- end add farmer white input fields and heading -->
-        <RelativeLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.8"
-            android:paddingLeft="10dp"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:gravity="center_vertical"
-            android:id="@+id/wrapper_farmerPhoto">
-
-            <ImageView
-                android:layout_width="84dp"
-                android:layout_height="112dp"
-                android:contentDescription="@string/Farmer_Photo"
-                android:id="@+id/viewFarmerFarmerPhoto"
-                app:srcCompat="@drawable/empty_farmer_icon"
-                android:background="@android:color/transparent"
-                android:scaleType="fitStart"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentBottom="true"/>
-
-            <ImageButton
-                android:layout_width="@dimen/standard_button_width_height"
-                android:layout_height="@dimen/standard_button_width_height"
-                android:id="@+id/farmerPhotoActionButton"
-                android:contentDescription="@string/Camera"
-                app:srcCompat="@drawable/ic_actionbutton_camera"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:padding="0dp"
-                android:adjustViewBounds="false"
-                android:background="@android:color/transparent"
-                android:scaleType="fitXY"
-                tools:ignore="VectorDrawableCompat" />
-        </RelativeLayout>
-
-    </LinearLayout>
     </LinearLayout>
    <!-- <LinearLayout
         android:orientation="horizontal"

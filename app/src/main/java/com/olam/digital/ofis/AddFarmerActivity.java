@@ -230,7 +230,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private List<String> farmerRolesList;
      private List<FarmerRoleDto> farmerRoleDTOList;
     private String localeSuffixColumn;
-     MultiStakeHolder stakeHolder ;
+    MultiStakeHolder stakeHolder;
 
 
 
@@ -249,7 +249,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         isAddStakeHolder = intent.getBooleanExtra(Utilities.STAKE_HOLDER_REGISTRATION, false);
         //roomdb
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
-         stakeHolder = new MultiStakeHolder();
+        stakeHolder = new MultiStakeHolder();
 
         String localeSuffix = Utilities.getLocaleSuffix(res);
         localeSuffixColumn = Utilities.getColumnNameByLanguage();
@@ -374,6 +374,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 farmerNameMs = extras.getString(Utilities.FARMER_NAME);
                 farmId = extras.getString(Utilities.FARM_ID);
             }
+
             if (editMode) {
                 if (editFarmerId != 0) {
                      stakeHolder = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(editFarmerId);
@@ -396,7 +397,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             bindConsentButton();
             addFarmerRegistrationUiChanges();
         }
-
 
     }
 
@@ -537,8 +537,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
         farmerName.setText(name);
-        etFarmHoldingName.setText(name);
-        etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE)));
+        etFarmHoldingName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)));
+        etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
@@ -831,7 +831,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         String olamFarmerId = String.valueOf(username + time);
 
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
-        String farmHoldingCode = etFarmHoldingCode.getText().toString().trim();
+        String farmCode = etFarmHoldingCode.getText().toString().trim();
+        String farmName = etFarmHoldingName.getText().toString().trim();
 
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
@@ -1100,7 +1101,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOLDING_CODE, farmHoldingCode);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE, farmCode);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmName);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -1148,7 +1150,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
          MultiStakeHolder multiStakeHolder = stakeHolder;
          multiStakeHolder.msTempId = null;
-
 
          Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
          Long time = System.currentTimeMillis();
@@ -1260,7 +1261,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              multiStakeHolder.isConsentAvailable = "true";
              multiStakeHolder.farmHoldingCode = farmHoldingCode;
              multiStakeHolder.msRoleId = farmerRoleSpinner.getTag().toString();
-             multiStakeHolder.msSignature = getCurrentSignaturePhotoPath();
+             multiStakeHolder.msSignature = edit_signature ? getCurrentSignaturePhotoPath() : stakeHolder.msSignature;
              multiStakeHolder.msTempId = Long.valueOf(olamFarmerId);
 
              Date today = new Date();
@@ -2025,7 +2026,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                              finish();
                              Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
                              Bundle bundle = new Bundle();
-                             bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerIdMs);
+                             bundle.putLong(Utilities.FARMER_ID, farmerIdMs);
                              intent.putExtras(bundle);
                              startActivity(intent);
                          }
@@ -2063,7 +2064,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                              finish();
                              Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
                              Bundle bundle = new Bundle();
-                             bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerIdMs);
+                             bundle.putLong(Utilities.FARMER_ID, farmerIdMs);
                              intent.putExtras(bundle);
                              startActivity(intent);
 
@@ -3222,7 +3223,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
              @Override
              public void afterTextChanged(Editable s) {
-                 populateFarmDetails(s.toString().trim());
+                 populateFarmDetails(farmerName.getText().toString().trim());
                  if(editMode) {
                      dl.updateConsentValue(s.toString().trim(),editFarmerId);
                  }
@@ -3251,22 +3252,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
      private void populateFarmDetails(String farmerName) {
          etFarmHoldingName.setText(farmerName + "'s Farm Holding");
-         etFarmHoldingName.addTextChangedListener(new TextWatcher() {
-             public void afterTextChanged(Editable s) {
-
-                 if (farmerName.equalsIgnoreCase("")){
-                     etFarmHoldingCode.setText("");
-                 }
-                 else{
-                     etFarmHoldingCode.setText(farmerName + "-" + String.format("%04d", new Random().nextInt(10000)));
-                 }
-                 etFarmHoldingCode.setEnabled(false);
-             }
-
-             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-             public void onTextChanged(CharSequence s, int start, int before, int count) {}
-         });
+         etFarmHoldingCode.setText(farmerName + "-" + String.format("%04d", new Random().nextInt(10000)));
      }
 
      private void bindFarmerRoles(MultiStakeHolder stakeHolder) {
@@ -3310,14 +3296,4 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return true;
      }
 
-     private int getIndexForFarmerRoleSpinnerList(String roleId) {
-        String localeSuffix = Utilities.getColumnNameByLanguage();
-        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
-        int id = Integer.parseInt(roleId);
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getId() == id) {
-                return i + 1;
-            }
-        }
-        return 0;}
  }

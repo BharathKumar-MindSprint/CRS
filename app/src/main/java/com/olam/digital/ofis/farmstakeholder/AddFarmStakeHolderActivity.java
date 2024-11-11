@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.AddFarmerActivity;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 
 import java.util.List;
@@ -26,7 +26,8 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
     public DataLayer dl;
     private Long farmerId;
     private String farmerName, farmId;
-    private String farmHoldingCode;
+    private String farmCode;
+    private String farmName;
     private StakeHolderRecyclerAdapter stakeHolderRecyclerAdapter;
     private RecyclerView stakeHolderRecyclerView;
     private EditText etFarmHoldingName, etFarmHoldingCode, etFarmerName;
@@ -40,9 +41,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dl = new DataLayer(res, context);
 
-        farmerId = getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
-        farmerName = dl.getFarmerName(farmerId);
-        farmHoldingCode = dl.getFarmHoldingCodeByFarmerId(farmerId);
+        farmerId = getIntent().getExtras().getLong(Utilities.FARMER_ID);
         farmId = String.valueOf(dl.getFarmId(Math.toIntExact(farmerId)));
 
         stakeHolderRecyclerView = findViewById(R.id.stakeHolderRecyclerView);
@@ -57,9 +56,23 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
     }
 
     private void initComponents() {
-        etFarmerName.setText(farmerName);
-        etFarmHoldingCode.setText(farmHoldingCode);
-        etFarmHoldingName.setText(farmerName);
+        try {
+            farmer = dl.getFarmerById(farmerId);
+            if (farmer != null && farmer.getCount() > 0) {
+                farmer.moveToFirst();
+                farmerName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                farmCode = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE));
+                farmName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME));
+
+                etFarmerName.setText(farmerName);
+                etFarmHoldingCode.setText(farmCode);
+                etFarmHoldingName.setText(farmName.toUpperCase());
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void initListener() {
@@ -70,7 +83,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
                 bundle.putString(Utilities.STAKE_HOLDER_ID, null);
                 bundle.putBoolean(Utilities.STAKE_HOLDER_REGISTRATION, true);
                 bundle.putLong(Utilities.FARMER_ID, farmerId);
-                bundle.putString(Utilities.FARM_HOLDING_CODE, farmHoldingCode);
+                bundle.putString(Utilities.FARM_HOLDING_CODE, farmCode);
                 bundle.putString(Utilities.FARMER_NAME, farmerName);
                 bundle.putString(Utilities.FARM_ID, farmId);
                 startActivity(new Intent(AddFarmStakeHolderActivity.this, AddFarmerActivity.class).putExtras(bundle));
@@ -93,9 +106,10 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
                 @Override
                 public void onStakeHolderClick(View view, int position, StakeHolderDto stakeHolderDto) {
                     Bundle bundle = new Bundle();
-                    bundle.putString(Utilities.STAKE_HOLDER_ID, stakeHolderDto.getStakeHolderId());
-                    bundle.putString(Utilities.STAKE_HOLDER_REGISTRATION, "true");
-                    startActivity(new Intent(AddFarmStakeHolderActivity.this, AddFarmerActivity.class).putExtras(bundle));
+                    bundle.putLong(Utilities.FARMER_ID, farmerId);
+                    bundle.putString(Utilities.STAKE_HOLDER_ID, stakeHolderDto.getMsId());
+                    startActivity(new Intent(AddFarmStakeHolderActivity.this, ViewStakeHolderActivity.class).putExtras(bundle));
+                    finish();
                 }
             });
         }

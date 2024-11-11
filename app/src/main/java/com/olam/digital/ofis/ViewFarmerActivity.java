@@ -268,14 +268,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        calculateComplianceFlag = Utilities.getBoolFromSharedPrefs(context, Utilities.CALCULATE_COMPOSITE_FLAG, false);
 
         db = OFISRoomDB.getDbInstance(context);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
 
-        //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
         setupGPS();
         setupUI();
@@ -659,6 +657,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 e.printStackTrace();
             }
 
+            calculateComplianceFlag = dl.getCompositeFlagByCountryId(countryID);
             llAggregatedIndicator.setVisibility(calculateComplianceFlag ? View.VISIBLE : View.GONE);
             aggregatedIndicator = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG)).equalsIgnoreCase("true");
             if (aggregatedIndicator) {
@@ -1377,10 +1376,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 }
 
-                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
+                int farmPlotCountDM = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
                 List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
-                if (calculateComplianceFlag && farmPlotCount > 0 && !dmPlotModules.isEmpty()) {
+                if (calculateComplianceFlag && farmPlotCountDM > 0 && !dmPlotModules.isEmpty()) {
                     mc.addRow(new String[]{
                             "0",
                             res.getString(R.string.dm_plot_survey),
@@ -1414,6 +1413,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
 
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey",""});
                 }
@@ -2527,14 +2527,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     else if (recordedLng != null && recordedLng.getText().equals("addFarmStakeholders")) {
                         Intent in = new Intent(this, AddFarmStakeHolderActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putLong(Utilities.FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
                     }
                     else if (recordedLng != null && recordedLng.getText().equals(res.getString(R.string.dm_plot_survey))) {
                         Intent in = new Intent(this, ViewPlotSurveyActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putLong(Utilities.FARMER_ID, farmerId);
                         bundle.putBoolean(res.getString(R.string.dm_plot_survey), true);
                         in.putExtras(bundle);
                         startActivity(in);

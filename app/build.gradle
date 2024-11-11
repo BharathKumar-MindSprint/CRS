@@ -33,8 +33,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
-        versionCode 501
-        versionName "13.2.0"
+        versionCode 503
+        versionName "13.2.2"
 
         javaCompileOptions {
             annotationProcessorOptions {
