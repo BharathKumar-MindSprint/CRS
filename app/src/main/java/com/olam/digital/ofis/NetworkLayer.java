@@ -4386,9 +4386,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
                                     }
                                     else {
-                                        dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"),OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+                                        dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
                                         String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
+
+                                        // update multiStakeholder table
+                                        db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
 
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
                                         db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
@@ -4612,7 +4615,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         if (errorCode.equalsIgnoreCase("5045")) {
                                             postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
                                         } else {
-                                            dl.updateSyncedStatusFixed(localFarmerId, stakeholder.getInt("msId"), OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                                            dl.updateSyncedStatusFixedMs(localFarmerId, stakeholder.getInt("msId"));
                                             dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getLong("olamMultiStakeHolderId"));
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
                                             initGPSSync();
@@ -4794,7 +4797,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
 
 
-                                        dl.updateSyncedStatusFixed(finalLocalFarmerId, jsonObject1.getInt("id"), OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+                                        dl.updateSyncedStatusFixed(finalLocalFarmerId, jsonObject1.getInt("id"));
                                         dl.updateSyncedStatusPlot(finalLocalFarmerId, jsonObject1.getInt("id"));
                                         String complainceFlag = jsonObject1.getString("complianceFlag");
                                         dl.markFarmerAsSynced(finalLocalFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), finalLocalPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);

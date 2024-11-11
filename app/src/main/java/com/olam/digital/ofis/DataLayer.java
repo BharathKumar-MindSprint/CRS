@@ -4099,14 +4099,38 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    public void updateSyncedStatusFixed(long farmerid, long updatedFarmerId, String columnName) {
+    public void updateSyncedStatusFixed(long farmerid, long updatedFarmerId) {
         try {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);
-            values.put(columnName, updatedFarmerId);
-            String whereClause = columnName + " = ?";
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, updatedFarmerId);
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " IS NULL";
             String[] whereArgs = new String[]{String.valueOf(farmerid)};
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+
+            ContentValues values2 = new ContentValues();
+            values2.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, updatedFarmerId);
+
+            String whereClause2 = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " IS NOT NULL";
+            String[] whereArgs2 = new String[]{String.valueOf(farmerid)};
+
+            db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values2, whereClause2, whereArgs2);
+
+
+        } catch (Exception e) {
+        }
+
+    }
+
+    public void updateSyncedStatusFixedMs(long id, long updatedStakeholderId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID, updatedStakeholderId);
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+
         } catch (Exception e) {
         }
 
