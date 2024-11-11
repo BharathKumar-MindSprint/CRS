@@ -58,7 +58,8 @@ import java.util.TimeZone;
  * Created by ben on 04/12/14.
  * Creates and binds the layouts and functions for an item in the farmer modules list
  */
-class CustomListAdapter_Modules extends SimpleCursorAdapter {
+class
+CustomListAdapter_Modules extends SimpleCursorAdapter {
     private final Cursor currentFarmer;
     private final int layout;
     private final LayoutInflater inflater;
@@ -450,40 +451,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
                 else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("addFarmStakeholders")) {
-                    boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Add Stakeholder", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                    if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
-
-
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                        enabledItem.setText("false");
-
-
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        try {
-                            if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
-                                if (dl.isIdAvailableMultiFarmDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
-                                    textView.setText("Multifarm Details Recorded");
-                                } else {
-                                    textView.setText(res.getString(R.string.module_finished));
-                                }
-                            } else {
-                                textView.setText("Multifarm Details Recorded");
-                            }
-                        } catch (Exception e) {
-                            textView.setText("Multifarm Details Recorded");
-                        }
-                    } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_farm_information));
-                        enabledItem.setText("true");
-
-                        linearLayout.setBackgroundResource(R.drawable.list_item);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        textView.setText("Tap to update");
-                    }
-
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_farm_information));
+                    enabledItem.setText("true");
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText("Tap to update");
                 }
                 else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
                     boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));

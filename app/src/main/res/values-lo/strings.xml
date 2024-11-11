@@ -987,6 +987,11 @@
     <string name="dm_plot_survey_completed">ສຳເລັດການສຳຫຼວດແຜນການວິນິໄສ</string>
     <string name="stakeholder_list">StakeHolders List</string>
     <string name="stake_holder_name">Stakeholder Name</string>
+    <string name="stake_holder_details">Stakeholder Details</string>
+    <string name="view_stake_holder">View Stakeholder</string>
+    <string name="view_stake_holder_information">View Stakeholder Information</string>
+    <string name="confirmation_message">Do you want to confirm changes ?</string>
+    <string name="no_task">No Task</string>
 
 </resources>
 

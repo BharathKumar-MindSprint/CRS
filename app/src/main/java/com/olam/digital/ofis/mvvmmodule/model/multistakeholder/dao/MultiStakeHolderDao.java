@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public interface MultiStakeHolderDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(MultiStakeHolder multiStakeHolder);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<MultiStakeHolder> multiStakeHolders);
 
     @Delete
     void delete(MultiStakeHolder multiStakeHolder);
@@ -40,4 +44,9 @@ public interface MultiStakeHolderDao {
     @Query("UPDATE MULTISTAKEHOLDER SET msId=:msId, farmId=:farmId, olamMultiStakeholderId=:olamFarmerId, msDisplayId=:olamFarmerId, synced=:syncedStatus WHERE msId=:localFarmerId")
     int updateStakeholderAfterSync(long localFarmerId, long msId, String farmId, long olamFarmerId, int syncedStatus);
 
+    @Query("SELECT msId, msName, msRoleId, olamMultiStakeholderId FROM MultiStakeHolder WHERE farmerId = :farmerId")
+    List<StakeHolderDto> getStakeHoldersByFarmerId(Long farmerId);
+
+    @Query("UPDATE MultiStakeHolder SET msRoleId = :roleId WHERE msId = :msId")
+    void updateMsRoleId(String roleId, Long msId);
 }

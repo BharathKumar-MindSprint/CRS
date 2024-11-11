@@ -2527,14 +2527,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     else if (recordedLng != null && recordedLng.getText().equals("addFarmStakeholders")) {
                         Intent in = new Intent(this, AddFarmStakeHolderActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putLong(Utilities.FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
                     }
                     else if (recordedLng != null && recordedLng.getText().equals(res.getString(R.string.dm_plot_survey))) {
                         Intent in = new Intent(this, ViewPlotSurveyActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putLong(Utilities.FARMER_ID, farmerId);
                         bundle.putBoolean(res.getString(R.string.dm_plot_survey), true);
                         in.putExtras(bundle);
                         startActivity(in);
