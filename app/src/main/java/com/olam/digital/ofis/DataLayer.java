@@ -3772,7 +3772,7 @@ public class DataLayer {
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)";
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)" + " group by _id";
 
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
