@@ -363,7 +363,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         EditText editText = new EditText(getActivity());
