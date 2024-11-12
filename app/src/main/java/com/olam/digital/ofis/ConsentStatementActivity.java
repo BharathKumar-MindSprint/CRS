@@ -55,6 +55,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     TableRow statement_rubber_indo;
     int countryId;
     int productId;
+    private boolean isAddStakeHolder = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                farmerId=getIntent().getExtras().getLong("FarmerId");
                displayFarmerId=getIntent().getExtras().getString("displayFarmerId");
                olamfarmername=getIntent().getExtras().getString("olamfarmername");
+               isAddStakeHolder = getIntent().getExtras().getBoolean(Utilities.STAKE_HOLDER_REGISTRATION);
                type=getIntent().getExtras().getString("type");
            }catch (Exception e){}
         init();
@@ -105,6 +107,9 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         nextsavebtn.setOnClickListener(this);
         prevbtn.setOnClickListener(this);
         farmer_signature.setOnClickListener(this);
+        if (isAddStakeHolder){
+            farmer_signature.setText(getResources().getString(R.string.stakeholder_signature));
+        }
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
