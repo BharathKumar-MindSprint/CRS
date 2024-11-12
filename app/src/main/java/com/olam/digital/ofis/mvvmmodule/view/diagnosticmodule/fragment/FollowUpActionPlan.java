@@ -404,7 +404,7 @@ public class FollowUpActionPlan extends Fragment {
         LinearLayout linearLayoutQes = new LinearLayout(getActivity());
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
         linearLayoutQes.setOrientation(LinearLayout.VERTICAL);
         linearLayoutQes.setLayoutParams(layoutParamsQes);
