@@ -228,27 +228,6 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, null, null);
         }
 
-        if(tableName.equals(OFISDBContract.MultiFarmFarms.TABLE_NAME)){
-            int lastItemId;
-            try {
-                lastItemId = item.getInt("farm_id");
-               ContentValues values = new ContentValues();
-                values.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID, (lastItemId + 100000));
-                values.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED, true);
-                values.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_EXISTING_FARM_TYPE, true);
-               long newSeedId=  db.insert(OFISDBContract.MultiFarmFarms.TABLE_NAME, null, values);
-                if (newSeedId != 0) {
-                    db.delete(OFISDBContract.MultiFarmFarms.TABLE_NAME, OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(newSeedId)});
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED, true);
-            db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values, null, null);
-        }
-
         if (tableName.equals(OFISDBContract.PlacesEntry.TABLE_NAME)) {
             int lastPlaceId;
             try {

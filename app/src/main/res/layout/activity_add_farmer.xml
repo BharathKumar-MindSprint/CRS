@@ -10,7 +10,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="160dp"
         android:id="@+id/topSectionBackground"
         android:background="@color/ofis_farmer_screen_actions_background"
         android:contentDescription="@string/cd_topSectionColour" />
@@ -71,23 +71,28 @@
                         android:nextFocusDown="@+id/spinner_farmerGroup"
                         tools:ignore="RtlHardcoded" />-->
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="@color/ofis_text_field"
                         android:textColorHint="@color/ofis_text_field"
                         android:textSize="@dimen/ofis_input_field_text"
                         android:id="@+id/farmerDOB"
-                        android:hint="@string/Date_of_Birth"
+                        android:hint="@string/Date_of_Birth_hint"
                         android:inputType="none"
+                        android:drawableRight="@drawable/ic_icon_calendar_1"
+                        android:drawablePadding="5dp"
+                        android:background="@drawable/datepicker_bg"
+                        android:padding="@dimen/margin_10"
                         android:nextFocusDown="@+id/spinner_farmerGroup"
                         tools:ignore="RtlHardcoded" />
                     <LinearLayout
                         android:layout_width="match_parent"
+                        android:visibility="invisible"
                         android:background="@android:color/holo_blue_dark"
                         android:layout_height="@dimen/ofis_spinner_itemseparator"></LinearLayout>
                     </LinearLayout>
@@ -111,7 +116,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="10.8"
-
                         android:orientation="vertical">
 
                         <TextView
@@ -248,8 +252,10 @@
                             android:background="@android:color/transparent"
                             android:contentDescription="@string/Add"
                             android:scaleType="fitXY"
+                            android:layout_marginBottom="@dimen/activity_horizontal_margin"
                             android:layout_gravity="right|center"
-                            app:srcCompat="@drawable/ic_ofis_add" />
+                            app:srcCompat="@drawable/ic_ofis_add"
+                            tools:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
 
@@ -257,6 +263,7 @@
 
                 <!-- geography groups -->
                 <LinearLayout
+                    android:id="@+id/llGeographyDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/ofis_large_pad"
@@ -265,7 +272,8 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -288,7 +296,8 @@
                             android:id="@+id/spinner_country"
                             android:hint="@string/Country"
                             android:layout_weight="1"
-                            android:nextFocusDown="@+id/spinner_region" />
+                            android:nextFocusDown="@+id/spinner_region"
+                            android:background="@drawable/spinner_bg_light" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -296,6 +305,7 @@
                             android:layout_height="match_parent"
                             app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
+                            android:visibility="invisible"
                             android:id="@+id/haCountry" />
 
                         <Spinner
@@ -303,21 +313,23 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/spinner_region"
                             android:layout_weight="1"
-                            android:nextFocusDown="@+id/spinner_district"/>
-
+                            android:nextFocusDown="@+id/spinner_district"
+                            android:background="@drawable/spinner_bg_light" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_med_pad">
 
                         <Spinner
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/spinner_district"
                             android:layout_weight="1"
-                            android:nextFocusDown="@+id/spinner_place"/>
+                            android:nextFocusDown="@+id/spinner_place"
+                            android:background="@drawable/spinner_bg_light" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -325,7 +337,8 @@
                             android:contentDescription="@string/ofis_cd_hierarchy_arrow"
                             app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
-                            android:id="@+id/haDistrict" />
+                            android:id="@+id/haDistrict"
+                            android:visibility="invisible"/>
 
                         <Spinner
                             android:layout_width="match_parent"
@@ -365,17 +378,53 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/spinner_subdistrict"
+                            android:layout_weight="1"
+                            android:nextFocusDown="@+id/spinner_place"
+                            android:background="@drawable/spinner_bg_light" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                            android:scaleType="center"
+                            android:visibility="invisible"
+                            android:id="@+id/haSubDistrict" />
+
+                        <Spinner
+                            android:visibility="invisible"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/spinner_bg_light"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <EditText
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:inputType="text"
                             android:id="@+id/newPlaceName"
                             android:hint="@string/New_place_name"
-                            android:textColor="@color/ofis_text_field"
+                            android:textColor="@color/ofis_base_font_dark"
+                            android:background="@drawable/edittext_bg_light"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:padding="@dimen/margin_10"
                             android:textSize="@dimen/ofis_input_field_text"
                             android:visibility="gone"
                             android:layout_marginTop="@dimen/ofis_med_pad"/>
@@ -384,8 +433,115 @@
                 </LinearLayout>
                 <!-- geography groups -->
 
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/ofis_large_pad"
+                android:paddingRight="@dimen/ofis_large_pad"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/border_white_background"
+                android:layout_marginTop="@dimen/ofis_med_pad"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ofis_text_field"
+                    android:textSize="@dimen/ofis_small_text"
+                    android:text="@string/farm_information"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                <LinearLayout
+                    android:id="@+id/newFarmLayout"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/farm_holding_name"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmHoldingName"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:hint="@string/farm_holding_name"
+                        android:maxLength="100"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+
+                    <TextView
+                        android:text="@string/farm_holding_code"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmHoldingCode"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:hint="@string/farm_holding_code"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        android:text="@string/role_farmer"
+                        android:textColor="@color/btn_secondary_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/etFarmerRole"
+                        android:textColor="@color/btn_secondary_background"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:visibility="gone"
+                        android:text="@string/primary_farmer"
+                        android:background="@drawable/farm_code_selected_edittext"
+                        android:focusable="false"
+                        android:layout_marginBottom="10dp"/>
+
+                    <Spinner
+                        android:id="@+id/farmerRoleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:visibility="gone"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:layout_gravity="center"
+                        android:background="@drawable/spinner_bg_light"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
                 <!-- display farmer lead-->
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/farmerLeadDisplayLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -410,173 +566,31 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/ofis_large_pad"
-                        android:gravity="center"
-                        android:background="@drawable/border_underline_bg">
+                        android:gravity="center">
 
                        <TextView
                            android:id="@+id/farmerleadinfo"
                            android:layout_width="match_parent"
                            android:layout_height="match_parent"
                            android:hint="@string/fl_search"
-                           android:textSize="@dimen/ofis_med_text"
+                           android:textSize="14sp"
+                           android:background="@drawable/edittext_bg_light"
+                           android:padding="@dimen/margin_10"
+                           android:textColorHint="@color/icon_grey_palette_2"
                            android:textColor="@color/black"
                            android:layout_gravity="center"
                            android:drawablePadding="@dimen/ofis_large_pad"
-                           android:drawableLeft="@drawable/ic_searchimg"/>
+                           android:drawableRight="@drawable/ic_searchimg"/>
 
                     </LinearLayout>
 
                 </LinearLayout>
                 <!-- end display farmer lead -->
-                <!-- Farm Information Start-->
-                <LinearLayout
-                    android:id="@+id/farmInformationLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/ofis_large_pad"
-                    android:paddingRight="@dimen/ofis_large_pad"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:background="@drawable/border_white_background"
-                    android:layout_marginTop="@dimen/ofis_med_pad"
-                    android:orientation="vertical">
+                //Farm Related code
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/ofis_text_field"
-                        android:textSize="@dimen/ofis_small_text"
-                        android:text="@string/farm_information"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
-
-
-                    <RadioGroup
-                        android:id="@+id/farmRadioGroup"
-                        android:layout_width="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_above="@+id/newFarmLayout"
-                        android:layout_height="wrap_content">
-
-                        <RadioButton
-                            android:id="@+id/newFarmRadioButton"
-                            android:layout_width="wrap_content"
-                            android:text="@string/create_new_farm"
-                            android:textStyle="bold"
-                            android:textColor="@color/ofis_text_field"
-                            android:layout_height="wrap_content"/>
-                        <RadioButton
-                            android:id="@+id/existingFarmRadioButton"
-                            android:layout_width="wrap_content"
-                            android:textStyle="bold"
-                            android:textColor="@color/ofis_text_field"
-                            android:text="@string/select_from_existing_farm"
-                            android:layout_marginLeft="@dimen/margin_10"
-                            android:padding="5dp"
-                            android:layout_height="wrap_content"/>
-
-                    </RadioGroup>
-
-                    <LinearLayout
-                        android:id="@+id/newFarmLayout"
-                        android:orientation="vertical"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="@string/farm_name"
-                            android:textColor="@color/ofis_text_field"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:inputType="textCapWords"
-                            android:padding="@dimen/margin_10"
-                            android:layout_marginTop="5dp"
-                            android:id="@+id/farmNameEdittext"
-                            android:textColor="@color/ofis_text_field"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/ofis_input_field_text"
-                            android:hint="@string/farm_name"
-                            android:maxLength="100"
-                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
-                            android:textColorHint="@color/icon_grey_palette_2"
-                            android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
-
-                        <TextView
-                            android:text="@string/farm_code"
-                            android:textColor="@color/ofis_text_field"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:inputType="textCapWords"
-                            android:padding="@dimen/margin_10"
-                            android:layout_marginTop="5dp"
-                            android:id="@+id/farmCodeEdittext"
-                            android:textColor="@color/ofis_text_field"
-                            android:textSize="@dimen/ofis_input_field_text"
-                            android:hint="@string/farm_code"
-                            android:textColorHint="@color/icon_grey_palette_2"
-                            android:focusable="false"
-                            android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/stakeholderPart"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:animateLayoutChanges="true"
-                            android:id="@+id/farmStakeholderLayout"/>
-
-
-
-                        <LinearLayout
-                            android:id="@+id/addFarmerRoleLayout"
-                            android:layout_width="match_parent"
-                            android:layout_marginTop="@dimen/margin_10"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:id="@+id/addRoleTV"
-                                android:layout_width="27dp"
-                                android:layout_height="27dp"
-                                android:src="@drawable/ic_ofis_add"
-                                android:layout_gravity="center"
-                                android:background="@android:color/transparent"
-                                android:contentDescription="@string/Add" />
-
-                            <TextView
-                                android:text="@string/add_stakeholder"
-                                android:textColor="@color/btnColorThird"
-                                android:layout_width="wrap_content"
-                                android:layout_marginLeft="@dimen/margin_10"
-                                android:layout_gravity="center"
-                                android:background="@android:color/transparent"
-                                android:layout_height="wrap_content"/>
-                        </LinearLayout>
-
-
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-                <!-- Farm Information End-->
                 <!-- business groups -->
                 <LinearLayout
+                    android:id="@+id/llFarmerGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/ofis_large_pad"
@@ -585,6 +599,7 @@
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -619,6 +634,7 @@
                             android:contentDescription="@string/ofis_cd_hierarchy_arrow"
                             app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
+                            android:visibility="invisible"
                             android:id="@+id/haFarmerGroup" />
 
                         <Spinner
@@ -635,19 +651,18 @@
 
                 </LinearLayout>
                 <!-- end business groups -->
-
                 <!-- Certification Name -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/linear_certifications"
-                    android:visibility="gone"
                     android:paddingLeft="10dp"
                     android:paddingRight="@dimen/ofis_large_pad"
                     android:paddingBottom="@dimen/activity_vertical_margin"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:background="@drawable/border_white_background"
                     android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView
@@ -666,17 +681,18 @@
 
                         <Spinner
                             android:id="@+id/spinner_certificationName"
-                            android:layout_width="165dp"
+                            android:layout_width="175dp"
                             android:layout_height="match_parent"
                             android:focusable="true"
                             android:layout_gravity="start"
                             android:gravity="start"
                             android:dropDownWidth="300dp"
+                            android:paddingLeft="-5dp"
                             android:focusableInTouchMode="true"/>
 
                         <EditText
                             android:id="@+id/ed_other_certification"
-                            android:layout_width="130dp"
+                            android:layout_width="140dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/edittext_bg_light"
                             android:hint="@string/other_certification"
@@ -763,8 +779,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ReadAndAgreeConsent"
                         android:id="@+id/consentLaunchButton"
-                        android:background="@color/ofis_action_button_background"
-                        android:textColor="@color/ofis_base_font_white"
+                        android:background="@drawable/btn_primary_outlines"
+                        android:textColor="@color/btnColorPrimary"
                         android:textSize="@dimen/ofis_med_text"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"/>
@@ -782,7 +798,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/Signature"
                         android:id="@+id/captureSignature"
-                        android:background="@color/ofis_action_button_background"
+                        android:background="@color/btn_secondary_background"
                         android:drawableRight="@drawable/ic_pen"
                         android:drawableEnd="@drawable/ic_pen"
                         android:drawablePadding="2dp"
@@ -869,21 +885,24 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:inputType="textCapWords"
+                android:padding="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_10"
                 android:id="@+id/farmerName"
-                android:textColor="@color/ofis_base_font_white"
+                android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_input_field_text"
                 android:hint="@string/Farmer_Name"
-                android:textColorHint="@color/ofis_base_font_white"
-                android:background="@drawable/ofis_edit_text_holo_dark"
+                android:textColorHint="@color/icon_grey_palette_2"
+                android:background="@drawable/edittext_bg_dark"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
             <Spinner
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:id="@+id/farmerGender"
-                android:textColor="@color/ofis_base_font_white"
-                android:entries="@array/genders" />
+                android:textColor="@color/ofis_base_font_dark"
+                android:entries="@array/genders"
+                android:background="@drawable/spinner_bg_dark"/>
 
         </LinearLayout>
         <!-- end add farmer white input fields and heading -->
@@ -892,6 +911,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.8"
+            android:layout_marginTop="30dp"
             android:paddingTop="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="@dimen/activity_horizontal_margin"
@@ -902,8 +922,9 @@
                 android:layout_width="84dp"
                 android:layout_height="112dp"
                 android:id="@+id/farmerPhoto"
+                android:layout_marginTop="5dp"
                 android:contentDescription="@string/Farmer_Photo"
-                app:srcCompat="@drawable/empty_farmer_photo"
+                app:srcCompat="@drawable/empty_farmer_icon"
                 android:background="@android:color/transparent"
                 android:scaleType="fitStart"
                 android:layout_alignParentLeft="false"
@@ -911,18 +932,18 @@
                 android:layout_alignParentBottom="true" />
 
             <ImageButton
+                android:id="@+id/farmerPhotoActionButton"
                 android:layout_width="@dimen/standard_button_width_height"
                 android:layout_height="@dimen/standard_button_width_height"
-                android:id="@+id/farmerPhotoActionButton"
-                android:contentDescription="@string/Camera"
-                app:srcCompat="@drawable/ic_actionbutton_camera"
                 android:layout_alignParentEnd="false"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:padding="0dp"
+                android:layout_alignParentBottom="true"
                 android:adjustViewBounds="false"
                 android:background="@android:color/transparent"
-                android:scaleType="fitXY" />
+                android:contentDescription="@string/Camera"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_actionbutton_camera" />
         </RelativeLayout>
 
     </LinearLayout>

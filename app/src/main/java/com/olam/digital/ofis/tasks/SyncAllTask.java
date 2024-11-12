@@ -453,16 +453,6 @@ public class SyncAllTask extends SyncTask {
             multifarmFarmResponse = null;
 
             // Goes directly to the AsyncTask
-
-            // not in this scope
-//            new UpdateFmpTask(context).execute(fmpResponse);
-//            fmpResponse = null;
-
-            // Goes directly to the AsyncTask
-            //new UpdateTransactionListsTask(context).execute(transactionResponse);
-            //transactionResponse = null;
-
-            // Goes directly to the AsyncTask
             new UpdateTrainingListsTask(context).execute(trainingResponse);
             trainingResponse = null;
 

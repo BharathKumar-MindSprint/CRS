@@ -126,6 +126,16 @@ public class Utilities {
 
     public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
 
+    public static final String STAKE_HOLDER_ID = "stakeHolderId";
+    public static final String STAKE_HOLDER_DISPLAY_ID = "stakeHolderId";
+    public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";
+    public static final String STAKE_HOLDER_NAME = "stakeHolderName";
+
+    public static final String FARMER_ID = "farmerId";
+    public static final String FARM_HOLDING_CODE = "farmHoldingCode";
+    public static final String FARMER_NAME = "farmerName";
+    public static final String FARM_ID = "farmId";
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -571,7 +581,7 @@ public  static String base64ConversionForImage(String filepath)  {
 
     }
 
-    static String scaleRotateAndSaveImage(String imagePath, String kind) {
+    public static String scaleRotateAndSaveImage(String imagePath, String kind) {
 
         return saveResizedImage(imagePath, kind);
 

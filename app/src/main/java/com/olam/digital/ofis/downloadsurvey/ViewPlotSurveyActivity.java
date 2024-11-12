@@ -138,7 +138,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     // method to populate the survey list
     private void populateSurveyList() throws JSONException {
         childModuleDtoList = getChildSurveyModuleList();
-//        Collections.sort(childModuleDtoList, new SortbySurveyCode());
         JSONObject submittedModules = null;
         JSONArray modulesArray=null;
         try {
@@ -148,33 +147,18 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                 submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
             }
             submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-
-//            submittedModules=new JSONObject(submittedModulesJSON);
-//            modulesArray= submittedModules.getJSONArray("modules");
-
         }catch (Exception e){e.printStackTrace();}
-        int roleId = 0;
-        if (Utilities.getMultifarmPref(this, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR)) {
-            //Old
-            //  roleId = dl.getMultiFarmRoleInfoByFarmerId(String.valueOf(farmerId));
-            // New
-            String roleIdStr = dl.getMultiFarmRoleInfoByFarmerId1(String.valueOf(farmerID));
-            if (roleIdStr != null) {
-                roleId = Integer.parseInt(roleIdStr);
-            }
-            multiFarmId=dl.getMultifarmfarmId(farmerID);
-            if(multiFarmId!=null){
-                farmSurvey=true;
-            }else{
-                farmSurvey=false;
-            }
+        int roleId = 1;
+        multiFarmId=dl.getMultifarmfarmId(farmerID);
 
+        if(multiFarmId!=null){
+            farmSurvey=true;
         }else{
             farmSurvey=false;
         }
+
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
 
-//            expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
             expandableListDetail = loadListWithPlots(childModuleDtoList);
             expandableListTitle = new ArrayList<PlotDTO>(expandableListDetail.keySet());
             expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListDetail,
@@ -321,8 +305,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setDisabled_months(moduleAssignments.getString(moduleAssignments.getColumnIndex("disabled_months")));
                         childModuleDto.setRecurrence_frequency(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_frequency")));
                         childModuleDto.setRecurrence_type(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_type")));
-//                        childModuleDto.setPlot_id(moduleAssignments.getInt(moduleAssignments.getColumnIndex("plot_id")));
-
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
                         childModuleDto.setIsPlotSurvey(moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey")));

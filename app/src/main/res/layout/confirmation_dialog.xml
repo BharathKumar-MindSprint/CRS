@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirmation_message"
+        android:layout_gravity="center"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_no"
+            style="?android:attr/negativeButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_white_rounded_corner"
+            android:text="@string/no"
+            android:layout_weight="1"
+            android:textColor="@color/ofis_action_button_background"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/button_yes"
+            style="?android:attr/positiveButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_primary_rounded_corner"
+            android:text="@string/yes"
+            android:textColor="@color/ofis_base_font_white"/>
+    </LinearLayout>
+
+</LinearLayout>

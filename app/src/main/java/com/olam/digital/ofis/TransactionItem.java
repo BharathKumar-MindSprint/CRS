@@ -299,7 +299,7 @@ public class TransactionItem extends BaseActivity {
                 olamFarmerId = transactee.getString(transactee.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
 
                 if (!editMode || transactionItemId == 0) {
-                    Cursor existingPhoneNumber = dl.getFarmerPhoneNumbers(transacteeId, true);
+                    Cursor existingPhoneNumber = dl.getFarmerPhoneNumbers(transacteeId, true, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                     if (existingPhoneNumber.moveToFirst()) {
                         diallingCode.setText(existingPhoneNumber.getString(existingPhoneNumber.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
                         phoneNumber.setText(existingPhoneNumber.getString(existingPhoneNumber.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));

@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -135,14 +137,15 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean getNIDPhotostatusByType(String type, long editFarmerId) {
+    public boolean getNIDPhotostatusByType(String type, long editFarmerId, String columnName) {
         boolean photostatus = false;
-        Cursor nid = dl.getNIDPhotostatusByType(type, editFarmerId);
+        Cursor nid = dl.getNIDPhotostatusByType(type, editFarmerId, columnName);
         if (nid.getCount() > 0) {
             photostatus = true;
         }
         return photostatus;
     }
+
 
     public boolean getUpdateNIDPhotoStatusByType(String type, long editFarmerId) {
         boolean photostatus = false;
@@ -153,15 +156,17 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
-    public String getNIDPhotoByType(String type, long farmerid) {
+    public String getNIDPhotoByType(String type, long farmerid, String columnName) {
         String photo = null;
-        Cursor nid = dl.getNIDPhotostatusByType(type, farmerid);
+        Cursor nid = dl.getNIDPhotostatusByType(type, farmerid, columnName);
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
         }
         return photo;
     }
+
+
 
     public ArrayList<Integer> getAllphotoTypes() {
         ArrayList<Integer> types = new ArrayList<>();
@@ -505,4 +510,18 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+    public int getIndexForFarmerRoleSpinnerList(String roleId) {
+        String localeSuffix = Utilities.getColumnNameByLanguage();
+        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
+        int id = Integer.parseInt(roleId);
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getId() == id) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+
 }
