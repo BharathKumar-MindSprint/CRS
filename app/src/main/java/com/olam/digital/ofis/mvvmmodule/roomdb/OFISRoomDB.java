@@ -76,7 +76,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
         DmMasterData.class, DmModuleAssignments.class},
-        version = 15)
+        version = 14)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -159,12 +159,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
                 database.execSQL("ALTER TABLE DmActionPlanCurrenciesTable ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("ALTER TABLE DMSurveyReport ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmMasterData ( uid INTEGER PRIMARY KEY NOT NULL, id INTEGER, type TEXT, value TEXT)");
-            }
-        };
-
-        final Migration MIGRATION_14_15 = new Migration(14, 15) {
-            @Override
-            public void migrate(SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmModuleAssignments ( uid INTEGER PRIMARY KEY NOT NULL, moduleId INTEGER, assignmentType TEXT, assignmentId INTEGER)");
             }
         };
@@ -172,7 +166,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14)
                     .fallbackToDestructiveMigration()
                     .build();
         }
