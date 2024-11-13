@@ -4,13 +4,13 @@ public class StakeHolderDto {
 
     private String msId;
     private String msName;
-    private String msRoleId;
+    private Integer msRoleId;
 
     private String olamMultiStakeholderId;
 
     public StakeHolderDto() {}
 
-    public StakeHolderDto(String msId, String msName, String msRoleId, String olamMultiStakeholderId) {
+    public StakeHolderDto(String msId, String msName, Integer msRoleId, String olamMultiStakeholderId) {
         this.msId = msId;
         this.msName = msName;
         this.msRoleId = msRoleId;
@@ -33,11 +33,11 @@ public class StakeHolderDto {
         this.msName = msName;
     }
 
-    public String getMsRoleId() {
+    public int getMsRoleId() {
         return msRoleId;
     }
 
-    public void setMsRoleId(String msRoleId) {
+    public void setMsRoleId(Integer msRoleId) {
         this.msRoleId = msRoleId;
     }
 

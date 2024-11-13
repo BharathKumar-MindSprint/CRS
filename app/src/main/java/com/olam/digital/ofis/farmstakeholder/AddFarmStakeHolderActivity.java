@@ -95,7 +95,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
         List<StakeHolderDto> stakeHolderList = dl.getAllStakeHolderListByFarmerId(farmerId);
 
         if (!stakeHolderList.isEmpty()) {
-            stakeHolderRecyclerAdapter = new StakeHolderRecyclerAdapter(stakeHolderList,this);
+            stakeHolderRecyclerAdapter = new StakeHolderRecyclerAdapter(stakeHolderList,this, dl);
             RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
             stakeHolderRecyclerView.setLayoutManager(reLayoutManager);
             stakeHolderRecyclerView.setItemAnimator(new DefaultItemAnimator());

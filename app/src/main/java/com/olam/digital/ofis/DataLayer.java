@@ -9010,7 +9010,6 @@ public class DataLayer {
     }
 
 
-
     Cursor getFarmerRoleById(int Id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + " = ?";
@@ -9019,13 +9018,18 @@ public class DataLayer {
     }
 
     public String getFarmerRole(int id) {
-        String name = "NA";
+        String localeSuffixColumn = Utilities.getColumnNameByLanguage();
+        String name = "";
         Cursor nids = getFarmerRoleById(id);
         try {
-            while (nids.moveToNext()) {
+            nids.moveToFirst();
+            name = nids.getString(nids.getColumnIndex(localeSuffixColumn));
+            if (name.isEmpty()) {
                 name = nids.getString(nids.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME));
             }
         } catch (Exception e) {
+            nids.moveToFirst();
+            name = nids.getString(nids.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME));
             e.printStackTrace();
         } finally {
             nids.close();
@@ -10607,6 +10611,7 @@ public class DataLayer {
         } catch (Exception e) {
             cursor = db.rawQuery("select * from multifarmRoles", null);
         }
+
         if (cursor != null) {
             try {
                 if (cursor.getCount() > 0) {

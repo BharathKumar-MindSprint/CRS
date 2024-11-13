@@ -1284,18 +1284,17 @@ public class OFISDBContract {
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
-        //        public static final String COLUMN_CREATEDDATE = "createddate";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
-                    add(COLUMN_NAME_STAKEHOLDER_ID);
-//                    add(COLUMN_CREATEDDATE);
                 }}
         );
     }
