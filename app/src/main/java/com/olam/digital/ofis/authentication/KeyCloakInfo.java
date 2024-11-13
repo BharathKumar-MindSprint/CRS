@@ -10,23 +10,11 @@ public interface KeyCloakInfo {
     String dev_ofi_client_Id="ofi-ofis-mobile-dev";
     String dev_ofi_Client_Secret="fa94b308-d229-4304-9339-b368a7699148";
 
-    // original - Inflight Dev
-//    String dev_ofi_client_Id="mobile-ofis-app-dev";
-//    String dev_ofi_Client_Secret="4afbbe46-ab48-4db9-8c67-dea623e691b1";
-
-    String dev_non_ofi_client_Id="mobile-ofis-app-dev";
-    String dev_non_ofi_Client_Secret="4a6393cc-1442-4bc2-a9aa-8528f9edb186";
-
-    String sit_client_Id="ofis-mobile-sit";
-    String sit_Client_Secret="d28384ec-7368-48ca-8886-91e4a17b8f3f";
-
     String sit_ofi_client_Id="ofi-ofis-mobile-sit";
     String sit_ofi_Client_Secret="e6e3d814-c600-4149-a240-54066cb0926a";
 
     String sit_non_ofi_client_Id="ofis-mobile-sit";
     String sit_non_ofi_Client_Secret="3bfd983e-f8db-4dfb-b817-9fc17906f0ca";
-
-
 
     String uat_ofi_client_Id="ofi-ofis-mobile-uat";
     String uat_ofi_Client_Secret="70efcd6c-ec13-49e9-9c0c-888a4e1d4276";

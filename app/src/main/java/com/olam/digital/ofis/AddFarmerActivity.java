@@ -1872,6 +1872,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                      bundle.putLong("FarmerId", 0);
                  }
 
+                 in.putExtra(Utilities.STAKE_HOLDER_REGISTRATION, isAddStakeHolder);
                  in.putExtras(bundle);
                  startActivityForResult(in,800);
              }
