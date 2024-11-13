@@ -796,13 +796,7 @@
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
     <string name="file_exceeds">O tamanho do arquivo excede </string>
     <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
-    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
-    <string name="farm_holding_name">Farm Holding Name</string>
-    <string name="farm_holding_code">Farm Holding Code</string>
     <string name="role_farmer">Farmer Role</string>
-    <string name="primary_farmer">Primary Farmer</string>
-    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
-
 
     <string name="dm_hint_txt">Módulo de diagnóstico</string>
     <string name="select_module">Selecione Módulo</string>
@@ -828,12 +822,20 @@
 
     <string name="dm_plot_survey">Levantamento de Parcelas Diagnósticas</string>
     <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
-    <string name="stakeholder_list">StakeHolders List</string>
-    <string name="stake_holder_name">Stakeholder Name</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="view_stake_holder">View Stakeholder</string>
-    <string name="view_stake_holder_information">View Stakeholder Information</string>
-    <string name="confirmation_message">Do you want to confirm changes ?</string>
-    <string name="no_task">No Task</string>
 
+    <string name="add_farm_stakeholder">Adicionar participante da fazenda</string>
+    <string name="stake_holder_name">Nome da participante de fazenda</string>
+    <string name="farm_holding_information">Informações sobre a propriedade agrícola</string>
+    <string name="farm_holding_name">Nome da propriedade agrícola</string>
+    <string name="farm_holding_code">Código da propriedade agrícola</string>
+    <string name="view_stake_holder_information">Exibir informações das participantes de fazenda</string>
+    <string name="view_stake_holder">Exibir participantes de fazenda</string>
+    <string name="stakeholder_list">Lista de  participantes de fazenda</string>
+    <string name="confirmation_message">Deseja confirmar as alterações?</string>
+    <string name="stakeholder_role">Função da parte interessada</string>
+    <string name="primary_farmer">Agricultor principal</string>
+    <string name="stake_holder_details">Stakeholder Details</string>
+    <string name="no_task">No Task</string>
+    <string name="stakeholder_signature">StakeHolder Signature</string>
+    <string name="update_stakeholder">Update StakeHolder</string>
 </resources>
