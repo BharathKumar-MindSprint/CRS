@@ -179,7 +179,7 @@ public class DataLayer {
 
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", farmerId);
+            boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", farmerId, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
             if (updateWaiting) {
                 ContentValues nqiValues = new ContentValues();
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
@@ -889,9 +889,9 @@ public class DataLayer {
         return newRowId;
     }
 
-    boolean networkEntryTypeExistsByFarmerId(String submission_type, long farmerId) {
+    boolean networkEntryTypeExistsByFarmerId(String submission_type, long farmerId, String columnName) {
         String[] columns = new String[]{"id"};
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + columnName + " = ?";
         String[] whereArgs = new String[]{
                 submission_type,
                 String.valueOf(farmerId)
@@ -6113,7 +6113,7 @@ public class DataLayer {
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO, values.getAsDouble(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-                if (networkEntryTypeExistsByFarmerId("farmer_photo", farmerId)) {
+                if (networkEntryTypeExistsByFarmerId("farmer_photo", farmerId, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)) {
                     updateNetworkQueueFarmerPhotoEntry(nqiValues, farmerId);
                 } else {
                     insertNetworkQueueEntry(nqiValues);
@@ -10631,5 +10631,33 @@ public class DataLayer {
         }
         return multiFarmRoleDTOList;
     }
+
+    public void updateNqForStakeHolder(String farmerId, String stakeHolderId, String stakeHolderPhoto,String stakeHolderName, String olamStakeHolderId){
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        ContentValues networkQueueValues = new ContentValues();
+        boolean updateWaiting = networkEntryTypeExistsByFarmerId("update stakeholder", Long.parseLong(stakeHolderId), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID);
+        if (updateWaiting) {
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            if (stakeHolderPhoto.equalsIgnoreCase("true")) {
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO, stakeHolderPhoto);
+            }
+            String[] whereArgsFarm = new String[]{farmerId, "update stakeholder", String.valueOf(stakeHolderId)};
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, networkQueueValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgsFarm);
+        }
+        else {
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "update stakeholder");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.update_stake_holder));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, stakeHolderName);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamStakeHolderId);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, stakeHolderId);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO, stakeHolderPhoto);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+    }
+
 
 }
