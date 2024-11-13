@@ -78,7 +78,6 @@ import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
@@ -299,11 +298,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         downloadSurveyWrap();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
-        if (!enumeratorId.equalsIgnoreCase("")) {
-            if (DynatraceHelper.isAppClosed) {
-
-            }
-        }
 
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1329,10 +1323,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
             new AuthenticationHelper(this).setPassode(passcode.getText().toString().trim());
 
-
-//            Dynatrace.identifyUser(enumeratorID.getText().toString());
-            DynatraceHelper.isAppClosed = false;
-            DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();
         } else if (response.code() == 423) {
             enableSync();
@@ -1565,7 +1555,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         enableSync();
         if (!status.equalsIgnoreCase("false")) {
             Utilities.minProgressCount = 0;
-            DynatraceHelper.findNetworkSpeed(this);
             if (syncOptionAll) {
                 startAllItemSync();
             } else {

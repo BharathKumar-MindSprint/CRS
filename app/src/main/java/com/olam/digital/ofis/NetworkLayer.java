@@ -44,8 +44,6 @@ import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceConstants;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
@@ -1314,7 +1312,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
 
                 }
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonObject.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, jsonObject, new Callback() {
@@ -2153,10 +2150,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 submission.put("answers", answers);
                             }
 
-                            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endPoint, submission.toString(), context, true);
-                            //increase the count - Adjustment code
-                            // recordFailedUpload(0, 0, networkQueueItemId);
-
                             final String finalEndPoint = endPoint;
                             final int finalFarmId = farmId;
                             int finalPlotId = plotId;
@@ -2345,7 +2338,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
                 params.put("primary_location", false);
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2488,7 +2480,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
                 params.put("primary_location", true);
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2591,8 +2582,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (enumeratorId != null) {
                     params.put("enumeratorId", enumeratorId);
                 }
-
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2711,7 +2700,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         place.close();
                     }
                 }
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2904,7 +2892,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         child.close();
                     }
                 }
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -3277,7 +3264,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (numberstosend != null && endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -3590,9 +3576,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 }
 
-//                    String url = "http://13.76.2.201:8080/farmerdata/socialinfra/saveAllSipAnswers/";
                 final String url = "ofisfarmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + url, params.toString(), context, true);
                 okHttpPost(context, url, params, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
@@ -3821,7 +3805,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         farmer.close();
                     }
                 }
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, params.toString(), context, true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpMSPost(context, endpoint, params, new Callback() {
@@ -4015,8 +3998,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } catch (JSONException e) {
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
-                        // String requestData=jsonArray.toString();
-                        DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, requstBody.toString(), context, true);
                         if (endpoint.length() > 0) {
 
                             final int finalTempChildId = tempChildId;
@@ -4298,7 +4279,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 final JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
                 if (endpoint.length() > 0) {
 
                     final String finalTempOlamFarmerID = tempOlamFarmerID;
@@ -4524,7 +4504,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     JSONObject finalObject = new JSONObject();
                     finalObject.put("msStakeHolders", jsonArray);
 
-                    DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
                     if (endpoint.length() > 0) {
 
                         final String finalTempOlamFarmerID = tempOlamFarmerID;
@@ -4698,7 +4677,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 final JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
 
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
                 if (endpoint.length() > 0) {
                     int finalLocalFarmerId = localFarmerId;
                     int finalLocalPlaceId = localPlaceId;
@@ -5089,7 +5067,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 submission.put("answers", answers);
                             }
                             Log.i("POST", "" + submission.toString());
-                            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endPoint, submission.toString(), context, true);
                             //increase the count - Adjustment code
                             recordFailedUpload(0, 0, networkQueueItemId);
 
@@ -5247,8 +5224,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
                 params.put("childAvailabilityStatus", checkavailstatus);
 
-
-                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endPoint, params.toString(), context, true);
                 if (endPoint.length() > 0) {
                     final String finalEndpoint = endPoint;
                     okHttpPost(context, endPoint, params, new Callback() {
@@ -5364,7 +5339,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }
-            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endPoint, params.toString(), context, true);
 
             if (endPoint.length() > 0) {
                 final String finalEndpoint = endPoint;
@@ -5484,7 +5458,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }
-            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endPoint, params.toString(), context, true);
 
             if (endPoint.length() > 0) {
                 final String finalEndpoint = endPoint;
@@ -5585,7 +5558,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
                     Log.e("NationalIdRequest", nidstosend.toString());
-                    DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
                     if (endpoint.length() > 0) {
 
                         okHttpArrayPost(context, endpoint, nidstosend, new Callback() {
@@ -5746,7 +5718,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
                     Log.e("NationalIdRequest", nidstosend.toString());
-                    DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, jsonArray.toString(), context, true);
 
                     if (endpoint.length() > 0) {
 
@@ -6008,8 +5979,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
-            // String requestData=jsonArray.toString();
-            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST + " " + endpoint, requstBody.toString(), context, true);
             if (endpoint.length() > 0) {
 
                 okHttpPost(context, endpoint, requstBody, new Callback() {
@@ -6154,7 +6123,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
                     hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
                     hashMap.put("isMobile", true);
-                    hashMap.put("location", location);
+
+                    //ofisdm-1860 - code removed
+                    //hashMap.put("location", location);
 
                     if (plotId != 0) {
                         hashMap.put("plotId", plotId);
@@ -6355,7 +6326,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     JSONObject followUpData = new JSONObject();
                     followUpData.put("farmerId", farmerId);
                     followUpData.put("moduleId", moduleId);
-                    followUpData.put("location", location);
+
+                    //ofisdm-1860 : code removed
+                    //followUpData.put("location", location);
+
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                     followUpData.put("submittedModuleId", dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
