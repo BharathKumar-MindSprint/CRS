@@ -593,7 +593,7 @@ public class DynamicQuestions {
 
                 // If id =2 , survey-completion-check
                 String getNoValue = dl.getValueByLookUpID(String.valueOf(checkedId), questions, "_en");
-                int surveyCompletion = 0;
+                int surveyCompletion = -1;
                 if (Objects.equals(getNoValue.toLowerCase(),"no")){
                     surveyCompletion = 2;
 
