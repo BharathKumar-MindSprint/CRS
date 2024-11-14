@@ -162,12 +162,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
                 database.execSQL("ALTER TABLE DmActionPlanCurrenciesTable ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("ALTER TABLE DMSurveyReport ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmMasterData ( uid INTEGER PRIMARY KEY NOT NULL, id INTEGER, type TEXT, value TEXT)");
-            }
-        };
-
-        final Migration MIGRATION_14_15 = new Migration(14, 15) {
-            @Override
-            public void migrate(SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmModuleAssignments ( uid INTEGER PRIMARY KEY NOT NULL, moduleId INTEGER, assignmentType TEXT, assignmentId INTEGER)");
             }
         };
