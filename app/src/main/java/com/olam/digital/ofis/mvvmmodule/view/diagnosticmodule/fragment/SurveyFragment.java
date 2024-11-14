@@ -525,6 +525,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.question = question;
                     dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                     int complianceId = 0;
+                    int answerId = 0;
                     boolean allowCustomActionPlan = false;
                     boolean isCaptureProof = false;
                     if (!db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).isEmpty()) {
@@ -536,10 +537,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.actionPlanText = "";
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
@@ -557,9 +560,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
+
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.actionPlanText = "";
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
@@ -576,10 +582,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.actionPlanText = "";
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
@@ -928,6 +936,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     int complianceId = 0;
                     boolean allowCustomActionPlan = false;
                     boolean isCaptureProof = false;
+                    int answerId = 0;
                     if (!db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).isEmpty()) {
                         if (editText.getText().toString() != null) {
                             String value = editText.getText().toString().trim();
@@ -938,11 +947,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                                         dmSurveyAnswerTable1.actionPlanText = "";
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
@@ -958,11 +969,14 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
+
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                                         dmSurveyAnswerTable1.actionPlanText = "";
                                         dmSurveyAnswerTable1.actionplanId = "";
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
@@ -977,12 +991,14 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
                                         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                                         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                                         dmSurveyAnswerTable1.actionPlanText = "";
                                         dmSurveyAnswerTable1.actionplanId = "";
+                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;

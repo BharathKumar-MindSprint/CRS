@@ -2338,6 +2338,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                 if (dmRangeTextBoxModuleQuestionsList != null) {
                                                     for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                        Integer id_range = dmRangeTextBoxModuleQuestionsList.get(r).getId();
                                                         double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
                                                         double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
                                                         String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
@@ -2347,6 +2348,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                         String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
 
                                                         DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                        dmRangeTextBoxModuleQuestionsTable.id = id_range;
                                                         dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
                                                         dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
                                                         dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
@@ -2600,6 +2602,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                         if (dmRangeTextBoxModuleQuestionsList != null) {
                                                             for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                                Integer id_range = dmRangeTextBoxModuleQuestionsList.get(r).getId();
                                                                 double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
                                                                 double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
                                                                 String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
@@ -2609,6 +2612,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                 String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
 
                                                                 DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                                dmRangeTextBoxModuleQuestionsTable.id = id_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.compliance = compliance;

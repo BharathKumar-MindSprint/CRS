@@ -387,7 +387,7 @@ public class FollowUpActionPlan extends Fragment {
                         textView.setTypeface(null, Typeface.BOLD);
                         linearLayoutItems.addView(textView);
 
-                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
+                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems, dmQuestionsModule.answerID);
 
                     }
                 }
@@ -398,7 +398,7 @@ public class FollowUpActionPlan extends Fragment {
 
 
     @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID) {
 
 
         LinearLayout linearLayoutQes = new LinearLayout(getActivity());
@@ -584,8 +584,8 @@ public class FollowUpActionPlan extends Fragment {
 
 
                         try{
-                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
+                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id, answerID);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
@@ -641,8 +641,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                     if (isStoragePermissionGalleryGranted()) {
 
-                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
+                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id, answerID);
                                         if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();

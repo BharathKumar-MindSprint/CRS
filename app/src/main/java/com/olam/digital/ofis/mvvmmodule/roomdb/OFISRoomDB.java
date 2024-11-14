@@ -158,6 +158,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
                 database.execSQL("ALTER TABLE DmComplaintFileTable ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("ALTER TABLE DmActionPlanCurrenciesTable ADD COLUMN plotId INTEGER DEFAULT 0");
                 database.execSQL("ALTER TABLE DMSurveyReport ADD COLUMN plotId INTEGER DEFAULT 0");
+                database.execSQL("ALTER TABLE DmRangeTextBoxModuleQuestionsTable ADD COLUMN id INTEGER");
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmMasterData ( uid INTEGER PRIMARY KEY NOT NULL, id INTEGER, type TEXT, value TEXT)");
                 database.execSQL("CREATE TABLE IF NOT EXISTS DmModuleAssignments ( uid INTEGER PRIMARY KEY NOT NULL, moduleId INTEGER, assignmentType TEXT, assignmentId INTEGER)");
             }
