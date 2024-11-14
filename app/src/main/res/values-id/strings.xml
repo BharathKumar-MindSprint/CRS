@@ -823,5 +823,6 @@
     <string name="view_stake_holder_information">View Stakeholder Information</string>
     <string name="confirmation_message">Do you want to confirm changes ?</string>
     <string name="no_task">No Task</string>
+    <string name="update_stake_holder">Update StakeHolder</string>
 
 </resources>

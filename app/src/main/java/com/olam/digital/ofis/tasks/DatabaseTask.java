@@ -148,10 +148,12 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
-    void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-      if ((! tableName.equalsIgnoreCase("stakeHolders"))
-              && (tableName != OFISDBContract.SavedAnswerEntry.TABLE_NAME)
-              && (tableName != OFISDBContract.DownloadedSurveyList.TABLE_NAME)){
+    public void fillTable(JSONArray jsonArray, String tableName, List columnList) {
+      if ((!tableName.equalsIgnoreCase("stakeHolders"))
+              && (!tableName.equals(OFISDBContract.SavedAnswerEntry.TABLE_NAME))
+              && (!tableName.equals(OFISDBContract.DownloadedSurveyList.TABLE_NAME))
+              && (!tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME))
+              && (!tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME))){
               db.delete(tableName, null, null);
       }
 
@@ -189,7 +191,11 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                         } else {
                             insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                         }
-                    } else {
+                    }
+                    else if (tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME) || tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME)) {
+                        insertHelper.bind(columnKeys.get(k), item.has(columnList.get(k).toString()) ? item.optString(columnList.get(k).toString()) : null);
+                    }
+                    else {
                         insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                     }
                 }

@@ -1372,4 +1372,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="no_task">No Task</string>
     <string name="stakeholder_signature">StakeHolder Signature</string>
 
+    <string name="update_stake_holder">Update StakeHolder</string>
 </resources>
