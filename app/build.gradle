@@ -4,10 +4,6 @@ apply plugin: 'org.sonarqube'
 
 
 android {
-    dexOptions {
-        preDexLibraries true
-        javaMaxHeapSize "4G"
-    }
     signingConfigs {
         release {
             keyAlias 'androiddebugkey'
@@ -22,9 +18,9 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 34
-    buildToolsVersion '34.0.0'
-    flavorDimensions "default"
+    compileSdkVersion = 34
+    buildToolsVersion ='34.0.0'
+    flavorDimensions = ["default"]
     defaultConfig {
         applicationId "com.olam.digital.ofis"
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
