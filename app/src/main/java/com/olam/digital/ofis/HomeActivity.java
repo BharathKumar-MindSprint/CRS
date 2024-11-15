@@ -2297,11 +2297,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                             int id_actionPlan = dmRangeTextBoxActionPlansList.get(n).getId();
                                                             boolean isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
                                                             String actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
+                                                            Integer actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
 
                                                             DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                             dmRangeActionPlansItems.id = id_actionPlan;
                                                             dmRangeActionPlansItems.isDefault = isDefault;
                                                             dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                            dmRangeActionPlansItems.actionValueId = actionValueId;
                                                             dmRangeActionPlansItems.questionId = id_questionModule;
                                                             dmRangeActionPlansItems.complainceId = complianceId;
 
@@ -2369,10 +2371,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                 int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
                                                                 boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
                                                                 String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                 DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                 dmRangeActionPlansItems.id = id_actionPlan;
                                                                 dmRangeActionPlansItems.isDefault = isDefault;
+                                                                dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                 dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                 dmRangeActionPlansItems.questionId = id_questionModule;
                                                                 dmRangeActionPlansItems.complainceId = complianceId;
@@ -2560,10 +2564,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                     int id_actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getId();
                                                                     boolean isDefault = dmRangeTextBoxActionPlansList.get(lsa).isDefault();
                                                                     String actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getActionPlan();
+                                                                    Integer actionValueId = dmRangeTextBoxActionPlansList.get(lsa).getActionValueId();
 
                                                                     DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                     dmRangeActionPlansItems.id = id_actionPlan;
                                                                     dmRangeActionPlansItems.isDefault = isDefault;
+                                                                    dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                     dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                     dmRangeActionPlansItems.questionId = id_questionModule;
                                                                     dmRangeActionPlansItems.complainceId = complianceId;
@@ -2633,10 +2639,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                         int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
                                                                         boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
                                                                         String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                        Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                         DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                         dmRangeActionPlansItems.id = id_actionPlan;
                                                                         dmRangeActionPlansItems.isDefault = isDefault;
+                                                                        dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                         dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                         dmRangeActionPlansItems.questionId = id_questionModule;
                                                                         dmRangeActionPlansItems.complainceId = complianceId;

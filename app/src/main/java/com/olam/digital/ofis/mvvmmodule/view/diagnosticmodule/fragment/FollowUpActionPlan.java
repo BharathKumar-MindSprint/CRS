@@ -694,7 +694,7 @@ public class FollowUpActionPlan extends Fragment {
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id));
+        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
         list.clear();

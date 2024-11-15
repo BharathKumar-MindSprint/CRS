@@ -602,7 +602,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id));
+        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
         list.clear();
