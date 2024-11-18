@@ -78,7 +78,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
 
             String complianceName = dmComplaintList.get(0).compliance;
 
@@ -196,7 +196,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         totalQuestion++;
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         EditText editText = new EditText(getActivity());
@@ -212,7 +212,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
         dmSurveyAnswerTableList.clear();
 
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
 
         LinearLayout linearLayout1 = new LinearLayout(getContext());
         linearLayout1.setGravity(Gravity.CENTER);
@@ -302,8 +302,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                             resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
                         }
 
-                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT);
+                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
                         }
 
                         resolveText.setTextColor(getResources().getColor(R.color.gray));
@@ -337,8 +337,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         }
                         notResolveText.setTextColor(getResources().getColor(R.color.gray));
 
-                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT);
+                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
                         }
 
                     }

@@ -1324,12 +1324,14 @@ public class OFISDBContract {
         public static final String COLUMN_COUNTRY_iD = "countryId";
         public static final String COLUMN_ISODORIGIN = "isODOrigin";
         public static final String COLUMN_COUNTRYISOCODE = "countryIsoCode";
+        public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_PRODUCT_ID);
                     add(COLUMN_COUNTRY_iD);
                     add(COLUMN_ISODORIGIN);
                     add(COLUMN_COUNTRYISOCODE);
+                    add(CALCULATE_COMPOSITE_FLAG);
                 }}
         );
     }
@@ -2672,6 +2674,12 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CREATED_AT = "created_at";
         public static final String COLUMN_NAME_CENTER_PLOT = "centerPlot";
         public static final String COLUMN_NAME_PLOT_SIZE = "plotArea";
+        public static final String COLUMN_NAME_IS_DEFORESTATION_PLOT = "deforestationFlag";
+        public static final String COLUMN_NAME_IS_PA_LEGALITY_PLOT = "paLegalityFlag";
+        public static final String COLUMN_NAME_IS_CLEANSED_STATUS = "cleansedStatus";
+        public static final String COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED = "isEUDRSurveyCompleted";
+        public static final String COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED = "isPALegalityCompleted";
+        public static final String COLUMN_NAME_GEO_DB_FLAG_STATUS = "geoDbFlagStatus";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2683,6 +2691,12 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CREATED_AT);
                     add(COLUMN_NAME_CENTER_PLOT);
                     add(COLUMN_NAME_PLOT_SIZE);
+                    add(COLUMN_NAME_IS_DEFORESTATION_PLOT);
+                    add(COLUMN_NAME_IS_PA_LEGALITY_PLOT);
+                    add(COLUMN_NAME_IS_CLEANSED_STATUS);
+                    add(COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED);
+                    add(COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED);
+                    add(COLUMN_NAME_GEO_DB_FLAG_STATUS);
                 }}
         );
     }

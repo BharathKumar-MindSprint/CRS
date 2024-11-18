@@ -22,4 +22,7 @@ public class DmActionPlanCurrenciesTable {
     @ColumnInfo(name = "farmerId")
     public String farmerId;
 
+    @ColumnInfo(name = "plotId", defaultValue = "0")
+    public Integer plotId;
+
 }

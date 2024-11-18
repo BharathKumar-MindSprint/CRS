@@ -817,5 +817,7 @@
     <string name="dm_survey_results">Resultados de Encuestas</string>
     <string name="dm_select_action_plan">Seleccionar Plan de Acción</string>
 
+    <string name="dm_plot_survey">Estudio diagnóstico de parcelas</string>
+    <string name="dm_plot_survey_completed">Estudio diagnóstico de parcelas</string>
 </resources>
 

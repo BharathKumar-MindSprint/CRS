@@ -21,14 +21,14 @@ public interface DmActionPlanCurrenciesTableDao {
     @Delete
     void delete(DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable);
 
-    @Query("DELETE FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId")
-    void deleteByModuleId(String id, String farmerId);
+    @Query("DELETE FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
+    void deleteByModuleId(String id, String farmerId, int plotId);
 
-    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId")
-    List<DmActionPlanCurrenciesTable> getDataByModuleId(String id, String farmerId);
+    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
+    List<DmActionPlanCurrenciesTable> getDataByModuleId(String id, String farmerId, int plotId);
 
-    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId")
-    List<DmActionPlanCurrenciesTable> getCurrencyByModuleId(String id , String farmerId);
+    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
+    List<DmActionPlanCurrenciesTable> getCurrencyByModuleId(String id , String farmerId, int plotId);
 
 
 }

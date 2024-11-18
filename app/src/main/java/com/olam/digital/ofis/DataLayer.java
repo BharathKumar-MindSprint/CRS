@@ -47,6 +47,8 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
@@ -386,6 +388,12 @@ public class DataLayer {
             plotDTO.setPlotId(plotId);
             plotDTO.setPlotName(plotName);
             plotDTO.setPlotActualName(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME)));
+            plotDTO.setDeforestationPlot(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT)).equalsIgnoreCase("true"));
+            plotDTO.setPALegalityPlot(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT)).equalsIgnoreCase("true"));
+            plotDTO.setCleansedStatus(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS)));
+            plotDTO.setEUDRSurveyCompleted(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED)).equalsIgnoreCase("true"));
+            plotDTO.setPALegalitySurveyCompleted(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED)).equalsIgnoreCase("true"));
+            plotDTO.setGeoDbFlagStatus(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS)));
             plotDTOArrayList.add(plotDTO);
         }
 
@@ -3764,7 +3772,7 @@ public class DataLayer {
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)";
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)" + " group by _id";
 
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
@@ -10704,38 +10712,43 @@ public class DataLayer {
     }
 
 
-    public void updateNqForDMSurvey(String farmerId, String moduleId, String type, String moduleName){
+    public void updateNqForDMSurvey(String farmerId, String moduleId, String type, String moduleName, int plotId, String location){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        boolean updateWaiting = networkEntryTypeExistsByFarmerModuleId(type, Long.parseLong(farmerId), moduleId);
+        boolean updateWaiting = networkEntryTypeExistsByFarmerModuleId(type, Long.parseLong(farmerId), moduleId, plotId);
+        String moduleType = plotId != 0 ? res.getString(R.string.dm_plot_survey) : res.getString(R.string.diagnostic_survey);
         if (updateWaiting) {
             ContentValues nqiValues = new ContentValues();
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-            String[] whereArgsFarm = new String[]{farmerId,type};
-            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, nqiValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?", whereArgsFarm);
+            String[] whereArgsFarm = new String[]{farmerId,type, String.valueOf(plotId)};
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, nqiValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " = ?", whereArgsFarm);
         }else {
             ContentValues networkQueueValues = new ContentValues();
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, type);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.diagnostic_survey));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, moduleType);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, getFarmerNamefromDb(Long.valueOf(farmerId)));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, location);
             insertNetworkQueueEntry(networkQueueValues);
         }
     }
 
-    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
+    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId, int plotId) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND "
                 + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
-                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ?";
+                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? AND "
+                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " = ?";
         String[] whereArgs = new String[]{
                 submission_type,
                 String.valueOf(farmerId),
-                moduleId
+                moduleId,
+                String.valueOf(plotId)
         };
 
         Cursor nqi = null;
@@ -10908,6 +10921,82 @@ public class DataLayer {
             //if language column didn't found in the table, it will throw exception, so we will return english column values
             return db.rawQuery("SELECT id, name FROM " + tableName, null);
         }
+    }
+
+    public void updateSurveyCapturedForPlots(boolean isEUDRGroundVerificationSurvey, List<Integer> plotIds) {
+        String columnName = isEUDRGroundVerificationSurvey ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED;
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < plotIds.size(); i++) {
+            sb.append("?");
+            if (i < plotIds.size() - 1) {
+                sb.append(",");
+            }
+        }
+        String whereClause = "id IN (" + sb.toString() + ")";
+
+        String[] whereArgs = new String[plotIds.size()];
+        for (int i = 0; i < plotIds.size(); i++) {
+            whereArgs[i] = String.valueOf(plotIds.get(i));
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(columnName, "true");
+
+        db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public int fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND ("
+                + "LOWER(" + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + ") = ? OR "
+                + "LOWER(" + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + ") = ?) AND "
+                + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id), "updated", "repaired", "1"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+        while (data.getCount() > 0 && data.moveToNext()) {
+            boolean isDeforestationSurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED)).equalsIgnoreCase("true");
+            boolean isPaLegalitySurveyCaptured = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED)).equalsIgnoreCase("true");
+            boolean isDeforestationPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT)).equalsIgnoreCase("false");
+            boolean isPaLegalityPlot = data.getString(data.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT)).equalsIgnoreCase("false");
+
+
+            if (isDeforestationPlot || isPaLegalityPlot ||isDeforestationSurveyCaptured || isPaLegalitySurveyCaptured) {
+                return 1;
+            }
+        }
+        return 0;
+
+    }
+
+    public void updatePlotFlagsAndSurveyCapture(boolean isDeforeStationSurvey, int plotId) {
+        String flagColumn = isDeforeStationSurvey ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
+        String surveyColumn = isDeforeStationSurvey ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED;
+
+        ContentValues values = new ContentValues();
+        values.put(flagColumn, "true");
+        values.put(surveyColumn, "true");
+
+        db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, "id = ?", new String[] {String.valueOf(plotId)});
+
+    }
+
+    public boolean getCompositeFlagByCountryId(int countryId) {
+        Cursor farmerAssignments = getassignmentbyCountryId(countryId);
+
+        try {
+            if (farmerAssignments != null) {
+                farmerAssignments.moveToFirst();
+                return farmerAssignments.getString(farmerAssignments.getColumnIndex(OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG)).equalsIgnoreCase("true");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            farmerAssignments.close();
+        }
+
+        return false;
     }
 
 

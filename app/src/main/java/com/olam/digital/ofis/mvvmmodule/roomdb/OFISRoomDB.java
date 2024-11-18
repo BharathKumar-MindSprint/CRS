@@ -17,6 +17,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.AssignmentTypeDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
@@ -33,6 +34,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
@@ -62,7 +65,6 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
-
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
         DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
@@ -72,8 +74,9 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
         FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class},
-        version = 13)
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
+        DmMasterData.class, DmModuleAssignments.class},
+        version = 14)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -129,6 +132,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
 
     public abstract PhotoCheckBoxDataDao photoCheckBoxDataDao();
 
+    public abstract DmMasterDataDao dmMasterDataDao();
+
+    public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
+
     public static volatile OFISRoomDB INSTANCE = null;
 
     public static OFISRoomDB getDbInstance(Context context) {
@@ -141,10 +148,27 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
+        final Migration MIGRATION_13_14 = new Migration(13, 14) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN diagnosticTypeId INTEGER");
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN plotSurveyType INTEGER");
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN captureLocation TEXT");
+                database.execSQL("ALTER TABLE DmSurveyAnswerTable ADD COLUMN plotId INTEGER DEFAULT 0");
+                database.execSQL("ALTER TABLE DmComplaintFileTable ADD COLUMN plotId INTEGER DEFAULT 0");
+                database.execSQL("ALTER TABLE DmActionPlanCurrenciesTable ADD COLUMN plotId INTEGER DEFAULT 0");
+                database.execSQL("ALTER TABLE DMSurveyReport ADD COLUMN plotId INTEGER DEFAULT 0");
+                database.execSQL("ALTER TABLE DmRangeTextBoxModuleQuestionsTable ADD COLUMN id INTEGER");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionValueId INTEGER");
+                database.execSQL("CREATE TABLE IF NOT EXISTS DmMasterData ( uid INTEGER PRIMARY KEY NOT NULL, id INTEGER, type TEXT, value TEXT)");
+                database.execSQL("CREATE TABLE IF NOT EXISTS DmModuleAssignments ( uid INTEGER PRIMARY KEY NOT NULL, moduleId INTEGER, assignmentType TEXT, assignmentId INTEGER)");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14)
                     .fallbackToDestructiveMigration()
                     .build();
         }

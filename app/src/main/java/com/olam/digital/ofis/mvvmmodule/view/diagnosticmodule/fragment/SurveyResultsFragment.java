@@ -85,6 +85,8 @@ public class SurveyResultsFragment extends Fragment {
     private Location mCurrentCapturedLocation = null;
     GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
+    int complaint = 0, nonComplaint = 0, satisfactory = 0;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -130,7 +132,7 @@ public class SurveyResultsFragment extends Fragment {
                     }
                 //Call API
 
-                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
                 String currencyId = "0";
 
@@ -152,7 +154,7 @@ public class SurveyResultsFragment extends Fragment {
 
                 HashMap answers = new HashMap();
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
                 String totalAmount = "0";
 
@@ -175,7 +177,7 @@ public class SurveyResultsFragment extends Fragment {
 
                         complaintFileTableList.clear();
 
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID, 0);
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                         List<String> files = new ArrayList<>();
                         files.clear();
@@ -193,11 +195,11 @@ public class SurveyResultsFragment extends Fragment {
                     }
                 }
 
-                db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID));
+                db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID), Constants.PLOT_ID);
 
-                DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
-                        Integer.parseInt(Constants.satisfactorySize),
-                        Integer.parseInt(Constants.noncomplaintSize),
+                DMSurveyReport dmSurveyReport = new DMSurveyReport(complaint,
+                        satisfactory,
+                        nonComplaint,
                         Integer.parseInt(Constants.TotalActionPlanCount),
                         Double.parseDouble(String.valueOf(amount)),
                         finalAssessmentValue,
@@ -206,15 +208,16 @@ public class SurveyResultsFragment extends Fragment {
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
                         Integer.parseInt(currencyId),submittedDate,resultColor,
-                        overAllResultComplianceID);
+                        overAllResultComplianceID,
+                        Constants.PLOT_ID);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
                 DataLayer dl = new DataLayer(getResources(), getContext());
                 // OW-4574
-                if(!dl.networkEntryTypeExistsByFarmerModuleId("DMSurvey",Long.parseLong(Constants.FARMER_ID), Constants.MODULE_ID)) {
+                if(!dl.networkEntryTypeExistsByFarmerModuleId("DMSurvey",Long.parseLong(Constants.FARMER_ID), Constants.MODULE_ID, Constants.PLOT_ID)) {
                     collectGPSPoint(mCurrentCapturedLocation);
                     gpsTracker.stopLocationUpdates();
                 }
-                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "DMSurvey",Constants.MODULE_NAME);
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "DMSurvey",Constants.MODULE_NAME, Constants.PLOT_ID, mCurrentCapturedLocation.getLatitude() + "," + mCurrentCapturedLocation.getLongitude());
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
                 getContext().startActivity(intent);
 
@@ -227,83 +230,6 @@ public class SurveyResultsFragment extends Fragment {
         traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
         traffic_indicator_red = view.findViewById(R.id.indicator_red);
 
-        /*int complaint = 0, nonComplaint = 0, satisfactory = 0;
-               List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-                dmSurveyAnswerTableList1.clear();
-                dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
-                for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
-
-                    int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
-                    int value = dmSurveyAnswerTableList1.get(j).amount;
-                    amount = amount +value;
-                    String complianceName = db.complianceIndicatorDao().getComplianceNameBycomplianceId(String.valueOf(compliantTypeId));
-                    if (complianceName.equalsIgnoreCase("Satisfactory")) {
-                        satisfactory = satisfactory + 1;
-                    } else if (complianceName.equalsIgnoreCase("Compliant")) {
-                        complaint = complaint + 1;
-                    } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
-                        nonComplaint = nonComplaint + 1;
-                    }
-
-
-        }
-
-        editTextText.setText(""+complaint);
-        editTextText3.setText(""+nonComplaint);
-        editTextText4.setText(""+satisfactory);
-
-        editTextText5.setText(String.valueOf(complaint + nonComplaint + satisfactory));
-        editTextText6.setText(""+ amount);
-//        int complaint = Integer.parseInt(complaint);
-//        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
-//        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
-
-        DmQuestionsModule isCritical = new DmQuestionsModule();
-        Boolean val = isCritical.isCriticalQuest;
-
-
-        if (val && nonComplaint >= 1 && satisfactory >= 1) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
-                survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
-                traffic_indicator_green.setVisibility(View.GONE);
-                traffic_indicator_orange.setVisibility(View.GONE);
-                traffic_indicator_red.setVisibility(View.VISIBLE);
-                resultValue = Constants.RED;
-            }
-        } else {
-
-            if (nonComplaint > complaint && nonComplaint > satisfactory) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
-                    traffic_indicator_green.setVisibility(View.GONE);
-                    traffic_indicator_orange.setVisibility(View.GONE);
-                    traffic_indicator_red.setVisibility(View.VISIBLE);
-                    resultValue = Constants.RED;
-                }
-            } else if (satisfactory > complaint && satisfactory > nonComplaint) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
-                    traffic_indicator_green.setVisibility(View.GONE);
-                    traffic_indicator_orange.setVisibility(View.VISIBLE);
-                    traffic_indicator_red.setVisibility(View.GONE);
-                    resultValue = Constants.ORANGE;
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
-                    traffic_indicator_green.setVisibility(View.VISIBLE);
-                    traffic_indicator_orange.setVisibility(View.GONE);
-                    traffic_indicator_red.setVisibility(View.GONE);
-                    resultValue = Constants.GREEN;
-                }
-            }
-
-        }*/
-
         return view;
     }
 
@@ -315,10 +241,12 @@ public class SurveyResultsFragment extends Fragment {
         Boolean val = false;
         double totalWeightages = 0;
         double finalScore = 0;
-        int complaint = 0, nonComplaint = 0, satisfactory = 0;
+        complaint = 0;
+        nonComplaint = 0;
+        satisfactory = 0;
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
         dmSurveyAnswerTableList1.clear();
-        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -366,7 +294,7 @@ public class SurveyResultsFragment extends Fragment {
         String currency_id = hashMap.get("keyCurrencies");
         String totalActionPlanCount = hashMap.get("totalActionPlanCount");
 
-        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;

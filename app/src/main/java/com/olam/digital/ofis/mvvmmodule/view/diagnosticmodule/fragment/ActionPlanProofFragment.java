@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -34,7 +33,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +70,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -186,10 +183,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
                 for (int i = 0; i < qId.size(); i++) {
-                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0);
-                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID);
+                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, Constants.PLOT_ID);
 
-                    if (!justVal.contains(qId.get(i)) && dmComplaintFileTables.size() > 0) {
+                    if (!justVal.contains(qId.get(i)) && !dmComplaintFileTables.isEmpty()) {
                         justVal.add(qId.get(i));
                     } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
                         justVal.add(qId.get(i));
@@ -198,21 +195,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
                 if (justVal.size()==Constants.questionIds.size()){
-
-
                     goNextCaptureProof = true;
-//                    HashMap<String, Integer> actionPlan = new HashMap<>();
-//                    actionPlan.put("totalActionPlanCount" , totalActionPlanCount);
-
-
                 } else {
-                    Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
                 }
 
                 for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID), "0")){
-                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
+                        Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
                         goNextActionPlan = false;
                         break;
                     }else {
@@ -220,18 +210,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     }
                 }
 
-
-//                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-//                viewPager.setCurrentItem(2);
-//
-//                HashMap<String, String> hashMap = new HashMap<>();
-//                hashMap.put("keyCurrencies", currency_id);
-
-
                 if (goNextCaptureProof && goNextActionPlan){
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(2);
-
 
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("keyCurrencies", currency_id);
@@ -240,14 +221,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
                 }
 
-
             }
         });
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
-        List<DmActionPlanCurrenciesTable> checkValueDefault = db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
-        if (checkValueDefault.size() == 0) {
+        List<DmActionPlanCurrenciesTable> checkValueDefault = db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
+        if (checkValueDefault.isEmpty()) {
             isCreated = true;
         }
 
@@ -266,23 +246,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
 
-            //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
-
-//            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
-
-
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
             String complianceName = dmComplaintList.get(0).compliance;
 
             for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
-
                 budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
-
             }
+
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
             dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
+            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
@@ -324,7 +297,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("1" + complaint_id);
                         complaint_dropdown.setRotation(180);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
+                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
                             View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
                             LinearLayout linearLayout = (LinearLayout) desiredView;
                             linearLayout.setVisibility(View.VISIBLE);
@@ -334,7 +307,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
                         complaint_dropdown.setRotation(0);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
+                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
                             View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
                             LinearLayout linearLayout = (LinearLayout) desiredView;
                             linearLayout.setVisibility(View.GONE);
@@ -362,7 +335,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
             // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
-            if (dmSurveyAnswerTableList.size() != 0) {
+            if (!dmSurveyAnswerTableList.isEmpty()) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
@@ -373,7 +346,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     textView.setPadding(0, 15, 0, 0);
                     textView.setTypeface(null, Typeface.BOLD);
                     linearLayoutItems.addView(textView);
-                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
+                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID);
 
                 }
             }
@@ -382,12 +355,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
     @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID ) {
 
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         EditText editText = new EditText(getActivity());
@@ -436,11 +409,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
         dmComplaintFileTableList.clear();
-        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0);
+        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
         boolean isFilesUploaded = false;
 
-        if (dmComplaintFileTableList.size() != 0) {
+        if (!dmComplaintFileTableList.isEmpty()) {
             for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                 retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                 retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -478,14 +451,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
-
-                                            //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
-
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
-
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                            if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
                                                 for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
                                                     displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                                 }
@@ -526,35 +495,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 @Override
                 public void onClick(View view) {
 
-                    if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0).size() >= 5) {
+                    if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0, Constants.PLOT_ID).size() >= 5) {
                         Toast.makeText(getActivity(), getResources().getString(R.string.dm_maximum_5_files_can_be_uploaded), Toast.LENGTH_SHORT).show();
-
                     } else {
-
                         CharSequence[] options = new CharSequence[0];
 
-
                         try {
-                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
+                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                 options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
 
                         CharSequence[] finalOptions = options;
-
-
-//                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle(getResources().getString(R.string.dm_add_photo));
 
@@ -592,8 +552,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                     if (isStoragePermissionGalleryGranted()) {
 
-                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
+                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
                                         if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
@@ -642,7 +602,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id));
+        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
         list.clear();
@@ -654,7 +614,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
 
-        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
@@ -691,8 +651,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         int actionPlanId = 0;
         String amountT = "0";
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
-        if (dmSurveyAnswerTableList1.size() != 0) {
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        if (!dmSurveyAnswerTableList1.isEmpty()) {
             actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
             try {
                 actionPlanId = Integer.parseInt(dmSurveyAnswerTableList1.get(0).actionplanId);
@@ -717,14 +677,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         spinner.setSelection(selectedPosition);
-
-       // Toast.makeText(getActivity(), "OK"+selectedPosition, Toast.LENGTH_SHORT).show();
-
-
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
         LinearLayout.LayoutParams layoutParamsActionTxt = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.capture_box)
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
         layoutParams.setMargins(0, 15, 0, 15);
 
@@ -774,11 +730,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (charSequence.length() > 0) {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-//                } else {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
-//                }
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
             }
 
             @Override
@@ -818,9 +770,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
         dmSurveyAnswerTableList.clear();
 
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
 
-        if (dmSurveyAnswerTableList.size() != 0) {
+        if (!dmSurveyAnswerTableList.isEmpty()) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
             editText.setText(answerIdDb);
         }
@@ -837,8 +789,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     actionPlan.setText("");
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(true);
 
@@ -851,8 +803,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(null, id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId(null, id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
 
@@ -871,19 +823,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String Id = ids.get(position);
                 if (position == 0) {
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
                     tVActionPlanSelectedTxt.setVisibility(View.VISIBLE);
                     tVActionPlanSelectedTxt.setText(list.get(position));
                     linearLayoutActionPlanMain.setVisibility(View.GONE);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(list.get(position), id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(list.get(position), id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
             }
 
@@ -936,7 +888,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }else {
             editTextCurrencyInput.setText(amountT);
         }
-//        editTextCurrencyInput.setText(amountT);
+
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
         editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -955,11 +907,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
-                    db.dmSurveyAnswerTableDao().updateAmount(charSequence.toString(), id, Constants.FARMER_ID);
-                } else {
-
+                    db.dmSurveyAnswerTableDao().updateAmount(charSequence.toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
-
             }
 
             @Override
@@ -983,7 +932,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(editText);
 
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).isCaptureProof) {
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).isCaptureProof) {
                 linearLayoutItems.addView(textView);
                 linearLayoutItems.addView(linearLayoutImage);
             } else {
@@ -993,7 +942,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             linearLayoutItems.addView(linearLayoutSpin);
             linearLayoutItems.addView(tVActionPlanSelectedTxt);
 
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
                 linearLayoutItems.addView(linearLayoutActionPlanMain);
             }
 
@@ -1013,7 +962,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        int totalSizeUntilNow = db.dmComplaintFileTableDao().getTotalUnsyncFileSizeByQuestionId(String.valueOf(GALLERY_QUESTION_ID), Constants.FARMER_ID, "ParentSurvey");
+        int totalSizeUntilNow = db.dmComplaintFileTableDao().getTotalUnSyncFileSizeByQuestionId(String.valueOf(GALLERY_QUESTION_ID), Constants.FARMER_ID, "ParentSurvey", Constants.PLOT_ID);
 
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
 
@@ -1054,6 +1003,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setOfisFileName(OFISFileName);
             dmComplaintFileTable.setFileData(imageBytes);
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+            dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
             dmComplaintFileTable.setAttempt(0);
             dmComplaintFileTable.setFileSize(imageBytes.length);
@@ -1074,6 +1024,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
             String destinationFilePath = destinationFile.getAbsolutePath();
             dmComplaintFileTable.setFilePath(destinationFilePath);
             db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
@@ -1104,8 +1055,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
             dmComplaintFileTableList.clear();
-            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-            if (dmComplaintFileTableList.size() != 0) {
+            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+            if (!dmComplaintFileTableList.isEmpty()) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                     retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                     retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1116,10 +1067,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             }
 
             dynamicArrays.put(dynamicArrayName, dynamicArray);
-
             dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
-
-            //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
 
             linearLayoutImage.removeAllViews();
 
@@ -1157,7 +1105,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         linearLayoutImage.removeAllViews();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                         dm_question_complaint.removeAllViews();
 
@@ -1233,6 +1181,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
                 dmComplaintFileTable.setFileSize(fileByteArray.length);
@@ -1279,8 +1228,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                if (!dmComplaintFileTableList.isEmpty()) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1328,7 +1277,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1389,6 +1338,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
                 dmComplaintFileTable.setFileSize(pdfByteArray2.length);
@@ -1439,8 +1389,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                if (!dmComplaintFileTableList.isEmpty()) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1490,7 +1440,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1572,6 +1522,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
                 dmComplaintFileTable.setFileSize(imageBytes.length);
@@ -1624,8 +1575,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                if (!dmComplaintFileTableList.isEmpty()) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1675,7 +1626,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1748,6 +1699,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
                 dmComplaintFileTable.setFileSize(fileByteArray.length);
@@ -1799,8 +1751,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                if (!dmComplaintFileTableList.isEmpty()) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1852,7 +1804,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1908,6 +1860,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
                 dmComplaintFileTable.setFileSize(pdfByteArray2.length);
@@ -1956,8 +1909,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
-                if (dmComplaintFileTableList.size() != 0) {
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0, Constants.PLOT_ID);
+                if (!dmComplaintFileTableList.isEmpty()) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -2007,7 +1960,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -2077,9 +2030,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         String currencyIdDb = "0";
 
-        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
-        if (dmActionPlanCurrenciesTables.size() != 0) {
+        if (!dmActionPlanCurrenciesTables.isEmpty()) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
         }
@@ -2087,23 +2040,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         int selectedPosition = 0;
 
-
-//        for (int i = 0; i < ids.size(); i++) {
-        //            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
-//                selectedPosition = i;
-//            }
-//        }
-
-
-//        if ()
         try {
             int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId, 1);
             for (int i = 0; i < ids.size(); i++) {
                 if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) && isCreated) {
                     selectedPosition = i;
                     isCreated = false;
-//                    currencyIdDb = String.valueOf(currencyDefault);
-//                    currency_id = String.valueOf(currencyDefault);
                 } else if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
                     selectedPosition = i;
                 }
@@ -2125,13 +2067,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 currency_id = ids.get(position);
 
-                db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+                db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
                 DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable = new DmActionPlanCurrenciesTable();
                 dmActionPlanCurrenciesTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
                 dmActionPlanCurrenciesTable.currencyId = Integer.parseInt(ids.get(position));
                 dmActionPlanCurrenciesTable.code = list.get(position);
                 dmActionPlanCurrenciesTable.farmerId = Constants.FARMER_ID;
+                dmActionPlanCurrenciesTable.plotId = Constants.PLOT_ID;
                 db.dmActionPlanCurrenciesTableDao().insert(dmActionPlanCurrenciesTable);
 
                 dm_question_complaint.removeAllViews();
