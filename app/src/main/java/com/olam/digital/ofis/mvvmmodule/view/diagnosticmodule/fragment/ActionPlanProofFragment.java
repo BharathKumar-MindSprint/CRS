@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -34,7 +33,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +70,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -349,7 +346,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     textView.setPadding(0, 15, 0, 0);
                     textView.setTypeface(null, Typeface.BOLD);
                     linearLayoutItems.addView(textView);
-                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
+                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID);
 
                 }
             }
@@ -358,7 +355,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
     @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID ) {
 
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -504,8 +501,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         CharSequence[] options = new CharSequence[0];
 
                         try {
-                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                            String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
+                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
@@ -555,8 +552,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                     if (isStoragePermissionGalleryGranted()) {
 
-                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
+                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
                                         if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
@@ -605,7 +602,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id));
+        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
         list.clear();

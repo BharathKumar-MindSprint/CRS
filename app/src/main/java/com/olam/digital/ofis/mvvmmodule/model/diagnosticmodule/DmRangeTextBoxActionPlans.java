@@ -11,10 +11,15 @@ public class DmRangeTextBoxActionPlans {
 
     @SerializedName("id")
     private int id;
-    public DmRangeTextBoxActionPlans(String actionPlan, boolean isDefault, int id) {
+
+    @SerializedName("actionValueId")
+    private Integer actionValueId;
+
+    public DmRangeTextBoxActionPlans(String actionPlan, boolean isDefault, int id, Integer actionValueId) {
         this.actionPlan = actionPlan;
         this.isDefault = isDefault;
         this.id = id;
+        this.actionValueId = actionValueId;
     }
 
 
@@ -43,5 +48,11 @@ public class DmRangeTextBoxActionPlans {
         this.id = id;
     }
 
+    public Integer getActionValueId() {
+        return actionValueId;
+    }
 
+    public void setActionValueId(Integer actionValueId) {
+        this.actionValueId = actionValueId;
+    }
 }

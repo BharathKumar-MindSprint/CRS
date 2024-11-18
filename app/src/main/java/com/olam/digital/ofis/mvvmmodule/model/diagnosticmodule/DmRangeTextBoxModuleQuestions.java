@@ -1,12 +1,14 @@
 package com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule;
 
+import androidx.room.ColumnInfo;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class DmRangeTextBoxModuleQuestions {
 
-    public DmRangeTextBoxModuleQuestions(double minimumRange, double maximumRange, String compliance, int complianceId, boolean allowCustomActionPlan, boolean isCaptureProof, String proofFormat, List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList) {
+    public DmRangeTextBoxModuleQuestions( Integer id, double minimumRange, double maximumRange, String compliance, int complianceId, boolean allowCustomActionPlan, boolean isCaptureProof, String proofFormat, List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList) {
         this.minimumRange = minimumRange;
         this.maximumRange = maximumRange;
         this.compliance = compliance;
@@ -15,6 +17,7 @@ public class DmRangeTextBoxModuleQuestions {
         this.isCaptureProof = isCaptureProof;
         this.proofFormat = proofFormat;
         this.dmRangeTextBoxActionPlansList = dmRangeTextBoxActionPlansList;
+        this.id = id;
     }
 
     public double getMinimumRange() {
@@ -80,6 +83,17 @@ public class DmRangeTextBoxModuleQuestions {
     public void setDmRangeTextBoxActionPlansList(List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList) {
         this.dmRangeTextBoxActionPlansList = dmRangeTextBoxActionPlansList;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @SerializedName("id")
+    public Integer id;
 
     @SerializedName("minimumRange")
     private double minimumRange;
