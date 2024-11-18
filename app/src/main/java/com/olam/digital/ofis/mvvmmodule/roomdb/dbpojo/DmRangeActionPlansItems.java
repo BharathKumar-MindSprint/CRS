@@ -10,6 +10,9 @@ public class DmRangeActionPlansItems {
     @PrimaryKey(autoGenerate = true)
     public int uid;
 
+    @ColumnInfo(name = "actionValueId")
+    public Integer actionValueId;
+
     @ColumnInfo(name = "id")
     public int id;
 
