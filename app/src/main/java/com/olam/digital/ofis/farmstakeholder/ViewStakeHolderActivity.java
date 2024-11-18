@@ -135,24 +135,21 @@ public class ViewStakeHolderActivity extends BaseActivity {
 
             tvStakeHolderName.setText(stakeHolder.msName);
             farmerOlamId.setText(stakeHolder.olamMultiStakeholderId);
-            long farmerPlaceId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
 
-            if (farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY)) == 1) {
-                String farmerPhotoPath = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
-                if (farmerPhotoPath != null && !farmerPhotoPath.isEmpty()) {
-                    // set our desired width and height for display
-                    int baseWidth = 100;
-                    int baseHeight = 133;
+            String farmerPhotoPath = stakeHolder.msPhoto;
+            if (farmerPhotoPath != null && !farmerPhotoPath.isEmpty() && new File(farmerPhotoPath).exists()) {
+                // set our desired width and height for display
+                int baseWidth = 100;
+                int baseHeight = 133;
 
-                    Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
-                    Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
-                    Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+                Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+                Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+                Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+                Bitmap existingBitmap = Utilities.loadSizedBitmap(farmerPhotoPath, outputWidth, outputHeight);
 
-                    Bitmap existingBitmap = Utilities.loadSizedBitmap(farmerPhotoPath, outputWidth, outputHeight);
-
-                    farmerPhoto.setImageBitmap(existingBitmap);
-                }
+                farmerPhoto.setImageBitmap(existingBitmap);
             }
+
 
             //setting farmer info
             Cursor existingNumbers = dl.getFarmerPhoneNumbers(stakeHolder.msId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
@@ -423,11 +420,10 @@ public class ViewStakeHolderActivity extends BaseActivity {
     }
 
     private void saveChanges(FarmerRoleDto farmerRoleDto) {
-        if (stakeHolder.synced == 0) {
-            db.multiStakeHolderDao().updateMsRoleId(String.valueOf(farmerRoleDto.getId()), stakeHolder.msId);
-        }
-        else {
+        db.multiStakeHolderDao().updateMsRoleId(String.valueOf(farmerRoleDto.getId()), stakeHolder.msId);
 
+        if (stakeHolder.synced == 1) {
+            dl.updateNqForStakeHolder(String.valueOf(stakeHolder.farmerId), String.valueOf(stakeHolder.msId), "false", stakeHolder.msName, stakeHolder.olamMultiStakeholderId);
         }
     }
 
@@ -475,7 +471,6 @@ public class ViewStakeHolderActivity extends BaseActivity {
                 setCapturedImageURI(uri);
                 setCurrentPhotoPath(savedImagePath);
             }
-
             displayBitmap(savedImagePath, target);
         }
     }
@@ -488,18 +483,13 @@ public class ViewStakeHolderActivity extends BaseActivity {
         Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
         Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
         target.setImageBitmap(bitmap);
-        //dl.updateFarmerPhoto(farmerId, savedImagePath, olamFarmerIdStr, farmerNameStr);
+        db.multiStakeHolderDao().updatePhotoByMsId(stakeHolder.msId, savedImagePath);
 
-//        // Collect the GPS Point
-//        if (mCurrentCapturedLocation != null) {
-//            // check the current location
-//            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO, mCurrentCapturedLocation, farmerId);
-//        } else if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-//            gpsTracker.getDeviceLocation();
-//            return;
-//        } else {
-//            //
-//        }
+
+        if (stakeHolder.synced == 1) {
+            dl.updateNqForStakeHolder(String.valueOf(stakeHolder.farmerId), String.valueOf(stakeHolder.msId), "true", stakeHolder.msName, stakeHolder.olamMultiStakeholderId);
+        }
+
     }
 
     @Override

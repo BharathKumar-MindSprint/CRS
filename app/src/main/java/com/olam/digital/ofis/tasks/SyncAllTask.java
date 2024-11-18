@@ -1,13 +1,10 @@
 package com.olam.digital.ofis.tasks;
 
-import static com.olam.digital.ofis.NetworkLayer.TAG;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -49,6 +46,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -70,7 +68,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -106,7 +103,7 @@ public class SyncAllTask extends SyncTask {
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse, answerResponse;
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
-    public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
+    public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
@@ -225,8 +222,8 @@ public class SyncAllTask extends SyncTask {
         else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
             syncMultiFarmRoles();
         }
-        else if (op == SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS) {
-            syncExistingMultiFarms();
+        else if (op == SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS) {
+            syncExistingStakeHolders();
         }
         else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
@@ -447,8 +444,9 @@ public class SyncAllTask extends SyncTask {
             new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
             multifarmRoleResponse = null;
 
-            new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
-            multifarmFarmResponse = null;
+            new UpdateStakeHolderResponse(context).execute(stakeHolderResponse);
+            StakeHoldersResponse(stakeHolderResponse);
+            stakeHolderResponse = null;
 
             // Goes directly to the AsyncTask
             new UpdateTrainingListsTask(context).execute(trainingResponse);
@@ -1436,12 +1434,10 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    // String output = postResponse.body().string();
-                    // DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         multifarmRoleResponse=response;
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Existing");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiStakeHolder Existing");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
 
                     } else {
                         try {
@@ -1471,25 +1467,19 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncExistingMultiFarms() {
+    private void syncExistingStakeHolders() {
         String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/farmerinfo";
+        endpoint = "ofisfarmer/multiStakeHolder/getStakeholderByenumeratorId";
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-
-
-                        multifarmFarmResponse=response;
-
+                        stakeHolderResponse = response;
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
-
-
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
@@ -1510,7 +1500,6 @@ public class SyncAllTask extends SyncTask {
                 if (e != null) {
                     failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                 }
-
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
 
             }
@@ -1565,9 +1554,7 @@ public class SyncAllTask extends SyncTask {
                 }
 
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-
             }
-
         });
     }
 
@@ -2296,5 +2283,23 @@ public class SyncAllTask extends SyncTask {
             e.printStackTrace();
         }
     }
+
+    private void StakeHoldersResponse(JSONObject stakeHolderResponse) {
+
+        try {
+            Gson gson = new Gson();
+            JSONObject multiStakeHolderResponseObject = stakeHolderResponse.has("outputData") ? stakeHolderResponse.getJSONObject("outputData") : new JSONObject();
+            JSONArray multiStakeHolderResponse = multiStakeHolderResponseObject.has("multiStakeHolders") ? multiStakeHolderResponseObject.getJSONArray("multiStakeHolders") : new JSONArray();
+            Type MultiStakeHolderDtoType = new TypeToken<List<MultiStakeHolder>>(){}.getType();
+            List<MultiStakeHolder> multiStakeHolder = gson.fromJson(multiStakeHolderResponse.toString(), MultiStakeHolderDtoType);
+            roomDB.multiStakeHolderDao().deleteAll();
+            roomDB.multiStakeHolderDao().insert(multiStakeHolder);
+        }
+        catch (Exception e) {
+            FirebaseCrash.report(new Exception("UpdateStakeHolderResponse: Error filling StakeHolders table", e));
+            e.printStackTrace();
+        }
+    }
+
 
 }

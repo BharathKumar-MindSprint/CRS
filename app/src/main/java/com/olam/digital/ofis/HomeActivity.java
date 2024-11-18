@@ -82,6 +82,8 @@ import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
+import com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity;
+import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -1680,17 +1682,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ChildVisitDetailActivity.class);
                 intent.putExtras(childBundle);
                 startActivity(intent);
-
-            } else if (itemType.equalsIgnoreCase("Multifarm Update")) {
+            } else if (itemType.equalsIgnoreCase("update stakeholder")) {
                 Bundle bundle = new Bundle();
-                bundle.putString("farmerId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-                bundle.putString("farmId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID))));
-                bundle.putBoolean("editMode", true);
-                bundle.putBoolean("isSurveyEnabled", false);
-                Intent intent = new Intent(this, UpdateMultiFarmActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-
+                bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+                bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
+                startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }

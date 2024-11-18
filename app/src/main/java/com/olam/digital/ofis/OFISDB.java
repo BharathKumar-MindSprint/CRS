@@ -14,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 156;
+    private static final int DATABASE_VERSION = 157;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -470,16 +470,36 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
 
     private static final String OFIS_PHONENUMBERS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumber.TABLE_NAME
-            + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID+ " INTEGER, "
+            + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID+ " INTEGER default null, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
 
+    private static final String OFIS_PHONENUMBERS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumberCopy.TABLE_NAME
+            + " ( " + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_ID + " INTEGER , "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_MULTI_STAKEHOLDER_ID+ " INTEGER, "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_NUMBER + " TEXT, "
+            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
+
 
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
-            + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER, "
+            + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_FAMRERNATIONALIDS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIdCopy.TABLE_NAME
+            + " ( " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_ID + " INTEGER, "
+            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER DEFAULT null, "
+            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.FarmerNationalIdCopy.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
@@ -1315,10 +1335,22 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME+ " ADD COLUMN "+ OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT ");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE +" TEXT ");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME +" TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID +" INTEGER ");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID +" INTEGER ");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID +" INTEGER ");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID +" INTEGER ");
+
+            sqLiteDatabase.execSQL(OFIS_PHONENUMBERS_COPY_TABLE_CREATE);
+            sqLiteDatabase.execSQL("INSERT INTO phoneNumbersCopy (id, farmer_id, country_id, phonenumber, primary_number) SELECT id, farmer_id, country_id, phonenumber, primary_number FROM phonenumbers");
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS phonenumbers");
+            sqLiteDatabase.execSQL(OFIS_PHONENUMBERS_TABLE_CREATE);
+            sqLiteDatabase.execSQL("INSERT INTO phonenumbers (id, farmer_id, country_id, msId, phonenumber, primary_number) SELECT id, farmer_id, country_id, msId, phonenumber, primary_number FROM phoneNumbersCopy");
+
+            sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_COPY_TABLE_CREATE);
+            sqLiteDatabase.execSQL("INSERT INTO farmerNationalIdCopy (id, farmerId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced) SELECT id, farmerId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced FROM farmernationalids");
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS farmernationalids");
+            sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_TABLE_CREATE);
+            sqLiteDatabase.execSQL(" INSERT INTO farmernationalids (id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced) SELECT id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced FROM farmerNationalIdCopy ");
+
         }
         catch (SQLException e) {
             e.printStackTrace();

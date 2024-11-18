@@ -52,4 +52,8 @@ public interface MultiStakeHolderDao {
 
     @Query("UPDATE MULTISTAKEHOLDER SET farmerId=:farmerId, farmId=:farmId, farmHoldingCode=:farmHoldingCode WHERE farmerId=:localFarmerId")
     void updateFarmerId(long localFarmerId, long farmerId, long farmId, String farmHoldingCode);
+
+    @Query("UPDATE MultiStakeHolder SET msPhoto = :savedImagePath WHERE msId = :msId")
+    void updatePhotoByMsId(Long msId, String savedImagePath);
+
 }

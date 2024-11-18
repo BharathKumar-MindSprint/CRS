@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 
@@ -21,10 +22,12 @@ public class StakeHolderRecyclerAdapter extends RecyclerView.Adapter<StakeHolder
     private OnItemClickListener onItemClickListener;
     private List<StakeHolderDto> stakeHolderList;
     private Context mContext;
+    private DataLayer dl;
 
-    public StakeHolderRecyclerAdapter(List<StakeHolderDto> stakeHolderList, Context context) {
+    public StakeHolderRecyclerAdapter(List<StakeHolderDto> stakeHolderList, Context context, DataLayer dl) {
         this.stakeHolderList = stakeHolderList;
         this.mContext = context;
+        this.dl = dl;
     }
 
     public void setOnItemClickListener(OnItemClickListener clickListener) {
@@ -45,7 +48,7 @@ public class StakeHolderRecyclerAdapter extends RecyclerView.Adapter<StakeHolder
         StakeHolderDto stakeHolderDto = stakeHolderList.get(position);
 
         holder.stakeHolderName.setText(stakeHolderDto.getMsName());
-        holder.farmerRole.setText(stakeHolderDto.getMsRoleId());
+        holder.farmerRole.setText(dl.getFarmerRole(stakeHolderDto.getMsRoleId()));
 
         holder.item.setOnClickListener(new View.OnClickListener() {
             @Override
