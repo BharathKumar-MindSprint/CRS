@@ -714,7 +714,7 @@
     <string name="dm_plot_survey">Khảo sát lô đất chẩn đoán</string>
     <string name="dm_plot_survey_completed">Khảo sát lô đất chẩn đoán đã hoàn thành</string>
 
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Vai trò của người nông dân</string>
 
 
     <string name="add_farm_stakeholder">Thêm bên liên quan đến trang trại</string>
@@ -728,8 +728,8 @@
     <string name="confirmation_message">Bạn có muốn xác nhận thay đổi không?</string>
     <string name="stakeholder_role">Vai trò của bên liên quan</string>
     <string name="primary_farmer">Nông dân chính</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Chi tiết về bên liên quan</string>
+    <string name="no_task">Không có nhiệm vụ</string>
+    <string name="stakeholder_signature">Chữ ký của bên liên quan</string>
+    <string name="update_stakeholder">Cập nhật bên liên quan</string>
 </resources>

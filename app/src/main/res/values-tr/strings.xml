@@ -710,7 +710,7 @@
     <string name="image_downloaded">Görüntüler başarıyla indirildi</string>
     <string name="file_exceeds">Dosya boyutu aşılıyor </string>
     <string name="total_file_size">Toplam dosya boyutu 5 MB\'ı aşıyor. Lütfen dosya boyutunun altında yükleyin </string>
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Çiftçi rolü</string>
 
     <string name="dm_plot_survey">Tanısal Arsa Araştırması</string>
     <string name="dm_plot_survey_completed">Tanısal Arsa Araştırması Tamamlandı</string>
@@ -726,9 +726,9 @@
     <string name="confirmation_message">Değişiklikleri onaylamak ister misiniz?</string>
     <string name="stakeholder_role">Paydaş Rolü</string>
     <string name="primary_farmer">Birincil Çiftçi</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Paydaş detayları</string>
+    <string name="no_task">Görev yok</string>
+    <string name="stakeholder_signature">Paydaşın imzası</string>
+    <string name="update_stakeholder">Paydaşı güncelleyin</string>
 
 </resources>

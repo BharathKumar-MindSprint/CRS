@@ -955,7 +955,7 @@
     <string name="total_file_size">khanad fail thangmodkoen 5MB  kaluna abold fail khanadnony kva </string>
     <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
 
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">ບົດບາດຊາວກະສິກອນ</string>
     <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
 
     <string name="dm_hint_txt">ໂມດູນການວິໃຈ</string>
@@ -996,9 +996,9 @@
     <string name="confirmation_message">ທ່ານຕ້ອງການຢືນຢັນການປ່ຽນແປງບໍ?</string>
     <string name="stakeholder_role">ບົດບາດຂອງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
     <string name="primary_farmer">ຊາວກະສິກອນປະຖົມ</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">ລາຍລະອຽດຂອງພາກສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="no_task">ບໍ່ມີໜ້າວຽກ</string>
+    <string name="stakeholder_signature">ລາຍເຊັນຂອງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="update_stakeholder">ປັບປຸງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
 </resources>
 

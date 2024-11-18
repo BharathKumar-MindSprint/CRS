@@ -1150,7 +1150,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_plot_survey">Enquête diagnostique sur la parcelle</string>
     <string name="dm_plot_survey_completed">Étude diagnostique de la parcelle terminée</string>
 
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Rôle de l\'agriculteur</string>
     <string name="add_farm_stakeholder">Ajouter autre l’acteur agricole</string>
     <string name="stake_holder_name">Nom de autre l‘acteur</string>
     <string name="farm_holding_information">Informations sur l\'exploitation agricole</string>
@@ -1162,8 +1162,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="confirmation_message">Souhaitez-vous confirmer les modifications ?</string>
     <string name="stakeholder_role">Rôle de l\'intervenant</string>
     <string name="primary_farmer">Agriculteur principal</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Détails sur les autres acteurs agricoles</string>
+    <string name="no_task">Pas de tâche</string>
+    <string name="stakeholder_signature">Signature de l’autre acteur agricole</string>
+    <string name="update_stakeholder">Mise à jour de l’autre acteur agricole</string>
 </resources>

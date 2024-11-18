@@ -809,7 +809,7 @@
     <string name="dm_plot_survey">Survei Plot Diagnostik</string>
     <string name="dm_plot_survey_completed">Survei Plot Diagnostik Selesai</string>
 
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Peran Petani</string>
     <string name="add_farm_stakeholder">Tambahkan Pemangku Kepentingan Kebun</string>
     <string name="stake_holder_name">Nama Pemangku Kepentingan</string>
     <string name="farm_holding_information">Informasi Kepemilikan Kebun</string>
@@ -821,8 +821,8 @@
     <string name="confirmation_message">Apakah Anda ingin mengkonfirmasi perubahan?</string>
     <string name="stakeholder_role">Peran Pemangku Kepentingan</string>
     <string name="primary_farmer">Petani Primer</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Rincian Pemangku Kepentingan</string>
+    <string name="no_task">Tidak Ada Tugas</string>
+    <string name="stakeholder_signature">Tanda Tangan Pemangku Kepentingan</string>
+    <string name="update_stakeholder">Memperbarui Pemangku Kepentingan</string>
 </resources>

@@ -820,7 +820,7 @@
     <string name="dm_plot_survey">Estudio diagnóstico de parcelas</string>
     <string name="dm_plot_survey_completed">Estudio diagnóstico de parcelas</string>
 
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Función del agricultor</string>
     <string name="add_farm_stakeholder">Añadir parte interesada agrícola</string>
     <string name="stake_holder_name">Nombre del interesado</string>
     <string name="farm_holding_information">Información de la explotación</string>
@@ -832,9 +832,9 @@
     <string name="confirmation_message">¿Desea confirmar los cambios?</string>
     <string name="stakeholder_role">Función del interesado</string>
     <string name="primary_farmer">Agricultor principal</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Detalles de la parte interesada agrícola</string>
+    <string name="no_task">Sin tarea</string>
+    <string name="stakeholder_signature">Firma de la parte interesada agrícola</string>
+    <string name="update_stakeholder">Actualización de la parte interesada agrícola</string>
 </resources>
 

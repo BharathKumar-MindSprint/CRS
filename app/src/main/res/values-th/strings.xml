@@ -709,7 +709,7 @@
     <string name="image_downloaded">ดาวน์โหลดรูปภาพสําเร็จแล้ว</string>
     <string name="file_exceeds">K̄hnād fịl̒ kein </string>
     <string name="total_file_size">K̄hnād fịl̒ rwm kein 5MB kruṇā xạphh̄old fịl̒ thī̀ mī k̄hnād n̂xy kẁā </string>
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">บทบาทของเกษตรกร</string>
 
     <string name="dm_plot_survey">การสำรวจแปลงวินิจฉัย</string>
     <string name="dm_plot_survey_completed">การสำรวจแปลงวินิจฉัยเสร็จสมบูรณ์</string>
@@ -725,9 +725,9 @@
     <string name="confirmation_message">คุณต้องการยืนยันการเปลี่ยนแปลงหรือไม่</string>
     <string name="stakeholder_role">StakeHolders Role</string>
     <string name="primary_farmer">บทบาทของผู้มีส่วนได้ส่วนเสีย</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">รายละเอียดผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="no_task">ไม่มีงาน</string>
+    <string name="stakeholder_signature">ลายเซ็นผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="update_stakeholder">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
 
 </resources>

@@ -796,7 +796,7 @@
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
     <string name="file_exceeds">O tamanho do arquivo excede </string>
     <string name="total_file_size">O tamanho total dos arquivos excede 5 MB. Faça upload do tamanho do arquivo menor que </string>
-    <string name="role_farmer">Farmer Role</string>
+    <string name="role_farmer">Função do fazendeiro</string>
 
     <string name="dm_hint_txt">Módulo de diagnóstico</string>
     <string name="select_module">Selecione Módulo</string>
@@ -834,8 +834,8 @@
     <string name="confirmation_message">Deseja confirmar as alterações?</string>
     <string name="stakeholder_role">Função da parte interessada</string>
     <string name="primary_farmer">Agricultor principal</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stake_holder_details">Detalhes dos participantes da fazenda</string>
+    <string name="no_task">Nenhuma tarefa</string>
+    <string name="stakeholder_signature">Assinatura do participante da fazenda</string>
+    <string name="update_stakeholder">Atualizar participante da fazenda</string>
 </resources>
