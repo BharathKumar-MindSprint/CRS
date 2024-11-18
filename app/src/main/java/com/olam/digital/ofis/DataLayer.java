@@ -5512,7 +5512,7 @@ public class DataLayer {
         newFarmer.close();
     }
 
-    void markFarmerAsSyncedMs(long localFarmerId, long msId, String farmId, long olamFarmerId) {
+    void markFarmerAsSyncedMs(long localFarmerId, long msId, String farmId, String olamFarmerId) {
 
         try {
 

@@ -4526,7 +4526,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
                                         } else {
                                             dl.updateSyncedStatusFixedMs(localFarmerId, stakeholder.getInt("msId"));
-                                            dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getLong("olamMultiStakeHolderId"));
+                                            dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getString("olamMultiStakeHolderId"));
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
                                             initGPSSync();
                                             statusMessage = res.getString(R.string.item_synced);
