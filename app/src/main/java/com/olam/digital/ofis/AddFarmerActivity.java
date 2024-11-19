@@ -3169,8 +3169,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
      private void stakeHolderUiChanges(String farmerNameMs, String farmHoldingCodeMs, long farmerIdMs, MultiStakeHolder stakeHolder) {
-         setTitle(R.string.add_farm_stake_holder);
-         titleText.setText(R.string.add_farm_stake_holder);
+         setTitle(R.string.add_farm_stakeholder);
+         titleText.setText(R.string.add_farm_stakeholder);
          farmerRoleSpinner.setVisibility(View.VISIBLE);
          farmerName.setHint(R.string.stake_holder_name);
          etFarmHoldingName.setText(farmerNameMs);

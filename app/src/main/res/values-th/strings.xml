@@ -715,6 +715,7 @@
     <string name="dm_plot_survey_completed">การสำรวจแปลงวินิจฉัยเสร็จสมบูรณ์</string>
 
     <string name="add_farm_stakeholder">เพิ่มผู้มีส่วนได้ส่วนเสียในฟาร์ม</string>
+    <string name="add_farm_stakeholders">เพิ่มผู้มีส่วนได้ส่วนเสียในฟาร์ม</string>
     <string name="stake_holder_name">ชื่อผู้มีส่วนได้ส่วนเสีย</string>
     <string name="farm_holding_information">ข้อมูลการถือครองฟาร์ม</string>
     <string name="farm_holding_name">ชื่อผู้ถือครองฟาร์ม</string>

@@ -716,6 +716,7 @@
     <string name="dm_plot_survey_completed">Tanısal Arsa Araştırması Tamamlandı</string>
 
     <string name="add_farm_stakeholder">Çiftlik Paydaşı Ekle</string>
+    <string name="add_farm_stakeholders">Çiftlik paydaşlarını ekleyin</string>
     <string name="stake_holder_name">Paydaş Adı</string>
     <string name="farm_holding_information">Çiftlik İşletme Bilgileri</string>
     <string name="farm_holding_name">Çiftlik İşletme Adı</string>

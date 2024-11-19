@@ -718,6 +718,7 @@
 
 
     <string name="add_farm_stakeholder">Thêm bên liên quan đến trang trại</string>
+    <string name="add_farm_stakeholders">Thêm các bên liên quan của trang trại</string>
     <string name="stake_holder_name">Tên bên liên quan</string>
     <string name="farm_holding_information">Thông tin về trang trại</string>
     <string name="farm_holding_name">Tên trang trại</string>

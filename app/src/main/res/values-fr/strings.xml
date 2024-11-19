@@ -1152,6 +1152,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="role_farmer">Rôle de l\'agriculteur</string>
     <string name="add_farm_stakeholder">Ajouter autre l’acteur agricole</string>
+    <string name="add_farm_stakeholders">Ajouter d’autres acteurs agricoles</string>
     <string name="stake_holder_name">Nom de autre l‘acteur</string>
     <string name="farm_holding_information">Informations sur l\'exploitation agricole</string>
     <string name="farm_holding_name">Nom de l\'exploitation</string>

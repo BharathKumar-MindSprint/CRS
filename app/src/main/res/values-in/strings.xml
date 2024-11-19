@@ -811,6 +811,7 @@
 
     <string name="role_farmer">Peran Petani</string>
     <string name="add_farm_stakeholder">Tambahkan Pemangku Kepentingan Kebun</string>
+    <string name="add_farm_stakeholders">Tambahkan Pemangku Kepentingan Kebun</string>
     <string name="stake_holder_name">Nama Pemangku Kepentingan</string>
     <string name="farm_holding_information">Informasi Kepemilikan Kebun</string>
     <string name="farm_holding_name">Nama Holding Kebun</string>

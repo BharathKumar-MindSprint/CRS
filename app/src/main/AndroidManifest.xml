@@ -64,7 +64,7 @@
         </activity>
         <activity
             android:name=".farmstakeholder.AddFarmStakeHolderActivity"
-            android:label="@string/add_farm_stake_holder"
+            android:label="@string/add_farm_stakeholder"
             android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">

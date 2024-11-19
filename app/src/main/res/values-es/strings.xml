@@ -822,6 +822,7 @@
 
     <string name="role_farmer">Función del agricultor</string>
     <string name="add_farm_stakeholder">Añadir parte interesada agrícola</string>
+    <string name="add_farm_stakeholders">Añadir parte interesadas agrícola</string>
     <string name="stake_holder_name">Nombre del interesado</string>
     <string name="farm_holding_information">Información de la explotación</string>
     <string name="farm_holding_name">Nombre de la explotación</string>

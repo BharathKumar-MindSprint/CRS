@@ -824,6 +824,7 @@
     <string name="dm_plot_survey_completed">Levantamento de Diagnóstico de Parcela Concluído</string>
 
     <string name="add_farm_stakeholder">Adicionar participante da fazenda</string>
+    <string name="add_farm_stakeholders">Adicionar partes interessadas da exploração</string>
     <string name="stake_holder_name">Nome da participante de fazenda</string>
     <string name="farm_holding_information">Informações sobre a propriedade agrícola</string>
     <string name="farm_holding_name">Nome da propriedade agrícola</string>
