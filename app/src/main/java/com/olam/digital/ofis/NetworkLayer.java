@@ -6195,9 +6195,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
                     hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
                     hashMap.put("isMobile", true);
-
-                    //ofisdm-1860 - code removed
-                    //hashMap.put("location", location);
+                    hashMap.put("location", location);
 
                     if (plotId != 0) {
                         hashMap.put("plotId", plotId);
@@ -6398,10 +6396,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     JSONObject followUpData = new JSONObject();
                     followUpData.put("farmerId", farmerId);
                     followUpData.put("moduleId", moduleId);
-
-                    //ofisdm-1860 : code removed
-                    //followUpData.put("location", location);
-
+                    followUpData.put("location", location);
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                     followUpData.put("submittedModuleId", dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
