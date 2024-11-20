@@ -92,6 +92,8 @@
  import java.lang.reflect.Method;
  import java.sql.Timestamp;
  import java.text.SimpleDateFormat;
+ import java.time.LocalDate;
+ import java.time.Period;
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Collections;
@@ -1253,6 +1255,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
              multiStakeHolder.created_locally = 1;
              multiStakeHolder.msDOB = dateStrToSend;
+
+             // age conversion
+             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                 LocalDate dob = LocalDate.parse(dateStrToSend);
+                 LocalDate currentDate = LocalDate.now();
+                 Period age = Period.between(dob, currentDate);
+                 multiStakeHolder.age = String.valueOf(age.getYears());
+             }
+
              multiStakeHolder.msGender=genderValue;
              multiStakeHolder.msPhoto = getCurrentPhotoPath();
              multiStakeHolder.synced = 0;
