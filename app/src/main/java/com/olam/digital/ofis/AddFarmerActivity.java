@@ -222,7 +222,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private int nidvalue;
 
     private boolean isAddStakeHolder = false;
-    private TextView titleText;
+    private TextView titleText, roleHeading;
     private Spinner farmerRoleSpinner;
     private EditText etFarmerRole;
     private LinearLayout llFarmerGroup, llGeographyDetails;
@@ -262,6 +262,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerRoleSpinner = findViewById(R.id.farmerRoleSpinner);
         etFarmHoldingName = findViewById(R.id.etFarmHoldingName);
         etFarmHoldingCode = findViewById(R.id.etFarmHoldingCode);
+        roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
         farmerName = findViewById(R.id.farmerName);
         llFarmerGroup = findViewById(R.id.llFarmerGroup);
@@ -3175,6 +3176,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          farmerName.setHint(R.string.stake_holder_name);
          etFarmHoldingName.setText(farmerNameMs);
          etFarmHoldingCode.setText(farmHoldingCodeMs);
+         roleHeading.setText(getResources().getString(R.string.stakeholder_role));
 
          LinearLayout phoneNumber = (LinearLayout) phonenumbers.getChildAt(0);
          EditText diallingCode = (EditText) phoneNumber.findViewById(R.id.dialling_code);

@@ -506,6 +506,7 @@
 
                     <TextView
                         android:text="@string/role_farmer"
+                        android:id="@+id/roleHeading"
                         android:textColor="@color/btn_secondary_background"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
