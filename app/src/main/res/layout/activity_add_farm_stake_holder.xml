@@ -23,8 +23,8 @@
             android:textSize="@dimen/ofis_large_text"
             android:paddingRight="0dp"
             android:paddingEnd="0dp"
-            android:paddingLeft="0dp"
-            android:layout_marginRight="90dp"
+            android:paddingLeft="16dp"
+            android:layout_gravity="start"
             android:maxLines="1" />
 
     </LinearLayout>
