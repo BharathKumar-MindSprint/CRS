@@ -92,6 +92,8 @@
  import java.lang.reflect.Method;
  import java.sql.Timestamp;
  import java.text.SimpleDateFormat;
+ import java.time.LocalDate;
+ import java.time.Period;
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Collections;
@@ -222,7 +224,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private int nidvalue;
 
     private boolean isAddStakeHolder = false;
-    private TextView titleText;
+    private TextView titleText, roleHeading;
     private Spinner farmerRoleSpinner;
     private EditText etFarmerRole;
     private LinearLayout llFarmerGroup, llGeographyDetails;
@@ -262,6 +264,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerRoleSpinner = findViewById(R.id.farmerRoleSpinner);
         etFarmHoldingName = findViewById(R.id.etFarmHoldingName);
         etFarmHoldingCode = findViewById(R.id.etFarmHoldingCode);
+        roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
         farmerName = findViewById(R.id.farmerName);
         llFarmerGroup = findViewById(R.id.llFarmerGroup);
@@ -1252,6 +1255,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
              multiStakeHolder.created_locally = 1;
              multiStakeHolder.msDOB = dateStrToSend;
+
+             // age conversion
+             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                 LocalDate dob = LocalDate.parse(dateStrToSend);
+                 LocalDate currentDate = LocalDate.now();
+                 Period age = Period.between(dob, currentDate);
+                 multiStakeHolder.age = String.valueOf(age.getYears());
+             }
+
              multiStakeHolder.msGender=genderValue;
              multiStakeHolder.msPhoto = getCurrentPhotoPath();
              multiStakeHolder.synced = 0;
@@ -3169,12 +3181,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
      private void stakeHolderUiChanges(String farmerNameMs, String farmHoldingCodeMs, long farmerIdMs, MultiStakeHolder stakeHolder) {
-         setTitle(R.string.add_farm_stake_holder);
-         titleText.setText(R.string.add_farm_stake_holder);
+         setTitle(R.string.add_farm_stakeholder);
+         titleText.setText(R.string.add_farm_stakeholder);
          farmerRoleSpinner.setVisibility(View.VISIBLE);
          farmerName.setHint(R.string.stake_holder_name);
          etFarmHoldingName.setText(farmerNameMs);
          etFarmHoldingCode.setText(farmHoldingCodeMs);
+         roleHeading.setText(getResources().getString(R.string.stakeholder_role));
 
          LinearLayout phoneNumber = (LinearLayout) phonenumbers.getChildAt(0);
          EditText diallingCode = (EditText) phoneNumber.findViewById(R.id.dialling_code);

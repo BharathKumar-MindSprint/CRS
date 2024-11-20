@@ -1150,18 +1150,21 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_plot_survey">Enquête diagnostique sur la parcelle</string>
     <string name="dm_plot_survey_completed">Étude diagnostique de la parcelle terminée</string>
 
-    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
-    <string name="farm_holding_name">Farm Holding Name</string>
-    <string name="farm_holding_code">Farm Holding Code</string>
-    <string name="role_farmer">Farmer Role</string>
-    <string name="primary_farmer">Primary Farmer</string>
-    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
-    <string name="stakeholder_list">StakeHolders List</string>
-    <string name="stake_holder_name">Stakeholder Name</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="view_stake_holder">View Stakeholder</string>
-    <string name="view_stake_holder_information">View Stakeholder Information</string>
-    <string name="confirmation_message">Do you want to confirm changes ?</string>
-    <string name="no_task">No Task</string>
-    <string name="update_stake_holder">Update StakeHolder</string>
+    <string name="role_farmer">Rôle de l\'agriculteur</string>
+    <string name="add_farm_stakeholder">Ajouter autre l’acteur agricole</string>
+    <string name="add_farm_stakeholders">Ajouter d’autres acteurs agricoles</string>
+    <string name="stake_holder_name">Nom de autre l‘acteur</string>
+    <string name="farm_holding_information">Informations sur l\'exploitation agricole</string>
+    <string name="farm_holding_name">Nom de l\'exploitation</string>
+    <string name="farm_holding_code">Code de l\'exploitation agricole</string>
+    <string name="view_stake_holder_information">Voir les informations sur autre l\'acteur</string>
+    <string name="view_stake_holder">Voir autre l’acteur</string>
+    <string name="stakeholder_list">Liste des autres acteurs</string>
+    <string name="confirmation_message">Souhaitez-vous confirmer les modifications ?</string>
+    <string name="stakeholder_role">Rôle de l\'intervenant</string>
+    <string name="primary_farmer">Agriculteur principal</string>
+    <string name="stake_holder_details">Détails sur les autres acteurs agricoles</string>
+    <string name="no_task">Pas de tâche</string>
+    <string name="stakeholder_signature">Signature de l’autre acteur agricole</string>
+    <string name="update_stakeholder">Mise à jour de l’autre acteur agricole</string>
 </resources>

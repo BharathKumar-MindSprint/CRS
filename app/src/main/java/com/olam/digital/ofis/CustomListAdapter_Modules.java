@@ -836,7 +836,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
 
-                try {
+                /*try {
                     String farmSurvey = cursor.getString(cursor.getColumnIndex("isFarmSurvey"));
                     boolean isFarmSurvey;
                     String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
@@ -1310,7 +1310,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
 
 
                 if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
