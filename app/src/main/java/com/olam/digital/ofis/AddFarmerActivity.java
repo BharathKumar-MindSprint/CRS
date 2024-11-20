@@ -2083,6 +2083,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
                             dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
                             if (isNIDAvailable) {
+                                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
+
                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
                                 if (moduretationstatus) {
                                     statusmoduration = true;
@@ -2416,9 +2418,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editMode) {
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
-            }
+
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 
         } else {
