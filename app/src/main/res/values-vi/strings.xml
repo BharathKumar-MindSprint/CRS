@@ -713,19 +713,24 @@
     <string name="image_downloaded">Hình ảnh tải xuống thành công</string>
     <string name="dm_plot_survey">Khảo sát lô đất chẩn đoán</string>
     <string name="dm_plot_survey_completed">Khảo sát lô đất chẩn đoán đã hoàn thành</string>
-    <string name="add_farm_stake_holder">Add Farm Stakeholder</string>
-    <string name="farm_holding_name">Farm Holding Name</string>
-    <string name="farm_holding_code">Farm Holding Code</string>
-    <string name="role_farmer">Farmer Role</string>
-    <string name="primary_farmer">Primary Farmer</string>
-    <string name="add_farm_stake_holders">Add Farm Stakeholders</string>
-    <string name="stakeholder_list">StakeHolders List</string>
-    <string name="stake_holder_name">Stakeholder Name</string>
-    <string name="stake_holder_details">Stakeholder Details</string>
-    <string name="view_stake_holder">View Stakeholder</string>
-    <string name="view_stake_holder_information">View Stakeholder Information</string>
-    <string name="confirmation_message">Do you want to confirm changes ?</string>
-    <string name="no_task">No Task</string>
-    <string name="update_stake_holder">Update StakeHolder</string>
 
+    <string name="role_farmer">Vai trò của người nông dân</string>
+
+
+    <string name="add_farm_stakeholder">Thêm bên liên quan đến trang trại</string>
+    <string name="add_farm_stakeholders">Thêm các bên liên quan của trang trại</string>
+    <string name="stake_holder_name">Tên bên liên quan</string>
+    <string name="farm_holding_information">Thông tin về trang trại</string>
+    <string name="farm_holding_name">Tên trang trại</string>
+    <string name="farm_holding_code">Mã trang trại</string>
+    <string name="view_stake_holder_information">Xem thông tin bên liên quan</string>
+    <string name="view_stake_holder">Xem bên liên quan</string>
+    <string name="stakeholder_list">Danh sách bên liên quan</string>
+    <string name="confirmation_message">Bạn có muốn xác nhận thay đổi không?</string>
+    <string name="stakeholder_role">Vai trò của bên liên quan</string>
+    <string name="primary_farmer">Nông dân chính</string>
+    <string name="stake_holder_details">Chi tiết về bên liên quan</string>
+    <string name="no_task">Không có nhiệm vụ</string>
+    <string name="stakeholder_signature">Chữ ký của bên liên quan</string>
+    <string name="update_stakeholder">Cập nhật bên liên quan</string>
 </resources>

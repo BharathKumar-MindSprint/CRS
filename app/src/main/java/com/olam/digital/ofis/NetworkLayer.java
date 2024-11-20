@@ -1851,14 +1851,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             //Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
             int plotId = 0;
-            // for MultiFarm
-            MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-//            MultiFarmDTO multifarmDTO=new MultiFarmDTO();
-//            if (MultiFarmUtils.isMultiFarmEnumerator) {
-//                multifarmDTO = dl.getMultiFarmLocationSync(farmerId);
-//            }else{
-//                multifarmDTO.setSynced(1);
-//            }
 
             boolean isFarmerMultifarmSynced = dl.isMultifarmSubmitted();
             try {
@@ -1869,12 +1861,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         msg.arg1 = total;
                         msg.arg2 = progress;
                         msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                        handler.dispatchMessage(msg);
-                    } else if (MultiFarmUtils.isMultiFarmEnumerator && isFarmerMultifarmSynced) {
-                        msg.what = 8;
-                        msg.arg1 = total;
-                        msg.arg2 = HomeActivity.progressItem = progress + 1;
-                        msg.obj = String.valueOf(res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
                         handler.dispatchMessage(msg);
                     } else {
                         farmerModule.moveToFirst();
@@ -1918,13 +1904,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             submission.put("app_version", BuildConfig.VERSION_NAME);
                             submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID)));
 
-//                    int farmId=farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID));
-//                    if (MultiFarmUtils.isMultiFarmEnumerator) {
-//                        if (multifarmDTO.getFarmId() != null) {
-//                            farmId= networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-//                        }
-//                    }
-//                    submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmId);
                             int farmId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
                             submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmId);
 
@@ -2331,10 +2310,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         endpoint = "ofisfarmer/farmer/addfarm";
         final JSONObject params = new JSONObject();
 
-        int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-        MultiFarmDTO multifarmDTO = new MultiFarmDTO();
-        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        multifarmDTO.setSynced(1);
+
 
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -2343,40 +2319,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
-        } else if (multifarmDTO.getSynced() == 0) {
-            msg.what = 7;
-            msg.arg1 = total;
-            msg.arg2 = HomeActivity.progressItem = progress + 1;
-            msg.obj = String.valueOf(res.getString(R.string.multifarm_not_synced));
-            handler.dispatchMessage(msg);
         } else {
             try {
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 String olamFarmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
                 int farmId = dl.getFarmId(farmerID);
-                if (MultiFarmUtils.isMultiFarmEnumerator) {
-                    try {
-                        String farmMultifarmId = dl.getMultiFarmLocationbyId(farmerID);
-                        if (farmMultifarmId != null) {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, Integer.parseInt(farmMultifarmId));
-                        } else {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                        }
-                    } catch (Exception e) {
-                    }
-
-
-                } else {
-                    try {
-                        if (farmId != 0) {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                        } else {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                        }
-                    } catch (Exception e) {
+                try {
+                    if (farmId != 0) {
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    } else {
                         params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                     }
+                } catch (Exception e) {
+                    params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 }
 
                 params.put("farm_plots", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS)));
@@ -2497,27 +2453,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         final JSONObject params = new JSONObject();
 
-        int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-
-        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        MultiFarmDTO multifarmDTO = new MultiFarmDTO();
-        if (MultiFarmUtils.isMultiFarmEnumerator) {
-            multifarmDTO = dl.getMultiFarmLocationSync(farmerID1);
-        } else {
-            multifarmDTO.setSynced(1);
-        }
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
             msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-            handler.dispatchMessage(msg);
-        } else if (multifarmDTO.getSynced() == 0) {
-            msg.what = 7;
-            msg.arg1 = total;
-            msg.arg2 = HomeActivity.progressItem = progress + 1;
-            msg.obj = String.valueOf(res.getString(R.string.multifarm_not_synced));
             handler.dispatchMessage(msg);
         } else {
 
@@ -2526,19 +2466,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
                 try {
                     int farmId = dl.getFarmId(farmerID);
-
-                    if (MultiFarmUtils.isMultiFarmEnumerator) {
-                        if (multifarmDTO.getFarmId() != null) {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, Integer.parseInt(multifarmDTO.getFarmId()));
-                        } else {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                        }
+                    if (farmId != 0) {
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                     } else {
-                        if (farmId != 0) {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                        } else {
-                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                        }
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                     }
 
                 } catch (Exception e) {
@@ -4598,7 +4529,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
                                         } else {
                                             dl.updateSyncedStatusFixedMs(localFarmerId, stakeholder.getInt("msId"));
-                                            dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getLong("olamMultiStakeHolderId"));
+                                            dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getString("olamMultiStakeHolderId"));
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
                                             initGPSSync();
                                             statusMessage = res.getString(R.string.item_synced);

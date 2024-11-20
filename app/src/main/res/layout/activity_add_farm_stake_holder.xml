@@ -23,8 +23,8 @@
             android:textSize="@dimen/ofis_large_text"
             android:paddingRight="0dp"
             android:paddingEnd="0dp"
-            android:paddingLeft="0dp"
-            android:layout_marginRight="90dp"
+            android:paddingLeft="16dp"
+            android:layout_gravity="start"
             android:maxLines="1" />
 
     </LinearLayout>
@@ -171,7 +171,7 @@
                         android:contentDescription="@string/Add" />
 
                     <TextView
-                        android:text="@string/add_stakeholder"
+                        android:text="@string/add_farm_stakeholder"
                         android:textColor="@color/btnColorThird"
                         android:layout_width="wrap_content"
                         android:layout_marginLeft="@dimen/margin_10"
