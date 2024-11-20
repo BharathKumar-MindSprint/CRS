@@ -1316,7 +1316,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_plot_survey_completed">Diagnostic Plot Survey Completed</string>
 
 
-    <string name="role_farmer">Farmer Holding Role</string>
+    <string name="role_farmer">Farmer Role</string>
 
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
