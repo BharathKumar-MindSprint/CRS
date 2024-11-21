@@ -4755,13 +4755,30 @@ public class DynamicQuestions {
                                         if (spinnervalues.moveToFirst()) {
                                             do {
                                                 String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
+                                                int id = spinnervalues.getInt(spinnervalues.getColumnIndex("_id"));
+
                                                 if (value.equals(checkBoxVal)) {
-                                                    Object[] rowData = new Object[columnNames.length];
-                                                    for (int j = 0; j < columnNames.length; j++) {
-                                                        rowData[j] = spinnervalues.getString(j);
+                                                    boolean idExists = false;
+                                                    newCursor.moveToPosition(-1);
+
+                                                    while (newCursor.moveToNext()) {
+                                                        int existingId = newCursor.getInt(newCursor.getColumnIndex("_id"));
+                                                        if (existingId == id) {
+                                                            idExists = true;
+                                                            break;
+                                                        }
                                                     }
-                                                    newCursor.addRow(rowData);
+
+                                                    if (!idExists) {
+                                                        Object[] rowData = new Object[columnNames.length];
+                                                        for (int j = 0; j < columnNames.length; j++) {
+                                                            rowData[j] = spinnervalues.getString(spinnervalues.getColumnIndex(columnNames[j]));
+                                                        }
+                                                        newCursor.addRow(rowData);
+                                                    }
+
                                                 }
+
                                             } while (spinnervalues.moveToNext());
                                         }
                                     }
@@ -4779,15 +4796,33 @@ public class DynamicQuestions {
                                         if (spinnervalues.moveToFirst()) {
                                             do {
                                                 String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
+                                                int id = spinnervalues.getInt(spinnervalues.getColumnIndex("_id"));
+
                                                 if (value.equals(checkBoxVal)) {
-                                                    Object[] rowData = new Object[columnNames.length];
-                                                    for (int j = 0; j < columnNames.length; j++) {
-                                                        rowData[j] = spinnervalues.getString(j);
+                                                    boolean idExists = false;
+                                                    newCursor.moveToPosition(-1);
+
+                                                    while (newCursor.moveToNext()) {
+                                                        int existingId = newCursor.getInt(newCursor.getColumnIndex("_id"));
+                                                        if (existingId == id) {
+                                                            idExists = true;
+                                                            break;
+                                                        }
                                                     }
-                                                    newCursor.addRow(rowData);
+
+                                                    if (!idExists) {
+                                                        Object[] rowData = new Object[columnNames.length];
+                                                        for (int j = 0; j < columnNames.length; j++) {
+                                                            rowData[j] = spinnervalues.getString(spinnervalues.getColumnIndex(columnNames[j]));
+                                                        }
+                                                        newCursor.addRow(rowData);
+                                                    }
+
                                                 }
+
                                             } while (spinnervalues.moveToNext());
                                         }
+
                                     }
                                 } else {
                                     // Convert the string array to an integer array
@@ -4810,16 +4845,33 @@ public class DynamicQuestions {
                                                 if (spinnervalues.moveToFirst()) {
                                                     do {
                                                         String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
+                                                        int id = spinnervalues.getInt(spinnervalues.getColumnIndex("_id"));
+
                                                         if (value.equals(checkBoxVal)) {
-                                                            Object[] rowData = new Object[columnNames.length];
-                                                            for (int j = 0; j < columnNames.length; j++) {
-                                                                rowData[j] = spinnervalues.getString(j);
+                                                            boolean idExists = false;
+                                                            newCursor.moveToPosition(-1);
+
+                                                            while (newCursor.moveToNext()) {
+                                                                int existingId = newCursor.getInt(newCursor.getColumnIndex("_id"));
+                                                                if (existingId == id) {
+                                                                    idExists = true;
+                                                                    break;
+                                                                }
                                                             }
-                                                            newCursor.addRow(rowData);
-                                                            break;
+
+                                                            if (!idExists) {
+                                                                Object[] rowData = new Object[columnNames.length];
+                                                                for (int j = 0; j < columnNames.length; j++) {
+                                                                    rowData[j] = spinnervalues.getString(spinnervalues.getColumnIndex(columnNames[j]));
+                                                                }
+                                                                newCursor.addRow(rowData);
+                                                            }
+
                                                         }
+
                                                     } while (spinnervalues.moveToNext());
                                                 }
+
                                             }
                                         }
                                     }
