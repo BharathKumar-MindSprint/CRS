@@ -837,5 +837,8 @@
     <string name="no_task">Sin tarea</string>
     <string name="stakeholder_signature">Firma de la parte interesada agrícola</string>
     <string name="update_stakeholder">Actualización de la parte interesada agrícola</string>
+    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
+    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
+    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
 </resources>
 

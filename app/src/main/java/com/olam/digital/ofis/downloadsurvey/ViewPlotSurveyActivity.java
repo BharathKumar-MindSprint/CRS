@@ -102,7 +102,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         initComponents();
         db = OFISRoomDB.getDbInstance(context);
         try {
-            farmerID=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
+            farmerID=getIntent().getExtras().getLong(Utilities.FARMER_ID);
             isDiagnosticsPlotSurvey = getIntent().getBooleanExtra(res.getString(R.string.dm_plot_survey), false);
         }catch (Exception e){e.printStackTrace();}
         getChildDetailsById();

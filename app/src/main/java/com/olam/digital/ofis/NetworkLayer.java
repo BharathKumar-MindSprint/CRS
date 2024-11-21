@@ -6594,7 +6594,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
                 jsonObject.put("msSignature", multiStakeHolder.msSignature);
 
-                okHttpArrayPost(context, endpoint, new JSONArray().put(jsonObject), new Callback() {
+                okHttpPost(context, endpoint, jsonObject, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
                         try {

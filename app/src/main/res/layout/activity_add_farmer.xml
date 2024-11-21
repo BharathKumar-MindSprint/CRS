@@ -467,21 +467,19 @@
                         android:layout_height="wrap_content"/>
 
                     <EditText
+                        android:id="@+id/etFarmHoldingName"
+                        android:hint="@string/farm_holding_name"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:inputType="textCapWords"
                         android:padding="@dimen/margin_10"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/etFarmHoldingName"
+                        android:layout_marginTop="10dp"
                         android:textColor="@color/btn_secondary_background"
                         android:textSize="@dimen/ofis_input_field_text"
-                        android:hint="@string/farm_holding_name"
-                        android:maxLength="100"
-                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
                         android:textColorHint="@color/icon_grey_palette_2"
                         android:background="@drawable/farm_code_selected_edittext"
                         android:focusable="false"
-                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+                        android:layout_marginBottom="10dp"/>
 
                     <TextView
                         android:text="@string/farm_holding_code"
@@ -494,7 +492,7 @@
                         android:layout_height="40dp"
                         android:inputType="textCapWords"
                         android:padding="@dimen/margin_10"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="10dp"
                         android:id="@+id/etFarmHoldingCode"
                         android:textColor="@color/btn_secondary_background"
                         android:textSize="@dimen/ofis_input_field_text"

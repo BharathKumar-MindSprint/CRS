@@ -672,14 +672,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                  Utilities.setSpinnerSelectionByValue(existingGender, genderspinner);
              }
          }.start();
-         /*isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-         if(isFLEnumerator) {
-             farmerLeadSearch.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
-         }
-         farmerIdPrefix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(0, 13));
-         EditText farmerIdSuffix = findViewById(R.id.olamFarmerIdEnd);
-         farmerIdSuffix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(13));
-         showFarmerLead();*/
+
          String farmerPhotoPath = multiStakeHolder.msPhoto;
          if (farmerPhotoPath != null) {
              ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
@@ -1163,12 +1156,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
          if (farmerNameValue.equals("")) {
              farmerName.setText("");
-             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
+             Toast.makeText(context, res.getString(R.string.please_fill_stakeholder_name), Toast.LENGTH_LONG).show();
              return null;
          }
 
          if (dateStrToSend == null || dateStrToSend.equals("")) {
-             Toast.makeText(context, res.getString(R.string.please_fill_dob), Toast.LENGTH_LONG).show();
+             Toast.makeText(context, res.getString(R.string.please_fill_stakeholder_dob), Toast.LENGTH_LONG).show();
              return null;
          }
 
@@ -1188,7 +1181,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
          if(! editMode) {
              if (!csStatus) {
-                 Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
+                 Toast.makeText(context, res.getString(R.string.Please_accept_stakeholder_consent), Toast.LENGTH_LONG).show();
                  return null;
              }
          }
@@ -1712,7 +1705,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 String value = spinner.getSelectedItem().toString();
-                if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
+                if (value.equalsIgnoreCase(SELECT_NATIONALID) && !isAddStakeHolder) {
                     Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -2028,10 +2021,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                          String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                          new GpsTrackerLogic().updateFarmerDetails(context,multiStakeHolder.msId,farmerNameValue,genderValue);
-                         dl.updateFarmerPhoneNumbers(farmerIdMs, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                         dl.updateFarmerPhoneNumbers(null, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
                          if (isNIDAvailable) {
-                             dl.updateFarmerNationalids(context,farmerIdMs , String.valueOf(multiStakeHolder.msId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-
+                             dl.updateFarmerNationalids(context,null , String.valueOf(multiStakeHolder.msId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
                          }
 
                          if (updFarmerId > 0) {
@@ -2055,7 +2047,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          long newStakeholderId = dl.insertStakeHolder(multiStakeHolder);
 
                          if (newStakeholderId != -1) {
-                             dl.updateFarmerPhoneNumbers(farmerIdMs, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                             dl.updateFarmerPhoneNumbers(null, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
                              EditText farmerName = findViewById(R.id.farmerName);
                              String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                              consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerIdMs);
@@ -2065,7 +2057,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                              dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
                              if (isNIDAvailable) {
-                                 dl.updateFarmerNationalids(context, farmerIdMs, String.valueOf(newStakeholderId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                                 dl.updateFarmerNationalids(context, null, String.valueOf(newStakeholderId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
 
                              }
                              saveButton.setEnabled(false);
@@ -3266,7 +3258,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
      private void populateFarmDetails(String farmerName) {
          etFarmHoldingName.setText(farmerName + "'s Farm Holding");
+         etFarmHoldingName.setSelection(etFarmHoldingName.getText().length());
          etFarmHoldingCode.setText(farmerName + "-" + String.format("%04d", new Random().nextInt(10000)));
+         etFarmHoldingCode.setSelection(etFarmHoldingCode.getText().length());
      }
 
      private void bindFarmerRoles(MultiStakeHolder stakeHolder) {

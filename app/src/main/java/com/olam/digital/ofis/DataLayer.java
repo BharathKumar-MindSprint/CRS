@@ -1794,7 +1794,7 @@ public class DataLayer {
     }
 
 
-    void addFarmerPhoneNumbers(long farmerId, String stakeHolder, JSONArray storeableNumbers) {
+    void addFarmerPhoneNumbers(Long farmerId, String stakeHolder, JSONArray storeableNumbers) {
         int arrayLength = storeableNumbers.length();
 
         try {
@@ -1816,7 +1816,7 @@ public class DataLayer {
     }
 
 
-    public boolean addFarmerNationalids(Context context, long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
+    public boolean addFarmerNationalids(Context context, Long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         int arrayLength = storeableNationalids.length();
         boolean moderationstatus = false;
         try {
@@ -1940,7 +1940,7 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    void updateFarmerPhoneNumbers(long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName) {
+    void updateFarmerPhoneNumbers(Long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName) {
         String whereClause = columnName + " = ?";
         String[] whereArgs;
         if (Objects.equals(columnName, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID)){
@@ -1948,6 +1948,7 @@ public class DataLayer {
         } else {
             whereArgs = new String[]{String.valueOf(farmerId)};
         }
+
         try {
             db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
             addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
@@ -1977,7 +1978,7 @@ public class DataLayer {
 
     }
 
-    public boolean updateFarmerNationalids(Context context, long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
+    public boolean updateFarmerNationalids(Context context, Long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         String whereClause = columnName + " = ?";
         String[] whereArgs;
         if (Objects.equals(columnName, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)){
@@ -1989,8 +1990,7 @@ public class DataLayer {
         if (!status.equals("updateNationalId")) {
             db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
         }
-        boolean modurationstatus = addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
-        return modurationstatus;
+        return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
     }
 
     void updateCertificationsByFarmerId(long farmerId, String certificationIds, String certificationText, String farmerName) {
@@ -4149,7 +4149,7 @@ public class DataLayer {
     }
 
 
-    public void updateModerationStatus(long farmerid, boolean moderationstatus) {
+    public void updateModerationStatus(Long farmerid, boolean moderationstatus) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, moderationstatus);
         String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
@@ -6786,7 +6786,7 @@ public class DataLayer {
         return type;
     }
 
-    private long updateNetworkQueueNIDEntry(Context context, long farmerId, String stakeHolderId, int nationalidtype, String farmername, String status) {
+    private long updateNetworkQueueNIDEntry(Context context, Long farmerId, String stakeHolderId, int nationalidtype, String farmername, String status) {
         long newEntry;
         String submissionType = "National_ID";
         if (!status.equals("2")) {
