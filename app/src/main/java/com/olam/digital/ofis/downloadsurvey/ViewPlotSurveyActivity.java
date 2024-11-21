@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.downloadsurvey.adapter.CustomExpandableListAdapter;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
@@ -54,8 +52,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-// Handles and shows the child list in the screen before taking the survey
 
 public class ViewPlotSurveyActivity extends BaseActivity {
 
@@ -147,15 +143,13 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                 submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
             }
             submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-        }catch (Exception e){e.printStackTrace();}
-        int roleId = 1;
-        multiFarmId=dl.getMultifarmfarmId(farmerID);
-
-        if(multiFarmId!=null){
-            farmSurvey=true;
-        }else{
-            farmSurvey=false;
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        int roleId = 1;
+        farmSurvey=true;
+
 
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
 
@@ -163,7 +157,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
             expandableListTitle = new ArrayList<PlotDTO>(expandableListDetail.keySet());
             expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListDetail,
                     submittedModules,farmerDTO,getResources(),
-                    roleId, multiFarmId);
+                    roleId);
             expandableListView.setAdapter(expandableListAdapter);
 
             expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -375,8 +369,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
     private void initComponents() {
         expandableListView =findViewById(R.id.surveyChildLabourRecycleView);
-        /*childNameTv=findViewById(R.id.childnameTv);
-        childNameTv.setVisibility(View.GONE);*/
     }
 
     @Override

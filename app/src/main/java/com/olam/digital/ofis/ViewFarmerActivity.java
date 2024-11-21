@@ -39,7 +39,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -84,8 +83,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
-import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
@@ -97,14 +94,11 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 
-import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
@@ -2565,96 +2559,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-
-
-    public void showPopupFarmDetails(View v, int position, long id, String mfFarmId) throws JSONException {
-        final Dialog farmDetailDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
-        farmDetailDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        farmDetailDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        farmDetailDialog.setContentView(R.layout.dialog_farmdetails);
-        farmDetailDialog.setCancelable(false);
-        farmDetailDialog.setCanceledOnTouchOutside(false);
-        LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
-
-//        fetch multifarm details
-        MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
-        JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
-        if (multiFarmArray != null) {
-            for (int i = 0; i < multiFarmArray.length(); i++) {
-                JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
-//            String farmerName=jsonobject.optString("farmerName");
-                String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
-                String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
-                LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
-                TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
-                TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
-                TextView farmerRole = includeFarmerList.findViewById(R.id.role);
-                int farmerCount = i + 1;
-                farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
-                farmer_name.setText(farmerName);
-                farmerRole.setText(role);
-                farmerList.addView(includeFarmerList);
-            }
-
-            TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
-            TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
-            farmName.setText(multiFarmDTO.getFarmName());
-            farmCode.setText(multiFarmDTO.getFarmCode());
-
-        }
-
-        farmDetailDialog.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                farmDetailDialog.dismiss();
-                showSurvey(v, id);
-            }
-        });
-
-        farmDetailDialog.findViewById(R.id.btnUpdate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                farmDetailDialog.dismiss();
-                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
-                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
-                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
-                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
-                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
-                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
-                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
-
-                Intent in = new Intent(ViewFarmerActivity.this, UpdateMultiFarmActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("farmerId", String.valueOf(farmerId));
-                bundle.putString("farmId", String.valueOf(mfFarmId));
-                bundle.putBoolean("editMode",true);
-                bundle.putBoolean("isSurveyEnabled",true);
-                bundle.putLong(MODULE_ID, id);
-                bundle.putLong(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
-                bundle.putLong(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
-                bundle.putLong(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
-                bundle.putLong(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
-                bundle.putLong(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
-                bundle.putString(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                bundle.putString(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
-                bundle.putString(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
-                bundle.putString(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
-                bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-
-                in.putExtras(bundle);
-                startActivity(in);
-            }
-        });
-
-        farmDetailDialog.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                farmDetailDialog.dismiss();
-            }
-        });
-
-        farmDetailDialog.show();
-    }
 
     public void showSurvey(View v, long id) {
         TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
