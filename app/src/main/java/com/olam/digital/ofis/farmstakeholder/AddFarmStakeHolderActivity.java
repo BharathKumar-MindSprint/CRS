@@ -66,7 +66,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
 
                 etFarmerName.setText(farmerName);
                 etFarmHoldingCode.setText(farmCode);
-                etFarmHoldingName.setText(farmName.toUpperCase());
+                etFarmHoldingName.setText(farmName.toUpperCase() + "'S FARM HOLDING");
             }
         }
         catch (Exception e) {

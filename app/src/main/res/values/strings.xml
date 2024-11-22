@@ -1371,7 +1371,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="view_stake_holder">View Stakeholder</string>
     <string name="stakeholder_list">StakeHolders List</string>
     <string name="confirmation_message">Do you want to confirm changes ?</string>
-    <string name="stakeholder_role">StakeHolders Role</string>
+    <string name="stakeholder_role">Stakeholder Role</string>
     <string name="primary_farmer">Primary Farmer</string>
     <string name="stake_holder_details">Stakeholder Details</string>
     <string name="no_task">No Task</string>

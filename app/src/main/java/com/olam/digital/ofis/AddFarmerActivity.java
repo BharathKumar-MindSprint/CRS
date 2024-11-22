@@ -540,7 +540,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
         farmerName.setText(name);
-        etFarmHoldingName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)));
+        etFarmHoldingName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
         etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -647,7 +647,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      private void populateExistingValuesMs(final MultiStakeHolder multiStakeHolder) {
          String name = multiStakeHolder.msName;
          farmerName.setText(name);
-         etFarmHoldingName.setText(name);
+         etFarmHoldingName.setText(name + "'s Farm Holding");
          etFarmHoldingCode.setText(multiStakeHolder.farmHoldingCode);
 
          farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -1168,7 +1168,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          int selectedPosition = farmerRoleSpinner.getSelectedItemPosition();
 
          if (selectedPosition == 0) {
-             Toast.makeText(this, "Farmer Role Required!", Toast.LENGTH_SHORT).show();
+             Toast.makeText(this, "StakeHolder Role Required!", Toast.LENGTH_SHORT).show();
              return null;
          }
 
@@ -3177,7 +3177,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          titleText.setText(R.string.add_farm_stakeholder);
          farmerRoleSpinner.setVisibility(View.VISIBLE);
          farmerName.setHint(R.string.stake_holder_name);
-         etFarmHoldingName.setText(farmerNameMs);
+         etFarmHoldingName.setText(farmerNameMs + "'s Farm Holding");
          etFarmHoldingCode.setText(farmHoldingCodeMs);
          roleHeading.setText(getResources().getString(R.string.stakeholder_role));
 
@@ -3191,7 +3191,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          farmerRoleDTOList = new ArrayList<>();
 
          farmerRoleDTOList = dl.getFarmerRoles(localeSuffixColumn);
-         farmerRolesList.add(res.getString(R.string.farmer_roles));
+         farmerRolesList.add(res.getString(R.string.stakeholder_role));
          for (FarmerRoleDto farmerRoleDTO : farmerRoleDTOList){
              farmerRolesList.add(farmerRoleDTO.getName());
          }
