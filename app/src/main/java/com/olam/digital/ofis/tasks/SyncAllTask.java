@@ -41,7 +41,6 @@ import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
@@ -215,9 +214,6 @@ public class SyncAllTask extends SyncTask {
 
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
-//            syncSpinners();
-        } else if (op == SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR) {
-            syncMultiFarmEnumerator();
         }
         else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
             syncMultiFarmRoles();
@@ -1373,58 +1369,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncMultiFarmEnumerator() {
-        String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/enableMultiFarmByEnumerator";
-        final String finalEndpoint = endpoint;
-        okHttpGet(context, endpoint, null, new Callback() {
-            @Override
-            public void onResponse(Call call, final Response postResponse) {
-                try {
-                    try {
-                        JSONObject  response = new JSONObject(postResponse.body().string());
-                        if (postResponse.isSuccessful()) {
-                            boolean isMultifarm = response.getBoolean("enableMultiFarm");
-                            Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, isMultifarm);
-                            if (isMultifarm) {
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
-                            }else{
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
-                            }
-                        } else {
-                            try {
-                                FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
-                            } catch (Exception e) {
-                            }
-                            postFailureMessage(null);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        postResponse.close();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                String failureMessage = res.getString(R.string.networking_error);
-                if (e != null) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
-                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                }
-
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-
-            }
-
-        });
-    }
-
     private void syncMultiFarmRoles() {
         String endpoint = "";
         endpoint ="ofisfarmer/multifarm/roles";
@@ -2006,8 +1950,8 @@ public class SyncAllTask extends SyncTask {
                                 }
                                 notificationArray = new JSONArray();
                                 moduleArray = new JSONArray();
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                             }
                         }
                     }

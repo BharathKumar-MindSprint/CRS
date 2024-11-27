@@ -68,7 +68,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
