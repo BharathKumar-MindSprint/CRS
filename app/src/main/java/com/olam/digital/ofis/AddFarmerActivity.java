@@ -1187,8 +1187,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          }
 
          if (isNIDAvailable) {
+             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(LIMIT_XED)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             }
 
-             ValidateNIDValuesMs();
+             if (!ValidateNIDValuesMs()) {
+                 return null;
+             }
              storeableNationalids = fetchnationalidvalues();
 
 
@@ -3006,8 +3015,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return status;
     }
 
-     private void ValidateNIDValuesMs() {
-
+     private boolean ValidateNIDValuesMs() {
+         boolean status = true;
          ArrayList<String> nidtype_list = new ArrayList<>();
          selectednationalidList = new ArrayList<String>();
          int nidrowscount = nationalids.getChildCount();
@@ -3024,34 +3033,58 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              String nid = nidnumber.getText().toString();
              String expDate = expiryDate.getText().toString();
 
+             if(!value.equals(getResources().getString(R.string.idtype).toUpperCase())){
 
-             nidtype_list.add(value);
-             selectednationalidList.add(value);
+                 if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
+                     Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
+                     return false;
+                 }
 
-             NationalIdDTO idDTO = new NationalIdDTO();
-             idDTO.setNationalidNumber(nid);
-             idDTO.setNationalidtype(String.valueOf(type));
-             if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
-                 String photopath = null;
-                 if (!editMode) {
-                     photopath = getPhotobytype(type);
-                 } else {
-                     if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
-                         photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId,OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-                     } else {
-                         photopath = getPhotobytype(type);
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
+                         Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
+                         return false;
                      }
                  }
-                 idDTO.setPhoto(photopath);
+             }
+
+
+             if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+                 nid_type.setEnabled(true);
+                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
+                 return false;
              } else {
-                 idDTO.setPhoto("");
+                 nidtype_list.add(value);
+                 selectednationalidList.add(value);
              }
-             if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
-                 idDTO.setExpiryDate(expDate);
+
+             if (status) {
+                 NationalIdDTO idDTO = new NationalIdDTO();
+                 idDTO.setNationalidNumber(nid);
+                 idDTO.setNationalidtype(String.valueOf(type));
+                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+                     String photopath = null;
+                     if (!editMode) {
+                         photopath = getPhotobytype(type);
+                     } else {
+                         if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+                             photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                         } else {
+                             photopath = getPhotobytype(type);
+                         }
+                     }
+                     idDTO.setPhoto(photopath);
+                 } else {
+                     idDTO.setPhoto("");
+                 }
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     idDTO.setExpiryDate(expDate);
+                 }
+                 dl.addnewLocalFarmerNationalids(idDTO);
+                 nid_type.setEnabled(false);
              }
-             dl.addnewLocalFarmerNationalids(idDTO);
-             nid_type.setEnabled(false);
          }
+         return status;
 
      }
 
