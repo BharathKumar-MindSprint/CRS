@@ -293,6 +293,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
     private int nidvalue;
+    private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
     private List<MultiFarmRoleDTO> multiFarmRoleDTOList= new ArrayList<MultiFarmRoleDTO>();
     private List<String> rolesList=new ArrayList<>();
     private String[] roles=null;
@@ -1352,6 +1353,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         if (isNIDAvailable) {
+            if(editMode){
+                for (Integer updatedValue : updatedNidValue) {
+                    dl.removeNIDPhotostatusByType(String.valueOf(updatedValue), editFarmerId);
+                }
+            }
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
@@ -2416,8 +2422,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editMode) {
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
+            if (!updatedNidValue.contains(nidvalue)) {
+                updatedNidValue.add(nidvalue);
             }
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 
