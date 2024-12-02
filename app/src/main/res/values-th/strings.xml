@@ -730,5 +730,8 @@
     <string name="no_task">ไม่มีงาน</string>
     <string name="stakeholder_signature">ลายเซ็นผู้มีส่วนได้ส่วนเสีย</string>
     <string name="update_stakeholder">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
+    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
+    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
 
 </resources>

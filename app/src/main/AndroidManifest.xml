@@ -505,10 +505,6 @@
             android:label="@string/title_privacy_statement"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".matoma.multifarm.UpdateMultiFarmActivity"
-            android:label="Add Farm Information"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".RegisterAdditionalTrainee"
             android:label="Add Attendee"
             android:parentActivityName=".HomeActivity"

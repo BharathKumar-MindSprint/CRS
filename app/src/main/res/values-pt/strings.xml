@@ -839,4 +839,9 @@
     <string name="no_task">Nenhuma tarefa</string>
     <string name="stakeholder_signature">Assinatura do participante da fazenda</string>
     <string name="update_stakeholder">Atualizar participante da fazenda</string>
+    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
+    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
+    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
+
 </resources>
+

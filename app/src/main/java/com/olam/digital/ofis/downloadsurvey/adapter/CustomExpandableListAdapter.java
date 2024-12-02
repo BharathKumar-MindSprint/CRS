@@ -57,16 +57,13 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private final DataLayer dl;
     private final Resources res;
     long farmerId;
-    private String moduleColumnSuffix = "";
-    String multiFarmId;
 
     public CustomExpandableListAdapter(Context context, List<PlotDTO> expandableListTitle,
                                        LinkedHashMap<PlotDTO, List<ChildModuleDto>> expandableListDetail,
                                        JSONObject submittedModules_,
                                        FarmerDTO farmerDTO,
                                        Resources res_,
-                                       int roleId,
-                                       String multiFarmId) throws JSONException {
+                                       int roleId) throws JSONException {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
@@ -78,9 +75,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         this.res = res_;
         this.dl = new DataLayer(res, context);
         farmerId = Long.parseLong(farmerDTO.getId());
-        this.moduleColumnSuffix = Utilities.getLocaleSuffix(res);
         this.roleId=roleId;
-        this.multiFarmId=multiFarmId;
     }
 
     @Override
@@ -389,10 +384,8 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                         }
 
                         if (!isFarmSurvey) {
-                            //// FARM-ER SURVEY CODE
                             if (farmerRole != 0 && roleId != 0) {
                                 if (farmerRole == roleId) {
-                                    // Enable
                                     if (!submitted) {
                                         enabledItem.setText("true");
                                         linearLayout.setBackgroundResource(R.drawable.list_item);
@@ -405,137 +398,13 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                                         enabledItem.setText("false");
                                     }
                                 } else {
-
-                                    // Can be completed by other stakeholders
-                                    //  showAlertMsg(linearLayout, res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
                                     enabledItem.setTag("farmerS");
-
                                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                     enabledItem.setText("false");
                                 }
                             }
-                        } else {
-                            // FARM SURVEY CODE
-//                                ------------START ----------------
-                            try {
-                                PlotDTO plotDTO = expandableListTitle.get(listPosition);
-                                int plotId = plotDTO.getPlotId();
-                                SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(childModuleDto, currentId, farmerId, multiFarmId,plotId);
-
-                                if (farmerRole != 0 && roleId != 0) {
-                                    if (farmerRole == roleId) {
-                                        // Enable
-                                        if (submittedInfo.isSubmitted()) {
-                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-
-
-                                            if (submittedInfo.isNetworkTable()) {
-                                                if (submittedInfo.getFarmerId() == farmerId) {
-                                                    enabledItem.setText("true");
-                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                                    textView.setText(res.getString(R.string.module_finished));
-                                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-
-                                                } else {
-                                                    if (submittedInfo.isAvailableInOtherFarm()) {
-                                                        textView.setText(res.getString(R.string.ModuleStatus));
-                                                    }
-                                                    enabledItem.setText("false");
-                                                    enabledItem.setTag("hasfarm");
-                                                }
-                                            } else {
-                                                if (submittedInfo.isAvailableInOtherFarm()) {
-                                                    textView.setText(res.getString(R.string.ModuleStatus));
-                                                }
-                                                enabledItem.setText("false");
-                                                enabledItem.setTag("hasfarm");
-                                            }
-                                        } else {
-
-                                            boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, plotId);
-                                            if (othersAttneded) {
-                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                enabledItem.setText("false");
-                                                enabledItem.setTag("hasfarm");
-                                            } else {
-                                                enabledItem.setText("true");
-                                                textView.setText(res.getString(R.string.ModuleStatus));
-                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                            }
-                                        }
-                                    } else {
-                                        enabledItem.setTag("canfarm");
-                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                        enabledItem.setText("false");
-                                    }
-                                } else {
-                                    // Farm Survey - Role is not defined for the farm stakeholders
-                                    if (roleId != 0 && farmerRole == 0) {
-                                        if (submittedInfo.isSubmitted()) {
-                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-
-
-                                            if (submittedInfo.isNetworkTable()) {
-                                                if (submittedInfo.getFarmerId() == farmerId) {
-                                                    enabledItem.setText("true");
-                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                                    textView.setText(res.getString(R.string.module_finished));
-                                                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                                                } else {
-                                                    if (submittedInfo.isAvailableInOtherFarm()) {
-                                                        textView.setText(res.getString(R.string.ModuleStatus));
-                                                    }
-                                                    enabledItem.setText("false");
-                                                    enabledItem.setTag("hasfarm");
-                                                }
-                                            } else {
-                                                if (submittedInfo.isAvailableInOtherFarm()) {
-                                                    textView.setText(res.getString(R.string.ModuleStatus));
-                                                }
-                                                enabledItem.setText("false");
-                                                enabledItem.setTag("hasfarm");
-                                            }
-                                        } else {
-                                            boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, plotId);
-                                            if (othersAttneded) {
-                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                enabledItem.setText("false");
-                                                enabledItem.setTag("hasfarm");
-                                            } else {
-                                                enabledItem.setText("true");
-                                                textView.setText(res.getString(R.string.ModuleStatus));
-                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-
-//                                ------------END ----------------
-
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();

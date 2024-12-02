@@ -194,8 +194,6 @@ public class CompleteModuleActivity extends BaseActivity {
         res = getResources();
         dl = new DataLayer(res, context);
 
-        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-
         DynamicQuestions.resource(res);
         setupGPS();
         gpsListener = new GPSListener() {
@@ -786,17 +784,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 // validate all the submodules question is answered
                 boolean isMandated = false, isMinVal = false;
                 try {
-//                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
-//                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
-//                        return;
-//                    }
                     if (DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0) {
                         String constraintMsg = new CoffeeConstraints().getConstraintExceedMsg(context, dl);
                         Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    // Check the editQuestionSet in each submodule
 
                     if (DynamicQuestions.getInstance().editQuestionSet.size() > 0) {
                         ArrayList<Integer> AllSubmodulesQuestions = dl.getAllSubmodulesQuestionsId(questions);
@@ -847,25 +839,13 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-                    if (MultiFarmUtils.isMultiFarmEnumerator) {
-                        String multifarmId = dl.getMultiFarmId(farmerId);
-                        if (multifarmId != null) {
-                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, multifarmId);
-                        } else {
-                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                        }
-
-                    } else {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                    }
-
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
                     boolean exist = dl.isPlotSavedinNetworkLayer(farmerId, plotId, farmerModuleId);
-//                    if (statusFinished == 0) {
                     if (!exist) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);

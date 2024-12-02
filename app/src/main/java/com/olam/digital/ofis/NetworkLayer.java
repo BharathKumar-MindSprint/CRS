@@ -1852,7 +1852,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             //Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
             int plotId = 0;
 
-            boolean isFarmerMultifarmSynced = dl.isMultifarmSubmitted();
             try {
                 farmerModule = dl.getFarmerModuleById(farmerModuleId);
                 if (farmerModule.getCount() > 0) {
@@ -1973,33 +1972,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                     String subquestion = "";
 
-
-                            /*int position = 0;
-                            if (cursor != null) {
-                                if (cursor.moveToFirst()) {
-                                    do {
-                                        JSONObject sub_answersjson = new JSONObject();
-                                        sub_questions_included.add(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID))));
-                                        sub_answersjson.put("question_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID)));
-                                        sub_answersjson.put("reporting_year", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR)));
-
-                                        sub_answersjson.put("olam_farmer_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID)));
-
-
-                                        if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
-                                            sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
-
-                                        } else
-                                            sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
-                                        sub_answers.put(sub_answersjson);
-                                    } while (cursor.moveToNext());
-                                }
-                            }
-
-                            String questions_included_output = sub_questions_included.toString();
-                            subset_section.put("sub_questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
-                            subset_section.put("sub_answers", sub_answers);
-                            answer.put("subset_section", subset_section);*/
                                     String datatypeID = "";
                                     String displayTypeId = "";
                                     String answerTypeId = "";
@@ -3048,18 +3020,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         Cursor phonenumbers = dl.getFarmerPhoneNumbers(id, false, columnName);
         JSONArray numbersarray = new JSONArray();
 
-        // New Code
-//        List<FarmerRegistrationPhoneNumberDTO> farmerRegistrationPhoneNumberDTOList=new ArrayList<FarmerRegistrationPhoneNumberDTO>();
-
         try {
             while (phonenumbers.moveToNext()) {
                 JSONObject phonenumber = new JSONObject();
-
-                // old
-//                phonenumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID, phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID)));
-//                phonenumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID, phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID)));
-//                phonenumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
-//                phonenumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY, phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)));
 
                 //New
                 phonenumber.put("farmerId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
@@ -6126,9 +6089,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
                     hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
                     hashMap.put("isMobile", true);
-
-                    //ofisdm-1860 - code removed
-                    //hashMap.put("location", location);
+                    hashMap.put("location", location);
 
                     if (plotId != 0) {
                         hashMap.put("plotId", plotId);
@@ -6329,10 +6290,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     JSONObject followUpData = new JSONObject();
                     followUpData.put("farmerId", farmerId);
                     followUpData.put("moduleId", moduleId);
-
-                    //ofisdm-1860 : code removed
-                    //followUpData.put("location", location);
-
+                    followUpData.put("location", location);
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                     followUpData.put("submittedModuleId", dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
@@ -6636,7 +6594,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
                 jsonObject.put("msSignature", multiStakeHolder.msSignature);
 
-                okHttpArrayPost(context, endpoint, new JSONArray().put(jsonObject), new Callback() {
+                okHttpPost(context, endpoint, jsonObject, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
                         try {
