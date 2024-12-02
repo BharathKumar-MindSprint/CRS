@@ -42,7 +42,7 @@ public interface MultiStakeHolderDao {
     int updateStakeholder(MultiStakeHolder multiStakeholder);
 
     @Query("UPDATE MULTISTAKEHOLDER SET msId=:msId, farmId=:farmId, olamMultiStakeholderId=:olamFarmerId, msDisplayId=:olamFarmerId, synced=:syncedStatus WHERE msId=:localFarmerId")
-    int updateStakeholderAfterSync(long localFarmerId, long msId, String farmId, long olamFarmerId, int syncedStatus);
+    int updateStakeholderAfterSync(long localFarmerId, long msId, String farmId, String olamFarmerId, int syncedStatus);
 
     @Query("SELECT msId, msName, msRoleId, olamMultiStakeholderId FROM MultiStakeHolder WHERE farmerId = :farmerId")
     List<StakeHolderDto> getStakeHoldersByFarmerId(Long farmerId);

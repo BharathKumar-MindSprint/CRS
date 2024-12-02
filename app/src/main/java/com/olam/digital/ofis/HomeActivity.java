@@ -179,8 +179,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private ProgressDialog mDialogLoading = null;
     int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
-    private boolean multifarmSynced = true;
-    private boolean farmerMultifarmSynced = true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -937,14 +935,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    } else if (!multifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!farmerMultifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
                     } else {
                         if (totalItems == 0)
                             totalItems = networkQueue.getCount();
@@ -974,10 +964,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
-                    } else if (msg.what == 7) {
-                        multifarmSynced = false;
-                    } else if (msg.what == 8) {
-                        farmerMultifarmSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     }
@@ -985,8 +971,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
-            multifarmSynced = true;
-            farmerMultifarmSynced = true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -1027,14 +1011,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    } else if (!multifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!farmerMultifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
                     }
                 }
             });
@@ -1055,10 +1031,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
-                    } else if (msg.what == 7) {
-                        multifarmSynced = false;
-                    } else if (msg.what == 8) {
-                        farmerMultifarmSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     } else {
@@ -1068,8 +1040,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
-            multifarmSynced = true;
-            farmerMultifarmSynced = true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -2272,11 +2242,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                             int id_actionPlan = dmRangeTextBoxActionPlansList.get(n).getId();
                                                             boolean isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
                                                             String actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
+                                                            Integer actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
 
                                                             DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                             dmRangeActionPlansItems.id = id_actionPlan;
                                                             dmRangeActionPlansItems.isDefault = isDefault;
                                                             dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                            dmRangeActionPlansItems.actionValueId = actionValueId;
                                                             dmRangeActionPlansItems.questionId = id_questionModule;
                                                             dmRangeActionPlansItems.complainceId = complianceId;
 
@@ -2313,6 +2285,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                 if (dmRangeTextBoxModuleQuestionsList != null) {
                                                     for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                        Integer id_range = dmRangeTextBoxModuleQuestionsList.get(r).getId();
                                                         double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
                                                         double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
                                                         String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
@@ -2322,6 +2295,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                         String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
 
                                                         DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                        dmRangeTextBoxModuleQuestionsTable.id = id_range;
                                                         dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
                                                         dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
                                                         dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
@@ -2342,10 +2316,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                 int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
                                                                 boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
                                                                 String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                 DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                 dmRangeActionPlansItems.id = id_actionPlan;
                                                                 dmRangeActionPlansItems.isDefault = isDefault;
+                                                                dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                 dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                 dmRangeActionPlansItems.questionId = id_questionModule;
                                                                 dmRangeActionPlansItems.complainceId = complianceId;
@@ -2533,10 +2509,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                     int id_actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getId();
                                                                     boolean isDefault = dmRangeTextBoxActionPlansList.get(lsa).isDefault();
                                                                     String actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getActionPlan();
+                                                                    Integer actionValueId = dmRangeTextBoxActionPlansList.get(lsa).getActionValueId();
 
                                                                     DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                     dmRangeActionPlansItems.id = id_actionPlan;
                                                                     dmRangeActionPlansItems.isDefault = isDefault;
+                                                                    dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                     dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                     dmRangeActionPlansItems.questionId = id_questionModule;
                                                                     dmRangeActionPlansItems.complainceId = complianceId;
@@ -2575,6 +2553,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                         if (dmRangeTextBoxModuleQuestionsList != null) {
                                                             for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                                Integer id_range = dmRangeTextBoxModuleQuestionsList.get(r).getId();
                                                                 double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
                                                                 double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
                                                                 String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
@@ -2584,6 +2563,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                 String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
 
                                                                 DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                                dmRangeTextBoxModuleQuestionsTable.id = id_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
                                                                 dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
@@ -2604,10 +2584,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                                         int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
                                                                         boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
                                                                         String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                        Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                         DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
                                                                         dmRangeActionPlansItems.id = id_actionPlan;
                                                                         dmRangeActionPlansItems.isDefault = isDefault;
+                                                                        dmRangeActionPlansItems.actionValueId = actionValueId;
                                                                         dmRangeActionPlansItems.actionPlan = actionPlan;
                                                                         dmRangeActionPlansItems.questionId = id_questionModule;
                                                                         dmRangeActionPlansItems.complainceId = complianceId;

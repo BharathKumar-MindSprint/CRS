@@ -10,6 +10,9 @@ public class DmRangeTextBoxModuleQuestionsTable {
     @PrimaryKey(autoGenerate = true)
     public int uid;
 
+    @ColumnInfo(name = "id")
+    public Integer id;
+
     @ColumnInfo(name = "minimumRange")
     public double minimumRange;
 
