@@ -1180,8 +1180,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
                         if (!dmAnswerById.isEmpty()) {
                             double submittedAnswer = Double.parseDouble(dmAnswerById.get(0).answer);
-                            double minimumRange = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).minimumRange;
-                            double maximumRange = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).maximumRange;
+                            double minimumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).minimumRange;
+                            double maximumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).maximumRange;
                             if (!(submittedAnswer >= minimumRange && submittedAnswer <= maximumRange)) {
                                 validRange.add(qId.get(i));
                             }
