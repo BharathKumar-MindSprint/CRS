@@ -4135,7 +4135,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
 
                     jsonObject.put("enumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
-                    jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)));
+                    jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
                     jsonObject.put("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
                     jsonObject.put("farmerRoleId", 1);
 
@@ -4375,7 +4375,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             jsonObject.put("farmerGroupId", farmerData.getString(farmerData.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
                         }
 
-                        jsonObject.put("farmHoldingName", multiStakeHolder.farmHoldingName);
+                        jsonObject.put("farmHoldingName", multiStakeHolder.farmHoldingName + "'s Farm Holding");
                         jsonObject.put("farmHoldingCode", multiStakeHolder.farmHoldingCode);
                         jsonObject.put("msRoleId", multiStakeHolder.msRoleId);
                         jsonObject.put("registeredDate",multiStakeHolder.registeredDate );

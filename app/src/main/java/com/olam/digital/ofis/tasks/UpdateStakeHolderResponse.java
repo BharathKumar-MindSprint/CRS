@@ -17,13 +17,11 @@ import org.json.JSONObject;
 public class UpdateStakeHolderResponse extends DatabaseTask {
     ProgressDialog pd;
     DataLayer dl;
-    private SQLiteDatabase db;
     Context context;
     public UpdateStakeHolderResponse(Context context) {
         super(context);
         this.context=context;
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
-        db = Utilities.getWriteableDb(context);
     }
 
     @Override
@@ -40,7 +38,6 @@ public class UpdateStakeHolderResponse extends DatabaseTask {
             if (stakeHolderResponse != null) {
                 JSONObject response = stakeHolderResponse.has("outputData") ? stakeHolderResponse.getJSONObject("outputData") : new JSONObject();
 
-                db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, null);
                 if (response.has("nationalIds")) {
                     JSONArray nationalIdArray = response.getJSONArray("nationalIds");
                     if (nationalIdArray.length() > 0) {

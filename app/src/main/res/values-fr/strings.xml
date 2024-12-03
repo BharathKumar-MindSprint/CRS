@@ -1170,5 +1170,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
     <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
     <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
+    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
 
 </resources>

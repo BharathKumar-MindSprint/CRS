@@ -6505,7 +6505,7 @@ public class DataLayer {
         return newRowId;
     }
 
-    public long insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type) {
+    public long     insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type, String poiType ) {
         long newRowId;
         newRowId = db.insert(OFISDBContract.ConsentStatementEntry.TABLE_NAME, null, contentValues);
         if (type.equalsIgnoreCase("update")) {
@@ -6515,14 +6515,14 @@ public class DataLayer {
 
                 ContentValues networkQueueValues = new ContentValues();
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "consentstatement");
-                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Stakeholder consent captured");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, poiType);
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
 //            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID));
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
 
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID));
-                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID));
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID));
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID));
 
                 insertNetworkQueueEntry(networkQueueValues);

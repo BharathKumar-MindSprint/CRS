@@ -849,12 +849,36 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llTitle"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Add_Farmer"
+            android:id="@+id/pageTitle"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text"
+            android:paddingRight="0dp"
+            android:paddingEnd="0dp"
+            android:paddingLeft="5dp"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
     <!-- top section -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/topSection"
+        android:layout_below="@+id/llTitle"
         android:baselineAligned="false"
         android:paddingBottom="0dp"
         android:layout_margin="0dp">
@@ -869,18 +893,6 @@
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Add_Farmer"
-                android:id="@+id/pageTitle"
-                android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_large_text"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                android:paddingLeft="5dp"
-                android:maxLines="1" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -910,7 +922,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.8"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="0dp"
             android:paddingTop="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="@dimen/activity_horizontal_margin"

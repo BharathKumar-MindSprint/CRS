@@ -1369,16 +1369,20 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="farm_holding_code">Farm Holding Code</string>
     <string name="view_stake_holder_information">View Stakeholder Information</string>
     <string name="view_stake_holder">View Stakeholder</string>
-    <string name="stakeholder_list">StakeHolders List</string>
+    <string name="stakeholder_list">Stakeholders List</string>
     <string name="confirmation_message">Do you want to confirm changes ?</string>
     <string name="stakeholder_role">Stakeholder Role</string>
     <string name="primary_farmer">Primary Farmer</string>
     <string name="stake_holder_details">Stakeholder Details</string>
     <string name="no_task">No Task</string>
-    <string name="stakeholder_signature">StakeHolder Signature</string>
-    <string name="update_stakeholder">Update StakeHolder</string>
+    <string name="stakeholder_signature">Stakeholder Signature</string>
+    <string name="update_stakeholder">Update Stakeholder</string>
+    <string name="new_stakeholder">New StakeHolder</string>
+    <string name="Stakeholder_Added">Stakeholder Added</string>
+    <string name="Stakeholder_Updated">Stakeholder Updated</string>
 
     <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
     <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
     <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
+    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
 </resources>

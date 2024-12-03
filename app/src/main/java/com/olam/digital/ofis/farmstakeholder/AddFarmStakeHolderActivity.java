@@ -66,7 +66,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
 
                 etFarmerName.setText(farmerName);
                 etFarmHoldingCode.setText(farmCode);
-                etFarmHoldingName.setText(farmName.toUpperCase() + "'S FARM HOLDING");
+                etFarmHoldingName.setText(farmerName.toUpperCase() + "'S FARM HOLDING");
             }
         }
         catch (Exception e) {
@@ -87,7 +87,6 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
                 bundle.putString(Utilities.FARMER_NAME, farmerName);
                 bundle.putString(Utilities.FARM_ID, farmId);
                 startActivity(new Intent(AddFarmStakeHolderActivity.this, AddFarmerActivity.class).putExtras(bundle));
-                finish();
             }
         });
     }
@@ -101,7 +100,6 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
             stakeHolderRecyclerView.setLayoutManager(reLayoutManager);
             stakeHolderRecyclerView.setItemAnimator(new DefaultItemAnimator());
             stakeHolderRecyclerView.setAdapter(stakeHolderRecyclerAdapter);
-            stakeHolderRecyclerView.scrollToPosition(stakeHolderRecyclerAdapter.getItemCount() - 1);
 
             stakeHolderRecyclerAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override

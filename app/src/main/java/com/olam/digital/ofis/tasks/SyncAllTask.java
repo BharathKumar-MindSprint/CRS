@@ -440,10 +440,6 @@ public class SyncAllTask extends SyncTask {
             new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
             multifarmRoleResponse = null;
 
-            new UpdateStakeHolderResponse(context).execute(stakeHolderResponse);
-            StakeHoldersResponse(stakeHolderResponse);
-            stakeHolderResponse = null;
-
             // Goes directly to the AsyncTask
             new UpdateTrainingListsTask(context).execute(trainingResponse);
             trainingResponse = null;
@@ -466,6 +462,10 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
             enumnationalidresponse = null;
+
+            new UpdateStakeHolderResponse(context).execute(stakeHolderResponse);
+            StakeHoldersResponse(stakeHolderResponse);
+            stakeHolderResponse = null;
 
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
