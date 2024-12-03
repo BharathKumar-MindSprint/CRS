@@ -90,8 +90,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
-//import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
@@ -461,12 +460,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener, true);
-        try {
-            MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        } catch (Exception e) {
-        }
-
-
     }
 
     private void setKeycloakCredentials(String environment) {

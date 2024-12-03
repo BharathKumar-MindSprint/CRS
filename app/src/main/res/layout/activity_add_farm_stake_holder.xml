@@ -18,7 +18,7 @@
             android:id="@+id/pageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/farm_information"
+            android:text="@string/farm_holding_information"
             android:textColor="@color/ofis_base_font_white"
             android:textSize="@dimen/ofis_large_text"
             android:paddingRight="0dp"

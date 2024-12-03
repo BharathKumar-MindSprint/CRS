@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -50,6 +51,8 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
     ScrollView scrollView;
     DataLayer dataLayer;
 
+    private boolean isAddStakeHolder = false;
+
     EditText et_maritalstatus,et_profession, et_cpfNumber, et_rgNumber,et_fulladdress,et_city,et_state, et_subname,
             et_subnationality, et_submaritalsts, et_subProfessinal, et_subCpf, et_subRg, et_subAddress, et_subCity,
             et_subState, dateEditT, contactOfi, witness1Name, witness1CPF, witness1RG ,witness2Name, witness2CPF, witness2RG;
@@ -68,6 +71,7 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                displayFarmerId=getIntent().getExtras().getString("displayFarmerId");
                olamfarmername=getIntent().getExtras().getString("olamfarmername");
                type=getIntent().getExtras().getString("type");
+               isAddStakeHolder = getIntent().getExtras().getBoolean(Utilities.STAKE_HOLDER_REGISTRATION);
            }catch (Exception e){}
         init();
     }
@@ -129,6 +133,10 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
         nextsavebtn.setOnClickListener(this);
         prevbtn.setOnClickListener(this);
         farmer_signature.setOnClickListener(this);
+        if (isAddStakeHolder){
+            farmer_signature.setText(getResources().getString(R.string.stakeholder_signature));
+        }
+
         enum_signature.setOnClickListener(this);
         witness1_signature.setOnClickListener(this);
         witness2_signature.setOnClickListener(this);
@@ -451,16 +459,21 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String registereddate = format.format(today);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
-               if(type.equalsIgnoreCase(UPDATE)){
+
+                if(type.equalsIgnoreCase(UPDATE)){
                     dataLayer.updateConsentStatus(farmerId);
-                    dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
-                }
+                   if(isAddStakeHolder){
+                       dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type, "Stakeholder consent captured");
+                   } else {
+                       dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type,"Farmer consent captured");
+                   }
+               }
+
                 Intent intent=new Intent();
                 intent.putExtra(STATUS,true);
                 intent.putExtra(CONSENTVALUE,contentValue);
                 setResult(2,intent);
                 finish();
-
             }
             addingGlobalLayoutListener();
         }else if(id == R.id.prevbtn){
@@ -596,5 +609,14 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (isAddStakeHolder && item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

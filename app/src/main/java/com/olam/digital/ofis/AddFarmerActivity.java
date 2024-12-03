@@ -52,6 +52,7 @@
  import android.widget.TextView;
  import android.widget.Toast;
 
+ import androidx.annotation.NonNull;
  import androidx.appcompat.app.AlertDialog;
  import androidx.core.app.ActivityCompat;
  import androidx.core.content.ContextCompat;
@@ -68,6 +69,7 @@
  import com.olam.digital.ofis.childlabour.ChildLabourUtils;
  import com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity;
  import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
+ import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
  import com.olam.digital.ofis.gps.GPSListener;
  import com.olam.digital.ofis.gps.GPSTracker;
  import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -540,7 +542,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
         farmerName.setText(name);
-        etFarmHoldingName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
+        etFarmHoldingName.setText(name + "'s Farm Holding");
         etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -647,7 +649,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      private void populateExistingValuesMs(final MultiStakeHolder multiStakeHolder) {
          String name = multiStakeHolder.msName;
          farmerName.setText(name);
-         etFarmHoldingName.setText(name + "'s Farm Holding");
+         etFarmHoldingName.setText(farmerNameMs + "'s Farm Holding");
          etFarmHoldingCode.setText(multiStakeHolder.farmHoldingCode);
 
          farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -828,7 +830,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
         String farmCode = etFarmHoldingCode.getText().toString().trim();
-        String farmName = etFarmHoldingName.getText().toString().trim();
 
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
@@ -1098,7 +1099,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE, farmCode);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmName);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmerNameValue);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -1187,8 +1188,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          }
 
          if (isNIDAvailable) {
+             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(LIMIT_XED)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             }
 
-             ValidateNIDValuesMs();
+             if (!ValidateNIDValuesMs()) {
+                 return null;
+             }
              storeableNationalids = fetchnationalidvalues();
 
 
@@ -1770,8 +1780,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         showConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //                consentHolder.setVisibility(View.VISIBLE);
-//                consentHolder.startAnimation(mSlideBottomUp);
+
+                String errorMsg = res.getString(R.string.please_fill_farmer_name);
+                if (isAddStakeHolder) {
+                    selectedCountry = dl.getCountryByFarmerId(farmerIdMs);
+                    errorMsg = res.getString(R.string.please_fill_stakeholder_name);
+                }
+                else {
+                    selectedCountry = (int) countrySpinner.getSelectedItemId();
+                }
+
                 EditText farmerName = findViewById(R.id.farmerName);
                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                 if (farmerNameValue.equals("")) {
@@ -1785,7 +1803,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
                     return;
                 }
-                Intent in ;
+
+                Intent in;
                 if(selectedCountry == 27 && Utilities.getOperatingUnitSharedPrefs(AddFarmerActivity.this).equals("OFI") ){
                     in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
                 }else {
@@ -1797,6 +1816,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 bundle.putString("type", NEW);
                 bundle.putString("displayFarmerId", "");
                 bundle.putString("olamfarmername", farmerNameValue);
+
                 if(editMode){
                     bundle.putLong("FarmerId", editFarmerId);
                 }else {
@@ -1972,7 +1992,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmerNameValue);
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
 
-                                dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
+                                dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new", "Farmer consent captured");
                                 if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                     if (moduretationstatus) {
@@ -2055,7 +2075,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                              consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmerNameValue);
                              consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
 
-                             dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
+                             dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new", "Farmer consent captured");
                              if (isNIDAvailable) {
                                  dl.updateFarmerNationalids(context, null, String.valueOf(newStakeholderId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
 
@@ -2068,6 +2088,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                              }
                              finish();
                              Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
+                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                              Bundle bundle = new Bundle();
                              bundle.putLong(Utilities.FARMER_ID, farmerIdMs);
                              intent.putExtras(bundle);
@@ -2367,7 +2388,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         builder.setTitle(res.getString(R.string.Select_picture_from));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
 
                 if (items[item].equals(res.getString(R.string.Camera))) {
                           Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
@@ -3006,8 +3026,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return status;
     }
 
-     private void ValidateNIDValuesMs() {
-
+     private boolean ValidateNIDValuesMs() {
+         boolean status = true;
          ArrayList<String> nidtype_list = new ArrayList<>();
          selectednationalidList = new ArrayList<String>();
          int nidrowscount = nationalids.getChildCount();
@@ -3024,34 +3044,58 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              String nid = nidnumber.getText().toString();
              String expDate = expiryDate.getText().toString();
 
+             if(!value.equals(getResources().getString(R.string.idtype).toUpperCase())){
 
-             nidtype_list.add(value);
-             selectednationalidList.add(value);
+                 if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
+                     Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
+                     return false;
+                 }
 
-             NationalIdDTO idDTO = new NationalIdDTO();
-             idDTO.setNationalidNumber(nid);
-             idDTO.setNationalidtype(String.valueOf(type));
-             if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
-                 String photopath = null;
-                 if (!editMode) {
-                     photopath = getPhotobytype(type);
-                 } else {
-                     if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
-                         photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId,OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
-                     } else {
-                         photopath = getPhotobytype(type);
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
+                         Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
+                         return false;
                      }
                  }
-                 idDTO.setPhoto(photopath);
+             }
+
+
+             if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+                 nid_type.setEnabled(true);
+                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
+                 return false;
              } else {
-                 idDTO.setPhoto("");
+                 nidtype_list.add(value);
+                 selectednationalidList.add(value);
              }
-             if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
-                 idDTO.setExpiryDate(expDate);
+
+             if (status) {
+                 NationalIdDTO idDTO = new NationalIdDTO();
+                 idDTO.setNationalidNumber(nid);
+                 idDTO.setNationalidtype(String.valueOf(type));
+                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+                     String photopath = null;
+                     if (!editMode) {
+                         photopath = getPhotobytype(type);
+                     } else {
+                         if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+                             photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                         } else {
+                             photopath = getPhotobytype(type);
+                         }
+                     }
+                     idDTO.setPhoto(photopath);
+                 } else {
+                     idDTO.setPhoto("");
+                 }
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     idDTO.setExpiryDate(expDate);
+                 }
+                 dl.addnewLocalFarmerNationalids(idDTO);
+                 nid_type.setEnabled(false);
              }
-             dl.addnewLocalFarmerNationalids(idDTO);
-             nid_type.setEnabled(false);
          }
+         return status;
 
      }
 

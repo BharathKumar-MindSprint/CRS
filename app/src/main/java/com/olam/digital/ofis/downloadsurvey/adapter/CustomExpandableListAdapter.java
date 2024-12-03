@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +16,11 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.DataLayer;
-import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

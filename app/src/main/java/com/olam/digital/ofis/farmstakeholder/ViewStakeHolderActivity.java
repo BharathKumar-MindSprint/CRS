@@ -101,9 +101,13 @@ public class ViewStakeHolderActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putLong(Utilities.FARMER_ID, farmerId);
-        startActivity(new Intent(ViewStakeHolderActivity.this, AddFarmStakeHolderActivity.class).putExtras(bundle));
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void setupUI() {
@@ -267,7 +271,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
         farmerRoleDTOList = new ArrayList<>();
 
         farmerRoleDTOList = dl.getFarmerRoles(localeSuffixColumn);
-        farmerRolesList.add(res.getString(R.string.farmer_roles));
+        farmerRolesList.add(res.getString(R.string.stakeholder_role));
         for (FarmerRoleDto farmerRoleDTO : farmerRoleDTOList){
             farmerRolesList.add(farmerRoleDTO.getName());
         }
