@@ -44,6 +44,10 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -818,6 +822,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                 String module_ID = cursor.getString(cursor.getColumnIndex("_id"));
                 String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                LocalDate startDate = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    try {
+                        if (start_date_string != null) {
+                            startDate = LocalDate.parse(start_date_string.split("T")[0], formatter);
+                        }
+                    } catch (DateTimeParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 boolean disable_entry = false;
                 if (hasSubmittedModules) {
                     try {
@@ -899,9 +916,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 //                                                    lastSubmittedDate.setTime(sdf.parse("2022-07-23 07:55:12"));
 
                                                 }else {
-                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                    int month = 0;
+                                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                                        month = startDate.getMonthValue();
+                                                    }
+                                                    calculationDate.add(Calendar.YEAR, recurrence_frequency - 1);
+                                                    calculationDate.set(Calendar.MONTH, getPreviousMonthIndex(month));
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, getLastDayOfPreviousMonth(month));
                                                 }
 //                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
 //                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -1585,25 +1606,18 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     enabledItem.setText("false");
                 }
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date startDate = null;
-                try {
-                    if(start_date_string!=null) {
-                        startDate = dateFormat.parse(start_date_string.split("T")[0]);
+                if (startDate != null) {
+                    LocalDate currentDate = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        currentDate = LocalDate.now();
+                        if (currentDate.isBefore(startDate)) {
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            enabledItem.setText("false");
+                        }
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
 
-                Date currentDateNew = new Date();
-
-                if (startDate!=null){
-                    if(currentDateNew.before(startDate)){
-                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        enabledItem.setText("false");
-                    }
                 }
 
             } else {
@@ -1795,5 +1809,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         return date1 != null && date2 != null && !date1.equals(date2);
     }
 
+    public static int getPreviousMonthIndex(int monthIndex) {
+        return (monthIndex - 2) % 12;
+    }
+
+    public static int getLastDayOfPreviousMonth(int monthIndex) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            YearMonth yearMonth = YearMonth.of(LocalDate.now().getYear(), monthIndex);
+            return yearMonth.minusMonths(1).lengthOfMonth();
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.MONTH, monthIndex - 1);
+            return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        }
+    }
 
 }
