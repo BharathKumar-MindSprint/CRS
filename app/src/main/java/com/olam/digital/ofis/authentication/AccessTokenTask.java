@@ -53,7 +53,6 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
                 new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
                 new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
-                new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
                 Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
                 Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                 return authenticationDTO.getAccessToken();
@@ -74,7 +73,6 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                         authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                         new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                         new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
-                        new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
                         Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
                         Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                         return authenticationDTO.getAccessToken();
