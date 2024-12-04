@@ -726,7 +726,7 @@
     <string name="view_stake_holder_information">Xem thông tin bên liên quan</string>
     <string name="view_stake_holder">Xem bên liên quan</string>
     <string name="stakeholder_list">Danh sách bên liên quan</string>
-    <string name="confirmation_message">Bạn có muốn xác nhận thay đổi không?</string>
+    <string name="confirmation_message">Bạn có muốn xác nhận các thay đổi không?</string>
     <string name="stakeholder_role">Vai trò của bên liên quan</string>
     <string name="primary_farmer">Nông dân chính</string>
     <string name="stake_holder_details">Chi tiết về bên liên quan</string>

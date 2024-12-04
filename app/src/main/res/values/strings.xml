@@ -1370,7 +1370,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="view_stake_holder_information">View Stakeholder Information</string>
     <string name="view_stake_holder">View Stakeholder</string>
     <string name="stakeholder_list">Stakeholders List</string>
-    <string name="confirmation_message">Do you want to confirm changes ?</string>
+    <string name="confirmation_message">Do you want to confirm the changes ?</string>
     <string name="stakeholder_role">Stakeholder Role</string>
     <string name="primary_farmer">Primary Farmer</string>
     <string name="stake_holder_details">Stakeholder Details</string>

@@ -49,18 +49,20 @@
                     android:paddingLeft="5dp"
                     android:maxLines="1" />
 
-
-                <TextView
+                <EditText
                     android:id="@+id/stakeHolderName"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:textSize="@dimen/ofis_input_field_text"
-                    android:layout_marginTop="6dp"
-                    android:textColor="@color/ofis_base_font_dark"
-                    android:background="@drawable/edittext_bg_dark"
+                    android:inputType="textCapWords"
                     android:padding="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                    android:maxLines="1" />
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:layout_marginBottom="10dp"/>
 
 
                 <TextView

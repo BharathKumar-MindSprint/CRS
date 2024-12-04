@@ -723,7 +723,7 @@
     <string name="view_stake_holder_information">ดูข้อมูลผู้มีส่วนได้ส่วนเสีย</string>
     <string name="view_stake_holder">ดูผู้มีส่วนได้ส่วนเสีย</string>
     <string name="stakeholder_list">รายชื่อผู้มีส่วนได้ส่วนเสีย</string>
-    <string name="confirmation_message">คุณต้องการยืนยันการเปลี่ยนแปลงหรือไม่</string>
+    <string name="confirmation_message">คุณต้องการยืนยันการเปลี่ยนแปลงหรือไม่?</string>
     <string name="stakeholder_role">StakeHolders Role</string>
     <string name="primary_farmer">บทบาทของผู้มีส่วนได้ส่วนเสีย</string>
     <string name="stake_holder_details">รายละเอียดผู้มีส่วนได้ส่วนเสีย</string>

@@ -830,7 +830,7 @@
     <string name="view_stake_holder_information">Ver información del interesado</string>
     <string name="view_stake_holder">Ver interesados</string>
     <string name="stakeholder_list">Lista de interesados</string>
-    <string name="confirmation_message">¿Desea confirmar los cambios?</string>
+    <string name="confirmation_message">Quieres confirmar los cambios?</string>
     <string name="stakeholder_role">Función del interesado</string>
     <string name="primary_farmer">Agricultor principal</string>
     <string name="stake_holder_details">Detalles de la parte interesada agrícola</string>

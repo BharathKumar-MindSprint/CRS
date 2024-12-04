@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,7 +113,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
 
     private void setupUI() {
 
-        TextView tvStakeHolderName = findViewById(R.id.stakeHolderName);
+        EditText tvStakeHolderName = findViewById(R.id.stakeHolderName);
         TextView farmerOlamId = findViewById(R.id.viewFarmerOlamFarmerID);
         farmerRoleSpinner = findViewById(R.id.farmerRoleSpinner);
         ImageView farmerPhoto = findViewById(R.id.viewFarmerFarmerPhoto);

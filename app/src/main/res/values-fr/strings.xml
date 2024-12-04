@@ -1160,7 +1160,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="view_stake_holder_information">Voir les informations sur autre l\'acteur</string>
     <string name="view_stake_holder">Voir autre l’acteur</string>
     <string name="stakeholder_list">Liste des autres acteurs</string>
-    <string name="confirmation_message">Souhaitez-vous confirmer les modifications ?</string>
+    <string name="confirmation_message">Voulez-vous confirmer les modifications ?</string>
     <string name="stakeholder_role">Rôle de l\'intervenant</string>
     <string name="primary_farmer">Agriculteur principal</string>
     <string name="stake_holder_details">Détails sur les autres acteurs agricoles</string>

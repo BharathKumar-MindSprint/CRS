@@ -724,7 +724,7 @@
     <string name="view_stake_holder_information">Paydaş Bilgilerini Görüntüle</string>
     <string name="view_stake_holder">Paydaşları Görüntüle</string>
     <string name="stakeholder_list">Paydaşlar listesi</string>
-    <string name="confirmation_message">Değişiklikleri onaylamak ister misiniz?</string>
+    <string name="confirmation_message">Değişiklikleri onaylamak istiyor musunuz?</string>
     <string name="stakeholder_role">Paydaş Rolü</string>
     <string name="primary_farmer">Birincil Çiftçi</string>
     <string name="stake_holder_details">Paydaş detayları</string>

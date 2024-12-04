@@ -819,7 +819,7 @@
     <string name="view_stake_holder_information">Melihat Informasi Pemangku Kepentingan</string>
     <string name="view_stake_holder">Lihat pemangku kepentingan</string>
     <string name="stakeholder_list">Daftar pemangku kepentingan</string>
-    <string name="confirmation_message">Apakah Anda ingin mengkonfirmasi perubahan?</string>
+    <string name="confirmation_message">Apakah Anda ingin mengonfirmasi perubahan ini?</string>
     <string name="stakeholder_role">Peran Pemangku Kepentingan</string>
     <string name="primary_farmer">Petani Primer</string>
     <string name="stake_holder_details">Rincian Pemangku Kepentingan</string>
