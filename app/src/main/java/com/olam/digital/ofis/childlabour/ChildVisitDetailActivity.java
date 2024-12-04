@@ -7,10 +7,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.content.ContextCompat;
 
 import android.util.Log;

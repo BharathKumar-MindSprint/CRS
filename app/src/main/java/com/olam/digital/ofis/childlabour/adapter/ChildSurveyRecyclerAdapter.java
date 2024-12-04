@@ -114,68 +114,6 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         }else{
             holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
         }
-//                String disabled_months_string = childModuleDto.getDisabled_months();
-//                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-
-
-        // check after 3 months scenerio
-        // Migrating code to above submitted modules
-//        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
-//            if (actionTickedArray != null) {
-//                if (actionTickedArray.length() > 0) {
-//                    try {
-//                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
-//                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
-//                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
-//                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
-//                            holder.surveyLayout.setEnabled(true);
-//                            enabledFollowUp=true;
-//                        } else {
-//                            holder.surveyLayout.setEnabled(false);
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    holder.surveyLayout.setEnabled(false);
-//                }
-//            } else {
-//                holder.surveyLayout.setEnabled(false);
-//            }
-//
-//        }
-
-//                String disabled_months_string = childModuleDto.getDisabled_months();
-//                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-
-
-        // check after 3 months scenerio
-        // Migrating code to above submitted modules
-//        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
-//            if (actionTickedArray != null) {
-//                if (actionTickedArray.length() > 0) {
-//                    try {
-//                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
-//                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
-//                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
-//                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
-//                            holder.surveyLayout.setEnabled(true);
-//                            enabledFollowUp=true;
-//                        } else {
-//                            holder.surveyLayout.setEnabled(false);
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    holder.surveyLayout.setEnabled(false);
-//                }
-//            } else {
-//                holder.surveyLayout.setEnabled(false);
-//            }
-//
-//        }
-
 
         if (hasSubmittedModules) {
             try {
