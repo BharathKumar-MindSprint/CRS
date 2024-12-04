@@ -186,17 +186,6 @@ public  static String base64ConversionForImage(String filepath)  {
         return returnVal;
     }
 
-    static String[] since1950() {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int difference = currentYear - 1950;
-        String[] since1950 = new String[difference];
-
-        for (int i = 0; i < difference; i++) {
-            since1950[i] = String.valueOf(currentYear - i);
-        }
-        return since1950;
-    }
-
     static String[] since1900() {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int difference = currentYear - 1899;
