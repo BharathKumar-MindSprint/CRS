@@ -971,8 +971,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
 
                                             } else {
-                                                // must be days
-                                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                Calendar finalReccurenceDate = (Calendar) recurrenceDate.clone();
+                                                Calendar nextRecurrenceDate = (Calendar) finalReccurenceDate.clone();
+
+                                                nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+
+                                                while (!currentDate.before(nextRecurrenceDate)) {
+                                                    finalReccurenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                                    nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                                }
+
+                                                int newYear = finalReccurenceDate.get(Calendar.YEAR);
+                                                int newMonth = finalReccurenceDate.get(Calendar.MONTH);
+                                                int newDay = finalReccurenceDate.get(Calendar.DAY_OF_MONTH);
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
                                             }
 
                                             // set the time
