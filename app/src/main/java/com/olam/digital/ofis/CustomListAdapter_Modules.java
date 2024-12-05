@@ -910,7 +910,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                         if (recurrence_type != null) {
                                             if (recurrence_type.equalsIgnoreCase("years")) {
 
-                                                // change the va;
                                                 if (Objects.equals(farmerAssignmentField, "48")){
 
                                                     // set the date according to start date
@@ -934,8 +933,20 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                     calculationDate.set(Calendar.DAY_OF_MONTH, day);
                                                 }
                                             } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                Calendar previousRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                while (!currentDate.before(nextRecurrenceDate)) {
+                                                    previousRecurrenceDate = (Calendar) nextRecurrenceDate.clone();
+                                                    nextRecurrenceDate.add(Calendar.MONTH, recurrence_frequency);
+
+                                                }
+                                                int newYear = previousRecurrenceDate.get(Calendar.YEAR);
+                                                int newMonth = previousRecurrenceDate.get(Calendar.MONTH);
+
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, day);
+
                                             } else if (recurrence_type.equalsIgnoreCase("weeks")) {
                                                 calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
                                                 calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -945,13 +956,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             }
 
                                             // set the time
-                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                            calculationDate.set(Calendar.MINUTE, 59);
-                                            calculationDate.set(Calendar.SECOND, 59);
-                                            calculationDate.set(Calendar.MILLISECOND, 999);
+//                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+//                                            calculationDate.set(Calendar.MINUTE, 59);
+//                                            calculationDate.set(Calendar.SECOND, 59);
+//                                            calculationDate.set(Calendar.MILLISECOND, 999);
 
                                             // force the recalculation
-                                            calculationDate.get(Calendar.DAY_OF_MONTH);
+//                                            calculationDate.get(Calendar.DAY_OF_MONTH);
 
 
                                             if (lastSubmittedDate.after(calculationDate) || isSameDay(lastSubmittedDate, calculationDate)) {
