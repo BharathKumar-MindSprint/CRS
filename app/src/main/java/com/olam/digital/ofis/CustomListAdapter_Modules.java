@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static org.apache.commons.lang3.time.DateUtils.isSameDay;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -820,14 +822,18 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
 
                 int month = 0;
+                int day = 0;
+                int year = 0;
+                Calendar recurrenceDate = Calendar.getInstance();
                 Date startDate = null;
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 try {
                     if (start_date_string != null) {
                         startDate = formatter.parse(start_date_string.split("T")[0]);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(startDate);
-                        month = calendar.get(Calendar.MONTH);
+                        recurrenceDate.setTime(startDate);
+                        month = recurrenceDate.get(Calendar.MONTH);
+                        day =  recurrenceDate.get(Calendar.DAY_OF_MONTH);
+                        year = recurrenceDate.get(Calendar.YEAR);
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -914,13 +920,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 //                                                    lastSubmittedDate.setTime(sdf.parse("2022-07-23 07:55:12"));
 
                                                 }else {
-                                                    calculationDate.add(Calendar.YEAR, recurrence_frequency - 1);
-                                                    calculationDate.set(Calendar.MONTH, getPreviousMonthIndex(month));
-                                                    calculationDate.set(Calendar.DAY_OF_MONTH, getLastDayOfPreviousMonth(month));
+                                                    Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                    nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+
+                                                    while (!currentDate.before(nextRecurrenceDate)) {
+                                                        year += recurrence_frequency;
+                                                        recurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                                        nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                                    }
+
+                                                    calculationDate.set(Calendar.YEAR, year);
+                                                    calculationDate.set(Calendar.MONTH, month);
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, day);
                                                 }
-//                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-//                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-//                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
                                             } else if (recurrence_type.equalsIgnoreCase("months")) {
                                                 calculationDate.add(Calendar.MONTH, -recurrence_frequency);
                                                 calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -942,7 +954,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             calculationDate.get(Calendar.DAY_OF_MONTH);
 
 
-                                            if (lastSubmittedDate.after(calculationDate)) {
+                                            if (lastSubmittedDate.after(calculationDate) || isSameDay(lastSubmittedDate, calculationDate)) {
                                                 disable_entry = true;
                                             }
                                         }
@@ -1797,16 +1809,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     private static boolean areDatesEqual(Date date1, Date date2) {
         // Check if the dates are equal
         return date1 != null && date2 != null && !date1.equals(date2);
-    }
-
-    public static int getPreviousMonthIndex(int monthIndex) {
-        return (monthIndex - 1) % 12;
-    }
-
-    public static int getLastDayOfPreviousMonth(int monthIndex) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.MONTH, monthIndex - 1);
-            return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
 }
