@@ -804,7 +804,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(null, id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
 
