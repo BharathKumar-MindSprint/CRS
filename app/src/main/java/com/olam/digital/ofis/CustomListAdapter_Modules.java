@@ -948,8 +948,28 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                 calculationDate.set(Calendar.DAY_OF_MONTH, day);
 
                                             } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+
+                                                long daysBetween = (currentDate.getTimeInMillis() - recurrenceDate.getTimeInMillis()) / (1000 * 60 * 60 * 24);
+
+                                                int weekDifference = (int) (daysBetween / 7);
+
+                                                int weeksPassed = weekDifference / recurrence_frequency;
+
+                                                nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, weeksPassed * recurrence_frequency);
+
+                                                if (currentDate.before(nextRecurrenceDate)) {
+                                                    nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                }
+
+                                                int newYear = nextRecurrenceDate.get(Calendar.YEAR);
+                                                int newMonth = nextRecurrenceDate.get(Calendar.MONTH);
+                                                int newDay = nextRecurrenceDate.get(Calendar.DAY_OF_MONTH);
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
+
+
                                             } else {
                                                 // must be days
                                                 calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
