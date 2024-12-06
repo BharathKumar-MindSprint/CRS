@@ -1,5 +1,7 @@
  package com.olam.digital.ofis;
 
+ import static com.olam.digital.ofis.Utilities.appendSuffixForFarmName;
+
  import android.Manifest;
  import android.app.Activity;
  import android.app.DatePickerDialog;
@@ -542,7 +544,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
         farmerName.setText(name);
-        etFarmHoldingName.setText(name + "'s Farm Holding");
+        etFarmHoldingName.setText(appendSuffixForFarmName(name, res.getString(R.string.farm_holding_suffix)));
         etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -649,7 +651,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      private void populateExistingValuesMs(final MultiStakeHolder multiStakeHolder) {
          String name = multiStakeHolder.msName;
          farmerName.setText(name);
-         etFarmHoldingName.setText(farmerNameMs + "'s Farm Holding");
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerNameMs, res.getString(R.string.farm_holding_suffix)));
          etFarmHoldingCode.setText(multiStakeHolder.farmHoldingCode);
 
          farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -1169,7 +1171,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          int selectedPosition = farmerRoleSpinner.getSelectedItemPosition();
 
          if (selectedPosition == 0) {
-             Toast.makeText(this, "StakeHolder Role Required!", Toast.LENGTH_SHORT).show();
+             Toast.makeText(context, res.getString(R.string.stakeholder_role_required), Toast.LENGTH_SHORT).show();
              return null;
          }
 
@@ -3221,7 +3223,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          titleText.setText(R.string.add_farm_stakeholder);
          farmerRoleSpinner.setVisibility(View.VISIBLE);
          farmerName.setHint(R.string.stake_holder_name);
-         etFarmHoldingName.setText(farmerNameMs + "'s Farm Holding");
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerNameMs, res.getString(R.string.farm_holding_suffix)));
          etFarmHoldingCode.setText(farmHoldingCodeMs);
          roleHeading.setText(getResources().getString(R.string.stakeholder_role));
 
@@ -3301,7 +3303,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
      }
 
      private void populateFarmDetails(String farmerName) {
-         etFarmHoldingName.setText(farmerName + "'s Farm Holding");
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerName, res.getString(R.string.farm_holding_suffix)));
          etFarmHoldingName.setSelection(etFarmHoldingName.getText().length());
          etFarmHoldingCode.setText(farmerName + "-" + String.format("%04d", new Random().nextInt(10000)));
          etFarmHoldingCode.setSelection(etFarmHoldingCode.getText().length());

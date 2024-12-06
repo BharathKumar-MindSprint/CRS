@@ -64,4 +64,9 @@ public interface DmComplaintFileTableDao {
 
     @Query("SELECT SUM(fileSize) FROM DmComplaintFileTable WHERE farmerId = :farmerId AND questionId = :id AND surveyType=:surveyType AND plotId = :plotId AND isFileSynced = 0")
     int getTotalUnSyncFileSizeByQuestionId(String id, String farmerId, String surveyType, int plotId);
+
+    @Query("SELECT COUNT(uid) FROM DmComplaintFileTable WHERE questionId IN (:questionIds) AND farmerId = :farmerId AND plotId = :plotId AND isFileSynced = 0")
+    int getUnSyncedFiles(List<Integer> questionIds, long farmerId, int plotId);
+
+
 }

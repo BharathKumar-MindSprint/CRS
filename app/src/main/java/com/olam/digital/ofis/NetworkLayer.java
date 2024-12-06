@@ -6046,8 +6046,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
-
-
             if (endpoint.length() > 0) {
 
                 try {
@@ -6079,7 +6077,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     ArrayList<JSONObject> answerArrayList = new ArrayList<>();
 
-                    if (dmSurveyAnswerTableList.size() != 0) {
+                    if (!dmSurveyAnswerTableList.isEmpty()) {
                         for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
                             JSONObject ans = new JSONObject();
                             ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
@@ -6091,9 +6089,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
 
                             List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
-
                             complaintFileTableList.clear();
-
                             complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0, plotId);
 
                             JSONArray jsonArray = new JSONArray();
@@ -6107,7 +6103,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         }
                     }
-
 
                     List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
                     currenciesItems.clear();
@@ -6423,24 +6418,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofissurvey/image/upload";
 
-            final boolean[] isSyncedAllFiles = {true};
-            boolean isFilesExists = false;
+            List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
+            boolean isFileNotExists = false;
 
             for (int k = 0; k < dmSurveyAnswerTableList.size(); k++) {
                 String questionId = dmSurveyAnswerTableList.get(k).questionID;
                 List<String> filePaths = new ArrayList<>();
                 List<String> fileName = new ArrayList<>();
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-                dmComplaintFileTableList.clear();
                 dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(String.valueOf(farmerId), questionId, plotId);
                 List<Long> ids = new ArrayList<>();
-                if (dmComplaintFileTableList.size() != 0) {
+                if (!dmComplaintFileTableList.isEmpty()) {
+                    isFileNotExists = true;
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         filePaths.add(dmComplaintFileTableList.get(l).getFilePath());
                         fileName.add(dmComplaintFileTableList.get(l).getOfisFileName());
                         ids.add(dmComplaintFileTableList.get(l).getUid());
                     }
-                    isFilesExists = true;
                 }
 
                 if (filePaths.isEmpty()) {
@@ -6457,8 +6451,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 builder.addFormDataPart("type", "DM");
 
                 RequestBody requestBody = builder.build();
+                Log.d("question", String.valueOf(k));
 
-                if (endpoint.length() > 0) {
+                if (!endpoint.isEmpty()) {
                     int finalK = k;
                     okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
                         @Override
@@ -6467,12 +6462,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             if (postResponse.isSuccessful()) {
                                 Log.d("UPLOAD_FILE_SUCCESS", "2");
-                                //                            Toast.makeText(context, "File Upload Inside Success Resp", Toast.LENGTH_SHORT).show();
+
                                 for (int i = 0; i < ids.size(); i++) {
                                     db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
                                 }
 
-                                if (finalK == dmSurveyAnswerTableList.size() - 1 && isSyncedAllFiles[0]) {
+                                int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
+
+                                if (fileSyncedCount == 0) {
                                     if(itemType.equalsIgnoreCase("DMSurvey")) {
                                         postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                                     }
@@ -6492,7 +6489,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                     Log.d("UPLOAD_FILE_FAILURE", "1");
                                 } else {
-                                    isSyncedAllFiles[0] = false;
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
                                     Log.d("Error in Upload Docs", postResponse.toString());
                                 }
@@ -6503,8 +6499,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.d("UPLOAD_FILE_FAILURE", e.toString());
-
-                            isSyncedAllFiles[0] = false;
                             try {
                                 String failureMessage = res.getString(R.string.networking_error);
                                 if (e != null) {
@@ -6523,7 +6517,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
 
-            if(!isFilesExists && isSyncedAllFiles[0]) {
+            if(!isFileNotExists) {
                 if(itemType.equalsIgnoreCase("DMSurvey")) {
                     postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                 }
