@@ -1385,4 +1385,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
     <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
     <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
+    <string name="farm_holding_suffix">\'s Farm Holding</string>
+    <string name="stakeholder_role_required">Stakeholder role required!</string>
 </resources>

@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">เสร็จสิ้นในส่วนของแบบสอบถาม</string>
     <string name="ofis_add_infrastructure">เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
-    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่</string>
+    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่และการถือครองฟาร์ม</string>
     <string name="Modules_to_submit">รายการที่จะส่ง</string>
     <string name="item_synced">รายการเชื่อมต่อสำเร็จ</string>
     <string name="item_sync_error">การเชื่อมต่อผิดพลาด โปรดติดต่อเจ้าหน้าที่</string>
@@ -730,9 +730,13 @@
     <string name="no_task">ไม่มีงาน</string>
     <string name="stakeholder_signature">ลายเซ็นผู้มีส่วนได้ส่วนเสีย</string>
     <string name="update_stakeholder">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
-    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
-    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
-    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
-    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
-
+    <string name="please_fill_stakeholder_name">กรุณากรอกชื่อผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="please_fill_stakeholder_dob">กรุณากรอกวันเกิดผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="Please_accept_stakeholder_consent">คุณต้องยอมรับคำชี้แจงความยินยอมเพื่อลงทะเบียนผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="stakeholder_consent">ความยินยอมของผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="new_stakeholder">ผู้มีส่วนได้ส่วนเสียรายใหม่</string>
+    <string name="Stakeholder_Added">เพิ่มผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="Stakeholder_Updated">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="farm_holding_suffix">ฟาร์มที่ถือครอง</string>
+    <string name="stakeholder_role_required">จำเป็นต้องมีบทบาทของผู้มีส่วนได้ส่วนเสีย!</string>
 </resources>

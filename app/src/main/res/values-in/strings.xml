@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Selesaikan modul kusioner</string>
     <string name="ofis_add_infrastructure">Tambahkan Infrastruktur Sosial</string>
-    <string name="ofis_add_new_farmer">Tambahkan Petani Baru</string>
+    <string name="ofis_add_new_farmer">tambahkan petani baru &amp; lahan pertanian</string>
     <string name="Modules_to_submit">Item yang dimasukkan</string>
     <string name="item_synced">Item item yang sukses di sinkronisasi</string>
     <string name="item_sync_error">Sinkronisasi Error. Mohon hubungi kami untuk bantuan</string>
@@ -818,7 +818,7 @@
     <string name="farm_holding_code">Kode Kepemilikan Kebun</string>
     <string name="view_stake_holder_information">Melihat Informasi Pemangku Kepentingan</string>
     <string name="view_stake_holder">Lihat pemangku kepentingan</string>
-    <string name="stakeholder_list">Daftar pemangku kepentingan</string>
+    <string name="stakeholder_list">daftar pemangku kepentingan</string>
     <string name="confirmation_message">Apakah Anda ingin mengonfirmasi perubahan ini?</string>
     <string name="stakeholder_role">Peran Pemangku Kepentingan</string>
     <string name="primary_farmer">Petani Primer</string>
@@ -826,8 +826,13 @@
     <string name="no_task">Tidak Ada Tugas</string>
     <string name="stakeholder_signature">Tanda Tangan Pemangku Kepentingan</string>
     <string name="update_stakeholder">Memperbarui Pemangku Kepentingan</string>
-    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
-    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
-    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
-    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
+    <string name="please_fill_stakeholder_name">Silakan isi nama pemangku kepentingan</string>
+    <string name="please_fill_stakeholder_dob">Silakan isi tanggal lahir pemangku kepentingan</string>
+    <string name="Please_accept_stakeholder_consent">Anda harus menerima pernyataan persetujuan untuk mendaftarkan pemangku kepentingan</string>
+    <string name="stakeholder_consent">persetujuan pemangku kepentingan</string>
+    <string name="new_stakeholder">Pemangku Kepentingan Baru</string>
+    <string name="Stakeholder_Added">Pemangku kepentingan ditambahkan</string>
+    <string name="Stakeholder_Updated">Pemangku Kepentingan Diperbarui</string>
+    <string name="farm_holding_suffix">Kepemilikan kebun</string>
+    <string name="stakeholder_role_required">Peran pemangku kepentingan diperlukan!</string>
 </resources>

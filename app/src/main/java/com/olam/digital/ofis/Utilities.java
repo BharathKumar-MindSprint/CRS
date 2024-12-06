@@ -859,8 +859,7 @@ public  static String base64ConversionForImage(String filepath)  {
             case "en" -> dmMainModule.name;
             case "es" -> dmMainModule.nameEs;
             case "fr" -> dmMainModule.nameFr;
-            case "id" -> dmMainModule.nameIdn;
-            case "in" -> dmMainModule.nameIdn;
+            case "id", "in" -> dmMainModule.nameIdn;
             case "lo" -> dmMainModule.nameLo;
             case "pt" -> dmMainModule.namePt;
             case "th" -> dmMainModule.nameTh;
@@ -868,8 +867,19 @@ public  static String base64ConversionForImage(String filepath)  {
             case "vi" -> dmMainModule.nameVi;
             default -> dmMainModule.name;
         };
-
     }
+
+    public static String appendSuffixForFarmName(String farmerName, String farmHoldingSuffix) {
+        String language = Locale.getDefault().getLanguage();
+
+        boolean isPrefix = switch (language) {
+            case "es", "fr", "id", "in", "pt" -> true;
+            default -> false;
+        };
+
+        return isPrefix ? farmHoldingSuffix + farmerName : farmerName + farmHoldingSuffix;
+    }
+
 
 
 // OW-4516 Fix

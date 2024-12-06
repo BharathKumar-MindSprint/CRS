@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Completar cuestionario</string>
     <string name="ofis_add_infrastructure">Añadir infraestructura comunitaria</string>
-    <string name="ofis_add_new_farmer">Agregar nuevo agricultor</string>
+    <string name="ofis_add_new_farmer">agregar nuevo agricultor y finca</string>
     <string name="Modules_to_submit">Elementos a cargar</string>
     <string name="item_synced">Elemento(s) sincronizado(s) con éxito</string>
     <string name="item_sync_error">Error de sincronización. Favor contáctenos para soporte</string>
@@ -829,7 +829,7 @@
     <string name="farm_holding_code">Código de explotación</string>
     <string name="view_stake_holder_information">Ver información del interesado</string>
     <string name="view_stake_holder">Ver interesados</string>
-    <string name="stakeholder_list">Lista de interesados</string>
+    <string name="stakeholder_list">lista de partes interesadas</string>
     <string name="confirmation_message">Quieres confirmar los cambios?</string>
     <string name="stakeholder_role">Función del interesado</string>
     <string name="primary_farmer">Agricultor principal</string>
@@ -837,9 +837,14 @@
     <string name="no_task">Sin tarea</string>
     <string name="stakeholder_signature">Firma de la parte interesada agrícola</string>
     <string name="update_stakeholder">Actualización de la parte interesada agrícola</string>
-    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
-    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
-    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
-    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
+    <string name="please_fill_stakeholder_name">Nombre de la parte interesada agrícola</string>
+    <string name="please_fill_stakeholder_dob">Fecha de nacimiento de la parte interesada agrícola</string>
+    <string name="Please_accept_stakeholder_consent">Debe aceptar las declaraciones de consentimiento para registrar al parte interesada agrícola</string>
+    <string name="stakeholder_consent">consentimiento de las partes interesadas</string>
+    <string name="new_stakeholder">Nueva parte interesada agrícola</string>
+    <string name="Stakeholder_Added">La parte interesada agrícola añadido</string>
+    <string name="Stakeholder_Updated">La parte interesada agrícola actualizado</string>
+    <string name="farm_holding_suffix">explotación de</string>
+    <string name="stakeholder_role_required">Función requerida de de la parte interesada agrícola</string>
 </resources>
 
