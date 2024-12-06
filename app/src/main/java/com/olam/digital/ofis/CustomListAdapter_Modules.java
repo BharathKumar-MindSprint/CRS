@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static org.apache.commons.lang3.time.DateUtils.isSameDay;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -818,6 +820,25 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                 String module_ID = cursor.getString(cursor.getColumnIndex("_id"));
                 String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
+
+                int month = 0;
+                int day = 0;
+                int year = 0;
+                Calendar recurrenceDate = Calendar.getInstance();
+                Date startDate = null;
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    if (start_date_string != null) {
+                        startDate = formatter.parse(start_date_string.split("T")[0]);
+                        recurrenceDate.setTime(startDate);
+                        month = recurrenceDate.get(Calendar.MONTH);
+                        day =  recurrenceDate.get(Calendar.DAY_OF_MONTH);
+                        year = recurrenceDate.get(Calendar.YEAR);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 boolean disable_entry = false;
                 if (hasSubmittedModules) {
                     try {
@@ -889,7 +910,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                         if (recurrence_type != null) {
                                             if (recurrence_type.equalsIgnoreCase("years")) {
 
-                                                // change the va;
                                                 if (Objects.equals(farmerAssignmentField, "48")){
 
                                                     // set the date according to start date
@@ -899,35 +919,87 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 //                                                    lastSubmittedDate.setTime(sdf.parse("2022-07-23 07:55:12"));
 
                                                 }else {
-                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                    Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                    nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+
+                                                    while (!currentDate.before(nextRecurrenceDate)) {
+                                                        year += recurrence_frequency;
+                                                        recurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                                        nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                                    }
+
+                                                    calculationDate.set(Calendar.YEAR, year);
+                                                    calculationDate.set(Calendar.MONTH, month);
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, day);
                                                 }
-//                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-//                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-//                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
                                             } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                Calendar previousRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                                while (!currentDate.before(nextRecurrenceDate)) {
+                                                    previousRecurrenceDate = (Calendar) nextRecurrenceDate.clone();
+                                                    nextRecurrenceDate.add(Calendar.MONTH, recurrence_frequency);
+
+                                                }
+                                                int newYear = previousRecurrenceDate.get(Calendar.YEAR);
+                                                int newMonth = previousRecurrenceDate.get(Calendar.MONTH);
+
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, day);
+
                                             } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+
+                                                long daysBetween = (currentDate.getTimeInMillis() - recurrenceDate.getTimeInMillis()) / (1000 * 60 * 60 * 24);
+
+                                                int weekDifference = (int) (daysBetween / 7);
+
+                                                int weeksPassed = weekDifference / recurrence_frequency;
+
+                                                nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, weeksPassed * recurrence_frequency);
+
+                                                if (currentDate.before(nextRecurrenceDate)) {
+                                                    nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                }
+
+                                                int newYear = nextRecurrenceDate.get(Calendar.YEAR);
+                                                int newMonth = nextRecurrenceDate.get(Calendar.MONTH);
+                                                int newDay = nextRecurrenceDate.get(Calendar.DAY_OF_MONTH);
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
+
+
                                             } else {
-                                                // must be days
-                                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                Calendar finalReccurenceDate = (Calendar) recurrenceDate.clone();
+                                                Calendar nextRecurrenceDate = (Calendar) finalReccurenceDate.clone();
+
+                                                nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+
+                                                while (!currentDate.before(nextRecurrenceDate)) {
+                                                    finalReccurenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                                    nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                                }
+
+                                                int newYear = finalReccurenceDate.get(Calendar.YEAR);
+                                                int newMonth = finalReccurenceDate.get(Calendar.MONTH);
+                                                int newDay = finalReccurenceDate.get(Calendar.DAY_OF_MONTH);
+                                                calculationDate.set(Calendar.YEAR, newYear);
+                                                calculationDate.set(Calendar.MONTH, newMonth);
+                                                calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
                                             }
 
                                             // set the time
-                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                            calculationDate.set(Calendar.MINUTE, 59);
-                                            calculationDate.set(Calendar.SECOND, 59);
-                                            calculationDate.set(Calendar.MILLISECOND, 999);
+//                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+//                                            calculationDate.set(Calendar.MINUTE, 59);
+//                                            calculationDate.set(Calendar.SECOND, 59);
+//                                            calculationDate.set(Calendar.MILLISECOND, 999);
 
                                             // force the recalculation
-                                            calculationDate.get(Calendar.DAY_OF_MONTH);
+//                                            calculationDate.get(Calendar.DAY_OF_MONTH);
 
 
-                                            if (lastSubmittedDate.after(calculationDate)) {
+                                            if (lastSubmittedDate.after(calculationDate) || isSameDay(lastSubmittedDate, calculationDate)) {
                                                 disable_entry = true;
                                             }
                                         }
@@ -1585,18 +1657,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     enabledItem.setText("false");
                 }
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date startDate = null;
-                try {
-                    if(start_date_string!=null) {
-                        startDate = dateFormat.parse(start_date_string.split("T")[0]);
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
                 Date currentDateNew = new Date();
-
                 if (startDate!=null){
                     if(currentDateNew.before(startDate)){
                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -1794,6 +1855,5 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         // Check if the dates are equal
         return date1 != null && date2 != null && !date1.equals(date2);
     }
-
 
 }
