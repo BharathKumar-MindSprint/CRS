@@ -84,7 +84,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
     }
 
     private void displaySectionQuestionItems(int section, List<DmQuestionsModule> dmQuestionsSubModuleList) {
-        Constants.questionIdsSection.clear();
         for (int j = 0; j < dmQuestionsSubModuleList.size(); j++) {
 
             DmQuestionsModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
@@ -110,7 +109,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             }
 
 
-//            textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setTypeface(null, Typeface.BOLD);
@@ -159,7 +157,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             dmQuestionsSubModuleList.clear();
             dmQuestionsSubModuleList = db.dmQuestionsModuleDao().getDmQuestionsSubModulebySectionId(dmSectionsItem.id);
             displaySectionQuestionItems(i + 1, dmQuestionsSubModuleList);
-//            Toast.makeText(getActivity(), "OK" + dmQuestionsSubModuleList.size(), Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -1062,14 +1059,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         dm_Section.removeAllViews();
         dm_Question.removeAllViews();
 
-        List<DmSectionsItem> dmSectionsItemList = new ArrayList<>();
-        dmSectionsItemList.clear();
-        dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsByModuleId(Integer.parseInt(Constants.MODULE_ID));
+        List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsByModuleId(Integer.parseInt(Constants.MODULE_ID));
+        Constants.questionIdsSection.clear();
         displaySectionItems(dmSectionsItemList);
 
-        List<DmQuestionsModule> dmQuestionsModuleList = new ArrayList<>();
-        dmQuestionsModuleList.clear();
-        dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
+        List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
+
         displayQuestionsModuleItems(dmQuestionsModuleList);
 
     }
