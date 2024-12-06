@@ -68,11 +68,6 @@ public class Utilities {
 
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
-    public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
-    public static int syctask=0;
-
-
-
     public  static  long farmerId;
     public  static String productId;
     public  static String countryId;
@@ -102,7 +97,6 @@ public class Utilities {
     public static String UNREAD = "U";
     public static String DELETED = "D";
     public static String NOTIFICATIONLIST = "notificationDetailsList";
-    public static String MODULELIST = "moduleList";
     public static String FDP = "FDP";
     public static String MODULE = "module";
     public static String PASSWORD = "password";
@@ -700,37 +694,6 @@ public  static String base64ConversionForImage(String filepath)  {
             e.printStackTrace();
         }
         return timeInSeconds;
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView)
-    {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        WindowManager.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
     }
 
     public static void setKeycloakClientDetails(Context context, String prefName, String value) {

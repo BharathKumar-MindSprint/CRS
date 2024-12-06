@@ -36,8 +36,6 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
     @NonNull
     @Override
     public ChildHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        /*View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.child_list_row,null);
-        return new ChildHolder(view);*/
         View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.child_list_row, null, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         rootView.setLayoutParams(lp);
@@ -57,12 +55,7 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
             holder.arrow.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_right_arrow));
         }
 
-        holder.rowItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemChildClickListener.onChildClick(v,position,childrenDTO);
-            }
-        });
+        holder.rowItem.setOnClickListener(v -> onItemChildClickListener.onChildClick(v,position,childrenDTO));
     }
 
     @Override
