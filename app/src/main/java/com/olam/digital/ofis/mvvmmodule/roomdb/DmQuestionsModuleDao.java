@@ -43,4 +43,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("SELECT question FROM DmQuestionsModule WHERE id=:questionID")
     String getQuestionById(int questionID);
+
+    @Query("SELECT DISTINCT id FROM DmQuestionsModule WHERE moduleId = :moduleId")
+    List<Integer> getDmQuestionsByModuleId(int moduleId);
 }

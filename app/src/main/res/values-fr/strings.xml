@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Complétez le questionnaire</string>
     <string name="ofis_add_infrastructure">Ajouter une infrastructure sociale</string>
-    <string name="ofis_add_new_farmer">Ajouter un nouveau planteur </string>
+    <string name="ofis_add_new_farmer">ajouter un nouvel agriculteur et une exploitation agricole</string>
     <string name="Modules_to_submit">Eléments à soumettre</string>
     <string name="item_synced">Synchronisation effectuée avec succès.</string>
     <string name="item_sync_error">Erreur de synchronisation. Veuillez nous contacter svp</string>
@@ -1159,17 +1159,21 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="farm_holding_code">Code de l\'exploitation agricole</string>
     <string name="view_stake_holder_information">Voir les informations sur autre l\'acteur</string>
     <string name="view_stake_holder">Voir autre l’acteur</string>
-    <string name="stakeholder_list">Liste des autres acteurs</string>
-    <string name="confirmation_message">Souhaitez-vous confirmer les modifications ?</string>
+    <string name="stakeholder_list">liste des parties prenantes</string>
+    <string name="confirmation_message">Voulez-vous confirmer les modifications ?</string>
     <string name="stakeholder_role">Rôle de l\'intervenant</string>
     <string name="primary_farmer">Agriculteur principal</string>
     <string name="stake_holder_details">Détails sur les autres acteurs agricoles</string>
     <string name="no_task">Pas de tâche</string>
     <string name="stakeholder_signature">Signature de l’autre acteur agricole</string>
     <string name="update_stakeholder">Mise à jour de l’autre acteur agricole</string>
-    <string name="please_fill_stakeholder_name">please fill the stakeholder name</string>
-    <string name="please_fill_stakeholder_dob">Please fill the stakeholder date of birth</string>
-    <string name="Please_accept_stakeholder_consent">You must accept consent statements to save the stakeholder</string>
-    <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
-
+    <string name="please_fill_stakeholder_name">Veuillez indiquer le nom de l\'acteur agricole</string>
+    <string name="please_fill_stakeholder_dob">Veuillez indiquer la date de naissance de l’acteur agricole</string>
+    <string name="Please_accept_stakeholder_consent">Vous devez accepter les déclarations de consentement pour enregistrer l’acteur agricole</string>
+    <string name="stakeholder_consent">consentement des parties prenantes</string>
+    <string name="new_stakeholder">Nouvel acteur agricole</string>
+    <string name="Stakeholder_Added">l’Acteur agricole ajouté</string>
+    <string name="Stakeholder_Updated">l’Acteur agricole mise à jour</string>
+    <string name="farm_holding_suffix">l\'exploitation agricole de</string>
+    <string name="stakeholder_role_required">Rôle de l\'acteur agricole obligatorie!</string>
 </resources>

@@ -178,39 +178,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
-                ArrayList<String> justVal = new ArrayList<String>();
-                justVal.clear();
-
-
-                for (int i = 0; i < qId.size(); i++) {
-                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0, Constants.PLOT_ID);
-                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, Constants.PLOT_ID);
-
-                    if (!justVal.contains(qId.get(i)) && !dmComplaintFileTables.isEmpty()) {
-                        justVal.add(qId.get(i));
-                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
-                        justVal.add(qId.get(i));
-                    }
-                }
-
-
-                if (justVal.size()==Constants.questionIds.size()){
-                    goNextCaptureProof = true;
-                } else {
-                    Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
-                }
-
-                for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                        Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
-                        goNextActionPlan = false;
-                        break;
-                    }else {
-                        goNextActionPlan = true;
-                    }
-                }
-
-                if (goNextCaptureProof && goNextActionPlan){
+                if (validateActionPlanAndProof(qId) && validateActionPlanAndProof(qIdSections)){
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(2);
 
@@ -232,6 +200,35 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         return view;
+    }
+
+    private boolean validateActionPlanAndProof(ArrayList<String> qId) {
+        ArrayList<String> justVal = new ArrayList<>();
+
+        for (int i = 0; i < qId.size(); i++) {
+            List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0, Constants.PLOT_ID);
+            int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, Constants.PLOT_ID);
+
+            if (!justVal.contains(qId.get(i)) && !dmComplaintFileTables.isEmpty()) {
+                justVal.add(qId.get(i));
+            } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
+                justVal.add(qId.get(i));
+            }
+        }
+
+        if (justVal.size() != qId.size()){
+            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        for (int j=0; j<qId.size(); j++) {
+            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
+                Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -804,7 +801,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(null, id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
 

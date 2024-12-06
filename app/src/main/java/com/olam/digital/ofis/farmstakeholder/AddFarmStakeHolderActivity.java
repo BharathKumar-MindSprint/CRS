@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.farmstakeholder;
 
+import static com.olam.digital.ofis.Utilities.appendSuffixForFarmName;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -66,7 +68,7 @@ public class AddFarmStakeHolderActivity extends BaseActivity {
 
                 etFarmerName.setText(farmerName);
                 etFarmHoldingCode.setText(farmCode);
-                etFarmHoldingName.setText(farmerName.toUpperCase() + "'S FARM HOLDING");
+                etFarmHoldingName.setText(appendSuffixForFarmName(farmName, res.getString(R.string.farm_holding_suffix)).toUpperCase());
             }
         }
         catch (Exception e) {
