@@ -7,7 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
-import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -365,10 +363,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
 
