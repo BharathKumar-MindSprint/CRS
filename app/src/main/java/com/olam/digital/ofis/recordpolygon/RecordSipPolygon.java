@@ -18,7 +18,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
@@ -64,11 +63,9 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
-import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
-import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -77,8 +74,6 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
@@ -90,7 +85,6 @@ import org.osmdroid.bonuspack.kml.KmlTrack;
 import org.osmdroid.bonuspack.kml.LineStyle;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -100,7 +94,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
-import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -113,7 +106,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
-import java.util.UUID;
 
 public class RecordSipPolygon extends AppCompatActivity {
 
@@ -134,7 +126,6 @@ public class RecordSipPolygon extends AppCompatActivity {
     TextView category_name_sip;
     EditText name_sip;
     Button start_stop_recording_sip, pause_recording_sip, bttnSave, delete_plot;
-    static int currentLoggingTrackSpinnerPosition = 0;
 
     protected LocationManager mLocationManager;
     OFISRoomDB db;
@@ -143,7 +134,6 @@ public class RecordSipPolygon extends AppCompatActivity {
     protected ArrayList<GeoPoint> viaPoints;
     protected FolderOverlay mItineraryMarkers;
     TextView areaInfo;
-    Logger logger;
     protected MapView map;
     Polygon polygon;
     OnlineTileSourceBase MAPBOXSATELLITELABELLED;
@@ -220,7 +210,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        logger.addRecordToLog("Record polygon activity started");
         db = OFISRoomDB.getDbInstance(getApplicationContext());
         dl = new DataLayer(getResources(),RecordSipPolygon.this);
 
@@ -229,8 +218,6 @@ public class RecordSipPolygon extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-//                        mRequestingLocationUpdates = true;
-                        logger.addRecordToLog("onPermissionGranted");
                         startLocationUpdates();
                     }
 
@@ -326,7 +313,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         start_stop_recording_sip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logger.addRecordToLog("mStartLoggingButton");
                 if(pause_recording_sip.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -1326,7 +1312,6 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
     boolean startLocationUpdates() {
-        logger.addRecordToLog("startLocationUpdates");
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -1350,23 +1335,17 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
     private boolean startUpdate() {
-        logger.addRecordToLog("startLocationUpdates");
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
         locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
-        logger.addRecordToLog("INTERVAL :" + INTERVAL +"\n" +
-                "FASTEST_INTERVAL :" + FASTEST_INTERVAL +"\n" +
-                "Priority: " +  new GPSTracker(this).getLocationMode() +"\n" +
-                "SmallestDisplacement: " +    DISPLACEMENT );
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Permission Required", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            logger.addRecordToLog("getFusedLocationProviderClient");
             getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             return true;
         }
@@ -1400,14 +1379,6 @@ public class RecordSipPolygon extends AppCompatActivity {
             return;
         }
         mLastTime = currentTime;
-
-        // Capture the Logger item
-
-        logger.addRecordToLog( currentTrackname +"-- >  Accuracy -->" + pLoc.getAccuracy()  +"\n" +
-                "    Latitude  -->"+ pLoc.getLatitude() +"\n" +
-                "    Longitude  -->"+ pLoc.getLongitude() +"\n" +
-                "    Altitude  -->"+ pLoc.getAltitude() +"\n" +
-                "    Bearing  -->"+ pLoc.getBearing()+"\n" );
 
         GeoPoint newLocation = new GeoPoint(pLoc);
         if (!myLocationOverlay.isEnabled()) {

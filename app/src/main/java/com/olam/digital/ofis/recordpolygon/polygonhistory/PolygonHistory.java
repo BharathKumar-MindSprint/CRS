@@ -36,7 +36,6 @@ import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.recordpolygon.Logger;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
@@ -63,24 +62,7 @@ import retrofit2.Response;
 public class PolygonHistory extends AppCompatActivity {
 
     private TextView farmerName, olamFarmerId , plot_name;
-    Logger logger;
     protected LocationManager mLocationManager;
-
-    private LocationRequest locationRequest;
-    OnlineTileSourceBase MAPBOXSATELLITELABELLED;
-    protected DirectedLocationOverlay myLocationOverlay;
-
-    private static int DISPLACEMENT = 5;
-
-    private static final long INTERVAL = 1000 * 3;
-    private static final long FASTEST_INTERVAL = 1000 * 2;
-
-    /*private LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            onLocationChanged(locationResult.getLastLocation());
-        }
-    };*/
 
     private static final String FARMER_ID = "FARMER_ID";
     private static final String FARM_ID = "FARM_ID";
@@ -94,8 +76,6 @@ public class PolygonHistory extends AppCompatActivity {
     protected MapView mapView;
     private Marker currentLocationMarker , farmLocationMarker;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 7;
-
-    Context context;
 
     OFISRoomDB db;
 
@@ -115,9 +95,6 @@ public class PolygonHistory extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         db = OFISRoomDB.getDbInstance(getApplicationContext());
-
-        logger.addRecordToLog("Polygon History");
-
 
         mFarmerId = getIntent().getLongExtra(FARMER_ID, 0);
         mFarmId = getIntent().getIntExtra(FARM_ID, 0);
@@ -141,7 +118,6 @@ public class PolygonHistory extends AppCompatActivity {
         Configuration.getInstance().load(this, getPreferences(MODE_PRIVATE));
         mapView = findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
-//        mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
         mapView.setClickable(true);
 
