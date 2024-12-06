@@ -1306,7 +1306,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-            new AuthenticationHelper(this).setPassode(passcode.getText().toString().trim());
 
             doInitialCheck();
         } else if (response.code() == 423) {

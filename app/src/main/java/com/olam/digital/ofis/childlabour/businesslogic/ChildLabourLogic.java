@@ -3,7 +3,6 @@ package com.olam.digital.ofis.childlabour.businesslogic;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import androidx.core.content.ContextCompat;
 
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
@@ -23,12 +22,6 @@ public class ChildLabourLogic {
 
     DataLayer dataLayer;
 
-
-    public long insertVisitDetails(Context context, ContentValues contentValues) {
-        dataLayer = new DataLayer(context.getResources(), context);
-        long newVisitDetaisId = dataLayer.insertChildVisitDetails(contentValues);
-        return newVisitDetaisId;
-    }
 
     // Inserting the child survey visit details to the database
     public long insertVisitSurveyDetails(Context context, ContentValues contentValues,String name,String type) {
@@ -87,19 +80,6 @@ public class ChildLabourLogic {
             }
 
         return childrenDTO;
-    }
-
-
-    public List<String> getSurveyCodeDetailsById(Context context, Long farmerId) {
-        dataLayer = new DataLayer(context.getResources(), context);
-        List<String> visitList = new ArrayList<String>();
-        Cursor cursor = dataLayer.getChildVisitDetailsById(farmerId);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                visitList.add(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
-            }
-        }
-        return visitList;
     }
 
     // Getting the child visit details by the farmer Id from local db

@@ -32,7 +32,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
-import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.DeviceIdExtractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
@@ -281,7 +281,7 @@ public class SyncAllTask extends SyncTask {
         String endpoint = "";
         JSONObject inputArgs = new JSONObject();
         try {
-            inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(context));
+            inputArgs.put("deviceId", DeviceIdExtractor.fetchDeviceID(context));
             inputArgs.put("firebaseToken",Utilities.getFirebaseTokenSharedPrefs(context));
         } catch (JSONException e) {
             e.printStackTrace();
