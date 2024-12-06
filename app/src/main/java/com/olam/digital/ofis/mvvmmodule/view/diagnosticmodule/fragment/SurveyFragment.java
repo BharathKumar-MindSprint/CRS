@@ -1,7 +1,6 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -29,19 +28,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DecimalFilter;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NegativeDecimalFilter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
@@ -524,128 +519,35 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                    int complianceId = 0;
-                    int answerId = 0;
-                    boolean allowCustomActionPlan = false;
-                    boolean isCaptureProof = false;
                     if (!db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).isEmpty()) {
                         if (editText.getText().toString() != null) {
                             String value = editText.getText().toString().trim();
                             for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
                                 try {
                                     if (Objects.equals(value, "-")) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                     else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                     else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
 
                                     }
                                     else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange > Double.parseDouble(value)) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                     else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange > Double.parseDouble(value)) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1,questionId, j);
                                         return ;
                                     }
                                 }catch (Exception e){e.printStackTrace();
@@ -979,10 +881,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                    int complianceId = 0;
-                    boolean allowCustomActionPlan = false;
-                    boolean isCaptureProof = false;
-                    int answerId = 0;
                     if (!db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).isEmpty()) {
                         if (editText.getText().toString() != null) {
                             String value = editText.getText().toString().trim();
@@ -990,115 +888,27 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
                                 try {
                                     if (Objects.equals(value, "-")) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                     else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                     else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
-
-                            
-
                                     }
                                     else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange > Double.parseDouble(value)) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     } else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange > Double.parseDouble(value)) {
-                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
-                                        answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
 
-                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                                        dmSurveyAnswerTable1.actionPlanText = "";
-                                        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable1.actionplanId = "";
-                                        dmSurveyAnswerTable1.amount = 0;
-                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                        dmSurveyAnswerTable1.isSynced = false;
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
-                                        }
-
+                                        saveTextBoxAnswer(dmSurveyAnswerTable1, questionId, j);
                                         return ;
                                     }
                                 }catch (Exception e){e.printStackTrace();
@@ -1369,6 +1179,27 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             case "vi" -> dmLookupValuesItem.valueVi;
             default -> dmLookupValuesItem.value;
         };
+    }
+
+    public void saveTextBoxAnswer(DmSurveyAnswerTable dmSurveyAnswerTable1, String questionId, int j) {
+        int complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+        boolean allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+        boolean isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+        int answerId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).id;
+
+        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
+        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+        dmSurveyAnswerTable1.actionPlanText = "";
+        dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
+        dmSurveyAnswerTable1.actionplanId = "";
+        dmSurveyAnswerTable1.amount = 0;
+        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+        dmSurveyAnswerTable1.isSynced = false;
+        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+        }
     }
 
 }
