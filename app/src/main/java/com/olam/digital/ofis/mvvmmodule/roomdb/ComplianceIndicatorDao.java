@@ -14,9 +14,6 @@ import java.util.List;
 @Dao
 public interface ComplianceIndicatorDao {
 
-    @Query("SELECT * FROM ComplianceIndicator")
-    List<ComplianceIndicator> getComplianceIndicator();
-
     @Insert
     void insert(ComplianceIndicator... complianceIndicators);
 

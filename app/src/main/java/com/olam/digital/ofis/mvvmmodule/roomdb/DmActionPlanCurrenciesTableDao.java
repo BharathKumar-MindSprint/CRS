@@ -12,8 +12,6 @@ import java.util.List;
 
 @Dao
 public interface DmActionPlanCurrenciesTableDao {
-    @Query("SELECT * FROM DmActionPlanCurrenciesTable")
-    List<DmActionPlanCurrenciesTable> getDmActionPlanCurrenciesTable();
 
     @Insert
     void insert(DmActionPlanCurrenciesTable... dmActionPlanCurrenciesTables);

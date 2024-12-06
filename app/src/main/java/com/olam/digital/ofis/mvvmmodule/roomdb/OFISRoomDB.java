@@ -26,41 +26,28 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItemSubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuestionsTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.CapturedProofFollowupTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.CapturedProofFollowupTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModuleItemFollowupTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
@@ -69,16 +56,14 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
-        DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
-        DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
+        DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
-        DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
-        DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
-        CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
-        FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
+        DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
+        FollowUpItemMainTable.class, FollowUpAnswerTable.class,
+        DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
         DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class},
-        version = 16)
+        version = 15)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -90,25 +75,17 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmCurrenciesItemDao dmCurrenciesItemDao();
     public abstract DmQuestionsModuleDao dmQuestionsModuleDao();
     public abstract DmLookupValuesItemDao dmLookupValuesItemDao();
-    public abstract DmActionPlansItemDao dmActionPlansItemDao();
     public abstract DmSectionsItemDao dmSectionsItemDao();
-    public abstract DmLookupValuesISubmoduleDao dmLookupValuesISubmoduleDao();
-    public abstract DmActionPlansItemSubmoduleDao dmActionPlansItemSubmoduleDao();
     public abstract DmRecurrenceDao dmRecurrenceDao();
     public abstract DmComplaintFileTableDao dmComplaintFileTableDao();
     public abstract DmSurveyAnswerTableDao dmSurveyAnswerTableDao();
     public abstract DmTextBoxModuleQuestionsDao dmTextBoxModuleQuestionsDao();
     public abstract DmRangeTextBoxModuleQuestionsTableDao dmRangeTextBoxModuleQuestionsTableDao();
-    public abstract DmNonComplaintFileTableDao dmNonComplaintFileTableDao();
-    public abstract DmSatisfactoryFileTableDao dmSatisfactoryFileTableDao();
     public abstract DmActionPlanCurrenciesTableDao dmActionPlanCurrenciesTableDao();
     public abstract DmRangeActionPlansItemsDao dmRangeActionPlansItemsDao();
     public abstract DMSurveyReportDao dmSurveyReportDao();
     public abstract FollowUpItemMainTableDao followUpItemMainTableDao();
-    public abstract CapturedProofFollowupTableDao capturedProofFollowupTableDao();
-    public abstract ExistingModuleItemFollowupTableDao existingModuleItemFollowupTableDao();
-    public abstract FollowUpAnswerTableDao followUpAnswerTableDao();
-    public abstract FollowUpResultTableDao followUpResultTableDao();
+
 
     public abstract DmAssessmentResultTypeDao dmAssessmentResultTypeDao();
 
@@ -197,6 +174,18 @@ public abstract class OFISRoomDB extends RoomDatabase {
                         "submitted_modules TEXT," +
                         "created_locally INTEGER" +
                         ")");
+                database.execSQL("DROP TABLE DmActionPlansItem");
+                database.execSQL("DROP TABLE DmActionPlansItemSubmodule");
+                database.execSQL("DROP TABLE DmLookupValuesISubmodule");
+                database.execSQL("DROP TABLE DmNonComplaintFileTable");
+                database.execSQL("DROP TABLE DmQuestionsSubModule");
+                database.execSQL("DROP TABLE DmSatisfactoryFileTable");
+                database.execSQL("DROP TABLE DmSavePartialSurveyTable");
+                database.execSQL("DROP TABLE CapturedProofFollowupTable");
+                database.execSQL("DROP TABLE ExistingModuleItemFollowupTable");
+                database.execSQL("DROP TABLE FollowUpItemMainTable");
+                database.execSQL("DROP TABLE FollowUpResultTable");
+
             }
         };
 

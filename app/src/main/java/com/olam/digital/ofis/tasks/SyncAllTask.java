@@ -560,11 +560,8 @@ public class SyncAllTask extends SyncTask {
         try {
             OFISRoomDB db = OFISRoomDB.getDbInstance(context);
             db.dmSectionsItemDao().deleteAll();
-            db.dmLookupValuesISubmoduleDao().deleteAll();
-            db.dmActionPlansItemSubmoduleDao().deleteAll();
             db.dmQuestionsModuleDao().deleteAll();
             db.dmLookupValuesItemDao().deleteAll();
-            db.dmActionPlansItemDao().deleteAll();
             db.dmMainModuleDao().deleteAll();
             db.dmAnswerTypesDao().deleteAll();
             db.dmQuestionTypesDao().deleteAll();

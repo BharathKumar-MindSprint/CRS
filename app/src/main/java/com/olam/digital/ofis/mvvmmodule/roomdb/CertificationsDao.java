@@ -21,9 +21,6 @@ public interface CertificationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Certifications> certificationsList);
 
-    @Query("SELECT * FROM Certifications WHERE certificationId = :id")
-    List<Certifications> getCertificationsById(int id);
-
     @Delete
     void delete(Certifications certifications);
 
