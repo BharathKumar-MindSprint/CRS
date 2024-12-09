@@ -76,6 +76,12 @@ public class SharedPreferenceUtils {
         return mSharedPreferences.getString(AppConstants.KEY_FARM_ID, "");
     }
 
+    public void setFarmID(String aFarmID) {
+        mSharedPreferencesEditor.putString(AppConstants.KEY_FARM_ID, aFarmID);
+        mSharedPreferencesEditor.commit();
+    }
+
+
     LocationBeanList getLocationBeanList(String aPlotKey) {
         aPlotKey += getFarmID();
         String json = mSharedPreferences.getString(aPlotKey, "");
