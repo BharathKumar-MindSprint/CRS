@@ -45,32 +45,12 @@ public class SharedPreferenceUtils {
     String setLocationBeanList(String aPlotKey, LocationBeanList aLocationBeanList) {
         aPlotKey += getFarmID();
         String json = aLocationBeanList == null ? null : new Gson().toJson(aLocationBeanList);
-//        if (json != null && json.length() > 0) {
-//            Toast.makeText(mContext, aPlotKey + " getLocationBeanList " + json.substring(0, 15), Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(mContext, aPlotKey + " getLocationBeanList No data", Toast.LENGTH_LONG).show();
-//        }
         mSharedPreferencesEditor.putString(aPlotKey, json);
         mSharedPreferencesEditor.commit();
 
         return json;
     }
 
-    public boolean isPlotsRecordingFinished(int lFarmID) {
-        setFarmID("" + lFarmID);
-        int count = getPlotCount(""+lFarmID);
-        if (count == 0) {
-            return false;
-        }
-        for (int i = 0; i < count; i++) {
-            String key = "Plot " + (i + 1);
-            LocationBeanList lLocationBeanList = getLocationBeanList(key);
-            if (lLocationBeanList == null) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public List<LocationBeanList> getAllLocations() {
         int count = getPlotCount(getFarmID());
@@ -91,13 +71,9 @@ public class SharedPreferenceUtils {
         return null;
     }
 
-    public void setFarmerID(String key, String value) {
-        mSharedPreferencesEditor.putString(key, value);
-        mSharedPreferencesEditor.commit();
-    }
 
-    public String getFarmerID(String key) {
-        return mSharedPreferences.getString(key, "0");
+    String getFarmID() {
+        return mSharedPreferences.getString(AppConstants.KEY_FARM_ID, "");
     }
 
     public void setFarmID(String aFarmID) {
@@ -105,18 +81,10 @@ public class SharedPreferenceUtils {
         mSharedPreferencesEditor.commit();
     }
 
-    String getFarmID() {
-        return mSharedPreferences.getString(AppConstants.KEY_FARM_ID, "");
-    }
 
     LocationBeanList getLocationBeanList(String aPlotKey) {
         aPlotKey += getFarmID();
         String json = mSharedPreferences.getString(aPlotKey, "");
-//        if (json != null && json.length() > 0) {
-//            Toast.makeText(mContext, aPlotKey + " getLocationBeanList " + json.substring(0, 15), Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(mContext, aPlotKey + " getLocationBeanList No data", Toast.LENGTH_LONG).show();
-//        }
         return new Gson().fromJson(json, LocationBeanList.class);
     }
 
