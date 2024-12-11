@@ -25,13 +25,9 @@
         android:maxSdkVersion="22" />
 
     <uses-feature
-        android:name="android.hardware.Camera"
+        android:name="android.hardware.camera"
         android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.usb.host" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
 
     <queries>
         <intent>
