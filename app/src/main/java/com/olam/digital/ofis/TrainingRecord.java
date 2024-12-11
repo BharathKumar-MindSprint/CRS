@@ -738,6 +738,8 @@ public class TrainingRecord extends BaseListActivity{
             default:
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
+                } else {
+                    mCurrentPhotoPath = null;
                 }
         }
     }

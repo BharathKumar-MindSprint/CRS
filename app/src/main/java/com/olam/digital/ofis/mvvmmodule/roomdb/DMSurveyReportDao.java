@@ -4,8 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import java.util.List;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
 
 @Dao
 public interface DMSurveyReportDao {

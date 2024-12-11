@@ -2,7 +2,6 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,9 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.olam.digital.ofis.DataLayer;
-import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -38,15 +35,12 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultT
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 //import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;

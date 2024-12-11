@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo;
+package com.olam.digital.ofis.mvvmmodule.roomdb.entity;
 
 
 import androidx.room.ColumnInfo;

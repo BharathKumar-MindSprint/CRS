@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
 
 import java.util.List;
 

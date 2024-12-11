@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -26,17 +24,12 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;

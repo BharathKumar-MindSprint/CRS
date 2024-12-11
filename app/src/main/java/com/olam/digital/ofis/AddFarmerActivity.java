@@ -54,7 +54,6 @@
  import android.widget.TextView;
  import android.widget.Toast;
 
- import androidx.annotation.NonNull;
  import androidx.appcompat.app.AlertDialog;
  import androidx.core.app.ActivityCompat;
  import androidx.core.content.ContextCompat;
@@ -68,10 +67,8 @@
  import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
  import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
  import com.olam.digital.ofis.authentication.AuthenticationHelper;
- import com.olam.digital.ofis.childlabour.ChildLabourUtils;
  import com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity;
  import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
- import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
  import com.olam.digital.ofis.gps.GPSListener;
  import com.olam.digital.ofis.gps.GPSTracker;
  import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -81,10 +78,9 @@
  import com.olam.digital.ofis.model.FarmerLeadDTO;
  import com.olam.digital.ofis.model.NationalIdDTO;
  import com.olam.digital.ofis.model.NationalIdTypeDTO;
- import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
  import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
  import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
- import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
 
  import org.json.JSONArray;
  import org.json.JSONException;
@@ -238,8 +234,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String localeSuffixColumn;
     MultiStakeHolder stakeHolder;
 
-
-
+    private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -984,6 +979,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         if (isNIDAvailable) {
+            if(editMode){
+                for (Integer updatedValue : updatedNidValue) {
+                    dl.removeNIDPhotostatusByType(String.valueOf(updatedValue), editFarmerId);
+                }
+            }
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
@@ -2317,8 +2317,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editMode) {
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
+            if (!updatedNidValue.contains(nidvalue)) {
+                updatedNidValue.add(nidvalue);
             }
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 

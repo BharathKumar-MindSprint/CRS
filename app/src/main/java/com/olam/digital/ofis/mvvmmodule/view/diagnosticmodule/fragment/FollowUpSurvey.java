@@ -21,8 +21,8 @@ import android.widget.Toast;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 
 import java.text.SimpleDateFormat;

@@ -1,11 +1,11 @@
-package com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo;
+package com.olam.digital.ofis.mvvmmodule.roomdb.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "Partners")
-public class Partners{
+@Entity(tableName = "Programme")
+public class Programme{
 
     @PrimaryKey
     @ColumnInfo(name = "id")
