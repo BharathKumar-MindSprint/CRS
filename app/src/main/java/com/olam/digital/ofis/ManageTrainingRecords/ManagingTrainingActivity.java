@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.olam.digital.ofis.BaseActivity;
-import com.olam.digital.ofis.RetrofitServices.MyService;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
@@ -61,6 +60,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     String[] Asset_name;
     List<DocumentList.data> data;
     ViewpageAdapter adapter;
+    boolean noDataFound = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -74,21 +74,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         progressDialog.setMessage(getString(R.string.Loading));
         progressDialog.show();
         mIntentFilter=new IntentFilter();
-        mIntentFilter.addAction("checkinternet");
-        Intent serviceIntent= new Intent(this, MyService.class);
-        startService(serviceIntent);
-        if(isOnline(getApplicationContext())){
-            if(CourseList_Flag==false){
-                Spinnerhint();
-                courseSpinnerMethod();
-            }
-            Home_frame.setVisibility(View.VISIBLE);
-            Network_frame.setVisibility(View.INVISIBLE);
-        }else {
-            progressDialog.cancel();
-            Network_frame.setVisibility(View.VISIBLE);
-            Home_frame.setVisibility(View.INVISIBLE);
-        }
+        mIntentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         retry_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,8 +154,8 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals("checkinternet")){
-                if(intent.getStringExtra("online_status").equals("true")){
+            if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
+                if(isOnline(context)){
                     if(CourseList_Flag==false){
                         Spinnerhint();
                         courseSpinnerMethod();
@@ -202,6 +188,10 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
             dialog.cancel();
+            if (noDataFound){
+                Intent intent = new Intent(context, Records.class);
+                context.startActivity(intent);
+            }
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -448,7 +438,8 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
                 }else{
                     CourseList_Flag=false;
                     progressDialog.cancel();
-                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
+                    noDataFound = true;
+                    showAlert(getString(R.string.no_data_found));
                 }
             }
             @Override

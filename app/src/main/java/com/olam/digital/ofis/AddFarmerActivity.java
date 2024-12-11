@@ -238,8 +238,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String localeSuffixColumn;
     MultiStakeHolder stakeHolder;
 
-
-
+    private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -984,6 +983,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         if (isNIDAvailable) {
+            if(editMode){
+                for (Integer updatedValue : updatedNidValue) {
+                    dl.removeNIDPhotostatusByType(String.valueOf(updatedValue), editFarmerId);
+                }
+            }
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
@@ -2317,8 +2321,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editMode) {
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
+            if (!updatedNidValue.contains(nidvalue)) {
+                updatedNidValue.add(nidvalue);
             }
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 

@@ -121,10 +121,6 @@
                 android:value="" />
         </activity>
 
-        <service
-            android:name=".RetrofitServices.MyService"
-            android:enabled="true"
-            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.gms.version"
