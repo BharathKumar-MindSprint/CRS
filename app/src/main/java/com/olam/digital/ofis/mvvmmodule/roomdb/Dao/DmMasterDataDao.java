@@ -5,8 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
 
 @Dao
 public interface DmMasterDataDao {

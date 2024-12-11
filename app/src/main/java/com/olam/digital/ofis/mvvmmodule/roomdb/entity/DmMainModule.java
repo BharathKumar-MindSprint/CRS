@@ -1,13 +1,8 @@
-package com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo;
+package com.olam.digital.ofis.mvvmmodule.roomdb.entity;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import com.google.gson.JsonArray;
-
-import java.util.ArrayList;
 
 @Entity(tableName = "DmMainModule")
 public class DmMainModule {

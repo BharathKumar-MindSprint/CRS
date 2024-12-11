@@ -4,7 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
 
 import java.util.List;
 

@@ -1,11 +1,8 @@
 package com.olam.digital.ofis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -15,7 +12,7 @@ import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
 import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
 
 import java.util.ArrayList;
 import java.util.List;

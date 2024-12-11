@@ -10,18 +10,16 @@ import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
 
 import java.util.List;
 

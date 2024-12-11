@@ -27,10 +27,9 @@ import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.olam.digital.ofis.model.Information;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
-import com.olam.digital.ofis.MultiSpinnerSearch;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 
 import java.util.ArrayList;
 import java.util.List;

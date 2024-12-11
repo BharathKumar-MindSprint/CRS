@@ -5,7 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 
 import java.util.List;
 
