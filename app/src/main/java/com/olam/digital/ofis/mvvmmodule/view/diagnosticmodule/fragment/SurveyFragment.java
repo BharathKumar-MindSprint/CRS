@@ -1002,6 +1002,30 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 }
             }
 
+            for (int i = 0; i < Constants.questionIdsSection.size(); i++) {
+                String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(i))).get(0).displayType;
+                if (type.equalsIgnoreCase("text box")) {
+                    View desiredView = dm_Section.findViewWithTag(qIdSections.get(i));
+                    View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(i)+1);
+                    if (desiredView != null) {
+                        TextView textView = (TextView) desiredView;
+                        EditText editText = (EditText) desiredView2;
+
+                        List<DmSurveyAnswerTable> dmAnswerById = db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(i), Constants.FARMER_ID, Constants.PLOT_ID);
+
+                        if (!dmAnswerById.isEmpty()) {
+                            double submittedAnswer = Double.parseDouble(dmAnswerById.get(0).answer);
+                            double minimumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qIdSections.get(i))).get(0).minimumRange;
+                            double maximumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qIdSections.get(i))).get(0).maximumRange;
+                            if (!(submittedAnswer >= minimumRange && submittedAnswer <= maximumRange)) {
+                                validRange.add(qIdSections.get(i));
+                            }
+                        }
+                    }
+
+                }
+            }
+
             boolean valid = true;
             List<DmQuestionsModule> dmQuestionsMandatedModuleList = db.dmQuestionsModuleDao().getDmQuestionsModuleId(Integer.parseInt(Constants.MODULE_ID));
             if(!dmQuestionsMandatedModuleList.isEmpty()) {
