@@ -50,6 +50,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -691,15 +692,10 @@ public class FollowUpActionPlan extends Fragment {
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList.clear();
         dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
-        list.clear();
-
         final List<String> ids = new ArrayList<String>();
-        ids.clear();
-
 
         list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
@@ -713,6 +709,7 @@ public class FollowUpActionPlan extends Fragment {
         }catch (Exception e){
             e.printStackTrace();
         }
+
         boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
         if (allowCustomActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
@@ -720,7 +717,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(dmActionPlansItemList.get(c).actionPlan);
+            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
             ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
         }
 

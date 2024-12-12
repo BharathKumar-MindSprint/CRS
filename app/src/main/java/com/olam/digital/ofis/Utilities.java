@@ -30,6 +30,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;
@@ -823,6 +825,23 @@ public  static String base64ConversionForImage(String filepath)  {
         };
 
         return isPrefix ? farmHoldingSuffix + farmerName : farmerName + farmHoldingSuffix;
+    }
+
+    public static String getActionPlanByLanguage(DmRangeActionPlansItems dmRangeActionPlansItems){
+        String language = Locale.getDefault().getLanguage();
+        String actionPlan =  switch (language) {
+            case "es" -> dmRangeActionPlansItems.actionPlanEs;
+            case "fr" -> dmRangeActionPlansItems.actionPlanFr;
+            case "id", "in" -> dmRangeActionPlansItems.actionPlanId;
+            case "lo" -> dmRangeActionPlansItems.actionPlanLo;
+            case "pt" -> dmRangeActionPlansItems.actionPlanPt;
+            case "th" -> dmRangeActionPlansItems.actionPlanTh;
+            case "tr" -> dmRangeActionPlansItems.actionPlanTr;
+            case "vi" -> dmRangeActionPlansItems.actionPlanVi;
+            default -> dmRangeActionPlansItems.actionPlan;
+        };
+
+        return actionPlan == null ? dmRangeActionPlansItems.actionPlan : actionPlan;
     }
 
 
