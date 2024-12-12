@@ -189,8 +189,8 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
             dialog.cancel();
             if (noDataFound){
-                Intent intent = new Intent(context, Records.class);
-                context.startActivity(intent);
+                finish();
+                onBackPressed();
             }
         });
         AlertDialog alertDialog = builder.create();
