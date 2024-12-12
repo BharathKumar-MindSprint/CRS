@@ -240,16 +240,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
         final Spinner spinner = new Spinner(getActivity());
-
-
-//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,relativeLayout,false);
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
-
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
+        spinner.setTag(questionId+2);
 
         TextView textView = new TextView(getActivity());
         textView.setText("Please enter any drop down value");
@@ -372,6 +369,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         EditText editText = new EditText(getActivity());
         editText.setTextSize(14);
+        editText.setTag(questionId + 1);
 
         double minValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange;
         double maxValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange;
@@ -477,14 +475,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     }
                 }
             });
-
         }
-
-        /////////////
-
-
-
-
 
         TextView textView = new TextView(getActivity());
         textView.setText("Please enter any value!");
@@ -492,7 +483,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
         textView.setVisibility(View.GONE);
-
         textView.setTag(questionId);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
@@ -1048,7 +1038,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     View desiredView = dm_Question.findViewWithTag(qId.get(i));
                     TextView textView = (TextView) desiredView;
                     textView.setVisibility(View.GONE);
-
                 }
                 for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
                     try {
@@ -1117,13 +1106,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 }
 
                 for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
-                    String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(j))).get(0).displayType;
+                    String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
                     boolean isMandate = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
 
                     if(isMandate){
                         if (type.equalsIgnoreCase("text box")) {
                             View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(j)+1);
+                            View desiredView2 = dm_Section.findViewWithTag(qIdSections.get(j)+1);
                             if (desiredView != null) {
                                 TextView textView = (TextView) desiredView;
                                 EditText editText = (EditText) desiredView2;
@@ -1146,7 +1135,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
                         } else if (type.equalsIgnoreCase("dropdown")) {
                             View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(j)+2);
+                            View desiredView2 = dm_Section.findViewWithTag(qIdSections.get(j)+2);
                             if (desiredView != null) {
                                 TextView textView = (TextView) desiredView;
                                 Spinner spinner = (Spinner) desiredView2;
