@@ -186,6 +186,15 @@ public abstract class OFISRoomDB extends RoomDatabase {
                 database.execSQL("DROP TABLE FollowUpItemMainTable");
                 database.execSQL("DROP TABLE FollowUpResultTable");
 
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanFr TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanEs TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanPt TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanId TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanLo TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanTh TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanTr TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanVi TEXT");
+
             }
         };
 

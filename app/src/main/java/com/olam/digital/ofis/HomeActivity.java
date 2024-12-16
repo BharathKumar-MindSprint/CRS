@@ -2121,6 +2121,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+
                                     try {
                                         for (int l = 0; l < questionsItemList.size(); l++) {
 
@@ -2221,26 +2222,26 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                     if (dmRangeTextBoxActionPlansList != null) {
                                                         for (int n = 0; n < dmRangeTextBoxActionPlansList.size(); n++) {
-                                                            int id_actionPlan = dmRangeTextBoxActionPlansList.get(n).getId();
-                                                            boolean isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
-                                                            String actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
-                                                            Integer actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
-
                                                             DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                            dmRangeActionPlansItems.id = id_actionPlan;
-                                                            dmRangeActionPlansItems.isDefault = isDefault;
-                                                            dmRangeActionPlansItems.actionPlan = actionPlan;
-                                                            dmRangeActionPlansItems.actionValueId = actionValueId;
+
+                                                            dmRangeActionPlansItems.id = dmRangeTextBoxActionPlansList.get(n).getId();
+                                                            dmRangeActionPlansItems.isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
+                                                            dmRangeActionPlansItems.actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
+                                                            dmRangeActionPlansItems.actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
                                                             dmRangeActionPlansItems.questionId = id_questionModule;
                                                             dmRangeActionPlansItems.complainceId = complianceId;
+                                                            dmRangeActionPlansItems.actionPlanFr = dmRangeTextBoxActionPlansList.get(n).getActionPlanFr();
+                                                            dmRangeActionPlansItems.actionPlanEs = dmRangeTextBoxActionPlansList.get(n).getActionPlanEs();
+                                                            dmRangeActionPlansItems.actionPlanPt = dmRangeTextBoxActionPlansList.get(n).getActionPlanPt();
+                                                            dmRangeActionPlansItems.actionPlanId = dmRangeTextBoxActionPlansList.get(n).getActionPlanId();
+                                                            dmRangeActionPlansItems.actionPlanLo = dmRangeTextBoxActionPlansList.get(n).getActionPlanLo();
+                                                            dmRangeActionPlansItems.actionPlanTh = dmRangeTextBoxActionPlansList.get(n).getActionPlanTh();
+                                                            dmRangeActionPlansItems.actionPlanTr = dmRangeTextBoxActionPlansList.get(n).getActionPlanTr();
+                                                            dmRangeActionPlansItems.actionPlanVi = dmRangeTextBoxActionPlansList.get(n).getActionPlanVi();
 
                                                             db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
-
-
                                                         }
                                                     }
-
-
                                                 }
                                             }
 
@@ -2289,38 +2290,35 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                         db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
 
                                                         List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
-                                                        dmRangeTextBoxActionPlansList.clear();
                                                         dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
 
 
                                                         if (dmRangeTextBoxActionPlansList != null) {
                                                             for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
-                                                                int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
-                                                                boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
-                                                                String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
-                                                                Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                 DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                                dmRangeActionPlansItems.id = id_actionPlan;
-                                                                dmRangeActionPlansItems.isDefault = isDefault;
-                                                                dmRangeActionPlansItems.actionValueId = actionValueId;
-                                                                dmRangeActionPlansItems.actionPlan = actionPlan;
+
+                                                                dmRangeActionPlansItems.id = dmRangeTextBoxActionPlansList.get(ra).getId();
+                                                                dmRangeActionPlansItems.isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
+                                                                dmRangeActionPlansItems.actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                dmRangeActionPlansItems.actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
                                                                 dmRangeActionPlansItems.questionId = id_questionModule;
                                                                 dmRangeActionPlansItems.complainceId = complianceId;
+                                                                dmRangeActionPlansItems.actionPlanFr = dmRangeTextBoxActionPlansList.get(ra).getActionPlanFr();
+                                                                dmRangeActionPlansItems.actionPlanEs = dmRangeTextBoxActionPlansList.get(ra).getActionPlanEs();
+                                                                dmRangeActionPlansItems.actionPlanPt = dmRangeTextBoxActionPlansList.get(ra).getActionPlanPt();
+                                                                dmRangeActionPlansItems.actionPlanId = dmRangeTextBoxActionPlansList.get(ra).getActionPlanId();
+                                                                dmRangeActionPlansItems.actionPlanLo = dmRangeTextBoxActionPlansList.get(ra).getActionPlanLo();
+                                                                dmRangeActionPlansItems.actionPlanTh = dmRangeTextBoxActionPlansList.get(ra).getActionPlanTh();
+                                                                dmRangeActionPlansItems.actionPlanTr = dmRangeTextBoxActionPlansList.get(ra).getActionPlanTr();
+                                                                dmRangeActionPlansItems.actionPlanVi = dmRangeTextBoxActionPlansList.get(ra).getActionPlanVi();
 
                                                                 db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
-
-
                                                             }
                                                         }
                                                     }
-
                                                 }
-
-
                                             }
-
-
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();

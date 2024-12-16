@@ -28,4 +28,28 @@ public class DmRangeActionPlansItems {
     @ColumnInfo(name = "actionPlan")
     public String actionPlan;
 
+    @ColumnInfo(name = "actionPlanFr")
+    public String actionPlanFr;
+
+    @ColumnInfo(name = "actionPlanEs")
+    public String actionPlanEs;
+
+    @ColumnInfo(name = "actionPlanId")
+    public String actionPlanId;
+
+    @ColumnInfo(name = "actionPlanPt")
+    public String actionPlanPt;
+
+    @ColumnInfo(name = "actionPlanTr")
+    public String actionPlanTr;
+
+    @ColumnInfo(name = "actionPlanLo")
+    public String actionPlanLo;
+
+    @ColumnInfo(name = "actionPlanVi")
+    public String actionPlanVi;
+
+    @ColumnInfo(name = "actionPlanTh")
+    public String actionPlanTh;
+
 }

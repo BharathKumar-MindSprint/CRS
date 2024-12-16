@@ -54,6 +54,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
@@ -145,9 +146,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     private boolean isCreated = false;
     Spinner spinner_dmCurrencies;
     String budgetAmount;
-
-    boolean goNextCaptureProof =false;
-    boolean goNextActionPlan = true;
 
     private final int FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
@@ -598,7 +596,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList.clear();
         dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
@@ -617,7 +614,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(dmActionPlansItemList.get(c).actionPlan);
+            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
             ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
         }
 
@@ -2421,8 +2418,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
         totalActionPlanCount = 0;
-        goNextCaptureProof = false;
-        goNextActionPlan = true;
     }
 
     @Override

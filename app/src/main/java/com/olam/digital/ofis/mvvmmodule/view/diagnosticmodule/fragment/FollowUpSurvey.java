@@ -33,16 +33,12 @@ import java.util.Objects;
 
 
 public class FollowUpSurvey extends Fragment implements View.OnClickListener {
-
-    ImageView iv_complaint_dropdown_follow_up_survey, iv_non_complaint_dropdown_follow_up_survey, iv_satisfactory_dropdown_follow_up_survey;
-    LinearLayout ll_complaint_follow_up_survey, ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
     LinearLayout dm_question_complaint_followup_survey, ll_servey_back_followup_survey, ll_servey_next_followup_survey;
 
     OFISRoomDB db;
 
     ArrayList<String> CoQId = new ArrayList<>();
     int totalQuestion = 0;
-//    int next_survey = 0;
     int capture_count = 0;
 
     public FollowUpSurvey() {
@@ -66,23 +62,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
     @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id) {
-
-        CoQId.clear();
-        Constants.questionIdsFollowUp.clear();
-
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
-        List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
-        dmComplaintList.clear();
-        dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
+        List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
-        if (dmComplaintList.size() != 0) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-            dmSurveyAnswerTableList.clear();
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
-
+        if (!dmComplaintList.isEmpty()) {
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
             String complianceName = dmComplaintList.get(0).compliance;
-
-
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
@@ -117,7 +102,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
 
                     if (tagFirst == 0) {
-                        //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("1" + complaint_id);
                         complaint_dropdown.setRotation(180);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
@@ -132,7 +116,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
 
                     } else {
-                        //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
                         complaint_dropdown.setRotation(0);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
@@ -150,7 +133,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 }
             });
 
-//            boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
             if(isActionPlanRequired){
                 LinearLayout linearLayoutItems = new LinearLayout(getActivity());
                 LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
@@ -165,8 +147,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
                 }
 
-
-                // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
                 if (dmSurveyAnswerTableList.size() != 0) {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
 
@@ -179,8 +159,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         textView.setPadding(0, 15, 0, 0);
                         textView.setTypeface(null, Typeface.BOLD);
                         linearLayoutItems.addView(textView);
-//                        next_survey +=1;
-
                         renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
 
                     }
@@ -209,15 +187,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
-
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
 
         LinearLayout linearLayout1 = new LinearLayout(getContext());
         linearLayout1.setGravity(Gravity.CENTER);
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
-        if (dmSurveyAnswerTableList.size() != 0) {
+        if (!dmSurveyAnswerTableList.isEmpty()) {
 
             boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
             if (isActionPlanRequired){
@@ -255,7 +230,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 linearLayout1.addView(resolveText, layoutParams);
                 List<FollowUpItemMainTable> followupData = db.followUpItemMainTableDao().getFollowupByQuestionId1(questionIdDb, Constants.FARMER_ID, Constants.ATTEMPT);
 
-                if(followupData.size() > 0) {
+                if(!followupData.isEmpty()) {
                     if (followupData.get(0).status.equalsIgnoreCase(Constants.RESOLVED)) {
 
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
@@ -269,10 +244,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
                         Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
-                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(dmSurveyAnswerTableList.get(0).questionID, Constants.FARMER_ID), 0)){
-//                            capture_count+=1;
-                        }
-
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
                         }
@@ -282,12 +253,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 notResolveText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
-                        // Do something with the selected value
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
-                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
-//                            capture_count+=1;
-                        }
+
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
                         }
@@ -313,12 +280,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 resolveText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
-                        // Do something with the selected value
                         submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
-                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
-//                            capture_count-=1;
-                        }
+
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
 
@@ -348,7 +311,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
         }
 
-        //editText.getLayoutParams().width=40;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
@@ -374,20 +336,13 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String submittedDate = format.format(today);
         FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
-//        followUpItemMainTable.actionPlanId = actionPlanId;
         followUpItemMainTable.questionId = Integer.parseInt(questionId);
-//        followUpItemMainTable.id = id;
         followUpItemMainTable.complianceId = Integer.parseInt(complianceId);
         followUpItemMainTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
-//        followUpItemMainTable.dmSubModId = Constants.;
         followUpItemMainTable.attempt = Constants.ATTEMPT;
-//        followUpItemMainTable.actionPlanText = actionPlanText;
         followUpItemMainTable.createdAt = submittedDate;
-//        followUpItemMainTable.createdBy = createdBy;
         followUpItemMainTable.status = status;
         followUpItemMainTable.updatedAt = submittedDate;
-//        followUpItemMainTable.updatedBy = updatedBy;
-//        followUpItemMainTable.isPortal = isPortal;
         followUpItemMainTable.farmerId = Long.parseLong(Constants.FARMER_ID);
         followUpItemMainTable.isSync = false;
 
@@ -402,11 +357,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     public void onResume() {
         totalQuestion = 0;
         dm_question_complaint_followup_survey.removeAllViews();
-//        next_survey = 0;
-//        capture_count = 0;
-        db = OFISRoomDB.getDbInstance(getActivity());
 
-        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+        db = OFISRoomDB.getDbInstance(getActivity());
+        CoQId.clear();
+        Constants.questionIdsFollowUp.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
             for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
                 displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
             }
@@ -420,12 +376,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.ll_servey_next_followup_survey) {
-            /*if ((Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.noncomplaintSize) + Integer.parseInt(Constants.satisfactorySize)) > CoQId.size()) {
-                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
-            }*/
-
             int resolve_count = db.followUpItemMainTableDao().getCountOfResolvedNotResolved( Constants.MODULE_ID, String.valueOf(Constants.ATTEMPT) , Constants.FARMER_ID);
-
 
             if (resolve_count == totalQuestion) {
                 ViewPager2 viewPager = getActivity().findViewById(R.id.viewPagerFollowUp);

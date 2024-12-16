@@ -240,16 +240,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
         final Spinner spinner = new Spinner(getActivity());
-
-
-//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,relativeLayout,false);
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
-
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
+        spinner.setTag(questionId+2);
 
         TextView textView = new TextView(getActivity());
         textView.setText("Please enter any drop down value");
@@ -372,6 +369,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         EditText editText = new EditText(getActivity());
         editText.setTextSize(14);
+        editText.setTag(questionId + 1);
 
         double minValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange;
         double maxValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange;
@@ -477,14 +475,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     }
                 }
             });
-
         }
-
-        /////////////
-
-
-
-
 
         TextView textView = new TextView(getActivity());
         textView.setText("Please enter any value!");
@@ -492,7 +483,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
         textView.setVisibility(View.GONE);
-
         textView.setTag(questionId);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
@@ -581,24 +571,11 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
     public void renderDropDownQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question) {
-
-
         final List<String> list = new ArrayList<String>();
-        list.clear();
-
-
         final List<String> ids = new ArrayList<String>();
-        ids.clear();
-
-
         final List<String> complianceIds = new ArrayList<String>();
-        complianceIds.clear();
-
         final List<Boolean> allowCustomActionPlan = new ArrayList<Boolean>();
-        allowCustomActionPlan.clear();
-
         final List<Boolean> isCaptureProof = new ArrayList<Boolean>();
-        isCaptureProof.clear();
 
         list.add(getResources().getString(R.string.ModuleAnswerHint));
         ids.add("0");
@@ -762,7 +739,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
                 editText.setFilters(new InputFilter[]{numberFilter});
 
-
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
             DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true);
@@ -786,24 +762,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     if (!input.isEmpty()) {
                         double number = Double.parseDouble(input);
                         if (number >= minValue) {
-                            // Valid input starting from the minimum value
                             if (number <= maxValue) {
-                                // Input falls within the specified range
-                                // Perform desired actions here
-                                editText.setError(null); // Clear any previous error
-
-
-                            } else {
-                                // Input is greater than the maximum range
-//                            editTextRange.setError("Please enter a number within the range");
+                                editText.setError(null);
                             }
                         } else {
                             // Input is less than the minimum value
                             editText.setError("Minimum Range " + minValue);
                         }
-                    } else {
-                        // Input is empty
-//                    editTextRange.setError("Please enter a number");
                     }
                 }
             });
@@ -830,24 +795,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     if (!input.isEmpty()) {
                         int number = Integer.parseInt(input);
                         if (number >= minValue) {
-                            // Valid input starting from the minimum value
                             if (number <= maxValue) {
-                                // Input falls within the specified range
-                                // Perform desired actions here
-                                editText.setError(null); // Clear any previous error
-
-
-                            } else {
-                                // Input is greater than the maximum range
-//                            editTextRange.setError("Please enter a number within the range");
+                                editText.setError(null);
                             }
                         } else {
-                            // Input is less than the minimum value
                             editText.setError("Minimum Range " + minValue);
                         }
-                    } else {
-                        // Input is empty
-//                    editTextRange.setError("Please enter a number");
                     }
                 }
             });
@@ -972,57 +925,23 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.ll_servey_next){
+        if(id == R.id.ll_servey_next) {
             ArrayList<String> qId = Constants.questionIds;
             ArrayList<String> qIdSections = Constants.questionIdsSection;
             ArrayList<String> validRange = new ArrayList<>();
 
             // check textbox range value
-            for (int i = 0; i < Constants.questionIds.size(); i++) {
+            for (int i = 0; i < qId.size(); i++) {
                 String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
                 if (type.equalsIgnoreCase("text box")) {
-                    View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                    View desiredView2 = dm_Question.findViewWithTag(qId.get(i) + 1);
-                    if (desiredView != null) {
-                        TextView textView = (TextView) desiredView;
-                        EditText editText = (EditText) desiredView2;
-
-                        List<DmSurveyAnswerTable> dmAnswerById = db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID);
-
-                        if (!dmAnswerById.isEmpty()) {
-                            double submittedAnswer = Double.parseDouble(dmAnswerById.get(0).answer);
-                            double minimumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).minimumRange;
-                            double maximumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).maximumRange;
-                            if (!(submittedAnswer >= minimumRange && submittedAnswer <= maximumRange)) {
-                                validRange.add(qId.get(i));
-                            }
-                        }
-                    }
-
+                    inputTextRangeValidation(qId, i, dm_Question, validRange);
                 }
             }
 
-            for (int i = 0; i < Constants.questionIdsSection.size(); i++) {
+            for (int i = 0; i < qIdSections.size(); i++) {
                 String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(i))).get(0).displayType;
                 if (type.equalsIgnoreCase("text box")) {
-                    View desiredView = dm_Section.findViewWithTag(qIdSections.get(i));
-                    View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(i)+1);
-                    if (desiredView != null) {
-                        TextView textView = (TextView) desiredView;
-                        EditText editText = (EditText) desiredView2;
-
-                        List<DmSurveyAnswerTable> dmAnswerById = db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(i), Constants.FARMER_ID, Constants.PLOT_ID);
-
-                        if (!dmAnswerById.isEmpty()) {
-                            double submittedAnswer = Double.parseDouble(dmAnswerById.get(0).answer);
-                            double minimumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qIdSections.get(i))).get(0).minimumRange;
-                            double maximumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qIdSections.get(i))).get(0).maximumRange;
-                            if (!(submittedAnswer >= minimumRange && submittedAnswer <= maximumRange)) {
-                                validRange.add(qIdSections.get(i));
-                            }
-                        }
-                    }
-
+                    inputTextRangeValidation(qIdSections, i, dm_Section, validRange);
                 }
             }
 
@@ -1044,13 +963,14 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             if (valid && validRange.isEmpty()) {
                 ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                 viewPager.setCurrentItem(1);
-                for (int i = 0; i < Constants.questionIds.size(); i++) {
+
+                for (int i = 0; i < qId.size(); i++) {
                     View desiredView = dm_Question.findViewWithTag(qId.get(i));
                     TextView textView = (TextView) desiredView;
                     textView.setVisibility(View.GONE);
-
                 }
-                for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
+
+                for (int j = 0; j < qIdSections.size(); j++) {
                     try {
                          View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
                          TextView textView = (TextView) desiredView;
@@ -1061,117 +981,97 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 }
 
             } else {
-                for (int i = 0; i < Constants.questionIds.size(); i++) {
-
+                for (int i = 0; i < qId.size(); i++) {
                     String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
                     boolean isMandate = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).mandate;
 
                     if(isMandate){
                         if (type.equalsIgnoreCase("text box")) {
-                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                            View desiredView2 = dm_Question.findViewWithTag(qId.get(i) + 1);
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                EditText editText = (EditText) desiredView2;
-
-
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                    textView.setVisibility(View.VISIBLE);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_error));
-
-                                    }
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-
-                                    }
-
-                                }
-                            } else {
-                                // View not found
-                            }
-
+                            errorTextDisplayForTextBoxQuestion(qId, i, dm_Question);
                         } else if (type.equalsIgnoreCase("dropdown")) {
-                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                            View desiredView2 = dm_Question.findViewWithTag(qId.get(i)+2);
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                Spinner spinner = (Spinner) desiredView2;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                    textView.setVisibility(View.VISIBLE);
-                                    spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_error));
-
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                    spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
-
-                                }
-                            } else {
-                                // View not found
-                            }
-
+                            errorTextDisplayForDropdownQuestion(qId, i, dm_Question);
                         }
                     }
                 }
 
-                for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
-                    String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(j))).get(0).displayType;
+                for (int j = 0; j < qIdSections.size(); j++) {
+                    String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
                     boolean isMandate = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
 
                     if(isMandate){
                         if (type.equalsIgnoreCase("text box")) {
-                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(j)+1);
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                EditText editText = (EditText) desiredView2;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                    textView.setVisibility(View.VISIBLE);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_error));
-
-                                    }
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-
-                                    }
-                                }
-                            } else {
-                                // View not found
-                            }
-
+                            errorTextDisplayForTextBoxQuestion(qIdSections, j, dm_Section);
                         } else if (type.equalsIgnoreCase("dropdown")) {
-                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            View desiredView2 = dm_Question.findViewWithTag(qIdSections.get(j)+2);
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                Spinner spinner = (Spinner) desiredView2;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                    textView.setVisibility(View.VISIBLE);
-                                    spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_error));
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                    spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
-                                }
-                            } else {
-                                // View not found
-                            }
-
+                            errorTextDisplayForDropdownQuestion(qIdSections, j, dm_Section);
                         }
                     }
                 }
             }
-
         }
         else if(id == R.id.ll_servey_back){
             requireActivity().onBackPressed();
         }
+    }
+
+    private void inputTextRangeValidation(ArrayList<String> qId, int i, LinearLayout questionLayout, ArrayList<String> validRange) {
+        View desiredView = questionLayout.findViewWithTag(qId.get(i));
+
+        if (desiredView != null) {
+            List<DmSurveyAnswerTable> dmAnswerById = db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID);
+            if (!dmAnswerById.isEmpty()) {
+                double submittedAnswer = Double.parseDouble(dmAnswerById.get(0).answer);
+                double minimumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).minimumRange;
+                double maximumRange = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(qId.get(i))).get(0).maximumRange;
+                if (!(submittedAnswer >= minimumRange && submittedAnswer <= maximumRange)) {
+                    validRange.add(qId.get(i));
+                }
+            }
+        }
+    }
+
+
+    private void errorTextDisplayForTextBoxQuestion(ArrayList<String> qId, int i, LinearLayout questionLayout) {
+        View desiredView = questionLayout.findViewWithTag(qId.get(i));
+        View desiredView2 = questionLayout.findViewWithTag(qId.get(i) + 1);
+
+        if (desiredView != null) {
+            TextView textView = (TextView) desiredView;
+            EditText editText = (EditText) desiredView2;
+
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                textView.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_error));
+
+                }
+            } else {
+                textView.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+                }
+            }
+        }
+    }
+
+    private void errorTextDisplayForDropdownQuestion(ArrayList<String> qId, int i, LinearLayout questionLayout) {
+        View desiredView = questionLayout.findViewWithTag(qId.get(i));
+        View desiredView2 = questionLayout.findViewWithTag(qId.get(i) + 2);
+
+        if (desiredView != null) {
+            TextView textView = (TextView) desiredView;
+            Spinner spinner = (Spinner) desiredView2;
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                textView.setVisibility(View.VISIBLE);
+                spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_error));
+            } else {
+                textView.setVisibility(View.GONE);
+                spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
+            }
+        }
+
 
     }
+
 
     public String getNamesbyLanguage(DmQuestionsModule dmQuestionsModule){
         String language = Locale.getDefault().getLanguage();
