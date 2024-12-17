@@ -1952,6 +1952,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (values.size() > 0) {
                         if (editMode) {
                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                            ofisRoomDB.multiStakeHolderDao().updateFarmNameAndCode(editFarmerId, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME), values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE));
                             // update farmer name
                             EditText farmerName = findViewById(R.id.farmerName);
                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
