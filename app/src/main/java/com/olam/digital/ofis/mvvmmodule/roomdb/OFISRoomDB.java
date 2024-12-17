@@ -174,17 +174,16 @@ public abstract class OFISRoomDB extends RoomDatabase {
                         "submitted_modules TEXT," +
                         "created_locally INTEGER" +
                         ")");
-                database.execSQL("DROP TABLE DmActionPlansItem");
-                database.execSQL("DROP TABLE DmActionPlansItemSubmodule");
-                database.execSQL("DROP TABLE DmLookupValuesISubmodule");
-                database.execSQL("DROP TABLE DmNonComplaintFileTable");
-                database.execSQL("DROP TABLE DmQuestionsSubModule");
-                database.execSQL("DROP TABLE DmSatisfactoryFileTable");
-                database.execSQL("DROP TABLE DmSavePartialSurveyTable");
-                database.execSQL("DROP TABLE CapturedProofFollowupTable");
-                database.execSQL("DROP TABLE ExistingModuleItemFollowupTable");
-                database.execSQL("DROP TABLE FollowUpItemMainTable");
-                database.execSQL("DROP TABLE FollowUpResultTable");
+                database.execSQL("DROP TABLE IF EXISTS DmActionPlansItem");
+                database.execSQL("DROP TABLE IF EXISTS DmActionPlansItemSubmodule");
+                database.execSQL("DROP TABLE IF EXISTS DmLookupValuesISubmodule");
+                database.execSQL("DROP TABLE IF EXISTS DmNonComplaintFileTable");
+                database.execSQL("DROP TABLE IF EXISTS DmQuestionsSubModule");
+                database.execSQL("DROP TABLE IF EXISTS DmSatisfactoryFileTable");
+                database.execSQL("DROP TABLE IF EXISTS DmSavePartialSurveyTable");
+                database.execSQL("DROP TABLE IF EXISTS CapturedProofFollowupTable");
+                database.execSQL("DROP TABLE IF EXISTS ExistingModuleItemFollowupTable");
+                database.execSQL("DROP TABLE IF EXISTS FollowUpResultTable");
 
                 database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanFr TEXT");
                 database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanEs TEXT");
