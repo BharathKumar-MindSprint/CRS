@@ -3047,7 +3047,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              String nid = nidnumber.getText().toString();
              String expDate = expiryDate.getText().toString();
 
-             if(!value.equals(getResources().getString(R.string.idtype).toUpperCase())){
+             if(!value.equals(SELECT_NATIONALID)){
 
                  if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
                      Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();

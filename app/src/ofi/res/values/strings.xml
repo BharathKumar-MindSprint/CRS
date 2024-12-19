@@ -82,7 +82,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Complete Questionnaire Module</string>
     <string name="ofis_add_infrastructure">Add Social Infrastructure</string>
-    <string name="ofis_add_new_farmer">Add New Farmer &amp; Farm Holding</string>
     <string name="Modules_to_submit">Items to Submit</string>
     <string name="item_synced">Item(s) synced successfully.</string>
     <string name="item_sync_error">Error syncing. Please contact us for help</string>

@@ -37,7 +37,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Completar cuestionario</string>
     <string name="ofis_add_infrastructure">Añadir infraestructura comunitaria</string>
-    <string name="ofis_add_new_farmer">Agregar nuevo agricultor</string>
     <string name="Modules_to_submit">Elementos a cargar</string>
     <string name="item_synced">Elemento(s) sincronizado(s) con éxito</string>
     <string name="item_sync_error">Error de sincronización. Favor contáctenos para soporte</string>

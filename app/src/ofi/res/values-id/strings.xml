@@ -37,7 +37,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Selesaikan modul kusioner</string>
     <string name="ofis_add_infrastructure">Tambahkan Infrastruktur Sosial</string>
-    <string name="ofis_add_new_farmer">Tambahkan Petani Baru</string>
     <string name="Modules_to_submit">Item yang dimasukkan</string>
     <string name="item_synced">Item item yang sukses di sinkronisasi</string>
     <string name="item_sync_error">Sinkronisasi Error. Mohon hubungi kami untuk bantuan</string>

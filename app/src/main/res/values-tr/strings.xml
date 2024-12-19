@@ -732,7 +732,7 @@
     <string name="stakeholder_signature">Paydaşın imzası</string>
     <string name="update_stakeholder">Paydaşı güncelleyin</string>
     <string name="please_fill_stakeholder_name">Lütfen paydaş adını yazınız</string>
-    <string name="please_fill_stakeholder_dob">ütfen paydaşın doğum tarihini doldurunuz</string>
+    <string name="please_fill_stakeholder_dob">Lütfen paydaşın doğum tarihini doldurunuz</string>
     <string name="Please_accept_stakeholder_consent">Paydaşın bilgilerini kaydetmek için onay beyanlarını kabul etmelisiniz</string>
     <string name="stakeholder_consent">paydaş onayı</string>
     <string name="new_stakeholder">Yeni Paydaş</string>

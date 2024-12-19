@@ -832,7 +832,7 @@
     <string name="view_stake_holder_information">Exibir informações das participantes de fazenda</string>
     <string name="view_stake_holder">Exibir participantes de fazenda</string>
     <string name="stakeholder_list">lista de partes interessadas</string>
-    <string name="confirmation_message">Você quer confirmar as alterações?</string>
+    <string name="confirmation_message">Deseja confirmar as alterações?</string>
     <string name="stakeholder_role">Função da parte interessada</string>
     <string name="primary_farmer">Agricultor principal</string>
     <string name="stake_holder_details">Detalhes dos participantes da fazenda</string>
