@@ -36,7 +36,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">เสร็จสิ้นในส่วนของแบบสอบถาม</string>
     <string name="ofis_add_infrastructure">เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
-    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่</string>
     <string name="Modules_to_submit">รายการที่จะส่ง</string>
     <string name="item_synced">รายการเชื่อมต่อสำเร็จ</string>
     <string name="item_sync_error">การเชื่อมต่อผิดพลาด โปรดติดต่อเจ้าหน้าที่</string>

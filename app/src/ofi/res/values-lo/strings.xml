@@ -36,7 +36,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
     <string name="ofis_add_infrastructure">ເພີ່ມ​ໂຄງ​ສ້າງ​ສັງ​ຄົມ</string>
-    <string name="ofis_add_new_farmer">ເພີ່ມ​ຊື່​ຊາວ​ສວນ​ໃໝ່</string>
     <string name="Modules_to_submit">ຫົວ​​ຂໍ້​ສະ​ເໜີ</string>
     <string name="item_synced">ຂໍ້ (s) ແມ່ນ​ລະ​ບົບ synced ສຳ​ເລັດ​ແລ້ວ</string>
     <string name="item_sync_error">ລະ​ບົບ syncing ຜິດ​ພາດ. ກະ​ລຸ​ນາ​ຕິ​ດ​ຕໍ່​ພວກ​ເຮົາ​ເພື​ອ​ຊ່ວຍ​ເຫຼື້ອ</string>
