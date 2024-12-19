@@ -6084,7 +6084,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
                             ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
                             ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
-                            ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+
+                            if (!dmSurveyAnswerTableList.get(i).actionplanId.equalsIgnoreCase("1")) {
+                                ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            }
+
                             ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
                             ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
 
