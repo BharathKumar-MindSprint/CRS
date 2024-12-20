@@ -765,6 +765,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }else {
                 valid = true;
             }
+
             Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
             int moduleCount = moduleAssignments.getCount();
             if(moduleCount == 0){
@@ -1066,7 +1067,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
                              "moduleassignments.isPlotSurvey != 'true' AND "+
-                            "moduleassignments.isFarmSurvey == 'false' AND " +
                              "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
@@ -2458,7 +2458,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     else if (recordedLng != null && recordedLng.getText().equals("PlotSurvey")) {
                         Intent in = new Intent(this, ViewPlotSurveyActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putLong(Utilities.FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
                     }
