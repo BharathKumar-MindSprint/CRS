@@ -4786,7 +4786,7 @@ public class DynamicQuestions {
                                         }
                                     }
                                 }
-                            } else if (assignmentFields.equals("null") && Objects.requireNonNull(countryAndProductAssign).length()!=0){
+                            } else if (assignmentFields.equals("null") && countryAndProductAssign != null && countryAndProductAssign.length() != 0){
                                 String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
                                 boolean isFound = countryAndProductAssignLookup(countryAndProductAssign, farmerId);
 
@@ -5625,7 +5625,8 @@ public class DynamicQuestions {
                                     radioGroup.addView(radioButton);
                                 }
                             }
-                        } else if (assignmentFields.equals("null") && Objects.requireNonNull(countryAndProductAssign).length()!=0){
+                        }
+                        else if (assignmentFields.equals("null") && countryAndProductAssign != null && countryAndProductAssign.length() != 0){
                             boolean isFound = countryAndProductAssignLookup(countryAndProductAssign, farmerId);
 
                             if (isFound) {
@@ -5689,7 +5690,8 @@ public class DynamicQuestions {
                                 }
                             }
 
-                        } else {
+                        }
+                        else {
                             // Remove square brackets and split the string into an array of strings
                             String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
 
@@ -6829,7 +6831,8 @@ public class DynamicQuestions {
 
                                     }
                                 }
-                            } else if (assignmentFields.equals("null") && Objects.requireNonNull(countryAndProductAssign).length()!=0){
+                            }
+                            else if (assignmentFields.equals("null") && countryAndProductAssign != null && countryAndProductAssign.length() != 0){
                                 boolean isFound = countryAndProductAssignLookup(countryAndProductAssign, farmerId);
 
                                 if (isFound) {
