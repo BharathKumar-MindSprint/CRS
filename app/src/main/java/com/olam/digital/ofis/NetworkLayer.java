@@ -6269,22 +6269,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                     followUpData.put("submittedModuleId", dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
-                    if (followupList.size() != 0) {
+                    if (!followupList.isEmpty()) {
                         for (int i = 0; i < followupList.size(); i++) {
                             JSONObject ans = new JSONObject();
-//                            ans.put("id", followupList.get(i).id);
-//                            ans.put("moduleId", followupList.get(i).moduleId);
-//                            ans.put("dmSubModId", followupList.get(i).dmSubModId);12.985743,80.2464469
                             ans.put("questionId", followupList.get(i).questionId);
-                            ans.put("actionPlanId", followupList.get(i).actionPlanId);
-                            ans.put("actionPlan", followupList.get(i).actionPlanText);
+
+                            if (followupList.get(i).actionPlanId != null && !followupList.get(i).actionPlanId.equalsIgnoreCase("1")) {
+                                ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            }
+                            ans.put("actionPlanText", followupList.get(i).actionPlanText);
                             ans.put("attempt", followupList.get(i).attempt);
                             ans.put("status", followupList.get(i).status);
                             ans.put("complianceId", followupList.get(i).complianceId);
-//                            ans.put("createdBy", Utilities.getFromSharedPrefs(context));
-//                            ans.put("createdAt", followupList.get(i).createdAt);
-//                            ans.put("updatedBy", followupList.get(i).amount);
-//                            ans.put("updatedAt", followupList.get(i).amount);
 
                             List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
 
@@ -6292,11 +6288,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt, plotId);
 
-//                            List<String> files = new ArrayList<>();
-//                            files.clear();
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
-//                                files.add(complaintFileTableList.get(j).getFile_name());
                                 jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
                             }
 
