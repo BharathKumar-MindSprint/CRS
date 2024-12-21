@@ -845,7 +845,7 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()) {
                     db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId(null,id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
 
