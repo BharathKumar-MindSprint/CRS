@@ -2,7 +2,6 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,9 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.olam.digital.ofis.DataLayer;
-import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -38,24 +35,27 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultT
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 //import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -139,9 +139,18 @@ public class SurveyResultsFragment extends Fragment {
                 if (actionPlanCurrenciesTables.size() != 0) {
                     currencyId = String.valueOf(actionPlanCurrenciesTables.get(0).currencyId);
                 }
-                Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                String submittedDate = format.format(today);
+
+//                Date today = new Date();
+//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//                String submittedDate = format.format(today);
+//                Instant now = new Date().toInstant();
+//                DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneId.of("UTC"));String formattedUTCDate1 = formatter1.format(now);
+//                DateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");Date date = formatter2.parse(formattedUTCDate1);System.out.println("New DAte1  : "+ date);
+
+                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String formattedUtcDateTime = sdf.format(calendar.getTime());
 
                 HashMap hashMap = new HashMap<>();
                 hashMap.put("farmerId", Constants.FARMER_ID);
@@ -149,7 +158,7 @@ public class SurveyResultsFragment extends Fragment {
                 hashMap.put("farmerGroupId", Constants.FARMER_GROUP_ID);
                 hashMap.put("enumeratorId", Constants.ENUMERATOR_ID);
                 hashMap.put("currencyId", currencyId);
-                hashMap.put("submissionDate", submittedDate);
+                hashMap.put("submissionDate", formattedUtcDateTime);
                 hashMap.put("isMobile", true);
 
                 HashMap answers = new HashMap();
@@ -207,7 +216,7 @@ public class SurveyResultsFragment extends Fragment {
                         remarks.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
-                        Integer.parseInt(currencyId),submittedDate,resultColor,
+                        Integer.parseInt(currencyId),formattedUtcDateTime,resultColor,
                         overAllResultComplianceID,
                         Constants.PLOT_ID);
                 db.dmSurveyReportDao().insert(dmSurveyReport);

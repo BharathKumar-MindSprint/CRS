@@ -1,7 +1,5 @@
 package com.olam.digital.ofis.recordpolygon.polygonhistory;
 
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -16,53 +14,34 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.ViewFarmerActivity;
-import com.olam.digital.ofis.authentication.AuthenticationHelper;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
-import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
-import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
-import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.recordpolygon.Logger;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.list.PolygonHistoryDataList;
-import com.olam.digital.ofis.tasks.SyncAllTask;
-import com.olam.digital.ofis.tasks.SyncTaskOperationType;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -77,33 +56,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Callback;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class PolygonHistory extends AppCompatActivity {
 
     private TextView farmerName, olamFarmerId , plot_name;
-    Logger logger;
     protected LocationManager mLocationManager;
-
-    private LocationRequest locationRequest;
-    OnlineTileSourceBase MAPBOXSATELLITELABELLED;
-    protected DirectedLocationOverlay myLocationOverlay;
-
-    private static int DISPLACEMENT = 5;
-
-    private static final long INTERVAL = 1000 * 3;
-    private static final long FASTEST_INTERVAL = 1000 * 2;
-
-    /*private LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            onLocationChanged(locationResult.getLastLocation());
-        }
-    };*/
 
     private static final String FARMER_ID = "FARMER_ID";
     private static final String FARM_ID = "FARM_ID";
@@ -117,8 +76,6 @@ public class PolygonHistory extends AppCompatActivity {
     protected MapView mapView;
     private Marker currentLocationMarker , farmLocationMarker;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 7;
-
-    Context context;
 
     OFISRoomDB db;
 
@@ -138,9 +95,6 @@ public class PolygonHistory extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         db = OFISRoomDB.getDbInstance(getApplicationContext());
-
-        logger.addRecordToLog("Polygon History");
-
 
         mFarmerId = getIntent().getLongExtra(FARMER_ID, 0);
         mFarmId = getIntent().getIntExtra(FARM_ID, 0);
@@ -164,7 +118,6 @@ public class PolygonHistory extends AppCompatActivity {
         Configuration.getInstance().load(this, getPreferences(MODE_PRIVATE));
         mapView = findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
-//        mapView.setBuiltInZoomControls(true);
         mapView.setMultiTouchControls(true);
         mapView.setClickable(true);
 

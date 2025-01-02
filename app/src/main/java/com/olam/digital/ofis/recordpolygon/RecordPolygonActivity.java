@@ -1,7 +1,6 @@
 package com.olam.digital.ofis.recordpolygon;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,8 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +34,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.telephony.mbms.StreamingServiceInfo;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -58,7 +54,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,7 +83,6 @@ import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -97,13 +91,11 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.list.PolygonHistoryDataList;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,8 +148,6 @@ import retrofit2.Response;
 
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
-    private static final String TAG = RecordPolygonActivity.class.getSimpleName();
-
     protected MapView map;
 
     protected GeoPoint startPoint, destinationPoint;
@@ -178,13 +168,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public static Stack<KmlFeature> mKmlStack; //passed between activities, top is the current KmlFeature to edit.
     public static KmlFolder mKmlClipboard; //passed between activities. Folder for multiple items selection.
 
-    boolean mIsRecordingTrack = false;
     boolean mIsLoggingStopped;
     boolean mIsLoggingStarted;
     boolean mIsLoggingPaused;
     boolean mIsGPSLocationAvailable;
-    private String plotsToGps;
-    private String plotsRecentGps;
 
     private enum RecordingState {
         RECORDING, PAUSED, STOPPED
@@ -199,8 +186,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private EditText plot_textGpx, etPlotArea;
     private ImageButton capture_latLng;
     private ImageView recordingStatus;
-    private Button pause, startStop, bttnSave;
-    //private ImageButton currentLocation;
+    private Button pause, bttnSave;
     TextView areaInfo;
     Spinner spinnerPlotList;
 
@@ -232,8 +218,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private static final long INTERVAL = 1000 * 3;
     private static final long FASTEST_INTERVAL = 1000 * 2;
-    private static final int REQUEST_MSG_PERMISSION = 1004;
-    private static final int REQUEST_LOCATION_CODE = 1001;
     private static int DISPLACEMENT = 5;
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -243,8 +227,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     };
     private LocationRequest locationRequest;
 
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS_ANDROID_13 = 1255;
-    Logger logger;
     ArrayList<String> plotNameList;
     private LinearLayout plotList;
     int selectedPlotId;
@@ -257,8 +239,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private Marker currentLocationMarker , farmLocationMarker;
     private String plotArea;
-    // boolean flag to toggle the ui
-//    private Boolean mRequestingLocationUpdates;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -277,15 +257,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        logger.addRecordToLog("Record polygon activity started");
         db = OFISRoomDB.getDbInstance(getApplicationContext());
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-//                        mRequestingLocationUpdates = true;
-                        logger.addRecordToLog("onPermissionGranted");
                         startLocationUpdates();
                     }
 
@@ -390,7 +367,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logger.addRecordToLog("mStartLoggingButton");
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -406,11 +382,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mIsLoggingPaused) {
-                    setPauseButtonState(false);
-                } else {
-                    setPauseButtonState(true);
-                }
+                setPauseButtonState(!mIsLoggingPaused);
             }
         });
 
@@ -1313,7 +1285,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     boolean startLocationUpdates() {
-        logger.addRecordToLog("startLocationUpdates");
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -1329,7 +1300,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     protected void onPause() {
         super.onPause();
         map.onPause();
-        logger.addRecordToLog("onPause checkSelfPermission");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(this);
         }
@@ -1409,14 +1379,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             return;
         }
         mLastTime = currentTime;
-
-        // Capture the Logger item
-
-        logger.addRecordToLog( currentTrackname +"-- >  Accuracy -->" + pLoc.getAccuracy()  +"\n" +
-                "    Latitude  -->"+ pLoc.getLatitude() +"\n" +
-                "    Longitude  -->"+ pLoc.getLongitude() +"\n" +
-                "    Altitude  -->"+ pLoc.getAltitude() +"\n" +
-                "    Bearing  -->"+ pLoc.getBearing()+"\n" );
 
         GeoPoint newLocation = new GeoPoint(pLoc);
         if (!myLocationOverlay.isEnabled()) {
@@ -2378,23 +2340,17 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     private boolean startUpdate() {
-        logger.addRecordToLog("startLocationUpdates");
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
         locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
-        logger.addRecordToLog("INTERVAL :" + INTERVAL +"\n" +
-                "FASTEST_INTERVAL :" + FASTEST_INTERVAL +"\n" +
-                "Priority: " +  new GPSTracker(this).getLocationMode() +"\n" +
-                "SmallestDisplacement: " +    DISPLACEMENT );
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Permission Required", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            logger.addRecordToLog("getFusedLocationProviderClient");
             getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             return true;
         }

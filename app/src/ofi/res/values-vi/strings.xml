@@ -36,7 +36,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Mục bảng hỏi hoàn tất</string>
     <string name="ofis_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
-    <string name="ofis_add_new_farmer">Thêm Nông hộ mới</string>
     <string name="Modules_to_submit">Các mục để gửi</string>
     <string name="item_synced">Các mục đồng bộ đã được hoàn thành.</string>
     <string name="item_sync_error">Lỗi đồng bộ. Hãy liên hệ với chúng tôi để được giúp đỡ</string>

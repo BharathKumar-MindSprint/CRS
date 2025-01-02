@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +32,10 @@ import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.downloadsurvey.adapter.CustomExpandableListAdapter;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
@@ -54,8 +52,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-// Handles and shows the child list in the screen before taking the survey
 
 public class ViewPlotSurveyActivity extends BaseActivity {
 
@@ -106,7 +102,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         initComponents();
         db = OFISRoomDB.getDbInstance(context);
         try {
-            farmerID=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
+            farmerID=getIntent().getExtras().getLong(Utilities.FARMER_ID);
             isDiagnosticsPlotSurvey = getIntent().getBooleanExtra(res.getString(R.string.dm_plot_survey), false);
         }catch (Exception e){e.printStackTrace();}
         getChildDetailsById();
@@ -138,7 +134,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
     // method to populate the survey list
     private void populateSurveyList() throws JSONException {
         childModuleDtoList = getChildSurveyModuleList();
-//        Collections.sort(childModuleDtoList, new SortbySurveyCode());
         JSONObject submittedModules = null;
         JSONArray modulesArray=null;
         try {
@@ -148,38 +143,21 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                 submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
             }
             submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-
-//            submittedModules=new JSONObject(submittedModulesJSON);
-//            modulesArray= submittedModules.getJSONArray("modules");
-
-        }catch (Exception e){e.printStackTrace();}
-        int roleId = 0;
-        if (Utilities.getMultifarmPref(this, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR)) {
-            //Old
-            //  roleId = dl.getMultiFarmRoleInfoByFarmerId(String.valueOf(farmerId));
-            // New
-            String roleIdStr = dl.getMultiFarmRoleInfoByFarmerId1(String.valueOf(farmerID));
-            if (roleIdStr != null) {
-                roleId = Integer.parseInt(roleIdStr);
-            }
-            multiFarmId=dl.getMultifarmfarmId(farmerID);
-            if(multiFarmId!=null){
-                farmSurvey=true;
-            }else{
-                farmSurvey=false;
-            }
-
-        }else{
-            farmSurvey=false;
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        int roleId = 1;
+        farmSurvey=true;
+
+
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
 
-//            expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
             expandableListDetail = loadListWithPlots(childModuleDtoList);
             expandableListTitle = new ArrayList<PlotDTO>(expandableListDetail.keySet());
             expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListDetail,
                     submittedModules,farmerDTO,getResources(),
-                    roleId, multiFarmId);
+                    roleId);
             expandableListView.setAdapter(expandableListAdapter);
 
             expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -321,8 +299,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setDisabled_months(moduleAssignments.getString(moduleAssignments.getColumnIndex("disabled_months")));
                         childModuleDto.setRecurrence_frequency(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_frequency")));
                         childModuleDto.setRecurrence_type(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_type")));
-//                        childModuleDto.setPlot_id(moduleAssignments.getInt(moduleAssignments.getColumnIndex("plot_id")));
-
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
                         childModuleDto.setIsPlotSurvey(moduleAssignments.getString(moduleAssignments.getColumnIndex("isPlotSurvey")));
@@ -393,8 +369,6 @@ public class ViewPlotSurveyActivity extends BaseActivity {
 
     private void initComponents() {
         expandableListView =findViewById(R.id.surveyChildLabourRecycleView);
-        /*childNameTv=findViewById(R.id.childnameTv);
-        childNameTv.setVisibility(View.GONE);*/
     }
 
     @Override

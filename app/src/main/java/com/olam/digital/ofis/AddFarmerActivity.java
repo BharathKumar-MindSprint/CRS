@@ -1,143 +1,110 @@
  package com.olam.digital.ofis;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.location.Location;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
-import android.os.StrictMode;
-import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+ import static com.olam.digital.ofis.Utilities.appendSuffixForFarmName;
 
-import android.telephony.PhoneNumberUtils;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.Spanned;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
+ import android.Manifest;
+ import android.app.Activity;
+ import android.app.DatePickerDialog;
+ import android.app.Dialog;
+ import android.content.ContentValues;
+ import android.content.Context;
+ import android.content.DialogInterface;
+ import android.content.Intent;
+ import android.content.pm.PackageManager;
+ import android.content.pm.ResolveInfo;
+ import android.database.Cursor;
+ import android.graphics.Bitmap;
+ import android.location.Location;
+ import android.net.Uri;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.os.CountDownTimer;
+ import android.os.StrictMode;
+ import android.provider.MediaStore;
+ import android.telephony.PhoneNumberUtils;
+ import android.text.Editable;
+ import android.text.InputFilter;
+ import android.text.InputType;
+ import android.text.Spanned;
+ import android.text.TextWatcher;
+ import android.text.format.DateFormat;
+ import android.view.Gravity;
+ import android.view.LayoutInflater;
+ import android.view.MenuItem;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.Window;
+ import android.view.WindowManager;
+ import android.view.animation.Animation;
+ import android.view.animation.AnimationUtils;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+ import android.widget.Button;
+ import android.widget.CompoundButton;
+ import android.widget.DatePicker;
+ import android.widget.EditText;
+ import android.widget.ImageButton;
+ import android.widget.ImageView;
+ import android.widget.LinearLayout;
+ import android.widget.PopupWindow;
+ import android.widget.RadioButton;
+ import android.widget.Spinner;
+ import android.widget.Switch;
+ import android.widget.TextView;
+ import android.widget.Toast;
 
-import com.androidbuts.multispinnerfilter.KeyPairBoolData;
-import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
-import com.github.gcacace.signaturepad.views.SignaturePad;
-import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
-import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
-import com.olam.digital.ofis.authentication.AuthenticationHelper;
-import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
-import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
-import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
-import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
-import com.olam.digital.ofis.gps.GPSListener;
-import com.olam.digital.ofis.gps.GPSTracker;
-import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
-import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.model.FarmerLeadDTO;
-import com.olam.digital.ofis.model.Information;
-import com.olam.digital.ofis.model.NationalIdDTO;
-import com.olam.digital.ofis.model.NationalIdTypeDTO;
-import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
-import com.olam.digital.ofis.recordpolygon.Utils;
-import com.olam.digital.ofis.multifarm.DistanceCalculation;
-import com.olam.digital.ofis.multifarm.FindMultiFarmFarmAdapter;
-import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
-import com.olam.digital.ofis.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
-import com.olam.digital.ofis.multifarm.OnItemMultiFarmFarmListener;
-import com.olam.digital.ofis.multifarm.OnItemMultifarmFarmerListener;
-import com.xw.repo.BubbleSeekBar;
+ import androidx.appcompat.app.AlertDialog;
+ import androidx.core.app.ActivityCompat;
+ import androidx.core.content.ContextCompat;
+ import androidx.core.content.FileProvider;
+ import androidx.recyclerview.widget.DefaultItemAnimator;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
+ import com.github.gcacace.signaturepad.views.SignaturePad;
+ import com.google.firebase.crash.FirebaseCrash;
+ import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
+ import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
+ import com.olam.digital.ofis.authentication.AuthenticationHelper;
+ import com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity;
+ import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
+ import com.olam.digital.ofis.gps.GPSListener;
+ import com.olam.digital.ofis.gps.GPSTracker;
+ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+ import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
+ import com.olam.digital.ofis.gps.utils.GPSConstants;
+ import com.olam.digital.ofis.gps.utils.GPSUtils;
+ import com.olam.digital.ofis.model.FarmerLeadDTO;
+ import com.olam.digital.ofis.model.NationalIdDTO;
+ import com.olam.digital.ofis.model.NationalIdTypeDTO;
+ import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
+ import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Random;
+ import org.json.JSONArray;
+ import org.json.JSONException;
+ import org.json.JSONObject;
 
-// update
+ import java.io.File;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.lang.reflect.Method;
+ import java.sql.Timestamp;
+ import java.text.SimpleDateFormat;
+ import java.time.LocalDate;
+ import java.time.Period;
+ import java.util.ArrayList;
+ import java.util.Calendar;
+ import java.util.Collections;
+ import java.util.Date;
+ import java.util.HashMap;
+ import java.util.Hashtable;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Random;
+
+ // update
 public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
 
     private final String MATOMOTAG = this.getClass().getSimpleName();
@@ -209,26 +176,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     boolean isFLEnumerator;
     boolean isSubdistrictCapture;
     PopupWindow popupWindow=null;
-
-    private LinearLayout farmInformationLayout;
-    private RadioGroup farmRadioGroup;
-    private RadioButton newFarmRadioButton;
-    private RadioButton existingFarmRadioButton;
-    private EditText farmNameEdittext;
-    private EditText farmCodeEdittext;
     private EditText certificationEditText;
-    private LinearLayout farmStakeholderLayout;
-    private LinearLayout existingFarmLayout,newFarmLayout,linear_certifications;
-    private TextView existingFarmTV;
-    private boolean editIsExistFarm=false;
-    private long editFarmId;
-
-    List<MultifarmFarmerDTO> mfFarmerList;
-
-    List<MultifarmFarmerDTO> mfFarmerMultifarmList;
+    private LinearLayout linear_certifications;
     ArrayList<MultiSpinnerStatus> listStatus = new ArrayList<>();
-    ArrayList<MultiSpinnerStatus> levelOfResponsibilityStatus = new ArrayList<>();
     private OFISRoomDB ofisRoomDB;
+
+    String stakeholderId;
+    long farmerIdMs;
+    String farmHoldingCodeMs;
+    String farmerNameMs, farmId;
+
 
     /**
      * Generate unique ID from UUID.
@@ -253,118 +210,69 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             farmerDOB.setText(humanDate);
         }
     };
-    private EditText farmerIdPrefix;
+    private EditText farmerIdPrefix, etFarmHoldingName, etFarmHoldingCode, farmerName;
     private LinearLayout phonenumbers;
     private LinearLayout nationalids;
     private LayoutInflater inflater;
     private JSONArray storeableNumbers;
     private JSONArray storeableNationalids = new JSONArray();
     private String blockCharacterSet = "~#^|$%&*!'\"";
-    private InputFilter filter = new InputFilter() {
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            return null;
-        }
-    };
-    private InputFilter flFilter = new InputFilter() {
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            for (int i = start; i < end; i++) {
-                int type = Character.getType(source.charAt(i));
-                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
-                    return "";
-                }
-            }
-            return null;
-        }
-    };
 
     // Location captured related variable
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
     private int nidvalue;
-    private List<MultiFarmRoleDTO> multiFarmRoleDTOList= new ArrayList<MultiFarmRoleDTO>();
-    private List<String> rolesList=new ArrayList<>();
-    private String[] roles=null;
-    private boolean isExistingFarm =false;
-    private boolean newFarmEditMode=false;
 
+    private boolean isAddStakeHolder = false;
+    private TextView titleText, roleHeading;
+    private Spinner farmerRoleSpinner;
+    private EditText etFarmerRole;
+    private LinearLayout llFarmerGroup, llGeographyDetails;
 
-    private static String getFilePathUri(Context context, Uri uri) {
-        Uri filePathUri = uri;
-        if (uri.getScheme().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            assert cursor != null;
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
-            }
-            cursor.close();
-        }
-        return filePathUri + "";
-    }
+    private List<String> farmerRolesList;
+     private List<FarmerRoleDto> farmerRoleDTOList;
+    private String localeSuffixColumn;
+    MultiStakeHolder stakeHolder;
 
-    public static void dimBehind(PopupWindow popupWindow) {
-        View container;
-        if (popupWindow.getBackground() == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                container = (View) popupWindow.getContentView().getParent();
-            } else {
-                container = popupWindow.getContentView();
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                container = (View) popupWindow.getContentView().getParent().getParent();
-            } else {
-                container = (View) popupWindow.getContentView().getParent();
-            }
-        }
-        Context context = popupWindow.getContentView().getContext();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
-        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        p.dimAmount = 0.7f;
-        wm.updateViewLayout(container, p);
-    }
+    private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
 
-    @Override
+     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_farmer);
-        initWidgets();
+
+
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         editFarmerId = intent.getLongExtra(EDIT_FARMER_ID, 0);
-        editFarmId = intent.getLongExtra("farmId", 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
-
+        isAddStakeHolder = intent.getBooleanExtra(Utilities.STAKE_HOLDER_REGISTRATION, false);
         //roomdb
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
+        stakeHolder = new MultiStakeHolder();
 
         String localeSuffix = Utilities.getLocaleSuffix(res);
+        localeSuffixColumn = Utilities.getColumnNameByLanguage();
+
         csStatus = false;
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
+        titleText = findViewById(R.id.pageTitle);
+        farmerRoleSpinner = findViewById(R.id.farmerRoleSpinner);
+        etFarmHoldingName = findViewById(R.id.etFarmHoldingName);
+        etFarmHoldingCode = findViewById(R.id.etFarmHoldingCode);
+        roleHeading = findViewById(R.id.roleHeading);
+        etFarmerRole = findViewById(R.id.etFarmerRole);
+        farmerName = findViewById(R.id.farmerName);
+        llFarmerGroup = findViewById(R.id.llFarmerGroup);
+        llGeographyDetails = findViewById(R.id.llGeographyDetails);
+
         ll_nidview = findViewById(R.id.ll_nidview);
         isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
-        if (!isNIDAvailable) {
-            ll_nidview.setVisibility(View.GONE);
-        } else {
-            ll_nidview.setVisibility(View.VISIBLE);
-        }
+        ll_nidview.setVisibility(isNIDAvailable ? View.VISIBLE : View.GONE);
+
         farmerIdPrefix = findViewById(R.id.olamFarmerIdStart);
         phonenumbers = findViewById(R.id.phonenumbers);
         nationalids = findViewById(R.id.nationalids);
@@ -395,18 +303,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
-        Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-
-        countrySpinner = this.findViewById(R.id.spinner_country);
-        regionSpinner = this.findViewById(R.id.spinner_region);
-        districtSpinner = this.findViewById(R.id.spinner_district);
-        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
-        placeSpinner = this.findViewById(R.id.spinner_place);
-        farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
-        sectionSpinner = this.findViewById(R.id.spinner_section);
-
-        dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
 
         farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -459,11 +355,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
 
         bindDateField();
-        bindSaveButton();
-        bindConsentButton();
-        bindCertificationNameSpinner();
-
-
         gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
@@ -472,31 +363,96 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         };
+
         gpsTracker = new GPSTracker(this, gpsListener);
+        gpsTracker.startLocationUpdateInitially();
 
-//        if (gpsTracker.isGpsEnabled()) {
-
-            gpsTracker.startLocationUpdateInitially();
- //       }
-
-
-        showFarmerLead();
-        if(! isFLEnumerator){
-            farmerLeadDisplayLayout.setVisibility(View.GONE);
-        }else {
-            boolean isMultiCountries = dl.isMultipleCountries();
-            if(isMultiCountries){
-                boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
-                if(isODOrigin){
-                    showFarmerLead();
-                }else {
-                    farmerLeadDisplayLayout.setVisibility(View.GONE);
-                }
-            }else {
-                showFarmerLead();
+        if (isAddStakeHolder) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                stakeholderId = extras.getString(Utilities.STAKE_HOLDER_ID);
+                farmerIdMs = extras.getLong(Utilities.FARMER_ID);
+                farmHoldingCodeMs = extras.getString(Utilities.FARM_HOLDING_CODE);
+                farmerNameMs = extras.getString(Utilities.FARMER_NAME);
+                farmId = extras.getString(Utilities.FARM_ID);
             }
+
+            if (editMode) {
+                if (editFarmerId != 0) {
+                     stakeHolder = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(editFarmerId);
+                    if (stakeHolder != null){
+                        farmerIdMs = stakeHolder.farmerId;
+                        farmHoldingCodeMs = stakeHolder.farmHoldingCode;
+                        farmerNameMs = stakeHolder.farmHoldingName;
+                        farmId = stakeHolder.farmId;
+                        populateExistingValuesMs(stakeHolder);
+                    }
+                }
+            }
+            bindMsSaveButton(farmerIdMs);
+            bindMsConsentButton();
+            stakeHolderUiChanges(farmerNameMs, farmHoldingCodeMs, farmerIdMs, stakeHolder);
+
+        }
+        else {
+            bindSaveButton();
+            bindConsentButton();
+            addFarmerRegistrationUiChanges();
         }
 
+    }
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
+
+    private InputFilter flFilter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
     }
 
     private void showFarmerLead() {
@@ -516,6 +472,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void farmerNameInFirstNowEdit() {
+
         EditText farmerName = findViewById(R.id.farmerName);
         farmerName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -530,381 +487,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (MultiFarmUtils.isMultiFarmEnumerator) {
-                    int stakeholderCount = farmStakeholderLayout.getChildCount();
-                    if (stakeholderCount > 0) {
-                        LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(0);
-                        TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
-                        farmerNameET.setText(s.toString());
-                    }
-                }
-                if(editMode) dl.updateConsentValue(s.toString(),editFarmerId);
-            }
-        });
-    }
-    private void bindMultiFarm() {
-        inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        if (editMode) {
-            MultiFarmDTO existingStakeHolder = dl.getMultiFarmStakeHolderInfoByFarmId(String.valueOf(editFarmId));
-            JSONArray multifarmArray = existingStakeHolder.getStakeholdersInfo();
-            String[] roles = rolesList.toArray(new String[rolesList.size()]);
-            boolean position = true;
-
-            if (existingStakeHolder!=null) {
-                if (existingStakeHolder.isExistingFarm()) {
-                    editIsExistFarm=true;
-                    isExistingFarm = true;
-                    existingFarmRadioButton.setChecked(true);
-                } else {
-                    editIsExistFarm=false;
-                    isExistingFarm = false;
-                    newFarmRadioButton.setChecked(true);
+                if(editMode) {
+                    dl.updateConsentValue(s.toString(),editFarmerId);
                 }
             }
-
-
-            if (multifarmArray!=null) {
-                if (multifarmArray.length() > 0) {
-                    int length = multifarmArray.length();
-                    for (int j = 0; j < length; j++) {
-                        try {
-                            String farmname = multifarmArray.getJSONObject(j).get("farmerId").toString();
-                            String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
-                            farmCodeEdittext.setTag(editFarmId);
-
-                            String responsibilityIds = "";
-                            if (multifarmArray.getJSONObject(j).has("responsibilities")) {
-                                responsibilityIds = multifarmArray.getJSONObject(j).get("responsibilities").toString();
-                            }
-
-                            String id=null;
-                            if (multifarmArray.getJSONObject(j).has("id")) {
-                                id = (multifarmArray.getJSONObject(j).getString("id"));
-                            }
-
-                            LinearLayout farmStakeholderRow = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-                            farmStakeholderRow.setTag(id);
-                            // Widgets
-                            TextView farmerNameEdittext = farmStakeholderRow.findViewById(R.id.farmFarmerTV);
-                            Spinner farmRoleSpinner = farmStakeholderRow.findViewById(R.id.farmerRoleSpinner);
-                            ImageView farmRoleDelete = farmStakeholderRow.findViewById(R.id.farmRoleDelete);
-
-                            // Spinner value setting part
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, roles);
-                            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                            farmRoleSpinner.setAdapter(adapter);
-
-                            if(j!=0) {
-                                bindFarmers(farmerNameEdittext);
-                            }
-
-
-                            //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
-
-
-                            String farmerId = multifarmArray.getJSONObject(j).get("farmerId").toString();
-
-                            // FarmerName Setting  evana
-                            if (multifarmArray.getJSONObject(j).get("farmerId").toString().equalsIgnoreCase(String.valueOf(editFarmerId))) {
-                                String defaultFarmerName = ((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
-                                farmerNameEdittext.setText(defaultFarmerName);
-
-                            } else {
-                                String farmerNameFromDb = dl.getFarmerNamefromDb(Long.valueOf(farmerId));
-                                farmerNameEdittext.setText(farmerNameFromDb);
-                            }
-
-                            farmerNameEdittext.setTag(farmerId);
-
-                            // Should cset the farmer Name - New field incorporate
-                            farmNameEdittext.setText(multifarmArray.getJSONObject(j).get("farmName").toString());
-                            farmCodeEdittext.setText(multifarmArray.getJSONObject(j).get("farmCode").toString());
-
-                            // disable the farm delete in first record
-                            if (position) {
-                                farmRoleDelete.setVisibility(View.GONE);
-                                position = false;
-                            }
-                            // Allowing the Farmer and delete the farmer stakeholder
-                            bindFarmRoleDelete(farmStakeholderRow);
-                            bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                            farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
-                            // Set Tag in edit Mode
-                            farmRoleSpinner.setTag(roleId);
-
-                            bindLevelOfResponsibilitySpinner(farmStakeholderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility), responsibilityIds);
-                            farmStakeholderLayout.addView(farmStakeholderRow);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-
-        } else {
-            // This will not get Called Ever - Revisit
-//            if(farmStakeholderLayout.getChildCount()>0) {
-//                LinearLayout farmRoleInclude = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-//                farmStakeholderLayout.addView(farmRoleInclude);
-//
-//                Spinner farmRoleSpinner = farmRoleInclude.findViewById(R.id.farmerRoleSpinner);
-//                bindFarmerRoles(farmRoleSpinner);
-//
-//                TextView farmFarmerEditText = farmRoleInclude.findViewById(R.id.farmFarmerTV);
-//                bindFarmers(farmFarmerEditText);
-//
-//                ImageView farmRoleDelete = farmRoleInclude.findViewById(R.id.farmRoleDelete);
-//                farmRoleDelete.setVisibility(View.GONE);
-//            }
-            if(!existingFarmRadioButton.isChecked()) {
-                newFarmRadioButton.setChecked(true);
-            }
-        }
-
-
-        existingFarmRadioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                isExistingFarm=true;
-                List<MultiFarmDTO> existingFarmList = new ArrayList<>();
-                showPopupFarm(existingFarmList);
-                farmStakeholderLayout.removeAllViews();
-            }
         });
-
-
-        newFarmRadioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                isExistingFarm =false;
-                farmNameEdittext.setEnabled(true);
-                farmNameEdittext.setText("");
-                farmCodeEdittext.setText("");
-                farmStakeholderLayout.removeAllViews();
-
-            }
-        });
-
-
-        // Add FArmer
-        LinearLayout addRoleFarmerLayout=findViewById(R.id.addFarmerRoleLayout);
-        addRoleFarmerLayout.setOnClickListener(v -> {
-            LinearLayout farmRoleInclude = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-
-            if(farmStakeholderLayout.getChildCount()==0){
-                // Default Farmer
-                String defaultFarmerName=((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
-                if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName!=null){
-                    TextView farmerNameET=farmRoleInclude.findViewById(R.id.farmFarmerTV);
-                    farmerNameET.setText(defaultFarmerName);
-                    farmerNameET.setTag("own");
-                }else{
-                    Toast.makeText(AddFarmerActivity.this,res.getString(R.string.please_enter_farmer_name),Toast.LENGTH_LONG).show();
-                    return;
-                }
-                (farmRoleInclude.findViewById(R.id.farmRoleDelete)).setVisibility(View.GONE);
-
-            }else {
-                bindFarmRoleDelete(farmRoleInclude);
-                bindFarmers(farmRoleInclude.findViewById(R.id.farmFarmerTV));
-            }
-
-            bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
-            bindLevelOfResponsibilitySpinner(farmRoleInclude.findViewById(R.id.spinnerSelectLevelOfResponsibility), "");
-            farmStakeholderLayout.addView(farmRoleInclude);
-        });
-
-
-        farmNameEdittext.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                // you can call or do what you want with your EditText here
-                String farmCodeContent=farmNameEdittext.getText().toString().trim();
-                if (farmCodeContent.equalsIgnoreCase("")){
-                    farmCodeEdittext.setText("");
-                }else{
-                    farmCodeEdittext.setText(farmCodeContent+"-"+ String.format("%04d", new Random().nextInt(10000)));
-                }
-                farmCodeEdittext.setEnabled(false);
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-    }
-
-
-    private void bindFarmers(TextView farmFarmerEditText) {
-        farmFarmerEditText.setOnClickListener(v -> {
-            List<MultifarmFarmerDTO> mfFarmerList=new ArrayList<>();
-            Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
-            long farmergroup_id = spinner_farmer_group.getSelectedItemId();
-            if (farmergroup_id < 1) {
-                Toast.makeText(context, res.getString(R.string.fill_farmergroup_name_multifarm), Toast.LENGTH_LONG).show();
-            }else {
-                showPopupFarmers(mfFarmerList, farmFarmerEditText,farmergroup_id);
-            }
-        });
-    }
-
-    private void bindExistingFarm(TextView existingFarmTV) {
-        existingFarmTV.setOnClickListener(v -> {
-            List<MultiFarmDTO> existingFarmList=new ArrayList<>();
-            showPopupFarm(existingFarmList);
-        });
-    }
-
-    private void bindFarmerRoles(Spinner roleSpinner){
-
-        String[] roles=rolesList.toArray(new String[rolesList.size()]);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, roles);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        roleSpinner.setAdapter(adapter);
-
-        roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position==0){
-                    roleSpinner.setTag("null");
-                }else {
-                    MultiFarmRoleDTO multiFarmRoleDTO = multiFarmRoleDTOList.get(position-1);
-                    roleSpinner.setTag(multiFarmRoleDTO.getId());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-    }
-
-    private void bindFarmRoleDelete(LinearLayout llMultiStakeHolder) {
-        llMultiStakeHolder.findViewById(R.id.farmRoleDelete).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                farmStakeholderLayout.removeView(llMultiStakeHolder);
-            }
-        });
-    }
-    private void initWidgets() {
-        farmInformationLayout=findViewById(R.id.farmInformationLayout);
-        farmRadioGroup=findViewById(R.id.farmRadioGroup);
-        newFarmRadioButton=findViewById(R.id.newFarmRadioButton);
-        existingFarmRadioButton=findViewById(R.id.existingFarmRadioButton);
-        // New
-        newFarmLayout=findViewById(R.id.newFarmLayout);
-        farmNameEdittext=findViewById(R.id.farmNameEdittext);
-        farmCodeEdittext=findViewById(R.id.farmCodeEdittext);
-        //Existing Farm
-        existingFarmLayout=findViewById(R.id.existingFarmLayout);
-        existingFarmTV = findViewById(R.id.existingFarmTV);
-
-        farmStakeholderLayout=findViewById(R.id.farmStakeholderLayout);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        String localeSuffix = Utilities.getColumnNameByLanguage();
-        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        if(!MultiFarmUtils.isMultiFarmEnumerator){
-            farmInformationLayout.setVisibility(View.GONE);
-        }else{
-
-            multiFarmRoleDTOList=dl.getMultiFarmRoles(localeSuffix);
-            rolesList.clear();
-            rolesList.add(res.getString(R.string.farmer_roles));
-            for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
-                rolesList.add(multiFarmRoleDTO.getName());
-            }
-            farmerNameInFirstNowEdit();
-            bindMultiFarm();
-        }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        if (mCurrentPhotoPath != null) {
-            savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY, mCurrentPhotoPath);
-        }
-        if (mCapturedImageURI != null) {
-            savedInstanceState.putString(CAPTURED_PHOTO_URI_KEY, mCapturedImageURI.toString());
-        }
-        if (mCurrentSignaturePhotoPath != null) {
-            savedInstanceState.putString(CAPTURED_SIGNATURE_PHOTO_PATH_KEY, mCurrentSignaturePhotoPath);
-        }
-        if (mCapturedSignatureImageURI != null) {
-            savedInstanceState.putString(CAPTURED_SIGNATURE_PHOTO_URI_KEY, mCapturedSignatureImageURI.toString());
-        }
-        if (dateStrToSend != null) {
-            savedInstanceState.putString(CAPTURED_DATE_STR_TO_SEND, dateStrToSend);
-        }
-
-        selectedCountry = (int) countrySpinner.getSelectedItemId();
-        selectedRegion = (int) regionSpinner.getSelectedItemId();
-        selectedDistrict = (int) districtSpinner.getSelectedItemId();
-        selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
-        selectedPlace = (int) placeSpinner.getSelectedItemId();
-        selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
-        selectedSection = (int) sectionSpinner.getSelectedItemId();
-
-
-        savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
-        savedInstanceState.putInt(CAPTURED_SELECTED_REGION, selectedRegion);
-        savedInstanceState.putInt(CAPTURED_SELECTED_DISTRICT, selectedDistrict);
-        savedInstanceState.putInt(CAPTURED_SELECTED_SUBDISTRICT, selectedSubDistrict);
-        savedInstanceState.putInt(CAPTURED_SELECTED_PLACE, selectedPlace);
-        savedInstanceState.putInt(CAPTURED_SELECTED_FARMERGROUP, selectedFarmerGroup);
-        savedInstanceState.putInt(CAPTURED_SELECTED_SECTION, selectedSection);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        ImageButton farmerPhotoButton = findViewById(R.id.farmerPhoto);
-        ImageButton farmerSignatureButton = findViewById(R.id.farmerSignature);
-
-        if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
-            mCurrentPhotoPath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
-        }
-        if (savedInstanceState.containsKey(CAPTURED_PHOTO_URI_KEY)) {
-            mCapturedImageURI = Uri.parse(savedInstanceState.getString(CAPTURED_PHOTO_URI_KEY));
-        }
-        if (savedInstanceState.containsKey(CAPTURED_SIGNATURE_PHOTO_PATH_KEY)) {
-            mCurrentSignaturePhotoPath = savedInstanceState.getString(CAPTURED_SIGNATURE_PHOTO_PATH_KEY);
-        }
-        if (savedInstanceState.containsKey(CAPTURED_SIGNATURE_PHOTO_URI_KEY)) {
-            mCapturedSignatureImageURI = Uri.parse(savedInstanceState.getString(CAPTURED_SIGNATURE_PHOTO_URI_KEY));
-        }
-        if (savedInstanceState.containsKey(CAPTURED_DATE_STR_TO_SEND)) {
-            dateStrToSend = savedInstanceState.getString(CAPTURED_DATE_STR_TO_SEND);
-        }
-        if (mCurrentPhotoPath != null) {
-            displayBitmap(mCurrentPhotoPath, "portrait", farmerPhotoButton);
-        }
-        if (mCurrentSignaturePhotoPath != null) {
-            displayBitmap(mCurrentSignaturePhotoPath, "signature", farmerSignatureButton);
-        }
-        selectedCountry = savedInstanceState.getInt(CAPTURED_SELECTED_COUNTRY, 0);
-        selectedRegion = savedInstanceState.getInt(CAPTURED_SELECTED_REGION, 0);
-        selectedDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_DISTRICT, 0);
-        selectedSubDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_SUBDISTRICT, 0);
-        selectedPlace = savedInstanceState.getInt(CAPTURED_SELECTED_PLACE, 0);
-        selectedFarmerGroup = savedInstanceState.getInt(CAPTURED_SELECTED_FARMERGROUP, 0);
-        selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
-
-        dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true, 1);
-        showFarmerLead();
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 
     private String getCurrentPhotoPath() {
         return mCurrentPhotoPath;
@@ -943,8 +537,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void populateExistingValues(final Cursor existingItem) {
-        EditText farmerName = findViewById(R.id.farmerName);
-        farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+        String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+        farmerName.setText(name);
+        etFarmHoldingName.setText(appendSuffixForFarmName(name, res.getString(R.string.farm_holding_suffix)));
+        etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
@@ -1047,7 +643,93 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void getAllPhoneNumbers() {
+     private void populateExistingValuesMs(final MultiStakeHolder multiStakeHolder) {
+         String name = multiStakeHolder.msName;
+         farmerName.setText(name);
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerNameMs, res.getString(R.string.farm_holding_suffix)));
+         etFarmHoldingCode.setText(multiStakeHolder.farmHoldingCode);
+
+         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
+         farmerDOB = findViewById(R.id.farmerDOB);
+         dateStrToSend = multiStakeHolder.msDOB;
+         farmerDOB.setText(dateStrToSend);
+
+         genderspinner = findViewById(R.id.farmerGender);
+         new CountDownTimer(1000, 100) {
+
+             public void onTick(long millisUntilFinished) {
+             }
+
+             public void onFinish() {
+                 String existingGender = multiStakeHolder.msGender;
+                 String existingGenderKey = existingGender + Utilities.getLocaleSuffix(res);
+                 if (genders.containsKey(existingGenderKey)) {
+                     existingGender = genders.get(existingGenderKey);
+                 }
+
+                 Utilities.setSpinnerSelectionByValue(existingGender, genderspinner);
+             }
+         }.start();
+
+         String farmerPhotoPath = multiStakeHolder.msPhoto;
+         if (farmerPhotoPath != null) {
+             ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
+             if (farmerPhotoPath.length() > 0) {
+                 Uri uri = Uri.parse(farmerPhotoPath);
+                 setCapturedImageURI(uri);
+                 setCurrentPhotoPath(uri.getPath());
+
+                 // set our desired width and height for display
+                 int baseWidth = 100;
+                 int baseHeight = 133;
+
+                 Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+                 Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+                 Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+                 Bitmap existingBitmap = Utilities.loadSizedBitmap(getCurrentPhotoPath(), outputWidth, outputHeight);
+
+                 farmerPhoto.setImageBitmap(existingBitmap);
+             }
+         }
+         ImageButton farmerSignature = findViewById(R.id.farmerSignature);
+         String farmerSignaturePhotoPath = multiStakeHolder.msSignature ;
+         if (farmerSignaturePhotoPath != null) {
+             if (farmerSignaturePhotoPath.length() > 0) {
+                 Uri uri = Uri.parse(farmerSignaturePhotoPath);
+                 setCapturedSignatureImageURI(uri);
+                 setCurrentSignaturePhotoPath(uri.getPath());
+
+                 // set our desired width and height for display
+                 int baseWidth = 82;
+                 int baseHeight = 28;
+
+                 Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+                 Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+                 Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+                 Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(farmerSignaturePhotoPath, outputWidth, outputHeight);
+
+                 farmerSignature.setImageBitmap(existingSignatureBitmap);
+             } else {
+                 farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
+             }
+         } else {
+             farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
+         }
+
+         Switch consentFarmer = findViewById(R.id.consentFarmer);
+         consentFarmer.setChecked(true);
+         consentFarmer.setEnabled(false);
+
+         Switch consentOthers = findViewById(R.id.consentOthers);
+         consentOthers.setChecked(true);
+         consentOthers.setEnabled(false);
+
+     }
+
+     private void getAllPhoneNumbers() {
         phoneNumberList = new ArrayList<String>();
 
         int phonerowscount = phonenumbers.getChildCount();
@@ -1143,23 +825,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         Long time = System.currentTimeMillis();
         String olamFarmerId = String.valueOf(username + time);
 
-//        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
-
-        EditText farmerName = findViewById(R.id.farmerName);
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+        String farmCode = etFarmHoldingCode.getText().toString().trim();
+
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
             return values;
-
-
         }
 
         if (dateStrToSend == null || dateStrToSend.equals("")) {
-
             Toast.makeText(context, res.getString(R.string.please_fill_dob), Toast.LENGTH_LONG).show();
             return values;
-
         }
         genderspinner = findViewById(R.id.farmerGender);
         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
@@ -1169,9 +846,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         Spinner spinner_section = findViewById(R.id.spinner_section);
         long section_id = spinner_section.getSelectedItemId();
 
-
         if (section_id < 1) {
-
             selectedCountry = (int) countrySpinner.getSelectedItemId();
             selectedRegion = (int) regionSpinner.getSelectedItemId();
             selectedDistrict = (int) districtSpinner.getSelectedItemId();
@@ -1207,7 +882,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
 
-//            Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             return values;
         }
@@ -1296,17 +970,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id ,subdistrict_id);
         }
 
-        /*Switch consentFarmer = findViewById(R.id.consentFarmer);
-        if (!consentFarmer.isChecked()) {
-            Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
-            return values;
-        }
-
-        Switch consentOthers = findViewById(R.id.consentOthers);
-        if (!consentOthers.isChecked()) {
-            Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
-            return values;
-        }*/
         if(! editMode) {
             if (!csStatus) {
                 Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
@@ -1314,44 +977,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
-         /* if(isFLEnumerator){
-            String farmerleadname = farmerLeadSearch.getText().toString();
-            if(farmerleadname.equalsIgnoreCase("")){
-                Toast.makeText(context, res.getString(R.string.select_farmerlead), Toast.LENGTH_LONG).show();
-                return values;
-            }
-        }*/
-
-        if(MultiFarmUtils.isMultiFarmEnumerator){
-
-            // Mobile created db
-            if(!(newFarmRadioButton.isChecked() || existingFarmRadioButton.isChecked())){
-                Toast.makeText(AddFarmerActivity.this,res.getString(R.string.farm_type_warning),Toast.LENGTH_LONG).show();
-                return values;
-            }
-
-
-            if(!farmNameEdittext.getText().toString().trim().equalsIgnoreCase("") &&
-                    !farmCodeEdittext.getText().toString().trim().equalsIgnoreCase("")){
-                if (farmStakeholderLayout.getChildCount()==0){
-                    Toast.makeText(AddFarmerActivity.this,res.getString(R.string.stakeholder_validation),Toast.LENGTH_LONG).show();
-                    return values;
-                }
-                if (!isAllRoleFarmerFilled()) {
-                    Toast.makeText(AddFarmerActivity.this,res
-                            .getString(R.string.fill_stakeholder_name_role),Toast.LENGTH_LONG).show();
-                    return values;
-                }
-            }else{
-                Toast.makeText(AddFarmerActivity.this,res
-                        .getString(R.string.fill_stakeholder_farm_code_name),Toast.LENGTH_LONG).show();
-                return values;
-            }
-
-        }
-
 
         if (isNIDAvailable) {
+            if(editMode){
+                for (Integer updatedValue : updatedNidValue) {
+                    dl.removeNIDPhotostatusByType(String.valueOf(updatedValue), editFarmerId);
+                }
+            }
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
@@ -1382,12 +1014,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                     }
                 }
-            }catch (Exception e){}
+            }
+            catch (Exception e){
 
-
-
+            }
         }
-        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+
+        if(!ofisRoomDB.certificationsDao().getCertifications().isEmpty()) {
             if(certificationNameSpinner.getTag()==null){
                 Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
                 return values;
@@ -1437,11 +1070,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
 
-//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, String.valueOf(generateUniqueLongNumber()));
 
         try {
-            if (edit_signature)
+            if (edit_signature) {
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
+            }
+
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
@@ -1466,6 +1100,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE, farmCode);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmerNameValue);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -1508,6 +1144,157 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         return values;
     }
+
+     private MultiStakeHolder validateValuesMs(long farmerIdMs) {
+
+         MultiStakeHolder multiStakeHolder = stakeHolder;
+         multiStakeHolder.msTempId = null;
+
+         Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
+         Long time = System.currentTimeMillis();
+         String olamFarmerId = String.valueOf(username + time);
+
+         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+         String farmHoldingCode = etFarmHoldingCode.getText().toString().trim();
+
+         if (farmerNameValue.equals("")) {
+             farmerName.setText("");
+             Toast.makeText(context, res.getString(R.string.please_fill_stakeholder_name), Toast.LENGTH_LONG).show();
+             return null;
+         }
+
+         if (dateStrToSend == null || dateStrToSend.equals("")) {
+             Toast.makeText(context, res.getString(R.string.please_fill_stakeholder_dob), Toast.LENGTH_LONG).show();
+             return null;
+         }
+
+         int selectedPosition = farmerRoleSpinner.getSelectedItemPosition();
+
+         if (selectedPosition == 0) {
+             Toast.makeText(context, res.getString(R.string.stakeholder_role_required), Toast.LENGTH_SHORT).show();
+             return null;
+         }
+
+         genderspinner = findViewById(R.id.farmerGender);
+         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+         if (genderValue.equals("")) {
+             return null;
+         }
+
+
+         if(! editMode) {
+             if (!csStatus) {
+                 Toast.makeText(context, res.getString(R.string.Please_accept_stakeholder_consent), Toast.LENGTH_LONG).show();
+                 return null;
+             }
+         }
+
+         if (isNIDAvailable) {
+             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(LIMIT_XED)) {
+                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             }
+
+             if (!ValidateNIDValuesMs()) {
+                 return null;
+             }
+             storeableNationalids = fetchnationalidvalues();
+
+
+             // collect the national id types
+             nationalIdTypes= new ArrayList<>();
+             try{
+                 if(storeableNationalids.length() > 0){
+
+                     int length = storeableNationalids.length();
+                     for (int j = 0; j < length; j++) {
+                         try {
+                             nationalIdTypes.add(storeableNationalids.getJSONObject(j).get("nationalIdType").toString());
+                         } catch (JSONException e) {
+                             e.printStackTrace();
+                         }
+                     }
+                 }
+             }
+             catch (Exception e){
+
+             }
+         }
+
+
+
+         int phonerowscount = phonenumbers.getChildCount();
+
+         storeableNumbers = new JSONArray();
+         for (int j = 0; j < phonerowscount; j++) {
+             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
+
+             EditText phonenumber = phonenumberrow.findViewById(R.id.phonenumber);
+             RadioButton primary_number = phonenumberrow.findViewById(R.id.primary_number);
+             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
+
+             if (phonenumberValue.length() > 0 && PhoneNumberUtils.isGlobalPhoneNumber(phonenumberValue)) {
+                 JSONObject storeableNumber = new JSONObject();
+                 try {
+                     storeableNumber.put("country_id", dl.getCountryByFarmerId(farmerIdMs));
+                     storeableNumber.put("primary_number", primary_number.isChecked());
+                     storeableNumber.put("phonenumber", phonenumberValue);
+                     storeableNumbers.put(storeableNumber);
+                 } catch (JSONException e) {
+                     FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
+                     e.printStackTrace();
+                 }
+             }
+         }
+
+         try {
+             multiStakeHolder.farmerId = farmerIdMs;
+             multiStakeHolder.msName = farmerNameValue;
+             multiStakeHolder.olamMultiStakeholderId = olamFarmerId;
+             multiStakeHolder.farmId = farmId;
+             multiStakeHolder.farmHoldingName = farmerNameMs;
+             multiStakeHolder.msDisplayId = olamFarmerId;
+
+             multiStakeHolder.created_locally = 1;
+             multiStakeHolder.msDOB = dateStrToSend;
+
+             // age conversion
+             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                 LocalDate dob = LocalDate.parse(dateStrToSend);
+                 LocalDate currentDate = LocalDate.now();
+                 Period age = Period.between(dob, currentDate);
+                 multiStakeHolder.age = String.valueOf(age.getYears());
+             }
+
+             multiStakeHolder.msGender=genderValue;
+             multiStakeHolder.msPhoto = getCurrentPhotoPath();
+             multiStakeHolder.synced = 0;
+             multiStakeHolder.submitted_modules = "{}";
+             multiStakeHolder.consentOthers = 1;
+             multiStakeHolder.consentFarmer = 1;
+             multiStakeHolder.isConsentAvailable = "true";
+             multiStakeHolder.farmHoldingCode = farmHoldingCode;
+             multiStakeHolder.msRoleId = farmerRoleSpinner.getTag().toString();
+             multiStakeHolder.msSignature = edit_signature ? getCurrentSignaturePhotoPath() : stakeHolder.msSignature;
+             multiStakeHolder.msTempId = Long.valueOf(olamFarmerId);
+
+             Date today = new Date();
+             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+             String registereddate = format.format(today);
+             multiStakeHolder.registeredDate = registereddate;
+
+
+         } catch (Exception e) {
+             multiStakeHolder = null;
+             e.printStackTrace();
+             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
+         }
+
+         return multiStakeHolder;
+     }
 
     private void bindnumberdelete(ImageView trashbutton) {
         trashbutton.setOnClickListener(new View.OnClickListener() {
@@ -1575,7 +1362,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         if (editMode) {
-            Cursor existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false);
+            Cursor existingNumbers = null;
+            if (isAddStakeHolder){
+                existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+            } else {
+                existingNumbers = dl.getFarmerPhoneNumbers(editFarmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+            }
             boolean firstNumber = true;
 
             while (existingNumbers.moveToNext()) {
@@ -1662,11 +1454,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
         expiryDate.setTag(nationalids.getChildCount());
-//        ll_captureexpiry.setVisibility(View.GONE);
         expiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
                 final Calendar c = Calendar.getInstance();
                 int mYear = c.get(Calendar.YEAR); // current year
                 int mMonth = c.get(Calendar.MONTH); // current month
@@ -1676,11 +1466,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         new DatePickerDialog.OnDateSetListener() {
 
                             @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-                                // set day of month , month and year value in the edit text
-                               /* expiryDate.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);*/
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 Calendar cal = Calendar.getInstance();
                                 cal.set(year, monthOfYear, dayOfMonth);
 
@@ -1750,137 +1536,142 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     private void bindNationalidValues() {
         if (editFarmerId != 0) {
-            Cursor nids = dl.getnationalidsbyfarmerid(editFarmerId);
+            Cursor nids;
+            if (isAddStakeHolder) {
+                nids = dl.getnationalidsbyfarmerids(editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID );
+            } else {
+                nids = dl.getnationalidsbyfarmerids(editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+            }
+
             ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
             try {
                 int i = 0;
-                while (nids.moveToNext()) {
-                    LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
-                    nationalids.addView(nationalidinclude);
-                    Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
-                    LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
-                    ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
-                    ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
-                    LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
-                    LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
-                    EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
-                    TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
-                    spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.nidtype_spinner, refreshitem);
-                    spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
-                    spinner_nidtype.setAdapter(spinnerArrayAdapter);
-                    actionbtn.setClickable(false);
-                    spinner_nidtype.setEnabled(false);
-//                    ll_captureexpiry.setVisibility(View.GONE);
-                    if (i == 0) {
-                        niddelete.setVisibility(View.INVISIBLE);
-                    } else {
-                        niddelete.setVisibility(View.VISIBLE);
-                    }
-                    i++;
-                    nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-                    expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
-                    String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
-                    int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
-                    spinner_nidtype.setSelection(spinnerPosition);
-
-                    String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
-                    if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
-                        int baseWidth = 100;
-                        int baseHeight = 133;
-
-
-                        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
-                        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
-                        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
-
-                        Bitmap bitmap = Utilities.loadSizedBitmap(farmerNIDPath, outputWidth, outputHeight);
-
-                        nationalidphoto.setImageBitmap(bitmap);
-
-                        nationalidphoto.setTag(nationalids.getChildCount());
-                    }
-                    actionbtn.setTag(nationalids.getChildCount());
-                    expiryDate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
-                            final Calendar c = Calendar.getInstance();
-                            int mYear = c.get(Calendar.YEAR); // current year
-                            int mMonth = c.get(Calendar.MONTH); // current month
-                            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-                            // date picker dialog
-                            DatePickerDialog   datePickerDialog = new DatePickerDialog(AddFarmerActivity.this,
-                                    new DatePickerDialog.OnDateSetListener() {
-
-                                        @Override
-                                        public void onDateSet(DatePicker view, int year,
-                                                              int monthOfYear, int dayOfMonth) {
-                                            // set day of month , month and year value in the edit text
-                                            /* expiryDate.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);*/
-                                            Calendar cal = Calendar.getInstance();
-                                            cal.set(year, monthOfYear, dayOfMonth);
-
-                                            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                                            String humanDate = serverDateFormat.format(cal.getTime());
-                                            expiryDate.setText(humanDate);
-
-                                        }
-                                    }, mYear, mMonth, mDay);
-                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
-                            datePickerDialog.show();
+                if (nids.getCount() > 0){
+                    while (nids.moveToNext()) {
+                        LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
+                        nationalids.addView(nationalidinclude);
+                        Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
+                        LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
+                        ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
+                        ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
+                        LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                        LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
+                        EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                        TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
+                        spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.nidtype_spinner, refreshitem);
+                        spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
+                        spinner_nidtype.setAdapter(spinnerArrayAdapter);
+                        actionbtn.setClickable(false);
+                        spinner_nidtype.setEnabled(false);
+                        if (i == 0) {
+                            niddelete.setVisibility(View.INVISIBLE);
+                        } else {
+                            niddelete.setVisibility(View.VISIBLE);
                         }
-                    });
+                        i++;
+                        nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                        expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                        String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
+                        int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
+                        spinner_nidtype.setSelection(spinnerPosition);
 
-                    spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            if (event.getAction() == MotionEvent.ACTION_UP) {
-                                String selected_item = spinner_nidtype.getSelectedItem().toString();
-                                int type = getNidType(selected_item);
-                                selectednationalidList.remove(selected_item);
-                                ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
-                                spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
-                                spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                                spinner_nidtype.setAdapter(spinnerArrayAdapter);
-                                nidnumber.setText("");
-                                nationalidphoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_capture_id_default));
-                                dl.removeNIDPhoto(type);
+                        String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                        if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
+                            int baseWidth = 100;
+                            int baseHeight = 133;
+
+
+                            Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+                            Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+                            Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+                            Bitmap bitmap = Utilities.loadSizedBitmap(farmerNIDPath, outputWidth, outputHeight);
+
+                            nationalidphoto.setImageBitmap(bitmap);
+
+                            nationalidphoto.setTag(nationalids.getChildCount());
+                        }
+                        actionbtn.setTag(nationalids.getChildCount());
+                        expiryDate.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Calendar c = Calendar.getInstance();
+                                int mYear = c.get(Calendar.YEAR); // current year
+                                int mMonth = c.get(Calendar.MONTH); // current month
+                                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                                // date picker dialog
+                                DatePickerDialog   datePickerDialog = new DatePickerDialog(AddFarmerActivity.this,
+                                        new DatePickerDialog.OnDateSetListener() {
+
+                                            @Override
+                                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                                Calendar cal = Calendar.getInstance();
+                                                cal.set(year, monthOfYear, dayOfMonth);
+
+                                                SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                                String humanDate = serverDateFormat.format(cal.getTime());
+                                                expiryDate.setText(humanDate);
+
+                                            }
+                                        }, mYear, mMonth, mDay);
+                                setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
+                                datePickerDialog.show();
                             }
-                            return false;
-                        }
-                    });
-                    spinner_nidtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
-                                int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
-                                InputFilter[] filters = new InputFilter[1];
-                                filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
-                                nidnumber.setFilters(filters);
-                                if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
-                                    ll_capturephoto.setVisibility(View.GONE);
-                                } else {
-                                    ll_capturephoto.setVisibility(View.VISIBLE);
+                        });
+
+                        spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                if (event.getAction() == MotionEvent.ACTION_UP) {
+                                    String selected_item = spinner_nidtype.getSelectedItem().toString();
+                                    int type = getNidType(selected_item);
+                                    selectednationalidList.remove(selected_item);
+                                    ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+                                    spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
+                                    spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                                    spinner_nidtype.setAdapter(spinnerArrayAdapter);
+                                    nidnumber.setText("");
+                                    nationalidphoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_capture_id_default));
+                                    dl.removeNIDPhoto(type);
                                 }
-                                if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
-                                    ll_captureexpiry.setVisibility(View.GONE);
-                                } else {
-                                    ll_captureexpiry.setVisibility(View.VISIBLE);
+                                return false;
+                            }
+                        });
+                        spinner_nidtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
+                                    int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                                    InputFilter[] filters = new InputFilter[1];
+                                    filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
+                                    nidnumber.setFilters(filters);
+                                    if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                        ll_capturephoto.setVisibility(View.GONE);
+                                    } else {
+                                        ll_capturephoto.setVisibility(View.VISIBLE);
+                                    }
+                                    if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                        ll_captureexpiry.setVisibility(View.GONE);
+                                    } else {
+                                        ll_captureexpiry.setVisibility(View.VISIBLE);
+                                    }
+                                    ValidateSpinnerTypes();
                                 }
-                                ValidateSpinnerTypes();
+
                             }
 
-                        }
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
 
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
-                    bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
-                    bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
+                            }
+                        });
+                        bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
+                        bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
+                    }
+                } else {
+                    bindnationalid();
                 }
+
 
             } catch (Exception e) {
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
@@ -1926,7 +1717,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 String value = spinner.getSelectedItem().toString();
-                if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
+                if (value.equalsIgnoreCase(SELECT_NATIONALID) && !isAddStakeHolder) {
                     Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -1991,8 +1782,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         showConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //                consentHolder.setVisibility(View.VISIBLE);
-//                consentHolder.startAnimation(mSlideBottomUp);
+
+                String errorMsg = res.getString(R.string.please_fill_farmer_name);
+                if (isAddStakeHolder) {
+                    selectedCountry = dl.getCountryByFarmerId(farmerIdMs);
+                    errorMsg = res.getString(R.string.please_fill_stakeholder_name);
+                }
+                else {
+                    selectedCountry = (int) countrySpinner.getSelectedItemId();
+                }
+
                 EditText farmerName = findViewById(R.id.farmerName);
                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                 if (farmerNameValue.equals("")) {
@@ -2006,7 +1805,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
                     return;
                 }
-                Intent in ;
+
+                Intent in;
                 if(selectedCountry == 27 && Utilities.getOperatingUnitSharedPrefs(AddFarmerActivity.this).equals("OFI") ){
                     in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
                 }else {
@@ -2018,6 +1818,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 bundle.putString("type", NEW);
                 bundle.putString("displayFarmerId", "");
                 bundle.putString("olamfarmername", farmerNameValue);
+
                 if(editMode){
                     bundle.putLong("FarmerId", editFarmerId);
                 }else {
@@ -2054,6 +1855,81 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
+     private void bindMsConsentButton() {
+         Button showConsent = findViewById(R.id.consentLaunchButton);
+         ImageButton hideConsent = findViewById(R.id.consentCloseButton);
+         final LinearLayout consentHolder = findViewById(R.id.consentStatementHolder);
+         final Animation mSlideBottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
+         final Animation mSlideBottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
+
+
+         showConsent.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 //                consentHolder.setVisibility(View.VISIBLE);
+//                consentHolder.startAnimation(mSlideBottomUp);
+                 EditText farmerName = findViewById(R.id.farmerName);
+                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                 if (farmerNameValue.equals("")) {
+                     farmerName.setText("");
+                     Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
+                     return;
+                 }
+                 selectedCountry = dl.getCountryByFarmerId(farmerIdMs);
+
+                 if(selectedCountry == 0){
+                     Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+                     return;
+                 }
+                 Intent in ;
+                 if(selectedCountry == 27 && Utilities.getOperatingUnitSharedPrefs(AddFarmerActivity.this).equals("OFI") ){
+                     in =  new Intent(AddFarmerActivity.this, ConsentStatementOFIsBrazilActivity.class);
+                 }else {
+                     in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                     in.putExtra("COUNTRY_ID", selectedCountry);
+                 }
+
+                 Bundle bundle=new Bundle();
+                 bundle.putString("type", NEW);
+                 bundle.putString("displayFarmerId", "");
+                 bundle.putString("olamfarmername", farmerNameValue);
+                 if(editMode){
+                     bundle.putLong("FarmerId", editFarmerId);
+                 }else {
+                     bundle.putLong("FarmerId", 0);
+                 }
+
+                 in.putExtra(Utilities.STAKE_HOLDER_REGISTRATION, isAddStakeHolder);
+                 in.putExtras(bundle);
+                 startActivityForResult(in,800);
+             }
+         });
+
+         hideConsent.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 consentHolder.startAnimation(mSlideBottomDown);
+             }
+         });
+
+         mSlideBottomDown.setAnimationListener(new Animation.AnimationListener() {
+             @Override
+             public void onAnimationStart(Animation animation) {
+
+             }
+
+             @Override
+             public void onAnimationEnd(Animation animation) {
+                 consentHolder.setVisibility(View.GONE);
+             }
+
+             @Override
+             public void onAnimationRepeat(Animation animation) {
+
+             }
+         });
+     }
+
     private void bindSaveButton() {
         Button saveButton = findViewById(R.id.saveFarmer);
 
@@ -2076,60 +1952,24 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (values.size() > 0) {
                         if (editMode) {
                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                            ofisRoomDB.multiStakeHolderDao().updateFarmNameAndCode(editFarmerId, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME), values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE));
                             // update farmer name
                             EditText farmerName = findViewById(R.id.farmerName);
                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                             String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                             new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
-                            dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
+                            dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                             if (isNIDAvailable) {
-                                boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
+                                boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                 if (moduretationstatus) {
                                     statusmoduration = true;
                                 }
                             }
 
-                            if(MultiFarmUtils.isMultiFarmEnumerator){
-
-                                if(!farmNameEdittext.getText().toString().trim().equalsIgnoreCase("") &&
-                                        !farmCodeEdittext.getText().toString().trim().equalsIgnoreCase("")){
-                                    if (farmStakeholderLayout.getChildCount()==0){
-                                        Toast.makeText(AddFarmerActivity.this,res.getString(R.string.stakeholder_validation),Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    if (isAllRoleFarmerFilled()) {
-                                       long newId= dl.updateMultiFarmInfo(getAllMultiFarmList1(editFarmerId),editFarmId,isExistingFarm,editIsExistFarm);
-
-                                        try {
-                                            dl.updateStakeHoldersTable(getAllMultiStakeholders(editFarmerId,newId),editFarmId);
-                                        }catch ( Exception e){}
-
-                                        ContentValues networkQueueValues = new ContentValues();
-                                        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
-                                        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, newId);
-                                        dl.updateNetworkQueueMultiFarmEntry(networkQueueValues,editFarmId,editFarmerId);
-                                    }else{
-                                        Toast.makeText(AddFarmerActivity.this,res
-                                                .getString(R.string.fill_stakeholder_name_role),Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                }else{
-                                    Toast.makeText(AddFarmerActivity.this,res
-                                            .getString(R.string.fill_stakeholder_farm_code_name),Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-
-                           //     dl.updateMultiFarmDetails(getAllMultiFarmList(),editFarmerId);
-                            }
                             if (updFarmerId > 0) {
                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                 ViewFarmerActivity.farmerId = editFarmerId;
-                                if(MultiFarmUtils.isMultiFarmEnumerator) {
-                                    ViewFarmerActivity.farmSurvey =true;
-                                }else{
-                                    ViewFarmerActivity.farmSurvey =false;
-                                }
-                                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(editFarmerId);
+                                ViewFarmerActivity.farmSurvey = false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -2147,27 +1987,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                            long newFarmerId = dl.insertFarmer(values);
 
-                            if(MultiFarmUtils.isMultiFarmEnumerator) {
-                                long newId = dl.insertMultiFarmInfo(getAllMultiFarmList1(newFarmerId), 0, isExistingFarm);
-
-                                try {
-                                    dl.insertStakeholderTable(getAllMultiStakeholders(newFarmerId,newId),newId,isExistingFarm);
-                                }catch ( Exception e){}
-
-                                dl.updateNetworkQueueFarmerEntry(newFarmerId, newId);
-                            }
-
                             if (newFarmerId != -1) {
-                                dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
+                                dl.updateFarmerPhoneNumbers(newFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
                                 EditText farmerName = findViewById(R.id.farmerName);
                                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,newFarmerId);
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmerNameValue);
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
 
-                                dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
+                                dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new", "Farmer consent captured");
                                 if (isNIDAvailable) {
-                                    boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
+                                    boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                     if (moduretationstatus) {
                                         statusmoduration = true;
                                     }
@@ -2176,17 +2006,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
-//                                    EditText farmerName = findViewById(R.id.farmerName);
-//                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
-
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
-                                if(MultiFarmUtils.isMultiFarmEnumerator) {
-                                    ViewFarmerActivity.farmSurvey =true;
-                                }else{
-                                    ViewFarmerActivity.farmSurvey =false;
-                                }
+                                ViewFarmerActivity.farmSurvey =false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -2204,6 +2027,85 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
     }
+
+     private void bindMsSaveButton(long farmerIdMs) {
+         Button saveButton = findViewById(R.id.saveFarmer);
+
+         saveButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 MultiStakeHolder multiStakeHolder = validateValuesMs(farmerIdMs);
+                 if (multiStakeHolder!=null && multiStakeHolder.msTempId!=null) {
+                     if (editMode) {
+                         long updFarmerId = editFarmerId;
+                         dl.updateFarmerMs(multiStakeHolder, editFarmerId);
+                         // update farmer name
+                         EditText farmerName = findViewById(R.id.farmerName);
+                         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+                         new GpsTrackerLogic().updateFarmerDetails(context,multiStakeHolder.msId,farmerNameValue,genderValue);
+                         dl.updateFarmerPhoneNumbers(null, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                         if (isNIDAvailable) {
+                             dl.updateFarmerNationalids(context,null , String.valueOf(multiStakeHolder.msId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                         }
+
+                         if (updFarmerId > 0) {
+                             Toast.makeText(context, res.getString(R.string.Stakeholder_Updated), Toast.LENGTH_LONG).show();
+                             finish();
+                             Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
+                             Bundle bundle = new Bundle();
+                             bundle.putLong(Utilities.FARMER_ID, farmerIdMs);
+                             intent.putExtras(bundle);
+                             startActivity(intent);
+                         }
+                     } else {
+                         // check the current location
+                         if(!(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))){
+                             if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                                 gpsTracker.getDeviceLocation();
+                                 return;
+                             }
+                         }
+
+                         long newStakeholderId = dl.insertStakeHolder(multiStakeHolder);
+
+                         if (newStakeholderId != -1) {
+                             dl.updateFarmerPhoneNumbers(null, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                             EditText farmerName = findViewById(R.id.farmerName);
+                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                             consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerIdMs);
+                             consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID,newStakeholderId);
+                             consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmerNameValue);
+                             consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
+
+                             dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new", "Farmer consent captured");
+                             if (isNIDAvailable) {
+                                 dl.updateFarmerNationalids(context, null, String.valueOf(newStakeholderId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+
+                             }
+                             saveButton.setEnabled(false);
+                             Toast.makeText(context, res.getString(R.string.Stakeholder_Added), Toast.LENGTH_LONG).show();
+
+                             if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
+                                 collectGPSPoint(newStakeholderId,farmerNameValue);
+                             }
+                             finish();
+                             Intent intent = new Intent(context, AddFarmStakeHolderActivity.class);
+                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                             Bundle bundle = new Bundle();
+                             bundle.putLong(Utilities.FARMER_ID, farmerIdMs);
+                             intent.putExtras(bundle);
+                             startActivity(intent);
+
+                         }
+                     }
+                     if (statusmoduration) {
+                         Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
+                     }
+                 }
+             }
+         });
+     }
 
     private void bindCertificationNameSpinner(){
 
@@ -2309,7 +2211,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             // insert National Id update
             trackDetailsDTO.setModule(GPSConstants.MODULE_ADD_NATIONAL_ID);
             // collecting in independent records
-            if(nationalIdTypes.size()>0) {
+            if(!nationalIdTypes.isEmpty()) {
                 ArrayList<String> nationalIdTypeNames = gpsTrackerLogic.getNationalIdNamesnyIds(this, nationalIdTypes);
                 for (String type : nationalIdTypeNames) {
                     trackDetailsDTO.setNationalId(type);
@@ -2416,8 +2318,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editMode) {
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
+            if (!updatedNidValue.contains(nidvalue)) {
+                updatedNidValue.add(nidvalue);
             }
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 
@@ -2489,7 +2391,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         builder.setTitle(res.getString(R.string.Select_picture_from));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
 
                 if (items[item].equals(res.getString(R.string.Camera))) {
                           Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
@@ -2961,11 +2862,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
-//                    ll_captureexpiry.setVisibility(View.GONE);
                     expiryDate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
                             final Calendar c = Calendar.getInstance();
                             int mYear = c.get(Calendar.YEAR); // current year
                             int mMonth = c.get(Calendar.MONTH); // current month
@@ -2975,11 +2874,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     new DatePickerDialog.OnDateSetListener() {
 
                                         @Override
-                                        public void onDateSet(DatePicker view, int year,
-                                                              int monthOfYear, int dayOfMonth) {
-                                            // set day of month , month and year value in the edit text
-                                            /* expiryDate.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);*/
+                                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                             Calendar cal = Calendar.getInstance();
                                             cal.set(year, monthOfYear, dayOfMonth);
 
@@ -3041,13 +2936,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                     bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
                     bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
-
                 }
             }
-
         }
-
-
     }
 
 
@@ -3101,7 +2992,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         return false;
                     }
                 } else {
-                    if (!(getNIDPhotostatusByType(String.valueOf(type), editFarmerId) || getPhotostatusByType(String.valueOf(type)))) {
+                    if (!(getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID) || getPhotostatusByType(String.valueOf(type)))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
@@ -3118,8 +3009,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (!editMode) {
                         photopath = getPhotobytype(type);
                     } else {
-                        if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId)) {
-                            photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId);
+                        if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID)) {
+                            photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                         } else {
                             photopath = getPhotobytype(type);
                         }
@@ -3138,8 +3029,82 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return status;
     }
 
+     private boolean ValidateNIDValuesMs() {
+         boolean status = true;
+         ArrayList<String> nidtype_list = new ArrayList<>();
+         selectednationalidList = new ArrayList<String>();
+         int nidrowscount = nationalids.getChildCount();
+         for (int j = 0; j < nidrowscount; j++) {
+             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
+             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
+             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+             LinearLayout ll_nidview = nidrow.findViewById(R.id.ll_nidview);
+             LinearLayout deleteNationalid = nidrow.findViewById(R.id.deleteNationalid);
+             ImageButton nidphotoActionButton = nidrow.findViewById(R.id.nidphotoActionButton);
+             String value = nid_type.getSelectedItem().toString();
+             int type = getNidType(value);
+             String nid = nidnumber.getText().toString();
+             String expDate = expiryDate.getText().toString();
 
-    public static class EmojiExcludeFilter implements InputFilter {
+             if(!value.equals(SELECT_NATIONALID)){
+
+                 if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
+                     Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
+                     return false;
+                 }
+
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
+                         Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
+                         return false;
+                     }
+                 }
+             }
+
+
+             if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+                 nid_type.setEnabled(true);
+                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
+                 return false;
+             } else {
+                 nidtype_list.add(value);
+                 selectednationalidList.add(value);
+             }
+
+             if (status) {
+                 NationalIdDTO idDTO = new NationalIdDTO();
+                 idDTO.setNationalidNumber(nid);
+                 idDTO.setNationalidtype(String.valueOf(type));
+                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+                     String photopath = null;
+                     if (!editMode) {
+                         photopath = getPhotobytype(type);
+                     } else {
+                         if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+                             photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
+                         } else {
+                             photopath = getPhotobytype(type);
+                         }
+                     }
+                     idDTO.setPhoto(photopath);
+                 } else {
+                     idDTO.setPhoto("");
+                 }
+                 if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                     idDTO.setExpiryDate(expDate);
+                 }
+                 dl.addnewLocalFarmerNationalids(idDTO);
+                 nid_type.setEnabled(false);
+             }
+         }
+         return status;
+
+     }
+
+
+
+     public static class EmojiExcludeFilter implements InputFilter {
         private String blockCharacterSet = "~#^|$%&*!'\"";
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
@@ -3156,23 +3121,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
 
-
     public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_findfarmerlead, null);
         FindFarmerLeadAdapter findFarmerLeadAdapter;
-       /* popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
-        popupWindow.setHeight(1);
-        popupWindow.setWidth(1);
-        popupWindow.setTouchable(true);
-        popupWindow.setFocusable(false);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setContentView(popupView);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bttn_disabled));*/
-
-
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
         boolean focusable = true;
@@ -3237,7 +3190,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onFarmerLeadClick(View view, int position, FarmerLeadDTO farmerLeadDTO) {
                 farmerLeadSearch.setText(farmerLeadDTO.getFarmerLeadFullName());
-//                getSelectedFarmerLead = farmerLeadDTO;
                 farmerleadid = farmerLeadDTO.getFarmerLeadDisplayId();
                 farmerleadidname = farmerLeadDTO.getFarmerLeadFullName();
                 popupWindow.dismiss();
@@ -3246,496 +3198,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    public void showPopupFarmers(List<MultifarmFarmerDTO> mfFarmerList,TextView farmerEditText,long farmerGroupId) {
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.activity_multifarm_findfarmer, null);
-        FindMultiFarmFarmerAdapter findMultiFarmFarmerAdapter;
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        boolean focusable = true;
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
-        dimBehind(popupWindow);
 
-        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
-        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        farmerleadDialog.setContentView(R.layout.activity_multifarm_findfarmer);
-
-        EditText searchfl = popupView.findViewById(R.id.findFLSearchBox);
-        RecyclerView multiFarmFarmerRecyclerView = popupView.findViewById(R.id.multiFarmFarmerReyclerView);
-
-        ArrayList<Long> tempFarmerList=getTempFarmerList();
-        mfFarmerList=dl.getfarmersMultifarmList(tempFarmerList,farmerGroupId);
-
-        findMultiFarmFarmerAdapter = new FindMultiFarmFarmerAdapter(mfFarmerList,this);
-        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
-        multiFarmFarmerRecyclerView.setLayoutManager(reLayoutManager);
-        // Newly Added
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
-        multiFarmFarmerRecyclerView.addItemDecoration(itemDecoration);
-
-        multiFarmFarmerRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
-        multiFarmFarmerRecyclerView.setAdapter(findMultiFarmFarmerAdapter);
-        multiFarmFarmerRecyclerView.scrollToPosition(findMultiFarmFarmerAdapter.getItemCount() - 1);
-        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        searchfl.setFilters(new InputFilter[] { flFilter });
-
-        List<MultifarmFarmerDTO> finalMfFarmerList = mfFarmerList;
-        searchfl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable constraint) {
-                ArrayList<MultifarmFarmerDTO> filteredlist = new ArrayList<>();
-                for (MultifarmFarmerDTO multifarmFarmerDTO : finalMfFarmerList) {
-                    if (multifarmFarmerDTO.getFarmerName().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filteredlist.add(multifarmFarmerDTO);
-                    }
-                }
-                if (filteredlist.isEmpty()) {
-                    filteredlist.clear();
-                    Toast.makeText(AddFarmerActivity.this, res.getString(R.string.no_match_found), Toast.LENGTH_SHORT).show();
-                    findMultiFarmFarmerAdapter.filterList(filteredlist);
-                } else {
-                    findMultiFarmFarmerAdapter.filterList(filteredlist);
-                }
-            }
-        });
-        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
-
-        findMultiFarmFarmerAdapter.setOnItemMultifarmFarmerListener(new OnItemMultifarmFarmerListener() {
-            @Override
-            public void onMultiFarmFarmerClick(View view, int position, MultifarmFarmerDTO multifarmFarmerDTO) {
-                farmerEditText.setText(multifarmFarmerDTO.getFarmerName());
-                farmerEditText.setTag(multifarmFarmerDTO.getFarmerId());
-                popupWindow.dismiss();
-            }
-        });
-    }
-
-    // multifarm farm - progress
-    public void showPopupFarm(List<MultiFarmDTO> existingFarmList) {
-
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.acivity_multifarm_farm, null);
-        FindMultiFarmFarmAdapter findMultiFarmFarmAdapter = null;
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        boolean focusable = true;
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
-        dimBehind(popupWindow);
-
-        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
-        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        farmerleadDialog.setContentView(R.layout.activity_multifarm_findfarmer);
-
-        EditText searchfl = popupView.findViewById(R.id.existingFarmTV);
-        RecyclerView multiFarmFarmReyclerView = popupView.findViewById(R.id.multiFarmFarmReyclerView);
-        existingFarmList =dl.getfarmList();
-        // Bubble Seekbar
-        BubbleSeekBar bubbleSeekBar=popupView.findViewById(R.id.seekbarKM);
-        List<MultiFarmDTO> finalExistingFarmList = existingFarmList;
-        findMultiFarmFarmAdapter = new FindMultiFarmFarmAdapter(existingFarmList,this);
-        FindMultiFarmFarmAdapter finalFindMultiFarmFarmAdapter = findMultiFarmFarmAdapter;
-
-        Button searchFarmLocationBtn=popupView.findViewById(R.id.searchFarmLocationBtn);
-        final int[] progressFinal = {0};
-        searchFarmLocationBtn.setOnClickListener(v -> {
-            if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)) {
-                ArrayList<MultiFarmDTO> multiFarmSeekbarDTOList = new DistanceCalculation(context, finalExistingFarmList, progressFinal[0]).calculate(mCurrentLocation);
-                finalFindMultiFarmFarmAdapter.filterList(multiFarmSeekbarDTOList);
-            }else{
-                Toast.makeText(AddFarmerActivity.this, "Please enable the device Location",Toast.LENGTH_LONG).show();
-            }
-
-        });
-
-        bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
-            @Override
-            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-
-            }
-
-            @Override
-            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-
-            }
-
-            @Override
-            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-                progressFinal[0] =progress;
-            }
-        });
-
-
-        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
-        multiFarmFarmReyclerView.setLayoutManager(reLayoutManager);
-        // Newly Added
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
-        multiFarmFarmReyclerView.addItemDecoration(itemDecoration);
-
-        multiFarmFarmReyclerView.setItemAnimator(new DefaultItemAnimator());
-        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
-        multiFarmFarmReyclerView.setAdapter(findMultiFarmFarmAdapter);
-        multiFarmFarmReyclerView.scrollToPosition(findMultiFarmFarmAdapter.getItemCount() - 1);
-        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        searchfl.setFilters(new InputFilter[] { flFilter });
-
-        List<MultiFarmDTO> finalMfFarmList = existingFarmList;
-        FindMultiFarmFarmAdapter finalFindMultiFarmFarmAdapter1 = findMultiFarmFarmAdapter;
-        searchfl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable constraint) {
-                ArrayList<MultiFarmDTO> filteredlist = new ArrayList<>();
-                for (MultiFarmDTO multiFarmDTO : finalMfFarmList) {
-                    if (multiFarmDTO.getFarmName().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filteredlist.add(multiFarmDTO);
-                    }
-                }
-                if (filteredlist.isEmpty()) {
-                    filteredlist.clear();
-                    Toast.makeText(AddFarmerActivity.this, res.getString(R.string.no_match_found), Toast.LENGTH_SHORT).show();
-                    finalFindMultiFarmFarmAdapter1.filterList(filteredlist);
-                } else {
-                    finalFindMultiFarmFarmAdapter1.filterList(filteredlist);
-                }
-            }
-        });
-        popupView.findViewById(R.id.cancel_btn).setOnClickListener(v -> {
-
-            if(!editMode) {
-                newFarmRadioButton.setChecked(true);
-                farmNameEdittext.setText("");
-                farmCodeEdittext.setText("");
-            }else{
-                newFarmRadioButton.setChecked(true);
-            }
-            popupWindow.dismiss();
-        });
-
-        findMultiFarmFarmAdapter.setOnItemMultifarmFarmListener(new OnItemMultiFarmFarmListener() {
-            @Override
-            public void onMultiFarmFarmClick(View view, int position, MultiFarmDTO multiFarmDTO) {
-                // 1989
-                farmNameEdittext.setText(multiFarmDTO.getFarmName());
-                farmCodeEdittext.setText(multiFarmDTO.getFarmCode());
-                farmCodeEdittext.setTag(multiFarmDTO.getFarmId());
-                farmNameEdittext.setEnabled(false);
-                farmCodeEdittext.setEnabled(false);
-                setupMultiFarmStakeholders(multiFarmDTO);
-                // farmerEditText.setTag(multifarmFarmerDTO.getFarmerId());
-                popupWindow.dismiss();
-            }
-        });
-
-    }
-
-    private void setupMultiFarmStakeholders(MultiFarmDTO multiFarmDTO) {
-
-        JSONArray multifarmArray = multiFarmDTO.getStakeholdersInfo();
-        String[] roles = rolesList.toArray(new String[rolesList.size()]);
-
-        LinearLayout farmRoleInclude = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-        if (farmStakeholderLayout.getChildCount() == 0) {
-            // Default Farmer
-            String defaultFarmerName = ((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
-            if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName != null) {
-                TextView farmerNameET = farmRoleInclude.findViewById(R.id.farmFarmerTV);
-                farmerNameET.setText(defaultFarmerName);
-                farmerNameET.setTag("own");
-            } else {
-                Toast.makeText(AddFarmerActivity.this, res.getString(R.string.please_enter_farmer_name), Toast.LENGTH_LONG).show();
-                return;
-            }
-            (farmRoleInclude.findViewById(R.id.farmRoleDelete)).setVisibility(View.GONE);
-            bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
-            bindLevelOfResponsibilitySpinner(farmRoleInclude.findViewById(R.id.spinnerSelectLevelOfResponsibility), "");
-            farmStakeholderLayout.addView(farmRoleInclude);
-            // Removed
-
-        }
-
-        if(multifarmArray==null){
-            return;
-        }
-
-        if (multifarmArray.length() > 0) {
-            int length = multifarmArray.length();
-            for (int j = 0; j < length; j++) {
-                try {
-
-                    String farmname = multifarmArray.getJSONObject(j).get("farmerId").toString();
-                    String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
-                    String responsibilityIds = "";
-                    if (multifarmArray.getJSONObject(j).has("responsibilities")) {
-                        responsibilityIds = multifarmArray.getJSONObject(j).get("responsibilities").toString();
-                    }
-
-                    String id=null;
-                    if (multifarmArray.getJSONObject(j).has("id")) {
-                        id = (multifarmArray.getJSONObject(j).getString("id"));
-                    }
-
-                    LinearLayout farmStakeholderRow = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-                    farmStakeholderRow.setTag(id);
-                    // Widgets
-                    TextView farmerNameEdittext = farmStakeholderRow.findViewById(R.id.farmFarmerTV);
-                    Spinner farmRoleSpinner = farmStakeholderRow.findViewById(R.id.farmerRoleSpinner);
-                    ImageView farmRoleDelete = farmStakeholderRow.findViewById(R.id.farmRoleDelete);
-
-                    // Spinner value setting part
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, roles);
-                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                    farmRoleSpinner.setAdapter(adapter);
-
-
-                    //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
-
-
-                    String farmerId = multifarmArray.getJSONObject(j).get("farmerId").toString();
-
-                    if (multifarmArray.getJSONObject(j).get("farmerId").toString().equalsIgnoreCase(String.valueOf(editFarmerId))) {
-                        String defaultFarmerName = ((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
-                        farmerNameEdittext.setText(defaultFarmerName);
-                    } else {
-                        String farmerNameFromDb = dl.getFarmerNamefromDb(Long.valueOf(farmerId));
-                        farmerNameEdittext.setText(farmerNameFromDb);
-                    }
-
-                    farmerNameEdittext.setTag(farmerId);
-
-                    // Should cset the farmer Name - New field incorporate
-                    farmNameEdittext.setText(multifarmArray.getJSONObject(j).get("farmName").toString());
-                    farmCodeEdittext.setText(multifarmArray.getJSONObject(j).get("farmCode").toString());
-
-                    // Allowing the Farmer and delete the farmer stakeholder
-                    bindFarmRoleDelete(farmStakeholderRow);
-                    bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                    farmRoleSpinner.setSelection(getIndexForFarmerRoleSpinnerList(roleId));
-
-                    // Set Tag in edit Mode
-                    farmRoleSpinner.setTag(roleId);
-
-                    bindLevelOfResponsibilitySpinner(farmStakeholderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility), responsibilityIds);
-
-                    farmStakeholderLayout.addView(farmStakeholderRow);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-
-    private MultiFarmDTO getAllMultiFarmList1(long newfarmerId){
-
-        int stakeholderCount=farmStakeholderLayout.getChildCount();
-
-        String farmName= farmNameEdittext.getText().toString().trim();
-        String farmCode=farmCodeEdittext.getText().toString().trim();
-        Object farmIdObj=farmCodeEdittext.getTag();
-        String farmIds=null;
-        if (farmIdObj!=null){
-            farmIds=farmIdObj.toString();
-        }
-
-        MultiFarmDTO multiFarmDTO=new MultiFarmDTO();
-        multiFarmDTO.setFarmName(farmName);
-        multiFarmDTO.setFarmCode(farmCode);
-
-        multiFarmDTO.setFarmId(farmIds);
-
-        JSONArray jsonArray=new JSONArray();
-        EditText fNameEt=findViewById(R.id.farmerName);
-        String globalFName=fNameEt.getText().toString().trim();
-        for (int j = 0; j < stakeholderCount; j++) {
-            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
-            JSONObject jsonObject=new JSONObject();
-
-
-            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
-            Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
-            String farmerStakeHolderId = farmerNameET.getTag().toString();
-            String farmerName = farmerNameET.getText().toString().trim();
-            MultiSpinnerSearch levelOfResponsibilitySpinner = stakeHolderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility);
-
-            Object id=stakeHolderRow.getTag();
-            String StakeholderId=null;
-            if(id!=null){
-                StakeholderId=id.toString();
-            }
-
-            try {
-                jsonObject.put("farmCode",farmCode);
-                jsonObject.put("farmName",farmName);
-
-                jsonObject.put("farmerRoleId",Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
-                jsonObject.put("responsibilities", levelOfResponsibilitySpinner.getSelectedValues());
-                if (globalFName.equalsIgnoreCase(farmerName)){
-                    jsonObject.put("primary",true);
-                    jsonObject.put("farmerId",newfarmerId);
-                }else{
-                    jsonObject.put("primary",false);
-                    jsonObject.put("farmerId",Long.valueOf(farmerStakeHolderId));
-                }
-
-                if (isExistingFarm){
-                    jsonObject.put("farmsId",Long.valueOf(farmIds));
-                }else{
-                    jsonObject.put("farmsId",null);
-                }
-
-             try {
-                 jsonObject.put("id", StakeholderId);
-             }catch (Exception e){}
-
-
-
-
-
-
-
-
-
-            }catch (Exception e){}
-
-            jsonArray.put(jsonObject);
-        }
-        multiFarmDTO.setStakeholdersInfo(jsonArray);
-
-        return  multiFarmDTO;
-
-    }
-
-
-    private boolean isAllRoleFarmerFilled(){
-        boolean fill=true;
-        int stakeholderCount=farmStakeholderLayout.getChildCount();
-
-        for (int j = 0; j < stakeholderCount; j++) {
-            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
-
-            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
-            Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
-
-            String farmerStakeHolderId = farmRoleSpinner.getTag().toString();
-            String farmerName = String.valueOf(farmerNameET.getText()).replace(" ", "");
-
-            if (farmerStakeHolderId.equalsIgnoreCase("null") || farmerName.equalsIgnoreCase("")){
-                fill=false;
-            }
-        }
-        return fill;
-    }
-
-    private ArrayList<Long> getTempFarmerList() {
-        int stakeholderCount=farmStakeholderLayout.getChildCount();
-        ArrayList<Long> tempList=new ArrayList<Long>();
-        for (int j = 0; j < stakeholderCount; j++) {
-            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
-
-            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
-            try {
-                tempList.add(Long.valueOf(farmerNameET.getTag().toString()));
-            }catch ( Exception e){}
-        }
-        return tempList;
-    }
-
-    private ArrayList<ContentValues> getAllMultiStakeholders(long newFarmerId,long farmId) {
-        ArrayList<ContentValues> valuesArrayList=new ArrayList<ContentValues>();
-        int stakeholderCount=farmStakeholderLayout.getChildCount();
-
-        String farmName= farmNameEdittext.getText().toString().trim();
-        String farmCode=farmCodeEdittext.getText().toString().trim();
-        Object farmIdObj=farmCodeEdittext.getTag();
-        String farmIds=null;
-        if (farmIdObj!=null){
-            farmIds=farmIdObj.toString();
-        }
-        EditText fNameEt=findViewById(R.id.farmerName);
-        String globalFName=fNameEt.getText().toString().trim();
-
-        for (int j = 0; j < stakeholderCount; j++) {
-            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
-            ContentValues values=new ContentValues();
-
-            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
-            Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
-            String farmerStakeHolderId = farmerNameET.getTag().toString();
-            String farmerName = farmerNameET.getText().toString().trim();
-            MultiSpinnerSearch levelOfResponsibilitySpinner = stakeHolderRow.findViewById(R.id.spinnerSelectLevelOfResponsibility);
-
-            Object id=stakeHolderRow.getTag();
-            String StakeholderId=null;
-            if(id!=null){
-                StakeholderId=id.toString();
-            }
-
-            try {
-
-
-                try {
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,StakeholderId);
-                }catch (Exception e){
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,"null");
-                }
-                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME,farmName);
-                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE,farmCode);
-                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID,Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
-                if (isExistingFarm){
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,Long.valueOf(farmIds));
-                }else{
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,farmId);
-                }
-
-                if (globalFName.equalsIgnoreCase(farmerName)){
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID,newFarmerId);
-                }else{
-                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID,Long.valueOf(farmerStakeHolderId));
-                }
-
-                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED,0);
-                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_RESPONSIBILITIES, levelOfResponsibilitySpinner.getSelectedValues());
-
-            }catch (Exception e){}
-
-            valuesArrayList.add(values);
-        }
-         return valuesArrayList;
-
-    }
 
     private Boolean getIsCertification(List<MultiSpinnerStatus> multiSpinnerStatuses){
         Boolean status=false;
@@ -3755,70 +3219,136 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void bindLevelOfResponsibilitySpinner(MultiSpinnerSearch levelOfResponsibilitySpinner, String selectedResponsibilityIds) {
-        bindSpinnerSpec(levelOfResponsibilitySpinner, res.getString(R.string.select_level_of_responsibility));
+     private void stakeHolderUiChanges(String farmerNameMs, String farmHoldingCodeMs, long farmerIdMs, MultiStakeHolder stakeHolder) {
+         setTitle(R.string.add_farm_stakeholder);
+         titleText.setText(R.string.add_farm_stakeholder);
+         farmerRoleSpinner.setVisibility(View.VISIBLE);
+         farmerName.setHint(R.string.stake_holder_name);
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerNameMs, res.getString(R.string.farm_holding_suffix)));
+         etFarmHoldingCode.setText(farmHoldingCodeMs);
+         roleHeading.setText(getResources().getString(R.string.stakeholder_role));
 
-        String locale = Utilities.getColumnNameByLanguage();
+         LinearLayout phoneNumber = (LinearLayout) phonenumbers.getChildAt(0);
+         EditText diallingCode = (EditText) phoneNumber.findViewById(R.id.dialling_code);
+         String dialling_code = dl.getDiallingCodeByFarmerId(farmerIdMs);
+         diallingCode.setText(dialling_code);
 
-        Cursor farmerGroupsCursor = dl.getResponsibilityDataFromTable(OFISDBContract.Responsibility.TABLE_NAME, locale);
 
-        List<Information> farmerGroupArrayList = new ArrayList<>();
-        ArrayList<KeyPairBoolData> list = new ArrayList<>();
+         farmerRolesList = new ArrayList<>();
+         farmerRoleDTOList = new ArrayList<>();
 
-        if (farmerGroupsCursor.moveToFirst()) {
-            do {
-                // on below line we are adding the data from
-                // cursor to our array list.
-                farmerGroupArrayList.add(new Information(
-                        farmerGroupsCursor.getInt(0),
-                        farmerGroupsCursor.getString(1)));
-            } while (farmerGroupsCursor.moveToNext());
-            // moving our cursor to next.
+         farmerRoleDTOList = dl.getFarmerRoles(localeSuffixColumn);
+         farmerRolesList.add(res.getString(R.string.stakeholder_role));
+         for (FarmerRoleDto farmerRoleDTO : farmerRoleDTOList){
+             farmerRolesList.add(farmerRoleDTO.getName());
+         }
+         bindFarmerRoles(stakeHolder);
+     }
+
+     private void addFarmerRegistrationUiChanges() {
+         etFarmerRole.setVisibility(View.VISIBLE);
+         llFarmerGroup.setVisibility(View.VISIBLE);
+         llGeographyDetails.setVisibility(View.VISIBLE);
+         linear_certifications.setVisibility(View.VISIBLE);
+
+         countrySpinner = this.findViewById(R.id.spinner_country);
+         regionSpinner = this.findViewById(R.id.spinner_region);
+         districtSpinner = this.findViewById(R.id.spinner_district);
+         subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
+         placeSpinner = this.findViewById(R.id.spinner_place);
+         farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
+         sectionSpinner = this.findViewById(R.id.spinner_section);
+
+         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
+         dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
+         bindCertificationNameSpinner();
+
+         farmerName.addTextChangedListener(new TextWatcher() {
+             @Override
+             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+             }
+
+             @Override
+             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+             }
+
+             @Override
+             public void afterTextChanged(Editable s) {
+                 populateFarmDetails(farmerName.getText().toString().trim());
+                 if(editMode) {
+                     dl.updateConsentValue(s.toString().trim(),editFarmerId);
+                 }
+             }
+         });
+
+         if (isFLEnumerator) {
+             farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+             boolean isMultiCountries = dl.isMultipleCountries();
+
+             if(isMultiCountries) {
+                 boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
+
+                 if(isODOrigin) {
+                     showFarmerLead();
+                 }
+                 else {
+                     farmerLeadDisplayLayout.setVisibility(View.GONE);
+                 }
+             }
+             else {
+                 showFarmerLead();
+             }
+         }
+     }
+
+     private void populateFarmDetails(String farmerName) {
+         etFarmHoldingName.setText(appendSuffixForFarmName(farmerName, res.getString(R.string.farm_holding_suffix)));
+         etFarmHoldingName.setSelection(etFarmHoldingName.getText().length());
+         etFarmHoldingCode.setText(farmerName + "-" + String.format("%04d", new Random().nextInt(10000)));
+         etFarmHoldingCode.setSelection(etFarmHoldingCode.getText().length());
+     }
+
+     private void bindFarmerRoles(MultiStakeHolder stakeHolder) {
+
+         String[] farmerRoles = farmerRolesList.toArray(new String[farmerRolesList.size()]);
+         ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, farmerRoles);
+         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+         farmerRoleSpinner.setAdapter(adapter);
+
+         if (editMode){
+             int roleIndex = getIndexForFarmerRoleSpinnerList(stakeHolder.msRoleId);
+             farmerRoleSpinner.setSelection(roleIndex);
+         }
+
+
+         farmerRoleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+             @Override
+             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                 if (position==0){
+                     farmerRoleSpinner.setTag("null");
+                 }else {
+                     FarmerRoleDto farmRoleDTO = farmerRoleDTOList.get(position - 1);
+                     farmerRoleSpinner.setTag(farmRoleDTO.getId());
+                 }
+             }
+
+             @Override
+             public void onNothingSelected(AdapterView<?> parent) {
+
+             }
+         });
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() != android.R.id.home) {
+            return super.onOptionsItemSelected(item);
         }
-        // at last closing our cursor
-        // and returning our array list.
-        farmerGroupsCursor.close();
-        for (int i = 0; i < farmerGroupArrayList.size(); i++) {
-            int id = farmerGroupArrayList.get(i).getId();
-            boolean isSelect = selectedResponsibilityIds.contains(String.valueOf(id));
-            KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-            keyPairBoolData.setId(id);
-            keyPairBoolData.setName(farmerGroupArrayList.get(i).getName());
-            keyPairBoolData.setSelected(isSelect);
-            list.add(keyPairBoolData);
-        }
 
-        levelOfResponsibilitySpinner.setItems(list, new MultiSpinnerListener() {
-            @Override
-            public void onItemsSelected(List<KeyPairBoolData> items) {
-                // after every selection this function is called, no logic is implemented
-            }
-        });
-    }
+        finish();
+        return true;
+     }
 
-    public void bindSpinnerSpec(MultiSpinnerSearch multiSpinnerSearch, String hintText){
-        multiSpinnerSearch.setSearchEnabled(false);
-
-        // If you will set the limit, this button will not display automatically.
-        multiSpinnerSearch.setShowSelectAllButton(false);
-
-        //A text that will display in clear text button
-        multiSpinnerSearch.setClearText(null);
-
-        //To set Title and placeholder for dropdown
-        multiSpinnerSearch.setHintText(hintText);
-    }
-
-    private int getIndexForFarmerRoleSpinnerList(String roleId) {
-        String localeSuffix = Utilities.getColumnNameByLanguage();
-        List<MultiFarmRoleDTO> roles = dl.getMultiFarmRoles(localeSuffix);
-        int id = Integer.parseInt(roleId);
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getId() == id) {
-                return i + 1;
-            }
-        }
-        return 0;
-    }
-
-}
+ }

@@ -5,15 +5,12 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
 
 import java.util.List;
 
 @Dao
 public interface DmActionPlanCurrenciesTableDao {
-    @Query("SELECT * FROM DmActionPlanCurrenciesTable")
-    List<DmActionPlanCurrenciesTable> getDmActionPlanCurrenciesTable();
 
     @Insert
     void insert(DmActionPlanCurrenciesTable... dmActionPlanCurrenciesTables);

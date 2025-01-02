@@ -1,0 +1,200 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.olam.digital.ofis.farmstakeholder.AddFarmStakeHolderActivity"
+    android:id="@+id/layout_view_farmer"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:id="@+id/llTitleSection"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/table_width60"
+        android:gravity="center"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/pageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/farm_holding_information"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_large_text"
+            android:paddingRight="0dp"
+            android:paddingEnd="0dp"
+            android:paddingLeft="16dp"
+            android:layout_gravity="start"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llTitleSection"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/llFarmInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/ofis_input_field_text"
+            android:layout_marginHorizontal="@dimen/standard_button_width_height"
+            >
+
+            <TextView
+                android:text="@string/farm_holding_name"
+                android:textColor="@color/btn_secondary_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etFarmHoldingName"
+                android:hint="@string/farm_holding_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textCapWords"
+                android:padding="@dimen/margin_10"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/btn_secondary_background"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:textColorHint="@color/icon_grey_palette_2"
+                android:background="@drawable/farm_code_selected_edittext"
+                android:focusable="false"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:text="@string/farm_holding_code"
+                android:textColor="@color/btn_secondary_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etFarmHoldingCode"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textCapWords"
+                android:padding="@dimen/margin_10"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/btn_secondary_background"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:textStyle="bold"
+                android:hint="@string/farm_holding_code"
+                android:textColorHint="@color/icon_grey_palette_2"
+                android:background="@drawable/farm_code_selected_edittext"
+                android:focusable="false"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="10dp"
+                >
+
+                <EditText
+                    android:id="@+id/etFarmerName"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:inputType="textCapWords"
+                    android:layout_marginEnd="@dimen/margin_10"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/btn_secondary_background"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:background="@drawable/farm_code_selected_edittext"
+                    android:focusable="false"
+                    android:text="@string/Farmer_Name"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/margin_10"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/btn_secondary_background"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:text="@string/primary_farmer"
+                    android:background="@drawable/farm_code_selected_edittext"
+                    android:focusable="false"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:text="@string/stakeholder_list"
+                    android:textColor="@color/btn_secondary_background"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/ofis_smallmed_text"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llAddStakeHolder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/addRoleTV"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_ofis_add"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/Add" />
+
+                <TextView
+                    android:text="@string/add_farm_stakeholder"
+                    android:textColor="@color/btnColorThird"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="@dimen/mapview_magrin"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="16dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stakeHolderRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content">
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

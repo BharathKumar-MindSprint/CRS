@@ -39,12 +39,10 @@ public class GPSUtils {
     }
 
     public static boolean isMockLocation(Location location){
-        if (android.os.Build.VERSION.SDK_INT >= 18  && android.os.Build.VERSION.SDK_INT <= 31  ) {
-            return location.isFromMockProvider();
-        }else if(android.os.Build.VERSION.SDK_INT > 31){
+        if (android.os.Build.VERSION.SDK_INT > 31  ) {
             return location.isMock();
+        }else {
+            return location.isFromMockProvider();
         }
-        return false;
     }
-
 }

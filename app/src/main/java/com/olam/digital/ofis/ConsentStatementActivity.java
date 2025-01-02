@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -55,6 +56,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     TableRow statement_rubber_indo;
     int countryId;
     int productId;
+    private boolean isAddStakeHolder = false;
+    private TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                farmerId=getIntent().getExtras().getLong("FarmerId");
                displayFarmerId=getIntent().getExtras().getString("displayFarmerId");
                olamfarmername=getIntent().getExtras().getString("olamfarmername");
+               isAddStakeHolder = getIntent().getExtras().getBoolean(Utilities.STAKE_HOLDER_REGISTRATION);
                type=getIntent().getExtras().getString("type");
            }catch (Exception e){}
         init();
@@ -96,6 +100,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         nextsavebtn = (Button) findViewById(R.id.nextsavebtn);
         prevbtn = (Button) findViewById(R.id.prevbtn);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
+        title = findViewById(R.id.completeModuleModuleTitle);
 
         // Indonesia rubber Requirement
         statement_rubber_indo = (TableRow) findViewById(R.id.statement_rubber_indo);
@@ -105,6 +110,10 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         nextsavebtn.setOnClickListener(this);
         prevbtn.setOnClickListener(this);
         farmer_signature.setOnClickListener(this);
+        if (isAddStakeHolder){
+            farmer_signature.setText(getResources().getString(R.string.stakeholder_signature));
+            title.setText(getResources().getString(R.string.stakeholder_consent));
+        }
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
@@ -232,7 +241,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.nextsavebtn){
+        if(id == R.id.nextsavebtn) {
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
             if(page <= 5 && page >= 1) {
                 if (page != 5) {
@@ -309,10 +318,16 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String registereddate = format.format(today);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
-               if(type.equalsIgnoreCase(UPDATE)){
+
+                if(type.equalsIgnoreCase(UPDATE)) {
                     dataLayer.updateConsentStatus(farmerId);
-                    dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
+                    if(isAddStakeHolder){
+                        dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type, "Stakeholder consent captured");
+                    } else {
+                        dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type,"Farmer consent captured");
+                    }
                 }
+
                 Intent intent=new Intent();
                 intent.putExtra(STATUS,true);
                 intent.putExtra(CONSENTVALUE,contentValue);
@@ -446,5 +461,14 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (isAddStakeHolder && item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

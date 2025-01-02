@@ -54,19 +54,20 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -146,9 +147,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     Spinner spinner_dmCurrencies;
     String budgetAmount;
 
-    boolean goNextCaptureProof =false;
-    boolean goNextActionPlan = true;
-
     private final int FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
 
@@ -178,39 +176,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
-                ArrayList<String> justVal = new ArrayList<String>();
-                justVal.clear();
-
-
-                for (int i = 0; i < qId.size(); i++) {
-                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0, Constants.PLOT_ID);
-                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, Constants.PLOT_ID);
-
-                    if (!justVal.contains(qId.get(i)) && !dmComplaintFileTables.isEmpty()) {
-                        justVal.add(qId.get(i));
-                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
-                        justVal.add(qId.get(i));
-                    }
-                }
-
-
-                if (justVal.size()==Constants.questionIds.size()){
-                    goNextCaptureProof = true;
-                } else {
-                    Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
-                }
-
-                for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                        Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
-                        goNextActionPlan = false;
-                        break;
-                    }else {
-                        goNextActionPlan = true;
-                    }
-                }
-
-                if (goNextCaptureProof && goNextActionPlan){
+                if (validateActionPlanAndProof(qId) && validateActionPlanAndProof(qIdSections)){
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(2);
 
@@ -232,6 +198,35 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         return view;
+    }
+
+    private boolean validateActionPlanAndProof(ArrayList<String> qId) {
+        ArrayList<String> justVal = new ArrayList<>();
+
+        for (int i = 0; i < qId.size(); i++) {
+            List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0, Constants.PLOT_ID);
+            int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, Constants.PLOT_ID);
+
+            if (!justVal.contains(qId.get(i)) && !dmComplaintFileTables.isEmpty()) {
+                justVal.add(qId.get(i));
+            } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
+                justVal.add(qId.get(i));
+            }
+        }
+
+        if (justVal.size() != qId.size()){
+            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        for (int j=0; j<qId.size(); j++) {
+            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
+                Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -601,7 +596,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList.clear();
         dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
@@ -620,7 +614,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(dmActionPlansItemList.get(c).actionPlan);
+            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
             ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
         }
 
@@ -804,7 +798,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId(null, id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
 
@@ -2424,8 +2418,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
         totalActionPlanCount = 0;
-        goNextCaptureProof = false;
-        goNextActionPlan = true;
     }
 
     @Override

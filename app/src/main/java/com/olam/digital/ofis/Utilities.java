@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -26,17 +24,14 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;
@@ -68,11 +63,6 @@ public class Utilities {
 
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
-    public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
-    public static int syctask=0;
-
-
-
     public  static  long farmerId;
     public  static String productId;
     public  static String countryId;
@@ -102,7 +92,6 @@ public class Utilities {
     public static String UNREAD = "U";
     public static String DELETED = "D";
     public static String NOTIFICATIONLIST = "notificationDetailsList";
-    public static String MODULELIST = "moduleList";
     public static String FDP = "FDP";
     public static String MODULE = "module";
     public static String PASSWORD = "password";
@@ -125,6 +114,16 @@ public class Utilities {
     public static final String PREVIOUS_ENTERED_USERNAME = "previousEnteredUsername";
 
     public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
+
+    public static final String STAKE_HOLDER_ID = "stakeHolderId";
+    public static final String STAKE_HOLDER_DISPLAY_ID = "stakeHolderId";
+    public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";
+    public static final String STAKE_HOLDER_NAME = "stakeHolderName";
+
+    public static final String FARMER_ID = "farmerId";
+    public static final String FARM_HOLDING_CODE = "farmHoldingCode";
+    public static final String FARMER_NAME = "farmerName";
+    public static final String FARM_ID = "farmId";
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -174,17 +173,6 @@ public  static String base64ConversionForImage(String filepath)  {
             }
         }
         return returnVal;
-    }
-
-    static String[] since1950() {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int difference = currentYear - 1950;
-        String[] since1950 = new String[difference];
-
-        for (int i = 0; i < difference; i++) {
-            since1950[i] = String.valueOf(currentYear - i);
-        }
-        return since1950;
     }
 
     static String[] since1900() {
@@ -571,7 +559,7 @@ public  static String base64ConversionForImage(String filepath)  {
 
     }
 
-    static String scaleRotateAndSaveImage(String imagePath, String kind) {
+    public static String scaleRotateAndSaveImage(String imagePath, String kind) {
 
         return saveResizedImage(imagePath, kind);
 
@@ -703,37 +691,6 @@ public  static String base64ConversionForImage(String filepath)  {
         return timeInSeconds;
     }
 
-    public static void setListViewHeightBasedOnChildren(ListView listView)
-    {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        WindowManager.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
-    }
-
     public static void setKeycloakClientDetails(Context context, String prefName, String value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -849,8 +806,7 @@ public  static String base64ConversionForImage(String filepath)  {
             case "en" -> dmMainModule.name;
             case "es" -> dmMainModule.nameEs;
             case "fr" -> dmMainModule.nameFr;
-            case "id" -> dmMainModule.nameIdn;
-            case "in" -> dmMainModule.nameIdn;
+            case "id", "in" -> dmMainModule.nameIdn;
             case "lo" -> dmMainModule.nameLo;
             case "pt" -> dmMainModule.namePt;
             case "th" -> dmMainModule.nameTh;
@@ -858,8 +814,36 @@ public  static String base64ConversionForImage(String filepath)  {
             case "vi" -> dmMainModule.nameVi;
             default -> dmMainModule.name;
         };
-
     }
+
+    public static String appendSuffixForFarmName(String farmerName, String farmHoldingSuffix) {
+        String language = Locale.getDefault().getLanguage();
+
+        boolean isPrefix = switch (language) {
+            case "es", "fr", "id", "in", "pt" -> true;
+            default -> false;
+        };
+
+        return isPrefix ? farmHoldingSuffix + farmerName : farmerName + farmHoldingSuffix;
+    }
+
+    public static String getActionPlanByLanguage(DmRangeActionPlansItems dmRangeActionPlansItems){
+        String language = Locale.getDefault().getLanguage();
+        String actionPlan =  switch (language) {
+            case "es" -> dmRangeActionPlansItems.actionPlanEs;
+            case "fr" -> dmRangeActionPlansItems.actionPlanFr;
+            case "id", "in" -> dmRangeActionPlansItems.actionPlanId;
+            case "lo" -> dmRangeActionPlansItems.actionPlanLo;
+            case "pt" -> dmRangeActionPlansItems.actionPlanPt;
+            case "th" -> dmRangeActionPlansItems.actionPlanTh;
+            case "tr" -> dmRangeActionPlansItems.actionPlanTr;
+            case "vi" -> dmRangeActionPlansItems.actionPlanVi;
+            default -> dmRangeActionPlansItems.actionPlan;
+        };
+
+        return actionPlan == null ? dmRangeActionPlansItems.actionPlan : actionPlan;
+    }
+
 
 
 // OW-4516 Fix

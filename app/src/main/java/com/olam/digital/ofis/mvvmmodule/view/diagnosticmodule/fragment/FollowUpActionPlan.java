@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -51,6 +50,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -61,18 +61,17 @@ import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -198,58 +197,8 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
                 ArrayList<String> qId = Constants.questionIdsFollowUp;
-                ArrayList<String> qIdSections = Constants.questionIdsSection;
-                ArrayList<String> justVal = new ArrayList<String>();
-                justVal.clear();
 
-                int capturedValue = 0;
-                int requiredValue = 0;
-                for (int i = 0; i < qId.size(); i++) {
-
-                    String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).get(0).answer;
-                    String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
-                    int ansId = 0;
-                    try {
-                        ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).get(0).answerID);
-                    }catch (NumberFormatException e){
-                        e.printStackTrace();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    boolean allowCaptureProof = checkAllowCaptureProof(qId.get(i), ans, ansId, displayType);
-                    if(allowCaptureProof){
-                        requiredValue ++;
-                        if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, Constants.ATTEMPT),"NOT Resolved")){
-                            List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
-                            if(dmComplaintFiles.size() == 0){
-                                Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
-                                goNextCaptureProof = false;
-                                break;
-                            }else if (dmComplaintFiles.size() > 0){
-                                capturedValue ++;
-                            }
-                        }else {
-                            goNextCaptureProof = true;
-                        }
-                    }
-                }
-
-                if ( capturedValue == requiredValue){
-                    goNextCaptureProof = true;
-
-                }
-
-                for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID ,Constants.NOTRESOLVED ), "0")){
-                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                        goNextActionPlan = false;
-                        break;
-                    }else {
-                        goNextActionPlan = true;
-                    }
-                }
-
-                if (goNextCaptureProof && goNextActionPlan){
+                if (validateCustomActionPlanAndCaptureProof(qId)){
                     DataLayer dl = new DataLayer(getResources(), getContext());
                     dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey", Constants.MODULE_NAME, Constants.PLOT_ID, mCurrentCapturedLocation.getLatitude() + "," + mCurrentCapturedLocation.getLongitude());
                     Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
@@ -261,39 +210,66 @@ public class FollowUpActionPlan extends Fragment {
         return view;
     }
 
+    private boolean validateCustomActionPlanAndCaptureProof(ArrayList<String> qId) {
+
+        for (int i = 0; i < qId.size(); i++) {
+
+            String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).get(0).answer;
+            String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
+            int ansId = 0;
+
+            try {
+                ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).get(0).answerID);
+            }catch (NumberFormatException e){
+                e.printStackTrace();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            boolean allowCaptureProof = checkAllowCaptureProof(qId.get(i), ans, ansId, displayType);
+
+            if(allowCaptureProof) {
+                if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, Constants.ATTEMPT),"NOT Resolved")){
+                    List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
+                    if(dmComplaintFiles.isEmpty()){
+                        Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        for (int j=0; j<qId.size(); j++) {
+            if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "0")){
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 
 
     @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id) {
 
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
+        List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
-        List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
-        dmComplaintList.clear();
-        dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
-
-        if (dmComplaintList.size() != 0) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-            dmSurveyAnswerTableList.clear();
-
-
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id,Constants.FARMER_ID, Constants.PLOT_ID);
-
-
+        if (!dmComplaintList.isEmpty()) {
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id,Constants.FARMER_ID, Constants.PLOT_ID);
             String complianceName = dmComplaintList.get(0).compliance;
 
             for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
-
                 budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
-
             }
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-            dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
+
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
-
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
@@ -327,7 +303,6 @@ public class FollowUpActionPlan extends Fragment {
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
 
                     if (tagFirst == 0) {
-                        //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("1" + complaint_id);
                         complaint_dropdown.setRotation(180);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
@@ -340,7 +315,6 @@ public class FollowUpActionPlan extends Fragment {
                         }
 
                     } else {
-                        //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
                         complaint_dropdown.setRotation(0);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
@@ -349,17 +323,14 @@ public class FollowUpActionPlan extends Fragment {
                                 LinearLayout linearLayout = (LinearLayout) desiredView;
                                 linearLayout.setVisibility(View.GONE);
                             }
-
-
                         }
-
                     }
-
                 }
             });
 
 
-            if(isActionPlanRequired){
+            if(isActionPlanRequired) {
+
                 LinearLayout linearLayoutItems = new LinearLayout(getActivity());
                 LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -373,9 +344,7 @@ public class FollowUpActionPlan extends Fragment {
                     linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
                 }
 
-
-                // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
-                if (dmSurveyAnswerTableList.size() != 0) {
+                if (!dmSurveyAnswerTableList.isEmpty()) {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
@@ -408,20 +377,10 @@ public class FollowUpActionPlan extends Fragment {
         );
         linearLayoutQes.setOrientation(LinearLayout.VERTICAL);
         linearLayoutQes.setLayoutParams(layoutParamsQes);
-        List<FollowUpItemMainTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-        dmSurveyAnswerTableList1.clear();
-
-        dmSurveyAnswerTableList1 = db.followUpItemMainTableDao().getFollowupByQuestionId1(id, Constants.FARMER_ID, Constants.ATTEMPT);
-
+        List<FollowUpItemMainTable> dmSurveyAnswerTableList1 = db.followUpItemMainTableDao().getFollowupByQuestionId1(id, Constants.FARMER_ID, Constants.ATTEMPT);
         TextView notResolveText = new TextView(getContext());
         notResolveText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         notResolveText.setTextSize(12);
-       /* ViewGroup.LayoutParams layoutParamsTxt = notResolveText.getLayoutParams();
-        layoutParamsTxt.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-        notResolveText.setLayoutParams(layoutParamsTxt);*/
-
-
-//        notResolveText.setTextColor(getResources().getColor(R.color.gray));
         notResolveText.setPadding(7, 3, 7, 3    );
         layoutParamsQes.setMargins(0, 15, 0, 0);
 
@@ -435,17 +394,13 @@ public class FollowUpActionPlan extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
 
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-
-        if (dmSurveyAnswerTableList.size() != 0) {
+        if (!dmSurveyAnswerTableList.isEmpty()) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
             editText.setText(answerIdDb);
         }
 
-        //editText.getLayoutParams().width=40;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
@@ -693,15 +648,10 @@ public class FollowUpActionPlan extends Fragment {
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList.clear();
         dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
 
         final List<String> list = new ArrayList<String>();
-        list.clear();
-
         final List<String> ids = new ArrayList<String>();
-        ids.clear();
-
 
         list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
@@ -715,6 +665,7 @@ public class FollowUpActionPlan extends Fragment {
         }catch (Exception e){
             e.printStackTrace();
         }
+
         boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
         if (allowCustomActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
@@ -722,7 +673,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(dmActionPlansItemList.get(c).actionPlan);
+            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
             ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
         }
 
@@ -773,12 +724,12 @@ public class FollowUpActionPlan extends Fragment {
             }catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
+
         if(actionPlanId == 1){
             selectedPosition = 1;
         }
+
         spinner.setSelection(selectedPosition);
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
@@ -836,13 +787,7 @@ public class FollowUpActionPlan extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (charSequence.length() > 0) {
-//                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID,Constants.ATTEMPT);
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-//                } else {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
-                    db.followUpItemMainTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID,Constants.ATTEMPT);
-//                }
+                db.followUpItemMainTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID,Constants.ATTEMPT);
             }
 
             @Override
@@ -885,8 +830,6 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()){
                     actionPlan.setText("");
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-//                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
                     db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
@@ -901,10 +844,8 @@ public class FollowUpActionPlan extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()) {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
-//                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
                     db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId(null,id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
 
@@ -926,7 +867,6 @@ public class FollowUpActionPlan extends Fragment {
                     db.followUpItemMainTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
-//                  db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
@@ -945,18 +885,14 @@ public class FollowUpActionPlan extends Fragment {
             }
         });
 
-
         linearLayoutSpin.addView(spinner);
-
-
-        //Selected Action Plan Txt
 
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(notResolveText);
             linearLayoutItems.addView(editText);
-            if (dmSurveyAnswerTableList1.size() != 0) {
+            if (!dmSurveyAnswerTableList1.isEmpty()) {
                 String resolved = dmSurveyAnswerTableList1.get(0).status;
-                if(resolved!=null) {
+                if(resolved != null) {
                     if (resolved.equalsIgnoreCase(Constants.RESOLVED)) {
                         notResolveText.setText(getResources().getString(R.string.dm_resolved));
                         notResolveText.setTextColor(getResources().getColor(R.color.colorPrimary));

@@ -2,6 +2,7 @@ package com.olam.digital.ofis.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -20,9 +21,12 @@ import org.json.JSONObject;
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateFarmersTask extends DatabaseTask {
     ProgressDialog pd;
+    private final SQLiteDatabase db;
+
     public UpdateFarmersTask(Context context) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
+        db = Utilities.getWriteableDb(context);
     }
 
     @Override
@@ -64,6 +68,7 @@ class UpdateFarmersTask extends DatabaseTask {
                 }
                 try {
                     phonenumbersArray = response.getJSONArray(OFISDBContract.PhoneNumber.TABLE_NAME);
+                    db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, null, null);
                     fillTable(phonenumbersArray, OFISDBContract.PhoneNumber.TABLE_NAME, OFISDBContract.PhoneNumber.COLUMN_LIST);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateFarmersTask: Error filling phone numbers table", e));

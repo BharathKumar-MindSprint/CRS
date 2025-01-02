@@ -1,13 +1,10 @@
 package com.olam.digital.ofis.tasks;
 
-import static com.olam.digital.ofis.NetworkLayer.TAG;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -35,21 +32,20 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
-import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.DeviceIdExtractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -71,7 +67,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -107,7 +102,7 @@ public class SyncAllTask extends SyncTask {
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse, answerResponse;
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
-    public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
+    public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
@@ -219,15 +214,12 @@ public class SyncAllTask extends SyncTask {
 
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
-//            syncSpinners();
-        } else if (op == SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR) {
-            syncMultiFarmEnumerator();
         }
         else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
             syncMultiFarmRoles();
         }
-        else if (op == SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS) {
-            syncExistingMultiFarms();
+        else if (op == SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS) {
+            syncExistingStakeHolders();
         }
         else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
@@ -289,7 +281,7 @@ public class SyncAllTask extends SyncTask {
         String endpoint = "";
         JSONObject inputArgs = new JSONObject();
         try {
-            inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(context));
+            inputArgs.put("deviceId", DeviceIdExtractor.fetchDeviceID(context));
             inputArgs.put("firebaseToken",Utilities.getFirebaseTokenSharedPrefs(context));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -353,7 +345,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
 
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
@@ -449,19 +440,6 @@ public class SyncAllTask extends SyncTask {
             new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
             multifarmRoleResponse = null;
 
-            new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
-            multifarmFarmResponse = null;
-
-            // Goes directly to the AsyncTask
-
-            // not in this scope
-//            new UpdateFmpTask(context).execute(fmpResponse);
-//            fmpResponse = null;
-
-            // Goes directly to the AsyncTask
-            //new UpdateTransactionListsTask(context).execute(transactionResponse);
-            //transactionResponse = null;
-
             // Goes directly to the AsyncTask
             new UpdateTrainingListsTask(context).execute(trainingResponse);
             trainingResponse = null;
@@ -484,6 +462,10 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
             enumnationalidresponse = null;
+
+            new UpdateStakeHolderResponse(context).execute(stakeHolderResponse);
+            StakeHoldersResponse(stakeHolderResponse);
+            stakeHolderResponse = null;
 
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
@@ -578,11 +560,8 @@ public class SyncAllTask extends SyncTask {
         try {
             OFISRoomDB db = OFISRoomDB.getDbInstance(context);
             db.dmSectionsItemDao().deleteAll();
-            db.dmLookupValuesISubmoduleDao().deleteAll();
-            db.dmActionPlansItemSubmoduleDao().deleteAll();
             db.dmQuestionsModuleDao().deleteAll();
             db.dmLookupValuesItemDao().deleteAll();
-            db.dmActionPlansItemDao().deleteAll();
             db.dmMainModuleDao().deleteAll();
             db.dmAnswerTypesDao().deleteAll();
             db.dmQuestionTypesDao().deleteAll();
@@ -649,7 +628,6 @@ public class SyncAllTask extends SyncTask {
                         FailureGetRefreshToken(null);
                     } else {
                         JSONObject response = new JSONObject(postResponse.body().string());
-                        DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                         if (postResponse.isSuccessful()) {
                             if (response.getString("status").equals("updated")) {
                                 if (Utilities.getLongFromSharedPrefs(context, "version_update_notified_on") == 0) {
@@ -744,7 +722,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         try {
                             JSONArray countryArray = response.getJSONArray("assignments");
@@ -886,7 +863,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
 
                         try {
@@ -966,7 +942,6 @@ public class SyncAllTask extends SyncTask {
                     String counrtyCode = isoCodes.get(countrycount-1);
                     String counrtyid = countryIds.get(countrycount-1);
                     JSONArray response = new JSONArray(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         int length = response.length();
                         for (int j = 0; j < length; j++) {
@@ -1157,7 +1132,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -1298,9 +1272,7 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
-                    DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
                         Boolean isChild = Boolean.parseBoolean(output.trim());
@@ -1355,7 +1327,6 @@ public class SyncAllTask extends SyncTask {
                 try {
                     // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
-                    DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
                         Boolean ishousehold = Boolean.parseBoolean(output.trim());
@@ -1395,58 +1366,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncMultiFarmEnumerator() {
-        String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/enableMultiFarmByEnumerator";
-        final String finalEndpoint = endpoint;
-        okHttpGet(context, endpoint, null, new Callback() {
-            @Override
-            public void onResponse(Call call, final Response postResponse) {
-                try {
-                    try {
-                        JSONObject  response = new JSONObject(postResponse.body().string());
-                        if (postResponse.isSuccessful()) {
-                            boolean isMultifarm = response.getBoolean("enableMultiFarm");
-                            Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, isMultifarm);
-                            if (isMultifarm) {
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
-                            }else{
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
-                            }
-                        } else {
-                            try {
-                                FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
-                            } catch (Exception e) {
-                            }
-                            postFailureMessage(null);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        postResponse.close();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                String failureMessage = res.getString(R.string.networking_error);
-                if (e != null) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
-                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                }
-
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-
-            }
-
-        });
-    }
-
     private void syncMultiFarmRoles() {
         String endpoint = "";
         endpoint ="ofisfarmer/multifarm/roles";
@@ -1456,12 +1375,10 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    // String output = postResponse.body().string();
-                    // DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         multifarmRoleResponse=response;
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Existing");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiStakeHolder Existing");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
 
                     } else {
                         try {
@@ -1491,25 +1408,19 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncExistingMultiFarms() {
+    private void syncExistingStakeHolders() {
         String endpoint = "";
-        endpoint = "ofisfarmer/multifarm/farmerinfo";
+        endpoint = "ofisfarmer/multiStakeHolder/getStakeholderByenumeratorId";
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-
-
-                        multifarmFarmResponse=response;
-
+                        stakeHolderResponse = response;
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
-
-
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
@@ -1530,7 +1441,6 @@ public class SyncAllTask extends SyncTask {
                 if (e != null) {
                     failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                 }
-
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
 
             }
@@ -1549,7 +1459,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     String output = postResponse.body().string();
-                    DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         Boolean isflenumerator = Boolean.parseBoolean(output.trim());
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
@@ -1586,9 +1495,7 @@ public class SyncAllTask extends SyncTask {
                 }
 
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-
             }
-
         });
     }
 
@@ -1601,7 +1508,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
 
                         nationalidresponse = response;
@@ -1647,7 +1553,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
 
                     if (postResponse.isSuccessful()) {
 
@@ -1700,7 +1605,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
 
@@ -1753,7 +1657,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
 
@@ -1811,7 +1714,6 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
 
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
@@ -1871,7 +1773,6 @@ public class SyncAllTask extends SyncTask {
                 try {
                     // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONArray  response = new JSONArray(postResponse.body().string());
-                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
 //                        syncResultCount = syncResultCount + response.getInt("resultcount");
@@ -2046,8 +1947,8 @@ public class SyncAllTask extends SyncTask {
                                 }
                                 notificationArray = new JSONArray();
                                 moduleArray = new JSONArray();
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                             }
                         }
                     }
@@ -2323,5 +2224,23 @@ public class SyncAllTask extends SyncTask {
             e.printStackTrace();
         }
     }
+
+    private void StakeHoldersResponse(JSONObject stakeHolderResponse) {
+
+        try {
+            Gson gson = new Gson();
+            JSONObject multiStakeHolderResponseObject = stakeHolderResponse.has("outputData") ? stakeHolderResponse.getJSONObject("outputData") : new JSONObject();
+            JSONArray multiStakeHolderResponse = multiStakeHolderResponseObject.has("multiStakeHolders") ? multiStakeHolderResponseObject.getJSONArray("multiStakeHolders") : new JSONArray();
+            Type MultiStakeHolderDtoType = new TypeToken<List<MultiStakeHolder>>(){}.getType();
+            List<MultiStakeHolder> multiStakeHolder = gson.fromJson(multiStakeHolderResponse.toString(), MultiStakeHolderDtoType);
+            roomDB.multiStakeHolderDao().deleteAll();
+            roomDB.multiStakeHolderDao().insert(multiStakeHolder);
+        }
+        catch (Exception e) {
+            FirebaseCrash.report(new Exception("UpdateStakeHolderResponse: Error filling StakeHolders table", e));
+            e.printStackTrace();
+        }
+    }
+
 
 }

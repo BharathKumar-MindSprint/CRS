@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">เสร็จสิ้นในส่วนของแบบสอบถาม</string>
     <string name="ofis_add_infrastructure">เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
-    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่</string>
+    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่และการถือครองฟาร์ม</string>
     <string name="Modules_to_submit">รายการที่จะส่ง</string>
     <string name="item_synced">รายการเชื่อมต่อสำเร็จ</string>
     <string name="item_sync_error">การเชื่อมต่อผิดพลาด โปรดติดต่อเจ้าหน้าที่</string>
@@ -709,8 +709,34 @@
     <string name="image_downloaded">ดาวน์โหลดรูปภาพสําเร็จแล้ว</string>
     <string name="file_exceeds">K̄hnād fịl̒ kein </string>
     <string name="total_file_size">K̄hnād fịl̒ rwm kein 5MB kruṇā xạphh̄old fịl̒ thī̀ mī k̄hnād n̂xy kẁā </string>
+    <string name="role_farmer">บทบาทของเกษตรกร</string>
 
     <string name="dm_plot_survey">การสำรวจแปลงวินิจฉัย</string>
     <string name="dm_plot_survey_completed">การสำรวจแปลงวินิจฉัยเสร็จสมบูรณ์</string>
 
+    <string name="add_farm_stakeholder">เพิ่มผู้มีส่วนได้ส่วนเสียในฟาร์ม</string>
+    <string name="add_farm_stakeholders">เพิ่มผู้มีส่วนได้ส่วนเสียในฟาร์ม</string>
+    <string name="stake_holder_name">ชื่อผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="farm_holding_information">ข้อมูลการถือครองฟาร์ม</string>
+    <string name="farm_holding_name">ชื่อผู้ถือครองฟาร์ม</string>
+    <string name="farm_holding_code">รหัสการถือครองฟาร์ม</string>
+    <string name="view_stake_holder_information">ดูข้อมูลผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="view_stake_holder">ดูผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="stakeholder_list">รายชื่อผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="confirmation_message">คุณต้องการยืนยันการเปลี่ยนแปลงหรือไม่</string>
+    <string name="stakeholder_role">StakeHolders Role</string>
+    <string name="primary_farmer">บทบาทของผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="stake_holder_details">รายละเอียดผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="no_task">ไม่มีงาน</string>
+    <string name="stakeholder_signature">ลายเซ็นผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="update_stakeholder">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="please_fill_stakeholder_name">กรุณากรอกชื่อผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="please_fill_stakeholder_dob">กรุณากรอกวันเกิดผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="Please_accept_stakeholder_consent">คุณต้องยอมรับคำชี้แจงความยินยอมเพื่อลงทะเบียนผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="stakeholder_consent">ความยินยอมของผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="new_stakeholder">ผู้มีส่วนได้ส่วนเสียรายใหม่</string>
+    <string name="Stakeholder_Added">เพิ่มผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="Stakeholder_Updated">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
+    <string name="farm_holding_suffix">ฟาร์มที่ถือครอง</string>
+    <string name="stakeholder_role_required">จำเป็นต้องมีบทบาทของผู้มีส่วนได้ส่วนเสีย!</string>
 </resources>

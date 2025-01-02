@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
 
 import java.util.List;
 
@@ -20,9 +20,6 @@ public interface CertificationsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Certifications> certificationsList);
-
-    @Query("SELECT * FROM Certifications WHERE certificationId = :id")
-    List<Certifications> getCertificationsById(int id);
 
     @Delete
     void delete(Certifications certifications);

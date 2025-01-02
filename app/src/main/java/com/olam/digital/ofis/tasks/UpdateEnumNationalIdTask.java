@@ -2,6 +2,7 @@ package com.olam.digital.ofis.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
@@ -18,9 +19,11 @@ import org.json.JSONObject;
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateEnumNationalIdTask extends DatabaseTask {
     ProgressDialog pd;
+    private SQLiteDatabase db;
     public UpdateEnumNationalIdTask(Context context) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
+        db = Utilities.getWriteableDb(context);
     }
 
     @Override
@@ -35,6 +38,7 @@ class UpdateEnumNationalIdTask extends DatabaseTask {
             JSONObject nationalidResponse = params[0];
 
                 try {
+                    db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, null);
                     JSONArray nationalidArray = nationalidResponse.getJSONArray("nationalids");
                     if (nationalidArray.length()>0) {
                         fillTable(nationalidArray, OFISDBContract.FarmerNationalIDs.TABLE_NAME, OFISDBContract.FarmerNationalIDs.COLUMN_LIST);

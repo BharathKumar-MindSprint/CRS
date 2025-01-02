@@ -59,7 +59,6 @@ import android.widget.Toast;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -78,11 +77,11 @@ import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
+import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -91,10 +90,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
-//import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
+
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
@@ -115,37 +111,31 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQues
 import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -178,8 +168,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private ProgressDialog mDialogLoading = null;
     int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
-    private boolean multifarmSynced = true;
-    private boolean farmerMultifarmSynced = true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -301,11 +289,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         downloadSurveyWrap();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
-        if (!enumeratorId.equalsIgnoreCase("")) {
-            if (DynatraceHelper.isAppClosed) {
-
-            }
-        }
 
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -477,12 +460,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener, true);
-        try {
-            MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        } catch (Exception e) {
-        }
-
-
     }
 
     private void setKeycloakCredentials(String environment) {
@@ -941,14 +918,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    } else if (!multifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!farmerMultifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
                     } else {
                         if (totalItems == 0)
                             totalItems = networkQueue.getCount();
@@ -978,10 +947,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
-                    } else if (msg.what == 7) {
-                        multifarmSynced = false;
-                    } else if (msg.what == 8) {
-                        farmerMultifarmSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     }
@@ -989,8 +954,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
-            multifarmSynced = true;
-            farmerMultifarmSynced = true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -1031,14 +994,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    } else if (!multifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!farmerMultifarmSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
                     }
                 }
             });
@@ -1059,10 +1014,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
-                    } else if (msg.what == 7) {
-                        multifarmSynced = false;
-                    } else if (msg.what == 8) {
-                        farmerMultifarmSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     } else {
@@ -1072,8 +1023,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
-            multifarmSynced = true;
-            farmerMultifarmSynced = true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -1357,12 +1306,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-            new AuthenticationHelper(this).setPassode(passcode.getText().toString().trim());
 
-
-//            Dynatrace.identifyUser(enumeratorID.getText().toString());
-            DynatraceHelper.isAppClosed = false;
-            DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();
         } else if (response.code() == 423) {
             enableSync();
@@ -1595,7 +1539,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         enableSync();
         if (!status.equalsIgnoreCase("false")) {
             Utilities.minProgressCount = 0;
-            DynatraceHelper.findNetworkSpeed(this);
             if (syncOptionAll) {
                 startAllItemSync();
             } else {
@@ -1628,28 +1571,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 intent.putExtra(EDIT_MODE, true);
                 startActivity(intent);
+            }else if (itemType.equalsIgnoreCase("stakeholder")) {
+                Intent intent = new Intent(this, AddFarmerActivity.class);
+                intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)));
+                intent.putExtra(Utilities.STAKE_HOLDER_REGISTRATION, true);
+                intent.putExtra(EDIT_MODE, true);
+                startActivity(intent);
             } else if (itemType.equalsIgnoreCase("farmlocation")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("biometric_update")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("farmpolygon")) {
                 Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
                 final String lFarmID = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-//            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
                 DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
                 dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 int count = 0;
-//        if(strFarmID != "0"){
                 try {
-//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
                     count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 } catch (Exception e) {
                     count = 0;
@@ -1658,7 +1600,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 recordPolygonIntent.putExtra(FARM_ID, lFarmID);
                 recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-//                recordPolygonIntent.putExtra(PLOT_COUNT, count);
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(Long.valueOf(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))));
                 recordPolygonIntent.putExtra(PLOT_COUNT, totalCount);
                 SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)), totalCount);
@@ -1668,8 +1609,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 CompleteModuleActivity.editMode = true;
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("FollowUpSurvey") ||
                     itemType.equalsIgnoreCase("DMSurvey")) {
@@ -1682,14 +1621,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 ChildLabourCompleteModuleActivity.editMode = true;
                 ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
-                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("transaction")) {
                 Intent intent = new Intent(context, TransactionItem.class);
@@ -1728,20 +1663,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 Intent intent = new Intent(this, ChildVisitDetailActivity.class);
                 intent.putExtras(childBundle);
-//            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-//            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
                 startActivity(intent);
-
-            } else if (itemType.equalsIgnoreCase("Multifarm Update")) {
+            } else if (itemType.equalsIgnoreCase("update stakeholder")) {
                 Bundle bundle = new Bundle();
-                bundle.putString("farmerId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-                bundle.putString("farmId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID))));
-                bundle.putBoolean("editMode", true);
-                bundle.putBoolean("isSurveyEnabled", false);
-                Intent intent = new Intent(this, UpdateMultiFarmActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-
+                bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+                bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
+                startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }
@@ -2194,6 +2121,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+
                                     try {
                                         for (int l = 0; l < questionsItemList.size(); l++) {
 
@@ -2294,26 +2222,26 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                     if (dmRangeTextBoxActionPlansList != null) {
                                                         for (int n = 0; n < dmRangeTextBoxActionPlansList.size(); n++) {
-                                                            int id_actionPlan = dmRangeTextBoxActionPlansList.get(n).getId();
-                                                            boolean isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
-                                                            String actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
-                                                            Integer actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
-
                                                             DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                            dmRangeActionPlansItems.id = id_actionPlan;
-                                                            dmRangeActionPlansItems.isDefault = isDefault;
-                                                            dmRangeActionPlansItems.actionPlan = actionPlan;
-                                                            dmRangeActionPlansItems.actionValueId = actionValueId;
+
+                                                            dmRangeActionPlansItems.id = dmRangeTextBoxActionPlansList.get(n).getId();
+                                                            dmRangeActionPlansItems.isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
+                                                            dmRangeActionPlansItems.actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
+                                                            dmRangeActionPlansItems.actionValueId = dmRangeTextBoxActionPlansList.get(n).getActionValueId();
                                                             dmRangeActionPlansItems.questionId = id_questionModule;
                                                             dmRangeActionPlansItems.complainceId = complianceId;
+                                                            dmRangeActionPlansItems.actionPlanFr = dmRangeTextBoxActionPlansList.get(n).getActionPlanFr();
+                                                            dmRangeActionPlansItems.actionPlanEs = dmRangeTextBoxActionPlansList.get(n).getActionPlanEs();
+                                                            dmRangeActionPlansItems.actionPlanPt = dmRangeTextBoxActionPlansList.get(n).getActionPlanPt();
+                                                            dmRangeActionPlansItems.actionPlanId = dmRangeTextBoxActionPlansList.get(n).getActionPlanId();
+                                                            dmRangeActionPlansItems.actionPlanLo = dmRangeTextBoxActionPlansList.get(n).getActionPlanLo();
+                                                            dmRangeActionPlansItems.actionPlanTh = dmRangeTextBoxActionPlansList.get(n).getActionPlanTh();
+                                                            dmRangeActionPlansItems.actionPlanTr = dmRangeTextBoxActionPlansList.get(n).getActionPlanTr();
+                                                            dmRangeActionPlansItems.actionPlanVi = dmRangeTextBoxActionPlansList.get(n).getActionPlanVi();
 
                                                             db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
-
-
                                                         }
                                                     }
-
-
                                                 }
                                             }
 
@@ -2362,38 +2290,35 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                         db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
 
                                                         List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
-                                                        dmRangeTextBoxActionPlansList.clear();
                                                         dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
 
 
                                                         if (dmRangeTextBoxActionPlansList != null) {
                                                             for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
-                                                                int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
-                                                                boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
-                                                                String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
-                                                                Integer actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
 
                                                                 DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                                dmRangeActionPlansItems.id = id_actionPlan;
-                                                                dmRangeActionPlansItems.isDefault = isDefault;
-                                                                dmRangeActionPlansItems.actionValueId = actionValueId;
-                                                                dmRangeActionPlansItems.actionPlan = actionPlan;
+
+                                                                dmRangeActionPlansItems.id = dmRangeTextBoxActionPlansList.get(ra).getId();
+                                                                dmRangeActionPlansItems.isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
+                                                                dmRangeActionPlansItems.actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                                                dmRangeActionPlansItems.actionValueId = dmRangeTextBoxActionPlansList.get(ra).getActionValueId();
                                                                 dmRangeActionPlansItems.questionId = id_questionModule;
                                                                 dmRangeActionPlansItems.complainceId = complianceId;
+                                                                dmRangeActionPlansItems.actionPlanFr = dmRangeTextBoxActionPlansList.get(ra).getActionPlanFr();
+                                                                dmRangeActionPlansItems.actionPlanEs = dmRangeTextBoxActionPlansList.get(ra).getActionPlanEs();
+                                                                dmRangeActionPlansItems.actionPlanPt = dmRangeTextBoxActionPlansList.get(ra).getActionPlanPt();
+                                                                dmRangeActionPlansItems.actionPlanId = dmRangeTextBoxActionPlansList.get(ra).getActionPlanId();
+                                                                dmRangeActionPlansItems.actionPlanLo = dmRangeTextBoxActionPlansList.get(ra).getActionPlanLo();
+                                                                dmRangeActionPlansItems.actionPlanTh = dmRangeTextBoxActionPlansList.get(ra).getActionPlanTh();
+                                                                dmRangeActionPlansItems.actionPlanTr = dmRangeTextBoxActionPlansList.get(ra).getActionPlanTr();
+                                                                dmRangeActionPlansItems.actionPlanVi = dmRangeTextBoxActionPlansList.get(ra).getActionPlanVi();
 
                                                                 db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
-
-
                                                             }
                                                         }
                                                     }
-
                                                 }
-
-
                                             }
-
-
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -2794,11 +2719,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static void deleteRoomDbValues() {
         OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
         db.dmSectionsItemDao().deleteAll();
-        db.dmLookupValuesISubmoduleDao().deleteAll();
-        db.dmActionPlansItemSubmoduleDao().deleteAll();
         db.dmQuestionsModuleDao().deleteAll();
         db.dmLookupValuesItemDao().deleteAll();
-        db.dmActionPlansItemDao().deleteAll();
         db.dmMainModuleDao().deleteAll();
         db.dmAnswerTypesDao().deleteAll();
         db.dmQuestionTypesDao().deleteAll();

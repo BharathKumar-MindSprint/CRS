@@ -32,7 +32,7 @@ public class Constants {
 
     public static String RED = "RED";
     public static String GREEN = "GREEN";
-    public static final String ORANGE = "ORANGE";
+    public static final String ORANGE = "YELLOW";
 
     public static String RESOLVED = "Resolved";
 

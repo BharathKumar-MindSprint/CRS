@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
@@ -20,45 +22,32 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.AssignmentTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItemSubmodule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.CapturedProofFollowupTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.CapturedProofFollowupTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModuleItemFollowupTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
@@ -67,16 +56,14 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
-        DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
-        DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
+        DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
-        DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
-        DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
-        CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
-        FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
+        DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
+        FollowUpItemMainTable.class, FollowUpAnswerTable.class,
+        DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class},
-        version = 14)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class},
+        version = 15)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -88,25 +75,17 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmCurrenciesItemDao dmCurrenciesItemDao();
     public abstract DmQuestionsModuleDao dmQuestionsModuleDao();
     public abstract DmLookupValuesItemDao dmLookupValuesItemDao();
-    public abstract DmActionPlansItemDao dmActionPlansItemDao();
     public abstract DmSectionsItemDao dmSectionsItemDao();
-    public abstract DmLookupValuesISubmoduleDao dmLookupValuesISubmoduleDao();
-    public abstract DmActionPlansItemSubmoduleDao dmActionPlansItemSubmoduleDao();
     public abstract DmRecurrenceDao dmRecurrenceDao();
     public abstract DmComplaintFileTableDao dmComplaintFileTableDao();
     public abstract DmSurveyAnswerTableDao dmSurveyAnswerTableDao();
     public abstract DmTextBoxModuleQuestionsDao dmTextBoxModuleQuestionsDao();
     public abstract DmRangeTextBoxModuleQuestionsTableDao dmRangeTextBoxModuleQuestionsTableDao();
-    public abstract DmNonComplaintFileTableDao dmNonComplaintFileTableDao();
-    public abstract DmSatisfactoryFileTableDao dmSatisfactoryFileTableDao();
     public abstract DmActionPlanCurrenciesTableDao dmActionPlanCurrenciesTableDao();
     public abstract DmRangeActionPlansItemsDao dmRangeActionPlansItemsDao();
     public abstract DMSurveyReportDao dmSurveyReportDao();
     public abstract FollowUpItemMainTableDao followUpItemMainTableDao();
-    public abstract CapturedProofFollowupTableDao capturedProofFollowupTableDao();
-    public abstract ExistingModuleItemFollowupTableDao existingModuleItemFollowupTableDao();
-    public abstract FollowUpAnswerTableDao followUpAnswerTableDao();
-    public abstract FollowUpResultTableDao followUpResultTableDao();
+
 
     public abstract DmAssessmentResultTypeDao dmAssessmentResultTypeDao();
 
@@ -135,6 +114,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmMasterDataDao dmMasterDataDao();
 
     public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
+    public abstract MultiStakeHolderDao multiStakeHolderDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -165,10 +145,62 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
+        final Migration MIGRATION_14_15 = new Migration(14, 15) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (" +
+                "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "msTempId INTEGER," +
+                        "farmerId INTEGER," +
+                        "msName TEXT," +
+                        "farmHoldingName TEXT," +
+                        "farmId TEXT," +
+                        "msGender TEXT," +
+                        "age TEXT," +
+                        "msPhoto TEXT," +
+                        "msDOB TEXT," +
+                        "consentFarmer INTEGER," +
+                        "consentOthers INTEGER," +
+                        "msSignature TEXT," +
+                        "msDisplayId TEXT," +
+                        "olamMultiStakeholderId TEXT," +
+                        "farmHoldingCode TEXT," +
+                        "msRoleId TEXT," +
+                        "synced INTEGER," +
+                        "primary_lat TEXT," +
+                        "primary_lng TEXT," +
+                        "registeredDate TEXT," +
+                        "isConsentAvailable TEXT," +
+                        "submitted_modules TEXT," +
+                        "created_locally INTEGER" +
+                        ")");
+                database.execSQL("DROP TABLE IF EXISTS DmActionPlansItem");
+                database.execSQL("DROP TABLE IF EXISTS DmActionPlansItemSubmodule");
+                database.execSQL("DROP TABLE IF EXISTS DmLookupValuesISubmodule");
+                database.execSQL("DROP TABLE IF EXISTS DmNonComplaintFileTable");
+                database.execSQL("DROP TABLE IF EXISTS DmQuestionsSubModule");
+                database.execSQL("DROP TABLE IF EXISTS DmSatisfactoryFileTable");
+                database.execSQL("DROP TABLE IF EXISTS DmSavePartialSurveyTable");
+                database.execSQL("DROP TABLE IF EXISTS CapturedProofFollowupTable");
+                database.execSQL("DROP TABLE IF EXISTS ExistingModuleItemFollowupTable");
+                database.execSQL("DROP TABLE IF EXISTS FollowUpResultTable");
+
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanFr TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanEs TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanPt TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanId TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanLo TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanTh TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanTr TEXT");
+                database.execSQL("ALTER TABLE DmRangeActionPlansItems ADD COLUMN actionPlanVi TEXT");
+
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
                     .fallbackToDestructiveMigration()
                     .build();
         }

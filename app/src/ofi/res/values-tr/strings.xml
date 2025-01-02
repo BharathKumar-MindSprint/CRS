@@ -36,7 +36,6 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Tam anket modülü</string>
     <string name="ofis_add_infrastructure">Sosyal altyapı ekle</string>
-    <string name="ofis_add_new_farmer">Yeni çiftçi ekle</string>
     <string name="Modules_to_submit">Verilecek öğeler</string>
     <string name="item_synced">Öğeler başarıyla senkronize edildi.</string>
     <string name="item_sync_error">Senkronize hatası. Lütfen yardım için bizimle bağlantı kurun</string>

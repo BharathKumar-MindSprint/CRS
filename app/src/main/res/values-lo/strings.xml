@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
     <string name="ofis_add_infrastructure">ເພີ່ມ​ໂຄງ​ສ້າງ​ສັງ​ຄົມ</string>
-    <string name="ofis_add_new_farmer">ເພີ່ມ​ຊື່​ຊາວ​ສວນ​ໃໝ່</string>
+    <string name="ofis_add_new_farmer">ເພີ່ມກະສິກອນໃໝ່ &amp; ການຖືກກວດສອບຟາມ່</string>
     <string name="Modules_to_submit">ຫົວ​​ຂໍ້​ສະ​ເໜີ</string>
     <string name="item_synced">ຂໍ້ (s) ແມ່ນ​ລະ​ບົບ synced ສຳ​ເລັດ​ແລ້ວ</string>
     <string name="item_sync_error">ລະ​ບົບ syncing ຜິດ​ພາດ. ກະ​ລຸ​ນາ​ຕິ​ດ​ຕໍ່​ພວກ​ເຮົາ​ເພື​ອ​ຊ່ວຍ​ເຫຼື້ອ</string>
@@ -954,6 +954,9 @@
     <string name="file_exceeds">khanad fail koen </string>
     <string name="total_file_size">khanad fail thangmodkoen 5MB  kaluna abold fail khanadnony kva </string>
 
+    <string name="role_farmer">ບົດບາດຊາວກະສິກອນ</string>
+
+
     <string name="dm_hint_txt">ໂມດູນການວິໃຈ</string>
     <string name="select_module">ເລືອກໂມດູນ</string>
     <string name="existing_module">ໂມດູນທີ່ມີຢູ່</string>
@@ -980,5 +983,32 @@
     <string name="dm_plot_survey">ການສໍາຫຼວດແຜນຜັງການວິນິດໄສ</string>
     <string name="dm_plot_survey_completed">ສຳເລັດການສຳຫຼວດແຜນການວິນິໄສ</string>
 
+
+    <string name="add_farm_stakeholder">ເພີ່ມຜູ້ມີສ່ວນກ່ຽວຂ້ອງກະສິກໍາ</string>
+    <string name="add_farm_stakeholders">ເພີ່ມຜູ້ມີສ່ວນຮ່ວມໃນຟາມ</string>
+    <string name="stake_holder_name">ຊື່ຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="farm_holding_information">ຂໍ້ມູນການຖືກະສິກໍາ</string>
+    <string name="farm_holding_name">Farm Holding ຊື່</string>
+    <string name="farm_holding_code">ລະຫັດການຖືກະສິກໍາ</string>
+    <string name="view_stake_holder_information">ເບິ່ງຂໍ້ມູນຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="view_stake_holder">ເບິ່ງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="stakeholder_list">ບັນຊີລາຍຊື່ຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="confirmation_message">ທ່ານຕ້ອງການຢືນຢັນການປ່ຽນແປງບໍ?</string>
+    <string name="stakeholder_role">ບົດບາດຂອງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="primary_farmer">ຊາວກະສິກອນປະຖົມ</string>
+    <string name="stake_holder_details">ລາຍລະອຽດຂອງພາກສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="no_task">ບໍ່ມີໜ້າວຽກ</string>
+    <string name="stakeholder_signature">ລາຍເຊັນຂອງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="update_stakeholder">ປັບປຸງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="please_fill_stakeholder_name">ກະລຸນາຕື່ມຊື່ຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="please_fill_stakeholder_dob">ກະລຸນາຕື່ມວັນເດືອນປີເກີດຂອງຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="Please_accept_stakeholder_consent">ທ່ານຕ້ອງຍອມຮັບຄໍາຖະແຫຼງການຍິນຍອມເພື່ອລົງທະບຽນຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="stakeholder_consent">ການຍິນຍອມຂອງຜູ້ມີສ່ວນກ່ຽວຂ້ອງ</string>
+    <string name="new_stakeholder">ຜູ້ຖືຮຸ້ນໃໝ່</string>
+    <string name="Stakeholder_Added">ເພີ່ມຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="Stakeholder_Updated">ອັບເດດຜູ້ມີສ່ວນຮ່ວມແລ້ວ</string>
+    <string name="farm_holding_suffix">ການຄອບຄອງກະສິກໍາ</string>
+    <string name="stakeholder_role_required">ຕ້ອງມີບົດບາດຜູ້ມີສ່ວນຮ່ວມ!</string>
 </resources>
+
 

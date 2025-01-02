@@ -36,7 +36,7 @@
     <!-- in XML -->
     <string name="ofis_complete_questionnaire">Mục bảng hỏi hoàn tất</string>
     <string name="ofis_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
-    <string name="ofis_add_new_farmer">Thêm Nông hộ mới</string>
+    <string name="ofis_add_new_farmer">thêm nông dân mới và trang trại</string>
     <string name="Modules_to_submit">Các mục để gửi</string>
     <string name="item_synced">Các mục đồng bộ đã được hoàn thành.</string>
     <string name="item_sync_error">Lỗi đồng bộ. Hãy liên hệ với chúng tôi để được giúp đỡ</string>
@@ -714,4 +714,32 @@
     <string name="dm_plot_survey">Khảo sát lô đất chẩn đoán</string>
     <string name="dm_plot_survey_completed">Khảo sát lô đất chẩn đoán đã hoàn thành</string>
 
+    <string name="role_farmer">Vai trò của người nông dân</string>
+
+
+    <string name="add_farm_stakeholder">Thêm bên liên quan đến trang trại</string>
+    <string name="add_farm_stakeholders">Thêm các bên liên quan của trang trại</string>
+    <string name="stake_holder_name">Tên bên liên quan</string>
+    <string name="farm_holding_information">Thông tin về trang trại</string>
+    <string name="farm_holding_name">Tên trang trại</string>
+    <string name="farm_holding_code">Mã trang trại</string>
+    <string name="view_stake_holder_information">Xem thông tin bên liên quan</string>
+    <string name="view_stake_holder">Xem bên liên quan</string>
+    <string name="stakeholder_list">danh sách các bên liên quan</string>
+    <string name="confirmation_message">Bạn có muốn xác nhận các thay đổi không?</string>
+    <string name="stakeholder_role">Vai trò của bên liên quan</string>
+    <string name="primary_farmer">Nông dân chính</string>
+    <string name="stake_holder_details">Chi tiết về bên liên quan</string>
+    <string name="no_task">Không có nhiệm vụ</string>
+    <string name="stakeholder_signature">Chữ ký của bên liên quan</string>
+    <string name="update_stakeholder">Cập nhật bên liên quan</string>
+    <string name="please_fill_stakeholder_name">Vui lòng điền tên bên liên quan</string>
+    <string name="please_fill_stakeholder_dob">Vui lòng điền ngày sinh của bên liên quan</string>
+    <string name="Please_accept_stakeholder_consent">Bạn phải chấp nhận các tuyên bố đồng ý để đăng ký bên liên quan</string>
+    <string name="stakeholder_consent">sự đồng ý của các bên liên quan</string>
+    <string name="new_stakeholder">Bên liên quan mới</string>
+    <string name="Stakeholder_Added">Bên liên quan đã thêm</string>
+    <string name="Stakeholder_Updated">Bên liên quan đã cập nhậ</string>
+    <string name="farm_holding_suffix">trang trại nắm giữ</string>
+    <string name="stakeholder_role_required">Cần có vai trò bên liên quan!</string>
 </resources>

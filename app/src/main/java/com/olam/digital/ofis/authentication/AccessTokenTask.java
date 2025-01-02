@@ -3,25 +3,14 @@ package com.olam.digital.ofis.authentication;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceConstants;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 
+import java.util.Objects;
 
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-
-import okhttp3.Callback;
 import retrofit2.Call;
 import retrofit2.Response;
-
-import static com.olam.digital.ofis.NetworkLayer.okHttpPostOauth;
 
 public class AccessTokenTask extends AsyncTask<Object, Object, String> {
 
@@ -64,7 +53,6 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
                 new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
                 new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
-                new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
                 Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
                 Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                 return authenticationDTO.getAccessToken();
@@ -82,64 +70,25 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     Response authResponse1 = authCall1.execute();
                     if (authResponse1.isSuccessful()) {
                         AuthenticationDTO authenticationDTO = (AuthenticationDTO) authResponse1.body();
-                        DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_RESPONSE, new Gson().toJson(authenticationDTO), mContext, false);
                         authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                         new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                         new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
-                        new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
                         Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
                         Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                         return authenticationDTO.getAccessToken();
-                    } else {
-                        JSONObject inputArgs = new JSONObject();
-
-                       String endpoint = "ofisoauth/api/v1/oauth/migrateRole?installId="+DeviceIDxctractor.fetchDeviceID(mContext);
-                       // inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(mContext));
-                        okHttpPostOauth(mContext, endpoint, inputArgs, new Callback() {
-                            @Override
-                            public void onResponse(okhttp3.Call call, final okhttp3.Response postResponse) throws IOException {
-                                if (postResponse.isSuccessful()) {
-
-                                } else {
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(okhttp3.Call call, IOException e) {
-
-                            }
-
-                        });
-
-
-                        //Old
-                        int statusCode = authResponse.code();
-                        return null;
                     }
 
-              //  } else {
-                    // Write a logic if code fails here apart from 401
-               //     return null;
-              //  }
             }
         } catch (Exception e) {
             return null;
         }
-      //   END
-
-
+        return null;
     }
 
     @Override
     protected void onPostExecute(String s) {
 
-        if (s!=null){
-
-            onAccessTokenInterface.onTokenCompleted(s);
-        }else{
-            onAccessTokenInterface.onTokenCompleted("false");
-        }
+        onAccessTokenInterface.onTokenCompleted(Objects.requireNonNullElse(s, "false"));
 
     }
 }

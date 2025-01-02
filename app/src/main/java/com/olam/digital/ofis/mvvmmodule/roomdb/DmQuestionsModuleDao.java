@@ -6,9 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 
 import java.util.List;
 
@@ -45,4 +43,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("SELECT question FROM DmQuestionsModule WHERE id=:questionID")
     String getQuestionById(int questionID);
+
+    @Query("SELECT DISTINCT id FROM DmQuestionsModule WHERE moduleId = :moduleId")
+    List<Integer> getDmQuestionsByModuleId(int moduleId);
 }

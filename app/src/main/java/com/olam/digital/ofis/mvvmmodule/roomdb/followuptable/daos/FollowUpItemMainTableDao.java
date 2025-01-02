@@ -4,8 +4,6 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt")
     List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt);
 
-    @Query("SELECT actionPlanText FROM FollowUpItemMainTable WHERE questionID = :questionId AND farmerId =:farmerId AND status=:notResolved")
+    @Query("SELECT actionPlanText FROM FollowUpItemMainTable WHERE questionID = :questionId AND farmerId =:farmerId AND status=:notResolved AND isSync = 0")
     String getActionPlanTextFollowUp(String questionId, String farmerId , String notResolved);
 
     @Query("SELECT status FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt =:attempt")

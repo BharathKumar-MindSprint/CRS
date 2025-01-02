@@ -1,15 +1,12 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb;
 
-import static android.icu.text.MessagePattern.ArgType.SELECT;
-
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
 
 import java.util.List;
 
