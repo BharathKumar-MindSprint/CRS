@@ -28,4 +28,7 @@ public interface DmLookupValuesItemDao {
 
     @Query("SELECT proofFormat FROM DmLookupValuesItem WHERE idQuestionsMudule=:id AND complianceId =:complianceId AND id=:answerID")
     String getProofFormatByQuestionIdDropDown (String id , String complianceId, String answerID);
+
+    @Query("SELECT * FROM DmLookupValuesItem WHERE id =:id")
+    DmLookupValuesItem getAllValuesByLookupId(int id);
 }
