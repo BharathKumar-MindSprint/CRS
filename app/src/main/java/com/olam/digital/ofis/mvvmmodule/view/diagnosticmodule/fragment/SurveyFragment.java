@@ -932,6 +932,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         Integer maxSelection = db.dmQuestionsModuleDao().getMaxSelectionCount(questionId);
+        int[] selectedCheckboxCount = {0};
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
             list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
@@ -951,6 +952,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
             Set<Integer> answerIdDbSet = new HashSet<>();
             for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+                selectedCheckboxCount[0]++;
                 answerIdDbSet.add(Integer.valueOf(answer.answerID));
             }
 
@@ -982,7 +984,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         textView.setVisibility(View.GONE);
         textView.setTag(questionId);
 
-        int[] selectedCheckboxCount = {0};
         for (int i = 0; i < tl.getChildCount(); i++) {
             View child = tl.getChildAt(i);
             if (child instanceof TableRow) {
