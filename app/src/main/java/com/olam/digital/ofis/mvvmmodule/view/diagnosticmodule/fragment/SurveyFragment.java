@@ -34,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
@@ -930,6 +931,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         allowCustomActionPlan.add(false);
         isCaptureProof.add(false);
 
+        Integer maxSelection = db.dmQuestionsModuleDao().getMaxSelectionCount(questionId);
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
             list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
@@ -973,13 +975,14 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         }
         TextView textView = new TextView(getActivity());
-        textView.setText("Please select any value!");
+        textView.setText("Please enter any checkbox value");
         textView.setTextColor(getResources().getColor(R.color.red_view_survey));
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
         textView.setVisibility(View.GONE);
         textView.setTag(questionId);
 
+        int[] selectedCheckboxCount = {0};
         for (int i = 0; i < tl.getChildCount(); i++) {
             View child = tl.getChildAt(i);
             if (child instanceof TableRow) {
@@ -995,52 +998,59 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         String value = tv.getText().toString();
                         DmLookupValuesItem lookupValuesItemsById = db.dmLookupValuesItemDao().getAllValuesByLookupId(Integer.parseInt(id));
                         if (isChecked) {
-                            Log.d("CheckBox", "Checked ID: " + id);
-                            List<DmSurveyAnswerTable> dmSurveyData = db.dmSurveyAnswerTableDao().getDataByAnswerId(id,Constants.FARMER_ID, Constants.PLOT_ID);
-                            if(dmSurveyData.isEmpty()) {
-                                DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                                dmSurveyAnswerTable1.questionID = questionId;
-                                dmSurveyAnswerTable1.answerID = id;
-                                dmSurveyAnswerTable1.answer = value;
-                                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                                dmSurveyAnswerTable1.question = question;
-                                dmSurveyAnswerTable1.complinceTypeId = String.valueOf(lookupValuesItemsById.complianceId);
-                                dmSurveyAnswerTable1.actionplanId = "";
-                                dmSurveyAnswerTable1.actionPlanText = "";
-                                dmSurveyAnswerTable1.amount = 0;
-                                dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
-                                dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
-                                dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                                dmSurveyAnswerTable1.isSynced = false;
-                                db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-                                if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                                    db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                            if (selectedCheckboxCount[0] < maxSelection) {
+                                selectedCheckboxCount[0]++;
+                                Log.d("CheckBox", "Checked ID: " + id);
+                                List<DmSurveyAnswerTable> dmSurveyData = db.dmSurveyAnswerTableDao().getDataByAnswerId(id,Constants.FARMER_ID, Constants.PLOT_ID);
+                                if(dmSurveyData.isEmpty()) {
+                                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                                    dmSurveyAnswerTable1.questionID = questionId;
+                                    dmSurveyAnswerTable1.answerID = id;
+                                    dmSurveyAnswerTable1.answer = value;
+                                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                                    dmSurveyAnswerTable1.question = question;
+                                    dmSurveyAnswerTable1.complinceTypeId = String.valueOf(lookupValuesItemsById.complianceId);
+                                    dmSurveyAnswerTable1.actionplanId = "";
+                                    dmSurveyAnswerTable1.actionPlanText = "";
+                                    dmSurveyAnswerTable1.amount = 0;
+                                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                    dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
+                                    dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
+                                    dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                                    dmSurveyAnswerTable1.isSynced = false;
+                                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                                    if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                        db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                                    }
+                                } else {
+                                    DmSurveyAnswerTable dmSurveyAnswer = dmSurveyData.get(0);
+                                    String actionPlanId = dmSurveyAnswer.actionplanId;
+                                    String actionPlanText = dmSurveyAnswer.actionPlanText;
+                                    int amount = dmSurveyAnswer.amount;
+                                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID, Constants.PLOT_ID);
+                                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                                    dmSurveyAnswerTable1.questionID = questionId;
+                                    dmSurveyAnswerTable1.answerID = id;
+                                    dmSurveyAnswerTable1.answer = value;
+                                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                                    dmSurveyAnswerTable1.question = question;
+                                    dmSurveyAnswerTable1.complinceTypeId =  String.valueOf(lookupValuesItemsById.complianceId);
+                                    dmSurveyAnswerTable1.amount = amount;
+                                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                    dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
+                                    dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
+                                    dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                                    dmSurveyAnswerTable1.isSynced = false;
+                                    dmSurveyAnswerTable1.actionplanId = actionPlanId;
+                                    dmSurveyAnswerTable1.actionPlanText = actionPlanText;
+                                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                                 }
                             } else {
-                                DmSurveyAnswerTable dmSurveyAnswer = dmSurveyData.get(0);
-                                String actionPlanId = dmSurveyAnswer.actionplanId;
-                                String actionPlanText = dmSurveyAnswer.actionPlanText;
-                                int amount = dmSurveyAnswer.amount;
-                                db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID, Constants.PLOT_ID);
-                                DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                                dmSurveyAnswerTable1.questionID = questionId;
-                                dmSurveyAnswerTable1.answerID = id;
-                                dmSurveyAnswerTable1.answer = value;
-                                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                                dmSurveyAnswerTable1.question = question;
-                                dmSurveyAnswerTable1.complinceTypeId =  String.valueOf(lookupValuesItemsById.complianceId);
-                                dmSurveyAnswerTable1.amount = amount;
-                                dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
-                                dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
-                                dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                                dmSurveyAnswerTable1.isSynced = false;
-                                dmSurveyAnswerTable1.actionplanId = actionPlanId;
-                                dmSurveyAnswerTable1.actionPlanText = actionPlanText;
-                                db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                                cb.setChecked(false);
+                                Toast.makeText(getContext(), "You can only select " + maxSelection + " options", Toast.LENGTH_SHORT).show();
                             }
                         } else {
+                            selectedCheckboxCount[0]--;
                             Log.d("CheckBox", "Unchecked ID: " + id);
                             db.dmSurveyAnswerTableDao().deleteByAnswerId(id, Constants.FARMER_ID, Constants.PLOT_ID);
                         }

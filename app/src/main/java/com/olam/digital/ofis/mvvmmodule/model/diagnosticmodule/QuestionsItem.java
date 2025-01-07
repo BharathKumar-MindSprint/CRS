@@ -9,6 +9,9 @@ public class QuestionsItem{
 	@SerializedName("mandate")
 	private boolean mandate;
 
+	@SerializedName("maxSelection")
+	private Integer maxSelection;
+
 	@SerializedName("textBox")
 	private TextBoxModuleQuestions textBoxModuleQuestions;
 
@@ -67,7 +70,15 @@ public class QuestionsItem{
 	@SerializedName("submoduleId")
 	private int submoduleId;
 
-	public QuestionsItem(boolean mandate, TextBoxModuleQuestions textBoxModuleQuestions, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
+	public Integer getMaxSelection() {
+		return maxSelection;
+	}
+
+	public void setMaxSelection(Integer maxSelection) {
+		this.maxSelection = maxSelection;
+	}
+
+	public QuestionsItem(boolean mandate, TextBoxModuleQuestions textBoxModuleQuestions, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId, Integer maxSelection) {
 		this.mandate = mandate;
 		this.textBoxModuleQuestions = textBoxModuleQuestions;
 		this.question = question;
@@ -88,6 +99,7 @@ public class QuestionsItem{
 		this.questionVi = questionVi;
 		this.moduleId = moduleId;
 		this.submoduleId = submoduleId;
+		this.maxSelection = maxSelection;
 	}
 
 
