@@ -129,6 +129,10 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 renderDropDownQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesISubmoduleList, dmQuestionsSubModule.question);
             } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("text box")) {
                 renderTextboxQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmQuestionsSubModule.question);
+            } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("checkbox")) {
+                List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
+                dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsSubModule.id);
+                renderCheckboxQuestionModule(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesItemList, dmQuestionsSubModule.question, true);
             }
 
         }
@@ -209,7 +213,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             } else if (dmQuestionsModule.displayType.equalsIgnoreCase("checkbox")) {
                 List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
                 dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
-                renderCheckboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question);
+                renderCheckboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question, false);
             }
 
         }
@@ -243,7 +247,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
-            list.add(dmLookupValuesISubmoduleList.get(k).value);
+            list.add(getLookupValuebyLanguage(dmLookupValuesISubmoduleList.get(k)));
             ids.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesISubmoduleList.get(k).allowCustomActionPlan);
@@ -913,7 +917,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
 
     }
-    public void renderCheckboxQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question) {
+    public void renderCheckboxQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question, boolean subSection) {
         final List<String> list = new ArrayList<String>();
         final List<String> ids = new ArrayList<String>();
         final List<String> complianceIds = new ArrayList<String>();
@@ -1046,9 +1050,16 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-        if (this.dm_Question != null) {
-            this.dm_Question.addView(tl);
-            this.dm_Question.addView(textView);
+        if (subSection) {
+            if (dm_Section != null) {
+                dm_Section.addView(tl);
+                dm_Section.addView(textView);
+            }
+        } else {
+            if (this.dm_Question != null) {
+                this.dm_Question.addView(tl);
+                this.dm_Question.addView(textView);
+            }
         }
     }
 
@@ -1154,6 +1165,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             errorTextDisplayForTextBoxQuestion(qIdSections, j, dm_Section);
                         } else if (type.equalsIgnoreCase("dropdown")) {
                             errorTextDisplayForDropdownQuestion(qIdSections, j, dm_Section);
+                        } else if (type.equalsIgnoreCase("checkbox")) {
+                            errorTextDisplayForCheckboxQuestion(qIdSections, j, dm_Section);
                         }
                     }
                 }
