@@ -837,5 +837,6 @@
     <string name="Stakeholder_Updated">Pemangku Kepentingan Diperbarui</string>
     <string name="farm_holding_suffix">Kepemilikan kebun</string>
     <string name="stakeholder_role_required">Peran pemangku kepentingan diperlukan!</string>
-
+    <string name="dm_custom_action_plan">Rencana Tindakan Khusus</string>
+    <string name="dm_edit_action_plan_details">Edit detail rencana tindakan</string>
 </resources>
