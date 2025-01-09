@@ -69,4 +69,7 @@ public class DmQuestionsModule {
     @ColumnInfo(name = "sectionId")
     public int sectionId;
 
+    @ColumnInfo(name = "maxSelection")
+    public Integer maxSelection;
+
 }

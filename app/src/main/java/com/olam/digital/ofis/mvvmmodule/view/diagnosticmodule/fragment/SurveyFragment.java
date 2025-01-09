@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,16 +19,22 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
@@ -41,9 +48,11 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NegativeDecimalFil
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class SurveyFragment extends Fragment implements View.OnClickListener{
@@ -82,6 +91,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int j = 0; j < dmQuestionsSubModuleList.size(); j++) {
 
             DmQuestionsModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
+            dmQuestionsSubModule.question = getNamesbyLanguage(dmQuestionsSubModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -121,6 +131,10 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 renderDropDownQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesISubmoduleList, dmQuestionsSubModule.question);
             } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("text box")) {
                 renderTextboxQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmQuestionsSubModule.question);
+            } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("checkbox")) {
+                List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
+                dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsSubModule.id);
+                renderCheckboxQuestionModule(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesItemList, dmQuestionsSubModule.question, true);
             }
 
         }
@@ -131,7 +145,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int i = 0; i < dmSectionsItemList.size(); i++) {
             DmSectionsItem dmSectionsItem = dmSectionsItemList.get(i);
             TextView textView = new TextView(getActivity());
-            textView.setText(dmSectionsItem.name);
+            textView.setText(getModuleSectionByLanguage(dmSectionsItemList.get(i)));
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setPadding(0, 10, 0, 0);
@@ -139,7 +153,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
             TextView textViewDesc = new TextView(getActivity());
-            textViewDesc.setText(dmSectionsItem.description);
+            textViewDesc.setText(getSectionDescriptionByLanguage(dmSectionsItemList.get(i)));
             textViewDesc.setTextColor(getResources().getColor(R.color.black));
             textViewDesc.setTextSize(14);
             textViewDesc.setTypeface(null, Typeface.ITALIC);
@@ -198,6 +212,10 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 renderDropDownQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question);
             } else if (dmQuestionsModule.displayType.equalsIgnoreCase("text box")) {
                 renderTextboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmQuestionsModule.question);
+            } else if (dmQuestionsModule.displayType.equalsIgnoreCase("checkbox")) {
+                List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
+                dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
+                renderCheckboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question, false);
             }
 
         }
@@ -231,7 +249,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
-            list.add(dmLookupValuesISubmoduleList.get(k).value);
+            list.add(getLookupValuebyLanguage(dmLookupValuesISubmoduleList.get(k)));
             ids.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesISubmoduleList.get(k).allowCustomActionPlan);
@@ -901,7 +919,161 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
 
     }
+    public void renderCheckboxQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question, boolean subSection) {
+        final List<String> list = new ArrayList<String>();
+        final List<String> ids = new ArrayList<String>();
+        final List<String> complianceIds = new ArrayList<String>();
+        final List<Boolean> allowCustomActionPlan = new ArrayList<Boolean>();
+        final List<Boolean> isCaptureProof = new ArrayList<Boolean>();
 
+        list.add(getResources().getString(R.string.ModuleAnswerHint));
+        ids.add("0");
+        complianceIds.add("0");
+        allowCustomActionPlan.add(false);
+        isCaptureProof.add(false);
+
+        Integer maxSelection = db.dmQuestionsModuleDao().getMaxSelectionCount(questionId);
+        int[] selectedCheckboxCount = {0};
+        for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
+            list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
+            ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
+            complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
+            allowCustomActionPlan.add(dmLookupValuesItemList.get(k).allowCustomActionPlan);
+            isCaptureProof.add(dmLookupValuesItemList.get(k).isCaptureProof);
+        }
+
+        LayoutInflater inflaterCheckbox = LayoutInflater.from(getContext());
+        final TableLayout tl = (TableLayout) inflaterCheckbox.inflate(R.layout.module_checkbox_table_dm, null);
+        tl.setSaveEnabled(true);
+        tl.setTag(questionId + 3);
+
+        if (!dmLookupValuesItemList.isEmpty()) {
+
+            // Get all checked answers
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
+            Set<Integer> answerIdDbSet = new HashSet<>();
+            for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+                selectedCheckboxCount[0]++;
+                answerIdDbSet.add(Integer.valueOf(answer.answerID));
+            }
+
+            for (DmLookupValuesItem item : dmLookupValuesItemList) {
+
+                TableRow tr = (TableRow) inflaterCheckbox.inflate(R.layout.module_checkbox_table_row, tl, false);
+
+                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                tv.setPadding(40,0,0,0);
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                tvId.setText(String.valueOf(item.id));
+                tv.setText(getLookupValuebyLanguage(item));
+
+                if (answerIdDbSet.contains(item.id)) {
+                    cb.setChecked(true);
+                }
+
+                tl.addView(tr);
+
+            }
+
+        }
+        TextView textView = new TextView(getActivity());
+        textView.setText("Please enter any checkbox value");
+        textView.setTextColor(getResources().getColor(R.color.red_view_survey));
+        textView.setTextSize(12);
+        textView.setPadding(0, 15, 0, 0);
+        textView.setVisibility(View.GONE);
+        textView.setTag(questionId);
+
+        for (int i = 0; i < tl.getChildCount(); i++) {
+            View child = tl.getChildAt(i);
+            if (child instanceof TableRow) {
+                TableRow row = (TableRow) child;
+                CheckBox cb = (CheckBox) row.findViewById(R.id.cbCheckBox);
+                TextView tvId = (TextView) row.findViewById(R.id.cbId);
+                TextView tv = (TextView) row.findViewById(R.id.cbTitle);
+
+                cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        String id = tvId.getText().toString();
+                        String value = tv.getText().toString();
+                        DmLookupValuesItem lookupValuesItemsById = db.dmLookupValuesItemDao().getAllValuesByLookupId(Integer.parseInt(id));
+                        if (isChecked) {
+                            if (selectedCheckboxCount[0] < maxSelection) {
+                                selectedCheckboxCount[0]++;
+                                Log.d("CheckBox", "Checked ID: " + id);
+                                List<DmSurveyAnswerTable> dmSurveyData = db.dmSurveyAnswerTableDao().getDataByAnswerId(id,Constants.FARMER_ID, Constants.PLOT_ID);
+                                if(dmSurveyData.isEmpty()) {
+                                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                                    dmSurveyAnswerTable1.questionID = questionId;
+                                    dmSurveyAnswerTable1.answerID = id;
+                                    dmSurveyAnswerTable1.answer = value;
+                                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                                    dmSurveyAnswerTable1.question = question;
+                                    dmSurveyAnswerTable1.complinceTypeId = String.valueOf(lookupValuesItemsById.complianceId);
+                                    dmSurveyAnswerTable1.actionplanId = "";
+                                    dmSurveyAnswerTable1.actionPlanText = "";
+                                    dmSurveyAnswerTable1.amount = 0;
+                                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                    dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
+                                    dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
+                                    dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                                    dmSurveyAnswerTable1.isSynced = false;
+                                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                                    if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                        db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                                    }
+                                } else {
+                                    DmSurveyAnswerTable dmSurveyAnswer = dmSurveyData.get(0);
+                                    String actionPlanId = dmSurveyAnswer.actionplanId;
+                                    String actionPlanText = dmSurveyAnswer.actionPlanText;
+                                    int amount = dmSurveyAnswer.amount;
+                                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID, Constants.PLOT_ID);
+                                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                                    dmSurveyAnswerTable1.questionID = questionId;
+                                    dmSurveyAnswerTable1.answerID = id;
+                                    dmSurveyAnswerTable1.answer = value;
+                                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                                    dmSurveyAnswerTable1.question = question;
+                                    dmSurveyAnswerTable1.complinceTypeId =  String.valueOf(lookupValuesItemsById.complianceId);
+                                    dmSurveyAnswerTable1.amount = amount;
+                                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                    dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
+                                    dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
+                                    dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                                    dmSurveyAnswerTable1.isSynced = false;
+                                    dmSurveyAnswerTable1.actionplanId = actionPlanId;
+                                    dmSurveyAnswerTable1.actionPlanText = actionPlanText;
+                                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                                }
+                            } else {
+                                cb.setChecked(false);
+                                Toast.makeText(getContext(), "You can only select " + maxSelection + " options", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            selectedCheckboxCount[0]--;
+                            Log.d("CheckBox", "Unchecked ID: " + id);
+                            db.dmSurveyAnswerTableDao().deleteByAnswerId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+                        }
+                    }
+                });
+
+            }
+        }
+
+        if (subSection) {
+            if (dm_Section != null) {
+                dm_Section.addView(tl);
+                dm_Section.addView(textView);
+            }
+        } else {
+            if (this.dm_Question != null) {
+                this.dm_Question.addView(tl);
+                this.dm_Question.addView(textView);
+            }
+        }
+    }
 
     @Override
     public void onResume() {
@@ -990,6 +1162,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             errorTextDisplayForTextBoxQuestion(qId, i, dm_Question);
                         } else if (type.equalsIgnoreCase("dropdown")) {
                             errorTextDisplayForDropdownQuestion(qId, i, dm_Question);
+                        } else if (type.equalsIgnoreCase("checkbox")) {
+                            errorTextDisplayForCheckboxQuestion(qId, i, dm_Question);
                         }
                     }
                 }
@@ -1003,6 +1177,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             errorTextDisplayForTextBoxQuestion(qIdSections, j, dm_Section);
                         } else if (type.equalsIgnoreCase("dropdown")) {
                             errorTextDisplayForDropdownQuestion(qIdSections, j, dm_Section);
+                        } else if (type.equalsIgnoreCase("checkbox")) {
+                            errorTextDisplayForCheckboxQuestion(qIdSections, j, dm_Section);
                         }
                     }
                 }
@@ -1072,6 +1248,27 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private void errorTextDisplayForCheckboxQuestion(ArrayList<String> qId, int i, LinearLayout questionLayout) {
+        View desiredView = questionLayout.findViewWithTag(qId.get(i));
+        View desiredView2 = questionLayout.findViewWithTag(qId.get(i) + 3);
+
+        if (desiredView != null) {
+            TextView textView = (TextView) desiredView;
+            TableLayout tl = (TableLayout) desiredView2;
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                textView.setVisibility(View.VISIBLE);
+                LayoutInflater inflaterCheckbox = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout = inflaterCheckbox.inflate(R.layout.module_checkbox_table_dm_error, null);
+                tl.setBackground(layout.getBackground());
+            } else {
+                textView.setVisibility(View.GONE);
+                LayoutInflater inflaterCheckbox = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout = inflaterCheckbox.inflate(R.layout.module_checkbox_table_dm, null);
+                tl.setBackground(layout.getBackground());
+            }
+        }
+    }
+
 
     public String getNamesbyLanguage(DmQuestionsModule dmQuestionsModule){
         String language = Locale.getDefault().getLanguage();
@@ -1089,6 +1286,41 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             default -> dmQuestionsModule.question;
         };
     }
+
+    public String getModuleSectionByLanguage(DmSectionsItem dmSectionsItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmSectionsItem.name;
+            case "es" -> dmSectionsItem.nameEs;
+            case "fr" -> dmSectionsItem.nameFr;
+            case "id" -> dmSectionsItem.nameId;
+            case "in" -> dmSectionsItem.nameId;
+            case "lo" -> dmSectionsItem.nameLo;
+            case "pt" -> dmSectionsItem.namePt;
+            case "th" -> dmSectionsItem.nameTh;
+            case "tr" -> dmSectionsItem.nameTr;
+            case "vi" -> dmSectionsItem.nameVi;
+            default -> dmSectionsItem.name;
+        };
+    }
+
+    public String getSectionDescriptionByLanguage(DmSectionsItem dmSectionsItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmSectionsItem.description;
+            case "es" -> dmSectionsItem.descriptionEs;
+            case "fr" -> dmSectionsItem.descriptionFr;
+            case "id" -> dmSectionsItem.descriptionIdn;
+            case "in" -> dmSectionsItem.descriptionIdn;
+            case "lo" -> dmSectionsItem.descriptionLo;
+            case "pt" -> dmSectionsItem.descriptionPt;
+            case "th" -> dmSectionsItem.descriptionTh;
+            case "tr" -> dmSectionsItem.descriptionTr;
+            case "vi" -> dmSectionsItem.descriptionVi;
+            default -> dmSectionsItem.description;
+        };
+    }
+
     public String getLookupValuebyLanguage(DmLookupValuesItem dmLookupValuesItem){
         String language = Locale.getDefault().getLanguage();
         return switch (language) {

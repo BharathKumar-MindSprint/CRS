@@ -97,5 +97,10 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND isSynced = :isSynced AND plotId = :plotId")
     List<DmSurveyAnswerTable> getDmPlotDataByModuleIdAndPlotId(String id, String farmerId, boolean isSynced, int plotId);
 
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE answerID =:id AND farmerId =:farmerId AND plotId =:plotId")
+    List<DmSurveyAnswerTable> getDataByAnswerId(String id, String farmerId, int plotId);
+
+    @Query("DELETE FROM DmSurveyAnswerTable WHERE answerID =:id AND farmerId =:farmerId AND plotId =:plotId")
+    void deleteByAnswerId(String id, String farmerId, int plotId);
 
 }

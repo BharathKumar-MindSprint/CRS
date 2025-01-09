@@ -2126,6 +2126,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         for (int l = 0; l < questionsItemList.size(); l++) {
 
                                             boolean mandate = questionsItemList.get(l).isMandate();
+                                            Integer maxSelection = questionsItemList.get(l).getMaxSelection();
                                             String question = questionsItemList.get(l).getQuestion();
                                             String questionTr = questionsItemList.get(l).getQuestionTr();
                                             String questionPt = questionsItemList.get(l).getQuestionPt();
@@ -2146,6 +2147,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                             DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
                                             dmQuestionsModule.mandate = mandate;
+                                            dmQuestionsModule.maxSelection = maxSelection;
                                             dmQuestionsModule.question = question;
                                             dmQuestionsModule.questionTr = questionTr;
                                             dmQuestionsModule.questionPt = questionPt;
@@ -2386,6 +2388,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                 for (int l = 0; l < questionsItems.size(); l++) {
 
                                                     boolean mandate = questionsItems.get(l).isMandate();
+                                                    Integer maxSelection = questionsItems.get(l).getMaxSelection();
                                                     String question = questionsItems.get(l).getQuestion();
                                                     String questionTr = questionsItems.get(l).getQuestionTr();
                                                     String questionPt = questionsItems.get(l).getQuestionPt();
@@ -2406,6 +2409,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                                     DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
                                                     dmQuestionsModule.mandate = mandate;
+                                                    dmQuestionsModule.maxSelection = maxSelection;
                                                     dmQuestionsModule.question = question;
                                                     dmQuestionsModule.questionTr = questionTr;
                                                     dmQuestionsModule.questionPt = questionPt;

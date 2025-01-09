@@ -1009,6 +1009,8 @@
     <string name="Stakeholder_Updated">ອັບເດດຜູ້ມີສ່ວນຮ່ວມແລ້ວ</string>
     <string name="farm_holding_suffix">ການຄອບຄອງກະສິກໍາ</string>
     <string name="stakeholder_role_required">ຕ້ອງມີບົດບາດຜູ້ມີສ່ວນຮ່ວມ!</string>
+    <string name="dm_custom_action_plan">ແຜນການປະຕິບັດງານທີ່ກຳນົດເອງ</string>
+    <string name="dm_edit_action_plan_details">ແກ້ໄຂລາຍລະອຽດແຜນການປະຕິບັດງານ</string>
 </resources>
 
 

@@ -1176,4 +1176,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="Stakeholder_Updated">l’Acteur agricole mise à jour</string>
     <string name="farm_holding_suffix">l\'exploitation agricole de</string>
     <string name="stakeholder_role_required">Rôle de l\'acteur agricole obligatorie!</string>
+    <string name="dm_custom_action_plan">Plan d’action personnalisé</string>
+    <string name="dm_edit_action_plan_details">Modifier les détails du plan d’action</string>
 </resources>

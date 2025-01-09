@@ -742,4 +742,6 @@
     <string name="Stakeholder_Updated">Bên liên quan đã cập nhậ</string>
     <string name="farm_holding_suffix">trang trại nắm giữ</string>
     <string name="stakeholder_role_required">Cần có vai trò bên liên quan!</string>
+    <string name="dm_custom_action_plan">Kế hoạch hành động tùy chỉnh</string>
+    <string name="dm_edit_action_plan_details">Chỉnh sửa chi tiết kế hoạch hành động</string>
 </resources>
