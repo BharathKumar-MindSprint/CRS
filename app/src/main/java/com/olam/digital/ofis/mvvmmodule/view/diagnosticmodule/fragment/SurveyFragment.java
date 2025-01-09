@@ -91,6 +91,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int j = 0; j < dmQuestionsSubModuleList.size(); j++) {
 
             DmQuestionsModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
+            dmQuestionsSubModule.question = getNamesbyLanguage(dmQuestionsSubModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -144,7 +145,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int i = 0; i < dmSectionsItemList.size(); i++) {
             DmSectionsItem dmSectionsItem = dmSectionsItemList.get(i);
             TextView textView = new TextView(getActivity());
-            textView.setText(dmSectionsItem.name);
+            textView.setText(getModuleSectionByLanguage(dmSectionsItemList.get(i)));
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setPadding(0, 10, 0, 0);
@@ -152,7 +153,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
             TextView textViewDesc = new TextView(getActivity());
-            textViewDesc.setText(dmSectionsItem.description);
+            textViewDesc.setText(getSectionDescriptionByLanguage(dmSectionsItemList.get(i)));
             textViewDesc.setTextColor(getResources().getColor(R.color.black));
             textViewDesc.setTextSize(14);
             textViewDesc.setTypeface(null, Typeface.ITALIC);
@@ -1285,6 +1286,41 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             default -> dmQuestionsModule.question;
         };
     }
+
+    public String getModuleSectionByLanguage(DmSectionsItem dmSectionsItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmSectionsItem.name;
+            case "es" -> dmSectionsItem.nameEs;
+            case "fr" -> dmSectionsItem.nameFr;
+            case "id" -> dmSectionsItem.nameId;
+            case "in" -> dmSectionsItem.nameId;
+            case "lo" -> dmSectionsItem.nameLo;
+            case "pt" -> dmSectionsItem.namePt;
+            case "th" -> dmSectionsItem.nameTh;
+            case "tr" -> dmSectionsItem.nameTr;
+            case "vi" -> dmSectionsItem.nameVi;
+            default -> dmSectionsItem.name;
+        };
+    }
+
+    public String getSectionDescriptionByLanguage(DmSectionsItem dmSectionsItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmSectionsItem.description;
+            case "es" -> dmSectionsItem.descriptionEs;
+            case "fr" -> dmSectionsItem.descriptionFr;
+            case "id" -> dmSectionsItem.descriptionIdn;
+            case "in" -> dmSectionsItem.descriptionIdn;
+            case "lo" -> dmSectionsItem.descriptionLo;
+            case "pt" -> dmSectionsItem.descriptionPt;
+            case "th" -> dmSectionsItem.descriptionTh;
+            case "tr" -> dmSectionsItem.descriptionTr;
+            case "vi" -> dmSectionsItem.descriptionVi;
+            default -> dmSectionsItem.description;
+        };
+    }
+
     public String getLookupValuebyLanguage(DmLookupValuesItem dmLookupValuesItem){
         String language = Locale.getDefault().getLanguage();
         return switch (language) {

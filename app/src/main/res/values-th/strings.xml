@@ -739,4 +739,6 @@
     <string name="Stakeholder_Updated">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
     <string name="farm_holding_suffix">ฟาร์มที่ถือครอง</string>
     <string name="stakeholder_role_required">จำเป็นต้องมีบทบาทของผู้มีส่วนได้ส่วนเสีย!</string>
+    <string name="dm_custom_action_plan">แผนปฏิบัติการที่กำหนดเอง</string>
+    <string name="dm_edit_action_plan_details">แก้ไขรายละเอียดแผนปฏิบัติการ</string>
 </resources>

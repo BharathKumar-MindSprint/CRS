@@ -846,5 +846,7 @@
     <string name="Stakeholder_Updated">La parte interesada agrícola actualizado</string>
     <string name="farm_holding_suffix">explotación de</string>
     <string name="stakeholder_role_required">Función requerida de de la parte interesada agrícola</string>
+    <string name="dm_custom_action_plan">Plan de Acción Personalizado</string>
+    <string name="dm_edit_action_plan_details">Editar detalles del plan de acción</string>
 </resources>
 

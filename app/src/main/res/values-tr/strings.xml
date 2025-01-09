@@ -740,4 +740,6 @@
     <string name="Stakeholder_Updated">Paydaş Güncellendi</string>
     <string name="farm_holding_suffix">\'in çiftlik holdingi</string>
     <string name="stakeholder_role_required">Paydaş rolü gerekli!</string>
+    <string name="dm_custom_action_plan">Özel Eylem Planı</string>
+    <string name="dm_edit_action_plan_details">Eylem planı detaylarını düzenle</string>
 </resources>
