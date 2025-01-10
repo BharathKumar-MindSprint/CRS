@@ -24,6 +24,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.smartnotification.adapter.SmartNotificationAdapter;
+import com.olam.digital.ofis.smartnotification.dto.ModuleListDTO;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 import com.olam.digital.ofis.smartnotification.listener.OnItemNotificationClickListener;
 
@@ -35,14 +36,10 @@ public class NotificationActivity extends BaseListActivity {
 
     private static RecyclerView notificationListRecyclerView;
     private static SmartNotificationAdapter smartNotificationAdapter;
-    Spinner moduleSpinner;
-    ImageButton sortIcon;
     public DataLayer dl;
     public Resources res;
-    boolean ascending = false;
     ArrayList<NotificationDTO> notificationList;
-    boolean isChildEnumerator;
-    ArrayAdapter<String> spinnerArrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,18 +51,9 @@ public class NotificationActivity extends BaseListActivity {
     private void init() {
         res = getResources();
         dl = new DataLayer(res, this);
-        moduleSpinner = (Spinner) findViewById(R.id.spinnerModuletype);
+        String moduleName = getIntent().getExtras().getString(Utilities.MODULE, "FDP");
         notificationListRecyclerView = (RecyclerView) findViewById(R.id.notificationList);
-        sortIcon = (ImageButton) findViewById(R.id.sortingButton);
-        isChildEnumerator = Utilities.getChildLabourPref(this, ChildLabourUtils.IS_CHILD_ENUMERATOR);
-        if(isChildEnumerator) {
-            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules));
-        }else{
-            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules_noclmrs));
-        }
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        moduleSpinner.setAdapter(spinnerArrayAdapter);
-        notificationList = dl.getSmartNotificationList();
+        notificationList = dl.getSmartNotificationList(moduleName);
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(this);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(res.getDrawable(R.drawable.list_seperator_divider));
@@ -73,57 +61,14 @@ public class NotificationActivity extends BaseListActivity {
         notificationListRecyclerView.setHasFixedSize(true);
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
-//        ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
         notificationListRecyclerView.setLayoutManager(reLayoutManager);
         ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
         notificationListRecyclerView.scrollToPosition(0);
         smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
         notificationListRecyclerView.setAdapter(smartNotificationAdapter);
         loadNotificationData();
-        sortIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(ascending){
-                    ascending = false;
-                }else {
-                    ascending = true;
-                }
-                sortNotificationList(ascending);
-            }
-        });
-        moduleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 0){
-                    notificationList = dl.getSmartNotificationList();
-                }else{
-                    notificationList = dl.getSmartNotificationList(position);
-                }
-                smartNotificationAdapter.resetItem(notificationList);
-                smartNotificationAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
-    public void sortNotificationList(boolean ascending) {
-        Collections.sort(notificationList, new Comparator<NotificationDTO>() {
-            public int compare(NotificationDTO o1, NotificationDTO o2) {
-                if (o1.getCreatedAt() == null || o2.getCreatedAt() == null)
-                    return 0;
-                if(ascending) {
-                    return o2.getCreatedAt().compareTo(o1.getCreatedAt());
-                }else{
-                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
-                }
-            }
-        });
-        smartNotificationAdapter.notifyDataSetChanged();
-    }
 
     private void loadNotificationData() {
 
@@ -134,6 +79,11 @@ public class NotificationActivity extends BaseListActivity {
                 ViewFarmerActivity.farmerId = notificationDTO.getFarmerId();
                 dl.updateNotificationModule(notificationDTO.getFarmerId());
                 startActivity(intent);
+            }
+
+            @Override
+            public void onModuleClick(View view, int position, ModuleListDTO moduleListDTO) {
+
             }
         });
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {

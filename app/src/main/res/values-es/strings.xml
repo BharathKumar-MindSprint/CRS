@@ -846,5 +846,12 @@
     <string name="Stakeholder_Updated">La parte interesada agrícola actualizado</string>
     <string name="farm_holding_suffix">explotación de</string>
     <string name="stakeholder_role_required">Función requerida de de la parte interesada agrícola</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
 </resources>
 

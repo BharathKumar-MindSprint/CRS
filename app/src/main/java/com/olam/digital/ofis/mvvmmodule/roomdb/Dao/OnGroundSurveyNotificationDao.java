@@ -1,0 +1,42 @@
+package com.olam.digital.ofis.mvvmmodule.roomdb.Dao;
+
+import android.database.Cursor;
+
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
+
+import java.util.List;
+
+@Dao
+public interface OnGroundSurveyNotificationDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<OnGroundSurveyNotification> onGroundSurveyNotifications);
+
+    @Query("SELECT DISTINCT(farmerId), farmerName, photo, olamFarmerId, createdOnPhone, countryId, odFarmerId, plotId FROM OnGroundSurveyNotification")
+    List<OnGroundSurveyNotification> getOnGroundPendingSurveyFarmers();
+
+    @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE surveyType = :eudr")
+    int getPendingEUDRSurveyCount(String eudr);
+
+    @Query(
+        """
+            SELECT DISTINCT(farmerId) AS _id, farmerName AS name, photo, olamFarmerId AS olam_farmer_id, createdOnPhone AS created_on_this_phone, countryId AS country_id, odFarmerId 
+            FROM OnGroundSurveyNotification 
+            WHERE (:q = '' OR (farmerName LIKE '%' || :q || '%' OR olam_farmer_id LIKE '%' || :q || '%' OR odFarmerId LIKE '%' || :q || '%')) 
+            AND surveyType = :surveyType 
+            AND (:farmerGroupId == 0 OR farmerGroupId = :farmerGroupId) 
+            AND (:sectionId == 0 OR sectionId = :sectionId)
+        """)
+    Cursor getFarmersBySurveyType(String surveyType, String q, long farmerGroupId, long sectionId);
+
+    @Query("DELETE FROM OnGroundSurveyNotification")
+    void deleteAll();
+
+    @Query("SELECT DISTINCT(farmerGroupId) from ongroundsurveynotification WHERE surveyType = :notificationType")
+    List<Integer> getFarmerGroupsBasedOnSurveyType(String notificationType);
+}

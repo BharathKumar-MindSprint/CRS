@@ -46,6 +46,7 @@ import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
@@ -56,12 +57,14 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -8470,25 +8473,30 @@ public class DataLayer {
         return notificationList;
     }
 
-    public ArrayList<NotificationDTO> getSmartNotificationList(int moduleId) {
+    public ArrayList<NotificationDTO> getSmartNotificationList(String moduleName) {
         ArrayList<NotificationDTO> notificationList = new ArrayList<>();
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_MODULEID+ " = ? AND "
-                + OFISDBContract.NotificationAssignments.COLUMN_STATUS+ " != ? ";
-        String[] whereArgs = new String[]{String.valueOf(moduleId),Utilities.DELETED};
-        String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " DESC";
-        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-        int i = 0;
-        while (nIds.moveToNext()) {
-            i++;
-            NotificationDTO notificationDTO = new NotificationDTO();
-            notificationDTO.setId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_NAME_ID)));
-            notificationDTO.setChildId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID)));
-            notificationDTO.setFarmerId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID)));
-            notificationDTO.setModuleId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_MODULEID)));
-            notificationDTO.setCreatedAt(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT)));
-            notificationDTO.setStatus(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_STATUS)));
-            notificationList.add(notificationDTO);
+        String query = " select n.* from " + OFISDBContract.NotificationAssignments.TABLE_NAME + " n INNER JOIN " + OFISDBContract.NotificationModuleAssignments.TABLE_NAME + " m ON m.id = n.moduleId " + " WHERE m.moduleName = ? AND n.status != 'D' ";
+        String[] params = new String[]{moduleName};
+        Cursor nIds = db.rawQuery(query, params);
+
+        if (nIds == null) {
+            return notificationList;
+        }
+
+        try {
+            while (nIds.moveToNext()) {
+                NotificationDTO notificationDTO = new NotificationDTO();
+                notificationDTO.setId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_NAME_ID)));
+                notificationDTO.setChildId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID)));
+                notificationDTO.setFarmerId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID)));
+                notificationDTO.setModuleId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_MODULEID)));
+                notificationDTO.setCreatedAt(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT)));
+                notificationDTO.setStatus(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_STATUS)));
+                notificationList.add(notificationDTO);
+            }
+        }
+        finally {
+            nIds.close();
         }
 
         return notificationList;
@@ -8619,6 +8627,24 @@ public class DataLayer {
         }
         return count;
     }
+
+    public int getNotificationCountByModule(String moduleName) {
+        int count = 0;
+        try {
+            String query = " select * from " + OFISDBContract.NotificationAssignments.TABLE_NAME + " n INNER JOIN " + OFISDBContract.NotificationModuleAssignments.TABLE_NAME + " m ON m.id = n.moduleId " + " WHERE m.moduleName = ? AND n.status != 'D' ";
+            String[] params = new String[]{moduleName};
+            Cursor cursor = db.rawQuery(query, params);
+            if (cursor != null) {
+                count = cursor.getCount();
+            }
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+
 
     public void updateNotificationModule(int farmerId) {
         String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
@@ -8926,6 +8952,56 @@ public class DataLayer {
         return dialingCode;
     }
 
+    public Cursor searchFarmerListBySurveyType(String notificationType, String q, long farmerGroupId, long sectionId) {
+
+        String flagColumn = notificationType.equals("EUDR") ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
+        String geoDbFlagStatus = notificationType.equals("EUDR") ? "DF%" : "%PA";
+        String whereClause = "";
+        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
+        String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
+
+        if (!q.isEmpty()) {
+            whereClause = farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + q + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + q + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + q + "'";
+        }
+
+        if (farmerGroupId > 0) {
+            if (!whereClause.isEmpty()) {
+                whereClause += " AND ";
+            }
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " = " + farmerGroupId;
+        }
+
+        if (sectionId > 0) {
+            if (!whereClause.isEmpty()) {
+                whereClause += " AND ";
+            }
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + sectionId;
+        }
+
+        if (!whereClause.isEmpty()) {
+            whereClause = " AND " + whereClause;
+        }
+
+        String sql = "select distinct(farmers.id) as _id, " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " from " +
+                plotTable + " p INNER JOIN " + farmerTable + " ON " + farmerTable + ".id = p.farmerId WHERE " + farmerTable + ".complainceFlag = 'false' AND (p.cleansedStatus LIKE 'updated' OR p.cleansedStatus LIKE 'repaired') AND (p.geoDbFlagStatus LIKE '" + geoDbFlagStatus + "' AND " +
+                flagColumn + "  = 'false') " + whereClause + " order by " + farmerTable + "."
+                + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
+
+
+        return db.rawQuery(sql, null);
+    }
+
+
 
     public Integer getCountryByFarmerId(long  farmerId) {
         String selectQuery = "SELECT country_id FROM farmers WHERE id = ?";
@@ -8995,5 +9071,105 @@ public class DataLayer {
         }
     }
 
+    public void insertOnGroundSurveyNotificationData() {
+
+        for (int farmerGroupId : getComplianceFarmerGroups()) {
+            List<String> surveyNames = ofisRoomDB.dmMainModuleDao().getDiagnosticSurveysByFarmerGroupId(farmerGroupId);
+
+            if (surveyNames.contains("On Ground Verification Survey")) {
+                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, "EUDR");
+            }
+
+            if (surveyNames.contains("PA Legality Survey")) {
+                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, "PA");
+            }
+        }
+
+    }
+
+    public void getPendingEUDRGroundVerificationSurveyData(int farmerGroupId, String surveyType) {
+        String flagColumn = surveyType.equals("EUDR") ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
+        String geoDbFlagStatus = surveyType.equals("EUDR") ? "DF%" : "%PA";
+        String query = """
+                SELECT DISTINCT f.*, p.id AS plotId FROM plot p INNER JOIN farmers f ON f.id = p.farmerId 
+                WHERE f.complainceFlag = 'false'
+                AND f.farmerGroupId = ?
+                AND (p.cleansedStatus LIKE 'updated' OR p.cleansedStatus LIKE 'repaired')
+                AND (p.geoDbFlagStatus LIKE '""";
+
+        query += geoDbFlagStatus + "' AND p." + flagColumn +"= 'false')";
+
+        String[] params = new String[]{String.valueOf(farmerGroupId)};
+        Cursor cursor = db.rawQuery(query, params);
+
+        try {
+            List<OnGroundSurveyNotification> onGroundSurveyNotifications = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                OnGroundSurveyNotification onGroundSurveyNotification = new OnGroundSurveyNotification();
+                onGroundSurveyNotification.farmerGroupId = farmerGroupId;
+                onGroundSurveyNotification.farmerId = cursor.getLong(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                onGroundSurveyNotification.farmerName = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                onGroundSurveyNotification.photo = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
+                onGroundSurveyNotification.olamFarmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                onGroundSurveyNotification.createdOnPhone = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY));
+                onGroundSurveyNotification.countryId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
+                onGroundSurveyNotification.odFarmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID));
+                onGroundSurveyNotification.plotId = cursor.getLong(cursor.getColumnIndex("plotId"));
+                onGroundSurveyNotification.surveyType = surveyType;
+                onGroundSurveyNotification.sectionId = cursor.getLong(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID));
+                onGroundSurveyNotifications.add(onGroundSurveyNotification);
+            }
+            ofisRoomDB.onGroundSurveyNotificationDao().insertAll(onGroundSurveyNotifications);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            cursor.close();
+        }
+    }
+
+    public List<Integer> getComplianceFarmerGroups() {
+        String query = """
+                    SELECT DISTINCT f.id FROM farmergroups f
+                    INNER JOIN assignments a ON a.productId = f.product_id
+                    WHERE a.isCompliance = 'true'
+                """;
+
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor == null) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> farmerGroupsId = new ArrayList<>();
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    farmerGroupsId.add(cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID)));
+                } while(cursor.moveToNext());
+            }
+        }
+        finally {
+            cursor.close();
+        }
+
+        return farmerGroupsId;
+    }
+
+    public Cursor getComplianceFarmerGroupsCursor(List<Integer> farmerGroupId) {
+        String query = """
+                    SELECT DISTINCT f.name, f.id AS _id, f.code, f.programme_id, f.partner_id, f.product_id FROM farmergroups f
+                    INNER JOIN assignments a ON a.productId = f.product_id
+                    WHERE f.id IN (""";
+
+        String placeholders = String.join(",", Collections.nCopies(farmerGroupId.size(), "?"));
+        query += placeholders + ")";
+
+        Log.d("sql", query);
+
+        String[] farmerGroupIdArray = new String[farmerGroupId.size()];
+        for (int i = 0; i < farmerGroupId.size(); i++) {
+            farmerGroupIdArray[i] = String.valueOf(farmerGroupId.get(i));
+        }
+        return db.rawQuery(query, farmerGroupIdArray);
+    }
 
 }

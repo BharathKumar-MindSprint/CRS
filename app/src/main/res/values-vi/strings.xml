@@ -742,4 +742,11 @@
     <string name="Stakeholder_Updated">Bên liên quan đã cập nhậ</string>
     <string name="farm_holding_suffix">trang trại nắm giữ</string>
     <string name="stakeholder_role_required">Cần có vai trò bên liên quan!</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
 </resources>

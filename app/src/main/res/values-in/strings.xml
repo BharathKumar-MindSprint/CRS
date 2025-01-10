@@ -835,4 +835,11 @@
     <string name="Stakeholder_Updated">Pemangku Kepentingan Diperbarui</string>
     <string name="farm_holding_suffix">Kepemilikan kebun</string>
     <string name="stakeholder_role_required">Peran pemangku kepentingan diperlukan!</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
 </resources>
