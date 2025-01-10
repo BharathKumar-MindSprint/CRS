@@ -81,8 +81,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class ActionPlanProofFragment extends Fragment implements View.OnClickListener {
@@ -241,7 +243,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
 
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
             String complianceName = dmComplaintList.get(0).compliance;
 
             for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
@@ -250,15 +252,50 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
             dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
+            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
 
+            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
 
+                // Assigning checkbox answer based on compliance list
+                int satisfactoryId = 0, nonComplaintId = 0;
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                        satisfactoryId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                        nonComplaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId));
+
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
+
+                // Assigning checkbox answer based on compliance list
+                int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                        satisfactoryId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                        nonComplaintId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, "Compliant")) {
+                        complaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId));
+
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
                 Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
+
+                // Assigning checkbox answer based on compliance list
+                int nonComplaintId = 0;
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                        nonComplaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId));
             }
 
             LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -269,7 +306,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dm_question_complaint.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
-            // Arch
             if (Objects.equals(complianceName,"Compliant")){
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
             } else if (Objects.equals(complianceName,"Non Compliant")) {
@@ -332,16 +368,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+                Set<Integer> questionIdSet = new HashSet<>();
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                    TextView textView = new TextView(getActivity());
-                    textView.setText((m + 1) + "." + dmQuestionsModule.question);
-                    textView.setTextColor(getResources().getColor(R.color.black));
-                    textView.setTextSize(14);
-                    textView.setPadding(0, 15, 0, 0);
-                    textView.setTypeface(null, Typeface.BOLD);
-                    linearLayoutItems.addView(textView);
-                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID);
+                    if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
+                        TextView textView = new TextView(getActivity());
+                        textView.setText((m + 1) + "." + dmQuestionsModule.question);
+                        textView.setTextColor(getResources().getColor(R.color.black));
+                        textView.setTextSize(14);
+                        textView.setPadding(0, 15, 0, 0);
+                        textView.setTypeface(null, Typeface.BOLD);
+                        linearLayoutItems.addView(textView);
+                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID, dmQuestionsModule);
+                    }
 
                 }
             }
@@ -350,7 +389,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
     @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID ) {
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
 
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -358,15 +397,58 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
-        EditText editText = new EditText(getActivity());
-        editText.setHint("Answer");
-        editText.setTextSize(14);
-        editText.setEnabled(false);
-        editText.setTextColor(getResources().getColor(R.color.black));
-        editText.setPadding(10, 10, 0, 10);
-        layoutParamsQes.setMargins(0, 10, 0, 10);
-        editText.setLayoutParams(layoutParamsQes);
-        editText.setTag("et" + complaint_id);
+        if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i=0; i<checkboxAnswers.size(); i++) {
+                    EditText editText = new EditText(getActivity());
+                    editText.setHint("Answer");
+                    editText.setTextSize(14);
+                    editText.setEnabled(false);
+                    editText.setTextColor(getResources().getColor(R.color.black));
+                    editText.setPadding(10, 10, 0, 10);
+                    layoutParamsQes.setMargins(0, 10, 0, 10);
+                    editText.setLayoutParams(layoutParamsQes);
+                    editText.setTag("et" + complaint_id + i);
+
+                    String answerIdDb = checkboxAnswers.get(i).answer;
+                    editText.setText(answerIdDb);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+                    }
+
+                    if (linearLayoutItems != null) {
+                        linearLayoutItems.addView(editText);
+                    }
+                }
+            }
+        } else {
+            EditText editText = new EditText(getActivity());
+            editText.setHint("Answer");
+            editText.setTextSize(14);
+            editText.setEnabled(false);
+            editText.setTextColor(getResources().getColor(R.color.black));
+            editText.setPadding(10, 10, 0, 10);
+            layoutParamsQes.setMargins(0, 10, 0, 10);
+            editText.setLayoutParams(layoutParamsQes);
+            editText.setTag("et" + complaint_id);
+
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+
+            if (!dmSurveyAnswerTableList.isEmpty()) {
+                String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
+                editText.setText(answerIdDb);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+            }
+
+            if (linearLayoutItems != null) {
+                linearLayoutItems.addView(editText);
+            }
+        }
 
 
         TextView textView = new TextView(getActivity());
@@ -760,22 +842,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         linearLayoutActionPlanMain.addView(actionPlan);
         linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
 
-
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
-
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-
-        if (!dmSurveyAnswerTableList.isEmpty()) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
-            editText.setText(answerIdDb);
-        }
-
-        //editText.getLayoutParams().width=40;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
-
         linearLayoutActionPlanMain.setVisibility(View.GONE);
 
         imageView2.setOnClickListener(new View.OnClickListener() {
@@ -924,7 +990,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         //Selected Action Plan Txt
 
         if (linearLayoutItems != null) {
-            linearLayoutItems.addView(editText);
 
             if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).isCaptureProof) {
                 linearLayoutItems.addView(textView);
