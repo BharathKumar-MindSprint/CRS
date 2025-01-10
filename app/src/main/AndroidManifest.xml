@@ -48,12 +48,25 @@
         android:theme="@style/AppCompactTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
+
+        <activity
+            android:name=".smartnotification.AllNotificationActivity"
+            android:label="@string/notifications"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".HomeActivity"
+            tools:ignore="UnusedAttribute">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.HomeActivity" />
+        </activity>
+
         <activity
             android:name=".farmstakeholder.ViewStakeHolderActivity"
             android:label="@string/stake_holder_details"
             android:parentActivityName=".farmstakeholder.AddFarmStakeHolderActivity"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute" >
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".farmstakeholder.AddFarmStakeHolderActivity" />
@@ -120,7 +133,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -204,7 +216,7 @@
             android:name=".AddFarmerActivity"
             android:label="@string/title_activity_add_farmer"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute"></activity>
+            tools:ignore="UnusedAttribute" />
         <activity
             android:name=".AddInfrastructureActivity"
             android:label="@string/title_activity_add_infrastructure"
@@ -376,7 +388,7 @@
         <activity
             android:name=".smartnotification.NotificationActivity"
             android:label="@string/notifications"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName=".smartnotification.AllNotificationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".childlabour.RegisterChildActivity"

@@ -1387,4 +1387,18 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
     <string name="farm_holding_suffix">\'s Farm Holding</string>
     <string name="stakeholder_role_required">Stakeholder role required!</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
+
+    <string-array name="all_notification">
+        <item>FDP</item>
+        <item>CLMRS Follow-up</item>
+        <item>EUDR Ground Verification Survey</item>
+        <item>Protected Area Legality Survey</item>
+    </string-array>
 </resources>
