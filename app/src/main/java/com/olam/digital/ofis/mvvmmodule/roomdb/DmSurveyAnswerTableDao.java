@@ -114,4 +114,8 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("SELECT d.* FROM DmSurveyAnswerTable AS d WHERE d.complinceTypeId =:complaint AND NOT EXISTS (SELECT 1 FROM DmSurveyAnswerTable AS d2 WHERE d2.questionId = d.questionId AND d2.displayType = 'checkbox' AND d2.complinceTypeId IN (:satisfactory, :non_compliant))")
     List<DmSurveyAnswerTable> getComplaintList(Integer complaint, Integer satisfactory, Integer non_compliant);
+
+    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText='', actionplanId='', amount=0 WHERE questionID =:questionId")
+    void updateActionPlanBudget(String questionId);
+
 }

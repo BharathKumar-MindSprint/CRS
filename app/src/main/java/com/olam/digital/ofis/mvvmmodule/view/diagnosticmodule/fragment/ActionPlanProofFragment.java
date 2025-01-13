@@ -147,7 +147,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     OFISRoomDB db;
     private boolean isCreated = false;
     Spinner spinner_dmCurrencies;
-    String budgetAmount;
 
     private final int FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
@@ -245,10 +244,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
             String complianceName = dmComplaintList.get(0).compliance;
-
-            for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
-                budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
-            }
 
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
             dmSurveyAnswerTableList1.clear();
@@ -678,7 +673,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+            if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+                }
+            }
+        } else {
+            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        }
 
         final List<String> list = new ArrayList<String>();
         list.clear();
