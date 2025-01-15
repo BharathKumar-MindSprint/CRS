@@ -31,4 +31,16 @@ public interface DmLookupValuesItemDao {
 
     @Query("SELECT * FROM DmLookupValuesItem WHERE id =:id")
     DmLookupValuesItem getAllValuesByLookupId(int id);
+
+    @Query("SELECT CASE "
+            + "WHEN 'Both' IN (SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId) "
+            + "OR ('Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)' IN (SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId) "
+            + "AND 'Image (.png, .jpg, .jpeg)' IN (SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId)) "
+            + "THEN 'Both' "
+            + "WHEN 'Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)' IN (SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId) "
+            + "THEN 'Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)' "
+            + "WHEN 'Image (.png, .jpg, .jpeg)' IN (SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId) "
+            + "THEN 'Image (.png, .jpg, .jpeg)' "
+            + "ELSE 'Both' END")
+    String getCaptureProofCheckbox(List<Integer> answerIds, List<Integer> complianceIds, String questionId);
 }

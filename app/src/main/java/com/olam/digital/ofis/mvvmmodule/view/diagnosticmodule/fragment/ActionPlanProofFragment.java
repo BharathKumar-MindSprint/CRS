@@ -33,6 +33,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -574,12 +575,25 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                         try {
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                            String formatValue = null;
+                            if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
+                                List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+                                List<Integer> answerIds = new ArrayList<>();
+                                List<Integer> complianceIds = new ArrayList<>();
+                                for (DmSurveyAnswerTable answer : checkboxAnswers) {
+                                    answerIds.add(Integer.valueOf(answer.answerID));
+                                    complianceIds.add(Integer.valueOf(answer.complinceTypeId));
+                                }
+                                formatValue = db.dmLookupValuesItemDao().getCaptureProofCheckbox(answerIds, complianceIds, id);
+                                Log.d("FormatValue", formatValue);
+                            } else {
+                                formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
+                            }
+                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                 options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             }
                         } catch (Exception e) {
@@ -625,8 +639,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     if (isStoragePermissionGalleryGranted()) {
 
                                         String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                                        String formatValue = null;
+                                        if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
+                                            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+                                            List<Integer> answerIds = new ArrayList<>();
+                                            List<Integer> complianceIds = new ArrayList<>();
+                                            for (DmSurveyAnswerTable answer : checkboxAnswers) {
+                                                answerIds.add(Integer.valueOf(answer.answerID));
+                                                complianceIds.add(Integer.valueOf(answer.complinceTypeId));
+                                            }
+                                            formatValue = db.dmLookupValuesItemDao().getCaptureProofCheckbox(answerIds, complianceIds, id);
+                                            Log.d("FormatValue", formatValue);
+                                        } else {
+                                            formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
+                                        }
+                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -636,7 +663,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
-                                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -644,7 +671,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
