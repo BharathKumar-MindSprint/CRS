@@ -9163,7 +9163,20 @@ public class DataLayer {
         String placeholders = String.join(",", Collections.nCopies(farmerGroupId.size(), "?"));
         query += placeholders + ")";
 
-        Log.d("sql", query);
+        String[] farmerGroupIdArray = new String[farmerGroupId.size()];
+        for (int i = 0; i < farmerGroupId.size(); i++) {
+            farmerGroupIdArray[i] = String.valueOf(farmerGroupId.get(i));
+        }
+        return db.rawQuery(query, farmerGroupIdArray);
+    }
+
+    public Cursor getSectionByFarmerGroup(List<Integer> farmerGroupId) {
+        String query = """
+                    SELECT DISTINCT s.name, s.id AS _id, s.code FROM sections s
+                    WHERE s.farmergroup_id IN (""";
+
+        String placeholders = String.join(",", Collections.nCopies(farmerGroupId.size(), "?"));
+        query += placeholders + ")";
 
         String[] farmerGroupIdArray = new String[farmerGroupId.size()];
         for (int i = 0; i < farmerGroupId.size(); i++) {

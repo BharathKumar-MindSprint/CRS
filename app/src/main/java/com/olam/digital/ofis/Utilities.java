@@ -77,6 +77,7 @@ public class Utilities {
     public  static  int subModuleId;
     public  static  String packagename;
     public static boolean isAppAlive;
+    public static String notificationType = null;
 
     public static  int minProgressCount=0;
 
@@ -128,6 +129,7 @@ public class Utilities {
     public static final String FARM_ID = "farmId";
     public static final String KEY_LAST_SHOWN_DATE = "keyLastShownDate";
     public static final String NOTIFICATION_TYPE = "notificationType";
+    public static final String IS_FROM_FIND_FARMER = "showRemainderSurvey";
 
 
 public  static String base64ConversionForImage(String filepath)  {

@@ -167,12 +167,14 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         showFarmerList();
 
         if (notificationType == null) {
+            ed.setHint(res.getString(R.string.Farmer_Name));
             setUpSearchFunctionality();
         }
         else {
             advancedFilter.setVisibility(View.GONE);
             advancedFilters.setVisibility(View.GONE);
             photoSearchButton.setVisibility(View.GONE);
+
             setUpSearchFunctionalityForNotification();
         }
         listView.setOnItemClickListener(this);
@@ -296,6 +298,9 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Cursor sections = dl.getSpinnerData(OFISDBContract.SectionsEntry.TABLE_NAME, true, OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID, ((int) id), true, OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME);
+                if (position == 0) {
+                    sections = dl.getSectionByFarmerGroup(farmerGroupIds);
+                }
                 dl.bindDataDrivenSpinner(productSpinner, sections, context, R.string.spinner_section_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
 
                 selectedCountry = id;
@@ -751,6 +756,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             ViewFarmerActivity.farmerId = id;
             ViewFarmerActivity.notificationType = null;
             intent = new Intent(context, ViewFarmerActivity.class);
+            intent.putExtra(Utilities.IS_FROM_FIND_FARMER, true);
             context.startActivity(intent);
         }
         else {
