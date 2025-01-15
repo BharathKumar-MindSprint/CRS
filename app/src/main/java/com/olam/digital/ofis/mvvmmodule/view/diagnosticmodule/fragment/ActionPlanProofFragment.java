@@ -235,24 +235,15 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     private void displayQuestionsModuleComplaint(String complaint_id) {
 
-        List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
-        dmComplaintList.clear();
-        dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
+        List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
-        if (dmComplaintList.size() != 0) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-            dmSurveyAnswerTableList.clear();
-
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+        if (!dmComplaintList.isEmpty()) {
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
             String complianceName = dmComplaintList.get(0).compliance;
 
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-            dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
-                Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
 
                 // Assigning checkbox answer based on compliance list
                 int satisfactoryId = 0, nonComplaintId = 0;
@@ -264,9 +255,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId));
+//                Constants.satisfactorySize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
-                Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
 
                 // Assigning checkbox answer based on compliance list
                 int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
@@ -280,9 +271,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId));
+//                Constants.complaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
-                Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
 
                 // Assigning checkbox answer based on compliance list
                 int nonComplaintId = 0;
@@ -292,6 +283,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId));
+//                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }
 
             LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -386,6 +378,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
 
+    /*public static int getComplianceSize(List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        Set<Integer> uniqueQuestionIds = new HashSet<>();
+        for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+            uniqueQuestionIds.add(Integer.valueOf(answer.questionID));
+        }
+        return uniqueQuestionIds.size();
+    }*/
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
 

@@ -253,9 +253,7 @@ public class SurveyResultsFragment extends Fragment {
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-        dmSurveyAnswerTableList1.clear();
-        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -269,22 +267,14 @@ public class SurveyResultsFragment extends Fragment {
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 totalWeightages = totalWeightages + newWeightage;
                 satisfactory = satisfactory + 1;
-                if (Objects.equals(newColorIsCritical, 1)){
-                    val = true;
-                }else {
-                    val = false;
-                }
+                val = Objects.equals(newColorIsCritical, 1);
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 complaint = complaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
                 nonComplaint = nonComplaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
-                if (Objects.equals(newColorIsCritical, 1)){
-                    val = true;
-                }else {
-                    val = false;
-                }
+                val = Objects.equals(newColorIsCritical, 1);
             }
 
 
