@@ -232,7 +232,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     private void displayQuestionsModuleComplaint(String complaint_id) {
 
         List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
@@ -365,17 +365,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                 Set<Integer> questionIdSet = new HashSet<>();
+                int quesNo = 1;
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
                     if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
                         TextView textView = new TextView(getActivity());
-                        textView.setText((m + 1) + "." + dmQuestionsModule.question);
+                        textView.setText(quesNo + "." + dmQuestionsModule.question);
                         textView.setTextColor(getResources().getColor(R.color.black));
                         textView.setTextSize(14);
                         textView.setPadding(0, 15, 0, 0);
                         textView.setTypeface(null, Typeface.BOLD);
                         linearLayoutItems.addView(textView);
                         renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID, dmQuestionsModule);
+                        quesNo++;
                     }
 
                 }
