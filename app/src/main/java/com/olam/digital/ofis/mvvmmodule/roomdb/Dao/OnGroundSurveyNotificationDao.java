@@ -27,7 +27,7 @@ public interface OnGroundSurveyNotificationDao {
         """
             SELECT DISTINCT(farmerId) AS _id, farmerName AS name, photo, olamFarmerId AS olam_farmer_id, createdOnPhone AS created_on_this_phone, countryId AS country_id, odFarmerId 
             FROM OnGroundSurveyNotification 
-            WHERE (:q = '' OR (farmerName LIKE '%' || :q || '%' OR olam_farmer_id LIKE '%' || :q || '%' OR odFarmerId LIKE '%' || :q || '%')) 
+            WHERE (:q = '' OR (farmerName LIKE '%' || :q || '%' OR olam_farmer_id LIKE '%' || :q || '%'))
             AND surveyType = :surveyType 
             AND (:farmerGroupId == 0 OR farmerGroupId = :farmerGroupId) 
             AND (:sectionId == 0 OR sectionId = :sectionId)

@@ -88,7 +88,26 @@ public class AllNotificationActivity extends BaseListActivity {
             @Override
             public void onModuleClick(View view, int position, ModuleListDTO moduleListDTO) {
                 String notificationType = moduleListDTO.getModuleName();
-
+                if (Objects.equals(notificationType, res.getString(R.string.fdp))) {
+                    Intent intent = new Intent(mContext, NotificationActivity.class);
+                    intent.putExtra(Utilities.MODULE,"FDP");
+                    mContext.startActivity(intent);
+                }
+                else if (Objects.equals(notificationType, res.getString(R.string.clmrs))) {
+                    Intent intent = new Intent(mContext, NotificationActivity.class);
+                    intent.putExtra(Utilities.MODULE,"CLMRS");
+                    mContext.startActivity(intent);
+                }
+                else if (Objects.equals(notificationType, res.getString(R.string.eudr))) {
+                    Intent intent = new Intent(mContext, FindFarmerActivity.class);
+                    intent.putExtra(Utilities.NOTIFICATION_TYPE,"EUDR");
+                    mContext.startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(mContext, FindFarmerActivity.class);
+                    intent.putExtra(Utilities.NOTIFICATION_TYPE,"PA");
+                    mContext.startActivity(intent);
+                }
             }
         });
     }
