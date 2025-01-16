@@ -166,7 +166,7 @@ public class SurveyResultsFragment extends Fragment {
 
                 HashMap answers = new HashMap();
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
                 String totalAmount = "0";
 
@@ -265,7 +265,7 @@ public class SurveyResultsFragment extends Fragment {
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -292,6 +292,7 @@ public class SurveyResultsFragment extends Fragment {
 
         }
 
+        // For DM Checkbox
         for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
             Integer complianceId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id;
             List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(String.valueOf(complianceId));
