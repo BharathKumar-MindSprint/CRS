@@ -254,7 +254,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
 //                Constants.satisfactorySize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
@@ -270,7 +270,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         complaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
 //                Constants.complaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
@@ -282,7 +282,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
 //                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }
 

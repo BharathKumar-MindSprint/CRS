@@ -35,6 +35,7 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultT
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 //import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
@@ -53,8 +54,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -80,7 +83,7 @@ public class SurveyResultsFragment extends Fragment {
     }
     String resultValue;
     String resultColor;
-    int amount = 0;
+    static int amount = 0;
     // OW-4574
     private Location mCurrentCapturedLocation = null;
     GPSListener gpsListener = null;
@@ -163,7 +166,7 @@ public class SurveyResultsFragment extends Fragment {
 
                 HashMap answers = new HashMap();
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
 
                 String totalAmount = "0";
 
@@ -241,6 +244,15 @@ public class SurveyResultsFragment extends Fragment {
 
         return view;
     }
+    public static int getComplianceSize(List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        Set<Integer> uniqueQuestionIds = new HashSet<>();
+        for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+            if (uniqueQuestionIds.add(Integer.valueOf(answer.questionID))){
+                amount = amount + answer.amount;
+            }
+        }
+        return uniqueQuestionIds.size();
+    }
 
     @Override
     public void onResume() {
@@ -253,7 +265,7 @@ public class SurveyResultsFragment extends Fragment {
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -280,6 +292,61 @@ public class SurveyResultsFragment extends Fragment {
 
         }
 
+        for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+            Integer complianceId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id;
+            List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(String.valueOf(complianceId));
+            if (!dmComplaintList.isEmpty()) {
+                String complianceName = dmComplaintList.get(0).compliance;
+
+                List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+                if (complianceName.equalsIgnoreCase("Satisfactory")) {
+                    // Assigning checkbox answer based on compliance list
+                    int satisfactoryId = 0, nonComplaintId = 0;
+                    for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                        if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                            satisfactoryId = complianceIndicator.id;
+                        } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                            nonComplaintId = complianceIndicator.id;
+                        }
+                    }
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    if (!answerTableCheckbox.isEmpty()) {
+                        satisfactory = satisfactory + getComplianceSize(answerTableCheckbox);
+                    }
+
+                } else if (complianceName.equalsIgnoreCase("Compliant")) {
+
+                    // Assigning checkbox answer based on compliance list
+                    int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+                    for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                        if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                            satisfactoryId = complianceIndicator.id;
+                        } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                            nonComplaintId = complianceIndicator.id;
+                        } else if (Objects.equals(complianceIndicator.compliance, "Compliant")) {
+                            complaintId = complianceIndicator.id;
+                        }
+                    }
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    if (!answerTableCheckbox.isEmpty()) {
+                        complaint = complaint + getComplianceSize(answerTableCheckbox);
+                    }
+                } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
+
+                    // Assigning checkbox answer based on compliance list
+                    int nonComplaintId = 0;
+                    for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                        if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                            nonComplaintId = complianceIndicator.id;
+                        }
+                    }
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    if (!answerTableCheckbox.isEmpty()) {
+                        nonComplaint = nonComplaint + getComplianceSize(answerTableCheckbox);
+                    }
+                }
+            }
+        }
 
 
         editTextText.setText(""+complaint);
