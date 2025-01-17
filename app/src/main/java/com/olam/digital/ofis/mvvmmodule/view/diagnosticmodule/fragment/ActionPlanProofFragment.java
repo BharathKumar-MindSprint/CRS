@@ -423,14 +423,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
-
+        boolean captureProof = false;
+        boolean customActionPlan = false;
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
-        if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
+        boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
+        if (isCheckbox) {
             List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
             if (!checkboxAnswers.isEmpty()) {
                 for (int i=0; i<checkboxAnswers.size(); i++) {
@@ -713,13 +715,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-            if (Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX)) {
-            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-            if (!checkboxAnswers.isEmpty()) {
-                for (int i = 0; i < checkboxAnswers.size(); i++) {
-                    dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+            if (isCheckbox) {
+                List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                if (!checkboxAnswers.isEmpty()) {
+                    for (int i = 0; i < checkboxAnswers.size(); i++) {
+                        dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+                    }
                 }
-            }
             } else {
                 dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
             }
@@ -734,7 +736,24 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
 
-        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
+        List<DmSurveyAnswerTable> answers = isCheckbox
+                ? db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX)
+                : db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+
+
+
+        if (!answers.isEmpty()) {
+            for (DmSurveyAnswerTable answer : answers) {
+                if (answer.isCaptureProof) {
+                    captureProof = true;
+                }
+                if (answer.allowCustomActionPlan) {
+                    customActionPlan = true;
+                }
+            }
+        }
+
+        if (customActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
@@ -1031,24 +1050,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
 
-        //Selected Action Plan Txt
-
         if (linearLayoutItems != null) {
-
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).isCaptureProof) {
+            if (captureProof) {
                 linearLayoutItems.addView(textView);
                 linearLayoutItems.addView(linearLayoutImage);
             } else {
                 textView.setVisibility(View.GONE);
                 linearLayoutImage.setVisibility(View.GONE);
             }
+
             linearLayoutItems.addView(linearLayoutSpin);
             linearLayoutItems.addView(tVActionPlanSelectedTxt);
 
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
+            if (customActionPlan) {
                 linearLayoutItems.addView(linearLayoutActionPlanMain);
             }
-
         }
 
         //linearLayoutItems.setVisibility(View.GONE);
