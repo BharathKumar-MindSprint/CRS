@@ -265,7 +265,7 @@ public class SurveyResultsFragment extends Fragment {
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -310,7 +310,7 @@ public class SurveyResultsFragment extends Fragment {
                             nonComplaintId = complianceIndicator.id;
                         }
                     }
-                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                     if (!answerTableCheckbox.isEmpty()) {
                         satisfactory = satisfactory + getComplianceSize(answerTableCheckbox);
                     }
@@ -328,7 +328,7 @@ public class SurveyResultsFragment extends Fragment {
                             complaintId = complianceIndicator.id;
                         }
                     }
-                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                     if (!answerTableCheckbox.isEmpty()) {
                         complaint = complaint + getComplianceSize(answerTableCheckbox);
                     }
@@ -341,7 +341,7 @@ public class SurveyResultsFragment extends Fragment {
                             nonComplaintId = complianceIndicator.id;
                         }
                     }
-                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+                    List<DmSurveyAnswerTable> answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                     if (!answerTableCheckbox.isEmpty()) {
                         nonComplaint = nonComplaint + getComplianceSize(answerTableCheckbox);
                     }

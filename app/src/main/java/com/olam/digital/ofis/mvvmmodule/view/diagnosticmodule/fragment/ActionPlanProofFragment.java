@@ -238,15 +238,15 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
         if (!dmComplaintList.isEmpty()) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox");
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
 
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
 
                 // Assigning checkbox answer based on compliance list
-                int satisfactoryId = 0, nonComplaintId = 0;
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
                         satisfactoryId = complianceIndicator.id;
@@ -254,13 +254,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.satisfactorySize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
 
                 // Assigning checkbox answer based on compliance list
-                int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
                         satisfactoryId = complianceIndicator.id;
@@ -270,19 +269,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                         complaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.complaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
 
                 // Assigning checkbox answer based on compliance list
-                int nonComplaintId = 0;
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, "checkbox"));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }
 
@@ -385,6 +383,44 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
         return uniqueQuestionIds.size();
     }*/
+    public String checkboxProofFormat(List<Integer> answerIds, List<Integer> complianceIds, String questionId) {
+        List<String> proofFormats = db.dmLookupValuesItemDao().getAllProofFormats(answerIds, complianceIds, questionId);
+        if (proofFormats.contains("Both")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") && proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+            return "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)";
+        } else if (proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Image (.png, .jpg, .jpeg)";
+        } else {
+            return "Both";
+        }
+    }
+
+    public String getProofFormat(String displayType, String questionId, String complaintId, String answerId) {
+        String formatValue = null;
+
+        if (Objects.equals(displayType, Constants.CHECKBOX)) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(
+                    Integer.valueOf(questionId), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+
+            List<Integer> answerIds = new ArrayList<>();
+            List<Integer> complianceIds = new ArrayList<>();
+
+            for (DmSurveyAnswerTable answer : checkboxAnswers) {
+                answerIds.add(Integer.valueOf(answer.answerID));
+                complianceIds.add(Integer.valueOf(answer.complinceTypeId));
+            }
+
+            formatValue = checkboxProofFormat(answerIds, complianceIds, questionId);
+        } else {
+            formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(questionId, complaintId, answerId);
+        }
+
+        return formatValue;
+    }
+
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
 
@@ -576,20 +612,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                         try {
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                            String formatValue = null;
-                            if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
-                                List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
-                                List<Integer> answerIds = new ArrayList<>();
-                                List<Integer> complianceIds = new ArrayList<>();
-                                for (DmSurveyAnswerTable answer : checkboxAnswers) {
-                                    answerIds.add(Integer.valueOf(answer.answerID));
-                                    complianceIds.add(Integer.valueOf(answer.complinceTypeId));
-                                }
-                                formatValue = db.dmLookupValuesItemDao().getCaptureProofCheckbox(answerIds, complianceIds, id);
-                                Log.d("FormatValue", formatValue);
-                            } else {
-                                formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                            }
+                            String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
@@ -640,20 +664,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     if (isStoragePermissionGalleryGranted()) {
 
                                         String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                                        String formatValue = null;
-                                        if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
-                                            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
-                                            List<Integer> answerIds = new ArrayList<>();
-                                            List<Integer> complianceIds = new ArrayList<>();
-                                            for (DmSurveyAnswerTable answer : checkboxAnswers) {
-                                                answerIds.add(Integer.valueOf(answer.answerID));
-                                                complianceIds.add(Integer.valueOf(answer.complinceTypeId));
-                                            }
-                                            formatValue = db.dmLookupValuesItemDao().getCaptureProofCheckbox(answerIds, complianceIds, id);
-                                            Log.d("FormatValue", formatValue);
-                                        } else {
-                                            formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                                        }
+                                        String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+
                                         if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
@@ -701,16 +713,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-            if (Objects.equals(dmQuestionsModule.displayType, "checkbox")) {
-            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+            if (Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX)) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             if (!checkboxAnswers.isEmpty()) {
                 for (int i = 0; i < checkboxAnswers.size(); i++) {
                     dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
                 }
             }
-        } else {
-            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
-        }
+            } else {
+                dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+            }
 
         final List<String> list = new ArrayList<String>();
         list.clear();

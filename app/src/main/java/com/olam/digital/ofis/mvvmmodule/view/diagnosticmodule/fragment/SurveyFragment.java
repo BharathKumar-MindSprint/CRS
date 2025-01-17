@@ -1023,7 +1023,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                     dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
                                     dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
                                     dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                                    dmSurveyAnswerTable1.displayType = "checkbox";
+                                    dmSurveyAnswerTable1.displayType = Constants.CHECKBOX;
                                     dmSurveyAnswerTable1.isSynced = false;
                                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                                     if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {

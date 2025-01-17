@@ -46,6 +46,7 @@ public class Constants {
 
     public static int PLOT_ID = 0;
 
+    public static String CHECKBOX = "checkbox";
 
 
 }
