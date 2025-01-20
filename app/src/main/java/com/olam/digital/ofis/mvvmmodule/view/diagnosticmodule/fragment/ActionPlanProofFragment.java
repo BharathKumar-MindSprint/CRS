@@ -244,39 +244,39 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
-            if (complianceName.equalsIgnoreCase("Satisfactory")) {
+            if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
                         satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.satisfactorySize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
-            } else if (complianceName.equalsIgnoreCase("Compliant")) {
+            } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, "Satisfactory")) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
                         satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
                         nonComplaintId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, "Compliant")) {
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
                         complaintId = complianceIndicator.id;
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.complaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
 
-            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
+            } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, "Non Compliant")) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
@@ -292,11 +292,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dm_question_complaint.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
-            if (Objects.equals(complianceName,"Compliant")){
+            if (Objects.equals(complianceName,Constants.COMPLIANT)){
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
-            } else if (Objects.equals(complianceName,"Non Compliant")) {
+            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
-            } else if (Objects.equals(complianceName,"Satisfactory")) {
+            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
             }
 
