@@ -421,6 +421,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         return formatValue;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void createAnswerDisplay(String answer, int index, boolean isCheckbox, String complaint_id, LinearLayout linearLayoutItems, LinearLayout.LayoutParams layoutParamsQes) {
+        EditText editText = new EditText(getActivity());
+        editText.setHint("Answer");
+        editText.setTextSize(14);
+        editText.setEnabled(false);
+        editText.setTextColor(getResources().getColor(R.color.black));
+        editText.setPadding(10, 10, 0, 10);
+        layoutParamsQes.setMargins(0, 10, 0, 10);
+        editText.setLayoutParams(layoutParamsQes);
+        editText.setTag("et" + complaint_id + (isCheckbox ? index : ""));
+
+        editText.setText(answer);
+        editText.setBackground(Objects.requireNonNull(getActivity()).getDrawable(R.drawable.answer_text_survey));
+
+        if (linearLayoutItems != null) {
+            linearLayoutItems.addView(editText);
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
         boolean captureProof = false;
@@ -435,53 +455,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (isCheckbox) {
             List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
             if (!checkboxAnswers.isEmpty()) {
-                for (int i=0; i<checkboxAnswers.size(); i++) {
-                    EditText editText = new EditText(getActivity());
-                    editText.setHint("Answer");
-                    editText.setTextSize(14);
-                    editText.setEnabled(false);
-                    editText.setTextColor(getResources().getColor(R.color.black));
-                    editText.setPadding(10, 10, 0, 10);
-                    layoutParamsQes.setMargins(0, 10, 0, 10);
-                    editText.setLayoutParams(layoutParamsQes);
-                    editText.setTag("et" + complaint_id + i);
-
-                    String answerIdDb = checkboxAnswers.get(i).answer;
-                    editText.setText(answerIdDb);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-                    }
-
-                    if (linearLayoutItems != null) {
-                        linearLayoutItems.addView(editText);
-                    }
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    createAnswerDisplay(checkboxAnswers.get(i).answer, i, true, complaint_id, linearLayoutItems, layoutParamsQes);
                 }
             }
         } else {
-            EditText editText = new EditText(getActivity());
-            editText.setHint("Answer");
-            editText.setTextSize(14);
-            editText.setEnabled(false);
-            editText.setTextColor(getResources().getColor(R.color.black));
-            editText.setPadding(10, 10, 0, 10);
-            layoutParamsQes.setMargins(0, 10, 0, 10);
-            editText.setLayoutParams(layoutParamsQes);
-            editText.setTag("et" + complaint_id);
-
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-
             if (!dmSurveyAnswerTableList.isEmpty()) {
-                String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
-                editText.setText(answerIdDb);
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-            }
-
-            if (linearLayoutItems != null) {
-                linearLayoutItems.addView(editText);
+                createAnswerDisplay(dmSurveyAnswerTableList.get(0).answer, 0, false, complaint_id, linearLayoutItems, layoutParamsQes);
             }
         }
 
