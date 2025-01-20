@@ -1183,4 +1183,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="clmrs">CLMRS</string>
     <string name="eudr">EUDR Ground Verification Survey</string>
     <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
 </resources>

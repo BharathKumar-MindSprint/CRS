@@ -44,6 +44,7 @@ import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
@@ -8952,57 +8953,6 @@ public class DataLayer {
         return dialingCode;
     }
 
-    public Cursor searchFarmerListBySurveyType(String notificationType, String q, long farmerGroupId, long sectionId) {
-
-        String flagColumn = notificationType.equals("EUDR") ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
-        String geoDbFlagStatus = notificationType.equals("EUDR") ? "DF%" : "%PA";
-        String whereClause = "";
-        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
-        String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
-
-        if (!q.isEmpty()) {
-            whereClause = farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + q + "%' OR " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + q + "%' OR " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + q + "'";
-        }
-
-        if (farmerGroupId > 0) {
-            if (!whereClause.isEmpty()) {
-                whereClause += " AND ";
-            }
-
-            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " = " + farmerGroupId;
-        }
-
-        if (sectionId > 0) {
-            if (!whereClause.isEmpty()) {
-                whereClause += " AND ";
-            }
-
-            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + sectionId;
-        }
-
-        if (!whereClause.isEmpty()) {
-            whereClause = " AND " + whereClause;
-        }
-
-        String sql = "select distinct(farmers.id) as _id, " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " from " +
-                plotTable + " p INNER JOIN " + farmerTable + " ON " + farmerTable + ".id = p.farmerId WHERE " + farmerTable + ".complainceFlag = 'false' AND (p.cleansedStatus LIKE 'updated' OR p.cleansedStatus LIKE 'repaired') AND (p.geoDbFlagStatus LIKE '" + geoDbFlagStatus + "' AND " +
-                flagColumn + "  = 'false') " + whereClause + " order by " + farmerTable + "."
-                + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
-
-
-        return db.rawQuery(sql, null);
-    }
-
-
-
     public Integer getCountryByFarmerId(long  farmerId) {
         String selectQuery = "SELECT country_id FROM farmers WHERE id = ?";
         Cursor farmer = db.rawQuery(selectQuery, new String[]{String.valueOf(farmerId)});
@@ -9077,19 +9027,19 @@ public class DataLayer {
             List<String> surveyNames = ofisRoomDB.dmMainModuleDao().getDiagnosticSurveysByFarmerGroupId(farmerGroupId);
 
             if (surveyNames.contains("On Ground Verification Survey")) {
-                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, "EUDR");
+                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, Constants.EUDR);
             }
 
             if (surveyNames.contains("PA Legality Survey")) {
-                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, "PA");
+                getPendingEUDRGroundVerificationSurveyData(farmerGroupId, Constants.PA);
             }
         }
 
     }
 
     public void getPendingEUDRGroundVerificationSurveyData(int farmerGroupId, String surveyType) {
-        String flagColumn = surveyType.equals("EUDR") ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
-        String geoDbFlagStatus = surveyType.equals("EUDR") ? "DF%" : "%PA";
+        String flagColumn = surveyType.equals(Constants.EUDR) ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
+        String geoDbFlagStatus = surveyType.equals(Constants.EUDR) ? "DF%" : "%PA";
         String query = """
                 SELECT DISTINCT f.*, p.id AS plotId FROM plot p INNER JOIN farmers f ON f.id = p.farmerId 
                 WHERE f.complainceFlag = 'false'
@@ -9163,7 +9113,20 @@ public class DataLayer {
         String placeholders = String.join(",", Collections.nCopies(farmerGroupId.size(), "?"));
         query += placeholders + ")";
 
-        Log.d("sql", query);
+        String[] farmerGroupIdArray = new String[farmerGroupId.size()];
+        for (int i = 0; i < farmerGroupId.size(); i++) {
+            farmerGroupIdArray[i] = String.valueOf(farmerGroupId.get(i));
+        }
+        return db.rawQuery(query, farmerGroupIdArray);
+    }
+
+    public Cursor getSectionByFarmerGroup(List<Integer> farmerGroupId) {
+        String query = """
+                    SELECT DISTINCT s.name, s.id AS _id, s.code FROM sections s
+                    WHERE s.farmergroup_id IN (""";
+
+        String placeholders = String.join(",", Collections.nCopies(farmerGroupId.size(), "?"));
+        query += placeholders + ")";
 
         String[] farmerGroupIdArray = new String[farmerGroupId.size()];
         for (int i = 0; i < farmerGroupId.size(); i++) {

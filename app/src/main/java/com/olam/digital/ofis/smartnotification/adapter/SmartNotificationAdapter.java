@@ -76,7 +76,7 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
         }else if (moduleId == 2){
             int childId = notificationDTO.getChildId();
             holder.childName.setText(dl.getChildNamefromDb(Long.valueOf(childId)));
-            holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_child_notify));
+            holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_status_no_photo));
         }
         String status = notificationDTO.getStatus();
         if(status.equalsIgnoreCase(Utilities.READ)){

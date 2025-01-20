@@ -17,6 +17,7 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.smartnotification.adapter.AllNotificationAdapter;
 import com.olam.digital.ofis.smartnotification.dto.ModuleListDTO;
@@ -27,7 +28,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AllNotificationActivity extends BaseListActivity {
@@ -41,6 +44,7 @@ public class AllNotificationActivity extends BaseListActivity {
     public OFISRoomDB db;
 
     private List<ModuleListDTO> notifications;
+    private Map<String, Object[]> notificationMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,17 @@ public class AllNotificationActivity extends BaseListActivity {
             @Override
             public void onModuleClick(View view, int position, ModuleListDTO moduleListDTO) {
                 String notificationType = moduleListDTO.getModuleName();
+                Object[] notificationData = notificationMap.get(notificationType);
+
+                if (notificationData != null) {
+                    Class<?> destination = (Class<?>) notificationData[0];
+                    String intentValue = (String) notificationData[1];
+                    String key = (String) notificationData[2];
+
+                    Intent intent = new Intent(mContext, destination);
+                    intent.putExtra(key, intentValue);
+                    mContext.startActivity(intent);
+                }
 
             }
         });
@@ -96,40 +111,27 @@ public class AllNotificationActivity extends BaseListActivity {
 
     private void createNotificationList() {
         notifications = new ArrayList<>();
+        notificationMap = new HashMap<>();
 
-        int FDPCount = dl.getNotificationCountByModule("FDP");
-        int CLMRSCount = dl.getNotificationCountByModule("CLMRS");
-        int EUDRCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("EUDR");
-        int PACount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("PA");
+        notificationMap.put(res.getString(R.string.fdp), new Object[]{NotificationActivity.class, Constants.FDP, Utilities.MODULE});
+        notificationMap.put(res.getString(R.string.clmrs), new Object[]{NotificationActivity.class, Constants.CLMRS, Utilities.MODULE});
+        notificationMap.put(res.getString(R.string.eudr), new Object[]{FindFarmerActivity.class, Constants.EUDR, Utilities.NOTIFICATION_TYPE});
+        notificationMap.put(res.getString(R.string.pa), new Object[]{FindFarmerActivity.class, Constants.PA, Utilities.NOTIFICATION_TYPE});
 
-        if (FDPCount > 0) {
-            ModuleListDTO moduleListDTO = new ModuleListDTO();
-            moduleListDTO.setModuleName(res.getString(R.string.fdp));
-            moduleListDTO.setTotalCount(FDPCount);
-            notifications.add(moduleListDTO);
+        Map<String, Integer> notificationCounts = new HashMap<>();
+        notificationCounts.put(res.getString(R.string.fdp), dl.getNotificationCountByModule(Constants.FDP));
+        notificationCounts.put(res.getString(R.string.clmrs), dl.getNotificationCountByModule(Constants.CLMRS));
+        notificationCounts.put(res.getString(R.string.eudr), db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount(Constants.EUDR));
+        notificationCounts.put(res.getString(R.string.pa), db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount(Constants.PA));
+
+        for (Map.Entry<String, Integer> entry : notificationCounts.entrySet()) {
+            if (entry.getValue() > 0) {
+                ModuleListDTO moduleListDTO = new ModuleListDTO();
+                moduleListDTO.setModuleName(entry.getKey());
+                moduleListDTO.setTotalCount(entry.getValue());
+                notifications.add(moduleListDTO);
+            }
         }
-
-        if (CLMRSCount > 0) {
-            ModuleListDTO moduleListDTO = new ModuleListDTO();
-            moduleListDTO.setModuleName(res.getString(R.string.clmrs));
-            moduleListDTO.setTotalCount(CLMRSCount);
-            notifications.add(moduleListDTO);
-        }
-
-        if (EUDRCount > 0) {
-            ModuleListDTO moduleListDTO = new ModuleListDTO();
-            moduleListDTO.setModuleName(res.getString(R.string.eudr));
-            moduleListDTO.setTotalCount(EUDRCount);
-            notifications.add(moduleListDTO);
-        }
-
-        if (PACount > 0) {
-            ModuleListDTO moduleListDTO = new ModuleListDTO();
-            moduleListDTO.setModuleName(res.getString(R.string.pa));
-            moduleListDTO.setTotalCount(PACount);
-            notifications.add(moduleListDTO);
-        }
-
     }
 
     @Override
@@ -137,4 +139,5 @@ public class AllNotificationActivity extends BaseListActivity {
         getMenuInflater().inflate(R.menu.menu_notify, menu);
         return true;
     }
+
 }

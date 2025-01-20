@@ -1394,6 +1394,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="clmrs">CLMRS</string>
     <string name="eudr">EUDR Ground Verification Survey</string>
     <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
 
     <string-array name="all_notification">
         <item>FDP</item>
