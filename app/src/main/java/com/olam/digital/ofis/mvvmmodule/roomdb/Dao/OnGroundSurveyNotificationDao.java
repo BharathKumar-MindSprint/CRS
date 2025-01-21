@@ -31,6 +31,7 @@ public interface OnGroundSurveyNotificationDao {
             AND surveyType = :surveyType 
             AND (:farmerGroupId == 0 OR farmerGroupId = :farmerGroupId) 
             AND (:sectionId == 0 OR sectionId = :sectionId)
+            ORDER BY name ASC
         """)
     Cursor getFarmersBySurveyType(String surveyType, String q, long farmerGroupId, long sectionId);
 

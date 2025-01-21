@@ -1698,7 +1698,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
     public static void GetAccessToken(String value) {
-
+        ((Activity) staticContext).invalidateOptionsMenu();
         String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
         Log.d("COUNTRY_CODENEWPREFFF", isoCode);
         counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
@@ -1761,10 +1761,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
-//                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                /*if (isEnableDM) {
-                    GetAllDiagnosticModule();
-                }*/
             }
         });
 

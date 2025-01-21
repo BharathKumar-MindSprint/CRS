@@ -1019,6 +1019,10 @@
     <string name="farmer_not_found">Farmer Not Found</string>
     <string name="no_notification">No Notification</string>
     <string name="farmer_search_hint">Search by Farmer Name or ID</string>
+    <string name="start_now">Start Now</string>
+    <string name="skip">Skip</string>
+    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
+    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
 </resources>
 
 
