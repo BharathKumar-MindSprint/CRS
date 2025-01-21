@@ -46,6 +46,12 @@ public class Constants {
 
     public static int PLOT_ID = 0;
 
+    public static String CHECKBOX = "checkbox";
+
+    public static String COMPLIANT = "Compliant";
+    public static String NON_COMPLIANT = "Non Compliant";
+    public static String SATISFACTORY = "Satisfactory";
+
 
 
 }

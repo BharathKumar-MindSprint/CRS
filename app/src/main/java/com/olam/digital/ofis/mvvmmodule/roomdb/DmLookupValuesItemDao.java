@@ -31,4 +31,7 @@ public interface DmLookupValuesItemDao {
 
     @Query("SELECT * FROM DmLookupValuesItem WHERE id =:id")
     DmLookupValuesItem getAllValuesByLookupId(int id);
+
+    @Query("SELECT DISTINCT proofFormat FROM DmLookupValuesItem WHERE id IN (:answerIds) AND complianceId IN (:complianceIds) AND idQuestionsMudule = :questionId")
+    List<String> getAllProofFormats(List<Integer> answerIds, List<Integer> complianceIds, String questionId);
 }

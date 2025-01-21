@@ -25,8 +25,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("DELETE FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId AND plotId =:plotId")
     void deleteByQuestionId(String id, String farmerId, int plotId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId = :plotId")
-    List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId, int plotId);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId =:plotId AND displayType!=:displayType")
+    List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId, int plotId, String displayType);
 
 
 
@@ -41,6 +41,9 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, int plotId);
+
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType")
+    List<DmSurveyAnswerTable> getDataByModuleIdNoCheckbox(String id, String farmerId, int plotId, String displayType);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND isSynced = :isSynced")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, boolean isSynced);
@@ -102,5 +105,20 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("DELETE FROM DmSurveyAnswerTable WHERE answerID =:id AND farmerId =:farmerId AND plotId =:plotId")
     void deleteByAnswerId(String id, String farmerId, int plotId);
+
+    @Query("SELECT * FROM DmSurveyAnswerTable AS sa JOIN DmLookupValuesItem AS lvi ON sa.answerId = lvi.id WHERE sa.questionID=:questionId AND sa.farmerId=:farmerId AND sa.moduleId=:moduleId AND sa.plotId=:plotId AND sa.displayType=:displayType ORDER BY lvi.position ASC")
+    List<DmSurveyAnswerTable> getAnswerIdByQuestionId(Integer questionId, String farmerId, String moduleId, int plotId, String displayType);
+
+    @Query("SELECT d.* FROM DmSurveyAnswerTable AS d JOIN ( SELECT questionId FROM DmSurveyAnswerTable WHERE displayType =:displayType AND complinceTypeId = :non_compliant) AS subquery ON d.questionId = subquery.questionId WHERE d.farmerId = :farmerId AND d.plotId = :plotId")
+    List<DmSurveyAnswerTable> getNonComplaintList(Integer non_compliant, String farmerId, Integer plotId, String displayType);
+
+    @Query("SELECT d1.* FROM DmSurveyAnswerTable AS d1 WHERE d1.questionId IN ( SELECT d2.questionId FROM DmSurveyAnswerTable AS d2 WHERE d2.complinceTypeId =:satisfactory AND NOT EXISTS ( SELECT 1 FROM DmSurveyAnswerTable AS d3 WHERE d3.questionId = d2.questionId AND d3.displayType =:displayType AND d3.complinceTypeId =:non_compliant)) AND d1.farmerId = :farmerId AND d1.plotId = :plotId AND d1.displayType=:displayType")
+    List<DmSurveyAnswerTable> getSatisfactoryList(Integer non_compliant, Integer satisfactory, String farmerId, Integer plotId, String displayType);
+
+    @Query("SELECT d.* FROM DmSurveyAnswerTable AS d WHERE d.complinceTypeId =:complaint AND NOT EXISTS (SELECT 1 FROM DmSurveyAnswerTable AS d2 WHERE d2.questionId = d.questionId AND d2.displayType =:displayType AND d2.complinceTypeId IN (:satisfactory, :non_compliant)) AND d.farmerId = :farmerId AND d.plotId = :plotId AND d.displayType=:displayType")
+    List<DmSurveyAnswerTable> getComplaintList(Integer complaint, Integer satisfactory, Integer non_compliant, String farmerId, Integer plotId, String displayType);
+
+    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText='', actionplanId='', amount=0 WHERE questionID =:questionId")
+    void updateActionPlanBudget(String questionId);
 
 }

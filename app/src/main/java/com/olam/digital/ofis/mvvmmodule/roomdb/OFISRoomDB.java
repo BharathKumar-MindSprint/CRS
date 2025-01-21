@@ -202,6 +202,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             public void migrate(SupportSQLiteDatabase database) {
 
                 database.execSQL("ALTER TABLE DmQuestionsModule ADD COLUMN maxSelection INTEGER");
+                database.execSQL("ALTER TABLE DmSurveyAnswerTable ADD COLUMN displayType STRING");
 
             }
         };

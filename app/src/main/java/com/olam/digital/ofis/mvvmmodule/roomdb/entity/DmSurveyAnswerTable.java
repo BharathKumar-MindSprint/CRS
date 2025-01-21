@@ -59,4 +59,7 @@ public class DmSurveyAnswerTable {
     @ColumnInfo(name = "plotId", defaultValue = "0")
     public Integer plotId;
 
+    @ColumnInfo(name = "displayType")
+    public String displayType;
+
 }
