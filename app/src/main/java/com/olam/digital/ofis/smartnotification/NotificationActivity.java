@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.smartnotification;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -39,12 +40,14 @@ public class NotificationActivity extends BaseListActivity {
     public DataLayer dl;
     public Resources res;
     ArrayList<NotificationDTO> notificationList;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smart_notification);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = this;
         init();
     }
   
@@ -75,10 +78,10 @@ public class NotificationActivity extends BaseListActivity {
         smartNotificationAdapter.setOnItemClickListener(new OnItemNotificationClickListener() {
             @Override
             public void onNotificationClick(View view, int position, NotificationDTO notificationDTO) {
-                Intent intent = new Intent(NotificationActivity.this, ViewFarmerActivity.class);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = notificationDTO.getFarmerId();
                 dl.updateNotificationModule(notificationDTO.getFarmerId());
-                startActivity(intent);
+                context.startActivity(intent);
             }
 
             @Override

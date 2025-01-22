@@ -447,8 +447,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         if (action.equalsIgnoreCase("exit")) {
             ViewFarmerActivity.farmerId = farmerId;
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
             Intent intent = new Intent(context, ViewFarmerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
 
@@ -460,8 +460,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 }
 
                 ViewFarmerActivity.farmerId = farmerId;
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 Intent intent = new Intent(context, ViewFarmerActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         } else {
@@ -537,8 +537,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     // method to setup submodule questions
     private void setupSubModuleQuestions() {
-        // loop through questions and generate the right control for each
-//        while (questions.moveToNext()) {
         if(questions != null && questions.moveToFirst()) {
             do {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
@@ -626,13 +624,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
 
     private void setupGPS() {
-        /*if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }*/
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
@@ -660,21 +651,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     }
 
     private void setPoiGPS(Location location) {
-        try {/*
-
-            poiLocation = location;
-            gpsField = (EditText) findViewById(R.id.gpsPosition);
-            String locationResult;
-            if (poiLocation != null) {
-                double latitude = poiLocation.getLatitude();
-                double longitude = poiLocation.getLongitude();
-                locationResult = latitude + "," + longitude;
-                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_found);
-            } else {
-                locationResult = res.getString(R.string.location_not_available);
-                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
-            }
-            gpsField.setText(locationResult);*/
+        try {
             Location moduleLocation = location;
             recordedLat = String.valueOf(moduleLocation.getLatitude());
             recordedLng = String.valueOf(moduleLocation.getLongitude());
@@ -699,16 +676,13 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     }
 
     protected void onStart() {
-//        googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
         if (mRequestingLocationUpdates) {
-            // pausing location updates
             stopLocationUpdates();
         }
-//        googleApiClient.disconnect();
         super.onStop();
     }
 
@@ -731,11 +705,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
                 if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     gpsTracker.getDeviceLocation();
                     startLocationUpdates();
                 } else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     stopLocationUpdates();
                 }
                 break;
@@ -763,12 +735,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback, Looper.myLooper());
-/*
-                        pd = new ProgressDialog(AddInfrastructureActivity.this);
-                        pd.setCancelable(false);
-                        pd.setIndeterminate(false);
-                        pd.setMessage(res.getString(R.string.fetching_location));
-                        pd.show();*/
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -777,9 +743,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                                 if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     setPoiGPS(mCurrentLocation);
                                 }else{
-                                   /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
-                                        pd.dismiss();
-                                    }*/
                                     Toast.makeText(ChildLabourCompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -795,9 +758,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                               /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
-                                    pd.dismiss();
-                                }*/
                                 Toast.makeText(ChildLabourCompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                             }
                         }, 1000);
@@ -805,18 +765,16 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
-                                    // Show the dialog by calling startResolutionForResult(), and check the
-                                    // result in onActivityResult().
+
                                     ResolvableApiException rae = (ResolvableApiException) e;
                                     rae.startResolutionForResult(ChildLabourCompleteModuleActivity.this, REQUEST_CHECK_SETTINGS);
                                 } catch (IntentSender.SendIntentException sie) {
-//                                    Log.i(TAG, "PendingIntent unable to execute request.");
+
                                 }
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
                                         "fixed here. Fix in Settings.";
-//                                Log.e(TAG, errorMessage);
 
                                 Toast.makeText(ChildLabourCompleteModuleActivity.this, errorMessage, Toast.LENGTH_LONG).show();
 
