@@ -884,7 +884,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("farmpolygon")) {
             postFarmPolygon(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("module")) {
-//            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, "QWR");
+//            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.QWR);
             postModule(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fmpreview")) {
             postFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
@@ -903,7 +903,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("children")) {
             postChild(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("childmodule")) {
-            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, "CLMRS");
+            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.CLMRS);
         } else if (itemType.equalsIgnoreCase("child_visit")) {
             postVisitDetails(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("signature")) {
@@ -1822,9 +1822,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             Cursor farmerModule = null;
             try {
-                if(itemType.equalsIgnoreCase("QWR")) {
+                if(itemType.equalsIgnoreCase(Utilities.QWR)) {
                     farmerModule = dl.getFarmerModuleById(farmerModuleId);
-                } else if(itemType.equalsIgnoreCase("CLMRS")) {
+                } else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                    farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
                 }
 
@@ -1842,9 +1842,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         final int moduleId = farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID));
                         ArrayList<Integer> getAllSubModulesId = dl.getAllSubmodulesByModuleId(moduleId);
                         Cursor photoUpload = null;
-                        if(itemType.equalsIgnoreCase("QWR")) {
+                        if(itemType.equalsIgnoreCase(Utilities.QWR)) {
                             photoUpload = dl.getAllUnUploadedPhotoById(farmerModuleId,getAllSubModulesId);
-                        } else if(itemType.equalsIgnoreCase("CLMRS")) {
+                        } else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                             photoUpload = dl.getAllUnUploadedPhotoById(farmerModuleId, getAllSubModulesId);
                         }
                         List<String> fileName = new ArrayList<>();
@@ -1864,11 +1864,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
                                 builder.addFormDataPart("files", fileName.get(i), fileBody);
                             }
-                            if(itemType.equalsIgnoreCase("QWR")) {
-                                builder.addFormDataPart("type", "QWR");
+                            if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                                builder.addFormDataPart("type", Utilities.QWR);
                             }
-                            else if(itemType.equalsIgnoreCase("CLMRS")) {
-                                builder.addFormDataPart("type", "CLMRS");
+                            else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                                builder.addFormDataPart("type", Utilities.CLMRS);
                             }
 
 
@@ -1881,10 +1881,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         if (response.isSuccessful()) {
                                             Log.d("Response_Upload", response.toString());
 
-                                            if(itemType.equalsIgnoreCase("QWR")) {
+                                            if(itemType.equalsIgnoreCase(Utilities.QWR)) {
                                                 postModule(networkQueueItemId, handler, msg, total, progress, itemId);
                                             }
-                                            else if(itemType.equalsIgnoreCase("CLMRS")) {
+                                            else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                                                 postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
                                             }
 
@@ -1924,10 +1924,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }
                         }
                         if(!isFileExists) {
-                            if(itemType.equalsIgnoreCase("QWR")) {
+                            if(itemType.equalsIgnoreCase(Utilities.QWR)) {
                                 postModule(networkQueueItemId, handler, msg, total, progress, itemId);
                             }
-                            else if(itemType.equalsIgnoreCase("CLMRS")) {
+                            else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                                 postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
                             }
                         }
