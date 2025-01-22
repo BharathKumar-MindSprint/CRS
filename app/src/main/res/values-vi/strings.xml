@@ -682,31 +682,8 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Kích thước lô nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng chỉ định kích thước lô hợp lệ.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-    <string name="existing_module">Existing Module</string>
-    <string name="over_all_result">Over all Result</string>
-    <string name="total_compliant_answers">Total Compliant answers</string>
-    <string name="total_non_compliant_answers">Total Non-Compliant answers</string>
-    <string name="total_satisfactory_answers">Total Satisfactory answers</string>
-    <string name="total_action_plans_proposed">Total Action plans proposed</string>
-    <string name="total_budget_proposed">Total Budget proposed</string>
-    <string name="dm_compliant">Compliant</string>
-    <string name="dm_satisfactory">Satisfactory</string>
-    <string name="dm_non_compliant">Non Compliant</string>
-    <string name="dm_capture_proof">Capture Proof</string>
     <string name="back">Trở lại</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="account_locked">Tài khoản của bạn bị khóa, vui lòng thử lại sau</string>
-    <string name="file_exceeds">Kích thước tập tin vượt quá </string>
-    <string name="total_file_size">Tổng kích thước tệp vượt quá 5 MB. Vui lòng tải lên kích thước tệp nhỏ hơn </string>
-
     <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
     <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
     <string name="no_images_to_be_downloaded">Không có hình ảnh nào để tải xuống</string>
@@ -742,6 +719,45 @@
     <string name="Stakeholder_Updated">Bên liên quan đã cập nhậ</string>
     <string name="farm_holding_suffix">trang trại nắm giữ</string>
     <string name="stakeholder_role_required">Cần có vai trò bên liên quan!</string>
+
+    // DM Translation
+    <string name="dm_header_txt">Kế hoạch hành động mô-đun chẩn đoán và bằng chứng</string>
+    <string name="dm_hint_txt">Mô-đun chẩn đoán</string>
+    <string name="dm_survey">Khảo sát</string>
+    <string name="diagnostic_survey">Khảo sát mô-đun chẩn đoán</string>
+    <string name="dm_actionplan_proof">Kế hoạch hành động và bằng chứng</string>
+    <string name="dm_survey_results">Kết quả khảo sát</string>
+    <string name="dm_diognostic_module">Mô-đun chẩn đoán</string>
+    <string name="dm_diognostic_module_subtitle">Theo dõi được tạo ra</string>
+    <string name="dm_select_currency_txt">Chọn đơn vị tiền tệ cho kế hoạch hành động</string>
+    <string name="existing_module">Mô-đun hiện có</string>
+    <string name="over_all_result">Kết quả tổng thể</string>
+    <string name="total_compliant_answers">Tổng số câu trả lời tuân thủ</string>
+    <string name="total_non_compliant_answers">Tổng số câu trả lời không tuân thủ</string>
+    <string name="total_satisfactory_answers">Tổng số câu trả lời đạt yêu cầu</string>
+    <string name="total_action_plans_proposed">Tổng số kế hoạch hành động được đề xuất</string>
+    <string name="total_budget_proposed">Tổng ngân sách được đề xuất</string>
+    <string name="dm_compliant">Tuân thủ</string>
+    <string name="dm_satisfactory">Đạt yêu cầu</string>
+    <string name="dm_non_compliant">Không tuân thủ</string>
+    <string name="dm_capture_proof">Chụp bằng chứng</string>
+    <string name="follow_up_farmer_details">Chi tiết nông dân theo dõi</string>
+    <string name="follow_up_survey">Khảo sát theo dõi</string>
+    <string name="dm_not_resolved">Chưa giải quyết</string>
+    <string name="dm_resolved">Đã giải quyết</string>
+    <string name="file_exceeds">Kích thước tệp vượt quá</string>
+    <string name="total_file_size">"Tổng kích thước tệp vượt quá 5MB. Vui lòng tải lên tệp có kích thước nhỏ hơn "</string>
+    <string name="dm_select_action_plan">Chọn kế hoạch hành động</string>
     <string name="dm_custom_action_plan">Kế hoạch hành động tùy chỉnh</string>
     <string name="dm_edit_action_plan_details">Chỉnh sửa chi tiết kế hoạch hành động</string>
+    <string name="dm_add_photo">Thêm ảnh!</string>
+    <string name="dm_choose_from_gallery">Chọn từ thư viện</string>
+    <string name="dm_do_you_want_to_remove_this_report">Bạn có muốn xóa báo cáo này không</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Tối đa 5 tệp có thể được tải lên.</string>
+    <string name="dm_capture_proof_is_missing">Thiếu bằng chứng chụp</string>
+    <string name="dm_action_plan_is_missing">Thiếu kế hoạch hành động!</string>
+    <string name="dm_please_give_camera_permission">Vui lòng cấp quyền truy cập máy ảnh</string>
+    <string name="dm_please_give_gallery_permission">Vui lòng cấp quyền truy cập thư viện</string>
+    <string name="select_module">Chọn mô-đun</string>
+
 </resources>
