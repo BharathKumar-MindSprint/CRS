@@ -50,6 +50,7 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
+import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -63,7 +64,11 @@ import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -141,6 +146,10 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private Location mCurrentCapturedLocation=null;
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
+    private final static int REQUEST_IMAGE_CAPTURE = 1;
+
+    private final static int REQUEST_IMAGE_GALLERY = 2;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -741,6 +750,50 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 break;
             case 6575:
                 checkTime();
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    if (dynamicQuestions.getCurrentPhotoPath() != null) {
+                        dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_CAPTURE");
+                    } else {
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            case REQUEST_IMAGE_GALLERY:
+                if (resultCode == RESULT_OK) {
+                    String realPath = ImageFilePath.getPath(ChildLabourCompleteModuleActivity.this, imageReturnedIntent.getData());
+                    try {
+                        if (realPath != null) {
+                            File sourceFile = new File(realPath);
+                            long fileSize = sourceFile.length();
+
+                            if (fileSize > 5 * 1024 * 1024) {
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this, "Image size exceeds 5MB. Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
+
+                            try {
+                                if (sourceFile.renameTo(destinationFile)) {
+                                    // Success! File renamed
+                                } else {
+                                    FileUtils.copyFile(sourceFile, destinationFile);
+
+                                }
+                            } catch (IOException e) {
+                                // Handle IOException
+                                e.printStackTrace();
+                            }
+                            dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
+                            // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
+                        } else {
+                            Toast.makeText(ChildLabourCompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
             default:
                 if (resultCode == RESULT_OK) {

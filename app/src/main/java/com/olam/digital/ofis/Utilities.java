@@ -124,6 +124,7 @@ public class Utilities {
     public static final String FARM_HOLDING_CODE = "farmHoldingCode";
     public static final String FARMER_NAME = "farmerName";
     public static final String FARM_ID = "farmId";
+    public static final String CHILD_LABOUR_ACTIVITY = "ChildLabourCompleteModuleActivity";
 
 
 public  static String base64ConversionForImage(String filepath)  {

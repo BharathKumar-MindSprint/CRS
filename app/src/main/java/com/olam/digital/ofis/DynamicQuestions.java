@@ -67,6 +67,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.coffeesurveyconstraints.CommonPojo;
@@ -1753,6 +1754,9 @@ public class DynamicQuestions {
 
                                 AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                                 addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                            } else if (context.getClass().getSimpleName().equalsIgnoreCase(Utilities.CHILD_LABOUR_ACTIVITY)) {
+                                ChildLabourCompleteModuleActivity childLabourCompleteModuleActivity = (ChildLabourCompleteModuleActivity) context;
+                                childLabourCompleteModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else {
                                 /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                                 StrictMode.setVmPolicy(builder.build());*/
@@ -1794,6 +1798,9 @@ public class DynamicQuestions {
                             StrictMode.setVmPolicy(builder.build());*/
                             AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                             addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                        } else if (context.getClass().getSimpleName().equalsIgnoreCase(Utilities.CHILD_LABOUR_ACTIVITY)) {
+                            ChildLabourCompleteModuleActivity childLabourCompleteModuleActivity = (ChildLabourCompleteModuleActivity) context;
+                            childLabourCompleteModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else {
                             /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                             StrictMode.setVmPolicy(builder.build());*/
