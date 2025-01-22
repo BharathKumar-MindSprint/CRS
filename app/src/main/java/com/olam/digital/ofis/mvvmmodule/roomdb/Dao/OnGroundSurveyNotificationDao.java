@@ -40,4 +40,7 @@ public interface OnGroundSurveyNotificationDao {
 
     @Query("SELECT DISTINCT(farmerGroupId) from ongroundsurveynotification WHERE surveyType = :notificationType")
     List<Integer> getFarmerGroupsBasedOnSurveyType(String notificationType);
+
+    @Query("DELETE FROM ongroundsurveynotification WHERE farmerId = :farmerId AND plotId = :plotId AND surveyType LIKE :s")
+    void deleteBySurveyType(long farmerId, int plotId, String s);
 }
