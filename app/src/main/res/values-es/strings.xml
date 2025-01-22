@@ -848,5 +848,10 @@
     <string name="stakeholder_role_required">Función requerida de de la parte interesada agrícola</string>
     <string name="dm_custom_action_plan">Plan de Acción Personalizado</string>
     <string name="dm_edit_action_plan_details">Editar detalles del plan de acción</string>
+    <string name="dm_capture_proof_uploaded">Prueba de captura subida</string>
+    <string name="dm_please_enter_any_drop_down_value">Por favor, ingrese cualquier valor del menú desplegable</string>
+    <string name="dm_please_enter_any_value">Por favor, ingrese cualquier valor</string>
+    <string name="dm_textbox_range">Rango de %1$d a %2$d</string>
+    <string name="minimum_range_error">Rango mínimo %1$.2f</string>
 </resources>
 

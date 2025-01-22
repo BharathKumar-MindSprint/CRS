@@ -759,5 +759,9 @@
     <string name="dm_please_give_camera_permission">Vui lòng cấp quyền truy cập máy ảnh</string>
     <string name="dm_please_give_gallery_permission">Vui lòng cấp quyền truy cập thư viện</string>
     <string name="select_module">Chọn mô-đun</string>
-
+    <string name="dm_capture_proof_uploaded">Bằng chứng chụp đã được tải lên</string>
+    <string name="dm_please_enter_any_drop_down_value">Vui lòng nhập bất kỳ giá trị nào từ menu thả xuống</string>
+    <string name="dm_please_enter_any_value">Vui lòng nhập bất kỳ giá trị nào</string>
+    <string name="dm_textbox_range">Phạm vi từ %1$d đến %2$d</string>
+    <string name="minimum_range_error">Phạm vi tối thiểu %1$.2f</string>
 </resources>

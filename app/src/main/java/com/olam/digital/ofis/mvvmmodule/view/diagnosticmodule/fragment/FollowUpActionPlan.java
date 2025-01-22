@@ -515,7 +515,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         if (isFilesUploaded) {
-            textView.setText("Capture Proof Uploaded");
+            textView.setText(getResources().getString(R.string.dm_capture_proof_uploaded));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
             }

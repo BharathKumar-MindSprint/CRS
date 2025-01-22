@@ -1011,6 +1011,11 @@
     <string name="stakeholder_role_required">ຕ້ອງມີບົດບາດຜູ້ມີສ່ວນຮ່ວມ!</string>
     <string name="dm_custom_action_plan">ແຜນການປະຕິບັດງານທີ່ກຳນົດເອງ</string>
     <string name="dm_edit_action_plan_details">ແກ້ໄຂລາຍລະອຽດແຜນການປະຕິບັດງານ</string>
+    <string name="dm_capture_proof_uploaded">ອັບໂຫລດຫຼັກຖານການຈັບພາບ</string>
+    <string name="dm_please_enter_any_drop_down_value">ກະລຸນາໃສ່ຄ່າໃດໆຈາກເມນູລົດລົງ</string>
+    <string name="dm_please_enter_any_value">ກະລຸນາໃສ່ຄ່າໃດໆ</string>
+    <string name="dm_textbox_range">ຊ່ວງຈາກ %1$d ຫາ %2$d</string>
+    <string name="minimum_range_error">ຊ່ວງຕ່ຳສຸດ %1$.2f</string>
 </resources>
 
 

@@ -758,4 +758,9 @@
     <string name="dm_please_give_camera_permission">Lütfen kamera izni verin</string>
     <string name="dm_please_give_gallery_permission">Lütfen galeri izni verin</string>
     <string name="select_module">Modül Seç</string>
+    <string name="dm_capture_proof_uploaded">Yüklenen yakalama kanıtı</string>
+    <string name="dm_please_enter_any_drop_down_value">Lütfen açılır menüden herhangi bir değer girin</string>
+    <string name="dm_please_enter_any_value">Lütfen herhangi bir değer girin</string>
+    <string name="dm_textbox_range">Aralık %1$d ile %2$d arasında</string>
+    <string name="minimum_range_error">Minimum aralık %1$.2f</string>
 </resources>

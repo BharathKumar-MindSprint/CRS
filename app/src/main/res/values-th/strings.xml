@@ -757,4 +757,9 @@
     <string name="dm_please_give_camera_permission">โปรดให้สิทธิ์การใช้งานกล้อง</string>
     <string name="dm_please_give_gallery_permission">โปรดให้สิทธิ์การใช้งานแกลเลอรี</string>
     <string name="select_module">เลือกโมดูล</string>
+    <string name="dm_capture_proof_uploaded">อัปโหลดหลักฐานการจับภาพ</string>
+    <string name="dm_please_enter_any_drop_down_value">กรุณาใส่ค่าจากเมนูแบบเลื่อนลง</string>
+    <string name="dm_please_enter_any_value">กรุณาใส่ค่าใดๆ</string>
+    <string name="dm_textbox_range">ช่วงจาก %1$d ถึง %2$d</string>
+    <string name="minimum_range_error">ช่วงขั้นต่ำ %1$.2f</string>
 </resources>

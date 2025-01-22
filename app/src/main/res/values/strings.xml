@@ -1311,6 +1311,11 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_action_plan_is_missing">Action Plan is missing!</string>
     <string name="dm_please_give_camera_permission">Please give camera permission</string>
     <string name="dm_please_give_gallery_permission">Please give gallery permission</string>
+    <string name="dm_capture_proof_uploaded">Capture Proof Uploaded</string>
+    <string name="dm_please_enter_any_drop_down_value">Please enter any drop down value</string>
+    <string name="dm_please_enter_any_value">Please enter any value</string>
+    <string name="dm_textbox_range">Range from %1$d to %2$d</string>
+    <string name="minimum_range_error">Minimum Range %1$.2f</string>
 
     <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
     <string name="dm_plot_survey_completed">Diagnostic Plot Survey Completed</string>
