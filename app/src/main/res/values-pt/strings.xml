@@ -855,5 +855,18 @@
     <string name="dm_please_enter_any_value">Por favor, insira qualquer valor</string>
     <string name="dm_textbox_range">Intervalo de %1$d a %2$d</string>
     <string name="minimum_range_error">Intervalo mínimo %1$.2f</string>
+
+
+    // DM Translation
+    <string name="dm_diognostic_module">Módulo de Diagnóstico</string>
+    <string name="dm_add_photo">Adicionar Foto!</string>
+    <string name="dm_choose_from_gallery">Escolher da Galeria</string>
+    <string name="dm_do_you_want_to_remove_this_report">Você quer remover este relatório?</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Máximo de 5 arquivos podem ser carregados.</string>
+    <string name="dm_capture_proof_is_missing">Prova de Captura está faltando</string>
+    <string name="dm_action_plan_is_missing">Plano de Ação está faltando!</string>
+    <string name="dm_please_give_camera_permission">Por favor, dê permissão para a câmera</string>
+    <string name="dm_please_give_gallery_permission">Por favor, dê permissão para a galeria</string>
+
 </resources>
 

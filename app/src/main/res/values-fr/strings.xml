@@ -1183,4 +1183,17 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_please_enter_any_value">Veuillez entrer une valeur</string>
     <string name="dm_textbox_range">Plage de %1$d à %2$d</string>
     <string name="minimum_range_error">Plage minimale %1$.2f</string>
+
+
+    // DM Translation
+    <string name="dm_diognostic_module">Module de Diagnostic</string>
+    <string name="dm_add_photo">Ajouter une Photo!</string>
+    <string name="dm_choose_from_gallery">Choisir de la Galerie</string>
+    <string name="dm_do_you_want_to_remove_this_report">Voulez-vous supprimer ce rapport?</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Un maximum de 5 fichiers peuvent être téléchargés.</string>
+    <string name="dm_capture_proof_is_missing">La Preuve de Capture est manquante</string>
+    <string name="dm_action_plan_is_missing">Le Plan d'Action est manquant!</string>
+    <string name="dm_please_give_camera_permission">Veuillez donner la permission pour la caméra</string>
+    <string name="dm_please_give_gallery_permission">Veuillez donner la permission pour la galerie</string>
+
 </resources>

@@ -1016,6 +1016,17 @@
     <string name="dm_please_enter_any_value">ກະລຸນາໃສ່ຄ່າໃດໆ</string>
     <string name="dm_textbox_range">ຊ່ວງຈາກ %1$d ຫາ %2$d</string>
     <string name="minimum_range_error">ຊ່ວງຕ່ຳສຸດ %1$.2f</string>
+
+    // DM Translation
+    <string name="dm_diognostic_module">ຫົວຂໍ້ການວິນິດໄສ</string>
+    <string name="dm_add_photo">ເພີ່ມຮູບພາບ!</string>
+    <string name="dm_choose_from_gallery">ເລືອກຈາກຄັງຮູບ</string>
+    <string name="dm_do_you_want_to_remove_this_report">ທ່ານຕ້ອງການລຶບລາຍງານນີ້ບໍ?</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">ສາມາດອັບໂຫລດໄດ້ສູງສຸດ 5 ໄຟລ໌.</string>
+    <string name="dm_capture_proof_is_missing">ຂາດຫາຍຫຼັກຖານການບັນທຶກ</string>
+    <string name="dm_action_plan_is_missing">ຂາດແຜນການປະຕິບັດ!</string>
+    <string name="dm_please_give_camera_permission">ກະລຸນາໃຫ້ອະນຸຍາດໃຊ້ກ້ອງ</string>
+    <string name="dm_please_give_gallery_permission">ກະລຸນາໃຫ້ອະນຸຍາດໃຊ້ຄັງຮູບ</string>
 </resources>
 
 
