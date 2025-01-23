@@ -760,6 +760,9 @@
     <string name="dm_capture_proof_uploaded">อัปโหลดหลักฐานการจับภาพ</string>
     <string name="dm_please_enter_any_drop_down_value">กรุณาใส่ค่าจากเมนูแบบเลื่อนลง</string>
     <string name="dm_please_enter_any_value">กรุณาใส่ค่าใดๆ</string>
-    <string name="dm_textbox_range">ช่วงจาก %1$d ถึง %2$d</string>
+    <string name="dm_textbox_range_integer">ช่วงจาก %1$d ถึง %2$d</string>
+    <string name="dm_textbox_range_decimal">ช่วงจาก %1$.2f ถึง %2$.2f</string>
     <string name="minimum_range_error">ช่วงขั้นต่ำ %1$.2f</string>
+    <string name="error_range_decimal">ป้อนช่วงระหว่าง %1$.2f ถึง %2$.2f</string>
+    <string name="error_range_integer">ป้อนช่วงระหว่าง %1$d ถึง %2$d</string>
 </resources>

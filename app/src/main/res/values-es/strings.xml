@@ -851,7 +851,8 @@
     <string name="dm_capture_proof_uploaded">Prueba de captura subida</string>
     <string name="dm_please_enter_any_drop_down_value">Por favor, ingrese cualquier valor del menú desplegable</string>
     <string name="dm_please_enter_any_value">Por favor, ingrese cualquier valor</string>
-    <string name="dm_textbox_range">Rango de %1$d a %2$d</string>
+    <string name="dm_textbox_range_integer">Rango de %1$d a %2$d</string>
+    <string name="dm_textbox_range_decimal">Rango de %1$.2f a %2$.2f</string>
     <string name="minimum_range_error">Rango mínimo %1$.2f</string>
 
     // DM Translation
@@ -864,6 +865,8 @@
     <string name="dm_action_plan_is_missing">¡Falta el Plan de Acción!</string>
     <string name="dm_please_give_camera_permission">Por favor, otorgue permiso para la cámara</string>
     <string name="dm_please_give_gallery_permission">Por favor, otorgue permiso para la galería</string>
+    <string name="error_range_decimal">Ingrese un rango entre %1$.2f y %2$.2f</string>
+    <string name="error_range_integer">Ingrese un rango entre %1$d y %2$d</string>
 
 </resources>
 

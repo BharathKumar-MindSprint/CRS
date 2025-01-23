@@ -378,19 +378,19 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[] { negativeDecimalFilter });
 
         }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), minValue, maxValue));
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[]{numberFilter});
         }
         else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true, getContext());
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[]{decimalFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -434,8 +434,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
         else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), (int) minValue, (int) maxValue));
-            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false, getContext());
             editText.setFilters(new InputFilter[]{numberFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -731,19 +731,19 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[] { negativeDecimalFilter });
 
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+                editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), minValue, maxValue));
                 NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
                 editText.setFilters(new InputFilter[]{numberFilter});
 
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), minValue, maxValue));
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true, getContext());
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[]{decimalFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -775,8 +775,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             });
         } else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range), (int) minValue, (int) maxValue));
-            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false, getContext());
             editText.setFilters(new InputFilter[]{numberFilter});
 
             editText.addTextChangedListener(new TextWatcher() {

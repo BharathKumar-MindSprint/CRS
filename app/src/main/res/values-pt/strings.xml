@@ -853,7 +853,8 @@
     <string name="dm_capture_proof_uploaded">Prova de captura carregada</string>
     <string name="dm_please_enter_any_drop_down_value">Por favor, insira qualquer valor do menu suspenso</string>
     <string name="dm_please_enter_any_value">Por favor, insira qualquer valor</string>
-    <string name="dm_textbox_range">Intervalo de %1$d a %2$d</string>
+    <string name="dm_textbox_range_integer">Intervalo de %1$d a %2$d</string>
+    <string name="dm_textbox_range_decimal">Intervalo de %1$.2f a %2$.2f</string>
     <string name="minimum_range_error">Intervalo mínimo %1$.2f</string>
 
 
@@ -867,6 +868,8 @@
     <string name="dm_action_plan_is_missing">Plano de Ação está faltando!</string>
     <string name="dm_please_give_camera_permission">Por favor, dê permissão para a câmera</string>
     <string name="dm_please_give_gallery_permission">Por favor, dê permissão para a galeria</string>
+    <string name="error_range_decimal">Insira um intervalo entre %1$.2f e %2$.2f</string>
+    <string name="error_range_integer">Insira um intervalo entre %1$d e %2$d</string>
 
 </resources>
 

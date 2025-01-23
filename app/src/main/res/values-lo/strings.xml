@@ -1014,7 +1014,8 @@
     <string name="dm_capture_proof_uploaded">ອັບໂຫລດຫຼັກຖານການຈັບພາບ</string>
     <string name="dm_please_enter_any_drop_down_value">ກະລຸນາໃສ່ຄ່າໃດໆຈາກເມນູລົດລົງ</string>
     <string name="dm_please_enter_any_value">ກະລຸນາໃສ່ຄ່າໃດໆ</string>
-    <string name="dm_textbox_range">ຊ່ວງຈາກ %1$d ຫາ %2$d</string>
+    <string name="dm_textbox_range_integer">ຊ່ວງຈາກ %1$d ຫາ %2$d</string>
+    <string name="dm_textbox_range_decimal">ຊ່ວງຈາກ %1$.2f ຫາ %2$.2f</string>
     <string name="minimum_range_error">ຊ່ວງຕ່ຳສຸດ %1$.2f</string>
 
     // DM Translation
@@ -1027,6 +1028,8 @@
     <string name="dm_action_plan_is_missing">ຂາດແຜນການປະຕິບັດ!</string>
     <string name="dm_please_give_camera_permission">ກະລຸນາໃຫ້ອະນຸຍາດໃຊ້ກ້ອງ</string>
     <string name="dm_please_give_gallery_permission">ກະລຸນາໃຫ້ອະນຸຍາດໃຊ້ຄັງຮູບ</string>
+    <string name="error_range_decimal">ໃສ່ຊ່ວງລະຫວ່າງ %1$.2f ຫາ %2$.2f</string>
+    <string name="error_range_integer">ໃສ່ຊ່ວງລະຫວ່າງ %1$d ຫາ %2$d</string>
 </resources>
 
 

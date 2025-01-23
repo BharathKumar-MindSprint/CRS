@@ -1181,7 +1181,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_capture_proof_uploaded">Preuve de capture téléchargée</string>
     <string name="dm_please_enter_any_drop_down_value">Veuillez entrer une valeur du menu déroulant</string>
     <string name="dm_please_enter_any_value">Veuillez entrer une valeur</string>
-    <string name="dm_textbox_range">Plage de %1$d à %2$d</string>
+    <string name="dm_textbox_range_integer">Plage de %1$d à %2$d</string>
+    <string name="dm_textbox_range_decimal">Plage de %1$.2f à %2$.2f</string>
     <string name="minimum_range_error">Plage minimale %1$.2f</string>
 
 
@@ -1192,8 +1193,10 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_do_you_want_to_remove_this_report">Voulez-vous supprimer ce rapport?</string>
     <string name="dm_maximum_5_files_can_be_uploaded">Un maximum de 5 fichiers peuvent être téléchargés.</string>
     <string name="dm_capture_proof_is_missing">La Preuve de Capture est manquante</string>
-    <string name="dm_action_plan_is_missing">Le Plan d'Action est manquant!</string>
+    <string name="dm_action_plan_is_missing">Le Plan d\'Action est manquant!</string>
     <string name="dm_please_give_camera_permission">Veuillez donner la permission pour la caméra</string>
     <string name="dm_please_give_gallery_permission">Veuillez donner la permission pour la galerie</string>
+    <string name="error_range_decimal">Entrez une plage entre %1$.2f et %2$.2f</string>
+    <string name="error_range_integer">Entrez une plage entre %1$d et %2$d</string>
 
 </resources>

@@ -1314,7 +1314,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_capture_proof_uploaded">Capture Proof Uploaded</string>
     <string name="dm_please_enter_any_drop_down_value">Please enter any drop down value</string>
     <string name="dm_please_enter_any_value">Please enter any value</string>
-    <string name="dm_textbox_range">Range from %1$d to %2$d</string>
+    <string name="dm_textbox_range_integer">Range from %1$d to %2$d</string>
+    <string name="dm_textbox_range_decimal">Range from %1$.2f to %2$.2f</string>
     <string name="minimum_range_error">Minimum Range %1$.2f</string>
 
     <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
@@ -1392,4 +1393,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
     <string name="farm_holding_suffix">\'s Farm Holding</string>
     <string name="stakeholder_role_required">Stakeholder role required!</string>
+    <string name="error_range_decimal">Enter range between %1$.2f to %2$.2f</string>
+    <string name="error_range_integer">Enter range between %1$d to %2$d</string>
+
 </resources>
