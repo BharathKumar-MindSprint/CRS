@@ -354,7 +354,10 @@ public class DynamicQuestions {
         }
         try {
             while (requiredQuestions.moveToNext()) {
-                requiredQuestionIds.add(requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)));
+                int questionId = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                if (isMandateQuestionOriginMatched(questionId)) {
+                    requiredQuestionIds.add(questionId);
+                }
             }
         } finally {
             requiredQuestions.close();

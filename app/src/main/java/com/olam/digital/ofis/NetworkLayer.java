@@ -884,8 +884,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("farmpolygon")) {
             postFarmPolygon(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("module")) {
-            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.QWR);
-//            postModule(networkQueueItemId, handler, msg, total, progress, itemId);
+//            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.QWR);
+            postModule(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fmpreview")) {
             postFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fullfmpreview")) {
