@@ -19,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 
@@ -198,8 +200,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             if (isActionPlanRequired){
                 String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
                 String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
-                editText.setText(answerIdDb);
-
+                List<DmRangeActionPlansItems> answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(questionIdDb),Integer.parseInt(dmSurveyAnswerTableList.get(0).complinceTypeId),dmSurveyAnswerTableList.get(0).answerID);
+                if (!answerActionPlan.isEmpty()){
+                    editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan.get(0)));
+                }
                 TextView notResolveText = new TextView(getContext());
                 notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
                 notResolveText.setTextColor(getResources().getColor(R.color.gray));
