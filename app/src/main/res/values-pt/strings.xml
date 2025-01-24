@@ -783,12 +783,6 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="account_locked">Sua conta está bloqueada, tente depois de algum+B6 tempo</string>
     <string name="ofis_photo_checkbox_download">Baixar imagens da caixa de seleção de fotos</string>
     <string name="ready_to_download_photo_checkbox">Existem imagens que precisam ser baixadas para perguntas da caixa de seleção de fotos. Deseja continuar baixando as imagens agora?</string>
@@ -870,6 +864,13 @@
     <string name="dm_please_give_gallery_permission">Por favor, dê permissão para a galeria</string>
     <string name="error_range_decimal">Insira um intervalo entre %1$.2f e %2$.2f</string>
     <string name="error_range_integer">Insira um intervalo entre %1$d e %2$d</string>
-
+    <string name="dm_diognostic_module_subtitle">Acompanhamento gerado</string>
+    <string name="follow_up_survey">Pesquisa de acompanhamento</string>
+    <string name="diagnostic_survey">Pesquisa do Módulo de Diagnóstico</string>
+    <string name="dm_not_resolved">Não resolvido</string>
+    <string name="dm_resolved">Resolvido</string>
+    <string name="follow_up_farmer_details">Detalhes de acompanhamento do agricultor</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Por favor, selecione o status do plano de ação antes de prosseguir!</string>
+    <string name="dm_file_deleted_successfully">Arquivo excluído com sucesso!</string>
 </resources>
 

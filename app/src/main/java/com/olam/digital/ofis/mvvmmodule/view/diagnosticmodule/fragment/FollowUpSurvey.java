@@ -384,7 +384,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 Constants.capture_count = capture_count;
             }
             else {
-                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_select_action_plan_status_before_proceed), Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.ll_servey_back_followup_survey) {
             requireActivity().onBackPressed();

@@ -766,4 +766,6 @@
     <string name="minimum_range_error">Minimum aralık %1$.2f</string>
     <string name="error_range_decimal">Aralık girin %1$.2f ile %2$.2f arasında</string>
     <string name="error_range_integer">Aralık girin %1$d ile %2$d arasında</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Lütfen devam etmeden önce Eylem Planı Durumunu seçin!</string>
+    <string name="dm_file_deleted_successfully">Dosya başarıyla silindi!</string>
 </resources>

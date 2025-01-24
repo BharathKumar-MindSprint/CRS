@@ -861,4 +861,6 @@
     <string name="minimum_range_error">Rentang minimum %1$.2f</string>
     <string name="error_range_decimal">Masukkan rentang antara %1$.2f hingga %2$.2f</string>
     <string name="error_range_integer">Masukkan rentang antara %1$d hingga %2$d</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Harap pilih status rencana tindakan sebelum melanjutkan!</string>
+    <string name="dm_file_deleted_successfully">File berhasil dihapus!</string>
 </resources>

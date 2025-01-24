@@ -1198,5 +1198,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_please_give_gallery_permission">Veuillez donner la permission pour la galerie</string>
     <string name="error_range_decimal">Entrez une plage entre %1$.2f et %2$.2f</string>
     <string name="error_range_integer">Entrez une plage entre %1$d et %2$d</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Veuillez sélectionner le statut du plan d\'action avant de continuer !</string>
+    <string name="dm_file_deleted_successfully">Fichier supprimé avec succès !</string>
 
 </resources>

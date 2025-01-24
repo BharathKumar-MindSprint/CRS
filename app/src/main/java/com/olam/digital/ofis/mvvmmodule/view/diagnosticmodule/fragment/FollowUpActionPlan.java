@@ -2428,7 +2428,7 @@ public class FollowUpActionPlan extends Fragment {
 
         if (fileToDelete.exists()) {
             if (fileToDelete.delete()) {
-                Toast.makeText(getContext(), "File deleted successfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.dm_file_deleted_successfully), Toast.LENGTH_SHORT).show();
             }
         }
     }

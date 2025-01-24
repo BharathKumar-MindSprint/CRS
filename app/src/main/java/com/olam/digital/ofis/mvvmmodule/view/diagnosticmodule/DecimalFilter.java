@@ -79,11 +79,11 @@ public class DecimalFilter implements InputFilter {
 
             if (input > maxValue) {
                 if (isDecimal) {
-                    editText.setError("Enter  range between " + minValue + " to " + maxValue);
+                    editText.setError(String.format(context.getString(R.string.error_range_decimal), minValue, maxValue));
                 } else {
-                    editText.setError("Enter  range between " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
+                    editText.setError(String.format(context.getString(R.string.error_range_integer), minValue, maxValue));
                 }
-                editText.setError("Range from " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
+                editText.setError(String.format(context.getString(R.string.error_range_integer), minValue, maxValue));
                 return "";
             }
 

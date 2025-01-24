@@ -797,13 +797,7 @@
     <string name="back">Atrás</string>
     <string name="dm_select_currency_txt">Seleccione la moneda para el plan de acción</string>
     <string name="dm_header_txt">Pruebas y Planes de Acción del Módulo de Diagnóstico</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
     <string name="dm_hint_txt">Módulo de Diagnóstico</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="account_locked">Tu cuenta está bloqueada. Inténtalo después de un tiempo.</string>
     <string name="ofis_photo_checkbox_download">Descargar imágenes de casillas de verificación de fotos</string>
     <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
@@ -868,5 +862,13 @@
     <string name="error_range_decimal">Ingrese un rango entre %1$.2f y %2$.2f</string>
     <string name="error_range_integer">Ingrese un rango entre %1$d y %2$d</string>
 
+    <string name="dm_diognostic_module_subtitle">Seguimiento generado</string>
+    <string name="follow_up_survey">Encuesta de seguimiento</string>
+    <string name="diagnostic_survey">Encuesta del módulo de diagnóstico</string>
+    <string name="dm_not_resolved">No resuelto</string>
+    <string name="dm_resolved">Resuelto</string>
+    <string name="follow_up_farmer_details">Detalles de seguimiento del agricultor</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">¡Por favor seleccione el estado del plan de acción antes de continuar!</string>
+    <string name="dm_file_deleted_successfully">¡Archivo eliminado con éxito!</string>
 </resources>
 

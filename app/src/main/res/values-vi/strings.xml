@@ -767,4 +767,6 @@
     <string name="minimum_range_error">Phạm vi tối thiểu %1$.2f</string>
     <string name="error_range_decimal">Nhập khoảng từ %1$.2f đến %2$.2f</string>
     <string name="error_range_integer">Nhập khoảng từ %1$d đến %2$d</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Vui lòng chọn trạng thái kế hoạch hành động trước khi tiếp tục!</string>
+    <string name="dm_file_deleted_successfully">Tệp đã được xóa thành công!</string>
 </resources>
