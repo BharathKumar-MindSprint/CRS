@@ -383,7 +383,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), minValue, maxValue));
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[]{numberFilter});
         }
@@ -736,7 +736,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), minValue, maxValue));
+                editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
                 NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
                 editText.setFilters(new InputFilter[]{numberFilter});
 

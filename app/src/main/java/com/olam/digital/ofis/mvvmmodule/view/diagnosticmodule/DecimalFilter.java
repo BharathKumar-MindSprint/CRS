@@ -64,9 +64,9 @@ public class DecimalFilter implements InputFilter {
                                     editText.setError(null);
                                 } else {
                                     if (isDecimal) {
-                                        editText.setError(String.format(context.getString(R.string.error_range_integer), minValue, maxValue));
-                                    } else {
                                         editText.setError(String.format(context.getString(R.string.error_range_decimal), minValue, maxValue));
+                                    } else {
+                                        editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                                     }
                                 }
                             } catch (NumberFormatException e) {
@@ -81,9 +81,9 @@ public class DecimalFilter implements InputFilter {
                 if (isDecimal) {
                     editText.setError(String.format(context.getString(R.string.error_range_decimal), minValue, maxValue));
                 } else {
-                    editText.setError(String.format(context.getString(R.string.error_range_integer), minValue, maxValue));
+                    editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                 }
-                editText.setError(String.format(context.getString(R.string.error_range_integer), minValue, maxValue));
+                editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                 return "";
             }
 
