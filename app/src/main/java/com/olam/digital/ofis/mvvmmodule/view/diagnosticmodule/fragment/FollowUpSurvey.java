@@ -23,6 +23,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -154,6 +156,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                        dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
                         TextView textView = new TextView(getActivity());
                         textView.setText((m + 1) + "." + dmQuestionsModule.question);
                         textView.setTextColor(getResources().getColor(R.color.black));
@@ -170,7 +173,23 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
         }
     }
-
+    public String getNamesbyLanguage(DmSurveyAnswerTable dmSurveyAnswerTable){
+        List<DmQuestionsModule> dmQuestionsModule = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(dmSurveyAnswerTable.questionID));
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.get(0).question;
+            case "es" -> dmQuestionsModule.get(0).questionEs;
+            case "fr" -> dmQuestionsModule.get(0).questionFr;
+            case "id" -> dmQuestionsModule.get(0).questionIdn;
+            case "in" -> dmQuestionsModule.get(0).questionIdn;
+            case "lo" -> dmQuestionsModule.get(0).questionLo;
+            case "pt" -> dmQuestionsModule.get(0).questionPt;
+            case "th" -> dmQuestionsModule.get(0).questionTh;
+            case "tr" -> dmQuestionsModule.get(0).questionTr;
+            case "vi" -> dmQuestionsModule.get(0).questionVi;
+            default -> dmQuestionsModule.get(0).question;
+        };
+    }
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
         totalQuestion++;
