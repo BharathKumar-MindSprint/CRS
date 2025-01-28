@@ -700,8 +700,18 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        notificationType = null;
         int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            if (transactionMode || notificationType != null) {
+                finish();
+            } else {
+                NavUtils.navigateUpFromSameTask(this);
+            }
+            return true;
+        }
+
+        notificationType = null;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -713,15 +723,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (id == R.id.action_home) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
-            return true;
-        }
-
-        if (id == android.R.id.home) {
-            if (transactionMode) {
-                finish();
-            } else {
-                NavUtils.navigateUpFromSameTask(this);
-            }
             return true;
         }
 

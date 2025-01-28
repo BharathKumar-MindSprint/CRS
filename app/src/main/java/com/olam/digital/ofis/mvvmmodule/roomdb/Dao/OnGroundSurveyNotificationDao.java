@@ -20,7 +20,7 @@ public interface OnGroundSurveyNotificationDao {
     @Query("SELECT DISTINCT(farmerId), farmerName, photo, olamFarmerId, createdOnPhone, countryId, odFarmerId, plotId FROM OnGroundSurveyNotification")
     List<OnGroundSurveyNotification> getOnGroundPendingSurveyFarmers();
 
-    @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE surveyType = :eudr")
+    @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE (:eudr = '' OR surveyType = :eudr)")
     int getPendingEUDRSurveyCount(String eudr);
 
     @Query(
@@ -43,4 +43,7 @@ public interface OnGroundSurveyNotificationDao {
 
     @Query("DELETE FROM ongroundsurveynotification WHERE farmerId = :farmerId AND plotId = :plotId AND surveyType LIKE :s")
     void deleteBySurveyType(long farmerId, int plotId, String s);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM ongroundsurveynotification WHERE farmerId = :farmerId)")
+    boolean checkSurveyExists(long farmerId);
 }

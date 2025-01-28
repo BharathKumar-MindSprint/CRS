@@ -666,6 +666,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 nonCompliance.setVisibility(View.GONE);
             }
 
+            showRemainderPopup = db.onGroundSurveyNotificationDao().checkSurveyExists(farmerId);
             if (isFromFindFarmerActivity && showRemainderPopup) {
                 isFromFindFarmerActivity = false;
                 showRemainderPopupForEUDRSurveys();
@@ -1382,7 +1383,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 List<DmMainModule> dmPlotModules = db.dmMainModuleDao().getDmMainModuleByAssignmentsByDiagnosticTypeId(countryId,regionId,farmerGroupId,districtId,sectionId,placeId,partnerId,programmeId,productId,diagnosticTypeId);
 
                 if (calculateComplianceFlag && farmPlotCountDM > 0 && !dmPlotModules.isEmpty()) {
-                    showRemainderPopup = true;
                     mc.addRow(new String[]{
                             "0",
                             res.getString(R.string.dm_plot_survey),

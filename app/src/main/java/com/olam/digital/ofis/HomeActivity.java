@@ -316,9 +316,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
         else {
-            List<OnGroundSurveyNotification> onGroundSurveyNotifications = db.onGroundSurveyNotificationDao().getOnGroundPendingSurveyFarmers();
-            if (!onGroundSurveyNotifications.isEmpty() && shouldShowPopup()) {
-                showDailyRemainderPopUp(onGroundSurveyNotifications.size());
+            int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+            if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
+                showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
 
@@ -2676,30 +2676,36 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             e.printStackTrace();
                         }
 
-                        dl.insertOnGroundSurveyNotificationData();
-                        progressDialog.hide();
-                        List<OnGroundSurveyNotification> onGroundPendingSurveyCount = db.onGroundSurveyNotificationDao().getOnGroundPendingSurveyFarmers();
-                        if (!onGroundPendingSurveyCount.isEmpty() && shouldShowPopup()) {
-                            showDailyRemainderPopUp(onGroundPendingSurveyCount.size());
-                            ((Activity) staticContext).invalidateOptionsMenu();
-                        }
-
                         GetAllFollowUpDMData();
 
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dl.insertOnGroundSurveyNotificationData();
+                                int onGroundPendingSurveyCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+                                if (onGroundPendingSurveyCount > 0 && shouldShowPopup()) {
+                                    showDailyRemainderPopUp(onGroundPendingSurveyCount);
+                                    ((Activity) staticContext).invalidateOptionsMenu();
+                                }
+                                progressDialog.hide();
+                            }
+                        }, 5000);
+
                     } else if (response.code() == 400) {
+                        progressDialog.hide();
                         GetAllFollowUpDMData();
                         Log.d("BadRequest-", response.message());
                     } else if (response.code() == 500) {
                         GetAllFollowUpDMData();
-
+                        progressDialog.hide();
                     } else {
-                        // showAlert("Server Issue!!"+response.message().toString());
+                        progressDialog.hide();
                         GetAllFollowUpDMData();
                     }
-                    progressDialog.hide();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
 
+                } catch (Exception e) {
+                    progressDialog.hide();
+                    throw new RuntimeException(e);
                 }
 
             }
