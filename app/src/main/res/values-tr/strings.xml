@@ -619,7 +619,6 @@
     <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>
     <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>
     <string name="common_survey_config_error">Survey config error. Please check the display config</string>
-    <string name="restriction_in_submodules">Please respond to all the mandatory questions to proceed</string>
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
     <string name="please_check_question">Please check Question</string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
@@ -742,4 +741,9 @@
     <string name="stakeholder_role_required">Paydaş rolü gerekli!</string>
     <string name="dm_custom_action_plan">Özel Eylem Planı</string>
     <string name="dm_edit_action_plan_details">Eylem planı detaylarını düzenle</string>
+
+    <string name="gallery_is_not_available_in_mobile">Galeri mobilde kullanılamıyor</string>
+    <string name="something_went_wrong_please_try_again">Bir şeyler yanlış gitti, lütfen tekrar deneyin</string>
+    <string name="image_size_exceeds_5_mb">Görüntü boyutu 5MB\'yi aşıyor. Lütfen daha küçük bir görüntü seçin.</string>
+    <string name="restriction_in_submodules">Devam etmek için lütfen tüm zorunlu soruları yanıtlayın</string>
 </resources>

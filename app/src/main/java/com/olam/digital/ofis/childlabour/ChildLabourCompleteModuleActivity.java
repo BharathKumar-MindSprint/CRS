@@ -806,7 +806,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     if (dynamicQuestions.getCurrentPhotoPath() != null) {
                         dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_CAPTURE");
                     } else {
-                        Toast.makeText(ChildLabourCompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -819,7 +819,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             long fileSize = sourceFile.length();
 
                             if (fileSize > 5 * 1024 * 1024) {
-                                Toast.makeText(ChildLabourCompleteModuleActivity.this, "Image size exceeds 5MB. Please choose a smaller image.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
@@ -838,7 +838,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
                             // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
                         } else {
-                            Toast.makeText(ChildLabourCompleteModuleActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

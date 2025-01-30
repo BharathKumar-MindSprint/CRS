@@ -1748,7 +1748,7 @@ public class DynamicQuestions {
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context,context.getResources().getString(R.string.gallery_is_not_available_in_mobile), Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -1792,11 +1792,6 @@ public class DynamicQuestions {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
                         }
-                        // setFullImageFromFilePath(imageURL, mCurrentImageView, "portrait");
-                        // setCapturedImageURI(photoURI);
-                        //setCurrentPhotoPath(photoFile.getPath());
-                        //startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-                        // setCurrentImageView(mCurrentImageView);
                     }
 
                 }

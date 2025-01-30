@@ -850,5 +850,9 @@
     <string name="stakeholder_role_required">Função do participante da fazenda necessária!</string>
     <string name="dm_custom_action_plan">Plano de Ação Personalizado</string>
     <string name="dm_edit_action_plan_details">Editar detalhes do plano de ação</string>
+
+    <string name="gallery_is_not_available_in_mobile">Galeria não está disponível no celular</string>
+    <string name="something_went_wrong_please_try_again">Algo deu errado, por favor tente novamente</string>
+    <string name="image_size_exceeds_5_mb">O tamanho da imagem excede 5MB. Por favor, escolha uma imagem menor.</string>
 </resources>
 
