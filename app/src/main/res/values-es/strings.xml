@@ -797,13 +797,7 @@
     <string name="back">Atrás</string>
     <string name="dm_select_currency_txt">Seleccione la moneda para el plan de acción</string>
     <string name="dm_header_txt">Pruebas y Planes de Acción del Módulo de Diagnóstico</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
     <string name="dm_hint_txt">Módulo de Diagnóstico</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="account_locked">Tu cuenta está bloqueada. Inténtalo después de un tiempo.</string>
     <string name="ofis_photo_checkbox_download">Descargar imágenes de casillas de verificación de fotos</string>
     <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
@@ -846,5 +840,35 @@
     <string name="Stakeholder_Updated">La parte interesada agrícola actualizado</string>
     <string name="farm_holding_suffix">explotación de</string>
     <string name="stakeholder_role_required">Función requerida de de la parte interesada agrícola</string>
+    <string name="dm_custom_action_plan">Plan de Acción Personalizado</string>
+    <string name="dm_edit_action_plan_details">Editar detalles del plan de acción</string>
+    <string name="dm_capture_proof_uploaded">Prueba de captura subida</string>
+    <string name="dm_please_enter_any_drop_down_value">Por favor, ingrese cualquier valor del menú desplegable</string>
+    <string name="dm_please_enter_any_value">Por favor, ingrese cualquier valor</string>
+    <string name="dm_textbox_range_integer">Rango de %1$d a %2$d</string>
+    <string name="dm_textbox_range_decimal">Rango de %1$.2f a %2$.2f</string>
+    <string name="minimum_range_error">Rango mínimo %1$.2f</string>
+
+    // DM Translation
+    <string name="dm_diognostic_module">Módulo de Diagnóstico</string>
+    <string name="dm_add_photo">¡Agregar Foto!</string>
+    <string name="dm_choose_from_gallery">Elegir de la Galería</string>
+    <string name="dm_do_you_want_to_remove_this_report">¿Desea eliminar este informe?</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Se pueden subir un máximo de 5 archivos.</string>
+    <string name="dm_capture_proof_is_missing">Falta la Prueba de Captura</string>
+    <string name="dm_action_plan_is_missing">¡Falta el Plan de Acción!</string>
+    <string name="dm_please_give_camera_permission">Por favor, otorgue permiso para la cámara</string>
+    <string name="dm_please_give_gallery_permission">Por favor, otorgue permiso para la galería</string>
+    <string name="error_range_decimal">Ingrese un rango entre %1$.2f y %2$.2f</string>
+    <string name="error_range_integer">Ingrese un rango entre %1$d y %2$d</string>
+
+    <string name="dm_diognostic_module_subtitle">Seguimiento generado</string>
+    <string name="follow_up_survey">Encuesta de seguimiento</string>
+    <string name="diagnostic_survey">Encuesta del módulo de diagnóstico</string>
+    <string name="dm_not_resolved">No resuelto</string>
+    <string name="dm_resolved">Resuelto</string>
+    <string name="follow_up_farmer_details">Detalles de seguimiento del agricultor</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">¡Por favor seleccione el estado del plan de acción antes de continuar!</string>
+    <string name="dm_file_deleted_successfully">¡Archivo eliminado con éxito!</string>
 </resources>
 
