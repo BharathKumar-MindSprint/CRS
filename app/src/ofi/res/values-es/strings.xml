@@ -652,7 +652,6 @@
     <string name="diagnostic_survey">Diagnostic Module Survey</string>
 
 
-    <string name="restriction_in_submodules">Responda a todas las preguntas obligatorias para continuar</string>
     <string name="please_respond_mandatory_question">Responde a la pregunta obligatoria</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
