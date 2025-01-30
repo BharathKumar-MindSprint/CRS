@@ -151,6 +151,7 @@ public class DynamicQuestions {
     public OFISRoomDB roomDB;
     private String mCurrentSignaturePhotoPath = null;
     private final static int REQUEST_IMAGE_GALLERY = 2;
+    private static final String[] ACCEPTED_MIME_TYPES_IMG = {"image/jpeg", "image/png"};
     private String imageURL = "";
     //    private ImageView imageViewInfo;
 
@@ -1762,6 +1763,7 @@ public class DynamicQuestions {
                         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         intent.setType("image/*");
+                        intent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
                         Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", photoFile);
                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                         setCapturedImageURI(photoURI);
