@@ -1,7 +1,9 @@
 package com.olam.digital.ofis;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +28,7 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -1643,62 +1646,35 @@ public class DynamicQuestions {
         modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
-                /*// New
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException e) {
-                    FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating photo image file");
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
-                if (photoFile != null) {
-                    // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if ((intent.resolveActivity(context.getPackageManager()) != null)) {
-                        //Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
-                        Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
+                        ActivityCompat.requestPermissions((Activity) context,
+                                new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.CAMERA},
+                                Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU);
 
-                        // Samsung Galaxy S3 Fix
-                        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                        for (ResolveInfo resolveInfo : resInfoList) {
-                            String packageName = resolveInfo.activityInfo.packageName;
-                            context.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        }
-
-                        //  tempProfileImageFile=photoFile;
-                        setCapturedImageURI(photoURI);
-                        setCurrentPhotoPath(photoFile.getPath());
-                        setCurrentImageView(iv);
-                        setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                    }
-
-                    if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-
-                        CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
-                        completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                    } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-
-                        AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
-                        addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                     } else {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-                        try {
-                            ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
-                            reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                        } catch (Exception e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                        }
-
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                     }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) +
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
-                }*/
+                        ActivityCompat.requestPermissions((Activity) context,
+                                new String[]{
+                                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        Manifest.permission.CAMERA},
+                                Utilities.REQUEST_PERMISSIONS_FOR_M);
+
+                    } else {
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                    }
+                } else {
+                    bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                }
             }
         });
 
