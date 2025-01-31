@@ -70,20 +70,26 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
 
         int moduleId = notificationDTO.getModuleId();
         holder.message.setText(dl.getMessageByModuleId(moduleId));
-        if(moduleId == 1){
+
+        if (moduleId == 1) {
             holder.childName.setVisibility(View.GONE);
             holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_fdp_notify));
-        }else if (moduleId == 2){
+
+            String status = notificationDTO.getStatus();
+            if(status.equalsIgnoreCase(Utilities.READ)){
+                holder.rowItem.setBackgroundResource(R.drawable.list_item_disabled);
+            }else {
+                holder.rowItem.setBackgroundResource(R.drawable.list_item);
+            }
+
+        } else if (moduleId == 2){
             int childId = notificationDTO.getChildId();
+            holder.statusIcon.setVisibility(View.GONE);
+            holder.lineView.setVisibility(View.GONE);
             holder.childName.setText(dl.getChildNamefromDb(Long.valueOf(childId)));
             holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_status_no_photo));
         }
-        String status = notificationDTO.getStatus();
-        if(status.equalsIgnoreCase(Utilities.READ)){
-            holder.rowItem.setBackgroundResource(R.drawable.list_item_disabled);
-        }else {
-            holder.rowItem.setBackgroundResource(R.drawable.list_item);
-        }
+
         holder.rowItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +107,7 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
         TextView farmerName,dataTime,message,childName;
         ImageView statusIcon,moduleIcon;
         CardView rowItem;
+        View lineView;
 
         public NotificationHolder(View itemView) {
             super(itemView);
@@ -111,6 +118,7 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
             dataTime = itemView.findViewById(R.id.dataTime);
             statusIcon = itemView.findViewById(R.id.statusIcon);
             moduleIcon = itemView.findViewById(R.id.moduleIcon);
+            lineView = itemView.findViewById(R.id.lineview);
         }
     }
 }

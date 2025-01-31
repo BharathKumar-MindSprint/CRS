@@ -20,10 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.BaseListActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.smartnotification.adapter.SmartNotificationAdapter;
 import com.olam.digital.ofis.smartnotification.dto.ModuleListDTO;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
@@ -32,6 +34,8 @@ import com.olam.digital.ofis.smartnotification.listener.OnItemNotificationClickL
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NotificationActivity extends BaseListActivity {
 
@@ -41,6 +45,7 @@ public class NotificationActivity extends BaseListActivity {
     public Resources res;
     ArrayList<NotificationDTO> notificationList;
     private Context context;
+    private String moduleName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,7 @@ public class NotificationActivity extends BaseListActivity {
     private void init() {
         res = getResources();
         dl = new DataLayer(res, this);
-        String moduleName = getIntent().getExtras().getString(Utilities.MODULE, "FDP");
+        moduleName = getIntent().getExtras().getString(Utilities.MODULE, "FDP");
         notificationListRecyclerView = (RecyclerView) findViewById(R.id.notificationList);
         notificationList = dl.getSmartNotificationList(moduleName);
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(this);
@@ -80,7 +85,7 @@ public class NotificationActivity extends BaseListActivity {
             public void onNotificationClick(View view, int position, NotificationDTO notificationDTO) {
                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = notificationDTO.getFarmerId();
-                dl.updateNotificationModule(notificationDTO.getFarmerId());
+                dl.updateNotificationModule(notificationDTO.getFarmerId(), notificationDTO.getModuleId(), notificationDTO.getChildId(), new HashMap<>(Map.ofEntries(Map.entry(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.READ))));
                 context.startActivity(intent);
             }
 
@@ -89,6 +94,8 @@ public class NotificationActivity extends BaseListActivity {
 
             }
         });
+
+
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -105,7 +112,10 @@ public class NotificationActivity extends BaseListActivity {
             }
         };
         ItemTouchHelper touchHelper =  new ItemTouchHelper(simpleItemTouchCallback);
-        touchHelper.attachToRecyclerView(notificationListRecyclerView);
+
+        if (moduleName.equals(Constants.FDP)) {
+            touchHelper.attachToRecyclerView(notificationListRecyclerView);
+        }
     }
 
     @Override
