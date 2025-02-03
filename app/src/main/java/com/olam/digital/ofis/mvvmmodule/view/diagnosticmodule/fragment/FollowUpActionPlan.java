@@ -693,8 +693,10 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
-            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            if (dmActionPlansItemList.get(c) != null) {
+                list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
+                ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            }
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
