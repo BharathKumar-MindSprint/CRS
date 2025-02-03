@@ -124,6 +124,11 @@ public class Utilities {
     public static final String FARM_HOLDING_CODE = "farmHoldingCode";
     public static final String FARMER_NAME = "farmerName";
     public static final String FARM_ID = "farmId";
+    public static final String CHILD_LABOUR_ACTIVITY = "ChildLabourCompleteModuleActivity";
+    public static final String CLMRS = "CLMRS";
+    public static final String QWR = "QWR";
+    public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
+    public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
 
 
 public  static String base64ConversionForImage(String filepath)  {

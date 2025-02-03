@@ -633,7 +633,6 @@
     <string name="biometric_licence_deactivation_queue">Penonaktifan Lisensi Biometrik</string>
     <string name="face_recognizion">Pengenalan Wajah</string>
 
-    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
    <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="attendee_sex">Sex</string>

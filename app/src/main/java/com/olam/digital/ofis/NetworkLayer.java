@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.gms.security.ProviderInstaller;
@@ -883,6 +884,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("farmpolygon")) {
             postFarmPolygon(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("module")) {
+//            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.QWR);
             postModule(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fmpreview")) {
             postFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
@@ -901,7 +903,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("children")) {
             postChild(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("childmodule")) {
-            postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
+            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.CLMRS);
         } else if (itemType.equalsIgnoreCase("child_visit")) {
             postVisitDetails(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("signature")) {
@@ -1806,6 +1808,150 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating full fmp review post object " + e.getMessage());
 
+        }
+    }
+
+    public void syncCapturedFileDataQwr(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) {
+
+        try {
+            final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
+            final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            final long childNwId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
+            final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
+            final String endpoint = "ofissurvey/image/upload";
+            String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
+
+            Cursor farmerModule = null;
+            try {
+                if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                    farmerModule = dl.getFarmerModuleById(farmerModuleId);
+                } else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                   farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
+                }
+
+                assert farmerModule != null;
+                if (farmerModule.getCount() > 0) {
+
+                    if (!dl.isFarmerSynced(farmerId)) {
+                        msg.what = 3;
+                        msg.arg1 = total;
+                        msg.arg2 = progress;
+                        msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                        handler.dispatchMessage(msg);
+                    } else {
+                        if (!dl.isChildSynced(childNwId) && itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                            msg.what = 5;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
+                            handler.dispatchMessage(msg);
+                        } else {
+                            farmerModule.moveToFirst();
+                            final int moduleId = farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID));
+                            ArrayList<Integer> getAllSubModulesId = dl.getAllSubmodulesByModuleId(moduleId);
+                            Cursor photoUpload = null;
+                            if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                                photoUpload = dl.getAllUnUploadedPhotoById(farmerModuleId,getAllSubModulesId);
+                            } else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                                photoUpload = dl.getAllUnUploadedPhotoById(farmerModuleId, getAllSubModulesId);
+                            }
+                            List<String> fileName = new ArrayList<>();
+                            List<Long> ids = new ArrayList<>();
+                            boolean isFileExists = false;
+                            if (photoUpload.getCount() > 0) {
+                                isFileExists = true;
+                                while (photoUpload.moveToNext()) {
+                                    fileName.add(photoUpload.getString(photoUpload.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT)));
+                                    ids.add(photoUpload.getLong(photoUpload.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID)));
+                                }
+
+                                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                                for (int i = 0; i < fileName.size(); i++) {
+                                    String photoName = fileName.get(i);
+                                    File file = new File(storageDir + "/" + photoName);
+                                    RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                                    builder.addFormDataPart("files", fileName.get(i), fileBody);
+                                }
+                                if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                                    builder.addFormDataPart("type", Utilities.QWR);
+                                }
+                                else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                                    builder.addFormDataPart("type", Utilities.CLMRS);
+                                }
+
+
+                                RequestBody requestBody = builder.build();
+
+                                if (!endpoint.isEmpty()) {
+                                    okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                                        @Override
+                                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                            if (response.isSuccessful()) {
+                                                Log.d("Response_Upload", response.toString());
+
+                                                if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                                                    postModule(networkQueueItemId, handler, msg, total, progress, itemId);
+                                                }
+                                                else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                                                    postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
+                                                }
+
+                                            } else {
+                                                if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                                                    try {
+                                                        FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting survey photo");
+                                                    } catch (Exception e) {
+                                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                                    }
+                                                    Log.d("UPLOAD_FILE_FAILURE", "1");
+                                                } else {
+                                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey photo");
+                                                    Log.d("Error in Upload Docs", response.toString());
+                                                }
+                                            }
+                                            response.close();
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                                            Log.d("UPLOAD_FILE_FAILURE", e.toString());
+                                            try {
+                                                String failureMessage = res.getString(R.string.networking_error);
+                                                if (e != null) {
+                                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                                }
+                                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                            } catch (Exception onfailEx) {
+                                                String failureMessage = res.getString(R.string.networking_error);
+                                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                                onfailEx.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                            if(!isFileExists) {
+                                if(itemType.equalsIgnoreCase(Utilities.QWR)) {
+                                    postModule(networkQueueItemId, handler, msg, total, progress, itemId);
+                                }
+                                else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
+                                    postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            } finally {
+                if (farmerModule != null) {
+                    farmerModule.close();
+                }
+            }
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -4845,7 +4991,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
                                                 if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
-                                                    sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
+                                                    sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
                                                     sub_answersjson.put("has_photo_upload", true);
                                                 } else
                                                     sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
@@ -4934,11 +5080,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                     if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                         hasPhotos = true;
-                                        File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
-                                        answer.put("answer", Utilities.base64ConversionForImage(
-                                                storageDir
-                                                        + "/"
-                                                        + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
+                                        answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("has_photo_upload", true);
                                     } else {
                                         answer.put("has_photo_upload", false);
@@ -4982,10 +5124,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
-//                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                                        subAnswer.put("answer", Utilities.base64ConversionForImage(
-                                                                storageDir + "/" +
-                                                                        subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype))));
+                                                        subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
                                                     } else {
                                                         subAnswer.put("has_photo_upload", false);
                                                     }

@@ -656,7 +656,6 @@
 
     <string name="child_labour_survey">Pesquisa do trabalho infantil</string>
     <string name="update_childlabour_hint">Toque para registrar</string>
-    <string name="restriction_in_submodules">Por favor, responda a todas as perguntas obrigatórias para prosseguir.</string>
     <string name="please_respond_mandatory_question">Por favor responda a pergunta obrigatória.</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="Date_of_Birth_hint">MMM DD,YYYY</string>

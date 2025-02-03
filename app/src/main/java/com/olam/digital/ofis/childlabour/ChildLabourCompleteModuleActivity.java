@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.location.Location;
@@ -50,6 +51,7 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
+import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -63,7 +65,11 @@ import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -141,6 +147,10 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private Location mCurrentCapturedLocation=null;
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
+    private final static int REQUEST_IMAGE_CAPTURE = 1;
+
+    private final static int REQUEST_IMAGE_GALLERY = 2;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -726,6 +736,55 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
+
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            case Utilities.REQUEST_PERMISSIONS_FOR_M: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
+
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         switch (requestCode) {
@@ -741,6 +800,50 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 break;
             case 6575:
                 checkTime();
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    if (dynamicQuestions.getCurrentPhotoPath() != null) {
+                        dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_CAPTURE");
+                    } else {
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            case REQUEST_IMAGE_GALLERY:
+                if (resultCode == RESULT_OK) {
+                    String realPath = ImageFilePath.getPath(ChildLabourCompleteModuleActivity.this, imageReturnedIntent.getData());
+                    try {
+                        if (realPath != null) {
+                            File sourceFile = new File(realPath);
+                            long fileSize = sourceFile.length();
+
+                            if (fileSize > 5 * 1024 * 1024) {
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
+
+                            try {
+                                if (sourceFile.renameTo(destinationFile)) {
+                                    // Success! File renamed
+                                } else {
+                                    FileUtils.copyFile(sourceFile, destinationFile);
+
+                                }
+                            } catch (IOException e) {
+                                // Handle IOException
+                                e.printStackTrace();
+                            }
+                            dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
+                            // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
+                        } else {
+                            Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
             default:
                 if (resultCode == RESULT_OK) {
