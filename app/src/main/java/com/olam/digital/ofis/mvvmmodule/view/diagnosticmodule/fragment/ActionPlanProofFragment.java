@@ -445,6 +445,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
         boolean captureProof = false;
         boolean customActionPlan = false;
+        boolean isActionPlanRequired = false;
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -727,9 +728,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             for (DmSurveyAnswerTable answer : answers) {
                 if (answer.isCaptureProof) {
                     captureProof = true;
+                    break;
                 }
+            }
+            for (DmSurveyAnswerTable answer : answers) {
                 if (answer.allowCustomActionPlan) {
                     customActionPlan = true;
+                    break;
                 }
             }
         }
@@ -740,8 +745,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
-            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            if (dmActionPlansItemList.get(c) != null) {
+                isActionPlanRequired = true;
+                list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
+                ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            }
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
@@ -1022,7 +1030,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         });
 
 
-        boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         if (isActionPlanRequired) {
             linearLayoutSpin.addView(spinner);
             linearLayoutSpin.addView(editTextCurrency);

@@ -28,8 +28,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTab
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class FollowUpSurvey extends Fragment implements View.OnClickListener {
@@ -60,21 +62,14 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     private void displayQuestionsModuleComplaint(String complaint_id) {
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
         if (!dmComplaintList.isEmpty()) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
-            if (complianceName.equalsIgnoreCase("Satisfactory")) {
-                Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
-            } else if (complianceName.equalsIgnoreCase("Compliant")) {
-                Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
-            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
-                Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList.size());
-            }
 
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
@@ -84,12 +79,46 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             dm_question_complaint_followup_survey.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
+
+            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
             if (Objects.equals(complianceName,"Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
+
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
+                        satisfactoryId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
+                        complaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+
             } else if (Objects.equals(complianceName,"Non Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
+
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
             } else if (Objects.equals(complianceName,"Satisfactory")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
+
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
+                        satisfactoryId = complianceIndicator.id;
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId = complianceIndicator.id;
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
             }
 
 
@@ -147,20 +176,23 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
                 }
 
-                if (dmSurveyAnswerTableList.size() != 0) {
+                if (!dmSurveyAnswerTableList.isEmpty()) {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
-
+                    Set<Integer> questionIdSet = new HashSet<>();
+                    int quesNo = 1;
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                        TextView textView = new TextView(getActivity());
-                        textView.setText((m + 1) + "." + dmQuestionsModule.question);
-                        textView.setTextColor(getResources().getColor(R.color.black));
-                        textView.setTextSize(14);
-                        textView.setPadding(0, 15, 0, 0);
-                        textView.setTypeface(null, Typeface.BOLD);
-                        linearLayoutItems.addView(textView);
-                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
-
+                        if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
+                            TextView textView = new TextView(getActivity());
+                            textView.setText(quesNo + "." + dmQuestionsModule.question);
+                            textView.setTextColor(getResources().getColor(R.color.black));
+                            textView.setTextSize(14);
+                            textView.setPadding(0, 15, 0, 0);
+                            textView.setTypeface(null, Typeface.BOLD);
+                            linearLayoutItems.addView(textView);
+                            renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
+                            quesNo++;
+                        }
                     }
                 }
             }
@@ -311,9 +343,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
+        editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
 
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(editText);

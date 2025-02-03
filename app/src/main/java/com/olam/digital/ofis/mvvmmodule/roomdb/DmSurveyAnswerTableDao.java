@@ -30,8 +30,8 @@ public interface DmSurveyAnswerTableDao {
 
 
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId = :plotId")
-    List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId, int plotId);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType")
+    List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId, int plotId, String displayType);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId")
     List<DmSurveyAnswerTable> getDataByComplianceIdFilterResolved(String id, String farmerId);
