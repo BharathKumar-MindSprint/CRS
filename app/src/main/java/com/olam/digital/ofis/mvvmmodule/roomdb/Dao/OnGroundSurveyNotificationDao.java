@@ -20,7 +20,7 @@ public interface OnGroundSurveyNotificationDao {
     @Query("SELECT DISTINCT(farmerId), farmerName, photo, olamFarmerId, createdOnPhone, countryId, odFarmerId, plotId FROM OnGroundSurveyNotification")
     List<OnGroundSurveyNotification> getOnGroundPendingSurveyFarmers();
 
-    @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE surveyType = :eudr")
+    @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE (:eudr = '' OR surveyType = :eudr)")
     int getPendingEUDRSurveyCount(String eudr);
 
     @Query(
@@ -31,6 +31,7 @@ public interface OnGroundSurveyNotificationDao {
             AND surveyType = :surveyType 
             AND (:farmerGroupId == 0 OR farmerGroupId = :farmerGroupId) 
             AND (:sectionId == 0 OR sectionId = :sectionId)
+            ORDER BY name ASC
         """)
     Cursor getFarmersBySurveyType(String surveyType, String q, long farmerGroupId, long sectionId);
 
@@ -39,4 +40,10 @@ public interface OnGroundSurveyNotificationDao {
 
     @Query("SELECT DISTINCT(farmerGroupId) from ongroundsurveynotification WHERE surveyType = :notificationType")
     List<Integer> getFarmerGroupsBasedOnSurveyType(String notificationType);
+
+    @Query("DELETE FROM ongroundsurveynotification WHERE farmerId = :farmerId AND plotId = :plotId AND surveyType LIKE :s")
+    void deleteBySurveyType(long farmerId, int plotId, String s);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM ongroundsurveynotification WHERE farmerId = :farmerId)")
+    boolean checkSurveyExists(long farmerId);
 }

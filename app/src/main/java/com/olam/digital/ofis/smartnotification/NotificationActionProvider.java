@@ -70,7 +70,7 @@ public class NotificationActionProvider extends ActionProvider {
         int EUDRGroundSurveyCount = 0;
 
         if (notificationCount <= 0) {
-            EUDRGroundSurveyCount = db.onGroundSurveyNotificationDao().getOnGroundPendingSurveyFarmers().size();
+            EUDRGroundSurveyCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
         }
 
         ImageView listCount = (ImageView) view.findViewById(R.id.notificationListCount);

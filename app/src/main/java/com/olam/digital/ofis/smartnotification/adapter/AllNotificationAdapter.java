@@ -69,7 +69,7 @@ public class AllNotificationAdapter extends RecyclerView.Adapter<AllNotification
         holder.contentCount.setText(String.valueOf(count));
         holder.cardView.setBackgroundResource(R.drawable.list_item);
         holder.arrow.setVisibility(View.VISIBLE);
-        holder.arrow.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onItemNotificationClickListener.onModuleClick(v, holder.getAdapterPosition(), module);

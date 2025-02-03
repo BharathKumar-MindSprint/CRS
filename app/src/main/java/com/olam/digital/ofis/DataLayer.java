@@ -9022,8 +9022,8 @@ public class DataLayer {
     }
 
     public void insertOnGroundSurveyNotificationData() {
-
-        for (int farmerGroupId : getComplianceFarmerGroups()) {
+        List<Integer> farmerGroups = getComplianceFarmerGroups();
+        for (int farmerGroupId : farmerGroups) {
             List<String> surveyNames = ofisRoomDB.dmMainModuleDao().getDiagnosticSurveysByFarmerGroupId(farmerGroupId);
 
             if (surveyNames.contains("On Ground Verification Survey")) {
@@ -9039,6 +9039,7 @@ public class DataLayer {
 
     public void getPendingEUDRGroundVerificationSurveyData(int farmerGroupId, String surveyType) {
         String flagColumn = surveyType.equals(Constants.EUDR) ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT;
+        String surveyCaptured = surveyType.equals(Constants.EUDR) ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED;
         String geoDbFlagStatus = surveyType.equals(Constants.EUDR) ? "DF%" : "%PA";
         String query = """
                 SELECT DISTINCT f.*, p.id AS plotId FROM plot p INNER JOIN farmers f ON f.id = p.farmerId 
@@ -9047,7 +9048,7 @@ public class DataLayer {
                 AND (p.cleansedStatus LIKE 'updated' OR p.cleansedStatus LIKE 'repaired')
                 AND (p.geoDbFlagStatus LIKE '""";
 
-        query += geoDbFlagStatus + "' AND p." + flagColumn +"= 'false')";
+        query += geoDbFlagStatus + "' AND (p." + flagColumn +"= 'false' AND p." + surveyCaptured + "= 'false'))";
 
         String[] params = new String[]{String.valueOf(farmerGroupId)};
         Cursor cursor = db.rawQuery(query, params);
