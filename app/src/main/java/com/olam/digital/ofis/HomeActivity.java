@@ -145,8 +145,10 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -1883,6 +1885,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 try {
                     if (response.code() == 200) {
                         deleteRoomDbValues();
+                        Map<Boolean, List<Integer>> submittedPlots = new HashMap<>();
 
                         int diagnosticType = 0;
                         int eudrGroundVerificationSurveyId = 0;
@@ -2006,18 +2009,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     db.dmMainModuleDao().insert(user);
 
                                     if (diagnosticTypeId != null && diagnosticTypeId == diagnosticType && !submittedPlotIds.isEmpty()) {
-                                        int finalEudrGroundVerificationSurveyId = eudrGroundVerificationSurveyId;
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                dl.updateSurveyCapturedForPlots(plotSurveyType == finalEudrGroundVerificationSurveyId, submittedPlotIds);
-                                            }
-                                        }, 5000);
+                                        submittedPlots.put(eudrGroundVerificationSurveyId == plotSurveyType, submittedPlotIds);
                                     }
 
-
                                     List<DmModuleAssignments> dmModuleAssignments = generateModuleAssignments(assignmentsModel, id);
-
                                     if (!dmModuleAssignments.isEmpty()) {
                                         db.dmModuleAssignmentsDao().insertDmModuleAssignMents(dmModuleAssignments);
                                     }
@@ -2681,6 +2676,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                dl.updateSurveyCapturedForPlots(submittedPlots);
                                 dl.insertOnGroundSurveyNotificationData();
                                 int onGroundPendingSurveyCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
                                 if (onGroundPendingSurveyCount > 0 && shouldShowPopup()) {

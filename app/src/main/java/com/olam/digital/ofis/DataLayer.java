@@ -8847,27 +8847,30 @@ public class DataLayer {
         return db.rawQuery(sql, null);
     }
 
-    public void updateSurveyCapturedForPlots(boolean isEUDRGroundVerificationSurvey, List<Integer> plotIds) {
-        String columnName = isEUDRGroundVerificationSurvey ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED;
-        StringBuilder sb = new StringBuilder();
+    public void updateSurveyCapturedForPlots(Map<Boolean, List<Integer>> submittedPlots) {
+        for (Map.Entry<Boolean, List<Integer>> entry : submittedPlots.entrySet()) {
+            String columnName = entry.getKey() ? OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED : OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED;
+            List<Integer> plotIds = entry.getValue();
+            StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < plotIds.size(); i++) {
-            sb.append("?");
-            if (i < plotIds.size() - 1) {
-                sb.append(",");
+            for (int i = 0; i < plotIds.size(); i++) {
+                sb.append("?");
+                if (i < plotIds.size() - 1) {
+                    sb.append(",");
+                }
             }
+            String whereClause = "id IN (" + sb + ")";
+
+            String[] whereArgs = new String[plotIds.size()];
+            for (int i = 0; i < plotIds.size(); i++) {
+                whereArgs[i] = String.valueOf(plotIds.get(i));
+            }
+
+            ContentValues values = new ContentValues();
+            values.put(columnName, "true");
+
+            db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
         }
-        String whereClause = "id IN (" + sb.toString() + ")";
-
-        String[] whereArgs = new String[plotIds.size()];
-        for (int i = 0; i < plotIds.size(); i++) {
-            whereArgs[i] = String.valueOf(plotIds.get(i));
-        }
-
-        ContentValues values = new ContentValues();
-        values.put(columnName, "true");
-
-        db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public int fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String id) {
