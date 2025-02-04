@@ -2,6 +2,8 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.olam.digital.ofis.mvvmmodule.Constants.getUniqueQuestion;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -279,6 +281,7 @@ public class FollowUpActionPlan extends Fragment {
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+            List<DmSurveyAnswerTable> checkboxAnswers = null;
             if (Objects.equals(complianceName,"Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
 
@@ -292,7 +295,8 @@ public class FollowUpActionPlan extends Fragment {
                         complaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
             } else if (Objects.equals(complianceName,"Non Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
@@ -303,7 +307,8 @@ public class FollowUpActionPlan extends Fragment {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
             } else if (Objects.equals(complianceName,"Satisfactory")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
@@ -316,12 +321,27 @@ public class FollowUpActionPlan extends Fragment {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
             }
 
+            if (!checkboxAnswers.isEmpty()) {
+                Set<Integer> uniquesQuestion = getUniqueQuestion(checkboxAnswers);
+                for (int questionId : uniquesQuestion) {
+                    List<DmSurveyAnswerTable> answers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                    for (DmSurveyAnswerTable answer : answers) {
+                        if (answer.allowCustomActionPlan) {
+                            isActionPlanRequired = true;
+                            break;
+                        }
+                    }
+                }
+
+            }
 
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
 
+            boolean finalIsActionPlanRequired = isActionPlanRequired;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -333,7 +353,7 @@ public class FollowUpActionPlan extends Fragment {
                         complaint_dropdown.setTag("1" + complaint_id);
                         complaint_dropdown.setRotation(180);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(isActionPlanRequired){
+                            if(finalIsActionPlanRequired){
                                 View desiredView = dm_question_followup_complaint.findViewWithTag("item" + complaint_id);
                                 LinearLayout linearLayout = (LinearLayout) desiredView;
                                 linearLayout.setVisibility(View.VISIBLE);
@@ -345,7 +365,7 @@ public class FollowUpActionPlan extends Fragment {
                         complaint_dropdown.setTag("0" + complaint_id);
                         complaint_dropdown.setRotation(0);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(isActionPlanRequired){
+                            if(finalIsActionPlanRequired){
                                 View desiredView = dm_question_followup_complaint.findViewWithTag("item" + complaint_id);
                                 LinearLayout linearLayout = (LinearLayout) desiredView;
                                 linearLayout.setVisibility(View.GONE);

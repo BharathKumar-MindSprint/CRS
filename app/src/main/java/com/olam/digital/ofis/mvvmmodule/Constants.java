@@ -1,8 +1,12 @@
 package com.olam.digital.ofis.mvvmmodule;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Constants {
 
@@ -53,5 +57,12 @@ public class Constants {
     public static String SATISFACTORY = "Satisfactory";
 
 
+    public static Set<Integer> getUniqueQuestion(List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        Set<Integer> uniqueQuestionIds = new HashSet<>();
+        for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+            uniqueQuestionIds.add(Integer.valueOf(answer.questionID));
+        }
+        return uniqueQuestionIds;
+    }
 
 }

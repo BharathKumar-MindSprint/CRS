@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
+import static com.olam.digital.ofis.mvvmmodule.Constants.getUniqueQuestion;
+
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -81,6 +83,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             complaint_dropdown.setTag("0" + complaint_id);
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+            List<DmSurveyAnswerTable> checkboxAnswers = null;
             int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
             if (Objects.equals(complianceName,"Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
@@ -95,7 +98,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         complaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
             } else if (Objects.equals(complianceName,"Non Compliant")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
@@ -106,7 +110,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
             } else if (Objects.equals(complianceName,"Satisfactory")) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
 
@@ -118,11 +123,26 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         nonComplaintId = complianceIndicator.id;
                     }
                 }
-                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
             }
 
 
+            if (!checkboxAnswers.isEmpty()) {
+                Set<Integer> uniquesQuestion = getUniqueQuestion(checkboxAnswers);
+                for (int questionId : uniquesQuestion) {
+                    List<DmSurveyAnswerTable> answers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                    for (DmSurveyAnswerTable answer : answers) {
+                        if (answer.allowCustomActionPlan) {
+                            isActionPlanRequired = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
+            boolean finalIsActionPlanRequired = isActionPlanRequired;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -135,7 +155,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         complaint_dropdown.setRotation(180);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
 
-                            if(isActionPlanRequired){
+                            if(finalIsActionPlanRequired){
                                 View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + complaint_id);
                                 LinearLayout linearLayout = (LinearLayout) desiredView;
                                 linearLayout.setVisibility(View.VISIBLE);
@@ -148,7 +168,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         complaint_dropdown.setTag("0" + complaint_id);
                         complaint_dropdown.setRotation(0);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(isActionPlanRequired){
+                            if(finalIsActionPlanRequired){
                                 View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + complaint_id);
                                 LinearLayout linearLayout = (LinearLayout) desiredView;
                                 linearLayout.setVisibility(View.GONE);
@@ -226,119 +246,116 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
         if (!dmSurveyAnswerTableList.isEmpty()) {
 
-            boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
-            if (isActionPlanRequired){
-                String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
-                String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
-                editText.setText(answerIdDb);
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
+            String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
+            editText.setText(answerIdDb);
 
-                TextView notResolveText = new TextView(getContext());
-                notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
-                notResolveText.setTextColor(getResources().getColor(R.color.gray));
-                notResolveText.setTag("rb1" + questionIdDb);
-                notResolveText.setPadding(70, 25, 70, 25);
-                notResolveText.setTextSize(14);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                }
-                TextView resolveText = new TextView(getContext());
-                resolveText.setText(getResources().getString(R.string.dm_resolved));
-                resolveText.setTag("rb2" + questionIdDb);
-                resolveText.setTextColor(getResources().getColor(R.color.gray));
-                resolveText.setPadding(110, 25, 110, 25);
-                resolveText.setTextSize(14);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                }
-
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                );
-                layoutParams.setMargins(10, 20, 10, 20);
-
-
-                linearLayout1.addView(notResolveText, layoutParams);
-                linearLayout1.addView(resolveText, layoutParams);
-                List<FollowUpItemMainTable> followupData = db.followUpItemMainTableDao().getFollowupByQuestionId1(questionIdDb, Constants.FARMER_ID, Constants.ATTEMPT);
-
-                if(!followupData.isEmpty()) {
-                    if (followupData.get(0).status.equalsIgnoreCase(Constants.RESOLVED)) {
-
-                        CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
-                        Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        resolveText.setTextColor(getResources().getColor(R.color.white));
-
-                    } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
-                        CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
-                        Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        notResolveText.setTextColor(getResources().getColor(R.color.white));
-                    }
-                }
-                notResolveText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
-
-                        if (!CoQId.contains(id)) {
-                            CoQId.add(id);
-                        }
-                        if (!Constants.questionIdsFollowUp.contains(id)) {
-                            Constants.questionIdsFollowUp.add(id);
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        notResolveText.setTextColor(getResources().getColor(R.color.white));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                        }
-
-                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
-                        }
-
-                        resolveText.setTextColor(getResources().getColor(R.color.gray));
-                    }
-                });
-
-                resolveText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
-
-                        if (!CoQId.contains(id)) {
-                            CoQId.add(id);
-
-                        }
-
-                        if (!Constants.questionIdsFollowUp.contains(id)) {
-                            Constants.questionIdsFollowUp.add(id);
-                        }
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        resolveText.setTextColor(getResources().getColor(R.color.white));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                        }
-                        notResolveText.setTextColor(getResources().getColor(R.color.gray));
-
-                        if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
-                        }
-
-                    }
-                });
+            TextView notResolveText = new TextView(getContext());
+            notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
+            notResolveText.setTextColor(getResources().getColor(R.color.gray));
+            notResolveText.setTag("rb1" + questionIdDb);
+            notResolveText.setPadding(70, 25, 70, 25);
+            notResolveText.setTextSize(14);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
             }
+            TextView resolveText = new TextView(getContext());
+            resolveText.setText(getResources().getString(R.string.dm_resolved));
+            resolveText.setTag("rb2" + questionIdDb);
+            resolveText.setTextColor(getResources().getColor(R.color.gray));
+            resolveText.setPadding(110, 25, 110, 25);
+            resolveText.setTextSize(14);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+            }
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            layoutParams.setMargins(10, 20, 10, 20);
+
+
+            linearLayout1.addView(notResolveText, layoutParams);
+            linearLayout1.addView(resolveText, layoutParams);
+            List<FollowUpItemMainTable> followupData = db.followUpItemMainTableDao().getFollowupByQuestionId1(questionIdDb, Constants.FARMER_ID, Constants.ATTEMPT);
+
+            if(!followupData.isEmpty()) {
+                if (followupData.get(0).status.equalsIgnoreCase(Constants.RESOLVED)) {
+
+                    CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
+                    Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    resolveText.setTextColor(getResources().getColor(R.color.white));
+
+                } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
+                    CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
+                    Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.white));
+                }
+            }
+            notResolveText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
+
+                    if (!CoQId.contains(id)) {
+                        CoQId.add(id);
+                    }
+                    if (!Constants.questionIdsFollowUp.contains(id)) {
+                        Constants.questionIdsFollowUp.add(id);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.white));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                    }
+
+                    if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                        db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
+                    }
+
+                    resolveText.setTextColor(getResources().getColor(R.color.gray));
+                }
+            });
+
+            resolveText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
+
+                    if (!CoQId.contains(id)) {
+                        CoQId.add(id);
+
+                    }
+
+                    if (!Constants.questionIdsFollowUp.contains(id)) {
+                        Constants.questionIdsFollowUp.add(id);
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    resolveText.setTextColor(getResources().getColor(R.color.white));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.gray));
+
+                    if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                        db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT, Constants.PLOT_ID);
+                    }
+
+                }
+            });
 
 
         }
