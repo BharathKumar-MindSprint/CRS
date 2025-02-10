@@ -280,45 +280,40 @@ public class FollowUpActionPlan extends Fragment {
             complaint_dropdown.setTag("0" + complaint_id);
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
             List<DmSurveyAnswerTable> checkboxAnswers = null;
-            if (Objects.equals(complianceName,"Compliant")) {
+            if (Objects.equals(complianceName,Constants.COMPLIANT)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
+
+                complaintId.add(Integer.valueOf(complaint_id));
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
+                        satisfactoryId.add(complianceIndicator.id);
                     } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId = complianceIndicator.id;
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
-            } else if (Objects.equals(complianceName,"Non Compliant")) {
+            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
 
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    }
-                }
+                nonComplaintId.add(Integer.valueOf(complaint_id));
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
-            } else if (Objects.equals(complianceName,"Satisfactory")) {
+            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
-
+                satisfactoryId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);

@@ -84,43 +84,38 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             List<DmSurveyAnswerTable> checkboxAnswers = null;
-            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
-            if (Objects.equals(complianceName,"Compliant")) {
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
+            if (Objects.equals(complianceName,Constants.COMPLIANT)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_compliant));
 
+                complaintId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
+                        satisfactoryId.add(complianceIndicator.id);
                     } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId = complianceIndicator.id;
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
-            } else if (Objects.equals(complianceName,"Non Compliant")) {
+            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
-
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    }
-                }
+                nonComplaintId.add(Integer.valueOf(complaint_id));
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
-            } else if (Objects.equals(complianceName,"Satisfactory")) {
+            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
                 selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
+                    satisfactoryId.add(Integer.valueOf(complaint_id));
+
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);

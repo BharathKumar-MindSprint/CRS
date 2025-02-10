@@ -243,15 +243,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
             if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
 
+                satisfactoryId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
@@ -259,14 +260,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
 
+                complaintId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
+                        satisfactoryId.add(complianceIndicator.id);
                     } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId = complianceIndicator.id;
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
@@ -274,12 +274,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
 
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    }
-                }
+                nonComplaintId.add(Integer.valueOf(complaint_id));
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }

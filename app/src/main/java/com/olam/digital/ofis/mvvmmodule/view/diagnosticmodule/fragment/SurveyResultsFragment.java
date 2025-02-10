@@ -253,20 +253,21 @@ public class SurveyResultsFragment extends Fragment {
         }
         return uniqueQuestionIds.size();
     }
-
-    private int getComplianceId(List<ComplianceIndicator> complianceList, String complianceName) {
+    private List<Integer> getComplianceId(List<ComplianceIndicator> complianceList, String complianceName) {
+        List<Integer> complianceIds = new ArrayList<>();
         for (ComplianceIndicator complianceIndicator : complianceList) {
             if (Objects.equals(complianceIndicator.compliance, complianceName)) {
-                return complianceIndicator.id;
+                complianceIds.add(complianceIndicator.id);
             }
         }
-        return 0;
+        return complianceIds;
     }
 
+
     private void processCompliance(String complianceName, List<ComplianceIndicator> complianceList, OFISRoomDB db) {
-        int satisfactoryId = getComplianceId(complianceList, Constants.SATISFACTORY);
-        int nonComplaintId = getComplianceId(complianceList, Constants.NON_COMPLIANT);
-        int complaintId = getComplianceId(complianceList, Constants.COMPLIANT);
+        List<Integer> satisfactoryId = getComplianceId(complianceList, Constants.SATISFACTORY);
+        List<Integer> nonComplaintId = getComplianceId(complianceList, Constants.NON_COMPLIANT);
+        List<Integer> complaintId = getComplianceId(complianceList, Constants.COMPLIANT);
 
         List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
         if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
