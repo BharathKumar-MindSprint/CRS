@@ -692,16 +692,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-            if (isCheckbox) {
-                List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                if (!checkboxAnswers.isEmpty()) {
-                    for (int i = 0; i < checkboxAnswers.size(); i++) {
-                        dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
-                    }
+        if (isCheckbox) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    dmActionPlansItemList.addAll(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
                 }
-            } else {
-                dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
             }
+        } else {
+            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        }
 
         final List<String> list = new ArrayList<String>();
         list.clear();

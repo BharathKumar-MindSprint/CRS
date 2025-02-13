@@ -736,7 +736,7 @@ public class FollowUpActionPlan extends Fragment {
             List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             if (!checkboxAnswers.isEmpty()) {
                 for (int i = 0; i < checkboxAnswers.size(); i++) {
-                    dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+                    dmActionPlansItemList.addAll(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
                 }
             }
         } else {
