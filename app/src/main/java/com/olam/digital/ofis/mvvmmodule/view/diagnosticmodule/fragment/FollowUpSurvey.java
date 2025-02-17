@@ -49,6 +49,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
+    Set<Integer> questionIdSet = new HashSet<>();
+    int quesNo = 1;
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,8 +70,74 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    private void initializeComplianceStatus() {
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
+            }
+
+
+            initializeComplaintLayout(compliantList, Constants.COMPLIANT);
+            initializeComplaintLayout(satisfactoryList, Constants.SATISFACTORY);
+            initializeComplaintLayout(nonComplaintList, Constants.NON_COMPLIANT);
+        }
+    }
+
+    private void initializeComplaintLayout(List<Integer> complianceList, String type) {
+        quesNo = 1;
+        if (complianceList.isEmpty()) return;
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
+        TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
+        ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
+
+        dm_question_complaint_followup_survey.addView(convertView);
+
+        int tagValue = complianceList.get(0);
+        String tagPrefix = "1" + tagValue;
+        String resourceString = "";
+
+        if (type.equals(Constants.COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_compliant);
+        } else if (type.equals(Constants.SATISFACTORY)) {
+            resourceString = getResources().getString(R.string.dm_satisfactory);
+        } else if (type.equals(Constants.NON_COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_non_compliant);
+        }
+
+        convertView.setTag(tagValue);
+        complaint_dropdown.setTag(tagPrefix);
+        selected_imgName.setText(resourceString);
+
+        LinearLayout linearLayoutItems = new LinearLayout(getActivity());
+        linearLayoutItems.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutItems.setPadding(25, 10, 10, 10);
+        linearLayoutItems.setTag("item" + tagValue);
+        linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
+        linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
+
+        for (Integer compliance : complianceList) {
+            displayQuestionsModuleComplaint(String.valueOf(compliance), complaint_dropdown, linearLayoutItems);
+        }
+    }
+
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    private void displayQuestionsModuleComplaint(String complaint_id) {
+    private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems)  {
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
@@ -73,23 +145,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
 
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
-            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
-            final ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
-
-            dm_question_complaint_followup_survey.addView(convertView);
-            convertView.setTag(complaint_id);
-            complaint_dropdown.setTag("0" + complaint_id);
-
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
             List<DmSurveyAnswerTable> checkboxAnswers = null;
             List<Integer> satisfactoryId = new ArrayList<>();
             List<Integer> nonComplaintId = new ArrayList<>();
             List<Integer> complaintId = new ArrayList<>();
             if (Objects.equals(complianceName,Constants.COMPLIANT)) {
-                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
-
                 complaintId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
@@ -103,12 +164,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
 
             } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
-                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
                 nonComplaintId.add(Integer.valueOf(complaint_id));
                 checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
                 dmSurveyAnswerTableList.addAll(checkboxAnswers);
             } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
-                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
 
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
@@ -136,65 +195,43 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 }
             }
 
-            List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
             boolean finalIsActionPlanRequired = isActionPlanRequired;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String tag = complaint_dropdown.getTag().toString();
-
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
+                    List<Integer> list;
 
                     if (tagFirst == 0) {
-                        complaint_dropdown.setTag("1" + complaint_id);
+                        // Expand
                         complaint_dropdown.setRotation(180);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
-
-                            if(finalIsActionPlanRequired){
-                                View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + complaint_id);
-                                LinearLayout linearLayout = (LinearLayout) desiredView;
-                                linearLayout.setVisibility(View.VISIBLE);
-                            }
-
-                        }
-
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("1" + list.get(0));
                     } else {
-                        complaint_dropdown.setTag("0" + complaint_id);
+                        // Collapse
                         complaint_dropdown.setRotation(0);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(finalIsActionPlanRequired){
-                                View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + complaint_id);
-                                LinearLayout linearLayout = (LinearLayout) desiredView;
-                                linearLayout.setVisibility(View.GONE);
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("0" + list.get(0));
+                    }
 
+                    if(finalIsActionPlanRequired){
+                        View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + list.get(0));
+                        if (desiredView != null) {
+                            LinearLayout linearLayout = (LinearLayout) desiredView;
+                            if (linearLayout != null) {
+                                linearLayout.setVisibility(tagFirst == 0 ? View.VISIBLE : View.GONE);
                             }
-
-
                         }
-
                     }
                 }
             });
 
             if(isActionPlanRequired){
-                LinearLayout linearLayoutItems = new LinearLayout(getActivity());
-                LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                linearLayoutItems.setLayoutParams(layoutParamLastHp);
-                linearLayoutItems.setPadding(25, 10, 10, 10);
-                linearLayoutItems.setTag("item" + complaint_id);
-                linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
-                }
-
                 if (!dmSurveyAnswerTableList.isEmpty()) {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
-                    Set<Integer> questionIdSet = new HashSet<>();
-                    int quesNo = 1;
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
                         if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
@@ -404,12 +441,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         CoQId.clear();
         Constants.questionIdsFollowUp.clear();
 
-        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
-            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-            }
-        }
-
+        // Display all compliance's based in module Id
+        initializeComplianceStatus();
         super.onResume();
     }
 
