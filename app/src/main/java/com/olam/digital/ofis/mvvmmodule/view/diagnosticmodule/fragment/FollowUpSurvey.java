@@ -146,7 +146,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             String complianceName = dmComplaintList.get(0).compliance;
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            List<DmSurveyAnswerTable> checkboxAnswers = null;
+            List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
             List<Integer> satisfactoryId = new ArrayList<>();
             List<Integer> nonComplaintId = new ArrayList<>();
             List<Integer> complaintId = new ArrayList<>();

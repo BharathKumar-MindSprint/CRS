@@ -280,7 +280,7 @@ public class FollowUpActionPlan extends Fragment {
             List<Integer> satisfactoryId = new ArrayList<>();
             List<Integer> nonComplaintId = new ArrayList<>();
             List<Integer> complaintId = new ArrayList<>();
-            List<DmSurveyAnswerTable> checkboxAnswers = null;
+            List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
             if (Objects.equals(complianceName,Constants.COMPLIANT)) {
 
                 // Assigning checkbox answer based on compliance list
