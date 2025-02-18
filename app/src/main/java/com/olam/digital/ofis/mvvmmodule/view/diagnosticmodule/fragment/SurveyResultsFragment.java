@@ -276,9 +276,10 @@ public class SurveyResultsFragment extends Fragment {
 
         List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
         if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
-            answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(complaintId, nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
         } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
-            answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(complaintId, satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId, satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+            answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(complaintId, satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
         } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
             answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
         }
@@ -359,9 +360,10 @@ public class SurveyResultsFragment extends Fragment {
 
         for(String compliance : complianceStatus) {
             if (compliance.equalsIgnoreCase(Constants.SATISFACTORY)) {
-                answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(compliantList, nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             } else if (compliance.equalsIgnoreCase(Constants.COMPLIANT)) {
-                answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
             } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
                 answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             }
