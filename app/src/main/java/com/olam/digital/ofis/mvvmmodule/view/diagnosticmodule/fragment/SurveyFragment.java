@@ -1040,6 +1040,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             Log.d("CheckBox", "Unchecked ID: " + id);
                             db.dmSurveyAnswerTableDao().deleteByAnswerId(id, Constants.FARMER_ID, Constants.PLOT_ID);
                             db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId);
+                            if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                            }
                         }
                     }
                 });
