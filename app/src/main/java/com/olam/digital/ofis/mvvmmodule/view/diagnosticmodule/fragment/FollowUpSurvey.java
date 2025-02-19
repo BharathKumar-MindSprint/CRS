@@ -46,7 +46,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     OFISRoomDB db;
 
     ArrayList<String> CoQId = new ArrayList<>();
-    int totalQuestion = 0;
+    HashSet<Integer> totalQuestion = new HashSet<>();
     int capture_count = 0;
 
     public FollowUpSurvey() {
@@ -58,6 +58,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     List<Integer> compliantList = new ArrayList<>();
     List<Integer> satisfactoryList = new ArrayList<>();
     List<Integer> nonComplaintList = new ArrayList<>();
+
+    List<Integer> complianceActionId = new ArrayList<>();
 
 
     @Override
@@ -140,74 +142,46 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         }
     }
 
+    List<DmSurveyAnswerTable> getComplianceCheckboxAnswers(String complianceName, List<Integer> complianceActionId) {
+
+        List<DmSurveyAnswerTable> answers = new ArrayList<>();
+
+        if (complianceName.equals(Constants.COMPLIANT)) {
+            answers.addAll(db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+            answers.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+        } else if (complianceName.equals(Constants.NON_COMPLIANT)) {
+            answers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+        } else if (complianceName.equals(Constants.SATISFACTORY)) {
+            answers = db.dmSurveyAnswerTableDao().getSatisfactoryList(compliantList, nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+        }
+
+        List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
+        for (DmSurveyAnswerTable answer : answers) {
+            if (complianceActionId.contains(Integer.parseInt(answer. complinceTypeId))) {
+                checkboxAnswers.add(answer);
+            }
+        }
+
+        return checkboxAnswers;
+    }
+
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems)  {
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
+        boolean isActionPlanCheckbox = false;
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
         if (!dmComplaintList.isEmpty()) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
 
-            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
-            List<Integer> satisfactoryId = new ArrayList<>();
-            List<Integer> nonComplaintId = new ArrayList<>();
-            List<Integer> complaintId = new ArrayList<>();
-            if (Objects.equals(complianceName,Constants.COMPLIANT)) {
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-                checkboxAnswers.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
-
-            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
-            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
-
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(complaintId, nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
+            // fetching checkbox answers based on action plan required
+            List<DmSurveyAnswerTable> dmSurveyAnswerCheckbox = getComplianceCheckboxAnswers(complianceName, complianceActionId);
+            if (!dmSurveyAnswerCheckbox.isEmpty()){
+                isActionPlanCheckbox = true;
             }
 
-
-            if (!checkboxAnswers.isEmpty()) {
-                Set<Integer> uniquesQuestion = getUniqueQuestion(checkboxAnswers);
-                for (int questionId : uniquesQuestion) {
-                    List<DmSurveyAnswerTable> answers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                    for (DmSurveyAnswerTable answer : answers) {
-                        if (answer.allowCustomActionPlan) {
-                            isActionPlanRequired = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            boolean finalIsActionPlanRequired = isActionPlanRequired;
+            boolean finalIsActionPlanCheckbox = isActionPlanCheckbox;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -229,7 +203,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         complaint_dropdown.setTag("0" + list.get(0));
                     }
 
-                    if(finalIsActionPlanRequired){
+                    if(isActionPlanRequired || finalIsActionPlanCheckbox){
                         View desiredView = dm_question_complaint_followup_survey.findViewWithTag("item" + list.get(0));
                         if (desiredView != null) {
                             LinearLayout linearLayout = (LinearLayout) desiredView;
@@ -241,28 +215,34 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 }
             });
 
-            if(isActionPlanRequired){
-                if (!dmSurveyAnswerTableList.isEmpty()) {
-                    String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
-                    for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
-                        DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                        if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
-                            dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
-                            TextView textView = new TextView(getActivity());
-                            textView.setText(quesNo + "." + dmQuestionsModule.question);
-                            textView.setTextColor(getResources().getColor(R.color.black));
-                            textView.setTextSize(14);
-                            textView.setPadding(0, 15, 0, 0);
-                            textView.setTypeface(null, Typeface.BOLD);
-                            linearLayoutItems.addView(textView);
-                            renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
-                            quesNo++;
-                        }
-                    }
-                }
+            if (isActionPlanRequired) {
+                renderSurveyQuestions(dmSurveyAnswerTableList, complaint_id, linearLayoutItems);
+            } else if (isActionPlanCheckbox) {
+                renderSurveyQuestions(dmSurveyAnswerCheckbox, complaint_id, linearLayoutItems);
             }
 
+        }
+    }
 
+
+    private void renderSurveyQuestions(List<DmSurveyAnswerTable> surveyList, String complaintId, LinearLayout linearLayout) {
+        if (!surveyList.isEmpty()) {
+            String answerIdDb = surveyList.get(0).answerID;
+            for (int m = 0; m < surveyList.size(); m++) {
+                DmSurveyAnswerTable questionModule = surveyList.get(m);
+                if (questionIdSet.add(Integer.valueOf(questionModule.questionID))) {
+                    questionModule.question = getNamesbyLanguage(questionModule);
+                    TextView textView = new TextView(getActivity());
+                    textView.setText(quesNo + "." + questionModule.question);
+                    textView.setTextColor(getResources().getColor(R.color.black));
+                    textView.setTextSize(14);
+                    textView.setPadding(0, 15, 0, 0);
+                    textView.setTypeface(null, Typeface.BOLD);
+                    linearLayout.addView(textView);
+                    renderTextboxQuestionModuleComplaint(String.valueOf(questionModule.questionID), complaintId, linearLayout);
+                    quesNo++;
+                }
+            }
         }
     }
     public String getNamesbyLanguage(DmSurveyAnswerTable dmSurveyAnswerTable){
@@ -284,7 +264,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     }
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
-        totalQuestion++;
+        totalQuestion.add(Integer.parseInt(id));
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -307,11 +287,16 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
         if (!dmSurveyAnswerTableList.isEmpty()) {
 
-            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
             String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
-            List<DmRangeActionPlansItems> answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(questionIdDb),Integer.parseInt(dmSurveyAnswerTableList.get(0).complinceTypeId),dmSurveyAnswerTableList.get(0).answerID);
-            if (!answerActionPlan.isEmpty()){
-                editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan.get(0)));
+
+            if (!Objects.equals(answerIdDb, null)) {
+                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0")){
+                    DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
+                    editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan));
+                } else {
+                    editText.setText(dmSurveyAnswerTableList.get(0).actionPlanText);
+                }
             }
 
             TextView notResolveText = new TextView(getContext());
@@ -466,12 +451,13 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        totalQuestion = 0;
+        totalQuestion.clear();
         dm_question_complaint_followup_survey.removeAllViews();
 
         db = OFISRoomDB.getDbInstance(getActivity());
         CoQId.clear();
         Constants.questionIdsFollowUp.clear();
+        complianceActionId = db.complianceIndicatorDao().getComplianceActionByModuleId(Constants.MODULE_ID);
 
         // Display all compliance's based in module Id
         initializeComplianceStatus();
@@ -483,9 +469,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.ll_servey_next_followup_survey) {
-            int resolve_count = db.followUpItemMainTableDao().getCountOfResolvedNotResolved( Constants.MODULE_ID, String.valueOf(Constants.ATTEMPT) , Constants.FARMER_ID);
+            List<Integer> resolve_count = db.followUpItemMainTableDao().getCountOfResolvedNotResolved( Constants.MODULE_ID, String.valueOf(Constants.ATTEMPT) , Constants.FARMER_ID);
 
-            if (resolve_count == totalQuestion) {
+            if (new HashSet<>(resolve_count).containsAll(totalQuestion)) {
                 ViewPager2 viewPager = getActivity().findViewById(R.id.viewPagerFollowUp);
                 viewPager.setCurrentItem(1);
                 Constants.capture_count = capture_count;
