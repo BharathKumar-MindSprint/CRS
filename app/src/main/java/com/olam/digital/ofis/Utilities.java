@@ -117,7 +117,6 @@ public class Utilities {
     public static final String PREVIOUS_ENTERED_USERNAME = "previousEnteredUsername";
 
     public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
-
     public static final String STAKE_HOLDER_ID = "stakeHolderId";
     public static final String STAKE_HOLDER_DISPLAY_ID = "stakeHolderId";
     public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";

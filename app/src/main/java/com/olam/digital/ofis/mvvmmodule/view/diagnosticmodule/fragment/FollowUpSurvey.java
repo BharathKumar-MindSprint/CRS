@@ -19,9 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 
@@ -29,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -152,6 +156,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                        dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
                         TextView textView = new TextView(getActivity());
                         textView.setText((m + 1) + "." + dmQuestionsModule.question);
                         textView.setTextColor(getResources().getColor(R.color.black));
@@ -168,7 +173,23 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
         }
     }
-
+    public String getNamesbyLanguage(DmSurveyAnswerTable dmSurveyAnswerTable){
+        List<DmQuestionsModule> dmQuestionsModule = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(dmSurveyAnswerTable.questionID));
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.get(0).question;
+            case "es" -> dmQuestionsModule.get(0).questionEs;
+            case "fr" -> dmQuestionsModule.get(0).questionFr;
+            case "id" -> dmQuestionsModule.get(0).questionIdn;
+            case "in" -> dmQuestionsModule.get(0).questionIdn;
+            case "lo" -> dmQuestionsModule.get(0).questionLo;
+            case "pt" -> dmQuestionsModule.get(0).questionPt;
+            case "th" -> dmQuestionsModule.get(0).questionTh;
+            case "tr" -> dmQuestionsModule.get(0).questionTr;
+            case "vi" -> dmQuestionsModule.get(0).questionVi;
+            default -> dmQuestionsModule.get(0).question;
+        };
+    }
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
         totalQuestion++;
@@ -198,8 +219,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             if (isActionPlanRequired){
                 String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
                 String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
-                editText.setText(answerIdDb);
-
+                List<DmRangeActionPlansItems> answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(questionIdDb),Integer.parseInt(dmSurveyAnswerTableList.get(0).complinceTypeId),dmSurveyAnswerTableList.get(0).answerID);
+                if (!answerActionPlan.isEmpty()){
+                    editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan.get(0)));
+                }
                 TextView notResolveText = new TextView(getContext());
                 notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
                 notResolveText.setTextColor(getResources().getColor(R.color.gray));
@@ -384,7 +407,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 Constants.capture_count = capture_count;
             }
             else {
-                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_select_action_plan_status_before_proceed), Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.ll_servey_back_followup_survey) {
             requireActivity().onBackPressed();

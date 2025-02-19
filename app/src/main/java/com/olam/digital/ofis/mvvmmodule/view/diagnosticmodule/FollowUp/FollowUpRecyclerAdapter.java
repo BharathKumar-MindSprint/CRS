@@ -103,6 +103,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
         public void onClick(View v) {
 
             OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+            in.putExtra("DM_MODULE_ID",moduleID);
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
             notifyItemChanged(previousPosition);
@@ -119,6 +120,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 }
             }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+                intent.putExtra("DM_MODULE_ID",moduleID);
                 intent.putExtra("FollowUpPosition", selectedPosition);
                 if(selectedPosition == items.size() - 1 && !isCompleted){
                     Constants.EDITABLE = true;

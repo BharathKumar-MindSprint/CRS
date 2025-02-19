@@ -69,6 +69,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -4772,7 +4773,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
                         handler.dispatchMessage(msg);
                     } else {
-                        final Long childRegisteredId = dl.getChildServerId(childNwId);
+                        final int childRegisteredId = dl.getChildServerId(childNwId);
                         farmerModule.moveToFirst();
 
                         try {
@@ -5056,6 +5057,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             handler.dispatchMessage(msg);
                                             syncNetworkQueue(originalSyncRequestItemId, handler);
                                         }
+
+                                        dl.deleteNotificationByFarmerId(new ArrayList<>(List.of(childRegisteredId)), OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID);
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : " + postResponse.networkResponse().toString(), context);

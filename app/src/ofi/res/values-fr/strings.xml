@@ -764,7 +764,6 @@
     <string name="document_viewer">Visualisateur de documents</string>
     <string name="selecting_course">Sélectionner le cours</string>
     <string name="no_data_found">Aucune donnée trouvée</string>
-    <string name="select_module">Sélectionnez le module</string>
     <string name="error">Erreur</string>
     <string name="Please_check_the_Internet_Connection">Veuillez vérifier la connexion Internet</string>
     <string name="Alert_message_to_contact_administrator">Oups ! !! Un problème est survenu. Veuillez contacter l\'administrateur.</string>
@@ -1110,19 +1109,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">La taille du tracé est inférieure à la zone minimale configurée (0,0009 HA). Veuillez spécifier une taille de parcelle valide.</string>
     <string name="back">Arrière</string>
-    <string name="dm_select_currency_txt">Sélectionnez la devise du plan d\'action</string>
-    <string name="dm_header_txt">Plan d\'action et preuve du module de diagnostic</string>
-    <string name="follow_up_farmer_details">Suivi des détails de l\'agriculteur</string>
-    <string name="dm_hint_txt">Module de diagnostic</string>
-    <string name="dm_diognostic_module_subtitle">Suivi généré</string>
-    <string name="follow_up_survey">Enquête de suivi</string>
-    <string name="diagnostic_survey">Enquête sur le module de diagnostic</string>
-    <string name="dm_not_resolved">Non Résolu</string>
-    <string name="dm_resolved">Résolue</string>
     <string name="ofis_photo_checkbox_download">Télécharger des images de cases à cocher pour photos</string>
     <string name="ready_to_download_photo_checkbox">Certaines images doivent être téléchargées pour les questions sur les cases à cocher photo. Voulez-vous continuer à télécharger les images maintenant ?</string>
     <string name="no_images_to_be_downloaded">Il n\'y a aucune image à télécharger</string>
     <string name="image_downloaded">Images téléchargées avec succès</string>
-    <string name="dm_select_action_plan">Sélectionner un plan d\'action</string>
-
 </resources>
