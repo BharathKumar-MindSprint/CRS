@@ -837,19 +837,19 @@
     <string name="Stakeholder_Updated">Pemangku Kepentingan Diperbarui</string>
     <string name="farm_holding_suffix">Kepemilikan kebun</string>
     <string name="stakeholder_role_required">Peran pemangku kepentingan diperlukan!</string>
-    <string name="remainder">Remainder</string>
+    <string name="remainder">Pengingat</string>
     <string name="remainder_message">No Eudr AND PA Surveys</string>
-    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
-    <string name="fdp">FDP</string>
-    <string name="clmrs">CLMRS</string>
-    <string name="eudr">EUDR Ground Verification Survey</string>
-    <string name="pa">Protected Area Legality Survey</string>
-    <string name="farmer_not_found">Farmer Not Found</string>
-    <string name="no_notification">No Notification</string>
-    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
-    <string name="start_now">Start Now</string>
-    <string name="skip">Skip</string>
-    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
-    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
+    <string name="home_popup_msg">" Petani Menunggu untuk Menyelesaikan Survey Verifikasi Lapangan"</string>
+    <string name="fdp">Rencana Pengembangan Petani</string>
+    <string name="clmrs">Sistem Pemantauan dan Remediasi Pekerja Anak</string>
+    <string name="eudr">Survey Verifikasi Lapangan EUDR</string>
+    <string name="pa">Survey Legalitas Kawasan Lindung</string>
+    <string name="farmer_not_found">Petani Tidak Ditemukan</string>
+    <string name="no_notification">Tidak Ada Pemberitahuan</string>
+    <string name="farmer_search_hint">Cari Berdasarkan Nama atau ID Petani</string>
+    <string name="start_now">Mulai Sekarang</string>
+    <string name="skip">Lewati</string>
+    <string name="eudr_survey_remainder_message">"Harap Selesaikan Tugas Survey Verifikasi Lapangan "</string>
+    <string name="edur_survey_remainder">Pengingat Survey EUDR</string>
 
 </resources>
