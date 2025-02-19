@@ -27,5 +27,5 @@ public interface DmRangeActionPlansItemsDao {
     List<DmRangeActionPlansItems> getActionPlanItemById(int id, int complianceId, String answerID);
 
     @Query("SELECT * FROM DmRangeActionPlansItems WHERE questionId = :id AND complainceId=:complianceId AND actionValueId=:answerID")
-    DmRangeActionPlansItems getActionPlanItemByIdCheckbox(String id, String complianceId, String answerID);
+    List<DmRangeActionPlansItems> getActionPlanItemByIdCheckbox(String id, String complianceId, String answerID);
 }

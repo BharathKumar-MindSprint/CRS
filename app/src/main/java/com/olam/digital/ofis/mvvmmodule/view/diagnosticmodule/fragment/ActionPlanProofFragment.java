@@ -33,7 +33,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,6 +150,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     private final int FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
+    Set<Integer> questionIdSet = new HashSet<>();
+    int quesNo = 1;
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -233,7 +237,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    private void displayQuestionsModuleComplaint(String complaint_id) {
+    private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems) {
 
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
@@ -243,15 +247,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
             List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            int satisfactoryId = 0, nonComplaintId = 0, complaintId=0;
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
             if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
 
+                satisfactoryId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
@@ -259,14 +264,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
 
+                complaintId.add(Integer.valueOf(complaint_id));
                 // Assigning checkbox answer based on compliance list
                 for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
                     if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId = complianceIndicator.id;
+                        satisfactoryId.add(complianceIndicator.id);
                     } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId = complianceIndicator.id;
+                        nonComplaintId.add(complianceIndicator.id);
                     }
                 }
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
@@ -274,88 +278,45 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
 
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId = complianceIndicator.id;
-                    }
-                }
+                nonComplaintId.add(Integer.valueOf(complaint_id));
                 dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
 //                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }
-
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
-            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
-            final ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
-
-            dm_question_complaint.addView(convertView);
-            convertView.setTag(complaint_id);
-            complaint_dropdown.setTag("0" + complaint_id);
-            if (Objects.equals(complianceName,Constants.COMPLIANT)){
-                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
-            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
-                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
-            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
-                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
-            }
-
-
-            List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
 
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String tag = complaint_dropdown.getTag().toString();
-
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
+                    List<Integer> list;
 
                     if (tagFirst == 0) {
-                        //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
-                        complaint_dropdown.setTag("1" + complaint_id);
+                        // Expand
                         complaint_dropdown.setRotation(180);
-                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
-                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
-                            LinearLayout linearLayout = (LinearLayout) desiredView;
-                            linearLayout.setVisibility(View.VISIBLE);
-                        }
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("1" + list.get(0));
                     } else {
-                        //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
-                        complaint_dropdown.setTag("0" + complaint_id);
+                        // Collapse
                         complaint_dropdown.setRotation(0);
-                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
-                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
-                            LinearLayout linearLayout = (LinearLayout) desiredView;
-                            linearLayout.setVisibility(View.GONE);
-
-                        }
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("0" + list.get(0));
                     }
 
+                    View desiredView = dm_question_complaint.findViewWithTag("item" + list.get(0));
+                    if (desiredView != null) {
+                        LinearLayout linearLayout = (LinearLayout) desiredView;
+                        if (linearLayout != null) {
+                            linearLayout.setVisibility(tagFirst == 0 ? View.VISIBLE : View.GONE);
+                        }
+                    }
                 }
             });
-
-
-            LinearLayout linearLayoutItems = new LinearLayout(getActivity());
-            LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            linearLayoutItems.setLayoutParams(layoutParamLastHp);
-            linearLayoutItems.setPadding(25, 10, 10, 10);
-            linearLayoutItems.setTag("item" + complaint_id);
-            linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
-            }
-
 
             // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
-                Set<Integer> questionIdSet = new HashSet<>();
-                int quesNo = 1;
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
                     if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
@@ -445,6 +406,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
         boolean captureProof = false;
         boolean customActionPlan = false;
+        boolean isActionPlanRequired = false;
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -547,11 +509,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
                                             dm_question_complaint.removeAllViews();
 
-                                            if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -640,6 +599,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
 
                                 } else if (finalOptions[item].equals( getResources().getString(R.string.dm_choose_from_gallery))) {
@@ -678,6 +639,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
@@ -696,16 +659,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-            if (isCheckbox) {
-                List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                if (!checkboxAnswers.isEmpty()) {
-                    for (int i = 0; i < checkboxAnswers.size(); i++) {
-                        dmActionPlansItemList.add(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
-                    }
+        if (isCheckbox) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    dmActionPlansItemList.addAll(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
                 }
-            } else {
-                dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
             }
+        } else {
+            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        }
 
         final List<String> list = new ArrayList<String>();
         list.clear();
@@ -727,9 +690,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             for (DmSurveyAnswerTable answer : answers) {
                 if (answer.isCaptureProof) {
                     captureProof = true;
+                    break;
                 }
+            }
+            for (DmSurveyAnswerTable answer : answers) {
                 if (answer.allowCustomActionPlan) {
                     customActionPlan = true;
+                    break;
                 }
             }
         }
@@ -740,8 +707,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
-            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            if (dmActionPlansItemList.get(c) != null) {
+                isActionPlanRequired = true;
+                list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
+                ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            }
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
@@ -1022,7 +992,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         });
 
 
-        boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         if (isActionPlanRequired) {
             linearLayoutSpin.addView(spinner);
             linearLayoutSpin.addView(editTextCurrency);
@@ -1209,11 +1178,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         dm_question_complaint.removeAllViews();
 
-                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                            }
-                                        }
+                                        // Display all compliance's based in module Id
+                                        initializeComplianceStatus();
 
                                     }
                                 });
@@ -1381,11 +1347,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -1544,11 +1507,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1730,11 +1690,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -1908,11 +1865,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -2064,11 +2018,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -2103,6 +2054,71 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     }
 
+    private void initializeComplianceStatus() {
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
+            }
+
+
+            initializeComplaintLayout(compliantList, Constants.COMPLIANT);
+            initializeComplaintLayout(satisfactoryList, Constants.SATISFACTORY);
+            initializeComplaintLayout(nonComplaintList, Constants.NON_COMPLIANT);
+        }
+    }
+
+    private void initializeComplaintLayout(List<Integer> complianceList, String type) {
+        quesNo = 1;
+        if (complianceList.isEmpty()) return;
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
+        TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
+        ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
+
+        dm_question_complaint.addView(convertView);
+
+        int tagValue = complianceList.get(0);
+        String tagPrefix = "1" + tagValue;
+        String resourceString = "";
+
+        if (type.equals(Constants.COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_compliant);
+        } else if (type.equals(Constants.SATISFACTORY)) {
+            resourceString = getResources().getString(R.string.dm_satisfactory);
+        } else if (type.equals(Constants.NON_COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_non_compliant);
+        }
+
+        convertView.setTag(tagValue);
+        complaint_dropdown.setTag(tagPrefix);
+        selected_imgName.setText(resourceString);
+
+        LinearLayout linearLayoutItems = new LinearLayout(getActivity());
+        linearLayoutItems.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutItems.setPadding(25, 10, 10, 10);
+        linearLayoutItems.setTag("item" + tagValue);
+        linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
+        linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
+
+        for (Integer compliance : complianceList) {
+            displayQuestionsModuleComplaint(String.valueOf(compliance), complaint_dropdown, linearLayoutItems);
+        }
+    }
     public void showCurrencyDropDown(List<DmCurrency> dmCurrenciesItemList) {
 
 
@@ -2179,12 +2195,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 dm_question_complaint.removeAllViews();
 
-                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                    }
-                }
-
+                // Display all compliance's based in module Id
+                initializeComplianceStatus();
 
             }
 
@@ -2208,26 +2220,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     public boolean isStoragePermissionGalleryGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
                                 android.Manifest.permission.READ_MEDIA_AUDIO,
                                 android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.READ_MEDIA_IMAGES}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
@@ -2251,26 +2253,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public boolean isStoragePermissionCameraGranted() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
@@ -2306,22 +2294,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
                     // Permissions granted, proceed with your code
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
                         || !shouldShowRequestPermissionRationale(permissions[1])
                         || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
@@ -2336,24 +2314,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (requestCode == MY_CAMERA_PERMISSION_CODE_TIRAMISU){
             try {
                 if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
                     // Permissions granted, proceed with your code
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 

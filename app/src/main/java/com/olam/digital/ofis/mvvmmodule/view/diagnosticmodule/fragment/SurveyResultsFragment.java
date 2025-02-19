@@ -51,6 +51,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,7 +90,11 @@ public class SurveyResultsFragment extends Fragment {
     GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
     int complaint = 0, nonComplaint = 0, satisfactory = 0;
-
+    Set<Integer> questionIdSet = new HashSet<>();
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
+    List<String> complianceStatus = Arrays.asList(Constants.COMPLIANT, Constants.SATISFACTORY, Constants.NON_COMPLIANT);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -253,20 +258,21 @@ public class SurveyResultsFragment extends Fragment {
         }
         return uniqueQuestionIds.size();
     }
-
-    private int getComplianceId(List<ComplianceIndicator> complianceList, String complianceName) {
+    private List<Integer> getComplianceId(List<ComplianceIndicator> complianceList, String complianceName) {
+        List<Integer> complianceIds = new ArrayList<>();
         for (ComplianceIndicator complianceIndicator : complianceList) {
             if (Objects.equals(complianceIndicator.compliance, complianceName)) {
-                return complianceIndicator.id;
+                complianceIds.add(complianceIndicator.id);
             }
         }
-        return 0;
+        return complianceIds;
     }
 
+
     private void processCompliance(String complianceName, List<ComplianceIndicator> complianceList, OFISRoomDB db) {
-        int satisfactoryId = getComplianceId(complianceList, Constants.SATISFACTORY);
-        int nonComplaintId = getComplianceId(complianceList, Constants.NON_COMPLIANT);
-        int complaintId = getComplianceId(complianceList, Constants.COMPLIANT);
+        List<Integer> satisfactoryId = getComplianceId(complianceList, Constants.SATISFACTORY);
+        List<Integer> nonComplaintId = getComplianceId(complianceList, Constants.NON_COMPLIANT);
+        List<Integer> complaintId = getComplianceId(complianceList, Constants.COMPLIANT);
 
         List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
         if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
@@ -285,6 +291,26 @@ public class SurveyResultsFragment extends Fragment {
                 complaint += complianceSize;
             } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
                 nonComplaint += complianceSize;
+            }
+        }
+    }
+
+    private void initializeComplianceStatus() {
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
             }
         }
     }
@@ -328,12 +354,27 @@ public class SurveyResultsFragment extends Fragment {
         }
 
         // For DM Checkbox
-        List<ComplianceIndicator> complianceList = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-        for (ComplianceIndicator complianceIndicator : complianceList) {
-            List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(String.valueOf(complianceIndicator.id));
-            if (!dmComplaintList.isEmpty()) {
-                String complianceName = dmComplaintList.get(0).compliance;
-                processCompliance(complianceName, complianceList, db);
+        initializeComplianceStatus();
+        List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
+
+        for(String compliance : complianceStatus) {
+            if (compliance.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            } else if (compliance.equalsIgnoreCase(Constants.COMPLIANT)) {
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            }
+
+            if (!answerTableCheckbox.isEmpty()) {
+                int complianceSize = getComplianceSize(answerTableCheckbox);
+                if (compliance.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactory += complianceSize;
+                } else if (compliance.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    complaint += complianceSize;
+                } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaint += complianceSize;
+                }
             }
         }
 

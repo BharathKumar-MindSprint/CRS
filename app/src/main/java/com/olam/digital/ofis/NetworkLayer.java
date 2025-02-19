@@ -6418,8 +6418,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
             boolean isFileNotExists = false;
 
-            for (int k = 0; k < dmSurveyAnswerTableList.size(); k++) {
-                String questionId = dmSurveyAnswerTableList.get(k).questionID;
+            for (int k = 0; k < questionIds.size(); k++) {
+                String questionId = String.valueOf(questionIds.get(k));
                 List<String> filePaths = new ArrayList<>();
                 List<String> fileName = new ArrayList<>();
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();

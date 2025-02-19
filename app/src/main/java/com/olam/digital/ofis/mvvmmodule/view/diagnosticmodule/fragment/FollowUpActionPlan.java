@@ -2,6 +2,8 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.olam.digital.ofis.mvvmmodule.Constants.getUniqueQuestion;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -82,8 +84,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class FollowUpActionPlan extends Fragment {
@@ -155,6 +159,12 @@ public class FollowUpActionPlan extends Fragment {
     public FollowUpActionPlan() {
         // Required empty public constructor
     }
+
+    Set<Integer> questionIdSet = new HashSet<>();
+    int quesNo = 1;
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
 
 
     @SuppressLint("MissingInflatedId")
@@ -253,111 +263,120 @@ public class FollowUpActionPlan extends Fragment {
 
 
     @SuppressLint("ResourceAsColor")
-    private void displayQuestionsModuleComplaint(String complaint_id) {
+    private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems)  {
 
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
         if (!dmComplaintList.isEmpty()) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id,Constants.FARMER_ID, Constants.PLOT_ID);
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id,Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
 
             for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
                 budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
             }
 
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
+            List<DmSurveyAnswerTable> checkboxAnswers = null;
+            if (Objects.equals(complianceName,Constants.COMPLIANT)) {
+                complaintId.add(Integer.valueOf(complaint_id));
 
-            if (complianceName.equalsIgnoreCase("Satisfactory")) {
-                Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
-            } else if (complianceName.equalsIgnoreCase("Compliant")) {
-                Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
-            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
-                Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
+                        satisfactoryId.add(complianceIndicator.id);
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
+                    }
+                }
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
+
+            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
+                nonComplaintId.add(Integer.valueOf(complaint_id));
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
+
+            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
+                satisfactoryId.add(Integer.valueOf(complaint_id));
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
+                    }
+                }
+                checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                dmSurveyAnswerTableList.addAll(checkboxAnswers);
             }
 
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
-            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
-            final ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
+            if (!checkboxAnswers.isEmpty()) {
+                Set<Integer> uniquesQuestion = getUniqueQuestion(checkboxAnswers);
+                for (int questionId : uniquesQuestion) {
+                    List<DmSurveyAnswerTable> answers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                    for (DmSurveyAnswerTable answer : answers) {
+                        if (answer.allowCustomActionPlan) {
+                            isActionPlanRequired = true;
+                            break;
+                        }
+                    }
+                }
 
-            dm_question_followup_complaint.addView(convertView);
-            convertView.setTag(complaint_id);
-            complaint_dropdown.setTag("0" + complaint_id);
-            if (Objects.equals(complianceName,"Compliant")) {
-                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
-            } else if (Objects.equals(complianceName,"Non Compliant")) {
-                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
-            } else if (Objects.equals(complianceName,"Satisfactory")) {
-                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
             }
 
-
-            List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
-
+            boolean finalIsActionPlanRequired = isActionPlanRequired;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String tag = complaint_dropdown.getTag().toString();
-
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
+                    List<Integer> list;
 
                     if (tagFirst == 0) {
-                        complaint_dropdown.setTag("1" + complaint_id);
+                        // Expand
                         complaint_dropdown.setRotation(180);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(isActionPlanRequired){
-                                View desiredView = dm_question_followup_complaint.findViewWithTag("item" + complaint_id);
-                                LinearLayout linearLayout = (LinearLayout) desiredView;
-                                linearLayout.setVisibility(View.VISIBLE);
-                            }
-
-                        }
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("1" + list.get(0));
                     } else {
-                        complaint_dropdown.setTag("0" + complaint_id);
+                        // Collapse
                         complaint_dropdown.setRotation(0);
-                        if (finalDmSurveyAnswerTableList.size() != 0) {
-                            if(isActionPlanRequired){
-                                View desiredView = dm_question_followup_complaint.findViewWithTag("item" + complaint_id);
-                                LinearLayout linearLayout = (LinearLayout) desiredView;
-                                linearLayout.setVisibility(View.GONE);
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("0" + list.get(0));
+                    }
+
+                    if(finalIsActionPlanRequired){
+                        View desiredView = dm_question_followup_complaint.findViewWithTag("item" + list.get(0));
+                        if (desiredView != null) {
+                            LinearLayout linearLayout = (LinearLayout) desiredView;
+                            if (linearLayout != null) {
+                                linearLayout.setVisibility(tagFirst == 0 ? View.VISIBLE : View.GONE);
                             }
                         }
                     }
                 }
             });
 
-
             if(isActionPlanRequired) {
-
-                LinearLayout linearLayoutItems = new LinearLayout(getActivity());
-                LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                linearLayoutItems.setLayoutParams(layoutParamLastHp);
-                linearLayoutItems.setPadding(25, 10, 10, 10);
-                linearLayoutItems.setTag("item" + complaint_id);
-                linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
-                }
 
                 if (!dmSurveyAnswerTableList.isEmpty()) {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                        TextView textView = new TextView(getActivity());
-                        textView.setText((m + 1) + "." + dmQuestionsModule.question);
-                        textView.setTextColor(getResources().getColor(R.color.black));
-                        textView.setTextSize(14);
-                        textView.setPadding(0, 15, 0, 0);
-                        textView.setTypeface(null, Typeface.BOLD);
-                        linearLayoutItems.addView(textView);
-
-                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems, dmQuestionsModule.answerID);
-
+                        if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
+                            TextView textView = new TextView(getActivity());
+                            textView.setText(quesNo + "." + dmQuestionsModule.question);
+                            textView.setTextColor(getResources().getColor(R.color.black));
+                            textView.setTextSize(14);
+                            textView.setPadding(0, 15, 0, 0);
+                            textView.setTypeface(null, Typeface.BOLD);
+                            linearLayoutItems.addView(textView);
+                            renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems, dmQuestionsModule.answerID, dmQuestionsModule);
+                            quesNo++;
+                        }
                     }
                 }
             }
@@ -365,10 +384,114 @@ public class FollowUpActionPlan extends Fragment {
         }
     }
 
+    private void initializeComplianceStatus() {
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
+            }
+
+
+            initializeComplaintLayout(compliantList, Constants.COMPLIANT);
+            initializeComplaintLayout(satisfactoryList, Constants.SATISFACTORY);
+            initializeComplaintLayout(nonComplaintList, Constants.NON_COMPLIANT);
+        }
+    }
+
+    private void initializeComplaintLayout(List<Integer> complianceList, String type) {
+        quesNo = 1;
+        if (complianceList.isEmpty()) return;
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
+        TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
+        ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
+
+        dm_question_followup_complaint.addView(convertView);
+
+        int tagValue = complianceList.get(0);
+        String tagPrefix = "1" + tagValue;
+        String resourceString = "";
+
+        if (type.equals(Constants.COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_compliant);
+        } else if (type.equals(Constants.SATISFACTORY)) {
+            resourceString = getResources().getString(R.string.dm_satisfactory);
+        } else if (type.equals(Constants.NON_COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_non_compliant);
+        }
+
+        convertView.setTag(tagValue);
+        complaint_dropdown.setTag(tagPrefix);
+        selected_imgName.setText(resourceString);
+
+        LinearLayout linearLayoutItems = new LinearLayout(getActivity());
+        linearLayoutItems.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutItems.setPadding(25, 10, 10, 10);
+        linearLayoutItems.setTag("item" + tagValue);
+        linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
+        linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
+
+        for (Integer compliance : complianceList) {
+            displayQuestionsModuleComplaint(String.valueOf(compliance), complaint_dropdown, linearLayoutItems);
+        }
+    }
+    public String checkboxProofFormat(List<Integer> answerIds, List<Integer> complianceIds, String questionId) {
+        List<String> proofFormats = db.dmLookupValuesItemDao().getAllProofFormats(answerIds, complianceIds, questionId);
+        if (proofFormats.contains("Both")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") && proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+            return "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)";
+        } else if (proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Image (.png, .jpg, .jpeg)";
+        } else {
+            return "Both";
+        }
+    }
+
+    public String getProofFormat(String displayType, String questionId, String complaintId, String answerId) {
+        String formatValue = null;
+
+        if (Objects.equals(displayType, Constants.CHECKBOX)) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(
+                    Integer.valueOf(questionId), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+
+            List<Integer> answerIds = new ArrayList<>();
+            List<Integer> complianceIds = new ArrayList<>();
+
+            for (DmSurveyAnswerTable answer : checkboxAnswers) {
+                answerIds.add(Integer.valueOf(answer.answerID));
+                complianceIds.add(Integer.valueOf(answer.complinceTypeId));
+            }
+
+            formatValue = checkboxProofFormat(answerIds, complianceIds, questionId);
+        } else {
+            formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(questionId, complaintId, answerId);
+        }
+
+        return formatValue;
+    }
 
     @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID) {
-
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
+        boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
+        boolean captureProof = false;
+        boolean customActionPlan = false;
 
         LinearLayout linearLayoutQes = new LinearLayout(getActivity());
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -489,12 +612,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
-
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -540,14 +659,14 @@ public class FollowUpActionPlan extends Fragment {
 
                         try{
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id, answerID);
-                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
+                            String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")){
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                 options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             }
@@ -590,6 +709,8 @@ public class FollowUpActionPlan extends Fragment {
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
 
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.dm_choose_from_gallery))) {
@@ -597,8 +718,8 @@ public class FollowUpActionPlan extends Fragment {
                                     if (isStoragePermissionGalleryGranted()) {
 
                                         String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id, answerID);
-                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
+                                        String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -608,7 +729,7 @@ public class FollowUpActionPlan extends Fragment {
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
-                                        }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")){
+                                        }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")){
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -616,7 +737,7 @@ public class FollowUpActionPlan extends Fragment {
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -627,6 +748,8 @@ public class FollowUpActionPlan extends Fragment {
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
@@ -648,7 +771,16 @@ public class FollowUpActionPlan extends Fragment {
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        if (isCheckbox) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    dmActionPlansItemList.addAll(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+                }
+            }
+        } else {
+            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        }
 
         final List<String> list = new ArrayList<String>();
         final List<String> ids = new ArrayList<String>();
@@ -662,19 +794,39 @@ public class FollowUpActionPlan extends Fragment {
             ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).answerID);
         }catch (NumberFormatException e){
             e.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
         }
 
-        boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
-        if (allowCustomActionPlan) {
+        List<DmSurveyAnswerTable> answers = isCheckbox
+                ? db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX)
+                : db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+
+
+
+        if (!answers.isEmpty()) {
+            for (DmSurveyAnswerTable answer : answers) {
+                if (answer.isCaptureProof) {
+                    captureProof = true;
+                    break;
+                }
+            }
+            for (DmSurveyAnswerTable answer : answers) {
+                if (answer.allowCustomActionPlan) {
+                    customActionPlan = true;
+                    break;
+                }
+            }
+        }
+
+        if (customActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
-            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            if (dmActionPlansItemList.get(c) != null) {
+                list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
+                ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            }
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
@@ -900,7 +1052,7 @@ public class FollowUpActionPlan extends Fragment {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_resolved));
                         }
                     } else if (resolved.equalsIgnoreCase(Constants.NOTRESOLVED)) {
-                        notResolveText.setText(getResources().getString(R.string.dm_resolved));
+                        notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
                         notResolveText.setTextColor(getResources().getColor(R.color.notResolved));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_not_resolved));
@@ -1154,12 +1306,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                         dm_question_followup_complaint.removeAllViews();
 
-                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                            }
-                                        }
-
+                                        // Display all compliance's based in module Id
+                                        initializeComplianceStatus();
                                     }
                                 });
                         builder1.setNegativeButton(
@@ -1326,12 +1474,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
-
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1480,11 +1624,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1648,12 +1789,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
-
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1816,12 +1953,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
-
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1965,11 +2098,8 @@ public class FollowUpActionPlan extends Fragment {
 
                                             dm_question_followup_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -2073,13 +2203,8 @@ public class FollowUpActionPlan extends Fragment {
 
                 dm_question_followup_complaint.removeAllViews();
 
-                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                    }
-                }
-
-
+                // Display all compliance's based in module Id
+                initializeComplianceStatus();
             }
 
             @Override
@@ -2102,26 +2227,16 @@ public class FollowUpActionPlan extends Fragment {
 
     public boolean isStoragePermissionGalleryGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
                                 android.Manifest.permission.READ_MEDIA_AUDIO,
                                 android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.READ_MEDIA_IMAGES}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
@@ -2145,26 +2260,12 @@ public class FollowUpActionPlan extends Fragment {
     public boolean isStoragePermissionCameraGranted() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
@@ -2200,22 +2301,12 @@ public class FollowUpActionPlan extends Fragment {
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
                     // Permissions granted, proceed with your code
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
                         || !shouldShowRequestPermissionRationale(permissions[1])
                         || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
@@ -2230,24 +2321,10 @@ public class FollowUpActionPlan extends Fragment {
         if (requestCode == MY_CAMERA_PERMISSION_CODE_TIRAMISU){
             try {
                 if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
                     // Permissions granted, proceed with your code
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
