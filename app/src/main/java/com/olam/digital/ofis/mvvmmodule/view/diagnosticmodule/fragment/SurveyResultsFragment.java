@@ -258,44 +258,6 @@ public class SurveyResultsFragment extends Fragment {
         }
         return uniqueQuestionIds.size();
     }
-    private List<Integer> getComplianceId(List<ComplianceIndicator> complianceList, String complianceName) {
-        List<Integer> complianceIds = new ArrayList<>();
-        for (ComplianceIndicator complianceIndicator : complianceList) {
-            if (Objects.equals(complianceIndicator.compliance, complianceName)) {
-                complianceIds.add(complianceIndicator.id);
-            }
-        }
-        return complianceIds;
-    }
-
-
-    private void processCompliance(String complianceName, List<ComplianceIndicator> complianceList, OFISRoomDB db) {
-        List<Integer> satisfactoryId = getComplianceId(complianceList, Constants.SATISFACTORY);
-        List<Integer> nonComplaintId = getComplianceId(complianceList, Constants.NON_COMPLIANT);
-        List<Integer> complaintId = getComplianceId(complianceList, Constants.COMPLIANT);
-
-        List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
-        if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
-            answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(complaintId, nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-        } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
-            answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId, satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-            answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(complaintId, satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-        } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
-            answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-        }
-
-        if (!answerTableCheckbox.isEmpty()) {
-            int complianceSize = getComplianceSize(answerTableCheckbox);
-            if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
-                satisfactory += complianceSize;
-            } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
-                complaint += complianceSize;
-            } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
-                nonComplaint += complianceSize;
-            }
-        }
-    }
-
     private void initializeComplianceStatus() {
         questionIdSet.clear();
         compliantList.clear();
