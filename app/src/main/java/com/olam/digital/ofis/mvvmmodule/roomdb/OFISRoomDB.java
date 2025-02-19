@@ -197,7 +197,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
-        final Migration MIGRATION_15_16 = new Migration(14, 15) {
+        final Migration MIGRATION_15_16 = new Migration(15, 16) {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
 
