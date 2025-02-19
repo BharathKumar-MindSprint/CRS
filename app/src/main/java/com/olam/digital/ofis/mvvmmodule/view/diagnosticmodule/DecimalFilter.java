@@ -1,10 +1,13 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.widget.EditText;
+
+import com.olam.digital.ofis.R;
 
 public class DecimalFilter implements InputFilter {
     private double minValue;
@@ -13,12 +16,14 @@ public class DecimalFilter implements InputFilter {
     private boolean isDecimal;
 
     private EditText editText;
+    private Context context;
 
-    public DecimalFilter(double minValue, double maxValue, EditText editText, boolean isDecimal) {
+    public DecimalFilter(double minValue, double maxValue, EditText editText, boolean isDecimal, Context context) {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.editText = editText;
         this.isDecimal = isDecimal;
+        this.context = context;
     }
 
     @Override
@@ -59,9 +64,9 @@ public class DecimalFilter implements InputFilter {
                                     editText.setError(null);
                                 } else {
                                     if (isDecimal) {
-                                        editText.setError("Enter range between " + minValue + " to " + maxValue);
+                                        editText.setError(String.format(context.getString(R.string.error_range_decimal), minValue, maxValue));
                                     } else {
-                                        editText.setError("Enter range between " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
+                                        editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                                     }
                                 }
                             } catch (NumberFormatException e) {
@@ -74,11 +79,11 @@ public class DecimalFilter implements InputFilter {
 
             if (input > maxValue) {
                 if (isDecimal) {
-                    editText.setError("Enter  range between " + minValue + " to " + maxValue);
+                    editText.setError(String.format(context.getString(R.string.error_range_decimal), minValue, maxValue));
                 } else {
-                    editText.setError("Enter  range between " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
+                    editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                 }
-                editText.setError("Range from " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
+                editText.setError(String.format(context.getString(R.string.error_range_integer), (int) minValue, (int) maxValue));
                 return "";
             }
 
