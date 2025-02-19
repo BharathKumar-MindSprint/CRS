@@ -68,6 +68,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
@@ -86,6 +88,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -375,6 +379,7 @@ public class FollowUpActionPlan extends Fragment {
                     String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                     for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                         DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                        dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
                         if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
                             TextView textView = new TextView(getActivity());
                             textView.setText(quesNo + "." + dmQuestionsModule.question);
@@ -494,6 +499,24 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         return formatValue;
+    }
+
+    public String getNamesbyLanguage(DmSurveyAnswerTable dmSurveyAnswerTable){
+        List<DmQuestionsModule> dmQuestionsModule = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(dmSurveyAnswerTable.questionID));
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.get(0).question;
+            case "es" -> dmQuestionsModule.get(0).questionEs;
+            case "fr" -> dmQuestionsModule.get(0).questionFr;
+            case "id" -> dmQuestionsModule.get(0).questionIdn;
+            case "in" -> dmQuestionsModule.get(0).questionIdn;
+            case "lo" -> dmQuestionsModule.get(0).questionLo;
+            case "pt" -> dmQuestionsModule.get(0).questionPt;
+            case "th" -> dmQuestionsModule.get(0).questionTh;
+            case "tr" -> dmQuestionsModule.get(0).questionTr;
+            case "vi" -> dmQuestionsModule.get(0).questionVi;
+            default -> dmQuestionsModule.get(0).question;
+        };
     }
 
     @SuppressLint("ResourceAsColor")
@@ -643,7 +666,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         if (isFilesUploaded) {
-            textView.setText("Capture Proof Uploaded");
+            textView.setText(getResources().getString(R.string.dm_capture_proof_uploaded));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
             }
@@ -2514,7 +2537,7 @@ public class FollowUpActionPlan extends Fragment {
 
         if (fileToDelete.exists()) {
             if (fileToDelete.delete()) {
-                Toast.makeText(getContext(), "File deleted successfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.dm_file_deleted_successfully), Toast.LENGTH_SHORT).show();
             }
         }
     }

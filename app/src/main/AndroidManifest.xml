@@ -483,6 +483,7 @@
             android:label="@string/child_details"
             android:parentActivityName=".childlabour.ChildLabourCompleteModuleActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

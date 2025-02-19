@@ -783,12 +783,6 @@
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">O tamanho do lote é menor que a área mínima configurada (0,0009 HA). Especifique um tamanho de lote válido.</string>
     <string name="click_gpx_icon_to_record_pin">Click GPX icon to record pin</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="account_locked">Sua conta está bloqueada, tente depois de algum+B6 tempo</string>
     <string name="ofis_photo_checkbox_download">Baixar imagens da caixa de seleção de fotos</string>
     <string name="ready_to_download_photo_checkbox">Existem imagens que precisam ser baixadas para perguntas da caixa de seleção de fotos. Deseja continuar baixando as imagens agora?</string>
@@ -850,5 +844,33 @@
     <string name="stakeholder_role_required">Função do participante da fazenda necessária!</string>
     <string name="dm_custom_action_plan">Plano de Ação Personalizado</string>
     <string name="dm_edit_action_plan_details">Editar detalhes do plano de ação</string>
+    <string name="dm_capture_proof_uploaded">Prova de captura carregada</string>
+    <string name="dm_please_enter_any_drop_down_value">Por favor, insira qualquer valor do menu suspenso</string>
+    <string name="dm_please_enter_any_value">Por favor, insira qualquer valor</string>
+    <string name="dm_textbox_range_integer">Intervalo de %1$d a %2$d</string>
+    <string name="dm_textbox_range_decimal">Intervalo de %1$.2f a %2$.2f</string>
+    <string name="minimum_range_error">Intervalo mínimo %1$.2f</string>
+
+
+    // DM Translation
+    <string name="dm_diognostic_module">Módulo de Diagnóstico</string>
+    <string name="dm_add_photo">Adicionar Foto!</string>
+    <string name="dm_choose_from_gallery">Escolher da Galeria</string>
+    <string name="dm_do_you_want_to_remove_this_report">Você quer remover este relatório?</string>
+    <string name="dm_maximum_5_files_can_be_uploaded">Máximo de 5 arquivos podem ser carregados.</string>
+    <string name="dm_capture_proof_is_missing">Prova de Captura está faltando</string>
+    <string name="dm_action_plan_is_missing">Plano de Ação está faltando!</string>
+    <string name="dm_please_give_camera_permission">Por favor, dê permissão para a câmera</string>
+    <string name="dm_please_give_gallery_permission">Por favor, dê permissão para a galeria</string>
+    <string name="error_range_decimal">Insira um intervalo entre %1$.2f e %2$.2f</string>
+    <string name="error_range_integer">Insira um intervalo entre %1$d e %2$d</string>
+    <string name="dm_diognostic_module_subtitle">Acompanhamento gerado</string>
+    <string name="follow_up_survey">Pesquisa de acompanhamento</string>
+    <string name="diagnostic_survey">Pesquisa do Módulo de Diagnóstico</string>
+    <string name="dm_not_resolved">Não resolvido</string>
+    <string name="dm_resolved">Resolvido</string>
+    <string name="follow_up_farmer_details">Detalhes de acompanhamento do agricultor</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Por favor, selecione o status do plano de ação antes de prosseguir!</string>
+    <string name="dm_file_deleted_successfully">Arquivo excluído com sucesso!</string>
 </resources>
 
