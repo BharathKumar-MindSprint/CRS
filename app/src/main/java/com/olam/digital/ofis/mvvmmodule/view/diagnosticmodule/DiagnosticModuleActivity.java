@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,16 +23,18 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class DiagnosticModuleActivity extends BaseActivity  {
 
     public TabLayout tabLayout;
     ViewPager2 viewPager;
-    TextView tv_subtitle;
+    TextView tv_subtitle, tv_title;
 
     OFISRoomDB db;
     List<DiagnosticModulesList> dMmoduleList;
@@ -47,14 +50,20 @@ public class DiagnosticModuleActivity extends BaseActivity  {
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         tv_subtitle = findViewById(R.id.tv_subtitle);
+        tv_title = findViewById(R.id.tv_title);
 
         enumerator_id = Utilities.getFromSharedPrefs(context);
         Constants.ENUMERATOR_ID = Utilities.getFromSharedPrefs(context);
 
+        Intent intent = getIntent();
+        String moduleID = intent.getStringExtra("DM_MODULE_ID");
+        db = OFISRoomDB.getDbInstance(context);
+        DmMainModule mainModule = db.dmMainModuleDao().getDmMainModule(Integer.parseInt(moduleID));
+        String subtitle = getNamesbyLanguage(mainModule);
 
-        if(!Constants.MODULE_NAME.equalsIgnoreCase("0"))
-        {
-            tv_subtitle.setText(Constants.MODULE_NAME);
+        if(!Constants.MODULE_NAME.equalsIgnoreCase("0")) {
+            tv_title.setText(Constants.MODULE_NAME);
+            tv_subtitle.setText(subtitle);
         }
 
 
@@ -152,5 +161,23 @@ public class DiagnosticModuleActivity extends BaseActivity  {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    public static String getNamesbyLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.description;
+            case "es" -> dmMainModule.descriptionEs;
+            case "fr" -> dmMainModule.descriptionFr;
+            case "id" -> dmMainModule.descriptionIdn;
+            case "in" -> dmMainModule.descriptionIdn;
+            case "lo" -> dmMainModule.descriptionLo;
+            case "pt" -> dmMainModule.descriptionPt;
+            case "th" -> dmMainModule.descriptionTh;
+            case "tr" -> dmMainModule.descriptionTr;
+            case "vi" -> dmMainModule.descriptionVi;
+            default -> dmMainModule.description;
+        };
+
     }
 }

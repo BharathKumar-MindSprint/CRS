@@ -121,138 +121,197 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:text="@string/total_compliant_answers"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.046"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="34dp"
-                    android:text="@string/total_non_compliant_answers"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.054"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
-                <TextView
-                    android:id="@+id/textView12"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="34dp"
-                    android:text="@string/total_satisfactory_answers"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.047"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="34dp"
-                    android:text="@string/total_action_plans_proposed"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.049"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-                <TextView
-                    android:id="@+id/textView14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="34dp"
-                    android:text="@string/total_budget_proposed"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.043"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView13" />
-
-                <EditText
-                    android:id="@+id/editTextText"
-                    android:layout_width="116dp"
-                    android:layout_height="32dp"
-                    android:background="#ffffff"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:inputType="number"
-                    android:textSize="10sp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.964"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine"
-                    app:layout_constraintVertical_bias="0.052" />
+                    app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine">
 
-                <EditText
-                    android:id="@+id/editTextText3"
-                    android:layout_width="116dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="24dp"
-                    android:background="#ffffff"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:inputType="number"
-                    android:textSize="10sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.964"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/editTextText4"
-                    android:layout_width="116dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="24dp"
-                    android:background="#ffffff"
-                    android:ems="10"
-                    android:enabled="false"
-                    android:textSize="10sp"
-                    android:inputType="number"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.964"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextText3" />
+                        <TextView
+                            android:id="@+id/textView7"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/total_compliant_answers" />
 
-                <EditText
-                    android:id="@+id/editTextText5"
-                    android:layout_width="116dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="24dp"
-                    android:background="#ffffff"
-                    android:padding="@dimen/margin_10"
-                    android:ems="10"
-                    android:textSize="10sp"
-                    android:enabled="false"
-                    android:inputType="number"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.964"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextText4" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
 
-                <EditText
-                    android:id="@+id/editTextText6"
-                    android:layout_width="116dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="24dp"
-                    android:background="#ffffff"
-                    android:ems="10"
-                    android:textSize="10sp"
-                    android:padding="@dimen/margin_10"
-                    android:enabled="false"
-                    android:inputType="number"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.964"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextText5" />
+                        <EditText
+                            android:id="@+id/editTextText"
+                            android:layout_width="116dp"
+                            android:layout_height="32dp"
+                            android:background="#ffffff"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:inputType="number"
+                            android:layout_marginEnd="7dp"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView9"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/total_non_compliant_answers" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/editTextText3"
+                            android:layout_width="116dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="#ffffff"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:inputType="number"
+                            android:layout_marginEnd="7dp"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/textView12"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/total_satisfactory_answers" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/editTextText4"
+                            android:layout_width="116dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="#ffffff"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:textSize="10sp"
+                            android:layout_marginEnd="7dp"
+                            android:inputType="number" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView13"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/total_action_plans_proposed" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/editTextText5"
+                            android:layout_width="116dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="#ffffff"
+                            android:padding="@dimen/margin_10"
+                            android:ems="10"
+                            android:textSize="10sp"
+                            android:enabled="false"
+                            android:layout_marginEnd="7dp"
+                            android:inputType="number"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/textView14"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/total_budget_proposed"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <EditText
+                            android:id="@+id/editTextText6"
+                            android:layout_width="116dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="#ffffff"
+                            android:ems="10"
+                            android:textSize="10sp"
+                            android:padding="@dimen/margin_10"
+                            android:enabled="false"
+                            android:layout_marginEnd="7dp"
+                            android:inputType="number" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
