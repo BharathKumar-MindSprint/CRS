@@ -27,5 +27,7 @@ public interface DmActionPlanCurrenciesTableDao {
     @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
     List<DmActionPlanCurrenciesTable> getCurrencyByModuleId(String id , String farmerId, int plotId);
 
+    @Query("UPDATE DmActionPlanCurrenciesTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
+    void updateFarmerId(int tempFarmerId, int farmerId);
 
 }

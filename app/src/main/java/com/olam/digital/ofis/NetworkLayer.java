@@ -4255,7 +4255,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
 
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
-                                        db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
+
+                                        // DM farmerId udpate
+                                        db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);
