@@ -1189,7 +1189,7 @@ public class FollowUpActionPlan extends Fragment {
             String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1667,7 +1667,7 @@ public class FollowUpActionPlan extends Fragment {
                 String filePathimage = null;
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (URISyntaxException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -1678,7 +1678,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);

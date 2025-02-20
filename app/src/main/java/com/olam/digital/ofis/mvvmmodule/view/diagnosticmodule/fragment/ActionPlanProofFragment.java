@@ -1057,7 +1057,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1552,7 +1552,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (URISyntaxException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -1565,7 +1565,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
