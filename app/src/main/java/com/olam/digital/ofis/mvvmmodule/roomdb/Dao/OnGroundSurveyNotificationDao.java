@@ -17,9 +17,6 @@ public interface OnGroundSurveyNotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<OnGroundSurveyNotification> onGroundSurveyNotifications);
 
-    @Query("SELECT DISTINCT(farmerId), farmerName, photo, olamFarmerId, createdOnPhone, countryId, odFarmerId, plotId FROM OnGroundSurveyNotification")
-    List<OnGroundSurveyNotification> getOnGroundPendingSurveyFarmers();
-
     @Query("SELECT COUNT(DISTINCT(farmerId)) from OnGroundSurveyNotification WHERE (:eudr = '' OR surveyType = :eudr)")
     int getPendingEUDRSurveyCount(String eudr);
 
