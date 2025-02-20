@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "OnGroundSurveyNotification")
 public class OnGroundSurveyNotification {
     @PrimaryKey(autoGenerate = true)
+    @NonNull
     @ColumnInfo(name = "id")
     public Integer id;
 
