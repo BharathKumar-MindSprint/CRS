@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 import static com.olam.digital.ofis.mvvmmodule.Constants.getUniqueQuestion;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,11 +11,13 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -263,6 +266,19 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         };
     }
 
+    private TextView createTextView(Context context, String text, String tag) {
+        TextView textView = new TextView(context);
+        textView.setText(text);
+        textView.setTextColor(context.getResources().getColor(R.color.gray));
+        textView.setPadding(70, 25, 70, 25);
+        textView.setTextSize(14);
+        textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+        textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+        textView.setSingleLine();
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setTag(tag);
+        return textView;
+    }
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
         totalQuestion.add(Integer.parseInt(id));
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -276,7 +292,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         editText.setEnabled(false);
         editText.setTextColor(getResources().getColor(R.color.black));
         editText.setPadding(10, 10, 0, 10);
-        layoutParamsQes.setMargins(0, 10, 0, 10);
+        layoutParamsQes.setMargins(0, 10, 0, 30);
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
@@ -285,6 +301,12 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         LinearLayout linearLayout1 = new LinearLayout(getContext());
         linearLayout1.setGravity(Gravity.CENTER);
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout1.setWeightSum(2.0f);
+
+        linearLayout1.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
         if (!dmSurveyAnswerTableList.isEmpty()) {
 
             String answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
@@ -299,33 +321,25 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 }
             }
 
-            TextView notResolveText = new TextView(getContext());
-            notResolveText.setText(getResources().getString(R.string.dm_not_resolved));
-            notResolveText.setTextColor(getResources().getColor(R.color.gray));
-            notResolveText.setTag("rb1" + questionIdDb);
-            notResolveText.setPadding(70, 25, 70, 25);
-            notResolveText.setTextSize(14);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-            }
-            TextView resolveText = new TextView(getContext());
-            resolveText.setText(getResources().getString(R.string.dm_resolved));
-            resolveText.setTag("rb2" + questionIdDb);
-            resolveText.setTextColor(getResources().getColor(R.color.gray));
-            resolveText.setPadding(110, 25, 110, 25);
-            resolveText.setTextSize(14);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-            }
+            TextView notResolveText = createTextView(getContext(),
+                    getResources().getString(R.string.dm_not_resolved),
+                    "rb1" + questionIdDb);
+
+            TextView resolveText = createTextView(getContext(),
+                    getResources().getString(R.string.dm_resolved),
+                    "rb2" + questionIdDb);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f
             );
-            layoutParams.setMargins(10, 20, 10, 20);
 
+            View spacer = new View(getContext());
+            spacer.setLayoutParams(new LinearLayout.LayoutParams(20, LinearLayout.LayoutParams.MATCH_PARENT));
 
             linearLayout1.addView(notResolveText, layoutParams);
+            linearLayout1.addView(spacer);
             linearLayout1.addView(resolveText, layoutParams);
             List<FollowUpItemMainTable> followupData = db.followUpItemMainTableDao().getFollowupByQuestionId1(questionIdDb, Constants.FARMER_ID, Constants.ATTEMPT);
 
