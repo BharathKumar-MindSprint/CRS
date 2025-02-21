@@ -33,6 +33,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1616,6 +1617,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String destinationFilePath = destinationFile.getAbsolutePath();
                 dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                // delete data stored temporary for isDownloadsDocument
+                if (PathUtil.isDownloadsDocument(uri)) {
+                    File file = new File(filePathimage);
+                    if (file.exists()) {
+                        if (file.delete()) {
+                            Log.d("IsDownloadDocument","File deleted successfully");
+                        } else {
+                            Log.d("IsDownloadDocument","Failed to delete file");
+                        }
+                    }
+                }
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
