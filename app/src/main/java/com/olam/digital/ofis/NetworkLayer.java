@@ -1877,6 +1877,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
                                 else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                                     builder.addFormDataPart("type", Utilities.CLMRS);
+                                    builder.addFormDataPart("childId", String.valueOf(childNwId));
                                 }
 
 
