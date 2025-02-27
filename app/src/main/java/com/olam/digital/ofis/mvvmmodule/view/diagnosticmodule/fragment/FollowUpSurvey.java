@@ -218,10 +218,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                 }
             });
 
-            if (isActionPlanRequired) {
+            if (isActionPlanRequired || isActionPlanCheckbox) {
+                dmSurveyAnswerTableList.addAll(dmSurveyAnswerCheckbox);
                 renderSurveyQuestions(dmSurveyAnswerTableList, complaint_id, linearLayoutItems);
-            } else if (isActionPlanCheckbox) {
-                renderSurveyQuestions(dmSurveyAnswerCheckbox, complaint_id, linearLayoutItems);
             }
 
         }
@@ -313,7 +312,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
 
             if (!Objects.equals(answerIdDb, null)) {
-                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0")){
+                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0") && !Objects.equals(answerIdDb,"")){
                     DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
                     editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan));
                 } else {

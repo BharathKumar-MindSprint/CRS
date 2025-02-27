@@ -342,10 +342,9 @@ public class FollowUpActionPlan extends Fragment {
                 }
             });
 
-            if (isActionPlanRequired) {
+            if (isActionPlanRequired || isActionPlanCheckbox) {
+                dmSurveyAnswerTableList.addAll(dmSurveyAnswerCheckbox);
                 renderSurveyQuestions(dmSurveyAnswerTableList, complaint_id, linearLayoutItems);
-            } else if (isActionPlanCheckbox) {
-                renderSurveyQuestions(dmSurveyAnswerCheckbox, complaint_id, linearLayoutItems);
             }
 
         }
@@ -528,7 +527,7 @@ public class FollowUpActionPlan extends Fragment {
         if (!dmSurveyAnswerTableList.isEmpty()) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
             if (!Objects.equals(answerIdDb, null)) {
-                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0")){
+                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0") && !Objects.equals(answerIdDb,"")){
                     DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
                     editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan));
                 } else {
