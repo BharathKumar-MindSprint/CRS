@@ -95,6 +95,7 @@ public class SurveyResultsFragment extends Fragment {
     List<Integer> satisfactoryList = new ArrayList<>();
     List<Integer> nonComplaintList = new ArrayList<>();
     List<String> complianceStatus = Arrays.asList(Constants.COMPLIANT, Constants.SATISFACTORY, Constants.NON_COMPLIANT);
+    static Boolean val;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -283,7 +284,7 @@ public class SurveyResultsFragment extends Fragment {
         super.onResume();
 
         amount = 0;
-        Boolean val = false;
+        val = false;
         double totalWeightages = 0;
         double finalScore = 0;
         complaint = 0;
@@ -328,6 +329,13 @@ public class SurveyResultsFragment extends Fragment {
                 answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
             } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
                 answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                for (DmSurveyAnswerTable answer : answerTableCheckbox){
+                    int newColorIsCritical = db.dmQuestionsModuleDao().getIsCriticalQuestForColor(Constants.MODULE_ID , Integer.parseInt(answer.questionID));
+                    if (Objects.equals(newColorIsCritical, 1)) {
+                        val = true;
+                        break;
+                    }
+                }
             }
 
             if (!answerTableCheckbox.isEmpty()) {
