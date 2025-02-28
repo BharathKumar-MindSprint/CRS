@@ -65,4 +65,7 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT questionId FROM FOLLOWUPITEMMAINTABLE WHERE moduleId=:id and attempt=:attempt and farmerId=:farmerID")
     List<Integer> getCountOfResolvedNotResolved(String id , String attempt , String farmerID );
 
+    @Query("SELECT DISTINCT questionId from FOLLOWUPITEMMAINTABLE where moduleId=:moduleId AND farmerId=:farmerId AND status=:status AND isSync=1")
+    List<Integer> getResolvedQuestionId(String moduleId, String farmerId, String status);
+
 }

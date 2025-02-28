@@ -170,6 +170,7 @@ public class FollowUpActionPlan extends Fragment {
     List<Integer> satisfactoryList = new ArrayList<>();
     List<Integer> nonComplaintList = new ArrayList<>();
     List<Integer> complianceActionId = new ArrayList<>();
+    List<Integer> resolvedQuestionId = new ArrayList<>();
 
 
     @SuppressLint("MissingInflatedId")
@@ -344,7 +345,16 @@ public class FollowUpActionPlan extends Fragment {
 
             if (isActionPlanRequired || isActionPlanCheckbox) {
                 dmSurveyAnswerTableList.addAll(dmSurveyAnswerCheckbox);
-                renderSurveyQuestions(dmSurveyAnswerTableList, complaint_id, linearLayoutItems);
+
+                // remove all the question where the followup is resolved
+                List<DmSurveyAnswerTable> answer = new ArrayList<>();
+                for(DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                    if (!resolvedQuestionId.contains(Integer.parseInt(answerTable.questionID))){
+                        answer.add(answerTable);
+                    }
+                }
+
+                renderSurveyQuestions(answer, complaint_id, linearLayoutItems);
             }
 
         }
@@ -2499,6 +2509,8 @@ public class FollowUpActionPlan extends Fragment {
         db = OFISRoomDB.getDbInstance(getActivity());
         complianceActionId = db.complianceIndicatorDao().getComplianceActionByModuleId(Constants.MODULE_ID);
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
+
+        resolvedQuestionId = db.followUpItemMainTableDao().getResolvedQuestionId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.RESOLVED);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
 
