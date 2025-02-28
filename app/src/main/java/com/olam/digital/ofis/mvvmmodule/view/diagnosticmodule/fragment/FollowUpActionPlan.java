@@ -532,16 +532,32 @@ public class FollowUpActionPlan extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
+        List<FollowUpItemMainTable> followUpItemMainTableList = new ArrayList<>();
+        if (Objects.equals(Constants.ATTEMPT, 1)){
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        } else {
+            followUpItemMainTableList = db.followUpItemMainTableDao().getFollowUpDataByQuestionId(id, Constants.FARMER_ID, Constants.ATTEMPT - 1);
+        }
 
-        if (!dmSurveyAnswerTableList.isEmpty()) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
+        if (!dmSurveyAnswerTableList.isEmpty() || !followUpItemMainTableList.isEmpty()) {
+            String answerIdDb = null;
+            String questionIdDb = null;
+            String actionPlanText = null;
+
+            if (!dmSurveyAnswerTableList.isEmpty()) {
+                answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
+                actionPlanText = dmSurveyAnswerTableList.get(0).actionPlanText;
+            } else if (!followUpItemMainTableList.isEmpty()) {
+                answerIdDb = followUpItemMainTableList.get(0).actionPlanId;
+                actionPlanText = followUpItemMainTableList.get(0).actionPlanText;
+            }
             if (!Objects.equals(answerIdDb, null)) {
                 if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0") && !Objects.equals(answerIdDb,"")){
                     DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
                     editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan));
                 } else {
-                    editText.setText(dmSurveyAnswerTableList.get(0).actionPlanText);
+                    editText.setText(actionPlanText);
                 }
             }
         }
