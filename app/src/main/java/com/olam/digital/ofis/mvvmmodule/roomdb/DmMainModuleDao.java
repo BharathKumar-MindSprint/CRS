@@ -8,6 +8,7 @@ import androidx.room.Query;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 
 import java.util.List;
+import java.util.Set;
 
 @Dao
 public interface DmMainModuleDao {
@@ -82,4 +83,14 @@ public interface DmMainModuleDao {
 """)
     List<DmMainModule> getDmMainModuleByAssignmentsByDiagnosticTypeId(String countryId, String regionId, String farmerGroupId, String districtId, String sectionId, String placeId, String partnerId, String programmeId, String productId, int diagnosticTypeId);
 
+    @Query(
+        """
+            SELECT DISTINCT d.value 
+            FROM DmModuleAssignments a
+            INNER JOIN DmMainModule m ON m. id = a.moduleId
+            INNER JOIN DmMasterData d ON d.id = m.plotSurveyType
+            where a.assignmentType = 'FarmerGroup' AND a.assignmentId = :assignmentId
+        """
+    )
+    List<String> getDiagnosticSurveysByFarmerGroupId(int assignmentId);
 }

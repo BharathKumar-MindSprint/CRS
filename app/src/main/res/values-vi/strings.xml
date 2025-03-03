@@ -719,8 +719,6 @@
     <string name="Stakeholder_Updated">Bên liên quan đã cập nhậ</string>
     <string name="farm_holding_suffix">trang trại nắm giữ</string>
     <string name="stakeholder_role_required">Cần có vai trò bên liên quan!</string>
-
-    // DM Translation
     <string name="dm_header_txt">Kế hoạch hành động mô-đun chẩn đoán và bằng chứng</string>
     <string name="dm_hint_txt">Mô-đun chẩn đoán</string>
     <string name="dm_survey">Khảo sát</string>
@@ -769,4 +767,18 @@
     <string name="error_range_integer">Nhập khoảng từ %1$d đến %2$d</string>
     <string name="dm_please_select_action_plan_status_before_proceed">Vui lòng chọn trạng thái kế hoạch hành động trước khi tiếp tục!</string>
     <string name="dm_file_deleted_successfully">Tệp đã được xóa thành công!</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
+    <string name="start_now">Start Now</string>
+    <string name="skip">Skip</string>
+    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
+    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
 </resources>

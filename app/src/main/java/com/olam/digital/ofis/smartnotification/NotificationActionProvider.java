@@ -6,14 +6,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Keep;
 import androidx.core.view.ActionProvider;
 
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+
+import java.util.List;
 
 /**
  * Task action provider. Created by ben on 08/11/2016.
@@ -53,7 +57,7 @@ public class NotificationActionProvider extends ActionProvider {
         taskIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, NotificationActivity.class);
+                Intent intent = new Intent(mContext, AllNotificationActivity.class);
                 mContext.startActivity(intent);
             }
         });
@@ -61,20 +65,17 @@ public class NotificationActionProvider extends ActionProvider {
 
     private void updateTaskCount() {
         DataLayer dl = new DataLayer(mContext.getResources(), mContext);
+        OFISRoomDB db = OFISRoomDB.getDbInstance(mContext);
         int notificationCount = dl.getNotificationCount();
-        TextView listCount = (TextView) view.findViewById(R.id.notificationListCount);
-        listCount.setMinWidth(70);
-        if (notificationCount > 0) {
-            if (notificationCount >= 1 && notificationCount < 100) {
-                listCount.setText(String.format("%02d",notificationCount));
-            }else if (notificationCount >= 100 && notificationCount < 1000){
-                listCount.setText("99+");
-            }else if (notificationCount >= 1000 && notificationCount < 10000){
-                int firstDigit = Integer.parseInt(Integer.toString(notificationCount).substring(0, 1));
-                listCount.setText(firstDigit + "k+");
-            }else if (notificationCount >= 10000){
-                listCount.setText("10k+");
-            }
+        int EUDRGroundSurveyCount = 0;
+
+        if (notificationCount <= 0) {
+            EUDRGroundSurveyCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+        }
+
+        ImageView listCount = (ImageView) view.findViewById(R.id.notificationListCount);
+
+        if (notificationCount > 0 || EUDRGroundSurveyCount > 0) {
             listCount.setVisibility(View.VISIBLE);
         } else {
             listCount.setVisibility(View.GONE);

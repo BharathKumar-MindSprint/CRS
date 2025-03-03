@@ -717,8 +717,6 @@
     <string name="Stakeholder_Updated">อัปเดตผู้มีส่วนได้ส่วนเสีย</string>
     <string name="farm_holding_suffix">ฟาร์มที่ถือครอง</string>
     <string name="stakeholder_role_required">จำเป็นต้องมีบทบาทของผู้มีส่วนได้ส่วนเสีย!</string>
-
-    // DM Translation
     <string name="dm_header_txt">แผนปฏิบัติการและหลักฐานของโมดูลการวินิจฉัย</string>
     <string name="dm_hint_txt">โมดูลการวินิจฉัย</string>
     <string name="dm_survey">แบบสำรวจ</string>
@@ -767,4 +765,18 @@
     <string name="error_range_integer">ป้อนช่วงระหว่าง %1$d ถึง %2$d</string>
     <string name="dm_please_select_action_plan_status_before_proceed">กรุณาเลือกสถานะแผนปฏิบัติการก่อนดำเนินการต่อ!</string>
     <string name="dm_file_deleted_successfully">ลบไฟล์เรียบร้อยแล้ว!</string>
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
+    <string name="start_now">Start Now</string>
+    <string name="skip">Skip</string>
+    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
+    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
 </resources>

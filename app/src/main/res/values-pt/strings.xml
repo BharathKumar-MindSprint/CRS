@@ -872,5 +872,19 @@
     <string name="follow_up_farmer_details">Detalhes de acompanhamento do agricultor</string>
     <string name="dm_please_select_action_plan_status_before_proceed">Por favor, selecione o status do plano de ação antes de prosseguir!</string>
     <string name="dm_file_deleted_successfully">Arquivo excluído com sucesso!</string>
+    <string name="remainder">Lembrete</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" Os agricultores estão pendentes para concluir pesquisas de verificação em campo"</string>
+    <string name="fdp">FMP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">Pesquisa de verificação em campo da EUDR</string>
+    <string name="pa">Pesquisa de Áreas de proteção</string>
+    <string name="farmer_not_found">Produtor não encontrado</string>
+    <string name="no_notification">Nenhuma notificação</string>
+    <string name="farmer_search_hint">Pesquisar por nome ou ID do produtor</string>
+    <string name="start_now">Comece agora</string>
+    <string name="skip">Pular</string>
+    <string name="eudr_survey_remainder_message">"Por favor, conclua a pesquisa de verificação em campo atribuída "</string>
+    <string name="edur_survey_remainder">Lembrete da Pesquisa EUDR</string>
 </resources>
 

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.olam.digital.ofis.smartnotification.AllNotificationActivity;
 import com.olam.digital.ofis.smartnotification.NotificationActivity;
 
 /**
@@ -75,7 +76,7 @@ public class BaseListActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_notification) {
-            Intent intent = new Intent(this, NotificationActivity.class);
+            Intent intent = new Intent(this, AllNotificationActivity.class);
             startActivity(intent);
             return true;
         }

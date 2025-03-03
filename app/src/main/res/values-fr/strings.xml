@@ -1184,9 +1184,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="dm_textbox_range_integer">Plage de %1$d à %2$d</string>
     <string name="dm_textbox_range_decimal">Plage de %1$.2f à %2$.2f</string>
     <string name="minimum_range_error">Plage minimale %1$.2f</string>
-
-
-    // DM Translation
     <string name="dm_diognostic_module">Module de Diagnostic</string>
     <string name="dm_add_photo">Ajouter une Photo!</string>
     <string name="dm_choose_from_gallery">Choisir de la Galerie</string>
@@ -1200,5 +1197,18 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="error_range_integer">Entrez une plage entre %1$d et %2$d</string>
     <string name="dm_please_select_action_plan_status_before_proceed">Veuillez sélectionner le statut du plan d\'action avant de continuer !</string>
     <string name="dm_file_deleted_successfully">Fichier supprimé avec succès !</string>
-
+    <string name="remainder">Rappel</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" Les producteurs doivent compléter les enquêtes de vérification sur le terrain"</string>
+    <string name="fdp">FDP: Plan de développement agricole</string>
+    <string name="clmrs">CLMRS: Système de surveillance et remédiation du travail des enfants</string>
+    <string name="eudr">Enquête de vérification terrain EUDR</string>
+    <string name="pa">Enquête sur la légalité des zones protégées</string>
+    <string name="farmer_not_found">Producteur introuvable</string>
+    <string name="no_notification">Pas de notification</string>
+    <string name="farmer_search_hint">Recherche un producteur par son nom ou le code </string>
+    <string name="start_now">Commencer maintenant</string>
+    <string name="skip">Sauter</string>
+    <string name="eudr_survey_remainder_message">"Veuillez compléter l'enquête de vérification terrain qui vous a été attribuée "</string>
+    <string name="edur_survey_remainder">Rappel de l\'enquête EUDR</string>
 </resources>

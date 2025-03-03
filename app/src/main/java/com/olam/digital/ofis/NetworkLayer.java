@@ -39,6 +39,7 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.model.GeoDTO;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
@@ -68,6 +69,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -4771,7 +4773,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
                         handler.dispatchMessage(msg);
                     } else {
-                        final Long childRegisteredId = dl.getChildServerId(childNwId);
+                        final int childRegisteredId = dl.getChildServerId(childNwId);
                         farmerModule.moveToFirst();
 
                         try {
@@ -5055,6 +5057,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             handler.dispatchMessage(msg);
                                             syncNetworkQueue(originalSyncRequestItemId, handler);
                                         }
+
+                                        dl.deleteNotificationByFarmerId(new ArrayList<>(List.of(childRegisteredId)), OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID);
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : " + postResponse.networkResponse().toString(), context);
@@ -6162,6 +6166,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         if (plotId != 0) {
                                             boolean isDeforestationSurvey = db.dmMasterDataDao().getDiagnosticPlotTypeId(Utilities.EUDR_GROUND_VERIFICATION_SURVEY) == dmMainModule.plotSurveyType;
+                                            db.onGroundSurveyNotificationDao().deleteBySurveyType(farmerId, plotId, isDeforestationSurvey ? Constants.EUDR : Constants.PA);
                                             dl.updatePlotFlagsAndSurveyCapture(isDeforestationSurvey, plotId);
                                         }
                                     }
