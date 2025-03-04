@@ -9,15 +9,16 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 
-import java.net.URISyntaxException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 public class PathUtil {
-    /*
-     * Gets the file path of the given Uri.
-     */
     @SuppressLint("NewApi")
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+    public static String getPath(Context context, Uri uri) {
         final boolean needToCheckUri = Build.VERSION.SDK_INT >= 19;
         String selection = null;
         String[] selectionArgs = null;
@@ -29,9 +30,11 @@ public class PathUtil {
                 final String[] split = docId.split(":");
                 return Environment.getExternalStorageDirectory() + "/" + split[1];
             } else if (isDownloadsDocument(uri)) {
-                final String id = DocumentsContract.getDocumentId(uri);
-                uri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                String fileName = getFileName(uri, context);
+                File internalFile = new File(context.getFilesDir(), fileName);
+                copyFileToInternalStorage(uri, internalFile, context);
+                return internalFile.getAbsolutePath();
+
             } else if (isMediaDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
@@ -62,6 +65,43 @@ public class PathUtil {
             return uri.getPath();
         }
         return null;
+    }
+
+    private static String getFileName(Uri uri, Context context) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
+    }
+
+    private static void copyFileToInternalStorage(Uri uri, File internalFile, Context context) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            OutputStream outputStream = new FileOutputStream(internalFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            inputStream.close();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

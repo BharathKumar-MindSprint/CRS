@@ -267,7 +267,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         spinner.setTag(questionId+2);
 
         TextView textView = new TextView(getActivity());
-        textView.setText("Please enter any drop down value");
+        textView.setText(getResources().getString(R.string.dm_please_enter_any_drop_down_value));
         textView.setTextColor(getResources().getColor(R.color.red_view_survey));
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
@@ -397,19 +397,19 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
-            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[] { negativeDecimalFilter });
 
         }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[]{numberFilter});
         }
         else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true);
-            editText.setHint("Range from " + minValue + " to " + maxValue);
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true, getContext());
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[]{decimalFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -442,7 +442,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             }
                         } else {
                             // Input is less than the minimum value
-                            editText.setError("Minimum Range " + minValue);
+                            editText.setError(String.format(getContext().getString(R.string.minimum_range_error), minValue));
                         }
                     } else {
                         // Input is empty
@@ -453,8 +453,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
         else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint("Range from " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
-            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false, getContext());
             editText.setFilters(new InputFilter[]{numberFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -487,7 +487,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             }
                         } else {
                             // Input is less than the minimum value
-                            editText.setError("Minimum Range " + minValue);
+                            editText.setError(String.format(getContext().getString(R.string.minimum_range_error), minValue));
                         }
                     } else {
                         // Input is empty
@@ -498,7 +498,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
 
         TextView textView = new TextView(getActivity());
-        textView.setText("Please enter any value!");
+        textView.setText(getResources().getString(R.string.dm_please_enter_any_value));
         textView.setTextColor(getResources().getColor(R.color.red_view_survey));
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
@@ -623,7 +623,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
         TextView textView = new TextView(getActivity());
-        textView.setText("Please enter any drop down value");
+        textView.setText(getResources().getString(R.string.dm_please_enter_any_drop_down_value));
         textView.setTextColor(getResources().getColor(R.color.red_view_survey));
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);
@@ -752,19 +752,19 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
-            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[] { negativeDecimalFilter });
 
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                editText.setHint("Range from " + minValue + " to " + maxValue);
+                editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
                 NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
                 editText.setFilters(new InputFilter[]{numberFilter});
 
         } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true);
-            editText.setHint("Range from " + minValue + " to " + maxValue);
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue, editText, true, getContext());
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_decimal), minValue, maxValue));
             editText.setFilters(new InputFilter[]{decimalFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -789,15 +789,15 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             }
                         } else {
                             // Input is less than the minimum value
-                            editText.setError("Minimum Range " + minValue);
+                            editText.setError(String.format(getContext().getString(R.string.minimum_range_error), minValue));
                         }
                     }
                 }
             });
         } else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint("Range from " + (int) Double.parseDouble(String.valueOf(minValue)) + " to " + (int) Double.parseDouble(String.valueOf(maxValue)));
-            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false);
+            editText.setHint(String.format(getContext().getString(R.string.dm_textbox_range_integer), (int) minValue, (int) maxValue));
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue, editText, false, getContext());
             editText.setFilters(new InputFilter[]{numberFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
@@ -821,7 +821,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                 editText.setError(null);
                             }
                         } else {
-                            editText.setError("Minimum Range " + minValue);
+                            editText.setError(String.format(getContext().getString(R.string.minimum_range_error), minValue));
                         }
                     }
                 }
@@ -829,7 +829,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         }
 
         TextView textView = new TextView(getActivity());
-        textView.setText("Please enter any value!");
+        textView.setText(getResources().getString(R.string.dm_please_enter_any_value));
         textView.setTextColor(getResources().getColor(R.color.red_view_survey));
         textView.setTextSize(12);
         textView.setPadding(0, 15, 0, 0);

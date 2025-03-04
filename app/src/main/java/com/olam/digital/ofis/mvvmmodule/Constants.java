@@ -49,6 +49,10 @@ public class Constants {
     public static ArrayList<String> questionIdsFollowUp = new ArrayList<>();
 
     public static int PLOT_ID = 0;
+    public static final String FDP = "FDP";
+    public static final String CLMRS = "CLMRS";
+    public static final String EUDR = "EUDR";
+    public static final String PA = "PA";
 
     public static String CHECKBOX = "checkbox";
 

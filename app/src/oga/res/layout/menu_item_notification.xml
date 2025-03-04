@@ -18,17 +18,13 @@
         android:scaleType="fitXY"
         android:background="@android:color/transparent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:background="@drawable/itemlist_total_background"
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/counter"
         android:id="@+id/notificationListCount"
-        android:text="0"
-        android:textColor="@color/ofis_base_font_white"
-        android:textSize="@dimen/ofis_small_text"
         android:gravity="center"
         android:layout_marginLeft="-10dp"
-        android:padding="0dp"
         tools:ignore="HardcodedText" />
     <TextView
         android:layout_width="10dp"

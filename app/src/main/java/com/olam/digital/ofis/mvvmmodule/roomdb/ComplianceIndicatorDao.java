@@ -19,6 +19,9 @@ public interface ComplianceIndicatorDao {
     @Query("SELECT * FROM ComplianceIndicator WHERE moduleDraftId =:id")
     List<ComplianceIndicator> getComplianceByModuleId(String id);
 
+    @Query("SELECT id FROM ComplianceIndicator WHERE moduleDraftId =:id AND isActionPlanRequired = 1")
+    List<Integer> getComplianceActionByModuleId(String id);
+
     @Query("SELECT * FROM ComplianceIndicator WHERE id =:id")
     List<ComplianceIndicator> getComplianceNameById(String id);
 

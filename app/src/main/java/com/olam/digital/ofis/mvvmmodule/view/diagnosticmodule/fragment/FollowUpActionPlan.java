@@ -68,6 +68,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
@@ -86,6 +88,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -165,6 +169,8 @@ public class FollowUpActionPlan extends Fragment {
     List<Integer> compliantList = new ArrayList<>();
     List<Integer> satisfactoryList = new ArrayList<>();
     List<Integer> nonComplaintList = new ArrayList<>();
+    List<Integer> complianceActionId = new ArrayList<>();
+    List<Integer> resolvedQuestionId = new ArrayList<>();
 
 
     @SuppressLint("MissingInflatedId")
@@ -260,11 +266,32 @@ public class FollowUpActionPlan extends Fragment {
     }
 
 
+    List<DmSurveyAnswerTable> getComplianceCheckboxAnswers(String complianceName, List<Integer> complianceActionId) {
 
+        List<DmSurveyAnswerTable> answers = new ArrayList<>();
+
+        if (complianceName.equals(Constants.COMPLIANT)) {
+            answers.addAll(db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+            answers.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+        } else if (complianceName.equals(Constants.NON_COMPLIANT)) {
+            answers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+        } else if (complianceName.equals(Constants.SATISFACTORY)) {
+            answers = db.dmSurveyAnswerTableDao().getSatisfactoryList(compliantList, nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+        }
+
+        List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
+        for (DmSurveyAnswerTable answer : answers) {
+            if (complianceActionId.contains(Integer.parseInt(answer. complinceTypeId))) {
+                checkboxAnswers.add(answer);
+            }
+        }
+
+        return checkboxAnswers;
+    }
 
     @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems)  {
-
+        boolean isActionPlanCheckbox = false;
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
@@ -276,66 +303,13 @@ public class FollowUpActionPlan extends Fragment {
                 budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
             }
 
-            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
-            List<Integer> satisfactoryId = new ArrayList<>();
-            List<Integer> nonComplaintId = new ArrayList<>();
-            List<Integer> complaintId = new ArrayList<>();
-            List<DmSurveyAnswerTable> checkboxAnswers = new ArrayList<>();
-            if (Objects.equals(complianceName,Constants.COMPLIANT)) {
-
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-                checkboxAnswers.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
-
-            } else if (Objects.equals(complianceName,Constants.NON_COMPLIANT)) {
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
-
-            } else if (Objects.equals(complianceName,Constants.SATISFACTORY)) {
-                // Assigning checkbox answer based on compliance list
-                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
-                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
-                        nonComplaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
-                        complaintId.add(complianceIndicator.id);
-                    } else if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
-                        satisfactoryId.add(complianceIndicator.id);
-                    }
-                }
-                checkboxAnswers = db.dmSurveyAnswerTableDao().getSatisfactoryList(complaintId, nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                dmSurveyAnswerTableList.addAll(checkboxAnswers);
+            // fetching checkbox answers based on action plan required
+            List<DmSurveyAnswerTable> dmSurveyAnswerCheckbox = getComplianceCheckboxAnswers(complianceName, complianceActionId);
+            if (!dmSurveyAnswerCheckbox.isEmpty()){
+                isActionPlanCheckbox = true;
             }
-
-            if (!checkboxAnswers.isEmpty()) {
-                Set<Integer> uniquesQuestion = getUniqueQuestion(checkboxAnswers);
-                for (int questionId : uniquesQuestion) {
-                    List<DmSurveyAnswerTable> answers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
-                    for (DmSurveyAnswerTable answer : answers) {
-                        if (answer.allowCustomActionPlan) {
-                            isActionPlanRequired = true;
-                            break;
-                        }
-                    }
-                }
-
-            }
-
             boolean finalIsActionPlanRequired = isActionPlanRequired;
+            boolean finalIsActionPlanCheckbox1 = isActionPlanCheckbox;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -357,7 +331,7 @@ public class FollowUpActionPlan extends Fragment {
                         complaint_dropdown.setTag("0" + list.get(0));
                     }
 
-                    if(finalIsActionPlanRequired){
+                    if(finalIsActionPlanRequired || finalIsActionPlanCheckbox1){
                         View desiredView = dm_question_followup_complaint.findViewWithTag("item" + list.get(0));
                         if (desiredView != null) {
                             LinearLayout linearLayout = (LinearLayout) desiredView;
@@ -369,27 +343,41 @@ public class FollowUpActionPlan extends Fragment {
                 }
             });
 
-            if(isActionPlanRequired) {
+            if (isActionPlanRequired || isActionPlanCheckbox) {
+                dmSurveyAnswerTableList.addAll(dmSurveyAnswerCheckbox);
 
-                if (!dmSurveyAnswerTableList.isEmpty()) {
-                    String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
-                    for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
-                        DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                        if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
-                            TextView textView = new TextView(getActivity());
-                            textView.setText(quesNo + "." + dmQuestionsModule.question);
-                            textView.setTextColor(getResources().getColor(R.color.black));
-                            textView.setTextSize(14);
-                            textView.setPadding(0, 15, 0, 0);
-                            textView.setTypeface(null, Typeface.BOLD);
-                            linearLayoutItems.addView(textView);
-                            renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems, dmQuestionsModule.answerID, dmQuestionsModule);
-                            quesNo++;
-                        }
+                // remove all the question where the followup is resolved
+                List<DmSurveyAnswerTable> answer = new ArrayList<>();
+                for(DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                    if (!resolvedQuestionId.contains(Integer.parseInt(answerTable.questionID))){
+                        answer.add(answerTable);
                     }
                 }
+
+                renderSurveyQuestions(answer, complaint_id, linearLayoutItems);
             }
 
+        }
+    }
+
+    private void renderSurveyQuestions(List<DmSurveyAnswerTable> surveyList, String complaintId, LinearLayout linearLayout) {
+        if (!surveyList.isEmpty()) {
+            String answerIdDb = surveyList.get(0).answerID;
+            for (int m = 0; m < surveyList.size(); m++) {
+                DmSurveyAnswerTable questionModule = surveyList.get(m);
+                if (questionIdSet.add(Integer.valueOf(questionModule.questionID))) {
+                    questionModule.question = getNamesbyLanguage(questionModule);
+                    TextView textView = new TextView(getActivity());
+                    textView.setText(quesNo + "." + questionModule.question);
+                    textView.setTextColor(getResources().getColor(R.color.black));
+                    textView.setTextSize(14);
+                    textView.setPadding(0, 15, 0, 0);
+                    textView.setTypeface(null, Typeface.BOLD);
+                    linearLayout.addView(textView);
+                    renderTextboxQuestionModuleComplaint(String.valueOf(questionModule.questionID), complaintId, linearLayout, questionModule.answerID, questionModule);
+                    quesNo++;
+                }
+            }
         }
     }
 
@@ -496,6 +484,24 @@ public class FollowUpActionPlan extends Fragment {
         return formatValue;
     }
 
+    public String getNamesbyLanguage(DmSurveyAnswerTable dmSurveyAnswerTable){
+        List<DmQuestionsModule> dmQuestionsModule = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(dmSurveyAnswerTable.questionID));
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmQuestionsModule.get(0).question;
+            case "es" -> dmQuestionsModule.get(0).questionEs;
+            case "fr" -> dmQuestionsModule.get(0).questionFr;
+            case "id" -> dmQuestionsModule.get(0).questionIdn;
+            case "in" -> dmQuestionsModule.get(0).questionIdn;
+            case "lo" -> dmQuestionsModule.get(0).questionLo;
+            case "pt" -> dmQuestionsModule.get(0).questionPt;
+            case "th" -> dmQuestionsModule.get(0).questionTh;
+            case "tr" -> dmQuestionsModule.get(0).questionTr;
+            case "vi" -> dmQuestionsModule.get(0).questionVi;
+            default -> dmQuestionsModule.get(0).question;
+        };
+    }
+
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
         boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
@@ -526,11 +532,34 @@ public class FollowUpActionPlan extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
+        List<FollowUpItemMainTable> followUpItemMainTableList = new ArrayList<>();
+        if (Objects.equals(Constants.ATTEMPT, 1)){
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+        } else {
+            followUpItemMainTableList = db.followUpItemMainTableDao().getFollowUpDataByQuestionId(id, Constants.FARMER_ID, Constants.ATTEMPT - 1);
+        }
 
-        if (!dmSurveyAnswerTableList.isEmpty()) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
-            editText.setText(answerIdDb);
+        if (!dmSurveyAnswerTableList.isEmpty() || !followUpItemMainTableList.isEmpty()) {
+            String answerIdDb = null;
+            String questionIdDb = null;
+            String actionPlanText = null;
+
+            if (!dmSurveyAnswerTableList.isEmpty()) {
+                answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
+                actionPlanText = dmSurveyAnswerTableList.get(0).actionPlanText;
+            } else if (!followUpItemMainTableList.isEmpty()) {
+                answerIdDb = followUpItemMainTableList.get(0).actionPlanId;
+                actionPlanText = followUpItemMainTableList.get(0).actionPlanText;
+            }
+            if (!Objects.equals(answerIdDb, null)) {
+                if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0") && !Objects.equals(answerIdDb,"")){
+                    DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
+                    editText.setText(Utilities.getActionPlanByLanguage(answerActionPlan));
+                } else {
+                    editText.setText(actionPlanText);
+                }
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -643,7 +672,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         if (isFilesUploaded) {
-            textView.setText("Capture Proof Uploaded");
+            textView.setText(getResources().getString(R.string.dm_capture_proof_uploaded));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
             }
@@ -813,13 +842,13 @@ public class FollowUpActionPlan extends Fragment {
 
         if (!answers.isEmpty()) {
             for (DmSurveyAnswerTable answer : answers) {
-                if (answer.isCaptureProof) {
+                if (answer.isCaptureProof!=null && answer.isCaptureProof) {
                     captureProof = true;
                     break;
                 }
             }
             for (DmSurveyAnswerTable answer : answers) {
-                if (answer.allowCustomActionPlan) {
+                if (answer.allowCustomActionPlan!=null && answer.allowCustomActionPlan) {
                     customActionPlan = true;
                     break;
                 }
@@ -1185,7 +1214,7 @@ public class FollowUpActionPlan extends Fragment {
             String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1663,7 +1692,7 @@ public class FollowUpActionPlan extends Fragment {
                 String filePathimage = null;
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (URISyntaxException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -1674,7 +1703,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -2494,7 +2523,10 @@ public class FollowUpActionPlan extends Fragment {
         goNextCaptureProof = false;
         goNextActionPlan = true;
         db = OFISRoomDB.getDbInstance(getActivity());
+        complianceActionId = db.complianceIndicatorDao().getComplianceActionByModuleId(Constants.MODULE_ID);
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
+
+        resolvedQuestionId = db.followUpItemMainTableDao().getResolvedQuestionId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.RESOLVED);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
 
@@ -2514,7 +2546,7 @@ public class FollowUpActionPlan extends Fragment {
 
         if (fileToDelete.exists()) {
             if (fileToDelete.delete()) {
-                Toast.makeText(getContext(), "File deleted successfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.dm_file_deleted_successfully), Toast.LENGTH_SHORT).show();
             }
         }
     }

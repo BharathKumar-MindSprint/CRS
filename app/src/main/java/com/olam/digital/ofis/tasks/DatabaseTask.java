@@ -17,7 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ben on 24/02/16.
@@ -87,7 +89,8 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
     void updateNotification(JSONArray jsonArray) throws JSONException {
         DataLayer dl = new DataLayer(context.getResources(),context);
-        ArrayList<Integer> existingFarmerList = dl.getNotificationFarmers();
+        dl.deleteCLMRSNotification();
+        ArrayList<Integer> existingFarmerList = dl.getFDPNotificationFarmers();
         ArrayList<Integer> currentFarmerList = new ArrayList<>();
         db.beginTransaction();
         if(jsonArray != null) {
@@ -102,7 +105,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             }
             ArrayList<Integer> removableList = new ArrayList<Integer>(existingFarmerList);
             removableList.removeAll(currentFarmerList);
-            dl.deleteNotificationByFarmerId(removableList);
+            dl.deleteNotificationByFarmerId(removableList, OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID);
             for (int j = 0; j < length; j++) {
                 try {
                     item = jsonArray.getJSONObject(j);
@@ -111,26 +114,40 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                     int childId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0);
                     String createdAt = item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, "");
 
-                    if (farmerId > 0 && createdAt.length() > 0) {
+                    if (farmerId > 0 && !createdAt.isEmpty()) {
                         ContentValues values = new ContentValues();
 
                         String[] columns = new String[]{"*"};
                         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? AND "
                                             + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " = ?";
+                                            + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ?";
                         String[] whereArgs = new String[]{String.valueOf(farmerId),String.valueOf(childId),
-                                String.valueOf(moduleId),createdAt};
+                                String.valueOf(moduleId)};
 
                         Cursor existingNotification = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
 
-                        if ( existingNotification.getCount() == 0) {
+                        if (existingNotification.getCount() == 0) {
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 0));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, item.optString(OFISDBContract.NotificationAssignments.COLUMN_STATUS, null));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, ""));
                             db.insert(OFISDBContract.NotificationAssignments.TABLE_NAME, null, values);
+                        }
+                        else {
+                            existingNotification.moveToFirst();
+                            String date = existingNotification.getString(existingNotification.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT));
+
+                            if (!date.equals(createdAt)) {
+                                dl.updateNotificationModule(farmerId, moduleId, childId,
+                                        new HashMap<>(
+                                                Map.ofEntries(
+                                                        Map.entry(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.UNREAD),
+                                                        Map.entry(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, createdAt)
+                                                )
+                                        )
+                                );
+                            }
                         }
                         existingNotification.close();
                     }

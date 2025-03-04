@@ -68,5 +68,8 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT COUNT(uid) FROM DmComplaintFileTable WHERE questionId IN (:questionIds) AND farmerId = :farmerId AND plotId = :plotId AND isFileSynced = 0")
     int getUnSyncedFiles(List<Integer> questionIds, long farmerId, int plotId);
 
+    @Query("UPDATE DmComplaintFileTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
+    void updateFarmerId(int tempFarmerId, int farmerId);
+
 
 }

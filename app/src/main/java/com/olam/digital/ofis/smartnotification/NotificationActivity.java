@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.smartnotification;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -19,53 +20,48 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.BaseListActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.smartnotification.adapter.SmartNotificationAdapter;
+import com.olam.digital.ofis.smartnotification.dto.ModuleListDTO;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 import com.olam.digital.ofis.smartnotification.listener.OnItemNotificationClickListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NotificationActivity extends BaseListActivity {
 
     private static RecyclerView notificationListRecyclerView;
     private static SmartNotificationAdapter smartNotificationAdapter;
-    Spinner moduleSpinner;
-    ImageButton sortIcon;
     public DataLayer dl;
     public Resources res;
-    boolean ascending = false;
     ArrayList<NotificationDTO> notificationList;
-    boolean isChildEnumerator;
-    ArrayAdapter<String> spinnerArrayAdapter;
+    private Context context;
+    private String moduleName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smart_notification);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = this;
         init();
     }
   
     private void init() {
         res = getResources();
         dl = new DataLayer(res, this);
-        moduleSpinner = (Spinner) findViewById(R.id.spinnerModuletype);
+        moduleName = getIntent().getExtras().getString(Utilities.MODULE, "FDP");
         notificationListRecyclerView = (RecyclerView) findViewById(R.id.notificationList);
-        sortIcon = (ImageButton) findViewById(R.id.sortingButton);
-        isChildEnumerator = Utilities.getChildLabourPref(this, ChildLabourUtils.IS_CHILD_ENUMERATOR);
-        if(isChildEnumerator) {
-            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules));
-        }else{
-            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules_noclmrs));
-        }
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        moduleSpinner.setAdapter(spinnerArrayAdapter);
-        notificationList = dl.getSmartNotificationList();
+        notificationList = dl.getSmartNotificationList(moduleName);
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(this);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(res.getDrawable(R.drawable.list_seperator_divider));
@@ -73,69 +69,33 @@ public class NotificationActivity extends BaseListActivity {
         notificationListRecyclerView.setHasFixedSize(true);
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
-//        ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
         notificationListRecyclerView.setLayoutManager(reLayoutManager);
         ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
         notificationListRecyclerView.scrollToPosition(0);
         smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
         notificationListRecyclerView.setAdapter(smartNotificationAdapter);
         loadNotificationData();
-        sortIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(ascending){
-                    ascending = false;
-                }else {
-                    ascending = true;
-                }
-                sortNotificationList(ascending);
-            }
-        });
-        moduleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 0){
-                    notificationList = dl.getSmartNotificationList();
-                }else{
-                    notificationList = dl.getSmartNotificationList(position);
-                }
-                smartNotificationAdapter.resetItem(notificationList);
-                smartNotificationAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
-    public void sortNotificationList(boolean ascending) {
-        Collections.sort(notificationList, new Comparator<NotificationDTO>() {
-            public int compare(NotificationDTO o1, NotificationDTO o2) {
-                if (o1.getCreatedAt() == null || o2.getCreatedAt() == null)
-                    return 0;
-                if(ascending) {
-                    return o2.getCreatedAt().compareTo(o1.getCreatedAt());
-                }else{
-                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
-                }
-            }
-        });
-        smartNotificationAdapter.notifyDataSetChanged();
-    }
 
     private void loadNotificationData() {
 
         smartNotificationAdapter.setOnItemClickListener(new OnItemNotificationClickListener() {
             @Override
             public void onNotificationClick(View view, int position, NotificationDTO notificationDTO) {
-                Intent intent = new Intent(NotificationActivity.this, ViewFarmerActivity.class);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = notificationDTO.getFarmerId();
-                dl.updateNotificationModule(notificationDTO.getFarmerId());
-                startActivity(intent);
+                dl.updateNotificationModule(notificationDTO.getFarmerId(), notificationDTO.getModuleId(), notificationDTO.getChildId(), new HashMap<>(Map.ofEntries(Map.entry(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.READ))));
+                context.startActivity(intent);
+            }
+
+            @Override
+            public void onModuleClick(View view, int position, ModuleListDTO moduleListDTO) {
+
             }
         });
+
+
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -152,7 +112,10 @@ public class NotificationActivity extends BaseListActivity {
             }
         };
         ItemTouchHelper touchHelper =  new ItemTouchHelper(simpleItemTouchCallback);
-        touchHelper.attachToRecyclerView(notificationListRecyclerView);
+
+        if (moduleName.equals(Constants.FDP)) {
+            touchHelper.attachToRecyclerView(notificationListRecyclerView);
+        }
     }
 
     @Override

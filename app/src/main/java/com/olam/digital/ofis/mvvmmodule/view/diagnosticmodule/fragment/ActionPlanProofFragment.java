@@ -33,6 +33,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -221,13 +222,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         if (justVal.size() != qId.size()){
-            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         for (int j=0; j<qId.size(); j++) {
             if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -540,7 +541,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         if (isFilesUploaded) {
-            textView.setText("Capture Proof Uploaded");
+            textView.setText(getResources().getString(R.string.dm_capture_proof_uploaded));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
             }
@@ -1057,7 +1058,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1552,7 +1553,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (URISyntaxException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -1565,7 +1566,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1616,6 +1617,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String destinationFilePath = destinationFile.getAbsolutePath();
                 dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                // delete data stored temporary for isDownloadsDocument
+                if (PathUtil.isDownloadsDocument(uri)) {
+                    File file = new File(filePathimage);
+                    if (file.exists()) {
+                        if (file.delete()) {
+                            Log.d("IsDownloadDocument","File deleted successfully");
+                        } else {
+                            Log.d("IsDownloadDocument","Failed to delete file");
+                        }
+                    }
+                }
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
 

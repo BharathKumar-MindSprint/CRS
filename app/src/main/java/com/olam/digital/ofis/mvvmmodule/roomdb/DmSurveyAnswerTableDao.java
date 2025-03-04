@@ -124,4 +124,7 @@ public interface DmSurveyAnswerTableDao {
     @Query("UPDATE DmSurveyAnswerTable SET actionPlanText='', actionplanId='', amount=0 WHERE questionID =:questionId")
     void updateActionPlanBudget(String questionId);
 
+    @Query("UPDATE DmSurveyAnswerTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
+    void updateFarmerId(int tempFarmerId, int farmerId);
+
 }

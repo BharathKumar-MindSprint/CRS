@@ -36,7 +36,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:padding="10dp"
-                    app:srcCompat="@drawable/ic_child_notify" />
+                    app:srcCompat="@drawable/ic_status_no_photo" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -106,6 +106,7 @@
                     android:padding="2dp">
 
                     <View
+                        android:id="@+id/lineview"
                         android:layout_width="1dp"
                         android:layout_height="50dp"
                         android:background="@color/ofis_input_field_separator" />
