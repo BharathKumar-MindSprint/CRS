@@ -106,6 +106,7 @@
                     android:padding="2dp">
 
                     <View
+                        android:id="@+id/lineview"
                         android:layout_width="1dp"
                         android:layout_height="50dp"
                         android:background="@color/ofis_input_field_separator" />
