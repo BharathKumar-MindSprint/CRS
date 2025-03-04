@@ -17,14 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
+import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
 import com.olam.digital.ofis.model.Information;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
@@ -49,6 +52,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     private Spinner countrySpinner, productSpinner;
     private LinearLayout advancedFilterLayout;
+    private ScrollView advancedFilters;
     private long selectedCountry=0, selectedProduct = 0;
 
     private List<Integer> selectedRegions = new ArrayList<Integer>();
@@ -89,7 +93,9 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     ArrayList<KeyPairBoolData> regionStatus = new ArrayList<>();
 
-
+    public static String notificationType;
+    private ImageButton photoSearchButton;
+    private TextView farmerNotFoundText;
     private OFISRoomDB ofisRoomDB;
 
     ListView listView;
@@ -131,6 +137,9 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         advancedFilter = (TextView) findViewById(R.id.advancedFilters);
         advancedFilterLayout = (LinearLayout) findViewById(R.id.advancedFilterLayout);
         farmerTopSection = (LinearLayout) findViewById(R.id.topSection);
+        advancedFilters = (ScrollView) findViewById(R.id.svAdvancedFilters);
+        farmerNotFoundText = (TextView) findViewById(R.id.tvNoFarmerFound);
+        photoSearchButton = (ImageButton) findViewById(R.id.photoSearchButton);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         ed.setFilters(new InputFilter[] { filter });
@@ -139,6 +148,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         backtoFinder = intent.getBooleanExtra(BACK_TO_FINDER, false);
         transactionItemId = intent.getLongExtra(EDIT_TRANSACTION_ITEM_ID, 0);
         buyingAgentId = intent.getLongExtra(BUYING_AGENT_CONTEXT, 0);
+        notificationType = intent.getStringExtra(Utilities.NOTIFICATION_TYPE);
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
         if (transactionMode) {
             this.setTitle(R.string.title_activity_find_transactee);
@@ -148,19 +158,47 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             ed.setHint(R.string.farmer_or_buying_agent_name);
         }
 
+        if (notificationType == null) {
+            notificationType = Utilities.notificationType;
+            Utilities.notificationType = null;
+        }
+
         bindFarmerList();
         showFarmerList();
-        setUpSearchFunctionality();
+
+        if (notificationType == null) {
+            ed.setHint(res.getString(R.string.Farmer_Name));
+            setUpSearchFunctionality();
+        }
+        else {
+            advancedFilter.setVisibility(View.GONE);
+            advancedFilters.setVisibility(View.GONE);
+            photoSearchButton.setVisibility(View.GONE);
+
+            setUpSearchFunctionalityForNotification();
+        }
         listView.setOnItemClickListener(this);
     }
 
     private void bindFarmerList() {
         if (transactionMode) {
             farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, 0, 0);
-        } else {
+        } else if (notificationType == null) {
             farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct,
                     selectedRegions, selectedDistricts, selectedPlaces, selectedPartners,
                     selectedProgrammes, selectedFarmerGroups, selectedSections, selectedCertifications);
+        }
+        else {
+            farmerList = ofisRoomDB.onGroundSurveyNotificationDao().getFarmersBySurveyType(notificationType, searchQuery, selectedCountry, selectedProduct);
+        }
+
+        if (farmerList.getCount() > 0) {
+            listView.setVisibility(View.VISIBLE);
+            farmerNotFoundText.setVisibility(View.GONE);
+        }
+        else {
+            listView.setVisibility(View.GONE);
+            farmerNotFoundText.setVisibility(View.VISIBLE);
         }
     }
 
@@ -187,13 +225,11 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             };
             int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId,R.id.farmerListODFarmerId};
             customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res, transactionMode);
-           // setListAdapter(customListAdapter_farmerAdapter);
             listView.setAdapter(customListAdapter_farmerAdapter);
         }
     }
 
-    private void setUpSearchFunctionality()
-    {
+    private void setUpSearchFunctionality() {
         //Bind Countries
         Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_view_farmer, null, false);
@@ -246,6 +282,57 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 //searches and populates the list with the appropriate info
+                searchQuery = String.valueOf(ed.getText());
+                doSearch();
+            }
+        });
+
+    }
+
+    private void setUpSearchFunctionalityForNotification() {
+        List<Integer> farmerGroupIds = ofisRoomDB.onGroundSurveyNotificationDao().getFarmerGroupsBasedOnSurveyType(notificationType);
+        Cursor farmerGroups = dl.getComplianceFarmerGroupsCursor(farmerGroupIds);
+        dl.bindDataDrivenSpinner(countrySpinner, farmerGroups, context, R.string.spinner_farmergroup_default, null, false);
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Cursor sections = dl.getSpinnerData(OFISDBContract.SectionsEntry.TABLE_NAME, true, OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID, ((int) id), true, OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME);
+                if (position == 0) {
+                    sections = dl.getSectionByFarmerGroup(farmerGroupIds);
+                }
+                dl.bindDataDrivenSpinner(productSpinner, sections, context, R.string.spinner_section_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
+
+                selectedCountry = id;
+                selectedProduct = 0;
+                doSearch();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        productSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedProduct = id;
+                doSearch();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        ed.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s) {  }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
                 searchQuery = String.valueOf(ed.getText());
                 doSearch();
             }
@@ -615,6 +702,17 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (id == android.R.id.home) {
+            if (transactionMode || notificationType != null) {
+                finish();
+            } else {
+                NavUtils.navigateUpFromSameTask(this);
+            }
+            return true;
+        }
+
+        notificationType = null;
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -625,15 +723,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (id == R.id.action_home) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
-            return true;
-        }
-
-        if (id == android.R.id.home) {
-            if (transactionMode) {
-                finish();
-            } else {
-                NavUtils.navigateUpFromSameTask(this);
-            }
             return true;
         }
 
@@ -663,11 +752,23 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                 intent.putExtra(EDIT_MODE, true);
             }
             intent.putExtra(FARMER_ID, id);
-        } else {
+            context.startActivity(intent);
+        } else if (notificationType == null) {
             ViewFarmerActivity.farmerId = id;
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(id);
+            ViewFarmerActivity.notificationType = null;
             intent = new Intent(context, ViewFarmerActivity.class);
+            intent.putExtra(Utilities.IS_FROM_FIND_FARMER, true);
+            context.startActivity(intent);
         }
-        context.startActivity(intent);
+        else {
+            ViewFarmerActivity.farmerId = id;
+            ViewFarmerActivity.notificationType = notificationType;
+            intent = new Intent(context, ViewPlotSurveyActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(Utilities.FARMER_ID, id);
+            bundle.putBoolean(res.getString(R.string.dm_plot_survey), true);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
+        }
     }
 }

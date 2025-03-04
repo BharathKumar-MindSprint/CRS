@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 
@@ -45,6 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -75,6 +77,7 @@ public class Utilities {
     public  static  int subModuleId;
     public  static  String packagename;
     public static boolean isAppAlive;
+    public static String notificationType = null;
 
     public static  int minProgressCount=0;
 
@@ -114,7 +117,6 @@ public class Utilities {
     public static final String PREVIOUS_ENTERED_USERNAME = "previousEnteredUsername";
 
     public static final String EUDR_GROUND_VERIFICATION_SURVEY = "On Ground Verification Survey";
-
     public static final String STAKE_HOLDER_ID = "stakeHolderId";
     public static final String STAKE_HOLDER_DISPLAY_ID = "stakeHolderId";
     public static final String STAKE_HOLDER_REGISTRATION = "stakeHolderRegistration";
@@ -124,6 +126,9 @@ public class Utilities {
     public static final String FARM_HOLDING_CODE = "farmHoldingCode";
     public static final String FARMER_NAME = "farmerName";
     public static final String FARM_ID = "farmId";
+    public static final String KEY_LAST_SHOWN_DATE = "keyLastShownDate";
+    public static final String NOTIFICATION_TYPE = "notificationType";
+    public static final String IS_FROM_FIND_FARMER = "showRemainderSurvey";
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -366,18 +371,6 @@ public  static String base64ConversionForImage(String filepath)  {
        editor.putBoolean(prefName,prefValue);
        editor.commit();
    }
-
-    public static boolean getMultifarmPref(Context context,String prefName){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(prefName, false);
-    }
-
-    public static void setMultiFarmPref(Context context,String prefName,boolean prefValue){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putBoolean(prefName,prefValue);
-        editor.commit();
-    }
 
     public static boolean getBoolFromSharedPrefs(Context context, String prefName, boolean defaultResponse) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -773,15 +766,16 @@ public  static String base64ConversionForImage(String filepath)  {
         editor.apply();
     }
 
-    public static void setPreviousEnteredUsernameSharedPrefs(Context context,String prefValue){
+    public static void setSharedPrefs(Context context, String prefValue, String prefName){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putString(PREVIOUS_ENTERED_USERNAME, prefValue);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(prefName, prefValue);
         editor.apply();
     }
-    public static String getPreviousEnteredUsernameSharedPrefs(Context context) {
+
+    public static String getSharedPrefs(Context context, String prefName) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(PREVIOUS_ENTERED_USERNAME, "");
+        return sharedPreferences.getString(prefName, null);
     }
 
 

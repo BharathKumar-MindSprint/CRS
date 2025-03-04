@@ -1,6 +1,8 @@
 package com.olam.digital.ofis.mvvmmodule.roomdb;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -20,6 +22,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.AssignmentTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.OnGroundSurveyNotificationDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
@@ -43,6 +46,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
@@ -62,8 +66,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class},
-        version = 16)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class},
+        version = 17)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -115,6 +119,8 @@ public abstract class OFISRoomDB extends RoomDatabase {
 
     public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
     public abstract MultiStakeHolderDao multiStakeHolderDao();
+
+    public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -196,8 +202,27 @@ public abstract class OFISRoomDB extends RoomDatabase {
 
             }
         };
-
         final Migration MIGRATION_15_16 = new Migration(15, 16) {
+
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS OnGroundSurveyNotification (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "farmerGroupId INTEGER, " +
+                        "farmerId INTEGER, " +
+                        "farmerName TEXT, " +
+                        "photo TEXT, " +
+                        "olamFarmerId TEXT, " +
+                        "createdOnPhone TEXT, " +
+                        "countryId INTEGER, " +
+                        "odFarmerId TEXT, " +
+                        "plotId INTEGER, " +
+                        "sectionId INTEGER, " +
+                        "surveyType TEXT)");
+            }
+        };
+
+        final Migration MIGRATION_16_17 = new Migration(16, 17) {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
 
@@ -210,7 +235,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
                     .fallbackToDestructiveMigration()
                     .build();
         }

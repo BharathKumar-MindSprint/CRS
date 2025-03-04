@@ -649,26 +649,11 @@ public class CompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                         noOtherQuestion = true;
                         renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
-                   /* try{
-                        if (mCurrentCapturedLocation!=null){
-                            dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
-                        }else {
-                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                                gpsTracker.getDeviceLocation();
-                                return;
-                            }
-                        }
-                    }catch (Exception e){}*/
+
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                         noOtherQuestion = true;
-
                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
-
-                    }/*else {
-                    if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
-                        dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
                     }
-                }*/
 
                 } else {
                     String[] stringArrayQuestion = questionAssignmentField.substring(1, questionAssignmentField.length() - 1).split(",");
@@ -720,26 +705,13 @@ public class CompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                                 noOtherQuestion = true;
                                 renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
-                   /* try{
-                        if (mCurrentCapturedLocation!=null){
-                            dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
-                        }else {
-                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                                gpsTracker.getDeviceLocation();
-                                return;
-                            }
-                        }
-                    }catch (Exception e){}*/
+
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                                 noOtherQuestion = true;
 
                                 dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
 
-                            }/*else {
-                    if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
-                        dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
-                    }
-                }*/
+                            }
                         }
                     }
                 }
@@ -873,13 +845,7 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void saveSubModule(String action) {
-        /*boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
-        if(! status){
-            return;
-        }*/
         boolean canSaveAndFinish = true;
-
-        // check location
         if (action.equalsIgnoreCase("finish")) {
             if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
 
@@ -915,83 +881,18 @@ public class CompleteModuleActivity extends BaseActivity {
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         }
 
-        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
-//            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) || ! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)) {
-            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
-                statusFinished = 0;
-                canSaveAndFinish = false;
-                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
-                Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
-            }
-            if(! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)){
-                statusFinished = 0;
-                canSaveAndFinish = false;
-                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
-                Toast.makeText(context, res.getString(R.string.valid_range), Toast.LENGTH_LONG).show();
-            }
-        }
-
-        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
-
-        if (action.equalsIgnoreCase("exit")) {
-            ViewFarmerActivity.farmerId = farmerId;
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            Intent intent = new Intent(context, ViewFarmerActivity.class);
-            context.startActivity(intent);
-        } else if (action.equalsIgnoreCase("finish")) {
-            if (canSaveAndFinish) {
-                ViewFarmerActivity.farmerId = farmerId;
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-                Intent intent = new Intent(context, ViewFarmerActivity.class);
-                context.startActivity(intent);
-            }
-        } else {
-            Intent intent = getIntent();
-            intent.putExtra(FARMER_ID, farmerId);
-            intent.putExtra(MODULE_ID, moduleId);
-            intent.putExtra(FARMER_MODULE_ID, farmerModuleId);
-            intent.putExtra(SUB_MODULE_ID, subModuleId);
-            intent.putExtra(FARM_ID, farmId);
-            intent.putExtra(STATUS_STARTED, statusStarted);
-            intent.putExtra(STATUS_FINISHED, statusFinished);
-            intent.putExtra(OLAM_FARMER_ID, olamFarmerId);
-            intent.putExtra(MODULE_NAME, moduleName);
-            intent.putExtra(RECORDED_LAT, recordedLat);
-            intent.putExtra(RECORDED_LNG, recordedLng);
-            intent.putExtra(FARMER_NAME, farmerName);
-
-            startActivity(intent);
-
-            finish();
-
-        }*/
         boolean bool = dynamicQuestions.checkDisplayStatus((int) moduleId);
-        /// required recheck before push
-        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
-            if(bool){
-                if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
-                    statusFinished = 0;
-                    canSaveAndFinish = false;
-                    dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
-                    Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
-                }
-            }else{
-                statusFinished = 0;
-                canSaveAndFinish = false;
-                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
-                Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
-            }
-        }*/
+
         if (action.equalsIgnoreCase("exit")) {
             statusFinished = 0;
         }
         dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished, plotId);
+
         if (action.equalsIgnoreCase("exit")) {
             if (bool) {
                 ViewFarmerActivity.farmerId = farmerId;
-
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 Intent intent = new Intent(context, ViewFarmerActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         } else if (action.equalsIgnoreCase("finish")) {
@@ -1003,10 +904,9 @@ public class CompleteModuleActivity extends BaseActivity {
                         gpsTracker.stopLocationUpdates();
                     }
 
-
                     ViewFarmerActivity.farmerId = farmerId;
-                    //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                     Intent intent = new Intent(context, ViewFarmerActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
             }
@@ -1060,12 +960,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback, Looper.myLooper());
-/*
-                        pd = new ProgressDialog(AddInfrastructureActivity.this);
-                        pd.setCancelable(false);
-                        pd.setIndeterminate(false);
-                        pd.setMessage(res.getString(R.string.fetching_location));
-                        pd.show();*/
+
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -1191,14 +1086,6 @@ public class CompleteModuleActivity extends BaseActivity {
             if (questions != null) {
                 boolean noOtherQuestion = false;
                 while (questions.moveToNext()) {
-                 /*LinearLayout questionInclude = (LinearLayout) inflaterQuestions.inflate(R.layout.question_answer_row, questionsSection, false);
-                 questionsSection.addView(questionInclude);
-                 TextView questionText = (TextView) questionInclude.findViewById(R.id.questionText);
-                 TextView answerText = (TextView) questionInclude.findViewById(R.id.answerText);
-                 String questionColumnSuffix = Utilities.getLocaleSuffix(res);
-                 int columnIndex = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
-                 questionText.setText(questions.getString(columnIndex));
-                 answerText.setText("Answer Here");*/
                     dynamicQuestions.hasAnswers = true;
                     dynamicQuestions.viewAnswer = true;
                     String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
@@ -1245,16 +1132,6 @@ public class CompleteModuleActivity extends BaseActivity {
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
                             noOtherQuestion = true;
                             renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
-                    /* try{
-                         if (mCurrentCapturedLocation!=null){
-                             dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
-                         }else {
-                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                                 gpsTracker.getDeviceLocation();
-                                 return;
-                             }
-                         }
-                     }catch (Exception e){}*/
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                             noOtherQuestion = true;
 

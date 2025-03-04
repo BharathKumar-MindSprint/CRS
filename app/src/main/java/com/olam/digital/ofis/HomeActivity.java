@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -132,6 +133,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -140,8 +142,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+ import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -280,7 +287,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
-        //
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
@@ -309,6 +315,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 passcode.setFocusable(true);
                 enumeratorID.setFocusableInTouchMode(false);
                 enumeratorID.setClickable(false);
+            }
+        }
+        else {
+            int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+            if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
+                showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
 
@@ -460,6 +472,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener, true);
+
     }
 
     private void setKeycloakCredentials(String environment) {
@@ -556,7 +569,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
-//        Passcode validation - Penetration testing
         String userpasscode = passcode.getText().toString().trim();
         if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("") &&
                 userpasscode != null && !userpasscode.equalsIgnoreCase("")) {
@@ -1133,7 +1145,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             public void onClick(View view) {
                 syncAll.setEnabled(false);
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
-//                final Handler handler = new Handler(Looper.getMainLooper());
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                     return;
                 } else {
@@ -1145,13 +1156,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     }
                 }
                 lastClickTime = SystemClock.elapsedRealtime();
-               /* handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-                        syncAll.setEnabled(true);
-                    }
-                }, 5000);*/
             }
         });
 
@@ -1184,24 +1188,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
                     context.startActivity(intent);
-//                    GetAccessToken("home");
                 }
             });
-
-            // Hiding the record transaction section
-//            if (can_transact || sharedPreferences.getBoolean("FIRST_RUN",true)) {
-//                recordTransaction.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(context, TransactionItems.class);
-//                        context.startActivity(intent);
-//                    }
-//                });
-//            } else {
-//                recordTransactionWrapper.setVisibility(View.GONE);
-//                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-//                lp.setMargins(0,0,0,0);
-//            }
 
             captureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1325,12 +1313,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void validateLoginAttempts() {
-        String previousEnteredUsername = Utilities.getPreviousEnteredUsernameSharedPrefs(context);
+        String previousEnteredUsername = Utilities.getSharedPrefs(context, Utilities.PREVIOUS_ENTERED_USERNAME);
         String currentEnteredUsername = enumeratorID.getText().toString().trim();
 
-        if (!previousEnteredUsername.equals(currentEnteredUsername)) {
+        if (previousEnteredUsername != null && !previousEnteredUsername.equals(currentEnteredUsername)) {
             Utilities.removeFromSharedPrefs(context, Utilities.LOGIN_ATTEMPTS);
-            Utilities.setPreviousEnteredUsernameSharedPrefs(context, currentEnteredUsername);
+            Utilities.setSharedPrefs(context, currentEnteredUsername, Utilities.PREVIOUS_ENTERED_USERNAME);
         }
 
         int LoginAttempts = Utilities.getLoginAttemptsFromSharedPrefs(context);
@@ -1711,9 +1699,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
-    //
     public static void GetAccessToken(String value) {
-
+        ((Activity) staticContext).invalidateOptionsMenu();
         String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
         Log.d("COUNTRY_CODENEWPREFFF", isoCode);
         counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
@@ -1727,8 +1714,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
                 if (response.code() == 200) {
-                    progressDialog.hide();
-
                     odAccessToken = response.body().getAccessToken();
 
                     //Toast.makeText(DownloadFarmPlanActivity.this,odAccessToken, Toast.LENGTH_SHORT).show();
@@ -1738,8 +1723,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
+                    else {
+                        progressDialog.hide();
+                    }
                 } else if (response.code() == 400) {
-                    progressDialog.hide();
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if (value.equalsIgnoreCase("home")) {
                         cardview_downloadFarmplan.setVisibility(View.GONE);
@@ -1747,9 +1734,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
-                    // showAlert("Unable to fetch country name for the ISOCode"+response.message());
+                    else {
+                        progressDialog.hide();
+                    }
                 } else if (response.code() == 500) {
-                    progressDialog.hide();
+
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if (value.equalsIgnoreCase("home")) {
                         cardview_downloadFarmplan.setVisibility(View.GONE);
@@ -1757,10 +1746,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
-                    // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
+                    else {
+                        progressDialog.hide();
+                    }
                 } else {
                     if (isEnableDM) {
                         GetAllDiagnosticModule();
+                    }
+                    else {
+                        progressDialog.hide();
                     }
                 }
 
@@ -1769,10 +1763,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
-//                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                /*if (isEnableDM) {
-                    GetAllDiagnosticModule();
-                }*/
             }
         });
 
@@ -1895,6 +1885,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 try {
                     if (response.code() == 200) {
                         deleteRoomDbValues();
+                        Map<Boolean, List<Integer>> submittedPlots = new HashMap<>();
 
                         int diagnosticType = 0;
                         int eudrGroundVerificationSurveyId = 0;
@@ -2018,18 +2009,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     db.dmMainModuleDao().insert(user);
 
                                     if (diagnosticTypeId != null && diagnosticTypeId == diagnosticType && !submittedPlotIds.isEmpty()) {
-                                        int finalEudrGroundVerificationSurveyId = eudrGroundVerificationSurveyId;
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                dl.updateSurveyCapturedForPlots(plotSurveyType == finalEudrGroundVerificationSurveyId, submittedPlotIds);
-                                            }
-                                        }, 5000);
+                                        submittedPlots.put(eudrGroundVerificationSurveyId == plotSurveyType, submittedPlotIds);
                                     }
 
-
                                     List<DmModuleAssignments> dmModuleAssignments = generateModuleAssignments(assignmentsModel, id);
-
                                     if (!dmModuleAssignments.isEmpty()) {
                                         db.dmModuleAssignmentsDao().insertDmModuleAssignMents(dmModuleAssignments);
                                     }
@@ -2702,27 +2685,42 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                         GetAllFollowUpDMData();
 
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dl.updateSurveyCapturedForPlots(submittedPlots);
+                                dl.insertOnGroundSurveyNotificationData();
+                                int onGroundPendingSurveyCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+                                if (onGroundPendingSurveyCount > 0 && shouldShowPopup()) {
+                                    showDailyRemainderPopUp(onGroundPendingSurveyCount);
+                                    ((Activity) staticContext).invalidateOptionsMenu();
+                                }
+                                progressDialog.hide();
+                            }
+                        }, 5000);
+
                     } else if (response.code() == 400) {
+                        progressDialog.hide();
                         GetAllFollowUpDMData();
                         Log.d("BadRequest-", response.message());
                     } else if (response.code() == 500) {
                         GetAllFollowUpDMData();
-
+                        progressDialog.hide();
                     } else {
-                        // showAlert("Server Issue!!"+response.message().toString());
+                        progressDialog.hide();
                         GetAllFollowUpDMData();
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
 
+                } catch (Exception e) {
+                    progressDialog.hide();
+                    throw new RuntimeException(e);
                 }
 
             }
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-
-
+                progressDialog.hide();
             }
         });
 
@@ -2748,6 +2746,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         db.dmMasterDataDao().deleteAll();
         db.dmRecurrenceDao().deleteAll();
         db.dmModuleAssignmentsDao().deleteAll();
+        db.onGroundSurveyNotificationDao().deleteAll();
     }
 
     public static void GetAllFollowUpDMData() {
@@ -2757,23 +2756,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         call.enqueue(new Callback<FollowUpResponseModel>() {
             @Override
             public void onResponse(Call<FollowUpResponseModel> call, Response<FollowUpResponseModel> response) {
-
                 OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
-
                 try {
                     if (response.code() == 200) {
-
                         if (response.body().getFollowUpResponseItemList() != null) {
-
-
                             for (int i = 0; i < response.body().getFollowUpResponseItemList().size(); i++) {
-
                                 ArrayList<FollowUpItem> followUpItemArrayList = new ArrayList<>();
-                                followUpItemArrayList.clear();
                                 followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
-
                                 ArrayList<ExistingModuleItem> existingModuleItemArrayList = new ArrayList<>();
-                                existingModuleItemArrayList.clear();
                                 existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
 
                                 if (followUpItemArrayList!=null){
@@ -2959,6 +2949,33 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
 
         return dmModuleAssignments;
+    }
+
+    private static boolean shouldShowPopup() {
+        String lastShownDate = Utilities.getSharedPrefs(staticContext, Utilities.KEY_LAST_SHOWN_DATE);
+        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        if (lastShownDate == null || lastShownDate.equalsIgnoreCase("") || !lastShownDate.equals(todayDate)) {
+            Utilities.setSharedPrefs(staticContext, todayDate, Utilities.KEY_LAST_SHOWN_DATE);
+            return true;
+        }
+        return false;
+    }
+
+    private static void showDailyRemainderPopUp(int totalCount) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(staticContext);
+        View customView = LayoutInflater.from(staticContext).inflate(R.layout.remainder_popup_dialog, null);
+        builder.setView(customView);
+        builder.setCancelable(false);
+
+        TextView dialogMessage = customView.findViewById(R.id.dialog_message);
+        ImageButton buttonClose = customView.findViewById(R.id.button_close);
+        dialogMessage.setText(totalCount + staticRes.getString(R.string.home_popup_msg));
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        buttonClose.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
 }

@@ -1011,8 +1011,6 @@
     <string name="dm_textbox_range_integer">ຊ່ວງຈາກ %1$d ຫາ %2$d</string>
     <string name="dm_textbox_range_decimal">ຊ່ວງຈາກ %1$.2f ຫາ %2$.2f</string>
     <string name="minimum_range_error">ຊ່ວງຕ່ຳສຸດ %1$.2f</string>
-
-    // DM Translation
     <string name="dm_diognostic_module">ຫົວຂໍ້ການວິນິດໄສ</string>
     <string name="dm_add_photo">ເພີ່ມຮູບພາບ!</string>
     <string name="dm_choose_from_gallery">ເລືອກຈາກຄັງຮູບ</string>
@@ -1032,7 +1030,20 @@
     <string name="follow_up_farmer_details">ລາຍລະອຽດການຕິດຕາມກະສິກອນ</string>
     <string name="dm_please_select_action_plan_status_before_proceed">ກະລຸນາເລືອກສະຖານະແຜນການກະທຳກ່ອນດຳເນີນການ!</string>
     <string name="dm_file_deleted_successfully">ລຶບໄຟລ໌ສຳເລັດແລ້ວ!</string>
-
+    <string name="remainder">Remainder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">FDP</string>
+    <string name="clmrs">CLMRS</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
+    <string name="start_now">Start Now</string>
+    <string name="skip">Skip</string>
+    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
+    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
 </resources>
 
 
