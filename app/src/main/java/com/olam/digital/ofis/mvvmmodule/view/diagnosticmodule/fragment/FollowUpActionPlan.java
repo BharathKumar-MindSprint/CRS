@@ -256,7 +256,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "0")){
+            if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "0") || Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "null")){
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -1020,8 +1020,8 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()){
                     actionPlan.setText("");
-                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(true);
 
@@ -1034,7 +1034,11 @@ public class FollowUpActionPlan extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()) {
-                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    } else {
+                        db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    }
                     db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
@@ -1058,7 +1062,11 @@ public class FollowUpActionPlan extends Fragment {
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.followUpItemMainTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    } else {
+                        db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    }
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {

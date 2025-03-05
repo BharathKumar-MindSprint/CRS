@@ -227,7 +227,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
+            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0") || Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "null")){
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -872,8 +872,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     actionPlan.setText("");
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(true);
 
@@ -886,7 +886,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
@@ -910,7 +914,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
