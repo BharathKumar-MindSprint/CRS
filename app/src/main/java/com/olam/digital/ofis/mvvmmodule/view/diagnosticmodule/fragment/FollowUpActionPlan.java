@@ -1189,6 +1189,9 @@ public class FollowUpActionPlan extends Fragment {
 
                 }
             }
+        } else if (displayType.equalsIgnoreCase(Constants.CHECKBOX)) {
+            List<String> lookUpValues = db.dmSurveyAnswerTableDao().getLookupValuesBasedOnQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID);
+            allowCaptureProof = db.dmLookupValuesItemDao().getIsCaptureProofCheckbox(questionId, lookUpValues);
         }else{
             List<DmLookupValuesItem> dmLookupValuesISubmoduleList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(Integer.parseInt(questionId));
             for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
