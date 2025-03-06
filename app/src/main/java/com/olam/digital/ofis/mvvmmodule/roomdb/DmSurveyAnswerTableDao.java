@@ -79,8 +79,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("DELETE FROM DmSurveyAnswerTable WHERE moduleId=:id and farmerId=:farmerID AND plotId = :plotId")
     void deleteAllDataForRecurrence(String id , String farmerID, int plotId);
 
-    @Query("SELECT actionPlanText FROM DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId =:farmerId AND plotId = :plotId")
-    String getActionPlanText(String questionId, String farmerId, int plotId);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId =:farmerId AND plotId = :plotId")
+    List<DmSurveyAnswerTable> getActionPlanText(String questionId, String farmerId, int plotId);
 
 
     @Update

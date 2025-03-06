@@ -227,10 +227,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0") || Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "null")){
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                return false;
+            List<DmSurveyAnswerTable> actionPlanText = db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID);
+            if (!actionPlanText.isEmpty()) {
+                if (actionPlanText.get(0).actionPlanText.trim().isEmpty()) {
+                    String actionPlanId = actionPlanText.get(0).actionplanId;
+                    if (Objects.equals(actionPlanId,"1")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                if (Objects.equals(actionPlanText.get(0).actionPlanText, "0") || Objects.equals(actionPlanText.get(0).actionPlanText, "null")){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
+
         }
 
         return true;
@@ -810,7 +821,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        if(actionPlanId == 1){
+        if(actionPlanId == 1 && !actionPlanT.equals("null")){
             actionPlan.setText(actionPlanT);
         }
 

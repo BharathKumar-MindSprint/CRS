@@ -256,9 +256,17 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "0") || Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "null")){
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                return false;
+            List<FollowUpItemMainTable> actionPlanText = db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED);
+            if (!actionPlanText.isEmpty()) {
+                String actionPlanId = actionPlanText.get(0).actionPlanId;
+                if (Objects.equals(actionPlanId,"1")) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                if (Objects.equals(actionPlanText, "0") || Objects.equals(actionPlanText, "null")){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
         }
 
@@ -960,7 +968,7 @@ public class FollowUpActionPlan extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        if(actionPlanId == 1){
+        if(actionPlanId == 1 && !actionPlanT.equals("null")){
             actionPlan.setText(actionPlanT);
         }
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
