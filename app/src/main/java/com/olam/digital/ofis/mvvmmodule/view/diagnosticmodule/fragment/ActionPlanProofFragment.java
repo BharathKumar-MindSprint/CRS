@@ -101,7 +101,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
 
     private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
-    private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
     private static final int CAMERA_REQUEST = 2277;
     private static final int GALLERY_PICK = 2233;
     private static final int GALLERY_PICK_DOCX = 4455;
@@ -2104,92 +2103,46 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     public boolean isStoragePermissionGalleryGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.READ_MEDIA_IMAGES}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                 return true;
             } else {
 
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_GALLERYPERMISSION_CODE);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
-
+        }
+        else {
             return true;
         }
     }
 
     public boolean isStoragePermissionCameraGranted() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                return  true;
-            }else {
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
-                return false;
-            }
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return true;
             } else {
-
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
                         MY_CAMERA_PERMISSION_CODE);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
-
+        }
+        else {
             return true;
         }
-
-
     }
 
 
@@ -2197,59 +2150,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU){
+        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU) {
             try {
                 if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                    // Permissions granted, proceed with your code
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
-                )) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                }else {
-                    Toast.makeText(getContext(), R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (requestCode == MY_CAMERA_PERMISSION_CODE_TIRAMISU){
-            try {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                    // Permissions granted, proceed with your code
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
@@ -2263,8 +2169,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(PatientReasonActivity.this, R.string.camera_perm_granted, Toast.LENGTH_LONG).show();
-                //openCamera();
+
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_camera_permission), Toast.LENGTH_LONG).show();
             }
@@ -2272,8 +2177,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         if (requestCode == MY_GALLERYPERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(PatientReasonActivity.this, R.string.cs, Toast.LENGTH_LONG).show();
-                //openGallery();
+
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_gallery_permission), Toast.LENGTH_LONG).show();
             }
