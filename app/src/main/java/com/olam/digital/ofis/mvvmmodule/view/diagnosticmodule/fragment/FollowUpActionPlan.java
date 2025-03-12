@@ -258,12 +258,14 @@ public class FollowUpActionPlan extends Fragment {
         for (int j=0; j<qId.size(); j++) {
             List<FollowUpItemMainTable> actionPlanText = db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED);
             if (!actionPlanText.isEmpty()) {
-                String actionPlanId = actionPlanText.get(0).actionPlanId;
-                if (Objects.equals(actionPlanId,"1")) {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                    return false;
+                if (actionPlanText.get(0).actionPlanText.trim().isEmpty()) {
+                    String actionPlanId = actionPlanText.get(0).actionPlanId;
+                    if (Objects.equals(actionPlanId,"1")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                 }
-                if (Objects.equals(actionPlanText, "0") || Objects.equals(actionPlanText, "null")){
+                if (Objects.equals(actionPlanText.get(0).actionPlanText, "0") || Objects.equals(actionPlanText.get(0).actionPlanText, "null")){
                     Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                     return false;
                 }
