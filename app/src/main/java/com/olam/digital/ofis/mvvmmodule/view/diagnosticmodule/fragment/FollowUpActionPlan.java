@@ -893,8 +893,8 @@ public class FollowUpActionPlan extends Fragment {
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
