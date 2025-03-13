@@ -2097,6 +2097,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
     private void initializeComplianceStatus() {
+        totalActionPlanCount = 0;
         questionIdSet.clear();
         compliantList.clear();
         satisfactoryList.clear();
@@ -2529,7 +2530,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
-        totalActionPlanCount = 0;
     }
 
     @Override
