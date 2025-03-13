@@ -1249,6 +1249,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] fileByteArray;
                 try {
@@ -1272,7 +1273,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1402,6 +1403,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] pdfByteArray2;
                 try {
@@ -1426,7 +1428,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1774,7 +1776,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] fileByteArray;
                 try {
                     fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
@@ -1793,7 +1795,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1932,7 +1934,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] pdfByteArray2;
                 try {
                     pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
@@ -1951,7 +1953,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);

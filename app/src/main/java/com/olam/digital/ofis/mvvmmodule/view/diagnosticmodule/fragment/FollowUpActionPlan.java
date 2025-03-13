@@ -1406,7 +1406,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
 
                 byte[] fileByteArray;
@@ -1558,7 +1558,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
                 byte[] pdfByteArray2;
@@ -1886,7 +1886,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] fileByteArray;
                 try {
@@ -2033,7 +2033,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
                 byte[] pdfByteArray2;
@@ -2551,15 +2551,6 @@ public class FollowUpActionPlan extends Fragment {
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
 
-    }
-
-    private String getFileExtension(String fileName) {
-        String extension = null;
-        int dotIndex = fileName.lastIndexOf(".");
-        if (dotIndex != -1) {
-            extension = fileName.substring(dotIndex + 1);
-        }
-        return extension;
     }
 
     private void deleteFile(String filePath) {

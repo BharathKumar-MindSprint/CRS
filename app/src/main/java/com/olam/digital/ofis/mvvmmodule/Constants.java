@@ -69,4 +69,13 @@ public class Constants {
         return uniqueQuestionIds;
     }
 
+    public static String getFileExtension(String fileName) {
+        String extension = null;
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex != -1) {
+            extension = fileName.substring(dotIndex + 1);
+        }
+        return extension;
+    }
+
 }
