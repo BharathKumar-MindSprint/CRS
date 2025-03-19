@@ -1582,6 +1582,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
 
@@ -1590,7 +1591,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                if (fileExtension.equalsIgnoreCase(Bitmap.CompressFormat.PNG.name())) {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                } else {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                }
+
                 byte[] imageBytes = baos.toByteArray();
 
                 if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
@@ -1609,7 +1615,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
