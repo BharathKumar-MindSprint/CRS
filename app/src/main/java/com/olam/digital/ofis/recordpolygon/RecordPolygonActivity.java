@@ -1157,12 +1157,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
-            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
-            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
-
         }
 
         if (!permissions.isEmpty()) {
@@ -1187,9 +1183,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     // Check for WRITE_EXTERNAL_STORAGE
                     Boolean storage = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        storage = perms.get(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED &&
-                                perms.get(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED &&
-                                perms.get(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
+                        storage = perms.get(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
                     }else {
                         storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                     }

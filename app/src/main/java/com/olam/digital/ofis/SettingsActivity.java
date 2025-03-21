@@ -130,13 +130,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                         if (ContextCompat.checkSelfPermission(SettingsActivity.this, android.Manifest.permission.CAMERA) +
                                 ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_AUDIO) +
-                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_VIDEO) +
                                 ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions(SettingsActivity.this,
                                     new String[]{
                                             android.Manifest.permission.CAMERA,
                                             android.Manifest.permission.READ_MEDIA_AUDIO,
-                                            android.Manifest.permission.READ_MEDIA_VIDEO,
                                             android.Manifest.permission.READ_MEDIA_IMAGES},
 
                                     REQUEST_PERMISSIONS_FOR_TIRAMISU);

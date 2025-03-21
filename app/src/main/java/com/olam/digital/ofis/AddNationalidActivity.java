@@ -947,7 +947,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     if (ContextCompat.checkSelfPermission(AddNationalidActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                             ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
@@ -957,7 +956,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                         android.Manifest.permission.CAMERA,
                                         android.Manifest.permission.READ_PHONE_STATE,
                                         android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
                                         android.Manifest.permission.READ_MEDIA_IMAGES,
                                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
                                         android.Manifest.permission.RECORD_AUDIO,

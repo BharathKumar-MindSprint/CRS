@@ -143,14 +143,12 @@ public class TrainingRecord extends BaseListActivity{
                     // Request Permission only for Android Version Marshmallow and above
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                         if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) +
-                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_AUDIO) +
-                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_VIDEO) +
+                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_AUDIO)  +
                                 ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions(TrainingRecord.this,
                                     new String[]{
                                             android.Manifest.permission.CAMERA,
                                             android.Manifest.permission.READ_MEDIA_AUDIO,
-                                            android.Manifest.permission.READ_MEDIA_VIDEO,
                                             android.Manifest.permission.READ_MEDIA_IMAGES},
 
                                     REQUEST_PERMISSIONS_FOR_TIRAMISU);
