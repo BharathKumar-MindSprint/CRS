@@ -19,7 +19,7 @@
 
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Companion Debug</string>
+    <string name="app_name">OFIS Enumerator</string>
     <string name="cd_topSectionColour">Coloured background for section</string>
     <string name="ofis_switch_text_yes">Yes</string>
     <string name="ofis_switch_text_no">No</string>

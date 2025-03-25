@@ -16,7 +16,6 @@
     <string name="title_activity_complete_module">Tam anket modülü</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFI Yardımcısı Ayıklama</string>
     <string name="cd_topSectionColour">Seçim için renkli arka plan</string>
     <string name="ofis_switch_text_yes">Evet</string>
     <string name="ofis_switch_text_no">Hayır</string>

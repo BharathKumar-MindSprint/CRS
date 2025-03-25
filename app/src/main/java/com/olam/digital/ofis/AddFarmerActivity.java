@@ -1680,7 +1680,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                 nidvalue = getNidType(value);
                 currentcapture_position = (int) actionbutton.getTag();
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(AddFarmerActivity.this,

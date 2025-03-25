@@ -1182,7 +1182,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
         if (!permissions.isEmpty()) {
             String[] params = permissions.toArray(new String[permissions.size()]);
             ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);

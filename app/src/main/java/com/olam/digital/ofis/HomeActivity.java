@@ -332,13 +332,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Bundle.EMPTY,
                 SYNC_INTERVAL
         );
-
         String[] PERMISSIONS = new String[]{
                 android.Manifest.permission.READ_PHONE_STATE,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
         };
-
         if (!Utilities.hasPermissions(PERMISSIONS, context)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS);
         }

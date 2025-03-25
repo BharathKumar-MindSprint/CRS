@@ -29,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 35
         multiDexEnabled true
-        versionCode 559
-        versionName "13.7.8"
+        versionCode 4
+        versionName "1.2"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -228,7 +228,7 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-            resValue "string", "applicationName", "OFI Companion"
+            resValue "string", "applicationName", "OFIS Enumerator"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'

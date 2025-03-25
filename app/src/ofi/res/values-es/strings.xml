@@ -17,7 +17,6 @@
 
 
     <!-- main stuff -->
-    <string name="app_name">OFI - Asistente en Campo Debug</string>
     <string name="cd_topSectionColour">Fondo coloreado de la sección</string>
     <string name="ofis_switch_text_yes">Si</string>
     <string name="ofis_switch_text_no">No</string>
