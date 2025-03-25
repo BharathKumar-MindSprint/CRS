@@ -261,8 +261,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
         spinner.setTag(questionId+2);
 
@@ -616,8 +616,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setTag(questionId+2);
         spinner.setAdapter(spinnerAdapter);
 

@@ -256,9 +256,19 @@ public class FollowUpActionPlan extends Fragment {
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED), "0")){
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                return false;
+            List<FollowUpItemMainTable> actionPlanText = db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID, Constants.NOTRESOLVED);
+            if (!actionPlanText.isEmpty()) {
+                if (actionPlanText.get(0).actionPlanText.trim().isEmpty()) {
+                    String actionPlanId = actionPlanText.get(0).actionPlanId;
+                    if (Objects.equals(actionPlanId,"1")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                if (Objects.equals(actionPlanText.get(0).actionPlanText, "0") || Objects.equals(actionPlanText.get(0).actionPlanText, "null")){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
         }
 
@@ -883,8 +893,8 @@ public class FollowUpActionPlan extends Fragment {
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
@@ -960,7 +970,7 @@ public class FollowUpActionPlan extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        if(actionPlanId == 1){
+        if(actionPlanId == 1 && !actionPlanT.equals("null")){
             actionPlan.setText(actionPlanT);
         }
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
@@ -1020,8 +1030,8 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()){
                     actionPlan.setText("");
-                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(true);
 
@@ -1034,7 +1044,11 @@ public class FollowUpActionPlan extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!actionPlan.getText().toString().isEmpty()) {
-                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    } else {
+                        db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    }
                     db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
@@ -1058,7 +1072,11 @@ public class FollowUpActionPlan extends Fragment {
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.followUpItemMainTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.followUpItemMainTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    } else {
+                        db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    }
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
@@ -1181,6 +1199,9 @@ public class FollowUpActionPlan extends Fragment {
 
                 }
             }
+        } else if (displayType.equalsIgnoreCase(Constants.CHECKBOX)) {
+            List<String> lookUpValues = db.dmSurveyAnswerTableDao().getLookupValuesBasedOnQuestionId(questionId, Constants.FARMER_ID, Constants.MODULE_ID);
+            allowCaptureProof = db.dmLookupValuesItemDao().getIsCaptureProofCheckbox(questionId, lookUpValues);
         }else{
             List<DmLookupValuesItem> dmLookupValuesISubmoduleList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(Integer.parseInt(questionId));
             for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
@@ -1385,7 +1406,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
 
                 byte[] fileByteArray;
@@ -1537,7 +1558,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
                 byte[] pdfByteArray2;
@@ -1699,6 +1720,8 @@ public class FollowUpActionPlan extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+                String fileExtension = Constants.getFileExtension(filename);
+
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
 
                 try {
@@ -1706,7 +1729,13 @@ public class FollowUpActionPlan extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                if (fileExtension.equalsIgnoreCase(Bitmap.CompressFormat.PNG.name())) {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                } else {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                }
                 byte[] imageBytes = baos.toByteArray();
 
                 if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
@@ -1720,7 +1749,7 @@ public class FollowUpActionPlan extends Fragment {
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1865,7 +1894,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] fileByteArray;
                 try {
@@ -2012,7 +2041,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
-                String fileExtension = getFileExtension(filename);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
                 byte[] pdfByteArray2;
@@ -2530,15 +2559,6 @@ public class FollowUpActionPlan extends Fragment {
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
 
-    }
-
-    private String getFileExtension(String fileName) {
-        String extension = null;
-        int dotIndex = fileName.lastIndexOf(".");
-        if (dotIndex != -1) {
-            extension = fileName.substring(dotIndex + 1);
-        }
-        return extension;
     }
 
     private void deleteFile(String filePath) {

@@ -79,15 +79,15 @@ public interface DmSurveyAnswerTableDao {
     @Query("DELETE FROM DmSurveyAnswerTable WHERE moduleId=:id and farmerId=:farmerID AND plotId = :plotId")
     void deleteAllDataForRecurrence(String id , String farmerID, int plotId);
 
-    @Query("SELECT actionPlanText FROM DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId =:farmerId AND plotId = :plotId")
-    String getActionPlanText(String questionId, String farmerId, int plotId);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId =:farmerId AND plotId = :plotId")
+    List<DmSurveyAnswerTable> getActionPlanText(String questionId, String farmerId, int plotId);
 
 
     @Update
     void updateEntity(DmSurveyAnswerTable entity);
 
 
-    @Query("SELECT isCaptureProof FROM DmSurveyAnswerTable WHERE questionId = :id AND farmerId = :farmerId AND plotId = :plotId")
+    @Query("SELECT CASE WHEN MAX(isCaptureProof) = 1 THEN 1 ELSE 0 END AS isCaptureProof FROM DmSurveyAnswerTable WHERE questionId = :id AND farmerId = :farmerId AND plotId = :plotId")
     int getIsCaptureProofValue(int id, String farmerId, int plotId);
 
 
@@ -127,4 +127,6 @@ public interface DmSurveyAnswerTableDao {
     @Query("UPDATE DmSurveyAnswerTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
     void updateFarmerId(int tempFarmerId, int farmerId);
 
+    @Query("SELECT DISTINCT answerID FROM DmSurveyAnswerTable WHERE questionID=:questionId AND farmerId=:farmerId AND moduleId=:moduleId")
+    List<String> getLookupValuesBasedOnQuestionId(String questionId, String farmerId, String moduleId);
 }

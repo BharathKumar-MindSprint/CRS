@@ -227,10 +227,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                return false;
+            List<DmSurveyAnswerTable> actionPlanText = db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID);
+            if (!actionPlanText.isEmpty()) {
+                if (actionPlanText.get(0).actionPlanText.trim().isEmpty()) {
+                    String actionPlanId = actionPlanText.get(0).actionplanId;
+                    if (Objects.equals(actionPlanId,"1")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                if (Objects.equals(actionPlanText.get(0).actionPlanText, "0") || Objects.equals(actionPlanText.get(0).actionPlanText, "null")){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
+
         }
 
         return true;
@@ -739,8 +750,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
@@ -810,7 +821,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        if(actionPlanId == 1){
+        if(actionPlanId == 1 && !actionPlanT.equals("null")){
             actionPlan.setText(actionPlanT);
         }
 
@@ -872,8 +883,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     actionPlan.setText("");
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(true);
 
@@ -886,7 +897,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
@@ -910,7 +925,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
@@ -1230,6 +1249,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] fileByteArray;
                 try {
@@ -1253,7 +1273,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1383,6 +1403,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] pdfByteArray2;
                 try {
@@ -1407,7 +1428,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1561,6 +1582,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
 
@@ -1569,7 +1591,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                if (fileExtension.equalsIgnoreCase(Bitmap.CompressFormat.PNG.name())) {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                } else {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                }
+
                 byte[] imageBytes = baos.toByteArray();
 
                 if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
@@ -1588,7 +1615,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1755,7 +1782,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] fileByteArray;
                 try {
                     fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
@@ -1774,7 +1801,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1913,7 +1940,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] pdfByteArray2;
                 try {
                     pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
@@ -1932,7 +1959,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -2076,6 +2103,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
     private void initializeComplianceStatus() {
+        totalActionPlanCount = 0;
         questionIdSet.clear();
         compliantList.clear();
         satisfactoryList.clear();
@@ -2508,7 +2536,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
-        totalActionPlanCount = 0;
     }
 
     @Override
