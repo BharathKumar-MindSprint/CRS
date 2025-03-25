@@ -130,8 +130,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     // Runtime Permission Request Code
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
-
-    private final static int MY_NATIONALID_PIC_REQUEST_PERMISSIONS_FOR_TIRAMISU = 2599;
     private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
@@ -308,47 +306,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerPhotoButton();
-                    }
-                }
-                // Request Permission only for Android Version Marshmallow and above
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // Check Camera & Storage Permission
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                        //request permission
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PROFILE_PIC_PERMISSIONS_REQUEST);
-
-                    } else {
-
-                        // Permission already granted
-                        bindFarmerPhotoButton();
-                    }
-                } else {
-
-                    // Call methods directly for Android versions lower than Marshmallow
-                    bindFarmerPhotoButton();
-                }
+                requestPermissions();
             }
         });
 
@@ -1722,45 +1680,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                 nidvalue = getNidType(value);
                 currentcapture_position = (int) actionbutton.getTag();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                MY_NATIONALID_PIC_REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
+                                new String[]{android.Manifest.permission.CAMERA}, MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
+                    }
+                    else {
                         bindFarmerNationalIDButton();
                     }
                 }
-                // Request Permission only for Android Version Marshmallow and above
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // Check Camera & Storage Permission
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                        //request permission
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
-
-                    } else {
-
-                        // Permission already granted
-                        bindFarmerNationalIDButton();
-                    }
-                } else {
-
-                    // Call methods directly for Android versions lower than Marshmallow
+                else {
                     bindFarmerNationalIDButton();
                 }
             }
@@ -2411,7 +2340,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             }
 
-                            //  tempProfileImageFile=photoFile;
                             setCapturedImageURI(photoURI);
                             setCurrentPhotoPath(photoFile.getPath());
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
@@ -2420,13 +2348,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
                     }
-
-                } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                }
+                else if (items[item].equals(res.getString(R.string.Gallery))) {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-
                 }
                 dialog.dismiss();
             }
@@ -2540,17 +2466,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    String realPath= ImageFilePath.getPath(AddFarmerActivity.this,imageReturnedIntent.getData());
-                    try {
-                        if (realPath != null) {
-                            setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
-                        } else {
-                            Toast.makeText(AddFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    } else {
+                    setImageForGalleryPick(imageReturnedIntent.getData(), farmerPhoto);
+                } else {
                     farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
                     setCurrentPhotoPath(null);
                 }
@@ -2565,44 +2482,47 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    @Override
+     private void setImageForGalleryPick(Uri uri, ImageButton farmerPhoto) {
+         String realPath= ImageFilePath.getPath(AddFarmerActivity.this, uri);
+         try {
+             if (realPath != null) {
+                 setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
+             } else {
+                 Toast.makeText(AddFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+
+     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
                     bindFarmerPhotoButton();
-
                 } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]) || !shouldShowRequestPermissionRationale(permissions[1]))) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
                 } else {
                     Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
                 }
                 break;
             }
-
             case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
                 try {
-                    if (grantResults.length > 0 &&
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults[0] == PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                            == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                            == PackageManager.PERMISSION_GRANTED)) {
+                        bindFarmerPhotoButton();
+                    }
+                    else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults.length > 0 &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                        // Permissions granted, proceed with your code
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        bindFarmerPhotoButton();
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                             && (!shouldShowRequestPermissionRationale(permissions[0])
                             || !shouldShowRequestPermissionRationale(permissions[1])
-                            || !shouldShowRequestPermissionRationale(permissions[2])
-                            || !shouldShowRequestPermissionRationale(permissions[3])
-                            || !shouldShowRequestPermissionRationale(permissions[4])
-                            || !shouldShowRequestPermissionRationale(permissions[5])
-                            || !shouldShowRequestPermissionRationale(permissions[6])
-                            || !shouldShowRequestPermissionRationale(permissions[7])
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
@@ -2616,50 +2536,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             case MY_NATIONALID_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     bindFarmerNationalIDButton();
-
-                } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]) || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]))) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
                 } else {
                     Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
                 }
                 break;
-            }
-
-            case MY_NATIONALID_PIC_REQUEST_PERMISSIONS_FOR_TIRAMISU: {
-                try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                        // Permissions granted, proceed with your code
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                            || !shouldShowRequestPermissionRationale(permissions[2])
-                            || !shouldShowRequestPermissionRationale(permissions[3])
-                            || !shouldShowRequestPermissionRationale(permissions[4])
-                            || !shouldShowRequestPermissionRationale(permissions[5])
-                            || !shouldShowRequestPermissionRationale(permissions[6])
-                            || !shouldShowRequestPermissionRationale(permissions[7])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
@@ -3347,4 +3231,30 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return true;
      }
 
+     private void requestPermissions() {
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+             String[] PERMISSIONS = new String[] {
+                     android.Manifest.permission.CAMERA,
+                     Manifest.permission.READ_MEDIA_IMAGES
+             };
+
+             if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                 return;
+             }
+             bindFarmerPhotoButton();
+         }
+         else {
+             String[] PERMISSIONS = new String[] {
+                     android.Manifest.permission.CAMERA,
+                     Manifest.permission.READ_EXTERNAL_STORAGE
+             };
+
+             if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                 return;
+             }
+            bindFarmerPhotoButton();
+         }
+     }
  }

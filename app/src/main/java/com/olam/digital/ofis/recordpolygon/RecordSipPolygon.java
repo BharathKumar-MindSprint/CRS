@@ -37,6 +37,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -104,7 +105,9 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class RecordSipPolygon extends AppCompatActivity {
@@ -269,15 +272,11 @@ public class RecordSipPolygon extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-//                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
-//                sharedPref.edit().putString("SIP_NAME_INFRA", name_sip.getText().toString()).apply();
-
                 if (!name_sip.getText().toString().isEmpty()){
                     dl.updateSipNameByUploadId(sip_upload_id, name_sip.getText().toString());
                 }
             }
         });
-
 
         SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
 
@@ -343,10 +342,6 @@ public class RecordSipPolygon extends AppCompatActivity {
             }
         });
 
-        /*//To use MapEventsReceiver methods, we add a MapEventsOverlay:
-        MapEventsOverlay overlay = new MapEventsOverlay(this);
-        map.getOverlays().add(overlay);*/
-
         myLocationOverlay = new DirectedLocationOverlay(this);
         map.getOverlays().add(myLocationOverlay);
         CompassOverlay compassOverlay = new CompassOverlay(this, map);
@@ -356,9 +351,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         if (savedInstanceState == null) {
             Location location = null;
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //  location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                if (location == null)
-//                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 try {
                     Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
                     locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
@@ -396,13 +388,9 @@ public class RecordSipPolygon extends AppCompatActivity {
 
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(map);
         map.getOverlays().add(scaleBarOverlay);
-
-        // Itinerary markers:
         mItineraryMarkers = new FolderOverlay();
-        //mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         map.getOverlays().add(mItineraryMarkers);
 
-        //Tracking system:
         mTrackingModeButton = (ImageButton) findViewById(R.id.buttonTrackingMode_sip);
         mTrackingModeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -438,21 +426,13 @@ public class RecordSipPolygon extends AppCompatActivity {
 
         mKmlOverlay = null;
         if (savedInstanceState != null) {
-            //STATIC - mKmlDocument = savedInstanceState.getParcelable("kml");
             updateUIWithKml();
         }
         setStdTileProvider();
 
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int permissionStatusExtStorage = getPermissionStatus(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionStatus == BLOCKED_OR_NEVER_ASKED || permissionStatusExtStorage == BLOCKED_OR_NEVER_ASKED) {
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                checkPermissionsForAndroid13Above();
-            }else {
-                checkPermissions();
-            }
-
+        if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
+            checkPermissions();
         }
         initializeLoggingVariables();
 
@@ -548,8 +528,6 @@ public class RecordSipPolygon extends AppCompatActivity {
                 }
                 dl.deleteSipPlotItem(currentTrackname);
                 delete_plot.setVisibility(View.GONE);
-//                initiateLogging();
-
                 alert.dismiss();
             }
         });
@@ -644,15 +622,10 @@ public class RecordSipPolygon extends AppCompatActivity {
                 alert.dismiss();
                 currentTrackname = sip_upload_id;
 
-//                SharedPreferences sharedPref = getSharedPreferences("myPrefs", MODE_PRIVATE);
-//                sharedPref.edit().putString("SIP_UPLOAD_ID", currentTrackname).apply();
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
 
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
-
-//                String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
-//                String plotName = txtPlotName.getText().toString();
                 saveSipPlotGeoDataJsonToDatabase(plotGeoJson, category_sip_id, category_name,name_sip.getText().toString(),currentTrackname);
                 JSONObject jObj=new JSONObject();
                 try {
@@ -661,18 +634,6 @@ public class RecordSipPolygon extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                try {
-//                    collectGPSPoint(jObj.toString());
-//                }catch (Exception e){}
-//                try {
-//                    String plotallLocations = prepareJsonServerSync();
-//                    saveToSyncDatabase(plotallLocations, plotId);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-
-                //List<LocationBeanList> list = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
 
                 showToastMessage(getResources().getString(R.string.saved_successfully_msg, name_sip.getText().toString()));
                 mLocationBeanList = new ArrayList<>();
@@ -688,13 +649,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         alert.show();
 
     }
-//    void saveToSyncDatabase(String plotsJson , String plotId) {
-//        DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
-//        if (plotsJson != null) {
-//            plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-//            dl.updateSipPolygon(category_sip_id, plotsJson, category_name, sip_name);
-//        }
-//    }
 
     void initializeLoggingVariables() {
         mIsLoggingStopped = false;
@@ -704,7 +658,6 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
     void loadMapWithPolygon(String trackId) {
-        //record in the track the current location at current time:
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         ArrayList<Double> lats = new ArrayList<>();
         ArrayList<Double> lons = new ArrayList<>();
@@ -718,15 +671,6 @@ public class RecordSipPolygon extends AppCompatActivity {
                 updateUIWithPolygon(geoPoints, trackId);
             }
         }
-        /*if (lats.size() > 0) {
-            double lTotalArea = Utils.getArea(lats, lons);
-            if (lTotalArea >= 0) {
-                lTotalArea = lTotalArea / 10000;
-                // lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
-                lTotalArea = roundArea(lTotalArea,2);
-                areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(lTotalArea)));
-            }
-        }*/
         updateUIWithPolygon(geoPoints, trackId);
     }
 
@@ -753,8 +697,8 @@ public class RecordSipPolygon extends AppCompatActivity {
         if (location != -1)
             mapOverlays.set(location, mDestinationPolygon);
         else
-            mapOverlays.add(1, mDestinationPolygon); //insert just above the MapEventsOverlay.
-        if (polygon.size() > 0) {
+            mapOverlays.add(1, mDestinationPolygon);
+        if (!polygon.isEmpty()) {
             setViewOn(bb);
         }
         map.invalidate();
@@ -924,9 +868,6 @@ public class RecordSipPolygon extends AppCompatActivity {
             if (startLocationUpdates()) {
                 Location location = null;
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                    if (location == null)
-//                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     try {
                         Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
                         locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
@@ -1069,11 +1010,7 @@ public class RecordSipPolygon extends AppCompatActivity {
     void initiateLogging() {
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionStatus == DENIED) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                checkPermissionsForAndroid13Above();
-            }else {
-                checkPermissions();
-            }
+            checkPermissions();
             return;
         } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
             showChangeSettingsDialog();
@@ -1245,29 +1182,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-
-        if (!permissions.isEmpty()) {
-            String[] params = permissions.toArray(new String[permissions.size()]);
-            ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-        }
-    }
-
-    void checkPermissionsForAndroid13Above(){
-        List<String> permissions = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
-        }
-
         if (!permissions.isEmpty()) {
             String[] params = permissions.toArray(new String[permissions.size()]);
             ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
@@ -1483,7 +1397,6 @@ public class RecordSipPolygon extends AppCompatActivity {
         p.mName = name;
         p.mGeometry = t;
         mKmlDocument.mKmlRoot.add(p);
-        //set a color to this track by creating a style:
         Style s = new Style();
         int color = Color.RED - 0x20000000;
         s.mLineStyle = new LineStyle(color, 8.0f);
@@ -1491,4 +1404,25 @@ public class RecordSipPolygon extends AppCompatActivity {
         p.mStyle = styleId;
         return t;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS) {
+            Map<String, Integer> perms = new HashMap<>();
+            for (int i = 0; i < permissions.length; i++) {
+                perms.put(permissions[i], grantResults[i]);
+            }
+
+            try {
+                boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                if (!locationPerm) {
+                    Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

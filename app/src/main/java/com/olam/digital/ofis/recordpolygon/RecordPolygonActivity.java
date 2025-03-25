@@ -312,26 +312,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         etPlotArea = (EditText) findViewById(R.id.plot_area);
         initializeEditTextListeners();
 
-
-        /*DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
-        Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
-        if (plotIdsSynced!=null){
-            int totalPlotCount = plotIdsSynced.getCount();
-            spinnerArray = new String[lPlotCount];
-            for (int i = 0; i < lPlotCount; i++) {
-                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1 + totalPlotCount));
-
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
-            }
-        }else {
-            spinnerArray = new String[lPlotCount];
-            for (int i = 0; i < lPlotCount; i++) {
-                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
-
-                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
-            }
-        }*/
-
         spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
@@ -441,9 +421,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (savedInstanceState == null) {
             Location location = null;
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //  location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                if (location == null)
-//                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 try {
                     Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
                     locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
@@ -543,21 +520,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         }
         setStdTileProvider();
-//        map.setTileSource(MAPBOXSATELLITELABELLED);
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.getOverlayManager().getTilesOverlay().setColorFilter(null);
         mapController.setZoom(17);
 
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int permissionStatusExtStorage = getPermissionStatus(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionStatus == BLOCKED_OR_NEVER_ASKED || permissionStatusExtStorage == BLOCKED_OR_NEVER_ASKED) {
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                checkPermissionsForAndroid13Above();
-            }else {
-                checkPermissions();
-            }
-
+        if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
+            checkPermissions();
         }
         initializeLoggingVariables();
         loadPlotName(0);
@@ -683,11 +652,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private void initCenterCurrentLocation() {
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionStatus == DENIED) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                checkPermissionsForAndroid13Above();
-            }else {
-                checkPermissions();
-            }
+            checkPermissions();
             return;
         } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
             showChangeSettingsDialog();
@@ -869,9 +834,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             if (startLocationUpdates()) {
                 Location location = null;
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                    if (location == null)
-//                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     try {
                         Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
                         locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
@@ -904,11 +866,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     void initiateLogging() {
         int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionStatus == DENIED) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                checkPermissionsForAndroid13Above();
-            }else {
-                checkPermissions();
-            }
+            checkPermissions();
             return;
         } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
             showChangeSettingsDialog();
@@ -1139,28 +1097,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-
-        if (!permissions.isEmpty()) {
-            String[] params = permissions.toArray(new String[permissions.size()]);
-            ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-        }
-    }
-
-    void checkPermissionsForAndroid13Above(){
-        List<String> permissions = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
-        }
-
         if (!permissions.isEmpty()) {
             String[] params = permissions.toArray(new String[permissions.size()]);
             ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
@@ -1169,32 +1105,17 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<>();
-                // Initial
-                //perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                // Fill with results
                 for (int i = 0; i < permissions.length; i++) {
                     perms.put(permissions[i], grantResults[i]);
                 }
 
                 try {
-                    // Check for WRITE_EXTERNAL_STORAGE
-                    Boolean storage = null;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        storage = perms.get(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
-                    }else {
-                        storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                    }
-                    if (!storage) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.storage_permission_explanation, Toast.LENGTH_LONG).show();
-                    } // else: permission was granted, yay!
-
-                    Boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                    boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
                     if (!locationPerm) {
-                        // Permission Denied
                         Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
