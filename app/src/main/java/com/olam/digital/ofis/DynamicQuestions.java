@@ -3199,6 +3199,7 @@ public class DynamicQuestions {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                Log.d("intial", charSequence.toString());
             }
 
             @Override
@@ -3423,95 +3424,37 @@ public class DynamicQuestions {
     }
 
     private void setAlphanumericFilter(final EditText editText, final int maxCharacterLimit) {
-        final int[] spaceCount = {0};
-        final int[] previousLength = {0};
-        final boolean[] backSpace = new boolean[1];
         InputFilter alphaNumericFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
-                                       Spanned dest, int dstart, int dend) {
-
-                if (source instanceof SpannableStringBuilder) {
-                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
-                    for (int i = end - 1; i >= start; i--) {
-                        char currentChar = source.charAt(i);
-                        if (!Character.isWhitespace(currentChar)) {
-                            sourceAsSpannableBuilder.delete(i, i + 1);
-                        }
-                    }
-                    return source;
-                } else {
-                    StringBuilder filteredStringBuilder = new StringBuilder();
-                    for (int i = start; i < end; i++) {
-                        char character = source.charAt(i);
-                        if (Character.isLetterOrDigit(character) || Character.isWhitespace(character) || isSymbol(character) || character == '\b') {
-                            if (filteredStringBuilder.length() < maxCharacterLimit) {
-                                if (character == ' ' && spaceCount[0] >= 1) {
-                                    continue;
-                                }
-
-                                filteredStringBuilder.append(character);
-                                if (character == ' ') {
-                                    spaceCount[0]++;
-                                } else {
-                                    spaceCount[0] = 0;
-                                }
+                                                Spanned dest, int dstart, int dend) {
+                StringBuilder filteredStringBuilder = new StringBuilder();
+                for (int i = start; i < end; i++) {
+                    char character = source.charAt(i);
+                    if (Character.isLetterOrDigit(character) || Character.isWhitespace(character) || isSymbol(character)) {
+                        if (filteredStringBuilder.length() < maxCharacterLimit) {
+                            if (character == ' ' && (filteredStringBuilder.length() == 0 || filteredStringBuilder.charAt(filteredStringBuilder.length() - 1) == ' ')) {
+                                continue; // Prevent multiple consecutive spaces
                             }
+                            filteredStringBuilder.append(character);
                         }
                     }
-
-                    editText.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                            previousLength[0] = charSequence.length();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            backSpace[0] = previousLength[0] > editable.length();
-
-                            if (backSpace[0]) {
-                                if (spaceCount[0] > 0) {
-                                    spaceCount[0]--;
-                                } else if (filteredStringBuilder.length() > 0) {
-                                    filteredStringBuilder.deleteCharAt(filteredStringBuilder.length() - 1);
-                                    spaceCount[0] = -1;
-                                }
-                            }
-                        }
-                    });
-
-                    if (filteredStringBuilder.length() > 0 && filteredStringBuilder.charAt(filteredStringBuilder.length() - 1) == ' ' && spaceCount[0] == -1) {
-                        filteredStringBuilder.deleteCharAt(filteredStringBuilder.length() - 1);
-                        spaceCount[0] = 0;
-                    }
-
-                    int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
-                    if (remainingCharacters <= 0) {
-                        editText.setError("Character limit reached");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                editText.setError(null); // Clear the error message after delay
-                            }
-                        }, 3000); // Delay for 3 seconds
-                        return ""; // Limit reached, discard the input
-                    } else {
-                        editText.setError(null);
-                    }
-                    return filteredStringBuilder.toString();
                 }
+                int remainingCharacters = maxCharacterLimit - (dest.length() - (dend - dstart));
+                if (remainingCharacters < filteredStringBuilder.length()) {
+                    filteredStringBuilder.setLength(remainingCharacters);
+                }
+                if(dest.length() + filteredStringBuilder.length() - (dend - dstart) > maxCharacterLimit){
+                    editText.setError("Character limit reached");
+                    new Handler().postDelayed(() -> editText.setError(null), 3000);
+                } else {
+                    editText.setError(null);
+                }
+                return filteredStringBuilder.toString();
             }
         };
-
         editText.setFilters(new InputFilter[]{alphaNumericFilter});
     }
-
 
     private boolean isSymbol(char character) {
         String symbolRegex = "[\\p{Punct}]";
