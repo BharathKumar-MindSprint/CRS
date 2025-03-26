@@ -764,15 +764,6 @@
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Kích thước lô nhỏ hơn diện tích được cấu hình tối thiểu (0,0009 HA). Vui lòng chỉ định kích thước lô hợp lệ.</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
 
     <string name="ofis_photo_checkbox_download">Tải xuống hình ảnh hộp kiểm ảnh</string>
     <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>

@@ -41,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.telephony.PhoneNumberUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +132,7 @@ import java.util.Objects;
 public class ViewFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener {
 
     public static long farmerId;
+    public static String notificationType;
     private Cursor farmer;
     private Context context;
     private static Context staticContext;
@@ -248,6 +250,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     boolean calculateComplianceFlag = false;
 
+    private boolean showRemainderPopup = false;
+    private boolean isFromFindFarmerActivity = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -259,6 +265,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         context = this;
         staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
+        isFromFindFarmerActivity = getIntent().getBooleanExtra(Utilities.IS_FROM_FIND_FARMER, false);
 
         db = OFISRoomDB.getDbInstance(context);
         res = getResources();
@@ -657,6 +664,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 compliance.setVisibility(View.VISIBLE);
                 ivNonCompliance.setVisibility(View.GONE);
                 nonCompliance.setVisibility(View.GONE);
+            }
+
+            showRemainderPopup = db.onGroundSurveyNotificationDao().checkSurveyExists(farmerId);
+            if (isFromFindFarmerActivity && showRemainderPopup) {
+                isFromFindFarmerActivity = false;
+                showRemainderPopupForEUDRSurveys();
             }
         }
 
@@ -1364,7 +1377,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "", "", "","", "", "", "",moduleID , "",
                             "diagnostic",""
                     });
-
                 }
 
                 int farmPlotCountDM = dl.fetchSyncedPlotCountByFarmerIdAndCleansedStatus(String.valueOf(farmerId));
@@ -2184,10 +2196,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Utilities.notificationType = notificationType;
+        notificationType = null;
         NavUtils.navigateUpFromSameTask(this);
     }
 
-    //JIRA req OW-505
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Utilities.notificationType = notificationType;
+            notificationType = null;
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void bindFarmerPhotoButton() {
         final CharSequence[] items = {res.getString(R.string.Camera), res.getString(R.string.Gallery)};
 
@@ -2871,7 +2895,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         } else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-            if (dmSurveyAnswerTableList.size() != 0) {
+            if (!dmSurveyAnswerTableList.isEmpty()) {
                 isCompleted = true;
             }
         }
@@ -2927,5 +2951,43 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         };
 
     }
+
+    private void showRemainderPopupForEUDRSurveys() {
+        View dialogView = getLayoutInflater().inflate(R.layout.confirmation_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        TextView title = dialogView.findViewById(R.id.dialog_title);
+        title.setVisibility(View.VISIBLE);
+        TextView message = dialogView.findViewById(R.id.dialog_message);
+        Button btnYes = dialogView.findViewById(R.id.button_yes);
+        Button btnNo = dialogView.findViewById(R.id.button_no);
+        message.setText(res.getString(R.string.eudr_survey_remainder_message));
+        btnYes.setText(res.getString(R.string.start_now));
+        btnNo.setText(res.getString(R.string.skip));
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(context, ViewPlotSurveyActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong(Utilities.FARMER_ID, farmerId);
+                bundle.putBoolean(res.getString(R.string.dm_plot_survey), true);
+                in.putExtras(bundle);
+                startActivity(in);
+                dialog.dismiss();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 
 }

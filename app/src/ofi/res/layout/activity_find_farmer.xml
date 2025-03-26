@@ -96,7 +96,7 @@
                     android:background="@drawable/edittext_bg_dark"
                     android:drawableRight="@drawable/ic_searchimg"
                     android:drawablePadding="@dimen/margin_10"
-                    android:hint="@string/Farmer_Name"
+                    android:hint="@string/farmer_search_hint"
                     android:inputType="textCapWords"
                     android:padding="@dimen/margin_10"
                     android:textColor="@color/ofis_base_font_dark"
@@ -134,6 +134,7 @@
             android:textSize="@dimen/ofis_large_text" />
 
         <ScrollView
+            android:id="@+id/svAdvancedFilters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -332,10 +333,23 @@
 
         <ListView
             android:id="@+id/list"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" />
+            android:dividerHeight="0dp"/>
+
+        <TextView
+            android:id="@+id/tvNoFarmerFound"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/farmer_not_found"
+            android:textStyle="bold"
+            android:textColor="@color/btn_primary_disabled"
+            android:textSize="@dimen/ofis_xlarge_pad"
+            android:gravity="center"
+            android:visibility="gone"
+            />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

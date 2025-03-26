@@ -215,13 +215,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         if (justVal.size() != qId.size()){
-            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.dm_capture_proof_is_missing), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         for (int j=0; j<qId.size(); j++) {
             if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -475,7 +475,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         if (isFilesUploaded) {
-            textView.setText("Capture Proof Uploaded");
+            textView.setText(getResources().getString(R.string.dm_capture_proof_uploaded));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg_disabled));
             }
@@ -614,8 +614,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-            list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
-            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            if (dmActionPlansItemList.get(c) != null) {
+                list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
+                ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
+            }
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());

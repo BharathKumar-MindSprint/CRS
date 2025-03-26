@@ -1213,7 +1213,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="failed_to_load_document">Échec du chargement du document</string>
     <string name="document_viewer">Document Viewer</string>
     <string name="no_data_found">No data Found</string>
-    <string name="select_module">Select Module</string>
     <string name="error">Error</string>
     <string name="Please_check_the_Internet_Connection">Please check the Internet Connection</string>
     <string name="Alert_message_to_contact_administrator">Oops!!! Something went wrong. Please contact the administrator.</string>
@@ -1222,15 +1221,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="download_farm_plan">Download Crop Plan</string>
     <string name="downloading_farm_plan">Downloading Farm Plan</string>
     <string name="checking_isfarmplan_available">Checking Download Crop Plan Status</string>
-
-    <!--Diagnostic Module-->
-    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
-    <string name="dm_survey">Survey</string>
-    <string name="dm_actionplan_proof">Action plan and proof</string>
-    <string name="dm_survey_results">Survey Results</string>
-    <string name="dm_diognostic_module">Diagnostic Module</string>
-    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
-    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter value within the range %1$d - %2$d</string>
@@ -1250,26 +1240,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_pins">"Plot Pin -  "</string>
     <string name="save_plot_size">save plot size</string>
     <string name="incorrect_plot_size_message">Plot size is smaller than the minimum configured area (0.0009 HA). Please specify a valid plot size.</string>
-    <string name="follow_up_farmer_details">Follow Up Farmer Details</string>
-    <string name="dm_hint_txt">Diagnostic Module</string>
-    <string name="follow_up_survey">Follow-up survey</string>
-    <string name="diagnostic_survey">Diagnostic Module Survey</string>
-    <string name="dm_not_resolved">Not Resolved</string>
-    <string name="dm_resolved">Resolved</string>
     <string name="ofis_photo_checkbox_download">Download Photo\nCheckbox Images</string>
     <string name="ready_to_download_photo_checkbox">There are images which need to be downloaded for photo checkbox questions. Do you want to continue to download the images now?</string>
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
     <string name="image_downloaded">Images successfully downloaded</string>
     <string name="image_download_start">Downloading Images for photo checkbox questions</string>
-    <string name="dm_select_action_plan">Select Action Plan</string>
-    <string name="dm_custom_action_plan">Custom Action Plan</string>
-    <string name="dm_edit_action_plan_details">Edit action plan details</string>
-    <string name="dm_add_photo">Add Photo!</string>
-    <string name="dm_choose_from_gallery">Choose from Gallery</string>
-    <string name="dm_do_you_want_to_remove_this_report">Do you want to remove this report</string>
-    <string name="dm_maximum_5_files_can_be_uploaded">Maximum 5 files can be uploaded.</string>
-    <string name="dm_capture_proof_is_missing">Capture Proof is missing</string>
-    <string name="dm_action_plan_is_missing">Action Plan is missing!</string>
-    <string name="dm_please_give_camera_permission">Please give camera permission</string>
-    <string name="dm_please_give_gallery_permission">Please give gallery permission</string>
 </resources>
