@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -14,8 +15,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpPagerAdapter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
+
+import java.util.Locale;
 
 public class DiagnosticModuleFollowUp extends BaseActivity {
 
@@ -23,7 +28,8 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
     public TabLayout tabLayout;
     ViewPager2 viewPager;
     private boolean swipeEnabled = true;
-    TextView followup_subtitle;
+    TextView followup_subtitle,followup_title;
+    OFISRoomDB db;
 
 
 
@@ -37,8 +43,17 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
         tabLayout = findViewById(R.id.tabLayoutFollowUp);
         viewPager = findViewById(R.id.viewPagerFollowUp);
         followup_subtitle = findViewById(R.id.followup_subtitle);
+        followup_title = findViewById(R.id.followup_title);
+
+        Intent intent = getIntent();
+        String moduleID = intent.getStringExtra("DM_MODULE_ID");
+        db = OFISRoomDB.getDbInstance(context);
+        DmMainModule mainModule = db.dmMainModuleDao().getDmMainModule(Integer.parseInt(moduleID));
+        String subtitle = getNamesbyLanguage(mainModule);
+
         if(!Constants.MODULE_NAME.equalsIgnoreCase("0")) {
-            followup_subtitle.setText(Constants.MODULE_NAME);
+            followup_title.setText(Constants.MODULE_NAME);
+            followup_subtitle.setText(subtitle);
         }
 
         FollowUpPagerAdapter sa = new FollowUpPagerAdapter(this);
@@ -123,5 +138,22 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
         viewPager.setCurrentItem(nextTab);
     }
 
+    public static String getNamesbyLanguage(DmMainModule dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.description;
+            case "es" -> dmMainModule.descriptionEs;
+            case "fr" -> dmMainModule.descriptionFr;
+            case "id" -> dmMainModule.descriptionIdn;
+            case "in" -> dmMainModule.descriptionIdn;
+            case "lo" -> dmMainModule.descriptionLo;
+            case "pt" -> dmMainModule.descriptionPt;
+            case "th" -> dmMainModule.descriptionTh;
+            case "tr" -> dmMainModule.descriptionTr;
+            case "vi" -> dmMainModule.descriptionVi;
+            default -> dmMainModule.description;
+        };
+
+    }
 
 }

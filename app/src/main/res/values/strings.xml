@@ -1311,6 +1311,12 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_action_plan_is_missing">Action Plan is missing!</string>
     <string name="dm_please_give_camera_permission">Please give camera permission</string>
     <string name="dm_please_give_gallery_permission">Please give gallery permission</string>
+    <string name="dm_capture_proof_uploaded">Capture Proof Uploaded</string>
+    <string name="dm_please_enter_any_drop_down_value">Please enter any drop down value</string>
+    <string name="dm_please_enter_any_value">Please enter any value</string>
+    <string name="dm_textbox_range_integer">Range from %1$d to %2$d</string>
+    <string name="dm_textbox_range_decimal">Range from %1$.2f to %2$.2f</string>
+    <string name="minimum_range_error">Minimum Range %1$.2f</string>
 
     <string name="dm_plot_survey">Diagnostic Plot Surveys</string>
     <string name="dm_plot_survey_completed">Diagnostic Plot Survey Completed</string>
@@ -1387,6 +1393,32 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="stakeholder_consent">STAKEHOLDER CONSENT</string>
     <string name="farm_holding_suffix">\'s Farm Holding</string>
     <string name="stakeholder_role_required">Stakeholder role required!</string>
+    <string name="error_range_decimal">Enter range between %1$.2f to %2$.2f</string>
+    <string name="error_range_integer">Enter range between %1$d to %2$d</string>
+    <string name="dm_please_select_action_plan_status_before_proceed">Please Select Action Plan Status before proceed!</string>
+    <string name="dm_file_deleted_successfully">File deleted successfully!</string>
+
+    <string name="remainder">Reminder</string>
+    <string name="remainder_message">No Eudr AND PA Surveys</string>
+    <string name="home_popup_msg">" farmers are pending to complete On-ground verification surveys"</string>
+    <string name="fdp">Farmer Development Plan</string>
+    <string name="clmrs">Child Labour Mediation and Remediation System</string>
+    <string name="eudr">EUDR Ground Verification Survey</string>
+    <string name="pa">Protected Area Legality Survey</string>
+    <string name="farmer_not_found">Farmer Not Found</string>
+    <string name="no_notification">No Notification</string>
+    <string name="farmer_search_hint">Search by Farmer Name or ID</string>
+    <string name="start_now">Start Now</string>
+    <string name="skip">Skip</string>
+    <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
+    <string name="edur_survey_remainder">EUDR Survey Reminder</string>
+
+    <string-array name="all_notification">
+        <item>FDP</item>
+        <item>CLMRS Follow-up</item>
+        <item>EUDR Ground Verification Survey</item>
+        <item>Protected Area Legality Survey</item>
+    </string-array>
 
     <string name="gallery_is_not_available_in_mobile">Gallery is not available in Mobile</string>
     <string name="something_went_wrong_please_try_again">Something went wrong, please try again</string>
