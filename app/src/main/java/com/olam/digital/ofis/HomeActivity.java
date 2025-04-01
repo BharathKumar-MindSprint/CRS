@@ -212,14 +212,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     //    Passcode added - Penetration test
     private EditText passcode;
     private Button saveUpdateButton;
-
-    // Runtime Permission Request Code
-    private final static int MY_PERMISSIONS_REQUEST = 9999;
-
-    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
-    private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
-
-    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
+    private static final int REQUEST_PERMISSIONS = 2507;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
@@ -339,78 +332,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Bundle.EMPTY,
                 SYNC_INTERVAL
         );
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
-            }
-        }
-        // Request Permission only for Android Version Marshmallow and above
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
-            }
-        }
-        // Request Permission only for Android Version Marshmallow and above
-
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Check Phone Permission
-            if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                    .checkSelfPermission(HomeActivity.this,
-                            android.Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(HomeActivity.this,
-                        new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_SIGNATURE_PIC_PERMISSIONS_REQUEST);
-
-
-                //request permission
-                ActivityCompat.requestPermissions(HomeActivity.this,
-                        new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                        MY_PERMISSIONS_REQUEST);
-
-            }
+        String[] PERMISSIONS = new String[]{
+                android.Manifest.permission.READ_PHONE_STATE,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+        };
+        if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS);
         }
 
         cardview_downloadFarmplan = findViewById(R.id.cardview_downloadFarmplan);
@@ -1413,6 +1341,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_ACCESS_LOCATION: {
                 try {
@@ -1438,87 +1367,32 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             }
                         }
                     }
-                    break;
                 } catch (Exception e) {
                 }
-
+                break;
             }
-
-            case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                try {
-                    if (grantResults.length > 0
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-
-                    } else if (Build.VERSION.SDK_INT >= 23
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    } else {
-                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                } catch (Exception e) {
-                }
-
-            }
-            case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
-
-                try {
-                    if (grantResults.length > 0
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-
-                    } else if (Build.VERSION.SDK_INT >= 23
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    } else {
-                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                    break;
-
-                } catch (Exception e) {
-                }
-            }
-
-            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+            case REQUEST_PERMISSIONS: {
                 try {
                     if (grantResults.length > 0 &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                             grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
                         // Permissions granted, proceed with your code
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                             && (!shouldShowRequestPermissionRationale(permissions[0])
                             || !shouldShowRequestPermissionRationale(permissions[1])
                             || !shouldShowRequestPermissionRationale(permissions[2])
-                            || !shouldShowRequestPermissionRationale(permissions[3])
-                            || !shouldShowRequestPermissionRationale(permissions[4])
-                            || !shouldShowRequestPermissionRationale(permissions[5])
-                            || !shouldShowRequestPermissionRationale(permissions[6])
-                            || !shouldShowRequestPermissionRationale(permissions[7])
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
                     }else {
                         Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
                     }
-                    break;
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
             }
-
         }
     }
 

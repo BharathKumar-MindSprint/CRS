@@ -4316,9 +4316,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     // convert base 64 string
 
                     try {
+                        Log.d("photo", farmerPhotoPath);
                         String encodedImage = Utilities.base64ConversionForImage(farmerPhotoPath);
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, encodedImage);
-
+                        Log.d("profile pic", encodedImage);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

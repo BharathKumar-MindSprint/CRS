@@ -868,4 +868,16 @@ public  static String base64ConversionForImage(String filepath)  {
             e.printStackTrace();
         }
     }
+
+    public static boolean hasPermissions(String[] permissions, Context context) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 }

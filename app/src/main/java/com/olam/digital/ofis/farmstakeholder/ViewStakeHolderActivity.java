@@ -1,5 +1,8 @@
 package com.olam.digital.ofis.farmstakeholder;
 
+import static android.Manifest.permission.READ_MEDIA_IMAGES;
+import static android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -60,15 +63,11 @@ public class ViewStakeHolderActivity extends BaseActivity {
     private DataLayer dl;
 
     ImageButton farmerPhotoActionButton;
-    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2509;
-
     private String mCurrentPhotoPath = null;
     private Uri mCapturedImageURI = null;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
     private final static int REQUEST_IMAGE_GALLERY = 2;
-    private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
-    private final static String CAPTURED_PHOTO_URI_KEY = "mCapturedImageURI";
     private List<String> farmerRolesList;
     private List<FarmerRoleDto> farmerRoleDTOList;
 
@@ -214,49 +213,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(ViewStakeHolderActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerPhotoButton();
-                    }
-                }
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(ViewStakeHolderActivity.this,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                            .checkSelfPermission(ViewStakeHolderActivity.this,
-                                    android.Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        ActivityCompat.requestPermissions(ViewStakeHolderActivity.this,
-                                new String[]{android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_PROFILE_PIC_PERMISSIONS_REQUEST);
-
-                    } else {
-                        bindFarmerPhotoButton();
-                    }
-                } else {
-                    bindFarmerPhotoButton();
-                }
+                requestPermissions();
             }
         });
 
@@ -316,13 +273,10 @@ public class ViewStakeHolderActivity extends BaseActivity {
                             Toast.makeText(ViewStakeHolderActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
                     }
-
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-
                 }
             }
         });
@@ -506,4 +460,64 @@ public class ViewStakeHolderActivity extends BaseActivity {
         onBackPressed();
         return true;
     }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            String[] PERMISSIONS = new String[] {
+                    android.Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES
+            };
+
+            if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                return;
+            }
+            bindFarmerPhotoButton();
+        }
+        else {
+            String[] PERMISSIONS = new String[] {
+                    android.Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+
+            if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                return;
+            }
+            bindFarmerPhotoButton();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults[0] == PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                            == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                            == PackageManager.PERMISSION_GRANTED)) {
+                        bindFarmerPhotoButton();
+                    }
+                    else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        bindFarmerPhotoButton();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 }
