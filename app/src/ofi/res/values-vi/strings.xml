@@ -16,7 +16,6 @@
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
 
     <!-- main stuff -->
-    <string name="app_name">Hiệu chỉnh đồng hành OFI</string>
     <string name="cd_topSectionColour">Chọn màu nền cho mục</string>
     <string name="ofis_switch_text_yes">Có</string>
     <string name="ofis_switch_text_no">Không</string>

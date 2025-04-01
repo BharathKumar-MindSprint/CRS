@@ -4316,9 +4316,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     // convert base 64 string
 
                     try {
+                        Log.d("photo", farmerPhotoPath);
                         String encodedImage = Utilities.base64ConversionForImage(farmerPhotoPath);
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, encodedImage);
-
+                        Log.d("profile pic", encodedImage);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -4404,7 +4405,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
 
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
-                                        db.dmSurveyReportDao().updatefarmerId(localFarmerId, jsonObject1.getInt("id"));
+
+                                        // DM farmerId udpate
+                                        db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);
@@ -6563,8 +6570,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
             boolean isFileNotExists = false;
 
-            for (int k = 0; k < dmSurveyAnswerTableList.size(); k++) {
-                String questionId = dmSurveyAnswerTableList.get(k).questionID;
+            for (int k = 0; k < questionIds.size(); k++) {
+                String questionId = String.valueOf(questionIds.get(k));
                 List<String> filePaths = new ArrayList<>();
                 List<String> fileName = new ArrayList<>();
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();

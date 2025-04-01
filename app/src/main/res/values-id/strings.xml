@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Debug</string>
+    <string name="app_name">OFIS Enumerator</string>
     <string name="cd_topSectionColour">Latar berwarna untuk setiap bagian</string>
     <string name="ofis_switch_text_yes">Ya</string>
     <string name="ofis_switch_text_no">Tidak</string>

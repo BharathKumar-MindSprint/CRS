@@ -92,9 +92,6 @@ public class TrainingRecord extends BaseListActivity{
     private static final int REQUEST_CHECK_SETTINGS = 100;
     ListView listView;
 
-//    private Location mCurrentLocation=null;
-//    GPSListener gpsListener=null;
-//    private GPSTracker gpsTracker=null;
    public static HashMap<Long,Integer> farmerAttendeeList =null;
    public static boolean isCaptureAttendee;
 
@@ -103,7 +100,6 @@ public class TrainingRecord extends BaseListActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
         listView=findViewById(R.id.list);
-        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         context = me = this;
@@ -118,7 +114,6 @@ public class TrainingRecord extends BaseListActivity{
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
         readOnlyMode = intent.getBooleanExtra(READ_ONLY_MODE, false);
 
-
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
 
@@ -127,10 +122,8 @@ public class TrainingRecord extends BaseListActivity{
             columnSuffix = "";
         }
 
-// Moving this to OnResume
         if (editMode) {
             getTrainingRecord();
-          //  getTrainingAttendees();
         }
 
         trainingPhotoActionButton = (ImageButton) findViewById(R.id.trainingPhotoActionButton);
@@ -140,46 +133,26 @@ public class TrainingRecord extends BaseListActivity{
             trainingPhotoActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Request Permission only for Android Version Marshmallow and above
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) +
-                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_AUDIO) +
-                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_VIDEO) +
-                                ContextCompat.checkSelfPermission(TrainingRecord.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                        if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions(TrainingRecord.this,
-                                    new String[]{
-                                            android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.READ_MEDIA_AUDIO,
-                                            android.Manifest.permission.READ_MEDIA_VIDEO,
-                                            android.Manifest.permission.READ_MEDIA_IMAGES},
-
+                                    new String[]{android.Manifest.permission.CAMERA},
                                     REQUEST_PERMISSIONS_FOR_TIRAMISU);
                         }else {
-                            // Permission already granted
                             bindTrainingPhotoButton();
                         }
                     }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        // Check Camera & Storage Permission
-                        if (ContextCompat.checkSelfPermission(TrainingRecord.this,
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
+                        if (ContextCompat
                                 .checkSelfPermission(TrainingRecord.this,
                                         android.Manifest.permission.CAMERA)
                                 != PackageManager.PERMISSION_GRANTED) {
-
-                            //request permission
                             ActivityCompat.requestPermissions(TrainingRecord.this,
-                                    new String[]{android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    MY_PERMISSIONS_REQUEST);
+                                    new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST);
 
                         } else {
-                            // Permission already granted
                             bindTrainingPhotoButton();
                         }
-
-
                     } else {
-                        // Call methods directly for Android versions lower than Marshmallow
                         bindTrainingPhotoButton();
                     }
                 }
@@ -188,19 +161,6 @@ public class TrainingRecord extends BaseListActivity{
 
         bindSpinners();
         bindButtons();
-
-//        gpsListener=new GPSListener() {
-//            @Override
-//            public void onGPSClick(Location location) {
-//                if (location!=null){
-//                    mCurrentLocation=location;
-//                }
-//            }
-//        };
-//        gpsTracker=new GPSTracker(this,gpsListener);
-//        gpsTracker.getDeviceLocation();
-
-
     }
 
     @Override
@@ -756,17 +716,12 @@ public class TrainingRecord extends BaseListActivity{
         if (photoFile != null) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if ((intent.resolveActivity(getPackageManager()) != null)) {
-                //Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
                 Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
-
-                // Samsung Galaxy S3 Fix
                 List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
                 for (ResolveInfo resolveInfo : resInfoList) {
                     String packageName = resolveInfo.activityInfo.packageName;
                     grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
-
-                //  tempProfileImageFile=photoFile;
                 setCapturedImageURI(photoURI);
                 setCurrentPhotoPath(photoFile.getPath());
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
@@ -775,7 +730,6 @@ public class TrainingRecord extends BaseListActivity{
                 Toast.makeText(TrainingRecord.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     private void showSettingsDialog(String msg) {
@@ -802,18 +756,16 @@ public class TrainingRecord extends BaseListActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
                 for (String permission : permissions) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
                         Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
                     } else {
                         if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
                             bindTrainingPhotoButton();
                         } else {
-                            // Checkbox set to Never Ask Again
                             showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                         }
                     }
@@ -822,20 +774,12 @@ public class TrainingRecord extends BaseListActivity{
             case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
                 try {
                     if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[3] == PackageManager.PERMISSION_GRANTED ) {
-                        // Permissions granted, proceed with your code
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         bindTrainingPhotoButton();
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                             && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                            || !shouldShowRequestPermissionRationale(permissions[2])
-                            || !shouldShowRequestPermissionRationale(permissions[3])
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
                     }else {
                         Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
                     }

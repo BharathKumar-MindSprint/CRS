@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
 
     <!-- main stuff -->
-    <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
+    <string name="app_name">OFIS ຕົວເລກ </string>
     <string name="cd_topSectionColour">ສີ​ພື້ນ​ສະ​ເພາະ​ກຸ່ມ</string>
     <string name="ofis_switch_text_no">ບໍ່</string>
     <string name="ofis_switch_text_yes">​ແມ່ນ</string>

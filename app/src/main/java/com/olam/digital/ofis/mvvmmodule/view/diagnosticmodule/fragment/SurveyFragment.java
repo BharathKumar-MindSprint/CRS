@@ -261,8 +261,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
         spinner.setTag(questionId+2);
 
@@ -327,6 +327,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
+                        dmSurveyAnswerTable1.displayType = "dropdown";
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
                         if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
@@ -353,6 +354,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
+                        dmSurveyAnswerTable1.displayType = "dropdown";
 
                         if (isUserInteraction[0]) {
                             if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
@@ -614,8 +616,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setTag(questionId+2);
         spinner.setAdapter(spinnerAdapter);
 
@@ -681,6 +683,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
+                        dmSurveyAnswerTable1.displayType = "dropdown";
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                         if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
                             db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
@@ -706,6 +709,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
                         dmSurveyAnswerTable1.isSynced = false;
+                        dmSurveyAnswerTable1.displayType = "dropdown";
 
                         if (isUserInteraction[0]) {
                             if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
@@ -1019,33 +1023,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                     dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
                                     dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
                                     dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                                    dmSurveyAnswerTable1.displayType = Constants.CHECKBOX;
                                     dmSurveyAnswerTable1.isSynced = false;
                                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                                     if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
                                         db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
                                     }
-                                } else {
-                                    DmSurveyAnswerTable dmSurveyAnswer = dmSurveyData.get(0);
-                                    String actionPlanId = dmSurveyAnswer.actionplanId;
-                                    String actionPlanText = dmSurveyAnswer.actionPlanText;
-                                    int amount = dmSurveyAnswer.amount;
-                                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID, Constants.PLOT_ID);
-                                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                                    dmSurveyAnswerTable1.questionID = questionId;
-                                    dmSurveyAnswerTable1.answerID = id;
-                                    dmSurveyAnswerTable1.answer = value;
-                                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                                    dmSurveyAnswerTable1.question = question;
-                                    dmSurveyAnswerTable1.complinceTypeId =  String.valueOf(lookupValuesItemsById.complianceId);
-                                    dmSurveyAnswerTable1.amount = amount;
-                                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                                    dmSurveyAnswerTable1.allowCustomActionPlan = lookupValuesItemsById.allowCustomActionPlan;
-                                    dmSurveyAnswerTable1.isCaptureProof = lookupValuesItemsById.isCaptureProof;
-                                    dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
-                                    dmSurveyAnswerTable1.isSynced = false;
-                                    dmSurveyAnswerTable1.actionplanId = actionPlanId;
-                                    dmSurveyAnswerTable1.actionPlanText = actionPlanText;
-                                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                                    db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId);
                                 }
                             } else {
                                 cb.setChecked(false);
@@ -1055,6 +1039,10 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             selectedCheckboxCount[0]--;
                             Log.d("CheckBox", "Unchecked ID: " + id);
                             db.dmSurveyAnswerTableDao().deleteByAnswerId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+                            db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId);
+                            if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                                db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
+                            }
                         }
                     }
                 });
@@ -1347,6 +1335,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
         dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+        dmSurveyAnswerTable1.displayType = "textbox";
         dmSurveyAnswerTable1.actionPlanText = "";
         dmSurveyAnswerTable1.answerID = String.valueOf(answerId);
         dmSurveyAnswerTable1.actionplanId = "";

@@ -84,7 +84,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
-    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX = 1111;
     private final static int MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX = 2222;
     Button buttonPrivacyConsent, buttonReenterPasscode;
@@ -118,55 +117,23 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 dialogLogout();
             }
         });
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                     return;
-                }else {
-                // For clear cache functionality
-                // FileUtils.deleteQuietly(context.getCacheDir());
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        if (ContextCompat.checkSelfPermission(SettingsActivity.this, android.Manifest.permission.CAMERA) +
-                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_AUDIO) +
-                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_VIDEO) +
-                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(SettingsActivity.this,
-                                    new String[]{
-                                            android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.READ_MEDIA_AUDIO,
-                                            android.Manifest.permission.READ_MEDIA_VIDEO,
-                                            android.Manifest.permission.READ_MEDIA_IMAGES},
-
-                                    REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                        }else {
-                            // Permission already granted
-                            bindSaveButton();
-                        }
-                    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // Check Phone Permission
-                    if (ContextCompat.checkSelfPermission(SettingsActivity.this,
-                            android.Manifest.permission.READ_PHONE_STATE)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        //request permission
-                        ActivityCompat.requestPermissions(SettingsActivity.this,
-                                new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                                MY_PERMISSIONS_REQUEST);
-
-                    } else {
-
-                        // Permission already granted
-                        bindSaveButton();
-                    }
-                } else {
-
-                    // Call methods directly for Android versions lower than Marshmallow
-                    bindSaveButton();
                 }
-            }
-                lastClickTime=SystemClock.elapsedRealtime();
+
+                if (ContextCompat.checkSelfPermission(SettingsActivity.this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(SettingsActivity.this,
+                            new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                            MY_PERMISSIONS_REQUEST);
+                    return;
+                }
+
+                bindSaveButton();
+                lastClickTime = SystemClock.elapsedRealtime();
             }
         });
 
@@ -185,13 +152,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     }
                 }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                            + ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
 
                         ActivityCompat.requestPermissions(SettingsActivity.this,
                                 new String[]{
-                                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE},
                                 MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX);
                     } else {
                         photoCheckboxDownload();
@@ -449,6 +414,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
                 for (String permission : permissions) {
@@ -465,31 +431,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                         }
                     }
                 }
-            }
-            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
-                try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[3] == PackageManager.PERMISSION_GRANTED ) {
-                        // Permissions granted, proceed with your code
-                        bindSaveButton();
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                            || !shouldShowRequestPermissionRationale(permissions[2])
-                            || !shouldShowRequestPermissionRationale(permissions[3])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
+                break;
             }
             case REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX: {
                 try {
@@ -504,31 +446,28 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     }else {
                         Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
                     }
-                    break;
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
             }
             case MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX: {
 
                 try {
                     if (grantResults.length > 0
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         photoCheckboxDownload();
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                             && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
                     } else {
                         Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
                     }
-                    break;
-
                 } catch (Exception e) {
                 }
+                break;
             }
         }
     }
