@@ -2834,6 +2834,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
                                             int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
                                             String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
+                                            String displayType = answersItemArrayList.get(l).getDisplayType();
 
                                             DmSurveyAnswerTable dmSurveyAnswerTable = new DmSurveyAnswerTable();
                                             dmSurveyAnswerTable.answerID = String.valueOf(answerId);
@@ -2848,6 +2849,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             dmSurveyAnswerTable.isSynced = true;
                                             dmSurveyAnswerTable.plotId = 0;
                                             dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
+                                            dmSurveyAnswerTable.displayType = displayType;
                                             db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                         }
                                         String[] totalBudget = result.getTotalBudget().split(" ");

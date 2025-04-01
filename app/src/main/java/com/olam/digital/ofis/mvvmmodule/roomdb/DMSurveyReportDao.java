@@ -19,7 +19,7 @@ public interface DMSurveyReportDao {
     void deleteAlreadyStoredData(int moduleId, int farmerId, int plotId);
 
     @Query("UPDATE DMSurveyReport SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
-    void updatefarmerId(int tempFarmerId, int farmerId);
+    void updateFarmerId(int tempFarmerId, int farmerId);
 
 
 

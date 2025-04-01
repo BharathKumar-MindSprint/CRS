@@ -2798,7 +2798,28 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         recyclerViewData.add(getResources().getString(R.string.existing_module));
 
-        if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
+        boolean moduleWithActionPlan = db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID));
+        boolean moduleWithoutActionPlan = db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID));
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+        if (!dmSurveyAnswerTableList.isEmpty()) {
+            boolean allEmpty = true;
+            for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                if (!Objects.equals(answerTable.actionPlanText, "")) {
+                    allEmpty = false;
+                    break;
+                }
+            }
+
+            if (allEmpty) {
+                moduleWithActionPlan = false;
+                moduleWithoutActionPlan = true;
+            } else {
+                moduleWithActionPlan = true;
+                moduleWithoutActionPlan = false;
+            }
+        }
+
+        if (moduleWithActionPlan) {
 
             // getting the seventh day which restricts in generating the followup
             Calendar calendar = Calendar.getInstance();
@@ -2823,9 +2844,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
             // creating the followUp for surveys
             List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
-            if (followupList.size() == 0) {
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-                if (dmSurveyAnswerTableList.size() != 0) {
+            if (followupList.isEmpty()) {
+                if (!dmSurveyAnswerTableList.isEmpty()) {
                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + 1);
                 }
             } else {
@@ -2834,9 +2854,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + i);
                 }
                 List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
-                if (followupUnSyncedItems.size() == 0) {
+                if (followupUnSyncedItems.isEmpty()) {
                     List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
-                    if (followupUnResolvedItems.size() > 0) {
+                    if (!followupUnResolvedItems.isEmpty()) {
                         int val = followupAttempts.size() + 1;
 
                         if (endFollowUpDurationDate != null) {
@@ -2847,7 +2867,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
                         if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
-                            if (count.replaceAll(" ", "").toLowerCase().equals("max")){
+                            if (count.replaceAll(" ", "").equalsIgnoreCase("max")){
                                 if (followUpDurationDisable){
                                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = false;
@@ -2893,8 +2913,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
 
-        } else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+        } else if (moduleWithoutActionPlan) {
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 isCompleted = true;
             }

@@ -17,29 +17,34 @@ import java.io.IOException;
 public class ImageOrientation {
 
 
-    public static Bitmap modifyOrientation(Context context, Bitmap bitmap, Uri uri ) throws IOException {
-        ExifInterface ei = new ExifInterface(getPath(context,uri));
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+    public static Bitmap modifyOrientation(Context context, Bitmap bitmap, Uri uri )  {
+        try {
+            ExifInterface ei = new ExifInterface(PathUtil.getPath(context,uri));
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return rotate(bitmap, 90);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotate(bitmap, 90);
 
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return rotate(bitmap, 180);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotate(bitmap, 180);
 
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return rotate(bitmap, 270);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotate(bitmap, 270);
 
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                return flip(bitmap, true, false);
+                case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                    return flip(bitmap, true, false);
 
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                return flip(bitmap, false, true);
+                case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                    return flip(bitmap, false, true);
 
-            default:
-                return bitmap;
+                default:
+                    return bitmap;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return bitmap;
     }
 
     private static String getPath(final Context context, final Uri uri) {

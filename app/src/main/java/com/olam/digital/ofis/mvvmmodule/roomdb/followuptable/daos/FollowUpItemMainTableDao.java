@@ -49,8 +49,8 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt")
     List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt);
 
-    @Query("SELECT actionPlanText FROM FollowUpItemMainTable WHERE questionID = :questionId AND farmerId =:farmerId AND status=:notResolved AND isSync = 0")
-    String getActionPlanTextFollowUp(String questionId, String farmerId , String notResolved);
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE questionID = :questionId AND farmerId =:farmerId AND status=:notResolved AND isSync = 0")
+    List<FollowUpItemMainTable> getActionPlanTextFollowUp(String questionId, String farmerId , String notResolved);
 
     @Query("SELECT status FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt =:attempt")
     String getResolvedOrNOt(String questionId, String farmerId, int attempt);
@@ -62,7 +62,12 @@ public interface FollowUpItemMainTableDao {
     @Query("DELETE FROM FollowUpItemMainTable WHERE moduleId=:id and farmerId=:farmerID")
     void deleteAllDataForRecurrenceFollowUp(String id , String farmerID);
 
-    @Query("SELECT count(*) FROM FOLLOWUPITEMMAINTABLE WHERE moduleId=:id and attempt=:attempt and farmerId=:farmerID")
-    int getCountOfResolvedNotResolved(String id , String attempt , String farmerID );
+    @Query("SELECT questionId FROM FOLLOWUPITEMMAINTABLE WHERE moduleId=:id and attempt=:attempt and farmerId=:farmerID")
+    List<Integer> getCountOfResolvedNotResolved(String id , String attempt , String farmerID );
 
+    @Query("SELECT DISTINCT questionId from FOLLOWUPITEMMAINTABLE where moduleId=:moduleId AND farmerId=:farmerId AND status=:status AND isSync=1")
+    List<Integer> getResolvedQuestionId(String moduleId, String farmerId, String status);
+
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE questionId=:id AND farmerId=:farmerId AND attempt=:attempt AND isSync=1")
+    List<FollowUpItemMainTable> getFollowUpDataByQuestionId(String id, String farmerId, int attempt);
 }

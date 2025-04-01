@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class AnswersItem{
 
-	public AnswersItem(int answerId, int complianceStatusId, int questionId, String answerValue, String captureProofs, int actionPlanId, String actionPlanText, List<String> captureProof) {
+	public AnswersItem(int answerId, int complianceStatusId, int questionId, String answerValue, String captureProofs, int actionPlanId, String actionPlanText, List<String> captureProof, String displayType) {
 		this.answerId = answerId;
 		this.complianceStatusId = complianceStatusId;
 		this.questionId = questionId;
@@ -14,6 +14,7 @@ public class AnswersItem{
 		this.actionPlanId = actionPlanId;
 		this.actionPlanText = actionPlanText;
 		this.captureProof = captureProof;
+		this.displayType = displayType;
 	}
 
 	public int getAnswerId() {
@@ -80,6 +81,14 @@ public class AnswersItem{
 		this.captureProof = captureProof;
 	}
 
+	public String getDisplayType() {
+		return displayType;
+	}
+
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+
 	@SerializedName("answerId")
 	private int answerId;
 
@@ -103,5 +112,8 @@ public class AnswersItem{
 
 	@SerializedName("captureProof")
 	private List<String> captureProof;
+
+	@SerializedName("displayType")
+	private String displayType;
 
 }
