@@ -2759,6 +2759,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     throw new RuntimeException(e);
 
                 }
+                progressDialog.hide();
 
             }
 
