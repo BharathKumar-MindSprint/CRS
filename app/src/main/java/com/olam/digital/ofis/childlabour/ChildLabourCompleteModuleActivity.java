@@ -737,13 +737,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 try {
                     if (grantResults.length > 0 &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
 
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                             && (!shouldShowRequestPermissionRationale(permissions[0])
                             || !shouldShowRequestPermissionRationale(permissions[1])
-                            || !shouldShowRequestPermissionRationale(permissions[2])
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 

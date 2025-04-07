@@ -2477,7 +2477,6 @@ public class FollowUpActionPlan extends Fragment {
     public void checkPermission() {
         final String[] permissions = {
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE};
 
         final List<String> permissionsToRequest = new ArrayList<>();
@@ -2489,7 +2488,7 @@ public class FollowUpActionPlan extends Fragment {
         if (!permissionsToRequest.isEmpty()) {
             // ActivityCompat.requestPermissions(getActivity(), permissionsToRequest.toArray(new String[permissionsToRequest.size()]), REQUEST_CAMERA_PERMISSIONS);
             requestPermissions(new String[]{
-                    Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSIONS);
+                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSIONS);
 
         }
 
