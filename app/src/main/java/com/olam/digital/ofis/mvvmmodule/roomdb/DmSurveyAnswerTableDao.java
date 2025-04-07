@@ -121,8 +121,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT d.* FROM DmSurveyAnswerTable AS d WHERE d.complinceTypeId in (:complaint) AND NOT EXISTS (SELECT 1 FROM DmSurveyAnswerTable AS d2 WHERE d2.questionId = d.questionId AND d2.displayType =:displayType AND d2.complinceTypeId IN (:satisfactory, :non_compliant) AND d2.farmerId = :farmerId AND d2.plotId = :plotId) AND d.farmerId = :farmerId AND d.plotId = :plotId AND d.displayType=:displayType")
     List<DmSurveyAnswerTable> getComplaintList(List<Integer> complaint, List<Integer> satisfactory, List<Integer> non_compliant, String farmerId, Integer plotId, String displayType);
 
-    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText='', actionplanId='', amount=0 WHERE questionID =:questionId")
-    void updateActionPlanBudget(String questionId);
+    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText='', actionplanId='', amount=0 WHERE questionID =:questionId AND farmerId =:farmerId AND plotId=:plotId")
+    void updateActionPlanBudget(String questionId, String farmerId, int plotId);
 
     @Query("UPDATE DmSurveyAnswerTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
     void updateFarmerId(int tempFarmerId, int farmerId);

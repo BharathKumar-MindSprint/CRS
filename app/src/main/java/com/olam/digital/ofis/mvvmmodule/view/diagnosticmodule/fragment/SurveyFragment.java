@@ -1029,7 +1029,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                     if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
                                         db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
                                     }
-                                    db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId);
+                                    db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
                                 }
                             } else {
                                 cb.setChecked(false);
@@ -1039,7 +1039,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             selectedCheckboxCount[0]--;
                             Log.d("CheckBox", "Unchecked ID: " + id);
                             db.dmSurveyAnswerTableDao().deleteByAnswerId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-                            db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId);
+                            db.dmSurveyAnswerTableDao().updateActionPlanBudget(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
                             if (!db.dmComplaintFileTableDao().getCaptureProofSize(questionId, Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
                                 db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID,0, Constants.PLOT_ID);
                             }
