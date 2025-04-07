@@ -284,7 +284,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
         progressDialog.setMessage(getString(R.string.Loading));
-
+        progressDialog.setCancelable(false);
 
         downloadSurveyWrap();
         String enumeratorId = Utilities.getFromSharedPrefs(context);

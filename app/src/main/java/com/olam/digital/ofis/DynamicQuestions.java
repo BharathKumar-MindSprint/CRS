@@ -1660,13 +1660,11 @@ public class DynamicQuestions {
                     }
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) +
                             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
                         ActivityCompat.requestPermissions((Activity) context,
                                 new String[]{
                                         Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                         Manifest.permission.CAMERA},
                                 Utilities.REQUEST_PERMISSIONS_FOR_M);
 
@@ -3433,10 +3431,13 @@ public class DynamicQuestions {
                     char character = source.charAt(i);
                     if (Character.isLetterOrDigit(character) || Character.isWhitespace(character) || isSymbol(character)) {
                         if (filteredStringBuilder.length() < maxCharacterLimit) {
-                            if (character == ' ' && (filteredStringBuilder.length() == 0 || filteredStringBuilder.charAt(filteredStringBuilder.length() - 1) == ' ')) {
-                                continue; // Prevent multiple consecutive spaces
+                            if (character == ' ') {
+                                if (dest.length() == 0 || dest.charAt(dest.length() - 1) != ' ' || filteredStringBuilder.length() > 0 && filteredStringBuilder.charAt(filteredStringBuilder.length() - 1) != ' ') {
+                                    filteredStringBuilder.append(character);
+                                }
+                            } else {
+                                filteredStringBuilder.append(character);
                             }
-                            filteredStringBuilder.append(character);
                         }
                     }
                 }
