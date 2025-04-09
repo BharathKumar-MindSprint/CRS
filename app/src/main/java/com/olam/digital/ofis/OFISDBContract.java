@@ -38,6 +38,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_DESCRIPTION_TH = "descriptionTh";
         public static final String COLUMN_NAME_DESCRIPTION_TR = "descriptionTr";
         public static final String COLUMN_NAME_DESCRIPTION_VI = "descriptionVi";
+        public static final String COLUMN_NAME_IS_MANDATE = "isMandate";
+
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -63,6 +65,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_DESCRIPTION_TH);
                     add(COLUMN_NAME_DESCRIPTION_TR);
                     add(COLUMN_NAME_DESCRIPTION_VI);
+                    add(COLUMN_NAME_IS_MANDATE);
                 }}
         );
     }

@@ -14,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 157;
+    private static final int DATABASE_VERSION = 158;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -141,7 +141,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_PT + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TH + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT, "
-            + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT)";
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT )";
     // create SubModules
     private static final String OFIS_SUBMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubmoduleEntry.TABLE_NAME
             + " ( " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
@@ -1087,6 +1088,9 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow156(sqLiteDatabase);
         }
 
+        if (oldVersion < 158) {
+            migrateFromVersionBelow157(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1351,6 +1355,15 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_TABLE_CREATE);
             sqLiteDatabase.execSQL(" INSERT INTO farmernationalids (id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced) SELECT id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced FROM farmerNationalIdCopy ");
 
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFromVersionBelow157(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT ");
         }
         catch (SQLException e) {
             e.printStackTrace();
