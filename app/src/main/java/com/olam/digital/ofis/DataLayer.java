@@ -58,6 +58,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -9145,6 +9146,44 @@ public class DataLayer {
             farmerGroupIdArray[i] = String.valueOf(farmerGroupId.get(i));
         }
         return db.rawQuery(query, farmerGroupIdArray);
+    }
+    public Collection<Integer> getAllUnSyncedModule(long farmerId) {
+        Collection<Integer> moduleIds = new ArrayList<>();
+        Collection<Integer> subModuleIds = new ArrayList<>();
+
+        // Query to get distinct subModuleIds based on farmerId
+        String query = "SELECT DISTINCT " + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " FROM " + OFISDBContract.AnswerEntry.TABLE_NAME + " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(farmerId)});
+
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID));
+                subModuleIds.add(id);
+            }
+            cursor.close();
+        }
+
+        if (!subModuleIds.isEmpty()) {
+            StringBuilder subModuleIdsString = new StringBuilder();
+            for (Integer subModuleId : subModuleIds) {
+                if (subModuleIdsString.length() > 0) {
+                    subModuleIdsString.append(",");
+                }
+                subModuleIdsString.append(subModuleId);
+            }
+
+            String moduleQuery = "SELECT DISTINCT " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " FROM " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " WHERE " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " IN (" + subModuleIdsString.toString() + ")";
+            Cursor moduleCursor = db.rawQuery(moduleQuery, null);
+
+            if (moduleCursor.getCount() > 0) {
+                while (moduleCursor.moveToNext()) {
+                    int moduleId = moduleCursor.getInt(moduleCursor.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID));
+                    moduleIds.add(moduleId);
+                }
+                moduleCursor.close();
+            }
+        }
+        return moduleIds;
     }
 
 }
