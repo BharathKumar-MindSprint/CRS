@@ -10,19 +10,15 @@ import java.util.List;
 public class ResponseModel {
 
     @SerializedName("diagnosticModules")
-    @Expose
     ArrayList<DiagnosticModulesList> diagnosticModules;
 
     @SerializedName("answerTypes")
-    @Expose
     private ArrayList<AnswerTypesItem> answerTypes;
 
     @SerializedName("questionTypes")
-    @Expose
     private ArrayList<QuestionTypesItem> questionTypes;
 
     @SerializedName("currencies")
-    @Expose
     private ArrayList<CurrenciesItem> currencies;
 
     public String getErrorMessage() {
@@ -34,11 +30,9 @@ public class ResponseModel {
     }
 
     @SerializedName("errorMessage")
-    @Expose
     private String errorMessage;
 
     @SerializedName("plotMasterData")
-    @Expose
     private List<DmMasterDataModel> DmMasterData;
 
     public ArrayList<AnswerTypesItem> getAnswerTypes() {
