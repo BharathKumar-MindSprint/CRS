@@ -752,7 +752,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         while (getIdCursor.moveToNext()) {
             int id = getIdCursor.getInt(getIdCursor.getColumnIndex("_id"));
             String checkMandate = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE));
-            if (Objects.equals(checkMandate,"1")) {
+            if (Objects.equals(Boolean.parseBoolean(checkMandate),true)) {
                 mandateList.add(getIdCursor.getInt(getIdCursor.getColumnIndex("_id")));
             }
         }
