@@ -120,7 +120,9 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
         final boolean isConsentTrue = isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true");
 
         boolean disableSurveyForNCF = false;
-        boolean isLocalMandateCheck = isMandateSurveyCompleted ? isMandateSurveyCompleted : mandateSurveyList.contains(cursor.getInt(cursor.getColumnIndex("_id")));
+
+        boolean isLocalMandateCheck = isMandateSurveyCompleted || mandateSurveyList.contains(currentId);
+        boolean localMandateSurveyPlotUpdate = mandateSurveyList.contains(cursor.getInt(cursor.getColumnIndex("_id"))) || isAtLeastOnePlotSurveyCaptured;
 
         if (currentId == 0) {
 
@@ -625,7 +627,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
             }
         }
         else {
-            if (isAtLeastOnePlotSurveyCaptured && isLocalMandateCheck &&
+            if (localMandateSurveyPlotUpdate && isLocalMandateCheck &&
                     isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true")) {
                 String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
