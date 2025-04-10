@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Debug</string>
+    <string name="app_name">OFIS Enumerator</string>
     <string name="cd_topSectionColour">Latar berwarna untuk setiap bagian</string>
     <string name="ofis_switch_text_yes">Ya</string>
     <string name="ofis_switch_text_no">Tidak</string>
@@ -875,4 +875,8 @@
     <string name="skip">Lewati</string>
     <string name="eudr_survey_remainder_message">"Harap Selesaikan Tugas Survey Verifikasi Lapangan "</string>
     <string name="edur_survey_remainder">Pengingat Survey EUDR</string>
+
+    <string name="gallery_is_not_available_in_mobile">Galeri tidak tersedia di Mobile</string>
+    <string name="something_went_wrong_please_try_again">Terjadi kesalahan, silakan coba lagi</string>
+    <string name="image_size_exceeds_5_mb">Ukuran gambar melebihi 5MB. Silakan pilih gambar yang lebih kecil.</string>
 </resources>

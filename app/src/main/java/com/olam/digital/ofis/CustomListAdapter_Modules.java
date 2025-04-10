@@ -296,68 +296,35 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
 
 
-                    if (startDateMain!=null){
-                        if (!disableSurveyForNCF) {
-                            if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                                enabledItem.setText("true");
-                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                textView.setText(res.getString(R.string.dm_hint_txt));
-                            }
-                            else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                                enabledItem.setText("true");
-                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                textView.setText(res.getString(R.string.dm_hint_txt));
-                            }
-                            else{
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                                enabledItem.setText("false");
-                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                            }
-                            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                            if(dmSurveyAnswerTableList.size() > 0){
-                                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                            }else{
-                                textView.setText(res.getString(R.string.dm_hint_txt));
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                    if (!dmSurveyAnswerTableList.isEmpty()) {
+                        boolean allEmpty = true;
+                        for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                            if (!Objects.equals(answerTable.actionPlanText, "")) {
+                                allEmpty = false;
+                                break;
                             }
                         }
-                        else {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                            enabledItem.setText("false");
 
-                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setText(res.getString(R.string.dm_hint_txt));
+                        if (allEmpty) {
+                            moduleWithActionPlan = false;
+                            moduleWithoutActionPlan = true;
+                        } else {
+                            moduleWithActionPlan = true;
+                            moduleWithoutActionPlan = false;
                         }
-
                     }
 
                     if (startDateMain!=null){
                         if (!disableSurveyForNCF) {
-                            if(currentDate.after(startDateMain) && moduleWithActionPlan) {
+                            if ((currentDate.after(startDateMain) && moduleWithActionPlan) || (currentDate.after(startDateMain) && moduleWithoutActionPlan)) {
                                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("true");
                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                                 textView.setText(res.getString(R.string.dm_hint_txt));
-                            } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                                enabledItem.setText("true");
-                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                textView.setText(res.getString(R.string.dm_hint_txt));
-                            } else{
+                            } else {
                                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                                 enabledItem.setText("false");
                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -365,8 +332,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                 textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                             }
-                            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                            if(dmSurveyAnswerTableList.size() > 0){
+                            if(!dmSurveyAnswerTableList.isEmpty() && moduleWithActionPlan){
                                 textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                             }else{
                                 textView.setText(res.getString(R.string.dm_hint_txt));

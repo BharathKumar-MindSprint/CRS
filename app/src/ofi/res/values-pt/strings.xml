@@ -16,7 +16,6 @@
     <string name="title_activity_complete_module">Completar o questiário</string>
 
     <!-- main stuff -->
-    <string name="app_name">Depurar OFI</string>
     <string name="cd_topSectionColour">Cores de fundo</string>
     <string name="ofis_switch_text_yes">Sim</string>
     <string name="ofis_switch_text_no">Não</string>
@@ -654,7 +653,6 @@
 
     <string name="child_labour_survey">Pesquisa do trabalho infantil</string>
     <string name="update_childlabour_hint">Toque para registrar</string>
-    <string name="restriction_in_submodules">Por favor, responda a todas as perguntas obrigatórias para prosseguir.</string>
     <string name="please_respond_mandatory_question">Por favor responda a pergunta obrigatória.</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="attendee_sex">Sex</string>

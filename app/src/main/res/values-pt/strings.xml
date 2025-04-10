@@ -15,7 +15,7 @@
     <string name="title_activity_complete_module">Completar o questiário</string>
 
     <!-- main stuff -->
-    <string name="app_name">Depurar OFIS</string>
+    <string name="app_name">OFIS Enumerador</string>
     <string name="cd_topSectionColour">Cores de fundo</string>
     <string name="ofis_switch_text_yes">Sim</string>
     <string name="ofis_switch_text_no">Não</string>
@@ -886,5 +886,9 @@
     <string name="skip">Pular</string>
     <string name="eudr_survey_remainder_message">"Por favor, conclua a pesquisa de verificação em campo atribuída "</string>
     <string name="edur_survey_remainder">Lembrete da Pesquisa EUDR</string>
+
+    <string name="gallery_is_not_available_in_mobile">Galeria não está disponível no celular</string>
+    <string name="something_went_wrong_please_try_again">Algo deu errado, por favor tente novamente</string>
+    <string name="image_size_exceeds_5_mb">O tamanho da imagem excede 5MB. Por favor, escolha uma imagem menor.</string>
 </resources>
 

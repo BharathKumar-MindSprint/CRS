@@ -17,7 +17,6 @@
 
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Compagnon Debug</string>
     <string name="cd_topSectionColour">Fonds coloré pour la section</string>
     <string name="ofis_switch_text_yes">Oui</string>
     <string name="ofis_switch_text_no">Non</string>
@@ -604,7 +603,6 @@
 
     <string name="allchilds_name">Noms de tous les enfants (le cas échéant)</string>
 
-    <string name="restriction_in_submodules">Veuillez répondre à toutes les questions obligatoires avant de continuer</string>
     <string name="please_respond_mandatory_question">Veuillez répondre à la question obligatoire</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>

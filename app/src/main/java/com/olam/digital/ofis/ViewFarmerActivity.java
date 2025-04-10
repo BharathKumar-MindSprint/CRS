@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static android.Manifest.permission.READ_MEDIA_IMAGES;
+import static android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED;
 import static com.olam.digital.ofis.BaseActivity.UPDATE;
 
 import android.Manifest;
@@ -209,7 +211,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     // Runtime Permission Request Code
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2509;
-    // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null;
     private Uri mCapturedImageURI = null;
     private final static int REQUEST_IMAGE_CAPTURE = 1;
@@ -673,14 +674,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
         }
 
-
-        //JIRA req OW-505
         farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Request Permission only for Android Version Marshmallow and above
-
                 if (mCurrentCapturedLocation != null) {
 
                 } else {
@@ -688,58 +685,30 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         gpsTracker.getDeviceLocation();
                         return;
                     }
-
                 }
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    String[] PERMISSIONS = new String[] {
+                            android.Manifest.permission.CAMERA,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                    };
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(ViewFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(ViewFarmerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(ViewFarmerActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerPhotoButton();
+                    if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                        ActivityCompat.requestPermissions(ViewFarmerActivity.this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                        return;
                     }
+                    bindFarmerPhotoButton();
                 }
-                // Request Permission only for Android Version Marshmallow and above
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // Check Camera & Storage Permission
-                    if (ContextCompat.checkSelfPermission(ViewFarmerActivity.this,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                            .checkSelfPermission(ViewFarmerActivity.this,
-                                    android.Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
+                else {
+                    String[] PERMISSIONS = new String[] {
+                            android.Manifest.permission.CAMERA,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    };
 
-                        //request permission
-                        ActivityCompat.requestPermissions(ViewFarmerActivity.this,
-                                new String[]{android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_PROFILE_PIC_PERMISSIONS_REQUEST);
-
-                    } else {
-
-                        // Permission already granted
-                        bindFarmerPhotoButton();
+                    if (!Utilities.hasPermissions(PERMISSIONS, context)) {
+                        ActivityCompat.requestPermissions(ViewFarmerActivity.this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                        return;
                     }
-                } else {
-
-                    // Call methods directly for Android versions lower than Marshmallow
                     bindFarmerPhotoButton();
                 }
             }
@@ -748,14 +717,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         viewFarmerInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                infoSectionBackground.setVisibility((infoSectionBackground.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
                 linear_viewInfo.setVisibility((linear_viewInfo.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
                 viewFarmerInfo.setCompoundDrawablesWithIntrinsicBounds(0, 0,(linear_viewInfo.getVisibility()==View.GONE) ? R.drawable.ic_drop_down_collapse : R.drawable.ic_task_drop_down_expand, 0);
             }
         });
-
-
     }
 
     private boolean validateBySubmittedModule(JSONObject submittedModules) {
@@ -927,9 +892,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        //JIRA req OW-505 MY_PROFILE_PIC_PERMISSIONS_REQUEST
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 6575) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getFarmGPS(clickedLocationItem);
@@ -947,34 +910,23 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
             }
         } else if (requestCode == REQUEST_PERMISSIONS_FOR_TIRAMISU) {
-            try {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                    // Permissions granted, proceed with your code
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
-                )) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults[0] == PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                    == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
+                    == PackageManager.PERMISSION_GRANTED)) {
+                bindFarmerPhotoButton();
+            }
+            else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE && (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+                bindFarmerPhotoButton();
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && (!shouldShowRequestPermissionRationale(permissions[0])
+                    || !shouldShowRequestPermissionRationale(permissions[1])
+            )) {
+                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                }else {
-                    Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
+            }else {
+                Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -2255,11 +2207,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }
 
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
-
                 }
             }
         });
@@ -2798,7 +2748,28 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         recyclerViewData.add(getResources().getString(R.string.existing_module));
 
-        if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))) {
+        boolean moduleWithActionPlan = db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID));
+        boolean moduleWithoutActionPlan = db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID));
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+        if (!dmSurveyAnswerTableList.isEmpty()) {
+            boolean allEmpty = true;
+            for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                if (!Objects.equals(answerTable.actionPlanText, "")) {
+                    allEmpty = false;
+                    break;
+                }
+            }
+
+            if (allEmpty) {
+                moduleWithActionPlan = false;
+                moduleWithoutActionPlan = true;
+            } else {
+                moduleWithActionPlan = true;
+                moduleWithoutActionPlan = false;
+            }
+        }
+
+        if (moduleWithActionPlan) {
 
             // getting the seventh day which restricts in generating the followup
             Calendar calendar = Calendar.getInstance();
@@ -2823,9 +2794,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
             // creating the followUp for surveys
             List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
-            if (followupList.size() == 0) {
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-                if (dmSurveyAnswerTableList.size() != 0) {
+            if (followupList.isEmpty()) {
+                if (!dmSurveyAnswerTableList.isEmpty()) {
                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + 1);
                 }
             } else {
@@ -2834,9 +2804,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey) + " " + i);
                 }
                 List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
-                if (followupUnSyncedItems.size() == 0) {
+                if (followupUnSyncedItems.isEmpty()) {
                     List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
-                    if (followupUnResolvedItems.size() > 0) {
+                    if (!followupUnResolvedItems.isEmpty()) {
                         int val = followupAttempts.size() + 1;
 
                         if (endFollowUpDurationDate != null) {
@@ -2847,7 +2817,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
                         if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
-                            if (count.replaceAll(" ", "").toLowerCase().equals("max")){
+                            if (count.replaceAll(" ", "").equalsIgnoreCase("max")){
                                 if (followUpDurationDisable){
                                     recyclerViewData.add(getResources().getString(R.string.follow_up_survey)+" " + val);
                                     isCompleted = false;
@@ -2893,8 +2863,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
 
-        } else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+        } else if (moduleWithoutActionPlan) {
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 isCompleted = true;
             }

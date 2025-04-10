@@ -129,6 +129,11 @@ public class Utilities {
     public static final String KEY_LAST_SHOWN_DATE = "keyLastShownDate";
     public static final String NOTIFICATION_TYPE = "notificationType";
     public static final String IS_FROM_FIND_FARMER = "showRemainderSurvey";
+    public static final String CHILD_LABOUR_ACTIVITY = "ChildLabourCompleteModuleActivity";
+    public static final String CLMRS = "CLMRS";
+    public static final String QWR = "QWR";
+    public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
+    public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -863,4 +868,16 @@ public  static String base64ConversionForImage(String filepath)  {
             e.printStackTrace();
         }
     }
+
+    public static boolean hasPermissions(String[] permissions, Context context) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 }

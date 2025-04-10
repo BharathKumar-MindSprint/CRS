@@ -66,6 +66,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 /**
@@ -5509,6 +5510,25 @@ public class DataLayer {
         }
     }
 
+    Cursor getAllUnUploadedPhotoById(Integer farmerModuleId, ArrayList<Integer> submoduleList) {
+        StringBuilder submoduleIds = new StringBuilder();
+        for (int subId : submoduleList) {
+            submoduleIds.append(subId).append(",");
+        }
+        String submoduleIdsString = submoduleIds.length() > 0 ? submoduleIds.substring(0, submoduleIds.length() - 1) : "";
+
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*,"
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") AND "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " = 12 ORDER BY "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+        String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
+
+        return db.rawQuery(sql, whereArgs);
+    }
     Cursor getFarmerModuleById(int itemId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " = ?";

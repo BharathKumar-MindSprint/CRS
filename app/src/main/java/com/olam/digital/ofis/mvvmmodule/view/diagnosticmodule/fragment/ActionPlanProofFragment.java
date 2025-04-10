@@ -33,6 +33,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,8 +82,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class ActionPlanProofFragment extends Fragment implements View.OnClickListener {
@@ -101,7 +104,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
 
     private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
-    private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
     private static final int CAMERA_REQUEST = 2277;
     private static final int GALLERY_PICK = 2233;
     private static final int GALLERY_PICK_DOCX = 4455;
@@ -145,10 +147,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     OFISRoomDB db;
     private boolean isCreated = false;
     Spinner spinner_dmCurrencies;
-    String budgetAmount;
 
     private final int FILE_SIZE = 5242880;
     private final String errorSizeMessage = "5MB";
+    Set<Integer> questionIdSet = new HashSet<>();
+    int quesNo = 1;
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -220,128 +226,129 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
         for (int j=0; j<qId.size(); j++) {
-            if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID), "0")){
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
-                return false;
+            List<DmSurveyAnswerTable> actionPlanText = db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID, Constants.PLOT_ID);
+            if (!actionPlanText.isEmpty()) {
+                if (actionPlanText.get(0).actionPlanText.trim().isEmpty()) {
+                    String actionPlanId = actionPlanText.get(0).actionplanId;
+                    if (Objects.equals(actionPlanId,"1")) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                if (Objects.equals(actionPlanText.get(0).actionPlanText, "0") || Objects.equals(actionPlanText.get(0).actionPlanText, "null")){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.dm_action_plan_is_missing), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
+
         }
 
         return true;
     }
 
 
-    @SuppressLint("ResourceAsColor")
-    private void displayQuestionsModuleComplaint(String complaint_id) {
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
+    private void displayQuestionsModuleComplaint(String complaint_id, ImageView complaint_dropdown, LinearLayout linearLayoutItems) {
 
-        List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
-        dmComplaintList.clear();
-        dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
+        List<ComplianceIndicator> dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
 
-        if (dmComplaintList.size() != 0) {
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-            dmSurveyAnswerTableList.clear();
-
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
+        if (!dmComplaintList.isEmpty()) {
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             String complianceName = dmComplaintList.get(0).compliance;
 
-            for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
-                budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
+
+            List<ComplianceIndicator> getComplianceByModuleId = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID);
+            List<Integer> satisfactoryId = new ArrayList<>();
+            List<Integer> nonComplaintId = new ArrayList<>();
+            List<Integer> complaintId = new ArrayList<>();
+            if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
+                        complaintId.add(complianceIndicator.id);
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
+                        satisfactoryId.add(complianceIndicator.id);
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryList(complaintId, nonComplaintId, satisfactoryId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+//                Constants.satisfactorySize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
+
+            } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                // Assigning checkbox answer based on compliance list
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.SATISFACTORY)) {
+                        satisfactoryId.add(complianceIndicator.id);
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
+                    } else if (Objects.equals(complianceIndicator.compliance, Constants.COMPLIANT)) {
+                        complaintId.add(complianceIndicator.id);
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(complaintId,satisfactoryId, nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+//                Constants.complaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
+
+            } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+
+                for(ComplianceIndicator complianceIndicator : getComplianceByModuleId) {
+                    if (Objects.equals(complianceIndicator.compliance, Constants.NON_COMPLIANT)) {
+                        nonComplaintId.add(complianceIndicator.id);
+                    }
+                }
+                dmSurveyAnswerTableList.addAll(db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintId, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+//                Constants.noncomplaintSize = String.valueOf(getComplianceSize(dmSurveyAnswerTableList));
             }
-
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-            dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, Constants.PLOT_ID);
-
-            if (complianceName.equalsIgnoreCase("Satisfactory")) {
-                Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
-
-            } else if (complianceName.equalsIgnoreCase("Compliant")) {
-                Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
-            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
-                Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
-            }
-
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
-            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
-            final ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
-
-            dm_question_complaint.addView(convertView);
-            convertView.setTag(complaint_id);
-            complaint_dropdown.setTag("0" + complaint_id);
-            // Arch
-            if (Objects.equals(complianceName,"Compliant")){
-                selected_imgName.setText(getResources().getString(R.string.dm_compliant));
-            } else if (Objects.equals(complianceName,"Non Compliant")) {
-                selected_imgName.setText(getResources().getString(R.string.dm_non_compliant));
-            } else if (Objects.equals(complianceName,"Satisfactory")) {
-                selected_imgName.setText(getResources().getString(R.string.dm_satisfactory));
-            }
-
-
-            List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
 
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String tag = complaint_dropdown.getTag().toString();
-
                     int tagFirst = Integer.parseInt(String.valueOf(tag.charAt(0)));
+                    List<Integer> list;
 
                     if (tagFirst == 0) {
-                        //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
-                        complaint_dropdown.setTag("1" + complaint_id);
+                        // Expand
                         complaint_dropdown.setRotation(180);
-                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
-                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
-                            LinearLayout linearLayout = (LinearLayout) desiredView;
-                            linearLayout.setVisibility(View.VISIBLE);
-                        }
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("1" + list.get(0));
                     } else {
-                        //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
-                        complaint_dropdown.setTag("0" + complaint_id);
+                        // Collapse
                         complaint_dropdown.setRotation(0);
-                        if (!finalDmSurveyAnswerTableList.isEmpty()) {
-                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
-                            LinearLayout linearLayout = (LinearLayout) desiredView;
-                            linearLayout.setVisibility(View.GONE);
-
-                        }
-
+                        list = complianceName.equalsIgnoreCase(Constants.SATISFACTORY) ? satisfactoryList :
+                                complianceName.equalsIgnoreCase(Constants.COMPLIANT) ? compliantList : nonComplaintList;
+                        complaint_dropdown.setTag("0" + list.get(0));
                     }
 
+                    View desiredView = dm_question_complaint.findViewWithTag("item" + list.get(0));
+                    if (desiredView != null) {
+                        LinearLayout linearLayout = (LinearLayout) desiredView;
+                        if (linearLayout != null) {
+                            linearLayout.setVisibility(tagFirst == 0 ? View.VISIBLE : View.GONE);
+                        }
+                    }
                 }
             });
-
-
-            LinearLayout linearLayoutItems = new LinearLayout(getActivity());
-            LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            linearLayoutItems.setLayoutParams(layoutParamLastHp);
-            linearLayoutItems.setPadding(25, 10, 10, 10);
-            linearLayoutItems.setTag("item" + complaint_id);
-            linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
-            }
-
 
             // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             if (!dmSurveyAnswerTableList.isEmpty()) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
-                    TextView textView = new TextView(getActivity());
-                    textView.setText((m + 1) + "." + dmQuestionsModule.question);
-                    textView.setTextColor(getResources().getColor(R.color.black));
-                    textView.setTextSize(14);
-                    textView.setPadding(0, 15, 0, 0);
-                    textView.setTypeface(null, Typeface.BOLD);
-                    linearLayoutItems.addView(textView);
-                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID);
+                    if (questionIdSet.add(Integer.valueOf(dmQuestionsModule.questionID))) {
+                        TextView textView = new TextView(getActivity());
+                        textView.setText(quesNo + "." + dmQuestionsModule.question);
+                        textView.setTextColor(getResources().getColor(R.color.black));
+                        textView.setTextSize(14);
+                        textView.setPadding(0, 15, 0, 0);
+                        textView.setTypeface(null, Typeface.BOLD);
+                        linearLayoutItems.addView(textView);
+                        renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems,dmQuestionsModule.answerID, dmQuestionsModule);
+                        quesNo++;
+                    }
 
                 }
             }
@@ -349,15 +356,53 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     }
 
 
-    @SuppressLint("ResourceAsColor")
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID ) {
+    /*public static int getComplianceSize(List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        Set<Integer> uniqueQuestionIds = new HashSet<>();
+        for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+            uniqueQuestionIds.add(Integer.valueOf(answer.questionID));
+        }
+        return uniqueQuestionIds.size();
+    }*/
+    public String checkboxProofFormat(List<Integer> answerIds, List<Integer> complianceIds, String questionId) {
+        List<String> proofFormats = db.dmLookupValuesItemDao().getAllProofFormats(answerIds, complianceIds, questionId);
+        if (proofFormats.contains("Both")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") && proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Both";
+        } else if (proofFormats.contains("Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+            return "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)";
+        } else if (proofFormats.contains("Image (.png, .jpg, .jpeg)")) {
+            return "Image (.png, .jpg, .jpeg)";
+        } else {
+            return "Both";
+        }
+    }
 
+    public String getProofFormat(String displayType, String questionId, String complaintId, String answerId) {
+        String formatValue = null;
 
-        LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
+        if (Objects.equals(displayType, Constants.CHECKBOX)) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(
+                    Integer.valueOf(questionId), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
 
+            List<Integer> answerIds = new ArrayList<>();
+            List<Integer> complianceIds = new ArrayList<>();
+
+            for (DmSurveyAnswerTable answer : checkboxAnswers) {
+                answerIds.add(Integer.valueOf(answer.answerID));
+                complianceIds.add(Integer.valueOf(answer.complinceTypeId));
+            }
+
+            formatValue = checkboxProofFormat(answerIds, complianceIds, questionId);
+        } else {
+            formatValue = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(questionId, complaintId, answerId);
+        }
+
+        return formatValue;
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void createAnswerDisplay(String answer, int index, boolean isCheckbox, String complaint_id, LinearLayout linearLayoutItems, LinearLayout.LayoutParams layoutParamsQes) {
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
         editText.setTextSize(14);
@@ -366,7 +411,41 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         editText.setPadding(10, 10, 0, 10);
         layoutParamsQes.setMargins(0, 10, 0, 10);
         editText.setLayoutParams(layoutParamsQes);
-        editText.setTag("et" + complaint_id);
+        editText.setTag("et" + complaint_id + (isCheckbox ? index : ""));
+
+        editText.setText(answer);
+        editText.setBackground(Objects.requireNonNull(getActivity()).getDrawable(R.drawable.answer_text_survey));
+
+        if (linearLayoutItems != null) {
+            linearLayoutItems.addView(editText);
+        }
+    }
+
+    @SuppressLint("ResourceAsColor")
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
+        boolean captureProof = false;
+        boolean customActionPlan = false;
+        boolean isActionPlanRequired = false;
+
+        LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
+        if (isCheckbox) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    createAnswerDisplay(checkboxAnswers.get(i).answer, i, true, complaint_id, linearLayoutItems, layoutParamsQes);
+                }
+            }
+        } else {
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+            if (!dmSurveyAnswerTableList.isEmpty()) {
+                createAnswerDisplay(dmSurveyAnswerTableList.get(0).answer, 0, false, complaint_id, linearLayoutItems, layoutParamsQes);
+            }
+        }
 
 
         TextView textView = new TextView(getActivity());
@@ -449,11 +528,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0, Constants.PLOT_ID);
                                             dm_question_complaint.removeAllViews();
 
-                                            if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -497,12 +573,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                         try {
                             String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                            String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                            String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+
+                            if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo), getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                 options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                            } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
                             }
                         } catch (Exception e) {
@@ -541,6 +618,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
 
                                 } else if (finalOptions[item].equals( getResources().getString(R.string.dm_choose_from_gallery))) {
@@ -548,8 +627,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                     if (isStoragePermissionGalleryGranted()) {
 
                                         String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id, answerID);
-                                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id, answerID);
-                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                                        String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+
+                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
 //                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -559,7 +639,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
-                                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -567,7 +647,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             galleryIntent.setType("*/*");
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
 //                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -578,6 +658,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         }
 
 
+                                    } else {
+                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
@@ -596,7 +678,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
-        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        if (isCheckbox) {
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            if (!checkboxAnswers.isEmpty()) {
+                for (int i = 0; i < checkboxAnswers.size(); i++) {
+                    dmActionPlansItemList.addAll(db.dmRangeActionPlansItemsDao().getActionPlanItemByIdCheckbox(checkboxAnswers.get(i).questionID, checkboxAnswers.get(i).complinceTypeId, checkboxAnswers.get(i).answerID));
+                }
+            }
+        } else {
+            dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id), answerID);
+        }
 
         final List<String> list = new ArrayList<String>();
         list.clear();
@@ -608,13 +699,35 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         list.add(getResources().getString(R.string.dm_select_action_plan));
         ids.add("0");
 
-        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
+        List<DmSurveyAnswerTable> answers = isCheckbox
+                ? db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX)
+                : db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
+
+
+
+        if (!answers.isEmpty()) {
+            for (DmSurveyAnswerTable answer : answers) {
+                if (answer.isCaptureProof) {
+                    captureProof = true;
+                    break;
+                }
+            }
+            for (DmSurveyAnswerTable answer : answers) {
+                if (answer.allowCustomActionPlan) {
+                    customActionPlan = true;
+                    break;
+                }
+            }
+        }
+
+        if (customActionPlan) {
             list.add(getResources().getString(R.string.dm_custom_action_plan));
             ids.add("1");
         }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
             if (dmActionPlansItemList.get(c) != null) {
+                isActionPlanRequired = true;
                 list.add(Utilities.getActionPlanByLanguage(dmActionPlansItemList.get(c)));
                 ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
             }
@@ -636,8 +749,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, R.id.ofis_spinner_text_view, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dm);
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
@@ -707,7 +820,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        if(actionPlanId == 1){
+        if(actionPlanId == 1 && !actionPlanT.equals("null")){
             actionPlan.setText(actionPlanT);
         }
 
@@ -762,22 +875,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         linearLayoutActionPlanMain.addView(actionPlan);
         linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
 
-
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
-
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-
-        if (!dmSurveyAnswerTableList.isEmpty()) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
-            editText.setText(answerIdDb);
-        }
-
-        //editText.getLayoutParams().width=40;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
-
         linearLayoutActionPlanMain.setVisibility(View.GONE);
 
         imageView2.setOnClickListener(new View.OnClickListener() {
@@ -785,8 +882,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     actionPlan.setText("");
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(true);
 
@@ -799,7 +896,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 }
                 actionPlan.setEnabled(false);
@@ -823,7 +924,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.PLOT_ID);
                 } else if (list.get(position).equalsIgnoreCase(getResources().getString(R.string.dm_custom_action_plan))) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.PLOT_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    if (Objects.equals(actionPlan.getText().toString(),"")){
+                        db.dmSurveyAnswerTableDao().updateActionPlanText("null", id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    } else {
+                        db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.PLOT_ID);
+                    }
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
@@ -914,7 +1019,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         });
 
 
-        boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         if (isActionPlanRequired) {
             linearLayoutSpin.addView(spinner);
             linearLayoutSpin.addView(editTextCurrency);
@@ -923,25 +1027,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
 
-        //Selected Action Plan Txt
-
         if (linearLayoutItems != null) {
-            linearLayoutItems.addView(editText);
-
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).isCaptureProof) {
+            if (captureProof) {
                 linearLayoutItems.addView(textView);
                 linearLayoutItems.addView(linearLayoutImage);
             } else {
                 textView.setVisibility(View.GONE);
                 linearLayoutImage.setVisibility(View.GONE);
             }
+
             linearLayoutItems.addView(linearLayoutSpin);
             linearLayoutItems.addView(tVActionPlanSelectedTxt);
 
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID).get(0).allowCustomActionPlan) {
+            if (customActionPlan) {
                 linearLayoutItems.addView(linearLayoutActionPlanMain);
             }
-
         }
 
         //linearLayoutItems.setVisibility(View.GONE);
@@ -976,7 +1076,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1105,11 +1205,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         dm_question_complaint.removeAllViews();
 
-                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                            }
-                                        }
+                                        // Display all compliance's based in module Id
+                                        initializeComplianceStatus();
 
                                     }
                                 });
@@ -1151,6 +1248,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] fileByteArray;
                 try {
@@ -1174,7 +1272,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1277,11 +1375,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -1307,6 +1402,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
+                String fileExtension = Constants.getFileExtension(filename);
 
                 byte[] pdfByteArray2;
                 try {
@@ -1331,7 +1427,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1440,11 +1536,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1480,7 +1573,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (URISyntaxException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -1488,15 +1581,21 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                 String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+                String fileExtension = Constants.getFileExtension(filename);
 
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
 
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                if (fileExtension.equalsIgnoreCase(Bitmap.CompressFormat.PNG.name())) {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                } else {
+                    resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                }
+
                 byte[] imageBytes = baos.toByteArray();
 
                 if (validateFileSize(imageBytes.length, totalSizeUntilNow)) {
@@ -1515,7 +1614,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1544,6 +1643,18 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String destinationFilePath = destinationFile.getAbsolutePath();
                 dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                // delete data stored temporary for isDownloadsDocument
+                if (PathUtil.isDownloadsDocument(uri)) {
+                    File file = new File(filePathimage);
+                    if (file.exists()) {
+                        if (file.delete()) {
+                            Log.d("IsDownloadDocument","File deleted successfully");
+                        } else {
+                            Log.d("IsDownloadDocument","Failed to delete file");
+                        }
+                    }
+                }
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
@@ -1626,11 +1737,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -1673,7 +1781,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] fileByteArray;
                 try {
                     fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
@@ -1692,7 +1800,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1804,11 +1912,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
 
                                         }
                                     });
@@ -1834,7 +1939,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
                 Uri uri1 = Uri.fromFile(compressPdf(uri));
-
+                String fileExtension = Constants.getFileExtension(filename);
                 byte[] pdfByteArray2;
                 try {
                     pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
@@ -1853,7 +1958,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
@@ -1960,11 +2065,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             dm_question_complaint.removeAllViews();
 
-                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                                                }
-                                            }
+                                            // Display all compliance's based in module Id
+                                            initializeComplianceStatus();
                                         }
                                     });
                             builder1.setNegativeButton(
@@ -1999,6 +2101,72 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     }
 
+    private void initializeComplianceStatus() {
+        totalActionPlanCount = 0;
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
+            }
+
+
+            initializeComplaintLayout(compliantList, Constants.COMPLIANT);
+            initializeComplaintLayout(satisfactoryList, Constants.SATISFACTORY);
+            initializeComplaintLayout(nonComplaintList, Constants.NON_COMPLIANT);
+        }
+    }
+
+    private void initializeComplaintLayout(List<Integer> complianceList, String type) {
+        quesNo = 1;
+        if (complianceList.isEmpty()) return;
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
+        TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
+        ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
+
+        dm_question_complaint.addView(convertView);
+
+        int tagValue = complianceList.get(0);
+        String tagPrefix = "1" + tagValue;
+        String resourceString = "";
+
+        if (type.equals(Constants.COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_compliant);
+        } else if (type.equals(Constants.SATISFACTORY)) {
+            resourceString = getResources().getString(R.string.dm_satisfactory);
+        } else if (type.equals(Constants.NON_COMPLIANT)) {
+            resourceString = getResources().getString(R.string.dm_non_compliant);
+        }
+
+        convertView.setTag(tagValue);
+        complaint_dropdown.setTag(tagPrefix);
+        selected_imgName.setText(resourceString);
+
+        LinearLayout linearLayoutItems = new LinearLayout(getActivity());
+        linearLayoutItems.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutItems.setPadding(25, 10, 10, 10);
+        linearLayoutItems.setTag("item" + tagValue);
+        linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
+        linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
+
+        for (Integer compliance : complianceList) {
+            displayQuestionsModuleComplaint(String.valueOf(compliance), complaint_dropdown, linearLayoutItems);
+        }
+    }
     public void showCurrencyDropDown(List<DmCurrency> dmCurrenciesItemList) {
 
 
@@ -2075,12 +2243,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 dm_question_complaint.removeAllViews();
 
-                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-                    }
-                }
-
+                // Display all compliance's based in module Id
+                initializeComplianceStatus();
 
             }
 
@@ -2104,92 +2268,45 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     public boolean isStoragePermissionGalleryGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
                 return  true;
             }else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
+                                android.Manifest.permission.READ_MEDIA_IMAGES}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
                 return false;
             }
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
                 return true;
             } else {
 
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_GALLERYPERMISSION_CODE);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
-
+        }
+        else {
             return true;
         }
     }
 
     public boolean isStoragePermissionCameraGranted() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                return  true;
-            }else {
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.READ_MEDIA_AUDIO,
-                                android.Manifest.permission.READ_MEDIA_VIDEO,
-                                android.Manifest.permission.READ_MEDIA_IMAGES,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAMERA_PERMISSION_CODE_TIRAMISU);
-                return false;
-            }
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return true;
             } else {
-
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
                         MY_CAMERA_PERMISSION_CODE);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
-
+        }
+        else {
             return true;
         }
-
-
     }
 
 
@@ -2197,59 +2314,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU){
+        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU) {
             try {
                 if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                    // Permissions granted, proceed with your code
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                         && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
-                )) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                }else {
-                    Toast.makeText(getContext(), R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (requestCode == MY_CAMERA_PERMISSION_CODE_TIRAMISU){
-            try {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[4] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[5] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[6] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
-                    // Permissions granted, proceed with your code
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1])
-                        || !shouldShowRequestPermissionRationale(permissions[2])
-                        || !shouldShowRequestPermissionRationale(permissions[3])
-                        || !shouldShowRequestPermissionRationale(permissions[4])
-                        || !shouldShowRequestPermissionRationale(permissions[5])
-                        || !shouldShowRequestPermissionRationale(permissions[6])
-                        || !shouldShowRequestPermissionRationale(permissions[7])
                 )) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
@@ -2263,8 +2333,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(PatientReasonActivity.this, R.string.camera_perm_granted, Toast.LENGTH_LONG).show();
-                //openCamera();
+
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_camera_permission), Toast.LENGTH_LONG).show();
             }
@@ -2272,8 +2341,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         if (requestCode == MY_GALLERYPERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(PatientReasonActivity.this, R.string.cs, Toast.LENGTH_LONG).show();
-                //openGallery();
+
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_gallery_permission), Toast.LENGTH_LONG).show();
             }
@@ -2385,7 +2453,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void checkPermission() {
         final String[] permissions = {
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE};
 
         final List<String> permissionsToRequest = new ArrayList<>();
@@ -2397,7 +2464,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (!permissionsToRequest.isEmpty()) {
             // ActivityCompat.requestPermissions(getActivity(), permissionsToRequest.toArray(new String[permissionsToRequest.size()]), REQUEST_CAMERA_PERMISSIONS);
             requestPermissions(new String[]{
-                    Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSIONS);
+                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSIONS);
 
         }
 
@@ -2419,7 +2486,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
-        totalActionPlanCount = 0;
     }
 
     @Override

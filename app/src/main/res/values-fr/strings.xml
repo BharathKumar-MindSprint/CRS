@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Compagnon Debug</string>
+    <string name="app_name">OFIS Enumerateur</string>
     <string name="cd_topSectionColour">Fonds coloré pour la section</string>
     <string name="ofis_switch_text_yes">Oui</string>
     <string name="ofis_switch_text_no">Non</string>
@@ -1211,4 +1211,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="skip">Sauter</string>
     <string name="eudr_survey_remainder_message">"Veuillez compléter l'enquête de vérification terrain qui vous a été attribuée "</string>
     <string name="edur_survey_remainder">Rappel de l\'enquête EUDR</string>
+
+    <string name="gallery_is_not_available_in_mobile">La galerie n\'est pas disponible sur mobile</string>
+    <string name="something_went_wrong_please_try_again">Une erreur s\'est produite, veuillez réessayer</string>
+    <string name="image_size_exceeds_5_mb">La taille de l\'image dépasse 5 Mo. Veuillez choisir une image plus petite.</string>
 </resources>

@@ -46,4 +46,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("SELECT DISTINCT id FROM DmQuestionsModule WHERE moduleId = :moduleId")
     List<Integer> getDmQuestionsByModuleId(int moduleId);
+
+    @Query("SELECT maxSelection FROM DmQuestionsModule where id=:questionId")
+    Integer getMaxSelectionCount(String questionId);
 }

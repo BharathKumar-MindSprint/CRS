@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
 
     <!-- main stuff -->
-    <string name="app_name">Hiệu chỉnh đồng hành OFIS</string>
+    <string name="app_name">OFIS Người đếm</string>
     <string name="cd_topSectionColour">Chọn màu nền cho mục</string>
     <string name="ofis_switch_text_yes">Có</string>
     <string name="ofis_switch_text_no">Không</string>
@@ -781,4 +781,8 @@
     <string name="skip">Skip</string>
     <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
     <string name="edur_survey_remainder">EUDR Survey Reminder</string>
+
+    <string name="gallery_is_not_available_in_mobile">Thư viện không khả dụng trên di động</string>
+    <string name="something_went_wrong_please_try_again">Đã xảy ra sự cố, vui lòng thử lại</string>
+    <string name="image_size_exceeds_5_mb">Kích thước hình ảnh vượt quá 5MB. Vui lòng chọn hình ảnh nhỏ hơn.</string>
 </resources>

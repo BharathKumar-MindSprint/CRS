@@ -35,6 +35,7 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultT
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 //import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
@@ -50,11 +51,14 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -80,13 +84,18 @@ public class SurveyResultsFragment extends Fragment {
     }
     String resultValue;
     String resultColor;
-    int amount = 0;
+    static int amount = 0;
     // OW-4574
     private Location mCurrentCapturedLocation = null;
     GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
     int complaint = 0, nonComplaint = 0, satisfactory = 0;
-
+    Set<Integer> questionIdSet = new HashSet<>();
+    List<Integer> compliantList = new ArrayList<>();
+    List<Integer> satisfactoryList = new ArrayList<>();
+    List<Integer> nonComplaintList = new ArrayList<>();
+    List<String> complianceStatus = Arrays.asList(Constants.COMPLIANT, Constants.SATISFACTORY, Constants.NON_COMPLIANT);
+    static Boolean val;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -241,21 +250,47 @@ public class SurveyResultsFragment extends Fragment {
 
         return view;
     }
+    public static int getComplianceSize(List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        Set<Integer> uniqueQuestionIds = new HashSet<>();
+        for (DmSurveyAnswerTable answer : dmSurveyAnswerTableList) {
+            if (uniqueQuestionIds.add(Integer.valueOf(answer.questionID))){
+                amount = amount + answer.amount;
+            }
+        }
+        return uniqueQuestionIds.size();
+    }
+    private void initializeComplianceStatus() {
+        questionIdSet.clear();
+        compliantList.clear();
+        satisfactoryList.clear();
+        nonComplaintList.clear();
+
+        if (!db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).isEmpty()) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                String complianceName = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance;
+                if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactoryList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    compliantList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaintList.add(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id);
+                }
+            }
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
 
         amount = 0;
-        Boolean val = false;
+        val = false;
         double totalWeightages = 0;
         double finalScore = 0;
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-        dmSurveyAnswerTableList1.clear();
-        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
@@ -266,30 +301,54 @@ public class SurveyResultsFragment extends Fragment {
             int newWeightage = db.complianceIndicatorDao().getComplianceScore(String.valueOf(compliantTypeId),complianceName);
 
             int newColorIsCritical = db.dmQuestionsModuleDao().getIsCriticalQuestForColor(Constants.MODULE_ID ,questionId);
-            if (complianceName.equalsIgnoreCase("Satisfactory")) {
+            if (complianceName.equalsIgnoreCase(Constants.SATISFACTORY)) {
                 totalWeightages = totalWeightages + newWeightage;
                 satisfactory = satisfactory + 1;
-                if (Objects.equals(newColorIsCritical, 1)){
-                    val = true;
-                }else {
-                    val = false;
-                }
-            } else if (complianceName.equalsIgnoreCase("Compliant")) {
+                val = Objects.equals(newColorIsCritical, 1);
+            } else if (complianceName.equalsIgnoreCase(Constants.COMPLIANT)) {
                 complaint = complaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
-            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
+            } else if (complianceName.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
                 nonComplaint = nonComplaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
-                if (Objects.equals(newColorIsCritical, 1)){
-                    val = true;
-                }else {
-                    val = false;
-                }
+                val = Objects.equals(newColorIsCritical, 1);
             }
 
 
         }
 
+        // For DM Checkbox
+        initializeComplianceStatus();
+        List<DmSurveyAnswerTable> answerTableCheckbox = new ArrayList<>();
+
+        for(String compliance : complianceStatus) {
+            if (compliance.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getSatisfactoryList(compliantList, nonComplaintList, satisfactoryList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+            } else if (compliance.equalsIgnoreCase(Constants.COMPLIANT)) {
+                answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+                answerTableCheckbox.addAll(db.dmSurveyAnswerTableDao().getSatisfactoryComplaintList(compliantList, satisfactoryList, nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX));
+            } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                answerTableCheckbox = db.dmSurveyAnswerTableDao().getNonComplaintList(nonComplaintList, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+                for (DmSurveyAnswerTable answer : answerTableCheckbox){
+                    int newColorIsCritical = db.dmQuestionsModuleDao().getIsCriticalQuestForColor(Constants.MODULE_ID , Integer.parseInt(answer.questionID));
+                    if (Objects.equals(newColorIsCritical, 1)) {
+                        val = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!answerTableCheckbox.isEmpty()) {
+                int complianceSize = getComplianceSize(answerTableCheckbox);
+                if (compliance.equalsIgnoreCase(Constants.SATISFACTORY)) {
+                    satisfactory += complianceSize;
+                } else if (compliance.equalsIgnoreCase(Constants.COMPLIANT)) {
+                    complaint += complianceSize;
+                } else if (compliance.equalsIgnoreCase(Constants.NON_COMPLIANT)) {
+                    nonComplaint += complianceSize;
+                }
+            }
+        }
 
 
         editTextText.setText(""+complaint);

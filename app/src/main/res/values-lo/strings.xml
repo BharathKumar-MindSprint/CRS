@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
 
     <!-- main stuff -->
-    <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
+    <string name="app_name">OFIS ຕົວເລກ </string>
     <string name="cd_topSectionColour">ສີ​ພື້ນ​ສະ​ເພາະ​ກຸ່ມ</string>
     <string name="ofis_switch_text_no">ບໍ່</string>
     <string name="ofis_switch_text_yes">​ແມ່ນ</string>
@@ -606,7 +606,6 @@
 <!--    <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>-->
 <!--    <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>-->
 <!--    <string name="common_survey_config_error">Survey config error. Please check the display config</string>-->
-    <string name="restriction_in_submodules">Please respond to all the mandatory questions to proceed</string>
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
 <!--    <string name="please_check_question">Please check Question</string>-->
 <!--    <string name="please_check_dependent_question">since its dependent question is updated</string>-->
@@ -1044,6 +1043,11 @@
     <string name="skip">Skip</string>
     <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
     <string name="edur_survey_remainder">EUDR Survey Reminder</string>
+
+    <string name="gallery_is_not_available_in_mobile">ຄັງຮູບບໍ່ມີໃຫ້ໃຊ້ງານໃນໂທລະສັບມືຖື</string>
+    <string name="something_went_wrong_please_try_again">ມີບາງຢ່າງຜິດພາດ, ກະລຸນາລອງໃໝ່</string>
+    <string name="image_size_exceeds_5_mb">ຂະໜາດຮູບເກີນ 5MB. ກະລຸນາເລືອກຮູບທີ່ນ້ອຍກວ່ານີ້.</string>
+    <string name="restriction_in_submodules">ກະລຸນາຕອບຄຳຖາມທີ່ຈຳເປັນທັງໝົດເພື່ອດຳເນີນການຕໍ່</string>
 </resources>
 
 

@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Debug</string>
+    <string name="app_name">OFIS Enumerator</string>
     <string name="cd_topSectionColour">Latar berwarna untuk setiap bagian</string>
     <string name="ofis_switch_text_yes">Ya</string>
     <string name="ofis_switch_text_no">Tidak</string>
@@ -878,4 +878,8 @@
     <string name="error_range_integer">Masukkan rentang antara %1$d hingga %2$d</string>
     <string name="dm_please_select_action_plan_status_before_proceed">Harap pilih status rencana tindakan sebelum melanjutkan!</string>
     <string name="dm_file_deleted_successfully">File berhasil dihapus!</string>
+
+    <string name="gallery_is_not_available_in_mobile">Galeri tidak tersedia di Mobile</string>
+    <string name="something_went_wrong_please_try_again">Terjadi kesalahan, silakan coba lagi</string>
+    <string name="image_size_exceeds_5_mb">Ukuran gambar melebihi 5MB. Silakan pilih gambar yang lebih kecil.</string>
 </resources>
