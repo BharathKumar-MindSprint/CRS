@@ -470,6 +470,9 @@ public class SyncAllTask extends SyncTask {
             // Goes directly to the AsyncTask
             new UpdateFarmersTask(context).execute(farmerResponse);
 
+            new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
+            spinnerResponse = null;
+
             new UpdateModuleListsTask(context).execute(moduleResponse);
             moduleResponse = null;
 
@@ -513,6 +516,8 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateDiagnosticModuleTask(context, dmResponseObject, dmFollowUpResponse, res, farmerResponse).execute(farmerResponse);
             farmerResponse = null;
+            dmResponseObject = null;
+            dmFollowUpResponse = null;
 
             LocalUnitResponse(localUnitResponse);
             localUnitResponse = null;
