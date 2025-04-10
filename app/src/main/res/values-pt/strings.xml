@@ -890,5 +890,8 @@
     <string name="gallery_is_not_available_in_mobile">Galeria não está disponível no celular</string>
     <string name="something_went_wrong_please_try_again">Algo deu errado, por favor tente novamente</string>
     <string name="image_size_exceeds_5_mb">O tamanho da imagem excede 5MB. Por favor, escolha uma imagem menor.</string>
+
+    <string name="mandate_survey">Por favor, complete primeiro a pesquisa obrigatória!</string>
+    <string name="mandate_survey_not_synced">Desculpe, mas a pesquisa obrigatória ainda não foi sincronizada. Por favor, sincronize primeiro a pesquisa obrigatória</string>
 </resources>
 
