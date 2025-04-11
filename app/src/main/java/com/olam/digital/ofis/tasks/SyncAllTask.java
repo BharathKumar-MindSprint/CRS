@@ -145,7 +145,7 @@ public class SyncAllTask extends SyncTask {
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
-    public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject;
+    public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
@@ -161,8 +161,6 @@ public class SyncAllTask extends SyncTask {
     int repeaterCount ;
 
     OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
-
-    private FollowUpResponseModel dmFollowUpResponse;
 
     public SyncAllTask(Context context) {
         super(context);
@@ -1736,12 +1734,12 @@ public class SyncAllTask extends SyncTask {
 
                         if (response.getString("status").equals("unchanged")) {
                             String progress = res.getString(R.string.farmers_up_to_date);
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Diagnostic Module");
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
                         }
                         farmerResponse = response;
                         String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Diagnostic Module");
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
 
                     } else {
@@ -2270,14 +2268,13 @@ public class SyncAllTask extends SyncTask {
                     try {
                         if (response.code() == 200) {
                             ResponseModel dmResponse = response.body();
-                            Log.d("count of DM", String.valueOf(dmResponse.getDiagnosticModules().size()));
                             dmResponseObject = new JSONObject(new Gson().toJson(dmResponse));
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic FollowUp Modules");
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
                         } else {
                             String finalEndPoint = call.request().url().toString();
                             int statusCode = response.code();
-                            String networkResponse = response.body().toString();
+                            String networkResponse = response.errorBody().toString();
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                             postFailureMessage(null);
                         }
@@ -2311,17 +2308,17 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(retrofit2.Call<FollowUpResponseModel> call, retrofit2.Response<FollowUpResponseModel> response) {
                 try {
                     if (response.code() == 200) {
-                        dmFollowUpResponse = response.body();
+                        FollowUpResponseModel followUpResponseModel = response.body();
+                        dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
                         String finalEndPoint = call.request().url().toString();
                         int statusCode = response.code();
-                        String networkResponse = response.body().toString();
+                        String networkResponse = response.errorBody().toString();
                         FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                         postFailureMessage(null);
                     }
                 } catch (Exception e) {
-                    Log.d("followUp", e.toString());
                     e.printStackTrace();
                 }
             }
