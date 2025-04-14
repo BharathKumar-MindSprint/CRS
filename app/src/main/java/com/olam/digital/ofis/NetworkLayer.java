@@ -1746,7 +1746,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
                                 dl.syncFmp(fmpId);
-                                dl.updateSubModuleAnswers(new ArrayList<JSONObject>(), fmpId, 0, farmerId, olamFarmerId, farmId, "fmp");
+                                dl.updateSubModuleAnswers(new ArrayList<JSONObject>(), fmpId, 0, farmerId, null, olamFarmerId, farmId, "fmp");
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
@@ -2027,6 +2027,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                             String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
                             submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
+                            String stakeholderId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
+                            if (stakeholderId!=null) {
+                                submission.put("stakeholderId", Long.parseLong(stakeholderId));
+                            }
                             submission.put("submission_date", submissionDate);
                             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             submission.put("upload_date", timestamp.toString());

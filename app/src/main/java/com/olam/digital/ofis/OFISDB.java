@@ -287,7 +287,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " INTEGER, "
-            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT )";
 
     private static final String OFIS_FARMERCHILD_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerChildModulesEntry.TABLE_NAME
             + " ( " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
@@ -369,7 +370,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID+ " TEXT, "
-            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC + " TEXT )";
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC + " TEXT, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT )";
 
     private static final String OFIS_SAVED_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SavedAnswerEntry.TABLE_NAME +
             " ( " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
@@ -379,7 +381,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
             + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
             + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
-            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT )";
 
     private static final String OFIS_ANSWER_CHILD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerChildEntry.TABLE_NAME +
             " ( " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
@@ -1365,6 +1369,9 @@ class OFISDB extends SQLiteOpenHelper {
     private void migrateFromVersionBelow157(SQLiteDatabase sqLiteDatabase) {
         try {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_SURVEY_TYPE +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STAKEHOLDER_ID +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID +" TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }

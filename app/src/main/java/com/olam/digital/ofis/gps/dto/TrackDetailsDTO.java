@@ -33,6 +33,8 @@ public class TrackDetailsDTO {
 
     private String sipCategoryName;
 
+    private String stakeholderId;
+
     public String getNationalId() {
         return nationalId;
     }
@@ -215,5 +217,13 @@ public class TrackDetailsDTO {
 
     public void setSipCategoryName(String sipCategoryName) {
         this.sipCategoryName = sipCategoryName;
+    }
+
+    public String getStakeholderId() {
+        return stakeholderId;
+    }
+
+    public void setStakeholderId(String stakeholderId) {
+        this.stakeholderId = stakeholderId;
     }
 }

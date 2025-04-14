@@ -833,7 +833,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                     long sectionId = dl.getSectionByFarmerId(farmerId);
                     boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
                     if (value) {
-                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
+                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId, null);
                         if (viewExistingdata) {
                             moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
                         } else {

@@ -322,7 +322,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                     boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, currentId);
 
                     if (value) {
-                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
+                        boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId, null);
                         if (viewExistingdata) {
                             moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
                         } else {
