@@ -1,8 +1,5 @@
 package com.olam.digital.ofis.farmstakeholder;
 
-import static android.Manifest.permission.READ_MEDIA_IMAGES;
-import static android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -34,10 +31,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -53,6 +54,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ViewStakeHolderActivity extends BaseActivity {
     private Cursor farmer;
@@ -78,6 +80,24 @@ public class ViewStakeHolderActivity extends BaseActivity {
     private final boolean[] isSpinnerClicked = {false};
 
     private MultiStakeHolder stakeHolder;
+    private RecyclerView stakeSurveys;
+    private LinearLayout noTaskLayout;
+    List<ModulesDTO> stakeModuleAssignments;
+    private static final String FARMER_ID = "FARMER_ID";
+    private static final String STAKEHOLDER_ID = "STAKEHOLDER_ID";
+    private static final String MODULE_ID = "MODULE_ID";
+    private static final String FARMER_MODULE_ID = "FARMER_MODULE_ID";
+    private static final String SUB_MODULE_ID = "SUB_MODULE";
+    private static final String FARM_ID = "FARM_ID";
+    private static final String STATUS_STARTED = "STATUS_STARTED";
+    private static final String STATUS_FINISHED = "STATUS_FINISHED";
+    private static final String OLAM_FARMER_ID = "OLAM_FARMER_ID";
+    private static final String MODULE_NAME = "MODULE_NAME";
+    private static final String RECORDED_LAT = "RECORDED_LAT";
+    private static final String RECORDED_LNG = "RECORDED_LNG";
+    private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String PLOT_COUNT = "PLOT_COUNT";
+    private static final String VIEW_MODULE = "VIEW_MODULE";
 
     private int countryId;
 
@@ -92,10 +112,90 @@ public class ViewStakeHolderActivity extends BaseActivity {
         db = OFISRoomDB.getDbInstance(context);
         res = getResources();
         dl = new DataLayer(res, context);
-
+        stakeSurveys = findViewById(R.id.stakeSurveys);
+        noTaskLayout = findViewById(R.id.noTask);
         localeSuffixColumn = Utilities.getColumnNameByLanguage();
         stakeHolder = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeHolderId));
         setupUI();
+
+        StakeholderModuleRepository moduleRepository = new StakeholderModuleRepository(dl, this);
+
+        // getting survey data from cursor to DTO
+        stakeModuleAssignments = moduleRepository.getStakeholderModules(farmerId);
+        List<ModulesDTO> filteredModules = filterModules(stakeModuleAssignments);
+
+        // attaching moduleList in recycler adapter
+        stakeSurveys.setLayoutManager(new LinearLayoutManager(this));
+        String moduleNameSuffix = Utilities.getLocaleSuffix(res);
+        StakeholderSurveyAdapter surveyAdapter = new StakeholderSurveyAdapter(this, stakeModuleAssignments, stakeHolder, new StakeholderSurveyAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, ModulesDTO item) {
+                if (Objects.equals(item.getSurveyType(), Utilities.SURVEY_TYPE_FLMRS)) {
+                    showSurvey(view, item);
+
+                }
+            }
+        });
+        stakeSurveys.setAdapter(surveyAdapter);
+
+        // showing no task based on survey availability
+        updateNoTaskVisibility(filteredModules);
+    }
+
+    public void showSurvey(View v, ModulesDTO item) {
+        TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+        TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+        TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+        TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+        TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+        TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+        TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+        TextView viewModuleAns = (TextView) v.findViewById(R.id.viewModuleAnswers);
+        Intent intent = new Intent(context, CompleteModuleActivity.class);
+        intent.putExtra(FARMER_ID, farmerId);
+        intent.putExtra(STAKEHOLDER_ID, stakeHolderId);
+        intent.putExtra(MODULE_ID, item.getId());
+        intent.putExtra(FARMER_MODULE_ID, item.getFarmer_module_id() == null ? 0 : Long.parseLong(item.getFarmer_module_id()));
+        intent.putExtra(SUB_MODULE_ID, item.getCurrent_submodule_id() == null ? 0 : Integer.parseInt(item.getCurrent_submodule_id()));
+        intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+        intent.putExtra(STATUS_STARTED, item.getStatus_started() == null ? 0 : Integer.parseInt(item.getStatus_started()));
+        intent.putExtra(STATUS_FINISHED, item.getStatus_finished() == null ? 0 : Integer.parseInt(item.getStatus_finished()));
+        intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+        intent.putExtra(MODULE_NAME, item.getModule_name());
+        intent.putExtra(RECORDED_LAT, item.getRecorded_lat());
+        intent.putExtra(RECORDED_LNG, item.getRecorded_lng());
+        intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+        intent.putExtra(VIEW_MODULE, item.getView_module());
+        if (DynamicQuestions.getInstance() != null) {
+            DynamicQuestions.clearInstance();
+        }
+        context.startActivity(intent);
+    }
+
+    private List<ModulesDTO> filterModules(List<ModulesDTO> modules) {
+        List<ModulesDTO> filteredModules = new ArrayList<>();
+        for (ModulesDTO item : modules) {
+            String surveyType = item.getSurveyType();
+            if (surveyType != null) {
+                if (Objects.equals(surveyType, Utilities.SURVEY_TYPE_FLMRS)) {
+                    String farmerRoleId = item.farmerRoleId;
+                    List<Integer> moduleRoleIds = new ArrayList<>();
+                    farmerRoleId = farmerRoleId.replaceAll("[\\[\\]]", "");
+                    String[] dataArray = farmerRoleId.split(",");
+
+                    for (String data : dataArray) {
+                        moduleRoleIds.add(Integer.parseInt(data.trim()));
+                    }
+
+                    if (moduleRoleIds.contains(Integer.parseInt(stakeHolder.msRoleId))) {
+                        filteredModules.add(item);
+                    }
+                } else {
+                    filteredModules.add(item);
+                }
+            }
+        }
+        return filteredModules;
     }
 
     @Override
@@ -520,4 +620,13 @@ public class ViewStakeHolderActivity extends BaseActivity {
         }
     }
 
+    private void updateNoTaskVisibility(List<ModulesDTO> filteredModules) {
+        if ( filteredModules == null || filteredModules.isEmpty()) {
+            stakeSurveys.setVisibility(View.GONE);
+            noTaskLayout.setVisibility(View.VISIBLE);
+        } else {
+            stakeSurveys.setVisibility(View.VISIBLE);
+            noTaskLayout.setVisibility(View.GONE);
+        }
+    }
 }

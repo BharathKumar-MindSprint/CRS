@@ -66,6 +66,7 @@ public class Utilities {
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
     public  static  long farmerId;
+    public  static  String stakeholderId;
     public  static String productId;
     public  static String countryId;
     public  static int datatypeIdCLMRS;
@@ -134,6 +135,9 @@ public class Utilities {
     public static final String QWR = "QWR";
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
+    public static final String FLMRS = "FLMRS";
+    public static final String SURVEY_TYPE_FLMRS = "8";
+
 
 
 public  static String base64ConversionForImage(String filepath)  {
