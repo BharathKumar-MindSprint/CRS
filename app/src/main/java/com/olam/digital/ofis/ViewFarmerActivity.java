@@ -1009,7 +1009,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                             "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND " +
+                             "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND " + "modules.surveyType != '8' AND " +
                              "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
@@ -1032,6 +1032,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
                              "moduleassignments.isPlotSurvey != 'true' AND "+
+                             "modules.surveyType != '8' AND " +
                              "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
