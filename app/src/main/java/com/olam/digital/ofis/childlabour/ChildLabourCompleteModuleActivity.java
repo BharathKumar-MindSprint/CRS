@@ -71,6 +71,7 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.recordpolygon.location;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
@@ -166,6 +167,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private final static int REQUEST_IMAGE_GALLERY = 2;
     boolean isSigned = false;
     private String mCurrentSignaturePhotoPath = null;
+    private String previousSignaturePhotoPath = null;
 
 
     @Override
@@ -413,6 +415,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule",0);
                     }
                     statusFinished = 1;
+                    if (dynamicQuestions.hasAnswers && previousSignaturePhotoPath != null) {
+                        deletePreviousSignatureFile(previousSignaturePhotoPath);
+                    }
                     saveSubModule("finish");
                 } else {
                     saveSubModule("next");
@@ -1010,7 +1015,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             if (qCursor.getColumnIndex("answer_" + dataType) != -1) {
                 currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + dataType));
                 setSignatureImage(currentAnswerValue, signatureImageView);
+                dynamicQuestions.saveAnswerEntry(questionId, answerTempId, parentQuestionId, repeaterItemPosition, dataType, currentAnswerValue, 0, 0,0);
             }
+
         }
 
         int answerId = answerTempId;
@@ -1076,12 +1083,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 try {
                     if (isSigned) {
                         signatureImageView.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
-
                         if (dynamicQuestions.hasAnswers) {
-                            deletePreviousSignatureFile(mCurrentSignaturePhotoPath);
+                            previousSignaturePhotoPath = mCurrentSignaturePhotoPath;
                         }
-                        File photoFile = createImageFile("signature");
 
+                        File photoFile = createImageFile("signature");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             try {
                                 Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
@@ -1138,6 +1144,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(finalCurrentAnswerValue, outputWidth, outputHeight);
         farmerSignature.setImageBitmap(existingSignatureBitmap);
+
+
     }
 
 }
