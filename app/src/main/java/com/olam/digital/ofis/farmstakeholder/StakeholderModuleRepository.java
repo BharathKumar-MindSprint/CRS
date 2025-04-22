@@ -19,7 +19,7 @@ public class StakeholderModuleRepository {
         this.context = context;
     }
 
-    public List<ModulesDTO> getStakeholderModules(long farmerId) {
+    public List<ModulesDTO> getStakeholderModules(long farmerId, String stakeHolderId) {
         Cursor farmer = null;
         try {
             farmer = dl.getFlattenedFarmer(farmerId);
@@ -44,7 +44,7 @@ public class StakeholderModuleRepository {
                         " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration, modules.surveyType FROM moduleassignments " +
                         " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                         " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) AND farmer_modules.stakeholder_id = ?" +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                         "moduleassignments.childLabour != 'true' AND " +
                         "moduleassignments.isPlotSurvey != 'true' AND " +
@@ -64,6 +64,7 @@ public class StakeholderModuleRepository {
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                        stakeHolderId,
                         countryId,
                         countryId,
                         countryId,

@@ -121,7 +121,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
         StakeholderModuleRepository moduleRepository = new StakeholderModuleRepository(dl, this);
 
         // getting survey data from cursor to DTO
-        stakeModuleAssignments = moduleRepository.getStakeholderModules(farmerId);
+        stakeModuleAssignments = moduleRepository.getStakeholderModules(farmerId, stakeHolderId);
         List<ModulesDTO> filteredModules = filterModules(stakeModuleAssignments);
 
         // attaching moduleList in recycler adapter
