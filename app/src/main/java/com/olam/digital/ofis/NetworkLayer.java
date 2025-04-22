@@ -2029,7 +2029,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
                             String stakeholderId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
                             if (stakeholderId!=null) {
-                                submission.put("stakeholderId", Long.parseLong(stakeholderId));
+                                submission.put("stakeholder_id", Long.parseLong(stakeholderId));
                             }
                             submission.put("submission_date", submissionDate);
                             Timestamp timestamp = new Timestamp(System.currentTimeMillis());

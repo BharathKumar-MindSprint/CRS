@@ -179,16 +179,18 @@ public class ViewStakeHolderActivity extends BaseActivity {
             if (surveyType != null) {
                 if (Objects.equals(surveyType, Utilities.SURVEY_TYPE_FLMRS)) {
                     String farmerRoleId = item.farmerRoleId;
-                    List<Integer> moduleRoleIds = new ArrayList<>();
-                    farmerRoleId = farmerRoleId.replaceAll("[\\[\\]]", "");
-                    String[] dataArray = farmerRoleId.split(",");
+                    if (!farmerRoleId.equals("[]")) {
+                        List<Integer> moduleRoleIds = new ArrayList<>();
+                        farmerRoleId = farmerRoleId.replaceAll("[\\[\\]]", "");
+                        String[] dataArray = farmerRoleId.split(",");
 
-                    for (String data : dataArray) {
-                        moduleRoleIds.add(Integer.parseInt(data.trim()));
-                    }
+                        for (String data : dataArray) {
+                            moduleRoleIds.add(Integer.parseInt(data.trim()));
+                        }
 
-                    if (moduleRoleIds.contains(Integer.parseInt(stakeHolder.msRoleId))) {
-                        filteredModules.add(item);
+                        if (moduleRoleIds.contains(Integer.parseInt(stakeHolder.msRoleId))) {
+                            filteredModules.add(item);
+                        }
                     }
                 } else {
                     filteredModules.add(item);
