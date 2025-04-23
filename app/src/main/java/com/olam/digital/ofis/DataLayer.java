@@ -66,8 +66,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 /**
@@ -5289,13 +5287,14 @@ public class DataLayer {
             return db.rawQuery("SELECT * FROM " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                             " ORDER BY CASE " +
                             "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'farmer' THEN 1 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'module' THEN 2 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'children' THEN 3 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'Multifarm Update' THEN 4 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' THEN 5 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' THEN 6 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' THEN 7 " +
-                            "ELSE 8 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'consentstatement' THEN 2 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'module' THEN 3 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'children' THEN 4 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'Multifarm Update' THEN 5 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' THEN 6 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' THEN 7 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' THEN 8 " +
+                            "ELSE 9 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
                     null);
         }
 
@@ -9091,6 +9090,28 @@ public class DataLayer {
             cursor.close();
         }
     }
+    public boolean getIsConsentAvailableToSync(long farmerId) {
+        Cursor networkEntry = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId), "consentstatement"};
+            networkEntry = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+            if (networkEntry != null && networkEntry.getCount() > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (networkEntry != null) {
+                networkEntry.close();
+            }
+        }
+        return false;
+    }
+
+
 
     public List<Integer> getComplianceFarmerGroups() {
         String query = """

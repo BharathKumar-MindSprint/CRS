@@ -1426,5 +1426,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="mandate_survey">Please complete the mandatory survey first!</string>
     <string name="mandate_survey_not_synced">Sorry, but the mandatory survey has not yet been synced. Please sync the mandatory survey first</string>
+    <string name="consent_not_synced">Sorry, but the consent has not yet been synced. Please sync the consent first</string>
 
 </resources>
