@@ -69,8 +69,11 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -2456,8 +2459,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (moduleAssignments != null) {
             try {
                 mandateSurveyList.addAll(ViewFarmerActivity.getMandateModules(moduleAssignments));
-            } finally {
-                moduleAssignments.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         if (mandateSurveyList.isEmpty() || mandateSurveyList.contains(moduleId)) {
@@ -2487,9 +2490,33 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         // Get list of all submitted moduleIds
         Set<Integer> allSubmittedModuleId = new HashSet<>(ViewFarmerActivity.getAllSubmittedModule(submittedModules));
+        Cursor getCursorRecurrence = moduleAssignments;
 
-        if (allSubmittedModuleId.containsAll(mandateSurveyList)) {
+        Set<Integer> finalSubmittedRecurrence = Collections.emptySet();
+        assert getCursorRecurrence != null;
+        if (getCursorRecurrence.moveToFirst()) {
+            finalSubmittedRecurrence = Utilities.getSubmittedModuleWithRecurrence(getCursorRecurrence, allSubmittedModuleId, submittedModules, farmerId, dl);
+        }
+
+
+        if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
             isMandate = true;
+        }   else {
+            Calendar calendar = Calendar.getInstance();
+            int currentYear = calendar.get(Calendar.YEAR);
+            String createdDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
+            int surveyYear = 0;
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                Date date = sdf.parse(createdDate);
+                calendar.setTime(date);
+                surveyYear = calendar.get(Calendar.YEAR);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (surveyYear < currentYear) {
+                isMandate = true;
+            }
         }
 
         return isMandate;

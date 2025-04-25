@@ -646,9 +646,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     // Get list of all the submitted moduleId and answered moduleId
                     Set<Integer> allSubmittedModuleId = new HashSet<>();
                     allSubmittedModuleId.addAll(getAllSubmittedModule(submittedModules));
-                    allSubmittedModuleId.addAll(dl.getAllUnSyncedModule(farmerId));
 
-                    if (allSubmittedModuleId.containsAll(mandateSurveyList)) {
+                    // Getting the module Id based on current recurrence period
+                    Cursor getCursorRecurrence = moduleAssignments;
+
+                    Set<Integer> finalSubmittedRecurrence = Collections.emptySet();
+                    if (getCursorRecurrence.moveToFirst()) {
+                        finalSubmittedRecurrence = Utilities.getSubmittedModuleWithRecurrence(getCursorRecurrence, allSubmittedModuleId, submittedModules, farmerId, dl);
+                    }
+                    finalSubmittedRecurrence.addAll(dl.getAllUnSyncedModule(farmerId));
+                    if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
                         isMandateSurveyCompleted = true;
                     }
                     String[] adapterCols = new String[]{
