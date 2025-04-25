@@ -5905,7 +5905,7 @@ public class DataLayer {
                 newModuleEntry.put("id", moduleId);
                 newModuleEntry.put("created_at", submissionDate);
                 newModuleEntry.put("farmId",farmId);
-                newModuleEntry.put("plotId",plotId);
+                newModuleEntry.put("plotId", plotId==0 ? "null" : plotId);
                 JSONObject newModule = new JSONObject();
                 newModule.put("module", newModuleEntry);
 

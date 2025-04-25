@@ -793,7 +793,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     for (int i = 0; i < submittedModulesArray.length(); i++) {
                         JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                         JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                        if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                        if (submittedModuleDetails.has("plotId") && !submittedModuleDetails.getString("plotId").equals("null")) {
                             valid = true;
                         }
                     }
