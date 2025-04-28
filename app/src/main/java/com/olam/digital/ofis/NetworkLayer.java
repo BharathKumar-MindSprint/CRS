@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -2004,6 +2005,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             Cursor farmerModule = null;
             Cursor moduleAnswers = null;
             Cursor extraInfo = null;
+            Cursor farmer = null;
 
             //Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
             int plotId = 0;
@@ -2031,6 +2033,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 if (isMandateSurveySynced) {
                                     final String submissionDate = farmerModule.getString(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE));
                                     extraInfo = dl.getExtraInfoByFarmerId(farmerId, moduleId);
+                                    farmer = dl.getFarmerById(farmerId);
                                     if (extraInfo.getCount() > 0) {
                                         extraInfo.moveToFirst();
                                         submission.put("farmer_name", extraInfo.getString(0));
@@ -2050,6 +2053,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         submission.put("farmer_name", "");
                                         submission.put("product_id", "");
                                         submission.put("partner_id", "");
+                                    }
+
+                                    if (farmer.getCount() > 0 ){
+                                        farmer.moveToFirst();
+                                        String programmeId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID));
+                                        submission.put("regionId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
+                                        submission.put("districtId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
+                                        submission.put("placeId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
+                                        submission.put("programmeId", programmeId==null ? 0 : Integer.parseInt(programmeId));
+                                        submission.put("sectionId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
                                     }
 
                                     boolean hasPhotos = false;
@@ -2443,6 +2456,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
                 if (extraInfo != null){
                     extraInfo.close();
+                }
+                if (farmer != null) {
+                    farmer.close();
                 }
                 if (moduleAnswers != null){
                     moduleAnswers.close();
