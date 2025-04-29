@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.tasks;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,10 +46,51 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
@@ -103,7 +145,7 @@ public class SyncAllTask extends SyncTask {
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
-    public static JSONObject localUnitResponse, photoCheckBoxResponse;
+    public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
@@ -119,6 +161,7 @@ public class SyncAllTask extends SyncTask {
     int repeaterCount ;
 
     OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
+
     public SyncAllTask(Context context) {
         super(context);
     }
@@ -156,7 +199,6 @@ public class SyncAllTask extends SyncTask {
 
             }
         }
-
         else if (op == SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO) {
             //  syncSpinners();
             syncDeviceInfo();
@@ -270,6 +312,12 @@ public class SyncAllTask extends SyncTask {
             }
         } else if ( op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
             syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
+        }
+        else if (op == SyncTaskOperationType.SYNC_DM_MODULES) {
+            GetAllDiagnosticModule();
+        }
+        else if (op == SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES) {
+            GetAllFollowUpDMData();
         }
 
         return null;
@@ -418,17 +466,11 @@ public class SyncAllTask extends SyncTask {
             DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO,ansCount);
         } else if (operation == SyncOperation.START_IMPORT) {
             // Goes directly to the AsyncTask
-            Log.d("Update","before async");
             new UpdateFarmersTask(context).execute(farmerResponse);
-            farmerResponse = null;
 
-            Log.e("UpdateSpinnerListsTask:","before async");
-            // Goes directly to the AsyncTask
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
-            Log.e("UpdateSpinnerListsTask:","afetr async");
 
-            // Goes directly to the AsyncTask
             new UpdateModuleListsTask(context).execute(moduleResponse);
             moduleResponse = null;
 
@@ -470,6 +512,11 @@ public class SyncAllTask extends SyncTask {
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
 
+            new UpdateDiagnosticModuleTask(context, dmResponseObject, dmFollowUpResponse, res, farmerResponse).execute(farmerResponse);
+            farmerResponse = null;
+            dmResponseObject = null;
+            dmFollowUpResponse = null;
+
             LocalUnitResponse(localUnitResponse);
             localUnitResponse = null;
 
@@ -477,22 +524,13 @@ public class SyncAllTask extends SyncTask {
             photoCheckBoxResponse = null;
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
-                deleteRoomDbValues();
                 HomeActivity.completeFirstSetup();
             }else{
-                deleteRoomDbValues();
                 SettingsActivity.completeSetup();
             }
             if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 photoCheckboxDownload();
             }
-
-            /*if (pd != null && pd.isShowing()) {
-                String pdUpdate = res.getString(R.string.update_complete);
-                pd = Utilities.updateProgressDialog(pd, syncResultCount, syncResultCount, pdUpdate);
-                Utilities.closeProgressDialog(pd, 1000);
-            }*/
-
 
         } else if (operation == SyncOperation.ERROR_RECEIVED) {
             if (pd != null && pd.isShowing()) {
@@ -554,30 +592,6 @@ public class SyncAllTask extends SyncTask {
             }
         }
 
-    }
-
-    private void deleteRoomDbValues() {
-        try {
-            OFISRoomDB db = OFISRoomDB.getDbInstance(context);
-            db.dmSectionsItemDao().deleteAll();
-            db.dmQuestionsModuleDao().deleteAll();
-            db.dmLookupValuesItemDao().deleteAll();
-            db.dmMainModuleDao().deleteAll();
-            db.dmAnswerTypesDao().deleteAll();
-            db.dmQuestionTypesDao().deleteAll();
-            db.dmCurrenciesItemDao().deleteAll();
-            db.dmTextBoxModuleQuestionsDao().deleteAll();
-            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-            db.dmTextBoxModuleQuestionsDao().deleteAll();
-            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-            db.complianceIndicatorDao().deleteAll();
-            db.dmCurrencyDao().deleteAll();
-            db.dmRangeActionPlansItemsDao().deleteAll();
-            db.dmSurveyAnswerTableDao().deleteAll();
-            db.dmModuleAssignmentsDao().deleteAll();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     private void postFailureMessage(JSONObject response) {
@@ -1706,8 +1720,7 @@ public class SyncAllTask extends SyncTask {
             inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
         }
 
-        String endpoint = "";
-        endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid";
+        String endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid";
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
@@ -1721,11 +1734,13 @@ public class SyncAllTask extends SyncTask {
 
                         if (response.getString("status").equals("unchanged")) {
                             String progress = res.getString(R.string.farmers_up_to_date);
-                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
                         }
                         farmerResponse = response;
                         String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-                        publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
 
                     } else {
                         try {
@@ -2240,6 +2255,110 @@ public class SyncAllTask extends SyncTask {
             FirebaseCrash.report(new Exception("UpdateStakeHolderResponse: Error filling StakeHolders table", e));
             e.printStackTrace();
         }
+    }
+
+    private void GetAllDiagnosticModule() {
+        deleteRoomDbValues();
+        if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
+            ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+            retrofit2.Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
+            call.enqueue(new retrofit2.Callback<ResponseModel>() {
+                @Override
+                public void onResponse(retrofit2.Call<ResponseModel> call, retrofit2.Response<ResponseModel> response) {
+                    try {
+                        if (response.code() == 200) {
+                            ResponseModel dmResponse = response.body();
+                            dmResponseObject = new JSONObject(new Gson().toJson(dmResponse));
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
+                        } else {
+                            String finalEndPoint = call.request().url().toString();
+                            int statusCode = response.code();
+                            String networkResponse = response.errorBody().toString();
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                            postFailureMessage(null);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<ResponseModel> call, Throwable t) {
+                    String failureMessage = res.getString(R.string.networking_error);
+                    if (t != null) {
+                        FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                        failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                    }
+
+                    publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+                }
+            });
+        }
+        else {
+            publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+        }
+    }
+
+    public void GetAllFollowUpDMData() {
+        ManageRecords GetAllFollowUpDMData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<FollowUpResponseModel> call = GetAllFollowUpDMData.getAllFollowUpDMData();
+        call.enqueue(new retrofit2.Callback<FollowUpResponseModel>() {
+            @Override
+            public void onResponse(retrofit2.Call<FollowUpResponseModel> call, retrofit2.Response<FollowUpResponseModel> response) {
+                try {
+                    if (response.code() == 200) {
+                        FollowUpResponseModel followUpResponseModel = response.body();
+                        dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+                    } else {
+                        String finalEndPoint = call.request().url().toString();
+                        int statusCode = response.code();
+                        String networkResponse = response.errorBody().toString();
+                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                        postFailureMessage(null);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<FollowUpResponseModel> call, Throwable t) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+
+    }
+
+    public void deleteRoomDbValues() {
+        roomDB.dmSectionsItemDao().deleteAll();
+        roomDB.dmQuestionsModuleDao().deleteAll();
+        roomDB.dmLookupValuesItemDao().deleteAll();
+        roomDB.dmMainModuleDao().deleteAll();
+        roomDB.dmAnswerTypesDao().deleteAll();
+        roomDB.dmQuestionTypesDao().deleteAll();
+        roomDB.dmCurrenciesItemDao().deleteAll();
+        roomDB.dmTextBoxModuleQuestionsDao().deleteAll();
+        roomDB.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        roomDB.dmTextBoxModuleQuestionsDao().deleteAll();
+        roomDB.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        roomDB.complianceIndicatorDao().deleteAll();
+        roomDB.dmCurrencyDao().deleteAll();
+        roomDB.dmRangeActionPlansItemsDao().deleteAll();
+        roomDB.dmSurveyAnswerTableDao().deleteAll();
+        roomDB.dmMasterDataDao().deleteAll();
+        roomDB.dmRecurrenceDao().deleteAll();
+        roomDB.dmModuleAssignmentsDao().deleteAll();
+        roomDB.onGroundSurveyNotificationDao().deleteAll();
+        roomDB.dmSurveyReportDao().deleteAll();
+        roomDB.followUpItemMainTableDao().deleteAll();
     }
 
 
