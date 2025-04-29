@@ -46,6 +46,9 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -124,22 +127,44 @@ public class ViewStakeHolderActivity extends BaseActivity {
         stakeModuleAssignments = moduleRepository.getStakeholderModules(farmerId, stakeHolderId);
         List<ModulesDTO> filteredModules = filterModules(stakeModuleAssignments);
 
+        JSONObject submittedModules;
+        String submittedModulesJSON = stakeHolder.submitted_modules;
+        String Samplestr = String.valueOf("{\"modules\":null}");
+        if (Samplestr.equals(submittedModulesJSON)) {
+            submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+        }
+        try {
+            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+
         // attaching moduleList in recycler adapter
         stakeSurveys.setLayoutManager(new LinearLayoutManager(this));
-        String moduleNameSuffix = Utilities.getLocaleSuffix(res);
-        StakeholderSurveyAdapter surveyAdapter = new StakeholderSurveyAdapter(this, stakeModuleAssignments, stakeHolder, new StakeholderSurveyAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, ModulesDTO item) {
-                if (Objects.equals(item.getSurveyType(), Utilities.SURVEY_TYPE_FLMRS)) {
-                    showSurvey(view, item);
-
-                }
-            }
-        });
+        StakeholderSurveyAdapter surveyAdapter = getStakeholderSurveyAdapter(submittedModules);
         stakeSurveys.setAdapter(surveyAdapter);
 
         // showing no task based on survey availability
         updateNoTaskVisibility(filteredModules);
+    }
+
+    private StakeholderSurveyAdapter getStakeholderSurveyAdapter(JSONObject submittedModules) {
+        StakeholderSurveyAdapter surveyAdapter;
+        try {
+            surveyAdapter = new StakeholderSurveyAdapter(this, stakeModuleAssignments, stakeHolder, submittedModules, dl, db, res, new StakeholderSurveyAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, ModulesDTO item) {
+                    if (Objects.equals(item.getSurveyType(), Utilities.SURVEY_TYPE_FLMRS)) {
+                        showSurvey(view, item);
+
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return surveyAdapter;
     }
 
     public void showSurvey(View v, ModulesDTO item) {
