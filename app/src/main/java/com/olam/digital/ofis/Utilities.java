@@ -106,7 +106,7 @@ public class Utilities {
     public static String NID_ERROR = "This national ID has already been added to the farmer";
 
     // OW-4529 Fix
-    public static String DUPLICATE_ERROR = "Dupicate survey entry";
+    public static String DUPLICATE_ERROR = "Duplicate survey entry";
 
     // OW-4516 Fix
     public static final int DATE_TIME_SETTING =6575;
