@@ -9172,4 +9172,21 @@ public class DataLayer {
         return db.rawQuery(query, farmerGroupIdArray);
     }
 
+    public void updateNqAndAnswerForStakeHolderModule(long localStakeholderId, int msId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, msId);
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(localStakeholderId), "module"};
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
+
+            ContentValues valuesAnswer = new ContentValues();
+            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID, msId);
+            String whereClauseAnswer = OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ?";
+            String[] whereArgsAnswer = new String[]{String.valueOf(localStakeholderId)};
+            db.update(OFISDBContract.AnswerEntry.TABLE_NAME, valuesAnswer, whereClauseAnswer, whereArgsAnswer);
+
+        } catch (Exception e) {
+        }
+    }
 }
