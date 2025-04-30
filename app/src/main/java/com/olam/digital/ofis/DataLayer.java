@@ -5894,7 +5894,7 @@ public class DataLayer {
 
     }
 
-    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate,int farmId, int plotId) {
+    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate, int farmId, int plotId, String stakeholderId) {
         ArrayList<Integer> getAllSubModulesId = getAllSubmodulesByModuleId(moduleId);
         StringBuilder submoduleIds = new StringBuilder();
         for (int subId : getAllSubModulesId) {
@@ -5911,47 +5911,54 @@ public class DataLayer {
             db.delete(OFISDBContract.FarmerModulesEntry.TABLE_NAME, whereClause, whereArgs);
         }catch (Exception e){}
 
-        Cursor farmer = getFarmerById(farmerId);
+        try {
+            JSONObject newModuleEntry = new JSONObject();
+            newModuleEntry.put("id", moduleId);
+            newModuleEntry.put("created_at", submissionDate);
+            newModuleEntry.put("farmId", farmId);
+            newModuleEntry.put("plotId", plotId);
+            JSONObject newModule = new JSONObject();
+            newModule.put("module", newModuleEntry);
 
-        if (farmer.getCount() > 0) {
-            farmer.moveToFirst();
-            try {
-                JSONObject newModuleEntry = new JSONObject();
-                newModuleEntry.put("id", moduleId);
-                newModuleEntry.put("created_at", submissionDate);
-                newModuleEntry.put("farmId",farmId);
-                newModuleEntry.put("plotId",plotId);
-                JSONObject newModule = new JSONObject();
-                newModule.put("module", newModuleEntry);
-
-                String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-                String Samplestr = String.valueOf("{\"modules\":null}");
-                if (Samplestr.equals(submittedModulesJSON)) {
-                    submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+            String submittedModulesJSON;
+            if (stakeholderId != null) {
+                MultiStakeHolder multiStakeHolder = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
+                submittedModulesJSON = (multiStakeHolder.submitted_modules == null) ? "null" : multiStakeHolder.submitted_modules;
+                ofisRoomDB.multiStakeHolderDao().updateSubmittedModulesById(stakeholderId, updateModules(submittedModulesJSON, newModule));
+            } else {
+                Cursor farmer = getFarmerById(farmerId);
+                if (farmer.getCount() > 0) {
+                    farmer.moveToFirst();
+                    submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, updateModules(submittedModulesJSON, newModule));
+                    db.update(OFISDBContract.FarmerEntry.TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
+                    db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
                 }
-                JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-                if (submittedModules.has("modules")) {
-                    JSONArray modules = submittedModules.getJSONArray("modules");
-                    modules.put(newModule);
-                } else {
-                    JSONArray newModules = new JSONArray();
-                    newModules.put(newModule);
-                    submittedModules.put("modules", newModules);
-                }
-
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, submittedModules.toString());
-
-                db.update(OFISDBContract.FarmerEntry.TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
-                db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
-
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("DataLayer: Error creating farmer submitted module", e));
-                e.printStackTrace();
             }
-
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DataLayer: Error creating farmer submitted module", e));
+            e.printStackTrace();
         }
     }
+
+    private String updateModules(String submittedModulesJSON, JSONObject newModule) throws JSONException {
+        String sampleStr = "{\"modules\":null}";
+        if (sampleStr.equals(submittedModulesJSON)) {
+            submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+        }
+        JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+        if (submittedModules.has("modules")) {
+            JSONArray modules = submittedModules.getJSONArray("modules");
+            modules.put(newModule);
+        } else {
+            JSONArray newModules = new JSONArray();
+            newModules.put(newModule);
+            submittedModules.put("modules", newModules);
+        }
+        return submittedModules.toString();
+    }
+
 
 
     // Remove and update after sync

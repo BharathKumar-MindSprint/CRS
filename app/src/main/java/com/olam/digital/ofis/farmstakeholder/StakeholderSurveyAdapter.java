@@ -120,12 +120,11 @@ public class StakeholderSurveyAdapter extends RecyclerView.Adapter<RecyclerView.
             surveyHolder.surveyType.setText(item.getSurveyType());
 
             boolean submitted = false;
-            Calendar currentDate = null;
+            Calendar currentDate = Calendar.getInstance();
             if (hasSubmittedModules) {
 
                 boolean disable_entry = false;
                 try {
-                    currentDate = Calendar.getInstance();
                     int recurrence_frequency = Integer.parseInt(item.recurrence_frequency);
                     String recurrence_type =  item.recurrence_type;
                     Calendar calculationDate = (Calendar) currentDate.clone();
@@ -324,6 +323,23 @@ public class StakeholderSurveyAdapter extends RecyclerView.Adapter<RecyclerView.
                                     surveyHolder.enabledTextView.setText("false");
                                     submitted = true;
                                     break;
+                                }
+                            }
+
+                            if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                surveyHolder.linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                surveyHolder.moduleName.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                surveyHolder.moduleStatus.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                surveyHolder.enabledTextView.setText("false");
+                            }
+
+                            Date currentDateNew = new Date();
+                            if (startDate!=null){
+                                if(currentDateNew.before(startDate)){
+                                    surveyHolder.linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                    surveyHolder.moduleName.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    surveyHolder.moduleStatus.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                    surveyHolder.enabledTextView.setText("false");
                                 }
                             }
 

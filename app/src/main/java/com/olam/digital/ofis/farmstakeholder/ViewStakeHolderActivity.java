@@ -134,7 +134,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
             submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
         }
         try {
-            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+            submittedModules = (submittedModulesJSON != null) ? new JSONObject(submittedModulesJSON) : new JSONObject();
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
