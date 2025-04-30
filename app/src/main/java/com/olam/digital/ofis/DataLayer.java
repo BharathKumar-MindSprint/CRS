@@ -4916,7 +4916,7 @@ public class DataLayer {
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
-        String farmerQuery = "" + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String farmerQuery = "" + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
         String farmerQueryValue = String.valueOf(farmerId);
 
         String sql = "SELECT " + columns + " FROM " + questionTable + " LEFT OUTER JOIN " + answerTable
@@ -4926,7 +4926,7 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
         String[] whereArgs = new String[]{
-                farmerQueryValue,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                 String.valueOf(farmerModuleId),
                 String.valueOf(submoduleId),
                 String.valueOf(question_id)
@@ -4936,6 +4936,7 @@ public class DataLayer {
     }
 
     Cursor getAnswersForQuestionByFarmer(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
+
         String[] columns = new String[]{"*"};
         String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
         String farmerQueryValue = String.valueOf(farmerId);
@@ -4944,7 +4945,7 @@ public class DataLayer {
                 + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                 String.valueOf(farmerModuleId)
         };
 
@@ -4960,7 +4961,7 @@ public class DataLayer {
                 + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                 String.valueOf(farmerModuleId),
                 String.valueOf(repeaterItemPosition)
         };
@@ -4978,7 +4979,7 @@ public class DataLayer {
 //                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
 //                String.valueOf(farmerModuleId)
         };
 
@@ -4995,7 +4996,7 @@ public class DataLayer {
                 + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                 String.valueOf(farmerModuleId)
         };
 
@@ -5103,7 +5104,7 @@ public class DataLayer {
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
                 String.valueOf(position),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                 String.valueOf(farmerModuleId)
         };
 
@@ -5122,7 +5123,7 @@ public class DataLayer {
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
                 String.valueOf(position),
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
 //                String.valueOf(farmerModuleId)
         };
 
@@ -5138,7 +5139,7 @@ public class DataLayer {
             String farmerQueryValue = String.valueOf(farmerId);
             String[] whereArgs = new String[]{
                     String.valueOf(subModuleId),
-                    farmerQueryValue, stakeholderId,
+                    farmerQueryValue, stakeholderId==null? "" : stakeholderId,
                     String.valueOf(farmerModuleId)
             };
             String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + farmerQuery + " AND " + idColumn + " = ? ";
@@ -8222,7 +8223,7 @@ public class DataLayer {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND "
                 + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID +" = ? AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(submoduleId),String.valueOf(farmerId), stakeholderId};
+        String[] whereArgs = new String[]{String.valueOf(submoduleId),String.valueOf(farmerId), stakeholderId==null? "" : stakeholderId};
         Cursor cursor = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
@@ -8448,7 +8449,7 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
         String[] whereArgs = new String[]{
-                farmerQueryValue, stakeholderId,
+                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
 //                String.valueOf(farmerModuleId),
                 String.valueOf(submoduleId)
         };
