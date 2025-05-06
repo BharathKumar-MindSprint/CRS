@@ -2336,7 +2336,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                                     @Override
                                                                     public void run() {
-                                                                        popupMsgInfo(res.getString(R.string.duplicate_survey));
+                                                                        popupMsgInfo(res.getString(R.string.survey_already_synced));
                                                                     }
                                                                 });
                                                             } else if (response.getInt("statusCode") == 3035) {
