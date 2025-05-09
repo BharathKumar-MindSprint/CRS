@@ -62,10 +62,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -9315,6 +9317,29 @@ public class DataLayer {
         } finally {
             farmer.close();
         }
+    }
+
+
+    public Set<Integer> getSurveyNQBasedOnFarmerId(long farmerId) {
+        Cursor nqCursor=null;
+        Set<Integer> surveyId = new HashSet<>();
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            nqCursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (nqCursor != null) {
+                while (nqCursor.moveToNext()) {
+                    surveyId.add(nqCursor.getInt(nqCursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID)));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            assert nqCursor != null;
+            nqCursor.close();
+        }
+        return surveyId;
     }
 
 }

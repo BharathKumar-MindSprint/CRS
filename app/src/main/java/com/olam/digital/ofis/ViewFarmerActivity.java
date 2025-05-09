@@ -120,6 +120,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -640,12 +641,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     Cursor getCursorModules = moduleAssignments;
-                    mandateSurveyList.addAll(getMandateModules(getCursorModules));
+                    mandateSurveyList.addAll(getMandateModules(getCursorModules, null));
                     isMandateSurveyCompleted = mandateSurveyList.isEmpty();
 
                     // Get list of all the submitted moduleId and answered moduleId
-                    Set<Integer> allSubmittedModuleId = new HashSet<>();
-                    allSubmittedModuleId.addAll(getAllSubmittedModule(submittedModules));
+                    Set<Integer> allSubmittedModuleId = new HashSet<>(getAllSubmittedModule(submittedModules));
 
                     // Getting the module Id based on current recurrence period
                     Cursor getCursorRecurrence = moduleAssignments;
@@ -754,13 +754,23 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         });
     }
 
-    public static Collection<Integer> getMandateModules(Cursor getIdCursor) {
+    public static Collection<Integer> getMandateModules(Cursor getIdCursor, Set<Integer> readyToSyncSurvey) {
         Set<Integer> mandateList = new HashSet<>();
+        Calendar currentDate = Calendar.getInstance();
+
         while (getIdCursor.moveToNext()) {
             int id = getIdCursor.getInt(getIdCursor.getColumnIndex("_id"));
             String checkMandate = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE));
-            if (Objects.equals(Boolean.parseBoolean(checkMandate),true)) {
-                mandateList.add(getIdCursor.getInt(getIdCursor.getColumnIndex("_id")));
+            if (checkMandate!=null) {
+                if (Boolean.parseBoolean(checkMandate)) {
+                    String disabledMonthsString = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+                    List<String> disabledMonths = Arrays.asList(disabledMonthsString.split("\\s*,\\s*"));
+
+                    if (!disabledMonths.contains(String.valueOf(currentDate.get(Calendar.MONTH))) ||
+                            (readyToSyncSurvey != null && readyToSyncSurvey.contains(id))) {
+                        mandateList.add(id);
+                    }
+                }
             }
         }
         return mandateList;

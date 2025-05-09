@@ -2472,9 +2472,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         // Get mandate modules
         Cursor moduleAssignments = dl.getAllModuleByFarmerId(farmerId);
+        Set<Integer> readyToSyncSurvey = dl.getSurveyNQBasedOnFarmerId(farmerId);
         if (moduleAssignments != null) {
             try {
-                mandateSurveyList.addAll(ViewFarmerActivity.getMandateModules(moduleAssignments));
+                mandateSurveyList.addAll(ViewFarmerActivity.getMandateModules(moduleAssignments, readyToSyncSurvey));
             } catch (Exception e) {
                 e.printStackTrace();
             }
