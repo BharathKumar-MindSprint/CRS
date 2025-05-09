@@ -174,7 +174,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading = null;
     int checkvalue = 0;
-    private boolean farmerSynced = true, autotimeEnabled = false, stakeholderSynced = true;
+    private boolean farmerSynced = true, autotimeEnabled = false, mandateSurveySynced = true, isConsentSynced = true, stakeholderSynced = true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -859,6 +859,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    } else if (!mandateSurveySynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.mandate_survey_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!isConsentSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.consent_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     } else if (!stakeholderSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.stakeholder_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
@@ -892,6 +900,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
+                    } else if (msg.what == 8) {
+                        mandateSurveySynced = false;
+                    } else if (msg.what == 10) {
+                        isConsentSynced = false;
                     } else if (msg.what == 11) {
                         stakeholderSynced = false;
                     } else if (msg.what == 9) {
@@ -901,6 +913,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
+            mandateSurveySynced = true;
+            isConsentSynced = true;
             stakeholderSynced = true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
@@ -942,6 +956,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    } else if (!mandateSurveySynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.mandate_survey_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!isConsentSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.consent_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     } else if (!stakeholderSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.stakeholder_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
@@ -968,6 +990,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         isChildSynced = false;
                     } else if (msg.what == 11) {
                         stakeholderSynced = false;
+                    } else if (msg.what == 8) {
+                        mandateSurveySynced = false;
+                    } else if (msg.what == 10) {
+                        isConsentSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     } else {
@@ -977,6 +1003,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
+            mandateSurveySynced = true;
+            isConsentSynced = true;
             stakeholderSynced = true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
