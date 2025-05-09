@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.childlabour;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,12 +10,14 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,13 +27,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -64,15 +71,23 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.recordpolygon.location;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Locale;
+
 // handling all survey Questions for child survey.
 //Capture all the collected answers and store in database.
 public class ChildLabourCompleteModuleActivity extends BaseActivity {
@@ -150,6 +165,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private final static int REQUEST_IMAGE_CAPTURE = 1;
 
     private final static int REQUEST_IMAGE_GALLERY = 2;
+    boolean isSigned = false;
+    private String mCurrentSignaturePhotoPath = null;
+    private String previousSignaturePhotoPath = null;
 
 
     @Override
@@ -397,6 +415,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule",0);
                     }
                     statusFinished = 1;
+                    if (dynamicQuestions.hasAnswers && previousSignaturePhotoPath != null) {
+                        deletePreviousSignatureFile(previousSignaturePhotoPath);
+                    }
                     saveSubModule("finish");
                 } else {
                     saveSubModule("next");
@@ -578,6 +599,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
+                    } else if (displayType.replaceAll("", "").toLowerCase().equals("signature")) {
+                        renderSignatureQuestion(questions, false, dynamicQuestions.questionsSection, 0, 0, null);
                     }
 
                 } else {
@@ -711,6 +734,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU: {
                 try {
@@ -737,7 +761,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 try {
                     if (grantResults.length > 0 &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                             && (!shouldShowRequestPermissionRationale(permissions[0])
@@ -965,6 +989,163 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 break;
         }
         return assignmentTypeColumn;
+    }
+
+    public void renderSignatureQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+        LayoutInflater inflater = this.getLayoutInflater();
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        dynamicQuestions.renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+
+        final RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.module_photo_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+        final ImageView signatureImageView = (ImageView) rl.findViewById(R.id.modulePhotoQuestion);
+        Button modulePhotoUploadButton = (Button) rl.findViewById(R.id.modulePhotoUpload);
+        modulePhotoUploadButton.setText(res.getString(R.string.Signature));
+
+        int answerTempId = 0;
+        String dataType = "text";
+        String currentAnswerValue = null;
+
+        if (dynamicQuestions.hasAnswers) {
+            if (qCursor.getColumnIndex("answer_id") != -1) {
+                answerTempId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+            }
+
+            if (qCursor.getColumnIndex("answer_" + dataType) != -1) {
+                currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + dataType));
+                setSignatureImage(currentAnswerValue, signatureImageView);
+                dynamicQuestions.saveAnswerEntry(questionId, answerTempId, parentQuestionId, repeaterItemPosition, dataType, currentAnswerValue, 0, 0,0);
+            }
+
+        }
+
+        int answerId = answerTempId;
+        modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSignatureDialogBox(signatureImageView, questionId, answerId, parentQuestionId, repeaterItemPosition, dataType);
+            }
+        });
+
+        questionWrapper.addView(rl);
+        parentLayout.addView(questionWrapper);
+    }
+
+    public void showSignatureDialogBox(ImageView signatureImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String dataType) {
+        isSigned = false;
+        final Dialog signatureDialog = new Dialog(ChildLabourCompleteModuleActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                isSigned = true;
+            }
+
+            @Override
+            public void onClear() {
+                isSigned = false;
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureDialog.dismiss();
+            }
+        });
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (isSigned) {
+                        signatureImageView.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
+                        if (dynamicQuestions.hasAnswers) {
+                            previousSignaturePhotoPath = mCurrentSignaturePhotoPath;
+                        }
+
+                        File photoFile = createImageFile("signature");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            try {
+                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                m.invoke(null);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                            mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, dataType, mCurrentSignaturePhotoPath, 0, 0,0);
+                        signatureDialog.dismiss();
+                    } else {
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        signatureDialog.show();
+    }
+
+    private void deletePreviousSignatureFile(String mCurrentSignaturePhotoPath) {
+        File file = new File(mCurrentSignaturePhotoPath);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    private File createImageFile(String signature) throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = signature + "_" + timestamp;
+        File storageDir = getExternalFilesDir("");
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        mCurrentSignaturePhotoPath = image.getName();
+        return image;
+    }
+
+    private void setSignatureImage(String signaturePhotoPath, ImageView farmerSignature) {
+        String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
+        final String finalCurrentAnswerValue = storageDir + signaturePhotoPath;
+        Uri uri = Uri.parse(finalCurrentAnswerValue);
+        mCurrentSignaturePhotoPath = uri.getPath();
+        int baseWidth = 100;
+        int baseHeight = 28;
+        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+        Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(finalCurrentAnswerValue, outputWidth, outputHeight);
+        farmerSignature.setImageBitmap(existingSignatureBitmap);
+
+
     }
 
 }
