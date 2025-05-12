@@ -2538,21 +2538,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
             isMandate = true;
-        }   else {
-            Calendar calendar = Calendar.getInstance();
-            int currentYear = calendar.get(Calendar.YEAR);
-            String createdDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
-            int surveyYear = 0;
+        } else if (moduleId == 0) {
+            return isMandate;
+        } else {
             try {
+                String createdDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 Date date = sdf.parse(createdDate);
+                Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
-                surveyYear = calendar.get(Calendar.YEAR);
+                int surveyYear = calendar.get(Calendar.YEAR);
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                isMandate = surveyYear < currentYear;
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-            if (surveyYear < currentYear) {
-                isMandate = true;
+                isMandate = false;
             }
         }
 
