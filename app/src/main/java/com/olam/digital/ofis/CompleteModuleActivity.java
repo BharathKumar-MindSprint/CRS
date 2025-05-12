@@ -165,6 +165,7 @@ public class CompleteModuleActivity extends BaseActivity {
     int plotId = 0;
     String isPlotSurvey;
     public ArrayList<JSONObject> backupAnswerSet;
+    boolean isMandateSurvey = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +199,7 @@ public class CompleteModuleActivity extends BaseActivity {
         context = this;
         res = getResources();
         dl = new DataLayer(res, context);
+        isMandateSurvey = dl.isSurveyMandate(moduleId);
 
         DynamicQuestions.resource(res);
         setupGPS();
@@ -812,7 +814,11 @@ public class CompleteModuleActivity extends BaseActivity {
 
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
+                    if(isMandateSurvey) {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "mandate_module");
+                    } else {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
+                    }
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
@@ -830,7 +836,11 @@ public class CompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId, "module", plotId);
+                        if (isMandateSurvey) {
+                            dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId, "mandate_module", plotId);
+                        } else {
+                            dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId, "module", plotId);
+                        }
                     }
                     statusFinished = 1;
                     saveSubModule("finish");
@@ -879,8 +889,11 @@ public class CompleteModuleActivity extends BaseActivity {
         }
 
 
-        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, stakeholderId, olamFarmerId, farmId, "module");
-
+        if (isMandateSurvey) {
+            dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, stakeholderId, olamFarmerId, farmId, "mandate_module");
+        } else {
+            dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, stakeholderId, olamFarmerId, farmId, "module");
+        }
 
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();

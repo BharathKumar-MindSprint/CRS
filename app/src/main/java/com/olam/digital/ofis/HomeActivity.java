@@ -1510,7 +1510,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)), totalCount);
                 recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
                 startActivity(recordPolygonIntent);
-            } else if (itemType.equalsIgnoreCase("module")) {
+            } else if (itemType.equalsIgnoreCase("module") || itemType.equalsIgnoreCase("mandate_module")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 CompleteModuleActivity.editMode = true;
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));

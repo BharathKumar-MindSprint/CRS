@@ -5310,13 +5310,15 @@ public class DataLayer {
                             " ORDER BY CASE " +
                             "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'farmer' THEN 1 " +
                             "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'consentstatement' THEN 2 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'module' THEN 3 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'children' THEN 4 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'Multifarm Update' THEN 5 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' THEN 6 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' THEN 7 " +
-                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' THEN 8 " +
-                            "ELSE 9 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'mandate_module' THEN 3 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'stakeholder' THEN 4 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'module' THEN 5 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'children' THEN 6 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'Multifarm Update' THEN 7 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' THEN 8 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' THEN 9 " +
+                            "WHEN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' THEN 10 " +
+                            "ELSE 11 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
                     null);
         }
 
@@ -9008,7 +9010,7 @@ public class DataLayer {
     }
 
     public List<MultiFarmRoleDTO> getMultiFarmRoles(String locale) {
-        List<com.olam.digital.ofis.multifarm.MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<com.olam.digital.ofis.multifarm.MultiFarmRoleDTO>();
+        List<MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<MultiFarmRoleDTO>();
         Cursor cursor = null;
         try {
             cursor = db.rawQuery("SELECT " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + "," + locale + " as name " + " FROM multifarmRoles ", null);
@@ -9020,7 +9022,7 @@ public class DataLayer {
             try {
                 if (cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
-                        com.olam.digital.ofis.multifarm.MultiFarmRoleDTO multiFarmRoleDTO = new com.olam.digital.ofis.multifarm.MultiFarmRoleDTO();
+                        MultiFarmRoleDTO multiFarmRoleDTO = new MultiFarmRoleDTO();
                         multiFarmRoleDTO.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID))));
                         multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME)));
                         multiFarmRoleDTOList.add(multiFarmRoleDTO);
@@ -9384,5 +9386,27 @@ public class DataLayer {
 
         } catch (Exception e) {
         }
+    }
+
+
+    public Boolean isSurveyMandate(long moduleId){
+        boolean isMandate = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            cursor = db.query(OFISDBContract.ModuleEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    isMandate = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE)));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return isMandate;
     }
 }
