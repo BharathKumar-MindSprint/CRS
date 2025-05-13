@@ -1081,14 +1081,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                              "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND " + "modules.surveyType != '8' AND " +
                              "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
                 }else {
 
@@ -1104,14 +1103,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                              "moduleassignments.isPlotSurvey != 'true' AND "+
                              "modules.surveyType != '8' AND " +
                              "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
                 }
                 String[] modulesQueryValues = new String[]{
@@ -1119,14 +1117,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
                         countryId,
                         countryId,
-                        countryId,
+                        productId,
                         regionId,
                         districtId,
                         placeId,
                         farmerGroupId,
                         sectionId,
                         programmeId,
-                        productId,
                         partnerId
                 };
 

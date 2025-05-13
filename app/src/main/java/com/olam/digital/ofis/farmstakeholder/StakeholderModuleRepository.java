@@ -50,14 +50,13 @@ public class StakeholderModuleRepository {
                         "moduleassignments.isPlotSurvey != 'true' AND " +
                         "modules.surveyType == '8' AND " +
                         "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                        "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                        "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
 
 
@@ -67,14 +66,13 @@ public class StakeholderModuleRepository {
                         stakeHolderId,
                         countryId,
                         countryId,
-                        countryId,
+                        productId,
                         regionId,
                         districtId,
                         placeId,
                         farmerGroupId,
                         sectionId,
                         programmeId,
-                        productId,
                         partnerId
                 };
 
