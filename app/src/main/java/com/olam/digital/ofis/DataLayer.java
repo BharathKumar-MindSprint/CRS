@@ -5138,13 +5138,26 @@ public class DataLayer {
             // delete existing answers for this farmer and submodule
             String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
             String idColumn = (type.equalsIgnoreCase("fmp")) ? OFISDBContract.AnswerEntry.COLUMN_NAME_FMP_ID : OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID;
-            String farmerQuery = "" + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
+            String farmerQuery = answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ?";
+
             String farmerQueryValue = String.valueOf(farmerId);
-            String[] whereArgs = new String[]{
-                    String.valueOf(subModuleId),
-                    farmerQueryValue, stakeholderId==null? "" : stakeholderId,
-                    String.valueOf(farmerModuleId)
-            };
+            String[] whereArgs;
+            if (stakeholderId != null) {
+                farmerQuery += " AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
+                whereArgs = new String[] {
+                        String.valueOf(subModuleId),
+                        farmerQueryValue, stakeholderId,
+                        String.valueOf(farmerModuleId)
+                };
+            } else {
+                whereArgs = new String[] {
+                        String.valueOf(subModuleId),
+                        farmerQueryValue,
+                        String.valueOf(farmerModuleId)
+                };
+            }
+
+
             String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + farmerQuery + " AND " + idColumn + " = ? ";
 
             db.delete(answerTable, whereClause, whereArgs);
