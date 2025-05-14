@@ -1059,6 +1059,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
         Button supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
+        CardView cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
 
         syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
@@ -1110,14 +1111,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
-            supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
-                    context.startActivity(intent);
-                }
-            });
-
+            if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+                supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else {
+                cvSupplierAndSurvey.setVisibility(View.GONE);
+            }
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override

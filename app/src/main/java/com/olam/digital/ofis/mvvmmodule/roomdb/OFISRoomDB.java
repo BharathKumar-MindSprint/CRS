@@ -9,6 +9,13 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.agrisupplier.dao.SupplierDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierGroupDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierTypeDao;
+import com.olam.digital.ofis.agrisupplier.entity.Supplier;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
@@ -66,8 +73,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class},
-        version = 17)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSupplierGroupCrossRef.class},
+        version = 18)
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -121,6 +128,9 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract MultiStakeHolderDao multiStakeHolderDao();
 
     public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
+    public abstract SupplierTypeDao supplierTypeDao();
+    public abstract SupplierDao supplierDao();
+    public abstract SupplierGroupDao supplierGroupDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -155,7 +165,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (" +
-                "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                         "msTempId INTEGER," +
                         "farmerId INTEGER," +
                         "msName TEXT," +
@@ -234,10 +244,49 @@ public abstract class OFISRoomDB extends RoomDatabase {
         };
 
 
+        final Migration MIGRATION_17_18 = new Migration(17, 18) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "supplierId INTEGER NOT NULL, " +
+                        "supplierName TEXT, " +
+                        "primaryPhoneNumber TEXT, " +
+                        "secondaryPhoneNumber TEXT, " +
+                        "supplierTypeId INTEGER, " +
+                        "productId INTEGER, " +
+                        "countryId INTEGER)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_type (" +
+                        "supplierTypeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "type TEXT)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_group (" +
+                        "supplierGroupId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "supplierGroupName TEXT, " +
+                        "countryId INTEGER, " +
+                        "productId INTEGER, " +
+                        "supplierTypeId INTEGER)");
+
+                database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `SupplierSupplierGroupCrossRef` (" +
+                                "`id` INTEGER NOT NULL, " +
+                                "`supplierGroupId` INTEGER NOT NULL, " +
+                                "PRIMARY KEY(`id`, `supplierGroupId`), " +
+                                "FOREIGN KEY(`id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE, " +
+                                "FOREIGN KEY(`supplierGroupId`) REFERENCES `supplier_group`(`supplierGroupId`) ON DELETE CASCADE)"
+                );
+
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_supplierGroupId` ON `SupplierSupplierGroupCrossRef`(`supplierGroupId`)");
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_id` ON `SupplierSupplierGroupCrossRef`(`id`)");
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18)
                     .fallbackToDestructiveMigration()
                     .build();
         }

@@ -28,6 +28,7 @@ import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
@@ -64,6 +65,8 @@ public class Utilities {
     public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
 
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
+
+    public static final String IS_SUPPLIER_ENABLED = "isEnableSupplierModule";
 
     public  static  long farmerId;
     public  static String productId;
@@ -134,7 +137,9 @@ public class Utilities {
     public static final String QWR = "QWR";
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
-
+    public static final String SUPPLIER = "supplier";
+    public static final String SUPPLIER_SURVEY = "supplierSurvey";
+    public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -812,6 +817,22 @@ public  static String base64ConversionForImage(String filepath)  {
             case "tr" -> dmMainModule.nameTr;
             case "vi" -> dmMainModule.nameVi;
             default -> dmMainModule.name;
+        };
+    }
+
+    public static String getNamesBy(SupplierSurveyDto dmMainModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "en" -> dmMainModule.getName();
+            case "es" -> dmMainModule.getNameEs();
+            case "fr" -> dmMainModule.getNameFr();
+            case "id", "in" -> dmMainModule.getNameId();
+            case "lo" -> dmMainModule.getNameLo();
+            case "pt" -> dmMainModule.getNamePt();
+            case "th" -> dmMainModule.getNameTh();
+            case "tr" -> dmMainModule.getNameTr();
+            case "vi" -> dmMainModule.getNameVi();
+            default -> dmMainModule.getName();
         };
     }
 

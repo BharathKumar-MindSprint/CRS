@@ -6,6 +6,8 @@ import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
 import com.olam.digital.ofis.ManageTrainingRecords.model.ViewFile;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
@@ -16,8 +18,6 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
-
-import org.json.JSONArray;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -87,5 +87,9 @@ public interface ManageRecords {
     @POST("ofissurvey/survey/getPhotoCheckboxImages")
     Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate, @Body RequestBody photoModuleList);
 
+    @GET("ofissupplier/supplier/mobile/getAllSupplierByEnum")
+    Call<SupplierResponse> getAllSupplierData();
 
+    @GET("ofissupplier/enumerator/survey")
+    Call<SupplierModuleResponse> getAllSupplierSurveys();
 }
