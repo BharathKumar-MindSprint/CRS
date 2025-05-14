@@ -1088,7 +1088,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
+                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
                 }else {
 
                      modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
@@ -1110,7 +1111,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
+                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
                 }
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
@@ -1124,6 +1126,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         farmerGroupId,
                         sectionId,
                         programmeId,
+                        productId,
                         partnerId
                 };
 

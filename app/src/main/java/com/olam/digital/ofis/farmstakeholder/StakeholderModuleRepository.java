@@ -57,6 +57,7 @@ public class StakeholderModuleRepository {
                         "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
 
 
@@ -73,6 +74,7 @@ public class StakeholderModuleRepository {
                         farmerGroupId,
                         sectionId,
                         programmeId,
+                        productId,
                         partnerId
                 };
 
