@@ -174,7 +174,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading = null;
     int checkvalue = 0;
-    private boolean farmerSynced = true, autotimeEnabled = false;
+    private boolean farmerSynced = true, autotimeEnabled = false, mandateSurveySynced = true, isConsentSynced = true, stakeholderSynced = true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -859,6 +859,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    } else if (!mandateSurveySynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.mandate_survey_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!isConsentSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.consent_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!stakeholderSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.stakeholder_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     } else {
                         if (totalItems == 0)
                             totalItems = networkQueue.getCount();
@@ -888,6 +900,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
+                    } else if (msg.what == 8) {
+                        mandateSurveySynced = false;
+                    } else if (msg.what == 10) {
+                        isConsentSynced = false;
+                    } else if (msg.what == 11) {
+                        stakeholderSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     }
@@ -895,6 +913,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
+            mandateSurveySynced = true;
+            isConsentSynced = true;
+            stakeholderSynced = true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -935,6 +956,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    } else if (!mandateSurveySynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.mandate_survey_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!isConsentSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.consent_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
+                    } else if (!stakeholderSynced) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.stakeholder_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }
                 }
             });
@@ -955,6 +988,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         farmerSynced = false;
                     } else if (msg.what == 5) {
                         isChildSynced = false;
+                    } else if (msg.what == 11) {
+                        stakeholderSynced = false;
+                    } else if (msg.what == 8) {
+                        mandateSurveySynced = false;
+                    } else if (msg.what == 10) {
+                        isConsentSynced = false;
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     } else {
@@ -964,6 +1003,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             isChildSynced = true;
+            mandateSurveySynced = true;
+            isConsentSynced = true;
+            stakeholderSynced = true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -1468,7 +1510,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)), totalCount);
                 recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
                 startActivity(recordPolygonIntent);
-            } else if (itemType.equalsIgnoreCase("module")) {
+            } else if (itemType.equalsIgnoreCase("module") || itemType.equalsIgnoreCase("mandate_module")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 CompleteModuleActivity.editMode = true;
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));

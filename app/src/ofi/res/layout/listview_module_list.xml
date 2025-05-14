@@ -95,6 +95,12 @@
                 android:id="@+id/moduleListModuleStatus"
                 android:textColor="@color/ofis_list_item_subtitle"
                 android:textSize="@dimen/ofis_small_text" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/surveyType"
+                android:text="@string/enabled_string"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <RelativeLayout

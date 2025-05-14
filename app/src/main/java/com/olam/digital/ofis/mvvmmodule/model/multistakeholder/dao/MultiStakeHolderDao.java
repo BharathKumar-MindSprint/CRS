@@ -58,4 +58,7 @@ public interface MultiStakeHolderDao {
 
     @Query("UPDATE MULTISTAKEHOLDER SET farmHoldingName=:farmName, farmHoldingCode=:farmCode WHERE farmerId=:farmerId")
     void updateFarmNameAndCode(long farmerId, String farmName, String farmCode);
+
+    @Query("UPDATE MULTISTAKEHOLDER SET submitted_modules =:submittedModules WHERE msId=:stakeholderId ")
+    void updateSubmittedModulesById(String stakeholderId, String submittedModules);
 }
