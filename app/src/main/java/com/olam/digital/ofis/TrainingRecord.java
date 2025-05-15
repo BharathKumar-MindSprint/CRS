@@ -381,6 +381,7 @@ public class TrainingRecord extends BaseListActivity{
     public void signTrainingAttendee(int attendeeId) {
         final boolean[] isSigned = {false};
         long farmerId = dl.getFarmerByAttendeeItem(attendeeId);
+        Cursor farmer = dl.getFarmerById(farmerId);
         final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -389,6 +390,13 @@ public class TrainingRecord extends BaseListActivity{
 
         Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
         Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        TextView tv_attendeeName = (TextView) signatureDialog.findViewById(R.id.tv_attendeeName);
+        if (farmer != null && farmer.getCount() > 0) {
+            farmer.moveToFirst();
+            tv_attendeeName.setVisibility(View.VISIBLE);
+            tv_attendeeName.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+        }
+
         bt_confirm.setEnabled(true);
         bt_clear.setEnabled(true);
 
@@ -429,21 +437,7 @@ public class TrainingRecord extends BaseListActivity{
             public void onClick(View v) {
                 try {
                     if (isSigned[0]) {
-                        /*File photoFile = createImageFile("signature");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            try {
-                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                                m.invoke(null);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
 
-                        try (FileOutputStream out = new FileOutputStream(photoFile)) {
-                            mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
                         signatureDialog.dismiss();
                     } else {
                         Toast.makeText(TrainingRecord.this, "No signature available...", Toast.LENGTH_SHORT).show();
