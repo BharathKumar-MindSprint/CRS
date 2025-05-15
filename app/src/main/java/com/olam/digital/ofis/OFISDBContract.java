@@ -2438,6 +2438,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_VI = "name_vi";
         public static final String COLUMN_NAME_NAME_TH = "name_th";
         public static final String COLUMN_NAME_CAPTURE_ATTENDEE = "captureAdditionalAttendees";
+        public static final String COLUMN_NAME_SIGNATURE = "captureSignature";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -2453,6 +2454,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NAME_VI);
                     add(COLUMN_NAME_NAME_TH);
                     add(COLUMN_NAME_CAPTURE_ATTENDEE);
+                    add(COLUMN_NAME_SIGNATURE);
                 }}
         );
 
