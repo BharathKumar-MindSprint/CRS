@@ -7891,28 +7891,19 @@ public class DynamicQuestions {
 
         Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
 
-        Cursor cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, stakeholderId, farmerModuleId);
-
         // is this a question we can only select one answer to?
         // get display config
 
 
         try {
-            int lookupvalue = 0;
-
             JSONObject displayConfig = new JSONObject();
-            String columnNameduplicate = "";
             if (questions != null) {
                 if (questions.moveToFirst()) {
                     do {
                         displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                        columnNameduplicate = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
-
-                        lookupvalue = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                     } while (questions.moveToNext());
                 }
             }
-
 
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -7934,8 +7925,8 @@ public class DynamicQuestions {
                 // generate row item
                 TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
 
-                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                TextView tvId = tr.findViewById(R.id.cbId);
+                TextView tv = tr.findViewById(R.id.cbTitle);
 
                 final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
 
@@ -7945,20 +7936,15 @@ public class DynamicQuestions {
                 int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
                 tv.setText(checkboxes.getString(columnIndex));
 
-                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                CheckBox cb = tr.findViewById(R.id.cbCheckBox);
                 tl.addView(tr);
 
                 if (cursor != null) {
                     if (cursor.moveToFirst()) {
                         do {
                             if (cbId == Integer.parseInt(cursor.getString(cursor.getColumnIndex("question_answer")))) {
-
-
                                 cb.setChecked(true);
-
                             }
-
-
                         } while (cursor.moveToNext());
                     }
                 }
@@ -8072,9 +8058,9 @@ public class DynamicQuestions {
                 // generate row item
                 TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
 
-                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+                TextView tvId = tr.findViewById(R.id.cbId);
+                TextView tv = tr.findViewById(R.id.cbTitle);
+                ImageView iv = tr.findViewById(R.id.photo);
 
                 int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
 
@@ -8147,10 +8133,8 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-            final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
         String oldDatatype = null;
@@ -8166,7 +8150,6 @@ public class DynamicQuestions {
                 datatype = "int";
             }
         }
-
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -8203,7 +8186,6 @@ public class DynamicQuestions {
             String assignmentType = "";
             String assignmentField = "";
             String assignmentFields = "";
-            String isDefault = "";
             String maxSelection = "";
             String isActive = "";
 
@@ -8222,7 +8204,6 @@ public class DynamicQuestions {
                             assignmentType = rangeArray.getString("assignmentType");
                             assignmentField = rangeArray.getString("assignmentField");
                             assignmentFields = rangeArray.getString("assignmentFields");
-                            isDefault = rangeArray.getString("isDefault");
                             if (rangeArray.has("active")) {
                                 isActive = rangeArray.getString("active");
                             }
@@ -8231,41 +8212,15 @@ public class DynamicQuestions {
 
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
 
-                                if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+                                if (assignmentField.equals(farmerAssignmentField)) {
 
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                         // generate row item
-                                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                        ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-                                        tvId.setText(lookupID);
-
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                        tv.setText(checkBoxName);
-                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
-                                        if (!Objects.equals(photoName,null)) {
-                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
-                                            if (imageId != 0) {
-                                                iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                                            } else {
-                                                iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                                            }
-                                        }
-
                                         String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                        if (photoLocation!=null){
-                                            File imageFile = new File(photoLocation);
-                                            if (imageFile.exists()) {
-                                                iv.setImageBitmap(bitmapImageResize(imageFile));
-                                            }
-                                        }
+                                        TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
 
-                                        tl.addView(tr);
-
-                                        final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                                         CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
                                         // pre-fill checkboxes that have been previously ticked
                                         if (hasAnswers && photoCbAnswers.getCount() > 0) {
@@ -8323,55 +8278,20 @@ public class DynamicQuestions {
                                                 saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                             }
                                         });
-
-//                            tl.addView(tr);
-
-
                                     }
-
                                 }
 
                             } else {
-
                                 // Remove square brackets and split the string into an array of strings
                                 String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
-
 
                                 if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                         // generate row item
-                                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                        ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-                                        tvId.setText(lookupID);
-
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                        tv.setText(checkBoxName);
-                                        String photoName = dl.getphotoNameByLookUpId(lookupID);
-                                        if (!Objects.equals(photoName,null)) {
-                                            int imageId = res.getIdentifier(photoName, "drawable", packageName);
-                                            if (imageId != 0) {
-                                                iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                                            } else {
-                                                iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                                            }
-                                        }
-
-
                                         String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                        if (photoLocation!=null){
-                                            File imageFile = new File(photoLocation);
-                                            if (imageFile.exists()) {
-                                                iv.setImageBitmap(bitmapImageResize(imageFile));
-                                            }
-                                        }
-
-                                        tl.addView(tr);
-
-                                        final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                                        TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
+                                        final CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
                                         // pre-fill checkboxes that have been previously ticked
                                         if (hasAnswers && photoCbAnswers.getCount() > 0) {
@@ -8452,37 +8372,11 @@ public class DynamicQuestions {
 
                                             if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                                 // generate row item
-                                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-                                                tvId.setText(lookupID);
-
                                                 String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                                tv.setText(checkBoxName);
-                                                String photoName = dl.getphotoNameByLookUpId(lookupID);
-                                                if (!Objects.equals(photoName,null)) {
-                                                    int imageId = res.getIdentifier(photoName, "drawable", packageName);
-                                                    if (imageId != 0) {
-                                                        iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                                                    } else {
-                                                        iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                                                    }
-                                                }
-
-
                                                 String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                                if (photoLocation!=null){
-                                                    File imageFile = new File(photoLocation);
-                                                    if (imageFile.exists()) {
-                                                        iv.setImageBitmap(bitmapImageResize(imageFile));
-                                                    }
-                                                }
+                                                TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
 
-                                                tl.addView(tr);
-
-                                                final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                                                final CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
                                                 // pre-fill checkboxes that have been previously ticked
                                                 if (hasAnswers && photoCbAnswers.getCount() > 0) {
@@ -8540,10 +8434,6 @@ public class DynamicQuestions {
                                                         saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
                                                     }
                                                 });
-
-//                            tl.addView(tr);
-
-
                                             }
 
                                         }
@@ -8554,217 +8444,14 @@ public class DynamicQuestions {
                             }
 
                         }
-                    } else {
-                        while (photoCheckboxes.moveToNext()) {
-                            // generate row item
-                            TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                            ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-                            tvId.setText(String.valueOf(cbId));
-
-                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                            tv.setText(photoCheckboxes.getString(columnIndex));
-
-                            int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
-                            if (imageId != 0) {
-                                iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                            } else {
-                                iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                            }
-
-                            final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                            // pre-fill checkboxes that have been previously ticked
-                            if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                                while (photoCbAnswers.moveToNext()) {
-                                    if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                                        cb.setChecked(true);
-                                    }
-                                }
-                                photoCbAnswers.moveToPosition(-1);
-                            }
-
-                            tr.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    cb.setChecked(!cb.isChecked());
-                                    cb.callOnClick();
-                                }
-
-                            });
-
-                            //stick the answer in the question itself
-                            String finalDatatype = datatype;
-                            cb.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if (singleSelect) {
-                                        int ssTableRows = tl.getChildCount();
-                                        for (int j = 0; j < ssTableRows; j++) {
-                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                            ssTcb.setChecked(false);
-                                        }
-                                        CheckBox clickedCb = (CheckBox) view;
-                                        clickedCb.setChecked(true);
-                                    }
-
-                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
-                                }
-                            });
-
-                            tl.addView(tr);
-                        }
                     }
 
 
-                } else {
-                    while (photoCheckboxes.moveToNext()) {
-                        // generate row item
-                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                        ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-                        int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-                        tvId.setText(String.valueOf(cbId));
-
-                        int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                        tv.setText(photoCheckboxes.getString(columnIndex));
-
-                        int imageId = res.getIdentifier(photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
-                        if (imageId != 0) {
-                            iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                        } else {
-                            iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                        }
-
-                        final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                        // pre-fill checkboxes that have been previously ticked
-                        if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                            while (photoCbAnswers.moveToNext()) {
-                                if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                                    cb.setChecked(true);
-                                }
-                            }
-                            photoCbAnswers.moveToPosition(-1);
-                        }
-
-                        tr.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                cb.setChecked(!cb.isChecked());
-                                cb.callOnClick();
-                            }
-
-                        });
-
-                        //stick the answer in the question itself
-                        String finalDatatype = datatype;
-                        cb.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (singleSelect) {
-                                    int ssTableRows = tl.getChildCount();
-                                    for (int j = 0; j < ssTableRows; j++) {
-                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                        ssTcb.setChecked(false);
-                                    }
-                                    CheckBox clickedCb = (CheckBox) view;
-                                    clickedCb.setChecked(true);
-                                }
-
-                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0, -1);
-                            }
-                        });
-
-                        tl.addView(tr);
-                    }
-
-                }
+                } 
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            // need to check for value assigment in old survery's checkbox -- don't delete
-            /*while (photoCheckboxes.moveToNext()) {
-                // generate row item
-                TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
-
-                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
-
-                int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
-
-                tvId.setText(String.valueOf(cbId));
-
-                int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                tv.setText(photoCheckboxes.getString(columnIndex));
-
-                int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
-                if (imageId != 0) {
-                    iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                } else {
-                    iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                }
-
-                final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                // pre-fill checkboxes that have been previously ticked
-                if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                    while (photoCbAnswers.moveToNext()) {
-                        if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                        }
-                    }
-                    photoCbAnswers.moveToPosition(-1);
-                }
-
-                tr.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        cb.setChecked(!cb.isChecked());
-                        cb.callOnClick();
-                    }
-
-                });
-
-                //stick the answer in the question itself
-                String finalDatatype = datatype;
-                cb.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (singleSelect) {
-                            int ssTableRows = tl.getChildCount();
-                            for (int j = 0; j < ssTableRows; j++) {
-                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                ssTcb.setChecked(false);
-                            }
-                            CheckBox clickedCb = (CheckBox) view;
-                            clickedCb.setChecked(true);
-                        }
-
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
-                    }
-                });
-
-                tl.addView(tr);
-            }*/
 
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
@@ -8772,6 +8459,23 @@ public class DynamicQuestions {
             saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
+    }
+
+    private TableRow addPhotoCheckboxView(TableLayout tl, String lookupId, String checkBoxName, String photoLocation ){
+        TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+        TextView tvId = tr.findViewById(R.id.cbId);
+        TextView tv = tr.findViewById(R.id.cbTitle);
+        ImageView iv = tr.findViewById(R.id.photo);
+        tvId.setText(lookupId);
+        tv.setText(checkBoxName);
+        if (photoLocation!=null){
+            File imageFile = new File(photoLocation);
+            if (imageFile.exists()) {
+                iv.setImageBitmap(bitmapImageResize(imageFile));
+            }
+        }
+        tl.addView(tr);
+        return tr;
     }
 
     public Bitmap bitmapImageResize(File imageFile){
