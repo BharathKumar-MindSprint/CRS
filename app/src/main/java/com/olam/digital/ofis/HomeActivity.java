@@ -63,6 +63,7 @@ import com.google.gson.Gson;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
@@ -133,7 +134,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -1058,6 +1058,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
+        Button supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
+        CardView cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
 
         syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
@@ -1109,6 +1111,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+            if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+                supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else {
+                cvSupplierAndSurvey.setVisibility(View.GONE);
+            }
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override

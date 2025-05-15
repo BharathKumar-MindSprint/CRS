@@ -65,14 +65,14 @@ import java.util.Map;
 public class UpdateDiagnosticModuleTask extends DatabaseTask {
     ProgressDialog pd;
     JSONObject dm;
-    FollowUpResponseModel dmFollowUpResponse;
+    JSONObject dmFollowUp;
     OFISRoomDB roomDB;
     DataLayer dl;
-    public UpdateDiagnosticModuleTask(Context context, JSONObject dm, FollowUpResponseModel dmFollowUpResponse, Resources res, JSONObject farmerResponse) {
+    public UpdateDiagnosticModuleTask(Context context, JSONObject dm, JSONObject dmFollowUpResponse, Resources res, JSONObject farmerResponse) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
         this.dm = dm;
-        this.dmFollowUpResponse = dmFollowUpResponse;
+        this.dmFollowUp = dmFollowUpResponse;
         roomDB = OFISRoomDB.getDbInstance(context);
         dl = new DataLayer(res, context);
     }
@@ -795,8 +795,9 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
             }
         }
         
-        if (dmFollowUpResponse != null) {
+        if (dmFollowUp != null) {
             try {
+                FollowUpResponseModel dmFollowUpResponse = new Gson().fromJson(dmFollowUp.toString(), FollowUpResponseModel.class);
                 ArrayList<FollowUpResponseItem> followUpResponseItemList = dmFollowUpResponse.getFollowUpResponseItemList();
                 if (followUpResponseItemList != null) {
                     for (int i = 0; i < followUpResponseItemList.size(); i++) {
