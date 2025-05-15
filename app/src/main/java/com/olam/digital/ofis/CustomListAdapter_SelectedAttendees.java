@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -42,7 +43,9 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private HashMap<Long,Integer> farmerAttendeeList;
     private long trainingRecordId;
 
-    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,DataLayer dl_,HashMap<Long,Integer> farmerAttendeeList,long trainingRecordId) {
+    Boolean signatureAllowed;
+
+    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_, DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -56,6 +59,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.dl=dl_;
         this.farmerAttendeeList=farmerAttendeeList;
         this.trainingRecordId=trainingRecordId;
+        this.signatureAllowed = signatureAllowed;
     }
 
     @Override
@@ -70,7 +74,13 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         LinearLayout attendeesLayout=view.findViewById(R.id.addAttndeesLayout);
         ImageView imageView = (ImageView) view.findViewById(R.id.deleteItem);
         ImageView tvAddAttendee=(ImageView) view.findViewById(R.id.addTrainingAttendeesIv);
+        ImageButton signatureAttendee = (ImageButton) view.findViewById(R.id.signatureAttendee);
         TextView tvViewAttendees=(TextView) view.findViewById(R.id.tvViewAddendees);
+        if (signatureAllowed) {
+            signatureAttendee.setVisibility(View.VISIBLE);
+        } else {
+            signatureAttendee.setVisibility(View.GONE);
+        }
         tvViewAttendees.setPaintFlags(tvViewAttendees.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         final TextView trainingAttendeeId = (TextView) view.findViewById(R.id.trainingAttendeeId);
@@ -171,6 +181,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                 public void onClick(View v) {
                     int itemId = Integer.parseInt(String.valueOf(trainingAttendeeId.getText()));
                     trainingRecord.deleteTrainingAttendee(itemId);
+                }
+            });
+
+            signatureAttendee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int itemId = Integer.parseInt(String.valueOf(trainingAttendeeId.getText()));
+                    trainingRecord.signTrainingAttendee(itemId);
                 }
             });
         } else  {

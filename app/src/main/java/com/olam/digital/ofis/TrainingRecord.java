@@ -1,6 +1,6 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +10,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import androidx.core.content.FileProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,14 +35,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
-import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
@@ -94,6 +94,8 @@ public class TrainingRecord extends BaseListActivity{
 
    public static HashMap<Long,Integer> farmerAttendeeList =null;
    public static boolean isCaptureAttendee;
+
+    public boolean signatureAllowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -326,7 +328,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId);
+            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed);
             listView.setAdapter(customListAdapter_selectedAttendees);
             //setListAdapter(customListAdapter_selectedAttendees);
         }
@@ -374,6 +376,84 @@ public class TrainingRecord extends BaseListActivity{
         alert.show();
 
 
+    }
+
+    public void signTrainingAttendee(int attendeeId) {
+        final boolean[] isSigned = {false};
+        long farmerId = dl.getFarmerByAttendeeItem(attendeeId);
+        final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                isSigned[0] = true;
+            }
+
+            @Override
+            public void onClear() {
+                isSigned[0] = false;
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureDialog.dismiss();
+            }
+        });
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (isSigned[0]) {
+                        /*File photoFile = createImageFile("signature");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            try {
+                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                m.invoke(null);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                            mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+                        signatureDialog.dismiss();
+                    } else {
+                        Toast.makeText(TrainingRecord.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        signatureDialog.show();
     }
 
     //------------------------Temp Testing for OW-431 - Start-----------------------------
@@ -505,6 +585,7 @@ public class TrainingRecord extends BaseListActivity{
                 // get the capture training Attendee eligibility
                 if (trainingModuleId != 0 ) {
                     isCaptureAttendee = dl.isCaptureAttendeeEligible(trainingModuleId);
+                    signatureAllowed = dl.isSignatureAllowed(trainingModuleId);
                     getTrainingAttendees();
                 }
 

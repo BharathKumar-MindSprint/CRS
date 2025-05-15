@@ -8168,6 +8168,31 @@ public class DataLayer {
 
     }
 
+    public boolean isSignatureAllowed(long trainingModuleId) {
+
+        boolean signatureAllowed = false;
+        String signature = "";
+
+        Cursor cursor=db.rawQuery("select * from trainingmodules where id="+trainingModuleId,null);
+        try {
+            if (cursor !=null){
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()) {
+                         signature = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE));
+                    }
+                }
+            }
+            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (signature!=null && !signature.equals("null")) {
+            signatureAllowed = Boolean.parseBoolean(signature);
+        }
+
+        return signatureAllowed;
+    }
+
     public void deleteTrainingAttendeeRelations(long trainingRecordId) {
 
         try {
