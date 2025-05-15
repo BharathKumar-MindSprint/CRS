@@ -1423,4 +1423,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="gallery_is_not_available_in_mobile">Gallery is not available in Mobile</string>
     <string name="something_went_wrong_please_try_again">Something went wrong, please try again</string>
     <string name="image_size_exceeds_5_mb">Image size exceeds 5MB. Please choose a smaller image.</string>
+    <string name="no_signature_available">No signature is available</string>
 </resources>

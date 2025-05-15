@@ -95,6 +95,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private Long farmerID;
     private ChildrenDTO children;
     private ChildModuleDto childModuleDto;
+    private int followUpCount;
     public static boolean editMode = false;
 
     private long farmerId;
@@ -408,6 +409,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID, children.getId());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE,childModuleDto.getSurveyCode()) ;
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, followUpCount);
                     if (statusFinished == 0) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
@@ -639,13 +641,12 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                                 dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
+                            } else if (displayType.replaceAll("", "").toLowerCase().equals("signature")) {
+                                renderSignatureQuestion(questions, false, dynamicQuestions.questionsSection, 0, 0, null);
                             }
                         }
-
                     }
                 }
-
-
             } while (questions.moveToNext());
         }
 
@@ -700,6 +701,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             if (bundle != null) {
                 children = (ChildrenDTO) bundle.getSerializable("children");
                 childModuleDto= (ChildModuleDto) bundle.getSerializable("childModule");
+                followUpCount = bundle.getInt(Utilities.FOLLOW_UP_COUNT, 0);
                 try {
                     farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
                 }catch (Exception e){}
@@ -1105,7 +1107,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, dataType, mCurrentSignaturePhotoPath, 0, 0,0);
                         signatureDialog.dismiss();
                     } else {
-                        Toast.makeText(ChildLabourCompleteModuleActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChildLabourCompleteModuleActivity.this, res.getString(R.string.no_signature_available), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1143,9 +1145,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
         Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(finalCurrentAnswerValue, outputWidth, outputHeight);
-        farmerSignature.setImageBitmap(existingSignatureBitmap);
-
-
+        if (existingSignatureBitmap != null) {
+            farmerSignature.setImageBitmap(existingSignatureBitmap);
+        }
     }
 
 }

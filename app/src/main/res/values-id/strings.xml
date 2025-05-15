@@ -882,4 +882,5 @@
     <string name="gallery_is_not_available_in_mobile">Galeri tidak tersedia di Mobile</string>
     <string name="something_went_wrong_please_try_again">Terjadi kesalahan, silakan coba lagi</string>
     <string name="image_size_exceeds_5_mb">Ukuran gambar melebihi 5MB. Silakan pilih gambar yang lebih kecil.</string>
+    <string name="no_signature_available">Tanda tangan tidak tersedia</string>
 </resources>

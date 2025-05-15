@@ -786,4 +786,5 @@
     <string name="something_went_wrong_please_try_again">Bir şeyler yanlış gitti, lütfen tekrar deneyin</string>
     <string name="image_size_exceeds_5_mb">Görüntü boyutu 5MB\'yi aşıyor. Lütfen daha küçük bir görüntü seçin.</string>
     <string name="restriction_in_submodules">Devam etmek için lütfen tüm zorunlu soruları yanıtlayın</string>
+    <string name="no_signature_available">İmza mevcut değil</string>
 </resources>

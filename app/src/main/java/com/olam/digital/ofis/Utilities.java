@@ -134,6 +134,7 @@ public class Utilities {
     public static final String QWR = "QWR";
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
+    public static final String FOLLOW_UP_COUNT = "followUpCount";
 
 
 public  static String base64ConversionForImage(String filepath)  {
