@@ -79,6 +79,7 @@ public class TrainingRecord extends BaseListActivity{
     private boolean editMode, readOnlyMode, firstLoad = true;
 
     private Spinner courseSpinner, trainingModuleSpinner;
+    Button completeTrainingRecord;
     private String columnSuffix;
 
     private Cursor trainingAttendees, trainingRecord;
@@ -118,6 +119,8 @@ public class TrainingRecord extends BaseListActivity{
 
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
+        completeTrainingRecord = (Button) findViewById(R.id.completeTrainingRecord);
+
 
         columnSuffix = Utilities.getLocaleSuffix(res);
         if (columnSuffix.equalsIgnoreCase("_en")) {
@@ -437,8 +440,15 @@ public class TrainingRecord extends BaseListActivity{
             public void onClick(View v) {
                 try {
                     if (isSigned[0]) {
-
+                        Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
+                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        saveSignatureImage(signatureBitmap, signatureName);
+                        dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();
+
+                        if (dl.areAllSignaturesPresent(trainingRecordId)){
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                        }
                     } else {
                         Toast.makeText(TrainingRecord.this, "No signature available...", Toast.LENGTH_SHORT).show();
                     }
@@ -496,6 +506,19 @@ public class TrainingRecord extends BaseListActivity{
         }
         
         return multiSelectFlag;
+    }
+
+    public void saveSignatureImage(Bitmap bitmap, String signatureName) {
+        File directory = new File(getFilesDir(), "signatures");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File imageFile = new File(directory, signatureName);
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     //------------------------Temp Testing for OW-431 - End-----------------------------
 
@@ -579,7 +602,14 @@ public class TrainingRecord extends BaseListActivity{
                 // get the capture training Attendee eligibility
                 if (trainingModuleId != 0 ) {
                     isCaptureAttendee = dl.isCaptureAttendeeEligible(trainingModuleId);
-                    signatureAllowed = dl.isSignatureAllowed(trainingModuleId);
+                    if (!readOnlyMode) {
+                        signatureAllowed = dl.isSignatureAllowed(trainingModuleId);
+                        if (signatureAllowed) {
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+                        } else {
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                        }
+                    }
                     getTrainingAttendees();
                 }
 
@@ -728,7 +758,6 @@ public class TrainingRecord extends BaseListActivity{
             });
         }
 
-        Button completeTrainingRecord = (Button) findViewById(R.id.completeTrainingRecord);
         if (readOnlyMode) {
             completeTrainingRecord.setVisibility(View.GONE);
         } else {
@@ -739,7 +768,16 @@ public class TrainingRecord extends BaseListActivity{
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
-                    } else {
+                    } else if (signatureAllowed) {
+                        if (!dl.areAllSignaturesPresent(trainingRecordId)){
+                            Toast.makeText(context, "Sign all attendees", Toast.LENGTH_LONG).show();
+                        } else {
+                            addOrUpdateTrainingRecord();
+                            Intent intent = new Intent(context, TrainingRecordConfirmation.class);
+                            intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                            context.startActivity(intent);
+                        }
+                    }else {
                         addOrUpdateTrainingRecord();
                         Intent intent = new Intent(context, TrainingRecordConfirmation.class);
                         intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);

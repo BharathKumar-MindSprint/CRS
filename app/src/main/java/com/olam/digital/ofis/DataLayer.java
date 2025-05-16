@@ -9447,4 +9447,52 @@ public class DataLayer {
         }
         return isMandate;
     }
+    public void saveAttendeeSignature(int attendeeId, String signatureName) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE, signatureName);
+            String whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(attendeeId)};
+            db.update(OFISDBContract.TrainingAttendee.TABLE_NAME, values, whereClause, whereArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean areAllSignaturesPresent(long trainingRecordId) {
+        boolean allSignaturesPresent = true;
+        String[] columns = new String[]{"*"};
+        String selection = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(trainingRecordId) };
+
+        Cursor cursor = db.query(
+                OFISDBContract.TrainingAttendee.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                    if (signature == null || signature.isEmpty()) {
+                        allSignaturesPresent = false;
+                        break;
+                    }
+                }
+            }
+            cursor.close();
+        } else {
+            allSignaturesPresent = false;
+        }
+
+        return allSignaturesPresent;
+    }
+
+
+
 }
