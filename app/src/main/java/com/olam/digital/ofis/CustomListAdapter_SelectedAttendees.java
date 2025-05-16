@@ -192,7 +192,10 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                 }
             });
 
-            trainingRecord.showAttendeeSignature(itemId, attendeeSignature);
+            int attendeeId = (!cursor.isNull(cursor.getColumnIndex(OFISDBContract.TrainingAttendee._ID))) ?
+                    cursor.getInt(cursor.getColumnIndex(OFISDBContract.TrainingAttendee._ID)) : -1;
+            attendeeSignature.setImageDrawable(null);
+            trainingRecord.showAttendeeSignature(attendeeId, attendeeSignature);
         } else  {
             // Confirmation screen
             // View Attendees logic
