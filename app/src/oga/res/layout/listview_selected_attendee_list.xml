@@ -40,15 +40,44 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone" />
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/Farmer_Name"
-                android:id="@+id/attendeeName"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/ofis_base_font_dark"
-                android:textSize="@dimen/ofis_med_text" />
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Farmer_Name"
+                        android:id="@+id/attendeeName"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textSize="@dimen/ofis_med_text" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/signatureAttendee"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:paddingStart="2dp"
+                        android:visibility="gone"
+                        android:layout_gravity="center"
+                        android:background="@drawable/edit_plot_circular_button" />
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
