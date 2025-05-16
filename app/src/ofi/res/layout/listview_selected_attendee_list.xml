@@ -44,12 +44,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="8"
+                    android:layout_weight="9"
                     android:orientation="horizontal">
 
                     <TextView
@@ -64,19 +65,41 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <ImageButton
                         android:id="@+id/signatureAttendee"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:paddingStart="2dp"
+                        android:layout_marginStart="2dp"
                         android:visibility="gone"
                         android:layout_gravity="center"
                         android:background="@drawable/edit_plot_circular_button" />
+
+                    <ImageView
+                        android:id="@+id/addTrainingAttendeesIv"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/Add"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_ofis_add" />
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="23dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/deleteItem"
+                        app:srcCompat="@drawable/ic_delete_item"
+                        android:contentDescription="@string/Delete_Item"
+                        android:layout_gravity="center" />
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -172,56 +195,28 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/addAttndeesLayout"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/addTrainingAttendeesIv"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/margin_10"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/Add"
-                android:padding="5dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_ofis_add" />
-
-            <TextView
-                android:id="@+id/addTrainingAttendeesTv1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/addTrainingAttendeesIv"
-                android:background="@android:color/transparent"
-                android:text="@string/add_edit_attendee"
-                android:gravity="center"
-                android:textSize="12sp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="@color/dark_orange" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/deleteItemWrapper"
             android:background="@drawable/left_border"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
+            android:visibility="visible"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/attendeeSignatureLayout"
             android:gravity="center">
-            <ImageView
-                android:layout_width="40dp"
+            <ImageButton
+                android:background="@android:color/transparent"
+                android:layout_width="70dp"
                 android:layout_height="40dp"
-                android:adjustViewBounds="true"
+                android:id="@+id/attendeeSignatureDisplay"
+                android:layout_marginStart="5dp"
+                android:contentDescription="@string/Add_Signature"
+                app:srcCompat="@drawable/empty_signature"
                 android:scaleType="fitCenter"
-                android:id="@+id/deleteItem"
-                app:srcCompat="@drawable/ic_delete_item"
-                android:contentDescription="@string/Delete_Item"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                tools:ignore="NestedWeights" />
         </LinearLayout>
+
+
+
     </LinearLayout>
 
     <TextView

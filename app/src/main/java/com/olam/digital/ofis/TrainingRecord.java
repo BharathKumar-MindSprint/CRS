@@ -10,11 +10,11 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -44,7 +44,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -445,6 +444,7 @@ public class TrainingRecord extends BaseListActivity{
                         saveSignatureImage(signatureBitmap, signatureName);
                         dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();
+                        getTrainingAttendees();
 
                         if (dl.areAllSignaturesPresent(trainingRecordId)){
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
@@ -518,6 +518,19 @@ public class TrainingRecord extends BaseListActivity{
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void showAttendeeSignature(int attendeeId, ImageButton attendeeSignature) {
+        String signNatureName = dl.getSignatureByAttendeeId(attendeeId);
+
+        if (signNatureName != null) {
+            File directory = new File(getFilesDir(), "signatures");
+            File imageFile = new File(directory, signNatureName);
+            if (imageFile.exists()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                attendeeSignature.setImageBitmap(bitmap);
+            }
         }
     }
     //------------------------Temp Testing for OW-431 - End-----------------------------
@@ -604,7 +617,7 @@ public class TrainingRecord extends BaseListActivity{
                     isCaptureAttendee = dl.isCaptureAttendeeEligible(trainingModuleId);
                     if (!readOnlyMode) {
                         signatureAllowed = dl.isSignatureAllowed(trainingModuleId);
-                        if (signatureAllowed) {
+                        if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
                         } else {
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));

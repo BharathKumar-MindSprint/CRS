@@ -9493,6 +9493,24 @@ public class DataLayer {
         return allSignaturesPresent;
     }
 
+    public String getSignatureByAttendeeId(int attendeeId){
+        String signature = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(attendeeId)};
+            cursor = db.query(OFISDBContract.TrainingAttendee.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (cursor!=null){
+                while (cursor.moveToNext()){
+                    signature = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return signature;
+    }
 
 
 }
