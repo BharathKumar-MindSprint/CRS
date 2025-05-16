@@ -8218,7 +8218,7 @@ public class DynamicQuestions {
                                         // generate row item
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                        TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
+                                        TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, checkBoxName, photoLocation);
 
                                          CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
@@ -8290,7 +8290,7 @@ public class DynamicQuestions {
                                         // generate row item
                                         String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                         String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                        TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
+                                        TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, checkBoxName, photoLocation);
                                         final CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
                                         // pre-fill checkboxes that have been previously ticked
@@ -8374,7 +8374,7 @@ public class DynamicQuestions {
                                                 // generate row item
                                                 String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
                                                 String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupID,questionId);
-                                                TableRow tr = addPhotoCheckboxView(tl, lookupID, checkBoxName, photoLocation);
+                                                TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, checkBoxName, photoLocation);
 
                                                 final CheckBox cb = tr.findViewById(R.id.cbCheckBox);
 
@@ -8447,7 +8447,7 @@ public class DynamicQuestions {
                     }
 
 
-                } 
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -8461,7 +8461,7 @@ public class DynamicQuestions {
 
     }
 
-    private TableRow addPhotoCheckboxView(TableLayout tl, String lookupId, String checkBoxName, String photoLocation ){
+    private TableRow addPhotoCheckboxTableRow(TableLayout tl, String lookupId, String checkBoxName, String photoLocation ){
         TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
         TextView tvId = tr.findViewById(R.id.cbId);
         TextView tv = tr.findViewById(R.id.cbTitle);
