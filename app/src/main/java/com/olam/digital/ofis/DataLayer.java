@@ -4968,21 +4968,35 @@ public class DataLayer {
     }
 
 
-    Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
+    Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId) {
         String[] columns = new String[]{"*"};
-        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
+        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
         String farmerQueryValue = String.valueOf(farmerId);
 
         String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
 //                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
-//                String.valueOf(farmerModuleId)
+                farmerQueryValue
         };
 
         return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+    Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
+        String[] columns = new String[]{"*"};
+        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
+//                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue
+        };
+
+        return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
 
     // get the child answers from dropdown
     Cursor getAnswersForQuestionByChild(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {

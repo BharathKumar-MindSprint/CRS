@@ -637,7 +637,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                         noOtherQuestion = true;
-                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, stakeholderId,  farmerModuleId, res, getPackageName(), false);
+                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                         noOtherQuestion = true;
                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, stakeholderId, olamFarmerId, farmerModuleId, res, false);
@@ -693,7 +693,7 @@ public class CompleteModuleActivity extends BaseActivity {
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                                 noOtherQuestion = true;
-                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, stakeholderId, farmerModuleId, res, getPackageName(), false);
+                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                                 noOtherQuestion = true;
                                 dynamicQuestions.renderRepeaterQuestion(questions, farmerId, stakeholderId, olamFarmerId, farmerModuleId, res, false);
@@ -1149,7 +1149,7 @@ public class CompleteModuleActivity extends BaseActivity {
                             dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                             noOtherQuestion = true;
-                            dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, stakeholderId, farmerModuleId, res, getPackageName(), true);
+                            dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                             noOtherQuestion = true;
                             dynamicQuestions.renderRepeaterQuestion(questions, farmerId, stakeholderId, olamFarmerId, farmerModuleId, res, true);
@@ -1205,7 +1205,7 @@ public class CompleteModuleActivity extends BaseActivity {
                                     dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                                     noOtherQuestion = true;
-                                    dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, stakeholderId, farmerModuleId, res, getPackageName(), true);
+                                    dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                                     noOtherQuestion = true;
                                     dynamicQuestions.renderRepeaterQuestion(questions, farmerId, stakeholderId, olamFarmerId, farmerModuleId, res, true);

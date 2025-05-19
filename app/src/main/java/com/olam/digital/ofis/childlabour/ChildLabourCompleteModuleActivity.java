@@ -565,7 +565,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId,null, farmerModuleId, res, getPackageName(), false);
+                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
@@ -603,7 +603,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId,null, farmerModuleId, res, getPackageName(), false);
+                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                                 dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
