@@ -371,6 +371,12 @@ public class TrainingRecord extends BaseListActivity{
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
+                    getTrainingAttendees();
+                    if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                        completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+                    } else {
+                        completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                    }
                 }
             }
         });
