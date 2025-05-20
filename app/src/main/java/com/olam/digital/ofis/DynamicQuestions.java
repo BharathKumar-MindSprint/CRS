@@ -71,19 +71,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -829,60 +817,6 @@ public class DynamicQuestions {
         }
     }
 
-    private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, float min, float max, Integer globalMetricId, Integer localMetricId, double metricAnswer) {
-        try {
-            if (viewAnswer) return;
-            if (answer.length() > 0) {
-                boolean isNew = true;
-                for (int i = 0; i < answerSet.size(); i++) {
-                    JSONObject currentAnswer = answerSet.get(i);
-                    if (currentAnswer != null) {
-                        int currentQuestionId = currentAnswer.optInt("question_id");
-                        int currentAnswerId = currentAnswer.optInt("answer_id");
-
-                        if (currentQuestionId == questionId && currentAnswerId == answerId) {
-                            if (checkvalues(min, max, answer)) {
-                                answerSet.remove(i);
-                            }
-                            if (repeaterItemPosition != -1) {
-                                int currentRepeaterItemPosition = currentAnswer.optInt("repeater_item_position");
-                                if (currentRepeaterItemPosition != repeaterItemPosition) {
-                                    continue;
-                                }
-                            }
-                            currentAnswer.put("answer", answer);
-                            currentAnswer.put("datatype", datatype);
-                            currentAnswer.put("parent_question_id", parentQuestionId);
-                            currentAnswer.put("repeater_item_position", repeaterItemPosition);
-                            currentAnswer.put("reporting_year", reportingYear);
-                            isNew = false;
-                            break;
-                        }
-
-                    }
-                }
-                if (isNew) {
-                    if (checkvalues(min, max, answer)) {
-                        JSONObject newAnswer = new JSONObject();
-                        newAnswer.put("question_id", questionId);
-                        newAnswer.put("answer_id", answerId);
-                        newAnswer.put("parent_question_id", parentQuestionId);
-                        newAnswer.put("repeater_item_position", repeaterItemPosition);
-                        newAnswer.put("datatype", datatype);
-                        newAnswer.put("answer", answer);
-                        newAnswer.put("reporting_year", reportingYear);
-                        answerSet.add(newAnswer);
-                    }
-                }
-            } else if (answerId > 0) {
-                removeAnswerEntry(questionId, answerId);
-            }
-
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-    }
-
     private boolean checkvalues(float min, float max, String answer) {
         boolean val = true;
         try {
@@ -916,10 +850,6 @@ public class DynamicQuestions {
             }
         }
 
-    }
-
-    private void removeAnswerEntryDatabase(int farmerModuleId, int questionId) {
-        dl.DeleteAnswersByQuestionId(farmerModuleId, questionId);
     }
 
 
@@ -8063,7 +7993,7 @@ public class DynamicQuestions {
                 final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
                 // pre-fill checkboxes that have been previously ticked
-                if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                if (photoCbAnswers.getCount() > 0) {
                     while (photoCbAnswers.moveToNext()) {
                         if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
                             cb.setChecked(true);
@@ -8116,79 +8046,29 @@ public class DynamicQuestions {
     public void renderPhotoCheckboxQuestion(Cursor questions, long farmerId) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
-
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-//        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-
-//        String oldDatatype = null;
-//
-//        String datatype = null;
-//        if (dataTypeID == 6) {
-//            oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-//        } else {
-//            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
-//        }
-//        if (oldDatatype != null) {
-//            if (oldDatatype.equals("Photo Checkbox")) {
         String datatype = "int";
-//            }
-//        }
-
-        boolean singleSelect = false;
-
-
         Cursor photoCheckboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
-
-        //
-       Cursor photoCbAnswers;
-//        if (isSavedAns) {
-        photoCbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId);
-//        } else {
-//            photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, stakeholderId, farmerModuleId);
-//        }
-        // is this a question we can only select one answer to?
-        // get display config
-        try {
-            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-            if (displayConfig.has("display")) {
-                JSONObject display = displayConfig.getJSONObject("display");
-                singleSelect = display.optBoolean("single_select", false);
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting photo checkbox display config " + e.getMessage());
-        }
-
+        Cursor photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId);
         final int[] checkboxCount = {0};
         if (photoCheckboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_photo_table, questionWrapper, false);
-
-            // adding validation
-            String assignmentType;
-            String assignmentField;
-            String assignmentFields ;
-            int maxSelection ;
-            String isActive = "";
-
             try {
                 JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                 if (displayConfig.has("display")) {
                     JSONObject display = displayConfig.getJSONObject("display");
+                    boolean singleSelect = display.optBoolean("single_select");
                     if (display.has("lookupProperties")) {
-                        maxSelection = display.getInt("maxSelection");
+                        int maxSelection = display.optInt("maxSelection");
                         JSONArray range = display.getJSONArray("lookupProperties");
-
                         for (int i = 0; i < range.length(); i++) {
                             JSONObject rangeArray = range.getJSONObject(i);
                             String lookupID = rangeArray.getString("lookupValueId");
-                            assignmentType = rangeArray.getString("assignmentType");
-                            assignmentField = rangeArray.getString("assignmentField");
-                            assignmentFields = rangeArray.getString("assignmentFields");
-                            if (rangeArray.has("active")) {
-                                isActive = rangeArray.getString("active");
-                            }
-
+                            String assignmentType = rangeArray.getString("assignmentType");
+                            String assignmentField = rangeArray.getString("assignmentField");
+                            String assignmentFields = rangeArray.getString("assignmentFields");
+                            String isActive = rangeArray.optString("active");
                             if (!assignmentField.equals("null")) {
 
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
@@ -8196,68 +8076,54 @@ public class DynamicQuestions {
                                 if (assignmentField.equals(farmerAssignmentField)) {
                                     if (isActive.equalsIgnoreCase("true") || isActive.isEmpty()) {
                                         TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, questions, questionId);
-                                        addPhotoCheckboxView(tl, tr, checkboxCount, datatype, maxSelection, singleSelect, questionId);
+                                        addPhotoCheckboxView(tl, tr, checkboxCount, datatype, photoCbAnswers, lookupID, maxSelection, singleSelect, questionId);
                                     }
                                 }
 
                             } else {
                                 // Remove square brackets and split the string into an array of strings
                                 String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
-
                                 if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
                                     if (isActive.equalsIgnoreCase("true") || isActive.isEmpty()) {
                                         TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, questions, questionId);
-                                        addPhotoCheckboxView(tl, tr, checkboxCount, datatype, maxSelection, singleSelect, questionId);
+                                        addPhotoCheckboxView(tl, tr, checkboxCount, datatype,photoCbAnswers, lookupID, maxSelection, singleSelect, questionId);
                                     }
-
                                 } else {
-
                                     // Convert the string array to an integer array
                                     int[] intArray = new int[stringArray.length];
                                     for (int m = 0; m < stringArray.length; m++) {
                                         intArray[m] = Integer.parseInt(stringArray[m]);
                                     }
-
                                     // Iterate through the integer array using a for loop
                                     for (int fieldMultipleAssignment : intArray) {
-
                                         String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
-
                                             if (isActive.equalsIgnoreCase("true") || isActive.isEmpty()) {
                                                 TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, questions, questionId);
-                                                addPhotoCheckboxView(tl, tr, checkboxCount, datatype, maxSelection, singleSelect, questionId);
+                                                addPhotoCheckboxView(tl, tr, checkboxCount, datatype,photoCbAnswers, lookupID, maxSelection, singleSelect, questionId);
                                             }
 
                                         }
-
                                     }
                                 }
-
                             }
-
                         }
                     }
-
-
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
-
             saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
     }
 
-
+    /**
+     * Add the Table Row containing Checkbox and its related view to the Table
+     */
     private TableRow addPhotoCheckboxTableRow(TableLayout tl, String lookupId , Cursor questions, int questionId ){
-            // generate row item
             String checkBoxName = dl.getValueByLookUpID(lookupId, questions, questionColumnSuffix);
             String photoLocation = roomDB.photoCheckBoxDataDao().getPhotoLocation(lookupId, questionId);
 
@@ -8278,25 +8144,18 @@ public class DynamicQuestions {
     }
 
     /**
-     * Add the checkbox checked change listener and the row item click listener
-     * @param tl
-     * @param tr
-     * @param checkboxCount
-     * @param dataType
-     * @param maxSelection
-     * @param singleSelect
-     * @param questionId
+     * Add the checkbox checked change event listener and the row item click event listener
      */
-    private void addPhotoCheckboxView(TableLayout tl, TableRow tr, int[] checkboxCount, String dataType, int maxSelection, boolean singleSelect, int questionId) {
+    private void addPhotoCheckboxView(TableLayout tl, TableRow tr, int[] checkboxCount, String dataType, Cursor photoCbAnswers, String lookupId, int maxSelection, boolean singleSelect, int questionId) {
         CheckBox cb = tr.findViewById(R.id.cbCheckBox);
-//        if (hasAnswers && photoCbAnswers.getCount() > 0) {
-//            while (photoCbAnswers.moveToNext()) {
-//                if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupId)) {
-//                    cb.setChecked(true);
-//                }
-//            }
-//            photoCbAnswers.moveToPosition(-1);
-//        }
+        if (photoCbAnswers.getCount() > 0) {
+            while (photoCbAnswers.moveToNext()) {
+                if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupId)) {
+                    cb.setChecked(true);
+                }
+            }
+            photoCbAnswers.moveToPosition(-1);
+        }
 
         tr.setOnClickListener(view -> {
             cb.setChecked(!cb.isChecked());
@@ -8311,12 +8170,6 @@ public class DynamicQuestions {
 
     /**
      * On Photocheckbox Checked or unchecked
-     * @param compoundButton
-     * @param checkboxCount
-     * @param singleSelect
-     * @param tl
-     * @param cb
-     * @param maxSelection
      */
     private void onPhotoCheckboxCheckChanged(CompoundButton compoundButton, int[] checkboxCount, boolean singleSelect, TableLayout tl, CheckBox cb, int maxSelection){
         if (compoundButton.isChecked()) {
@@ -8340,7 +8193,7 @@ public class DynamicQuestions {
 
     }
 
-    public Bitmap bitmapImageResize(File imageFile){
+    private Bitmap bitmapImageResize(File imageFile){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
@@ -8362,8 +8215,6 @@ public class DynamicQuestions {
             newHeight = reqHeight;
             newWidth = Math.round(reqHeight * aspectRatio);
         }
-
-//        return Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false);
         return Utilities.loadSizedBitmap(imageFile.getAbsolutePath(),newWidth,newHeight);
     }
 

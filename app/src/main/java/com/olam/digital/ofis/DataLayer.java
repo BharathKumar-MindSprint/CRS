@@ -4968,20 +4968,18 @@ public class DataLayer {
     }
 
 
-    Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId) {
-        String[] columns = new String[]{"*"};
-        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
+    Cursor getAnswersForQuestionByFarmer(int questionId, long farmerId) {
+        String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
         String farmerQueryValue = String.valueOf(farmerId);
-
-        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
-//                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
                 farmerQueryValue
         };
 
-        return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, null, null, null);
     }
+
     Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
         String[] columns = new String[]{"*"};
         String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
@@ -7503,27 +7501,6 @@ public class DataLayer {
             farmerCursor.close();
         }
         return lookupValue;
-    }
-
-    public String getphotoNameByLookUpId(String lookupId) {
-        String photoName = "";
-        Cursor photoCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(lookupId)};
-            photoCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (photoCursor != null) {
-                while (photoCursor.moveToNext()) {
-                    photoName = photoCursor.getString(photoCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            photoCursor.close();
-        }
-        return photoName;
     }
 
     public String getChildNamefromDb(Long childId) {
