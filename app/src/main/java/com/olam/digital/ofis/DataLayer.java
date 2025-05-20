@@ -3795,15 +3795,14 @@ public class DataLayer {
                         "(farmer_child_modules.child_id = ?)" +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_child_modules.current_submodule_id = submodules.id WHERE " +
                         "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                        "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)" + " group by _id";
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))" + " group by _id";
 
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
@@ -3818,7 +3817,6 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex("farmergroup_id")),
                         farmer.getString(farmer.getColumnIndex("section_id")),
                         farmer.getString(farmer.getColumnIndex("programme_id")),
-                        farmer.getString(farmer.getColumnIndex("product_id")),
                         farmer.getString(farmer.getColumnIndex("partner_id"))
                 };
 
@@ -3909,7 +3907,6 @@ public class DataLayer {
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
                 }else {
                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
@@ -3932,7 +3929,6 @@ public class DataLayer {
                             "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
                 }
                 String[] modulesQueryValues = new String[]{
@@ -3947,7 +3943,6 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex("farmergroup_id")),
                         farmer.getString(farmer.getColumnIndex("section_id")),
                         farmer.getString(farmer.getColumnIndex("programme_id")),
-                        farmer.getString(farmer.getColumnIndex("product_id")),
                         farmer.getString(farmer.getColumnIndex("partner_id"))
                 };
 //                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
@@ -9317,7 +9312,6 @@ public class DataLayer {
                         "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
 
                 String[] modulesQueryValues = new String[]{
@@ -9332,7 +9326,6 @@ public class DataLayer {
                         farmerGroupId,
                         sectionId,
                         programmeId,
-                        productId,
                         partnerId
                 };
                 @SuppressLint("Recycle")
