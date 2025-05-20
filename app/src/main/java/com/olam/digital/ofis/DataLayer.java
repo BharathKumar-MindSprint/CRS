@@ -1690,6 +1690,7 @@ public class DataLayer {
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + ", "
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + ", "
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + ", "
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
                 + " FROM " + trainingAttendeesTable + " INNER JOIN " + farmerTable + " ON "
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " = "
@@ -9459,40 +9460,6 @@ public class DataLayer {
         }
     }
 
-    public boolean areAllSignaturesPresent(long trainingRecordId) {
-        boolean allSignaturesPresent = true;
-        String[] columns = new String[]{"*"};
-        String selection = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ? ";
-        String[] selectionArgs = { String.valueOf(trainingRecordId) };
-
-        Cursor cursor = db.query(
-                OFISDBContract.TrainingAttendee.TABLE_NAME,
-                columns,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
-                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
-                    if (signature == null || signature.isEmpty()) {
-                        allSignaturesPresent = false;
-                        break;
-                    }
-                }
-            }
-            cursor.close();
-        } else {
-            allSignaturesPresent = false;
-        }
-
-        return allSignaturesPresent;
-    }
-
     public String getSignatureByAttendeeId(int attendeeId){
         String signature = "";
         Cursor cursor = null;
@@ -9510,6 +9477,44 @@ public class DataLayer {
             e.printStackTrace();
         }
         return signature;
+    }
+
+    private Cursor queryTrainingAttendee(long trainingRecordId, String[] columns) {
+        String selection = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(trainingRecordId) };
+
+        return db.query(
+                OFISDBContract.TrainingAttendee.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+    }
+
+    public boolean areAllSignaturesPresent(long trainingRecordId) {
+        String[] columns = { OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE };
+
+        try (Cursor cursor = queryTrainingAttendee(trainingRecordId, columns)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                    if (signature == null || signature.isEmpty()) {
+                        return false;
+                    }
+                } while (cursor.moveToNext());
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Cursor getAllTraineeDataByRecordId(long trainingRecordId) {
+        String[] columns = { "*" };
+        return queryTrainingAttendee(trainingRecordId, columns);
     }
 
 
