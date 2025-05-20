@@ -7144,71 +7144,73 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
 
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                for (int i = 0; i < attendeeSignature.size(); i++) {
-                    String signNatureName = attendeeSignature.get(i);
-                    File directory = new File(context.getFilesDir(), "signatures");
-                    File imageFile = new File(directory, signNatureName);
-                    RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, imageFile);
-                    builder.addFormDataPart("signature", attendeeSignature.get(i), fileBody);
-                }
+                if (isFileExists) {
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                    for (int i = 0; i < attendeeSignature.size(); i++) {
+                        String signNatureName = attendeeSignature.get(i);
+                        File directory = new File(context.getFilesDir(), "signatures");
+                        File imageFile = new File(directory, signNatureName);
+                        RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, imageFile);
+                        builder.addFormDataPart("signature", attendeeSignature.get(i), fileBody);
+                    }
 
 
-                RequestBody requestBody = builder.build();
+                    RequestBody requestBody = builder.build();
 
-                okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        if (response.isSuccessful() && response.body() != null) {
-                            String responseBody = response.body().string();
-                            Log.d("Response_Upload", response.body().toString());
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = new JSONObject(responseBody);
-                                String sessionId = jsonObject.getString("sessionId");
-                                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId, sessionId);
-
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-
-
-
-
-
-                        } else {
-                            if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                    okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            if (response.isSuccessful() && response.body() != null) {
+                                String responseBody = response.body().string();
+                                Log.d("Response_Upload", response.body().toString());
+                                JSONObject jsonObject = null;
                                 try {
-                                    FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting training photo");
-                                } catch (Exception e) {
-                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                }
-                                Log.d("UPLOAD_FILE_FAILURE", "1");
-                            } else {
-                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training photo");
-                                Log.d("Error in Upload Docs", response.toString());
-                            }
-                        }
-                        response.close();
-                    }
+                                    jsonObject = new JSONObject(responseBody);
+                                    String sessionId = jsonObject.getString("sessionId");
+                                    postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId, sessionId);
 
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.d("UPLOAD_FILE_FAILURE", e.toString());
-                        try {
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+
+
+
+
+                            } else {
+                                if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                                    try {
+                                        FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting training photo");
+                                    } catch (Exception e) {
+                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                    }
+                                    Log.d("UPLOAD_FILE_FAILURE", "1");
+                                } else {
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training photo");
+                                    Log.d("Error in Upload Docs", response.toString());
+                                }
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
-                        } catch (Exception onfailEx) {
-                            String failureMessage = res.getString(R.string.networking_error);
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
-                            FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
-                            onfailEx.printStackTrace();
+                            response.close();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            Log.d("UPLOAD_FILE_FAILURE", e.toString());
+                            try {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
+                            } catch (Exception onfailEx) {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
+                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                onfailEx.printStackTrace();
+                            }
+                        }
+                    });
+                }
             }
 
             if(!isFileExists) {
