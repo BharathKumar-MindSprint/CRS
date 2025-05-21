@@ -270,7 +270,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
             dynamicQuestions.hasAnswers = true;
             dynamicQuestions.viewAnswer = false;
-            questions = dl.getQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
+            questions = dl.getQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId, null);
 
             moveToCurrentSubModule(subModuleId);
         } else if (subModuleId != 0) {
@@ -434,7 +434,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         }
 
 
-        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
+        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, null, olamFarmerId, farmId, "module");
 
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();
@@ -557,7 +557,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
                 if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
+                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId,null, farmerModuleId, false, false, -1, null, 0);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
@@ -565,9 +565,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(), false);
+                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                        dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, false);
+                        dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
@@ -577,7 +577,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-                        dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
+                        dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
                     }
 
                 } else {
@@ -595,7 +595,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                                dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, false, -1, null, 0);
+                                dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId,null, farmerModuleId, false, false, -1, null, 0);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                                 dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
@@ -603,9 +603,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(), false);
+                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                                dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, false);
+                                dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
@@ -615,7 +615,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-                                dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false, -1, null, 0);
+                                dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
                             }
                         }
 
@@ -924,47 +924,27 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
 
     }
 
     private String getColumnName(String assignmentType) {
-        String assignmentTypeColumn = "";
-        switch (assignmentType) {
-            case "1":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                break;
-            case "2":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                break;
-            case "3":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                break;
-            case "4":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                break;
-            case "5":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                break;
-            case "6":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                break;
-            case "7":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                break;
-            case "8":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                break;
-            case "9":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                break;
-        }
-        return assignmentTypeColumn;
+        return switch (assignmentType) {
+            case "1" -> OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+            case "2" -> OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+            case "3" -> OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+            case "4" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+            case "5" -> OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+            case "6" -> OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+            case "7" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+            case "8" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+            case "9" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+            default -> "";
+        };
     }
 
 }
