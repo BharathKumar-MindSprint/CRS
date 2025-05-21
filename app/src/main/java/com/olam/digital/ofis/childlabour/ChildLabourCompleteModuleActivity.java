@@ -565,7 +565,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId,null, farmerModuleId, res, getPackageName(), false);
+                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
@@ -603,7 +603,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId,null, farmerModuleId, res, getPackageName(), false);
+                                dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
                                 dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
@@ -924,47 +924,27 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
 
     }
 
     private String getColumnName(String assignmentType) {
-        String assignmentTypeColumn = "";
-        switch (assignmentType) {
-            case "1":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                break;
-            case "2":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                break;
-            case "3":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                break;
-            case "4":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                break;
-            case "5":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                break;
-            case "6":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                break;
-            case "7":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                break;
-            case "8":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                break;
-            case "9":
-                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                break;
-        }
-        return assignmentTypeColumn;
+        return switch (assignmentType) {
+            case "1" -> OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+            case "2" -> OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+            case "3" -> OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+            case "4" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+            case "5" -> OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+            case "6" -> OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+            case "7" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+            case "8" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+            case "9" -> OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+            default -> "";
+        };
     }
 
 }

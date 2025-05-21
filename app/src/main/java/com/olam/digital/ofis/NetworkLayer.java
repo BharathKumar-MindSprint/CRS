@@ -71,6 +71,7 @@ import java.security.cert.CertificateException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -2537,27 +2538,75 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
 
 
+        Cursor getDisableMonth = moduleAssignments;
+        List<Integer> disabled_months = new ArrayList<>();
+        if (getDisableMonth.moveToFirst()) {
+            disabled_months = getDisableMonths(getDisableMonth);
+        }
+
+        int surveyYear = 0, currentYear = 0, itemMonth = 0;
+        try {
+            String createdDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date date = sdf.parse(createdDate);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            surveyYear = calendar.get(Calendar.YEAR);
+            currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            itemMonth = calendar.get(Calendar.MONTH);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
             isMandate = true;
         } else if (moduleId == 0) {
-            return isMandate;
+            if (disabled_months.contains(itemMonth)) {
+                if (!containsAny(readyToSyncSurvey, mandateSurveyList)){
+                    isMandate = true;
+                }
+            }
+        } else if (disabled_months.contains(itemMonth)) {
+            if (!containsAny(readyToSyncSurvey, mandateSurveyList)){
+                isMandate = true;
+            }
         } else {
-            try {
-                String createdDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                Date date = sdf.parse(createdDate);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                int surveyYear = calendar.get(Calendar.YEAR);
-                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                isMandate = surveyYear < currentYear;
-            } catch (Exception e) {
-                e.printStackTrace();
-                isMandate = false;
+            if (surveyYear < currentYear) {
+                isMandate = true;
             }
         }
 
         return isMandate;
+    }
+
+    public static boolean containsAny(Set<Integer> readyToSyncSurvey, Set<Integer> mandateSurveyList) {
+        for (Integer item : mandateSurveyList) {
+            if (readyToSyncSurvey.contains(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<Integer> getDisableMonths(Cursor getIdCursor) {
+        List<Integer> disableMonthList = new ArrayList<>();
+        Calendar currentDate = Calendar.getInstance();
+
+        while (getIdCursor.moveToNext()) {
+            String checkMandate = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE));
+            if (checkMandate!=null) {
+                if (Boolean.parseBoolean(checkMandate)) {
+                    String disabledMonthsString = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+                    List<String> disabledMonths = Arrays.asList(disabledMonthsString.split("\\s*,\\s*"));
+                    for (String month : disabledMonths) {
+                        if (!Objects.equals(month,"null")) {
+                            disableMonthList.add(Integer.parseInt(month));
+                        }
+                    }
+                }
+            }
+        }
+        return disableMonthList;
     }
 
 

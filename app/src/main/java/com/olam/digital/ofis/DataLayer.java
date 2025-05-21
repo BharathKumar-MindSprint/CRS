@@ -92,26 +92,6 @@ public class DataLayer {
         ofisRoomDB = OFISRoomDB.getDbInstance(context_);
     }
 
-    // data recording tasks
-    boolean isFarmerIdUnique(String olamFarmerId, long farmerId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{olamFarmerId};
-        if (farmerId != 0) {
-            whereClause += " AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " != ?";
-            whereArgs = new String[]{
-                    olamFarmerId,
-                    String.valueOf(farmerId)
-            };
-        }
-
-        Cursor existingFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        boolean idIsUnique = (existingFarmer.getCount() == 0);
-        existingFarmer.close();
-
-        return idIsUnique;
-    }
-
     boolean placeAlreadyExists(String placeName, long district_id) {
         String[] columns = new String[]{"*"};
         String whereClause = "upper(" + OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME + ") = ? AND " + OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID + " = ?";
@@ -545,11 +525,6 @@ public class DataLayer {
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
     }
 
-    public Cursor getSipPlotGeoData() {
-        String[] columns = new String[]{"*"};
-        return db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, null, null, null, null, null);
-    }
-
     public Cursor getPNamePlotGeoData(String mOlamFarmerid) {
         String[] columns = new String[]{OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME};
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
@@ -569,26 +544,6 @@ public class DataLayer {
 //            int updatedRows = db.update(OFISDBContract.PlotGeoData.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
         }catch (Exception e){
             e.printStackTrace();
-        }
-    }
-
-    public void deletePlotDataBycount(String farmerId, int plotSubmittedCount){
-        Cursor plotIds = fetchPlotids(String.valueOf(farmerId));
-        if(plotIds.getCount() > 0) {
-            int size = plotIds.getCount();
-            for (int i = 1; i <= size; i++) {
-                plotIds.moveToNext();
-                if(i <= plotSubmittedCount){
-                    int id = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
-                    String table = OFISDBContract.PlotEntry.TABLE_NAME;
-                    String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
-                    String[] whereArgs = new String[]{
-                            String.valueOf(id),
-                    };
-
-                    db.delete(table, whereClause, whereArgs);
-                }
-            }
         }
     }
 
@@ -877,17 +832,6 @@ public class DataLayer {
         return newRowId;
     }
 
-    public static long insertNetworkQueueEntry2(ContentValues values) {
-        long newRowId=0;
-        if (!values.containsKey(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)) {
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, UUID.randomUUID().toString());
-        }
-        try {
-            newRowId = db.insert(OFISDBContract.NetworkQueueEntry.TABLE_NAME, null, values);
-        }catch (Exception e){}
-        return newRowId;
-    }
-
     boolean networkEntryTypeExistsByFarmerId(String submission_type, long farmerId, String columnName) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + columnName + " = ?";
@@ -1121,10 +1065,6 @@ public class DataLayer {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    long getBuyingAgentCount() {
-        return DatabaseUtils.queryNumEntries(db, OFISDBContract.BuyingAgent.TABLE_NAME);
     }
 
     Cursor getBuyingAgentById(long id) {
@@ -1907,23 +1847,6 @@ public class DataLayer {
 
     }
 
-
-    /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
-        int arrayLength = storeableNationalids.size();
-        try {
-            for (int i = 0; i < arrayLength; i++) {
-                ContentValues values = new ContentValues();
-                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.get(i).getNationalidtype());
-                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.get(i).getNationalidNumber());
-                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.get(i).getPhoto());
-                db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
-
-            }
-        }catch (Exception e){}
-
-
-    }*/
-
     void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
 //        delete value if exists
         String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
@@ -1952,28 +1875,6 @@ public class DataLayer {
         try {
             db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
             addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
-        }catch (Exception e){}
-
-    }
-
-    void updateFarmerIdforConsentStatement(long farmerId, String name) {
-        ContentValues values = new ContentValues();
-        values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, farmerId);
-        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(name)};
-        try {
-            db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
-        }catch (Exception e){}
-
-    }
-
-    void updateFarmerIdByConsentId(long farmerId, int consentId) {
-        ContentValues values = new ContentValues();
-        values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, farmerId);
-        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(consentId)};
-        try {
-            db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
 
     }
@@ -2105,26 +2006,6 @@ public class DataLayer {
         return rowsUpdated;
     }
 
-    public String getSurveyDurationByModuleId(int moduleId){
-        String surveyDuration = "";
-        Cursor cursor = null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(moduleId)};
-            cursor = db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
-            if(cursor != null){
-                while(cursor.moveToNext()){
-                    surveyDuration = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION));
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            cursor.close();
-        }
-        return surveyDuration;
-    }
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
@@ -2268,21 +2149,6 @@ public class DataLayer {
 
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
-
-    void deletelocalfarmervalues(int id) {
-        String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        try {
-            db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){}
-
-    }
-
-   /* void deletelocalfarmervalues() {
-        try {
-            db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
-        }catch (Exception e){}
-    }*/
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
         String placesTable = OFISDBContract.PlacesEntry.TABLE_NAME;
@@ -2706,30 +2572,6 @@ public class DataLayer {
 
     }
 
-    void loadSubdistrictSpinner(final AppCompatActivity activity, final Context context, final int districtSelection, final int subdistrictSelection) {
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
-
-        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, districtSelection, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-        if (subdistrictSelection != 0) {
-            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-            if (subdistricts.getCount() == 1) {
-                subdistrictSpinner.setEnabled(false);
-            } else {
-                subdistrictSpinner.setEnabled(true);
-            }
-        } else {
-            if (subdistricts.getCount() == 1) {
-                subdistrictSpinner.setSelection(1, false);
-                subdistrictSpinner.setEnabled(false);
-            } else {
-                subdistrictSpinner.setEnabled(true);
-            }
-        }
-
-    }
-
     void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
@@ -2992,168 +2834,6 @@ public class DataLayer {
         }
 
 
-
-        if (countrySelection != 0) {
-            setSpinnerSelectionById(countrySelection, countrySpinner);
-            if (countries.getCount() == 1) {
-                countrySpinner.setEnabled(false);
-            }
-        } else {
-            if (countries.getCount() == 1) {
-                countrySpinner.setSelection(1, false);
-                countrySpinner.setEnabled(false);
-            }
-        }
-    }
-
-    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
-        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
-        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
-        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
-        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
-
-
-        final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
-
-        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
-
-        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
-                bindDataDrivenSpinner(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
-                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
-
-                if (farmerIdPrefix != null && id > 0) {
-                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
-                    String currentPrefix = farmerIdPrefix.getText().toString();
-                    String newPrefix = code + currentPrefix.substring(2);
-                    farmerIdPrefix.setText(newPrefix);
-                }
-
-                if (phonenumbers != null && id > 0) {
-                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
-                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
-                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
-                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
-                        diallingcode.setText(dialling_code);
-                    }
-                }
-
-                if (regionSelection != 0) {
-                    setSpinnerSelectionById(regionSelection, regionSpinner);
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setSelection(1, false);
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
-                bindDataDrivenSpinner(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
-
-                if (districtSelection != 0) {
-                    setSpinnerSelectionById(districtSelection, districtSpinner);
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setSelection(1, false);
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        if (placeSpinner != null) {
-            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-            if (activity.findViewById(R.id.newPlaceName) != null) {
-                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
-                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                        try {
-                            if (id == -1) {
-                                newPlaceName.setVisibility(View.VISIBLE);
-                            } else {
-                                newPlaceName.setVisibility(View.GONE);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    }
-                });
-            }
-        }
 
         if (countrySelection != 0) {
             setSpinnerSelectionById(countrySelection, countrySpinner);
@@ -3635,21 +3315,6 @@ public class DataLayer {
         return db.rawQuery(sql, null);
     }
 
-    Cursor getFarmerAndGroupByFarmerId(long id) {
-        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
-        String sectionTable = OFISDBContract.SectionsEntry.TABLE_NAME;
-        String farmerGroupsTable = OFISDBContract.FarmerGroupsEntry.TABLE_NAME;
-
-        String sql = "SELECT " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + ", " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", "
-                + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " + farmerGroupsTable
-                + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " as farmer_group_id, " + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME + " as farmer_group_name "
-                + "FROM " + farmerTable + " INNER JOIN " + sectionTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + sectionTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID
-                + " INNER JOIN " + farmerGroupsTable + " ON " + sectionTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID + " = " + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID
-                + " WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = " + id;
-
-        return db.rawQuery(sql, null);
-    }
-
     public Cursor getFarmerById(long id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
@@ -3865,20 +3530,6 @@ public class DataLayer {
         }
     }
 
-    public int isPlotSurveyModuleAvailable(long farmerId, boolean isfarmSurvey) {
-        int count = 0;
-        Cursor cursor = getFarmerModules(farmerId,isfarmSurvey);
-        try {
-            if (cursor != null) {
-                count = cursor.getCount();
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return count;
-    }
-
     public Cursor getFarmerModules(long id, boolean farmSurvey) {
         Cursor farmer = null;
 
@@ -4072,17 +3723,6 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerid),String.valueOf(nIdType)};
         try {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
-        }catch (Exception e){}
-
-    }
-
-    public void updateSipPlotSync(String id) {
-        ContentValues values = new ContentValues();
-        values.put(OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED, "true");
-        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
-        String[] whereArgs = new String[]{id};
-        try {
-            db.update(OFISDBContract.SipPlot.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
 
     }
@@ -4343,42 +3983,6 @@ public class DataLayer {
         return status;
     }
 
-    public String getNIDType(long farmerId) {
-        String type = null;
-        Cursor nids = getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
-        try {
-            while (nids.moveToNext()) {
-                String value = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
-                type = getNidTypebyid(Integer.parseInt(value));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return type;
-    }
-
-    public ArrayList<String> getNIDTypeByFarmerID(long farmerId) {
-
-        ArrayList<String> nationalList = new ArrayList<String>();
-        Cursor nids = getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
-        try {
-            while (nids.moveToNext()) {
-                String type = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
-                String number = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
-                nationalList.add(number + " (" + getNIDTypeByID(type) + ") ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return nationalList;
-    }
-
     public List<FarmerLeadDTO> getFarmerLeads(int countryId) {
 
         List<FarmerLeadDTO> list = new ArrayList<FarmerLeadDTO>();
@@ -4596,23 +4200,6 @@ public class DataLayer {
                         }
                     }
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return status;
-    }
-
-    public boolean isConsentChecked(String name) {
-        boolean status = false;
-        Cursor nids = getConsentStatementByName(name);
-
-        try {
-            if (nids.getCount() > 0) {
-                status = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -4864,42 +4451,6 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
-    public Cursor getChildQuestionsAndAnswersBySubModuleId(int submoduleId, long farmerId, long farmerModuleId) {
-        Log.d(TAG, "getChildQuestionsAndAnswersBySubModuleId");
-        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
-        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
-        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
-        String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ID + " as answer_id, "
-                + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
-                + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_BOOL + ", "
-                + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DATE + ", "
-                + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
-        String farmerQuery = "" + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String farmerQueryValue = String.valueOf(farmerId);
-
-        String sql = "SELECT " + columns + " FROM " + questionTable + " LEFT OUTER JOIN " + answerTable
-                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " AND "
-                + farmerQuery + " AND " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
-                + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? GROUP BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
-        String[] whereArgs = new String[]{
-                farmerQueryValue,
-                String.valueOf(farmerModuleId),
-                String.valueOf(submoduleId)
-        };
-
-        return db.rawQuery(sql, whereArgs);
-    }
-
     Cursor getQuestionsAndAnswersBySubModuleId1(int submoduleId, long farmerId, String stakeholderId, long farmerModuleId, int question_id) {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
@@ -4969,21 +4520,33 @@ public class DataLayer {
     }
 
 
+    Cursor getAnswersForQuestionByFarmer(int questionId, long farmerId) {
+        String farmerQuery = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
+        String farmerQueryValue = String.valueOf(farmerId);
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue
+        };
+
+        return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, null, null, null);
+    }
+
     Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
         String[] columns = new String[]{"*"};
-        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ? ";
+        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? " ;
         String farmerQueryValue = String.valueOf(farmerId);
 
         String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
 //                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{
                 String.valueOf(questionId),
-                farmerQueryValue, stakeholderId==null? "" : stakeholderId,
-//                String.valueOf(farmerModuleId)
+                farmerQueryValue
         };
 
         return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+
 
     // get the child answers from dropdown
     Cursor getAnswersForQuestionByChild(int questionId, long farmerId, String stakeholderId, long farmerModuleId) {
@@ -5222,59 +4785,6 @@ public class DataLayer {
         return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
-    public void updateSubModuleChildAnswers(ArrayList<JSONObject> answerSet, long farmerModuleId, int subModuleId, long farmerId, String olamFarmerId, int farmId, String type) {
-        try {
-            // delete existing answers for this farmer and submodule
-            String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
-            String idColumn = (type.equalsIgnoreCase("fmp")) ? OFISDBContract.AnswerChildEntry.COLUMN_NAME_FMP_ID : OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID;
-            String farmerQuery = "" + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String farmerQueryValue = String.valueOf(farmerId);
-            String[] whereArgs = new String[]{
-                    String.valueOf(subModuleId),
-                    farmerQueryValue,
-                    String.valueOf(farmerModuleId)
-            };
-            String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + farmerQuery + " AND " + idColumn + " = ? ";
-
-            db.delete(answerTable, whereClause, whereArgs);
-
-            // now add in answers
-            for (int i = 0; i < answerSet.size(); i++) {
-                JSONObject currentAnswer = answerSet.get(i);
-                if (currentAnswer != null) {
-                    int currentQuestionId = currentAnswer.optInt("question_id");
-                    int parentQuestionId = currentAnswer.optInt("parent_question_id");
-                    int repeaterPosition = currentAnswer.optInt("repeater_item_position", -1);
-                    String datatype = currentAnswer.getString("datatype");
-                    String answer = currentAnswer.getString("answer");
-                    String sub_answers = currentAnswer.optString("sub_answers");
-                    int reportingYear = currentAnswer.getInt("reporting_year");
-
-                    ContentValues values = new ContentValues();
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID, currentQuestionId);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_PARENT_QUESTION_ID, parentQuestionId);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION, repeaterPosition);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_SUBMODULE_ID, subModuleId);
-                    values.put(idColumn, farmerModuleId);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARM_ID, farmId);
-                    values.put("answer_" + datatype, answer);
-                    if (sub_answers.length() > 0 && (!datatype.equalsIgnoreCase("text"))) {
-                        values.put("answer_text", sub_answers);
-                    }
-                    values.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
-
-                    db.insert(OFISDBContract.AnswerChildEntry.TABLE_NAME, null, values);
-
-                }
-            }
-        } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DataLayer: Error updating submodule answers", e));
-            e.printStackTrace();
-        }
-    }
-
 
     public void updateFarmerModule(long farmerModuleId, int subModuleId, int statusStarted, int statusFinished, int plotId) {
         ContentValues values = new ContentValues();
@@ -5360,15 +4870,6 @@ public class DataLayer {
             db.delete(OFISDBContract.AnswerSipEntry.TABLE_NAME, whereClause, whereArgs);
             deleteNetworkQueueItem(networkQueueItemId);
         }catch (Exception e){}
-    }
-
-    public void deleteNetworkQueueItemByFarmerModuleId(int farmerModuleId) {
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
-        try {
-            db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){}
-
     }
 
     public long deleteNetworkQueueItemByFarmerId(int farmerId, String type) {
@@ -5648,15 +5149,6 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId), String.valueOf(questionId)};
         Cursor cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return cursor;
-    }
-
-    public void DeleteAnswersByQuestionId(int farmerModuleId, int questionId) {
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerModuleId), String.valueOf(questionId)};
-            db.delete(OFISDBContract.AnswerEntry.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){}
     }
 
     Cursor getAnswersByFarmerChildModuleId(int farmerModuleId, ArrayList<Integer> submoduleList) {
@@ -6545,26 +6037,7 @@ public class DataLayer {
         return update_nq;
     }
 
-    public long insertChildVisitDetails(ContentValues contentValues) {
-        long newRowId;
-        newRowId = db.insert(OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME, null, contentValues);
-        if (newRowId != -1) {
-            // add a network queue entry
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-            ContentValues networkQueueValues = new ContentValues();
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "child_visit_details");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Visit Detail Registered");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Child Name");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_FARMER_ID));
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-            insertNetworkQueueEntry(networkQueueValues);
-        }
-        return newRowId;
-    }
-
-    public long     insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type, String poiType ) {
+    public long insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type, String poiType ) {
         long newRowId;
         newRowId = db.insert(OFISDBContract.ConsentStatementEntry.TABLE_NAME, null, contentValues);
         if (type.equalsIgnoreCase("update")) {
@@ -6656,50 +6129,6 @@ public class DataLayer {
             cursor=db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
 
-        return cursor;
-    }
-
-    public Cursor getConsentStatementByConsentId(long id) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        Cursor cursor=null;
-        try {
-            cursor=db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
-
-        return cursor;
-    }
-
-    public int getConsentIdByFarmerId(long farmerID) {
-
-        int consentId=0;
-        Cursor farmerCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerID)};
-            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerCursor != null) {
-                while (farmerCursor.moveToNext()) {
-                    consentId = farmerCursor.getInt(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID));
-                }
-            }
-        } catch (Exception e) {
-        }finally {
-            farmerCursor.close();
-        }
-        return  consentId;
-    }
-
-    public Cursor getConsentStatementByName(String name) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(name)};
-        Cursor cursor=null;
-        try {
-            cursor=db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
         return cursor;
     }
 
@@ -6939,18 +6368,6 @@ public class DataLayer {
         }
     }
 
-    public void updateConsentDetails(long editFarmerId, String farmerNameValue) {
-        try {
-            String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerNameValue)};
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
-            db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-    }
-
     public void updateConsentValue(String farmerName, long farmerId) {
         try {
             String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID + " = ?";
@@ -7013,98 +6430,6 @@ public class DataLayer {
     }
 
 
-
-    public Cursor farmerExist(long id, int sectionId, int placeId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id), String.valueOf(sectionId), String.valueOf(placeId)};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-    public Cursor farmerExist(long id) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-
-
-    public Cursor farmerExistByName(String name) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(name)};
-
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-        return cursor;
-    }
-
-    public Cursor farmerExistByDob(String name) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(name)};
-
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-
-    }
-
-    public Cursor farmerExistByNameDob(String dob, String nameExisting, String nameNew) {
-//        String[] columns = new String[]{"*"};
-//        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " = ?";
-//        String[] whereArgs = new String[]{String.valueOf(dob),name};
-//        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-//
-        String sqlQuery = "select * from farmers where dob LIKE '%" + dob + "%' and (name='" + nameExisting + "' or name='" + nameNew + "')";
-        Cursor cursor=null;
-        try {
-            cursor = db.rawQuery(sqlQuery, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-        return cursor;
-    }
-
-    public Cursor farmerExistByGeoValues(int countryId, int regionId, int districtId, int placeId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " = ?AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(countryId), String.valueOf(regionId), String.valueOf(districtId), String.valueOf(placeId)};
-
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-        return cursor;
-
-    }
-
     public boolean farmerExistByfarmerGroupSection(long farmerGroupId, long sectionId, long moduleId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.DownloadedSurveyList.COLUMN_NAME_FARMER_GROUP + " = ? AND "
@@ -7120,49 +6445,6 @@ public class DataLayer {
         return exists;
     }
 
-
-    public Cursor farmerExistByNationalId(String value, int typeId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(value), String.valueOf(typeId)};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-    public Cursor getDuplicateRecordByFarmerId(long editFarmerId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-
-
-    public int getConsentCount() {
-        int count = 0;
-        try {
-            Cursor cursor = db.rawQuery("select * from " + OFISDBContract.ConsentStatementEntry.TABLE_NAME, null);
-            if (cursor != null) {
-                count = cursor.getCount();
-            }
-            cursor.close();
-        } catch (Exception e) {
-        }
-        return count;
-    }
 
     public boolean isAvailableInNqTable(long farmerId){
         boolean available = false;
@@ -7184,47 +6466,6 @@ public class DataLayer {
 
         return available;
     }
-    public boolean isAvailableInNetworkTable(String farmerId, String update_biomatric) {
-        boolean available = false;
-
-        try {
-            // Check in Update Flow
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
-            String[] whereArgs = new String[]{farmerId, update_biomatric};
-            Cursor cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-            if (cursor != null) {
-                if (cursor.getCount() > 0) {
-                    available = true;
-                }
-            }
-            cursor.close();
-        } catch (Exception e) {
-        }
-
-
-        try {
-            // Check in Add Farmer registration Table
-            String[] columnsReg = new String[]{"*"};
-            String whereClauseReg = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
-            String[] whereArgsReg = new String[]{farmerId, "farmer"};
-            Cursor cursorReg = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columnsReg, whereClauseReg, whereArgsReg, null, null, null);
-
-            if (cursorReg != null) {
-                if (cursorReg.getCount() > 0) {
-                    available = true;
-                }
-            }
-            cursorReg.close();
-        } catch (Exception e) {
-        }
-
-        return available;
-    }
-
-
-
 
 
     public String getQuestionNo(String questionNo) {
@@ -7490,27 +6731,6 @@ public class DataLayer {
             farmerCursor.close();
         }
         return lookupValue;
-    }
-
-    public String getphotoNameByLookUpId(String lookupId) {
-        String photoName = "";
-        Cursor photoCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(lookupId)};
-            photoCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (photoCursor != null) {
-                while (photoCursor.moveToNext()) {
-                    photoName = photoCursor.getString(photoCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            photoCursor.close();
-        }
-        return photoName;
     }
 
     public String getChildNamefromDb(Long childId) {
@@ -7959,22 +7179,6 @@ public class DataLayer {
         }
 
         return name;
-    }
-
-    public String getFarmerName(Long farmerId) {
-        Cursor cursor = db.rawQuery("select * from farmers where id ="+ farmerId, null);
-        String farmerName=null;
-        if (cursor != null) {
-            try {
-                if (cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        farmerName = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
-                    }
-                }
-            }catch (Exception e) {}
-        }
-        cursor.close();
-        return  farmerName;
     }
 
     public Cursor getTraineeRelationship(int trainingRecordId, long farmerId) {
@@ -9266,12 +8470,32 @@ public class DataLayer {
             if (moduleCursor.getCount() > 0) {
                 while (moduleCursor.moveToNext()) {
                     int moduleId = moduleCursor.getInt(moduleCursor.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID));
-                    moduleIds.add(moduleId);
+                    boolean moduleFinished = moduleFinishedCheck(moduleId, farmerId);
+                    if (moduleFinished) {
+                        moduleIds.add(moduleId);
+                    }
                 }
                 moduleCursor.close();
             }
         }
         return moduleIds;
+    }
+    private boolean moduleFinishedCheck(Integer moduleId, long farmerId) {
+        boolean statusFinished = false;
+        Integer status = null;
+        String moduleQuery = "SELECT " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " FROM " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " WHERE " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID  + " = ? AND " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID  + " = ? ";
+        Cursor cursor = db.rawQuery(moduleQuery, new String[]{String.valueOf(farmerId), String.valueOf(moduleId)});
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                status = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED));
+            }
+            cursor.close();
+        }
+
+        if (status!=null && Objects.equals(status,1)){
+            statusFinished = true;
+        }
+        return statusFinished;
     }
 
     public Cursor getAllModuleByFarmerId(long id) {

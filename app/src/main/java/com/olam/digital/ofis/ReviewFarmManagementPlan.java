@@ -405,7 +405,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                 } else if (displayType.toLowerCase().equals("dropdown")) {
                     dynamicQuestions.renderDropDownQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.toLowerCase().equals("photocheckbox")) {
-                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId,null,0, res, getPackageName(), false);
+                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId);
                 } else if (displayType.toLowerCase().equals("repeater")) {
                     dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, null, olamFarmerId, 0, res, false);
                 } else if (displayType.toLowerCase().equals("textbox")) {
