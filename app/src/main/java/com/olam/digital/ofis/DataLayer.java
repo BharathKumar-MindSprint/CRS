@@ -3459,14 +3459,14 @@ public class DataLayer {
                         "(farmer_child_modules.child_id = ?)" +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_child_modules.current_submodule_id = submodules.id WHERE " +
                         "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                        "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)" + " group by _id";
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))" + " group by _id";
 
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
