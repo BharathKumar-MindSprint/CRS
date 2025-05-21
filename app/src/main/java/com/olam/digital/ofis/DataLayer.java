@@ -8444,12 +8444,32 @@ public class DataLayer {
             if (moduleCursor.getCount() > 0) {
                 while (moduleCursor.moveToNext()) {
                     int moduleId = moduleCursor.getInt(moduleCursor.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID));
-                    moduleIds.add(moduleId);
+                    boolean moduleFinished = moduleFinishedCheck(moduleId, farmerId);
+                    if (moduleFinished) {
+                        moduleIds.add(moduleId);
+                    }
                 }
                 moduleCursor.close();
             }
         }
         return moduleIds;
+    }
+    private boolean moduleFinishedCheck(Integer moduleId, long farmerId) {
+        boolean statusFinished = false;
+        Integer status = null;
+        String moduleQuery = "SELECT " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " FROM " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " WHERE " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID  + " = ? AND " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID  + " = ? ";
+        Cursor cursor = db.rawQuery(moduleQuery, new String[]{String.valueOf(farmerId), String.valueOf(moduleId)});
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                status = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED));
+            }
+            cursor.close();
+        }
+
+        if (status!=null && Objects.equals(status,1)){
+            statusFinished = true;
+        }
+        return statusFinished;
     }
 
     public Cursor getAllModuleByFarmerId(long id) {
