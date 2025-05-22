@@ -404,8 +404,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha10'
     implementation 'android.arch.lifecycle:viewmodel:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
-    implementation 'androidx.room:room-runtime:2.2.5'
-    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+    implementation 'androidx.room:room-runtime:2.7.1'
+    annotationProcessor 'androidx.room:room-compiler:2.7.1'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
 }
