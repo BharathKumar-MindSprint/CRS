@@ -663,7 +663,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     // Iterate through the integer array using a for loop
                     for (int fieldMultipleAssignmentQuestion : intArrayQuestion) {
                         String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
-                            
+
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                                 dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, stakeholderId, farmerModuleId, false, false, -1, null, 0);
