@@ -34,7 +34,7 @@
     </queries>
 
     <application
-        android:name=".EnableMultiDex"
+        android:name=".OFISApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
