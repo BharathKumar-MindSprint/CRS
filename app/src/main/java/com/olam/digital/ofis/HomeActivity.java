@@ -1,6 +1,5 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -18,8 +17,6 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -54,10 +51,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.crashlytics.android.answers.Answers;
-//import com.crashlytics.android.answers.LoginEvent;
-//import com.dynatrace.android.agent.Dynatrace;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
@@ -92,49 +85,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
@@ -145,17 +96,13 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
- import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -181,11 +128,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static RelativeLayout mainSection;
     private static ScrollView firstRunSection;
     private static TextView queueCount;
-    private static CardView captureMyLocationWrapper;
-    private static CardView recordTrainingWrapper;
     private SharedPreferences sharedPreferences;
-    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
-    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private static MenuItem settingsButton, tasksButton, notificationButton;
     private Handler mainHandler;
 
@@ -262,8 +205,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         firstRunSection = findViewById(R.id.firstRunWrapper);
         mainSection = findViewById(R.id.mainWrapper);
-        captureMyLocationWrapper = findViewById(R.id.captureLocationWrapper);
-        recordTrainingWrapper = findViewById(R.id.recordTrainingWrapper);
         passcode = findViewById(R.id.passcode);
         saveUpdateButton = findViewById(R.id.buttonSaveUpdate);
         topSection = findViewById(R.id.topSectionWrapper);
@@ -545,7 +486,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void checkForUpdate() {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             @SuppressLint("HandlerLeak") Handler checkVersionHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
@@ -725,7 +666,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void checkAuthenticate() {
 
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
             accessTokenTask.execute();
         } else {
@@ -750,9 +691,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void startAllItemSync() {
-        if (nl.isPhoneOnline()) {
-
-
+        if (isNetworkAvailable(context)) {
             final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
             mainHandler.post(new Runnable() {
 
@@ -850,7 +789,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     public void startItemSync(int itemId) {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             mainHandler.post(new Runnable() {
 
                 @Override

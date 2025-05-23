@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +50,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickListener  {
     private RecyclerView recyclerView;
@@ -120,7 +120,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         }
 
         /*OD Access Token API*/
-        if(isOnline(getApplicationContext())){
+        if(isNetworkAvailable(getApplicationContext())){
             GetAccessToken();
         }else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
@@ -145,7 +145,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     //Toast.makeText(DownloadFarmPlanActivity.this,odAccessToken, Toast.LENGTH_SHORT).show();
                     Log.e("OD_AccessTOKEN",odAccessToken);
 
-                    if(isOnline(getApplicationContext())){
+                    if(isNetworkAvailable(getApplicationContext())){
                         DownloadFormList();
                     }else {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
@@ -408,17 +408,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
     }
 
-
-    public boolean isOnline(Context c){
-        ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        @SuppressLint("MissingPermission") NetworkInfo ni=cm.getActiveNetworkInfo();
-        if(ni !=null && ni.isConnectedOrConnecting()){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     @Override
     public void onClick(String fileUrl, String fileName) {
 
@@ -429,24 +418,15 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         String[] separated1 = currentString1.split("/");
         String finalFilepath1 = separated1[1].trim();
 
-
-        // Log.d("FINALRootObj",finalFilepath1);
-        // Log.d("FINALFilePATH",finalFilepath);
-
         String chapterNumbe1r = finalFilepath1;
         int index = chapterNumbe1r.indexOf(".");
-        String finalFilepathPdf1 = chapterNumbe1r.substring(0,index);
-
-        //String path = String.valueOf(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS+"/"+finalFilepath1);
-
-
         String path = (dir+"/"+finalFilepath1);
         File fileChk = new File(path);
         if (fileChk.exists()) {
             showAlertIsDownloadAgain("File is Already Available,Do You want to download it Again!!");
         } else {
             // ...
-            if(isOnline(getApplicationContext())){
+            if(isNetworkAvailable(getApplicationContext())){
                 getDownloadUrl();
                 Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
             }else {
@@ -498,7 +478,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         builder.setTitle(R.string.Alert_txt);
         builder.setCancelable(false);
         builder.setPositiveButton("YES", (DialogInterface.OnClickListener) (dialog, which) -> {
-            if(isOnline(getApplicationContext())){
+            if(isNetworkAvailable(getApplicationContext())){
                 getDownloadUrl();
                 Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
             }else {

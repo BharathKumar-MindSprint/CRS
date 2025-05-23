@@ -1,6 +1,5 @@
 package com.olam.digital.ofis.tasks;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,53 +45,13 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONArray;
 import android.os.Handler;
@@ -116,6 +75,8 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 /**
  * Created by ben on 24/02/16.
@@ -189,7 +150,7 @@ public class SyncAllTask extends SyncTask {
         SyncTaskOperationType op = params[0];
 
         if (op == SyncTaskOperationType.CHECK_VERSION) {
-            if (isPhoneOnline()) {
+            if (isNetworkAvailable(context)) {
 
                 try {
                     checkVersion();
@@ -2054,7 +2015,7 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
-                    if (!InternetConnectionHelper.isInternetAvailable(context)) {
+                    if (!isNetworkAvailable(context)) {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         return;
                     }

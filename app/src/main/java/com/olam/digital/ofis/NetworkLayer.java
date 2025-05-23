@@ -9,9 +9,6 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -126,7 +123,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private Cursor networkQueueItems;
     //private Handler handler;
     private ProgressDialog pd = null;
-    private boolean gpsSynced = false;
     private boolean isGpsSyncProcessing = false;
 
     private OFISRoomDB db;
@@ -173,14 +169,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         res = res_;
         this.dl = new DataLayer(res, context);
         this.db = OFISRoomDB.getDbInstance(context);
-    }
-
-    public boolean isPhoneOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     // Array Object created
@@ -6316,7 +6304,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         isGpsSyncProcessing = false;
-                        gpsSynced = false;
+                        boolean gpsSynced = false;
                     }
                 });
             }

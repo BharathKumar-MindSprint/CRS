@@ -16,3 +16,5 @@ local.properties
 .idea
 app/schemas/com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB
 *.aab
+*.apk
+*output-metadata.json
