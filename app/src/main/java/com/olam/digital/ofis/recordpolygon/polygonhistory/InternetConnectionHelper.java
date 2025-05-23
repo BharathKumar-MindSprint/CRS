@@ -3,7 +3,6 @@ package com.olam.digital.ofis.recordpolygon.polygonhistory;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 public class InternetConnectionHelper {
 
     public static boolean isInternetAvailable(Context context) {
