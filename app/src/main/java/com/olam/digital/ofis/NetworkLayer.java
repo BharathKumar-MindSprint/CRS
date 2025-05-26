@@ -1334,7 +1334,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             trainingRecord.close();
         }
     }
-    
+
 
 
     private void postTransaction(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {

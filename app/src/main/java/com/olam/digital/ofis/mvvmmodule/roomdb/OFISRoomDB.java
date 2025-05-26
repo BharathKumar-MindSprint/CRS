@@ -48,10 +48,15 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
         DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class,
         //Version 18
-        Country.class,
+//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+//                Children.class,  Country.class,
+
+
         },
-        version = 18,
-        autoMigrations ={@AutoMigration(from =17, to=18)})
+        version = 17
+       // autoMigrations ={@AutoMigration(from =17, to=18)}
+        )
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
