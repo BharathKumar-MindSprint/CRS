@@ -901,7 +901,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             //postTransaction(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("trainingrecord")) {
             //     syncTasks(OFISDBContract.Task.COLUMN_NAME_SYNCED);
-            postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
+            syncCapturedTraineeSign(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("phonenumbers")) {
             postPhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("farmer_photo")) {
@@ -1189,7 +1189,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+    private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId, String sessionId) {
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         RequestBody requestBody = null;
 
@@ -1214,6 +1214,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME)));
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                    jsonObject.put("sessionId", sessionId);
 
                     jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID)));
 
@@ -1283,6 +1284,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
+                                attendee.put("signature", trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE)));
 
                                 attendeesJSON.put(attendee);
 
@@ -7158,6 +7160,105 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.arg2 = progress;
             msg.obj = String.valueOf(res.getString(R.string.consent_not_synced));
             handler.dispatchMessage(msg);
+        }
+    }
+
+    public void syncCapturedTraineeSign(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId) {
+
+        try {
+            final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
+            Cursor traineeAttendeeById = dl.getAllTraineeDataByRecordId(trainingRecordId);
+            final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
+            final String endpoint = "ofistraining/signature/upload";
+
+            List<String> attendeeSignature = new ArrayList<>();
+            List<Long> ids = new ArrayList<>();
+            boolean isFileExists = false;
+            if (traineeAttendeeById.getCount() > 0) {
+                while (traineeAttendeeById.moveToNext()) {
+                    String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                    if (signatures != null) {
+                        isFileExists = true;
+                        attendeeSignature.add(signatures);
+                        ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ID)));
+                    }
+                }
+
+                if (isFileExists) {
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                    for (int i = 0; i < attendeeSignature.size(); i++) {
+                        String signNatureName = attendeeSignature.get(i);
+                        File directory = new File(context.getFilesDir(), "signatures");
+                        File imageFile = new File(directory, signNatureName);
+                        RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, imageFile);
+                        builder.addFormDataPart("signature", attendeeSignature.get(i), fileBody);
+                    }
+
+
+                    RequestBody requestBody = builder.build();
+
+                    okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            if (response.isSuccessful() && response.body() != null) {
+                                String responseBody = response.body().string();
+                                Log.d("Response_Upload", response.body().toString());
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(responseBody);
+                                    String sessionId = jsonObject.getString("sessionId");
+                                    postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId, sessionId);
+
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+
+
+
+
+                            } else {
+                                if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                                    try {
+                                        FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting training photo");
+                                    } catch (Exception e) {
+                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                    }
+                                    Log.d("UPLOAD_FILE_FAILURE", "1");
+                                } else {
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training photo");
+                                    Log.d("Error in Upload Docs", response.toString());
+                                }
+                            }
+                            response.close();
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            Log.d("UPLOAD_FILE_FAILURE", e.toString());
+                            try {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
+                            } catch (Exception onfailEx) {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training photo");
+                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                onfailEx.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+
+            if(!isFileExists) {
+                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId,null);
+            }
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 }

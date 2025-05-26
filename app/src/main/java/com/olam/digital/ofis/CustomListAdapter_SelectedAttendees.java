@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -42,7 +43,9 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private HashMap<Long,Integer> farmerAttendeeList;
     private long trainingRecordId;
 
-    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,DataLayer dl_,HashMap<Long,Integer> farmerAttendeeList,long trainingRecordId) {
+    Boolean signatureAllowed;
+
+    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_, DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -56,6 +59,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.dl=dl_;
         this.farmerAttendeeList=farmerAttendeeList;
         this.trainingRecordId=trainingRecordId;
+        this.signatureAllowed = signatureAllowed;
     }
 
     @Override
@@ -67,10 +71,19 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
         super.bindView(view, context, cursor);
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
-        LinearLayout attendeesLayout=view.findViewById(R.id.addAttndeesLayout);
         ImageView imageView = (ImageView) view.findViewById(R.id.deleteItem);
         ImageView tvAddAttendee=(ImageView) view.findViewById(R.id.addTrainingAttendeesIv);
+        ImageButton signatureAttendee = (ImageButton) view.findViewById(R.id.signatureAttendee);
         TextView tvViewAttendees=(TextView) view.findViewById(R.id.tvViewAddendees);
+        ImageButton attendeeSignature = (ImageButton) view.findViewById(R.id.attendeeSignatureDisplay);
+        LinearLayout attendeeSignatureLayout = (LinearLayout) view.findViewById(R.id.attendeeSignatureLayout);
+        if (signatureAllowed) {
+            signatureAttendee.setVisibility(View.VISIBLE);
+            attendeeSignatureLayout.setVisibility(View.VISIBLE);
+        } else {
+            signatureAttendee.setVisibility(View.GONE);
+            attendeeSignatureLayout.setVisibility(View.GONE);
+        }
         tvViewAttendees.setPaintFlags(tvViewAttendees.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         final TextView trainingAttendeeId = (TextView) view.findViewById(R.id.trainingAttendeeId);
@@ -78,8 +91,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
         if (readOnlyMode) {
             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-            LinearLayout deleteItemWrapper = (LinearLayout) view.findViewById(R.id.deleteItemWrapper);
-            deleteItemWrapper.setVisibility(View.GONE);
+            imageView.setVisibility(View.GONE);
             LinearLayout itemTextContainer = (LinearLayout) view.findViewById(R.id.itemTextContainer);
             LinearLayout.LayoutParams llp = (LinearLayout.LayoutParams) itemTextContainer.getLayoutParams();
             llp.weight = 8;
@@ -136,7 +148,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                     tvViewAttendees.setVisibility(View.INVISIBLE);
                 }
 
-                attendeesLayout.setOnClickListener(view1 -> {
+                tvAddAttendee.setOnClickListener(view1 -> {
 
                     int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
                     long trainingRecordId = trainingRecord.trainingRecordId;
@@ -161,18 +173,29 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                     mContext.startActivity(addIntent);
                 });
             }else{
-                attendeesLayout.setVisibility(View.INVISIBLE);
+                tvAddAttendee.setVisibility(View.INVISIBLE);
                 tvViewAttendees.setVisibility(View.INVISIBLE);
             }
             // End
-
+            int itemId = Integer.parseInt(String.valueOf(trainingAttendeeId.getText()));
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int itemId = Integer.parseInt(String.valueOf(trainingAttendeeId.getText()));
                     trainingRecord.deleteTrainingAttendee(itemId);
                 }
             });
+
+            signatureAttendee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    trainingRecord.signTrainingAttendee(itemId);
+                }
+            });
+
+            int attendeeId = (!cursor.isNull(cursor.getColumnIndex(OFISDBContract.TrainingAttendee._ID))) ?
+                    cursor.getInt(cursor.getColumnIndex(OFISDBContract.TrainingAttendee._ID)) : -1;
+            attendeeSignature.setImageDrawable(null);
+            trainingRecord.showAttendeeSignature(attendeeId, attendeeSignature);
         } else  {
             // Confirmation screen
             // View Attendees logic
@@ -195,12 +218,12 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 //            });
 
             tvViewAttendees.setVisibility(View.GONE);
-            attendeesLayout.setVisibility(View.GONE);
+            tvAddAttendee.setVisibility(View.GONE);
 
 
             linearLayout.setBackgroundResource(0);
-            LinearLayout deleteItemWrapper = (LinearLayout) view.findViewById(R.id.deleteItemWrapper);
-            deleteItemWrapper.setVisibility(View.GONE);
+
+            imageView.setVisibility(View.GONE);
             LinearLayout itemTextContainer = (LinearLayout) view.findViewById(R.id.itemTextContainer);
             LinearLayout.LayoutParams llp = (LinearLayout.LayoutParams) itemTextContainer.getLayoutParams();
             llp.weight = 8;
