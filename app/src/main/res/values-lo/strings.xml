@@ -1051,6 +1051,9 @@
 
     <string name="mandate_survey">ກະລຸນາສຳເລັດການສຳຫຼວດທີ່ຈຳເປັນກ່ອນ!</string>
     <string name="mandate_survey_not_synced">ຂໍອະໄພ, ແຕ່ການສຳຫຼວດທີ່ຈຳເປັນຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງການສຳຫຼວດທີ່ຈຳເປັນກ່ອນ</string>
+    <string name="stakeholder_not_synced">ຂໍອະໄພ, ແຕ່ stakeholder ຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງ stakeholder ກ່ອນ</string>
+    <string name="consent_not_synced">ຂໍອະໄພ, ແຕ່ການຍິນຍອມຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງການຍິນຍອມກ່ອນ</string>
+    <string name="survey_already_synced">ການສຳຫຼວດນີ້ໄດ້ຖືກຕອບໂດຍຜູ້ສຳຫຼວດຄົນອື່ນແລ້ວ. ກະລຸນາບັນທຶກແລະອັບເດດແອັບ OFIS ຂອງທ່ານ</string>
 </resources>
 
 
