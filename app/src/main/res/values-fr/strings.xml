@@ -1218,4 +1218,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="mandate_survey">Veuillez d\'abord compléter le sondage obligatoire !</string>
     <string name="mandate_survey_not_synced">Désolé, mais le sondage obligatoire n\'a pas encore été synchronisé. Veuillez d\'abord synchroniser le sondage obligatoire</string>
+    <string name="stakeholder_not_synced">Désolé, mais le stakeholder n\'a pas encore été synchronisé. Veuillez synchroniser le stakeholder d\'abord</string>
+    <string name="consent_not_synced">Désolé, mais le consentement n\'a pas encore été synchronisé. Veuillez synchroniser le consentement d\'abord</string>
+    <string name="survey_already_synced">Ce sondage a déjà été répondu par un autre enquêteur. Veuillez enregistrer et mettre à jour votre application OFIS</string>
+
 </resources>
