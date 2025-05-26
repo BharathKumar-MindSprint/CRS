@@ -2560,21 +2560,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
             isMandate = true;
-        } else if (moduleId == 0) {
-            if (disabled_months.contains(itemMonth)) {
-                if (!containsAny(readyToSyncSurvey, mandateSurveyList)){
-                    isMandate = true;
-                }
-            }
-        } else if (disabled_months.contains(itemMonth)) {
-            if (!containsAny(readyToSyncSurvey, mandateSurveyList)){
-                isMandate = true;
-            }
-        } else {
-            if (surveyYear < currentYear) {
-                isMandate = true;
-            }
+        } else if (disabled_months.contains(itemMonth) && !containsAny(readyToSyncSurvey, mandateSurveyList)) {
+            isMandate = true;
+        } else if (surveyYear < currentYear) {
+            isMandate = true;
         }
+
 
         return isMandate;
     }

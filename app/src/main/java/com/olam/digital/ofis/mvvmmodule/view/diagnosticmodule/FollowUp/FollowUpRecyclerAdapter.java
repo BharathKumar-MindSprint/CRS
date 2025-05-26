@@ -8,35 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.R;
-//import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
-import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
-import com.olam.digital.ofis.mvvmmodule.listener.OnItemSurveyClickListener;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecyclerAdapter.ViewHolder> {
     private ArrayList<String> items;
     private Context context;
-
     int newFollowCount;
     private int selectedPosition = RecyclerView.NO_POSITION;
-
-    private boolean isDiagnosticModuleEnabled;
     Intent in;
     boolean isCompleted;
-    private OnItemSurveyClickListener onItemSurveyClickListener;
-
     String moduleID;
 
     public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in, boolean isCompleted ,String moduleId) {
@@ -46,10 +35,6 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
         this.in = in;
         this.isCompleted = isCompleted;
         this.moduleID = moduleId;
-    }
-
-    public void setOnItemSurveyClickListener(OnItemSurveyClickListener clickListener) {
-        this.onItemSurveyClickListener = clickListener;
     }
 
     @NonNull
@@ -79,7 +64,6 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             super(itemView);
             itemTextView = itemView.findViewById(R.id.itemTextView);
             tickImageView = itemView.findViewById(R.id.tickImageView);
-
             itemView.setOnClickListener(this);
         }
 
@@ -93,11 +77,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             } else {
                 tickImageView.setVisibility(View.GONE);
             }
-
-
         }
-
-
 
         @Override
         public void onClick(View v) {
