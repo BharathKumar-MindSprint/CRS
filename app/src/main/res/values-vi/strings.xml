@@ -788,4 +788,9 @@
 
     <string name="mandate_survey">Vui lòng hoàn thành khảo sát bắt buộc trước!</string>
     <string name="mandate_survey_not_synced">Xin lỗi, nhưng khảo sát bắt buộc chưa được đồng bộ. Vui lòng đồng bộ khảo sát bắt buộc trước</string>
+    <string name="stakeholder_not_synced">Xin lỗi, nhưng stakeholder chưa được đồng bộ. Vui lòng đồng bộ stakeholder trước</string>
+    <string name="consent_not_synced">Xin lỗi, nhưng sự đồng ý chưa được đồng bộ. Vui lòng đồng bộ sự đồng ý trước</string>
+    <string name="survey_already_synced">Khảo sát này đã được trả lời bởi một người khảo sát khác. Vui lòng lưu và cập nhật ứng dụng OFIS của bạn</string>
+
+
 </resources>
