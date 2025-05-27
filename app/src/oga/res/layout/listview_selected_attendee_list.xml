@@ -76,7 +76,7 @@
                         android:layout_marginStart="2dp"
                         android:visibility="gone"
                         android:layout_gravity="center"
-                        android:background="@drawable/edit_plot_circular_button" />
+                        android:background="@drawable/signature_icon" />
 
                     <ImageView
                         android:id="@+id/addTrainingAttendeesIv"
