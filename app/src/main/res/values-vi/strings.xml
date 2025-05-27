@@ -788,4 +788,22 @@
 
     <string name="mandate_survey">Vui lòng hoàn thành khảo sát bắt buộc trước!</string>
     <string name="mandate_survey_not_synced">Xin lỗi, nhưng khảo sát bắt buộc chưa được đồng bộ. Vui lòng đồng bộ khảo sát bắt buộc trước</string>
+    <string name="supplier_and_surveys">Nhà cung cấp và khảo sát</string>
+    <string name="title_find_supplier_and_survey">Tìm kiếm nhà cung cấp</string>
+    <string name="select_supplier">Chọn nhà cung cấp</string>
+    <string name="supplier_not_found">Không tìm thấy nhà cung cấp</string>
+    <string name="supplier_id">Danh tính nhà cung cấp</string>
+    <string name="supplier_details">Chi tiết nhà cung cấp</string>
+    <string name="view_supplier">Hiển thị nhà cung cấp</string>
+    <string name="view_supplier_information">Xem chi tiết nhà cung cấp</string>
+    <string name="supplier_group">Nhóm nhà cung cấp</string>
+    <string name="supplier_type">Loại nhà cung cấp</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Tải lên bằng chứng</string>
+    <string name="supplier_survey">Khảo sát nhà cung cấp</string>
+    <string name="supplier_search_hint">Tìm kiếm theo Tên nhà cung cấp hoặc Mã nhà cung cấp</string>
+    <string name="evidence_is_missing">Bằng chứng bị thiếu</string>
+    <string name="spinner_supplier_group">Nhóm nhà cung cấp</string>
+
 </resources>

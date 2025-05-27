@@ -893,5 +893,23 @@
 
     <string name="mandate_survey">Por favor, complete primeiro a pesquisa obrigatória!</string>
     <string name="mandate_survey_not_synced">Desculpe, mas a pesquisa obrigatória ainda não foi sincronizada. Por favor, sincronize primeiro a pesquisa obrigatória</string>
+    <string name="supplier_and_surveys">Fornecedores e pesquisas</string>
+    <string name="title_find_supplier_and_survey">Pesquisar um fornecedor</string>
+    <string name="select_supplier">Selecione um fornecedor</string>
+    <string name="supplier_not_found">Fornecedor não encontrado</string>
+    <string name="supplier_id">Identidade do fornecedor</string>
+    <string name="supplier_details">Detalhes do fornecedor</string>
+    <string name="view_supplier">Exibir fornecedor</string>
+    <string name="view_supplier_information">Exibir detalhes do fornecedor</string>
+    <string name="supplier_type">Tipo de fornecedor</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Upload de evidências</string>
+    <string name="supplier_survey">Pesquisa de fornecedores</string>
+    <string name="evidence_is_missing">Faltam evidências</string>
+    <string name="supplier_search_hint">Pesquisar por nome do fornecedor ou identificação do fornecedor</string>
+    <string name="spinner_supplier_group">Grupo de fornecedores</string>
+    <string name="supplier_group">Grupo de fornecedores</string>
+
 </resources>
 

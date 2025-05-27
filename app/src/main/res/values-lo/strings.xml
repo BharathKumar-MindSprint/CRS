@@ -1051,6 +1051,26 @@
 
     <string name="mandate_survey">ກະລຸນາສຳເລັດການສຳຫຼວດທີ່ຈຳເປັນກ່ອນ!</string>
     <string name="mandate_survey_not_synced">ຂໍອະໄພ, ແຕ່ການສຳຫຼວດທີ່ຈຳເປັນຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງການສຳຫຼວດທີ່ຈຳເປັນກ່ອນ</string>
+    <string name="supplier_and_surveys">ຜູ້ສະຫນອງແລະການສໍາຫຼວດ</string>
+    <string name="title_find_supplier_and_survey">ຄົ້ນຫາຜູ້ສະຫນອງ</string>
+    <string name="select_supplier">ເລືອກຜູ້ສະຫນອງ</string>
+    <string name="supplier_not_found">ບໍ່ພົບຜູ້ສະໜອງ</string>
+    <string name="supplier_id">ຕົວຕົນຂອງຜູ້ຜະລິດ</string>
+    <string name="supplier_details">ລາຍລະອຽດຜູ້ສະຫນອງ</string>
+    <string name="view_supplier">ຜູ້ຜະລິດສະແດງ</string>
+    <string name="view_supplier_information">ເບິ່ງລາຍລະອຽດຜູ້ສະຫນອງ</string>
+    <string name="supplier_type">ປະເພດຜູ້ສະຫນອງ</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">ອັບໂຫຼດຫຼັກຖານ</string>
+    <string name="supplier_survey">ການສໍາຫຼວດຜູ້ສະຫນອງ</string>
+    <string name="evidence_is_missing">ຫຼັກຖານຂາດຫາຍໄປ</string>
+    <string name="supplier_group">ກຸ່ມຜູ້ສະຫນອງ</string>
+    <string name="supplier_search_hint">ຄົ້ນຫາໂດຍຊື່ຜູ້ສະຫນອງຫຼື ID ຜູ້ສະຫນອງ</string>
+    <string name="spinner_supplier_group">ກຸ່ມຜູ້ສະຫນອງ</string>
+
+
+
 </resources>
 
 

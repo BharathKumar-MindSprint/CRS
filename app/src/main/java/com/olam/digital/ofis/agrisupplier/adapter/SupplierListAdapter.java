@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.agrisupplier.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,10 @@ import java.util.List;
 public class SupplierListAdapter extends RecyclerView.Adapter<SupplierListAdapter.ViewHolder> {
     List<SupplierDto> supplierList = new ArrayList<>();
     SupplierItemClickListener listener;
-    public SupplierListAdapter(List<SupplierDto> supplierList) {
+    private Resources res;
+    public SupplierListAdapter(List<SupplierDto> supplierList, Resources res) {
         this.supplierList = supplierList;
+        this.res = res;
     }
 
     public void setOnItemClickListener(SupplierItemClickListener listener) {
@@ -52,11 +55,12 @@ public class SupplierListAdapter extends RecyclerView.Adapter<SupplierListAdapte
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull SupplierListAdapter.ViewHolder holder, int position) {
         SupplierDto supplier = supplierList.get(position);
         holder.supplierName.setText(supplier.getSupplierName());
-        holder.supplierId.setText("Supplier Id: " + supplier.getSupplierId());
+        holder.supplierId.setText(res.getString(R.string.supplier_id) + ": " +supplier.getSupplierId());
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override

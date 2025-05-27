@@ -16,7 +16,7 @@ public interface SupplierTypeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSupplierType(List<SupplierType> supplierTypes);
 
-    @Query("SELECT * FROM supplier_type")
+    @Query("SELECT * FROM supplier_type LIMIT 2")
     List<SupplierTypeDto> getAllSupplierType();
 
     @Query("SELECT type FROM supplier_type")

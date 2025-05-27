@@ -1218,4 +1218,22 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="mandate_survey">Veuillez d\'abord compléter le sondage obligatoire !</string>
     <string name="mandate_survey_not_synced">Désolé, mais le sondage obligatoire n\'a pas encore été synchronisé. Veuillez d\'abord synchroniser le sondage obligatoire</string>
+    <string name="supplier_and_surveys">Fournisseurs et enquêtes</string>
+    <string name="title_find_supplier_and_survey">Trouver un fournisseur</string>
+    <string name="select_supplier">Sélectionner un fournisseur</string>
+    <string name="supplier_not_found">Fournisseur non trouvé</string>
+    <string name="supplier_id">Identité du fournisseur</string>
+    <string name="supplier_details">Détails du fournisseur</string>
+    <string name="view_supplier">Voir le fournisseur</string>
+    <string name="view_supplier_information">Voir les informations sur le fournisseur</string>
+    <string name="supplier_type">Type de fournisseur</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Téléchargement de preuves</string>
+    <string name="supplier_survey">Enquête auprès des fournisseurs</string>
+    <string name="evidence_is_missing">Les preuves sont manquantes</string>
+    <string name="supplier_search_hint">Recherche par nom ou numéro d\'identification du fournisseur</string>
+    <string name="spinner_supplier_group">Groupe de fournisseurs</string>
+    <string name="supplier_group">Groupe de fournisseurs</string>
+
 </resources>

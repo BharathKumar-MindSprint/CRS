@@ -888,5 +888,22 @@
 
     <string name="mandate_survey">¡Por favor, complete primero la encuesta obligatoria!</string>
     <string name="mandate_survey_not_synced">Lo siento, pero la encuesta obligatoria aún no se ha sincronizado. Por favor, sincronice primero la encuesta obligatoria</string>
+    <string name="supplier_and_surveys">Proveedores y encuestas</string>
+    <string name="title_find_supplier_and_survey">Buscar un proveedor</string>
+    <string name="select_supplier">Seleccionar un proveedor</string>
+    <string name="supplier_search_hint">Buscar por nombre o ID de proveedor</string>
+    <string name="supplier_not_found">Proveedor no encontrado</string>
+    <string name="spinner_supplier_group">Grupo de proveedores</string>
+    <string name="supplier_id">Identidad del proveedor</string>
+    <string name="supplier_details">Datos del proveedor</string>
+    <string name="view_supplier">Ver proveedor</string>
+    <string name="view_supplier_information">Ver detalles del proveedor</string>
+    <string name="supplier_group">Grupo de proveedores</string>
+    <string name="supplier_type">Tipo de proveedor</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Carga de pruebas</string>
+    <string name="supplier_survey">Encuesta a proveedores</string>
+    <string name="evidence_is_missing">Faltan pruebas</string>
+    <string name="limiter">%1$s - %2$s</string>
 </resources>
 
