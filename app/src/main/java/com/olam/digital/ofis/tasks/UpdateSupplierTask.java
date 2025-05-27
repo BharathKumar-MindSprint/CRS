@@ -10,10 +10,12 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierMappingDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSubmittedModuleResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyAssignments;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyResponse;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -63,7 +65,8 @@ public class UpdateSupplierTask extends DatabaseTask {
     protected String doInBackground(JSONObject... params) {
         try {
             JSONObject supplierResponseObject = params[0];
-            //JSONObject supplierSurveys = params[1];
+            JSONObject supplierSurveys = params[1];
+            JSONObject supplierSurveySubmittedModulesResponse = params[2];
 
             if (supplierResponseObject != null) {
                 SupplierResponse supplierResponse = new Gson().fromJson(supplierResponseObject.toString(), SupplierResponse.class);
@@ -78,7 +81,6 @@ public class UpdateSupplierTask extends DatabaseTask {
                 roomDB.supplierDao().insertCrossRefs(supplierSupplierGroupCrossRefs);
             }
 
-/*
             if (supplierSurveys != null) {
                 SupplierModuleResponse supplierModuleResponse = new Gson().fromJson(supplierSurveys.toString(), SupplierModuleResponse.class);
                 List<SupplierSurveyResponse> supplierSurveyResponse = supplierModuleResponse.getSupplierSurveyModules();
@@ -436,7 +438,14 @@ public class UpdateSupplierTask extends DatabaseTask {
                     }
                 }
             }
-*/
+
+            if (supplierSurveySubmittedModulesResponse != null) {
+                SupplierSubmittedModuleResponse supplierSubmittedModuleResponse = new Gson().fromJson(supplierSurveySubmittedModulesResponse.toString(), SupplierSubmittedModuleResponse.class);
+                List<SupplierSubmittedModules> supplierSubmittedModules = supplierSubmittedModuleResponse.supplierModuleData;
+
+                roomDB.supplierSubmittedModuleDao().insertSubmittedModule(supplierSubmittedModules);
+            }
+
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("UpdateSupplierResponse: Error Saving Supplier response", e));
             e.printStackTrace();
@@ -456,7 +465,7 @@ public class UpdateSupplierTask extends DatabaseTask {
 
         return supplierSupplierGroupCrossRefs;
     }
-/*
+
     private List<DmModuleAssignments> generateModuleAssignments(SupplierSurveyAssignments assignmentsModels, int moduleId) {
         List<DmModuleAssignments> dmModuleAssignments = new ArrayList<>();
         String assignmentType = String.valueOf(assignmentsModels.getAssignmentType());
@@ -467,6 +476,4 @@ public class UpdateSupplierTask extends DatabaseTask {
 
         return dmModuleAssignments;
     }
-
- */
 }

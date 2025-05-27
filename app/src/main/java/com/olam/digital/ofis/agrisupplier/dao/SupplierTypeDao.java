@@ -25,6 +25,6 @@ public interface SupplierTypeDao {
     @Query("DELETE FROM supplier_type")
     void deleteAll();
 
-    @Query("SELECT type FROM supplier_type WHERE supplierTypeId = :supplierTypeId")
-    String getSupplierTypeNameById(Integer supplierTypeId);
+    @Query("SELECT * FROM supplier_type WHERE supplierTypeId = :supplierTypeId")
+    SupplierTypeDto getSupplierTypeNameById(Integer supplierTypeId);
 }

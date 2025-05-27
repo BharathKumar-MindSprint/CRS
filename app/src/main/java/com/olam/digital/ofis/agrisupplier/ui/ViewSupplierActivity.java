@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.agrisupplier.ui;
 
+import static com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity.getSupplierTypeByLanguage;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -23,6 +25,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.agrisupplier.adapter.SupplierSurveyListAdapter;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierTypeDto;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierWithGroups;
 import com.olam.digital.ofis.agrisupplier.listener.SupplierSurveyItemClickListener;
@@ -57,6 +60,11 @@ public class ViewSupplierActivity extends BaseListActivity {
         }
 
         setUiWidgets();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         intiSurveys();
     }
 
@@ -79,16 +87,16 @@ public class ViewSupplierActivity extends BaseListActivity {
         TextView viewSupplierInfo = findViewById(R.id.viewSupplierInfo);
         ConstraintLayout clViewSupplierInfo = findViewById(R.id.clSupplierInfo);
 
-        SupplierWithGroups supplierGroup = ofisRoomDB.supplierDao().getSupplierWithGroups(supplier.getSupplierId());
+        SupplierWithGroups supplierGroup = ofisRoomDB.supplierDao().getSupplierWithGroups(supplier.getId());
         StringBuilder groupNames = getGroupNames(supplierGroup);
-        String supplierTypeName = ofisRoomDB.supplierTypeDao().getSupplierTypeNameById(supplier.getSupplierTypeId());
+        SupplierTypeDto supplierTypeDto = ofisRoomDB.supplierTypeDao().getSupplierTypeNameById(supplier.getSupplierTypeId());
         String mobileNumber = supplier.getPrimaryPhoneNumber() + ", " + supplier.getSecondaryPhoneNumber();
 
         supplierName.setText(supplier.getSupplierName());
-        supplierId.setText(String.valueOf(supplier.getSupplierId()));
+        supplierId.setText(supplier.getSupplierId());
         setBoldLabelText(phoneNumber, res.getString(R.string.PhoneNumberHint), mobileNumber);
         setBoldLabelText(supplierGroupName, res.getString(R.string.supplier_group), groupNames.toString());
-        setBoldLabelText(supplierType, res.getString(R.string.supplier_type), supplierTypeName);
+        setBoldLabelText(supplierType, res.getString(R.string.supplier_type), getSupplierTypeByLanguage(supplierTypeDto));
 
         viewSupplierInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +146,10 @@ public class ViewSupplierActivity extends BaseListActivity {
                 Intent intent = new Intent(context, SupplierSurveyActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Utilities.SUPPLIER, supplierSurveyDto);
-                bundle.putLong("SupplierId", supplier.getId());
+                Long supplierId = supplier.getId();
+                bundle.putString("SupplierId", "S-" + supplierId);
+                bundle.putString("SupplierName", supplier.getSupplierName());
+                bundle.putString("SupplierDisplayId", supplier.getSupplierId());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

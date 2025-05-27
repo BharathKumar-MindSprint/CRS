@@ -14,7 +14,7 @@ public class SupplierDto implements Parcelable {
     @SerializedName("supplierName")
     private String supplierName;
     @SerializedName("supplierId")
-    private Long supplierId;
+    private String supplierId;
     @SerializedName("primaryPhoneNumber")
     private String primaryPhoneNumber;
     @SerializedName("secondaryPhoneNumber")
@@ -28,7 +28,19 @@ public class SupplierDto implements Parcelable {
     @SerializedName("productId")
     private Integer productId;
 
-    public SupplierDto(Long id, String supplierName, Long supplierId, String primaryPhoneNumber, String secondaryPhoneNumber, Integer supplierGroupId, Integer supplierTypeId, Integer countryId, Integer productId) {
+    @SerializedName("region")
+    public String region;
+
+    @SerializedName("street")
+    public String street;
+
+    @SerializedName("city")
+    public String city;
+
+    @SerializedName("district")
+    public String district;
+
+    public SupplierDto(Long id, String supplierName, String supplierId, String primaryPhoneNumber, String secondaryPhoneNumber, Integer supplierGroupId, Integer supplierTypeId, Integer countryId, Integer productId, String region, String street, String city, String district) {
         this.id = id;
         this.supplierName = supplierName;
         this.supplierId = supplierId;
@@ -38,8 +50,11 @@ public class SupplierDto implements Parcelable {
         this.supplierTypeId = supplierTypeId;
         this.countryId = countryId;
         this.productId = productId;
+        this.region = region;
+        this.street = street;
+        this.city = city;
+        this.district = district;
     }
-
 
     protected SupplierDto(Parcel in) {
         if (in.readByte() == 0) {
@@ -48,11 +63,7 @@ public class SupplierDto implements Parcelable {
             id = in.readLong();
         }
         supplierName = in.readString();
-        if (in.readByte() == 0) {
-            supplierId = null;
-        } else {
-            supplierId = in.readLong();
-        }
+        supplierId = in.readString();
         primaryPhoneNumber = in.readString();
         secondaryPhoneNumber = in.readString();
         if (in.readByte() == 0) {
@@ -75,6 +86,10 @@ public class SupplierDto implements Parcelable {
         } else {
             productId = in.readInt();
         }
+        region = in.readString();
+        street = in.readString();
+        city = in.readString();
+        district = in.readString();
     }
 
     public static final Creator<SupplierDto> CREATOR = new Creator<SupplierDto>() {
@@ -105,11 +120,11 @@ public class SupplierDto implements Parcelable {
         this.supplierName = supplierName;
     }
 
-    public Long getSupplierId() {
+    public String getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(Long supplierId) {
+    public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;
     }
 
@@ -161,6 +176,37 @@ public class SupplierDto implements Parcelable {
         this.productId = productId;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 
     @Override
     public int describeContents() {
@@ -176,12 +222,7 @@ public class SupplierDto implements Parcelable {
             dest.writeLong(id);
         }
         dest.writeString(supplierName);
-        if (supplierId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(supplierId);
-        }
+        dest.writeString(supplierId);
         dest.writeString(primaryPhoneNumber);
         dest.writeString(secondaryPhoneNumber);
         if (supplierGroupId == null) {
@@ -208,5 +249,9 @@ public class SupplierDto implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(productId);
         }
+        dest.writeString(region);
+        dest.writeString(street);
+        dest.writeString(city);
+        dest.writeString(district);
     }
 }

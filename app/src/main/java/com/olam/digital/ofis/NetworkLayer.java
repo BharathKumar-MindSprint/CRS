@@ -30,6 +30,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierWithGroups;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
@@ -936,6 +937,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
         else if (itemType.equalsIgnoreCase("update stakeholder")) {
             postStakeHolderData(networkQueueItemId, handler, msg, total, progress, itemId);
+        }
+        else if (itemType.equals("Supplier Survey")) {
+            syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "Supplier Survey");
         }
 
 
@@ -6842,27 +6846,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     public void syncCapturedFileData(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) {
+        boolean isSupplierSurvey = itemType.equalsIgnoreCase("Supplier Survey");
 
-        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+        if (!isSupplierSurvey && !dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
             msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
-            long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            String farmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            boolean isConsentAvailableToSync = isSupplierSurvey || dl.getIsConsentAvailableToSync(Long.parseLong(farmerId));
 
-            boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
-            if (!isConsentAvailableToSync) {
-                Boolean isMandateSurveySynced = getIsMandateSurveySynced(farmerId, 0);
+            if (!isConsentAvailableToSync || isSupplierSurvey) {
+                boolean isMandateSurveySynced = isSupplierSurvey || getIsMandateSurveySynced(Long.parseLong(farmerId), 0);
                 if (isMandateSurveySynced) {
                     try {
                         int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                         int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
 
-                        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                         final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
-                        final String endpoint = "ofissurvey/image/upload";
+                        final String endpoint =  itemType.equalsIgnoreCase("Supplier Survey") ? "ofissupplier/survey/image/upload" : "ofissurvey/image/upload";
+                        final String type = itemType.equalsIgnoreCase("Supplier Survey") ? "ASC" : "DM";
 
                         List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
                         boolean isFileNotExists = false;
@@ -6871,8 +6876,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             String questionId = String.valueOf(questionIds.get(k));
                             List<String> filePaths = new ArrayList<>();
                             List<String> fileName = new ArrayList<>();
-                            List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-                            dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(String.valueOf(farmerId), questionId, plotId);
+                            List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getUnSyncedFile(farmerId, questionId, plotId);
                             List<Long> ids = new ArrayList<>();
                             if (!dmComplaintFileTableList.isEmpty()) {
                                 isFileNotExists = true;
@@ -6887,88 +6891,80 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 continue;
                             }
 
-                            List<MultipartBody.Part> parts = new ArrayList<>();
                             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                             for (int i = 0; i < filePaths.size(); i++) {
                                 File file = new File(filePaths.get(i));
                                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
                                 builder.addFormDataPart("files", fileName.get(i), fileBody);
                             }
-                            builder.addFormDataPart("type", "DM");
+                            builder.addFormDataPart("type", type);
 
                             RequestBody requestBody = builder.build();
                             Log.d("question", String.valueOf(k));
 
-                            if (!endpoint.isEmpty()) {
-                                int finalK = k;
-                                okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
-                                    @Override
-                                    public void onResponse(Call call, Response postResponse) {
-                                        Log.d("UPLOAD_FILE_SUCCESS", "1");
+                            okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                                @Override
+                                public void onResponse(Call call, Response postResponse) {
+                                    if (postResponse.isSuccessful()) {
+                                        for (int i = 0; i < ids.size(); i++) {
+                                            db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
+                                        }
 
-                                        if (postResponse.isSuccessful()) {
-                                            Log.d("UPLOAD_FILE_SUCCESS", "2");
-
-                                            for (int i = 0; i < ids.size(); i++) {
-                                                db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
+                                        int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
+                                        if (fileSyncedCount == 0) {
+                                            if(itemType.equalsIgnoreCase("DMSurvey")) {
+                                                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                                             }
-
-                                            int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
-
-                                            if (fileSyncedCount == 0) {
-                                                if(itemType.equalsIgnoreCase("DMSurvey")) {
-                                                    postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                                }
-                                                else {
-                                                    postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                                }
+                                            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
+                                                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                                             }
-
+                                            else {
+                                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                                            }
+                                        }
+                                    } else {
+                                        if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                            try {
+                                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting farm location");
+                                            } catch (Exception e) {
+                                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                            }
                                         } else {
-
-                                            // Added
-                                            if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
-                                                try {
-                                                    FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting farm location");
-                                                } catch (Exception e) {
-                                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                                }
-                                                Log.d("UPLOAD_FILE_FAILURE", "1");
-                                            } else {
-                                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
-                                                Log.d("Error in Upload Docs", postResponse.toString());
-                                            }
-                                        }
-                                        postResponse.close();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call call, IOException e) {
-                                        Log.d("UPLOAD_FILE_FAILURE", e.toString());
-                                        try {
-                                            String failureMessage = res.getString(R.string.networking_error);
-                                            if (e != null) {
-                                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                            }
-                                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                        } catch (Exception onfailEx) {
-                                            String failureMessage = res.getString(R.string.networking_error);
-                                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                            FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
-                                            onfailEx.printStackTrace();
+                                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
+                                            Log.d("Error in Upload Docs", postResponse.toString());
                                         }
                                     }
-                                });
+                                    postResponse.close();
+                                }
 
-                            }
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    try {
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        if (e != null) {
+                                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                        }
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                    } catch (Exception onfailEx) {
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                        onfailEx.printStackTrace();
+                                    }
+                                }
+                            });
+
                         }
 
                         if(!isFileNotExists) {
                             if(itemType.equalsIgnoreCase("DMSurvey")) {
                                 postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                             }
-                            else {
+                            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
                                 postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                            }
+                            else {
+                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                             }
                         }
 
@@ -6990,8 +6986,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 handler.dispatchMessage(msg);
             }
         }
-
-
     }
 
     private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
@@ -7121,4 +7115,143 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             handler.dispatchMessage(msg);
         }
     }
+
+    private void postSupplierSurvey(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
+        String endPoint = "ofissupplier/supplier/mobile/syncSupplierSurvey";
+
+        try {
+            String supplierId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+            String location = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
+            String submissionDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT));
+            String id = supplierId.substring(2);
+
+            SupplierWithGroups supplierWithGroups = db.supplierDao().getSupplierWithGroups(Long.valueOf(id));
+            int vendorGroupId = supplierWithGroups.supplierGroups.get(0).supplierGroupId;
+
+            JSONObject hashMap = new JSONObject();
+            hashMap.put("supplierId", id);
+            hashMap.put("moduleId", moduleId);
+            hashMap.put("enumeratorId", Utilities.getFromSharedPrefs(context));
+            hashMap.put("submissionDate", submissionDate);
+            hashMap.put("productId", supplierWithGroups.supplier.productId);
+            hashMap.put("vendorGroupId", vendorGroupId);
+            hashMap.put("location", location);
+
+            JSONArray answers = new JSONArray();
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), supplierId, 0);
+
+            if (!dmSurveyAnswerTableList.isEmpty()) {
+                for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+
+                    JSONObject ans = new JSONObject();
+                    ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
+                    ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
+                    ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
+                    ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+
+                    List<DmComplaintFileTable> complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), supplierId, 0, 0);
+
+                    JSONArray jsonArray = new JSONArray();
+                    for (int j = 0; j < complaintFileTableList.size(); j++) {
+                        jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
+                    }
+
+                    ans.put("captureProof", jsonArray);
+                    answers.put(ans);
+                }
+            }
+
+            hashMap.put("answers", answers);
+
+            okHttpPost(context, endPoint, hashMap, new Callback() {
+                @Override
+                public void onResponse(Call call, Response postResponse) {
+                    String statusMessage;
+                    if (postResponse.isSuccessful()) {
+                        try {
+                            db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId), supplierId, 0);
+                            db.supplierSubmittedModuleDao().updateSyncStatus(String.valueOf(moduleId), id);
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(itemId, handler);
+                        } catch (Exception e) {
+                            updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting supplier survey");
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            if (postResponse.code() == 400 && postResponse.body() != null) {
+                                JSONObject jsonObject = new JSONObject(postResponse.body().string());
+                                String errorCode = jsonObject.optString("errorCode");
+                                String errorItem = jsonObject.optString("errorMsg");
+
+                                if (errorCode.equalsIgnoreCase("3035")) {
+                                    handler.postDelayed(() -> {
+                                        popupMsgInfo(errorItem);
+                                        return;
+                                    }, 500);
+
+                                    db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId), supplierId, 0);
+                                    db.supplierSubmittedModuleDao().updateSyncStatus(String.valueOf(moduleId), id);
+                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+
+                                    statusMessage = res.getString(R.string.item_synced);
+                                    msg.what = 1;
+                                    msg.arg1 = total;
+                                    msg.arg2 = progress;
+                                    msg.obj = statusMessage;
+                                    handler.dispatchMessage(msg);
+                                    syncNetworkQueue(itemId, handler);
+                                }
+                                else {
+                                    updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting supplier survey");
+                                }
+                            }
+                            else if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting farm location");
+                            } else {
+                                updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting supplier survey");
+                            }
+                        } catch (JSONException | IOException e) {
+                            updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting supplier survey");
+                        }
+                    }
+                    postResponse.close();
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    try {
+                        recordFailedUpload(0, 0, networkQueueItemId);
+
+                        String failureMessage = res.getString(R.string.networking_error);
+                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                    } catch (Exception onFailEx) {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                        onFailEx.printStackTrace();
+                    }
+                }
+
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateErrorResponse(int networkQueueItemId, Handler handler, Message msg, int total, int progress, String message) {
+        recordFailedUpload(0, 0, networkQueueItemId);
+        postFailureMessage(handler, null, msg, 2, total, progress, null, message);
+        FirebaseCrash.report(new Exception(res.getString(R.string.item_sync_error) + " : " + message));
+    }
+
 }

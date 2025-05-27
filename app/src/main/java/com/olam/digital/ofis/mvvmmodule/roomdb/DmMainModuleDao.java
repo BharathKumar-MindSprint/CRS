@@ -5,10 +5,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 
 import java.util.List;
-import java.util.Set;
 
 @Dao
 public interface DmMainModuleDao {
@@ -54,7 +54,7 @@ public interface DmMainModuleDao {
 
     @Query("""
         SELECT * FROM DmMainModule INNER JOIN DmModuleAssignMents ON DmMainModule.id = DmModuleAssignMents.moduleId 
-        WHERE DmMainModule.diagnosticTypeId != :diagnosticTypeId AND 
+        WHERE DmMainModule.diagnosticTypeId != :diagnosticTypeId AND
         ((DmModuleAssignMents.assignmentType = 'Country' AND DmModuleAssignMents.assignmentId = :countryId) OR
         (DmModuleAssignMents.assignmentType = 'Region' AND DmModuleAssignMents.assignmentId = :regionId) OR
         (DmModuleAssignMents.assignmentType = 'District' AND DmModuleAssignMents.assignmentId = :districtId) OR
@@ -70,7 +70,7 @@ public interface DmMainModuleDao {
 
     @Query("""
         SELECT * FROM DmMainModule INNER JOIN DmModuleAssignMents ON DmMainModule.id = DmModuleAssignMents.moduleId 
-        WHERE DmMainModule.diagnosticTypeId = :diagnosticTypeId AND 
+        WHERE DmMainModule.diagnosticTypeId = :diagnosticTypeId AND
         ((DmModuleAssignMents.assignmentType = 'Country' AND DmModuleAssignMents.assignmentId = :countryId) OR
         (DmModuleAssignMents.assignmentType = 'Region' AND DmModuleAssignMents.assignmentId = :regionId) OR
         (DmModuleAssignMents.assignmentType = 'District' AND DmModuleAssignMents.assignmentId = :districtId) OR
@@ -93,4 +93,14 @@ public interface DmMainModuleDao {
         """
     )
     List<String> getDiagnosticSurveysByFarmerGroupId(int assignmentId);
+
+    @Query("""
+        SELECT *, m.surveyType AS moduleType FROM DmMainModule m INNER JOIN DmModuleAssignMents a ON m.id = a.moduleId
+        WHERE m.diagnosticTypeId IS NULL AND m.surveyType = 9 AND m.supplierType = :supplierType
+        AND a.assignmentId = :supplierId AND a.assignmentType IN (:supplierGroupId)
+""")
+    List<SupplierSurveyDto> getSupplierSurveys(int supplierType, List<Integer> supplierGroupId, Long supplierId);
+
+    @Query("SELECT *, surveyType AS moduleType FROM DmMainModule WHERE id =:moduleId")
+    SupplierSurveyDto getModuleById(int moduleId);
 }

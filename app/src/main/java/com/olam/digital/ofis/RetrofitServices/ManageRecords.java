@@ -8,6 +8,7 @@ import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
 import com.olam.digital.ofis.ManageTrainingRecords.model.ViewFile;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSubmittedModuleResponse;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
@@ -92,4 +93,7 @@ public interface ManageRecords {
 
     @GET("ofissupplier/enumerator/survey")
     Call<SupplierModuleResponse> getAllSupplierSurveys();
+
+    @GET("ofissupplier/supplier/mobile/getAllSubmittedModuleDataForSupplier")
+    Call<SupplierSubmittedModuleResponse> getSupplierSurveySubmittedModules();
 }

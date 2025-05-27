@@ -11,9 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.olam.digital.ofis.agrisupplier.dao.SupplierDao;
 import com.olam.digital.ofis.agrisupplier.dao.SupplierGroupDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierSubmittedModuleDao;
 import com.olam.digital.ofis.agrisupplier.dao.SupplierTypeDao;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
@@ -73,7 +75,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSupplierGroupCrossRef.class},
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSupplierGroupCrossRef.class, SupplierSubmittedModules.class},
         version = 18)
 
 public abstract class OFISRoomDB extends RoomDatabase {
@@ -131,6 +133,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract SupplierTypeDao supplierTypeDao();
     public abstract SupplierDao supplierDao();
     public abstract SupplierGroupDao supplierGroupDao();
+    public abstract SupplierSubmittedModuleDao supplierSubmittedModuleDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -249,17 +252,30 @@ public abstract class OFISRoomDB extends RoomDatabase {
             public void migrate(@NonNull SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        "supplierId INTEGER NOT NULL, " +
+                        "supplierId TEXT NOT NULL, " +
                         "supplierName TEXT, " +
                         "primaryPhoneNumber TEXT, " +
                         "secondaryPhoneNumber TEXT, " +
                         "supplierTypeId INTEGER, " +
                         "productId INTEGER, " +
-                        "countryId INTEGER)");
+                        "countryId INTEGER, " +
+                        "region TEXT, " +
+                        "street TEXT, " +
+                        "city TEXT, " +
+                        "district TEXT)");
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier_type (" +
                         "supplierTypeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "type TEXT)");
+                        "type TEXT, " +
+                        "typeEs TEXT, " +
+                        "typeFr TEXT, " +
+                        "typeId TEXT, " +
+                        "typeIn TEXT, " +
+                        "typeLo TEXT, " +
+                        "typePt TEXT, " +
+                        "typeTh TEXT, " +
+                        "typeTr TEXT, " +
+                        "typeVi TEXT)");
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier_group (" +
                         "supplierGroupId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
@@ -269,17 +285,26 @@ public abstract class OFISRoomDB extends RoomDatabase {
                         "supplierTypeId INTEGER)");
 
                 database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `SupplierSupplierGroupCrossRef` (" +
-                                "`id` INTEGER NOT NULL, " +
-                                "`supplierGroupId` INTEGER NOT NULL, " +
-                                "PRIMARY KEY(`id`, `supplierGroupId`), " +
-                                "FOREIGN KEY(`id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE, " +
-                                "FOREIGN KEY(`supplierGroupId`) REFERENCES `supplier_group`(`supplierGroupId`) ON DELETE CASCADE)"
+                        "CREATE TABLE IF NOT EXISTS SupplierSupplierGroupCrossRef (" +
+                                "id INTEGER NOT NULL, " +
+                                "supplierGroupId INTEGER NOT NULL, " +
+                                "PRIMARY KEY(id, supplierGroupId), " +
+                                "FOREIGN KEY(id) REFERENCES supplier(id) ON DELETE CASCADE, " +
+                                "FOREIGN KEY(supplierGroupId) REFERENCES supplier_group(supplierGroupId) ON DELETE CASCADE)"
                 );
 
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_supplierGroupId` ON `SupplierSupplierGroupCrossRef`(`supplierGroupId`)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_id` ON `SupplierSupplierGroupCrossRef`(`id`)");
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_SupplierSupplierGroupCrossRef_supplierGroupId ON SupplierSupplierGroupCrossRef(supplierGroupId)");
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_SupplierSupplierGroupCrossRef_id ON SupplierSupplierGroupCrossRef(id)");
                 database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
+
+                database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS supplier_submitted_modules (" +
+                                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "submitted_date TEXT, " +
+                                "supplier_id TEXT, " +
+                                "module_id TEXT, " +
+                                "sync_status TEXT)"
+                );
             }
         };
 

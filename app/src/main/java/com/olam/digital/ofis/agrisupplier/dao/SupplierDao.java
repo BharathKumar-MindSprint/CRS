@@ -25,7 +25,7 @@ public interface SupplierDao {
     void insertCrossRefs(List<SupplierSupplierGroupCrossRef> crossRefs);
 
     @Transaction
-    @Query("SELECT * FROM supplier WHERE supplierId = :supplierId")
+    @Query("SELECT * FROM supplier WHERE id = :supplierId")
     SupplierWithGroups getSupplierWithGroups(Long supplierId);
 
     @Transaction
