@@ -2,9 +2,11 @@ package com.olam.digital.ofis.mvvmmodule.roomdb.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "Assignments")
 public class Assignments {
+    @PrimaryKey
     @ColumnInfo(name="productId")
     public int productId;
     @ColumnInfo(name="countryId")

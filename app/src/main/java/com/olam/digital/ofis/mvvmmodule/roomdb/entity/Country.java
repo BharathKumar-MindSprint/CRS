@@ -9,7 +9,6 @@ public class Country {
     @PrimaryKey
     @ColumnInfo(name = "id")
     public int id;
-
     @ColumnInfo(name = "code")
     public String code;
 }
