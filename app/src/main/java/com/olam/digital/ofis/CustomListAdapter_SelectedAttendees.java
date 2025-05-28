@@ -157,6 +157,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
                     bundle.putString("farmerId", String.valueOf(farmerId));
                     bundle.putBoolean("isEdit", true);
+                    bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });
@@ -169,6 +170,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
                     bundle.putString("farmerId", String.valueOf(farmerId));
                     bundle.putBoolean("isEdit", false);
+                    bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });

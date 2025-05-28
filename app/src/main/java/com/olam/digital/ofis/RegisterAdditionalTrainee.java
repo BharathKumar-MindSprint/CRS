@@ -1,14 +1,18 @@
 package com.olam.digital.ofis;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,11 +24,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RegisterAdditionalTrainee extends BaseActivity {
 
@@ -44,6 +54,11 @@ public class RegisterAdditionalTrainee extends BaseActivity {
     private List<AttendeeRelations> attendeeRelationsList=null;
     private List<String> relationShipList=new ArrayList<>();
     private String[] relationShips=null;
+    private boolean signatureAllowed;
+
+    private HashMap<Integer, Pair<String, Bitmap>> relationSignatureMap = new HashMap<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +120,22 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     Spinner spinnerGender = (Spinner) child.findViewById(R.id.spinnerGender);
                     String gender = (String) spinnerGender.getSelectedItem();
 
-                    if (etAttendeeName.getText().toString().trim().equalsIgnoreCase("")
-                            || etAttendeeAge.getText().toString().trim().equalsIgnoreCase("")
-                            || spinnerRelationship.getSelectedItemId() == 0){
-                         allAvailable=false;
+                    String signatureName = null;
+                    Bitmap signatureAttendee = null;
+                    if (signatureAllowed) {
+                        Pair<String, Bitmap> entry = relationSignatureMap.get(index);
+                        if (entry != null) {
+                            signatureName = entry.first;
+                            signatureAttendee = entry.second;
+
+                        }
+                    }
+
+                    if (etAttendeeName.getText().toString().trim().isEmpty()
+                            || etAttendeeAge.getText().toString().trim().isEmpty()
+                            || spinnerRelationship.getSelectedItemId() == 0
+                            || (signatureAllowed && signatureName == null)) {
+                        allAvailable = false;
                     }
 
                     Attendee attendee = new Attendee();
@@ -118,6 +145,10 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     attendee.setTraineeGenderId(String.valueOf(spinnerGender.getSelectedItemId()));
                     attendee.setTraineeRelationship(relationShip);
                     attendee.setTraineeRelationshipId(String.valueOf(spinnerRelationship.getSelectedItemId()));
+                    if (signatureAllowed && signatureName!=null) {
+                        attendee.setTraineeRelationSignature(signatureName);
+                        saveSignatureImage(signatureAttendee, signatureName);
+                    }
                     attendeeList.add(attendee);
                 }
                 if (!allAvailable){
@@ -129,6 +160,19 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                 }
             }
         });
+    }
+
+    public void saveSignatureImage(Bitmap bitmap, String signatureName) {
+        File directory = new File(getFilesDir(), "signatures");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File imageFile = new File(directory, signatureName);
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class EmojiExcludeFilter implements InputFilter {
@@ -154,6 +198,27 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 
         EditText etAttendeeName = (EditText) childAttendeeView.findViewById(R.id.etTraineeName);
         etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
+        LinearLayout traineeSignatureContainer = (LinearLayout) childAttendeeView.findViewById(R.id.traineeSignatureContainer);
+        LinearLayout signatureRelationAttendee = (LinearLayout) childAttendeeView.findViewById(R.id.signatureRelationAttendee);
+        ImageButton attendeeRelationSignatureDisplay = (ImageButton) childAttendeeView.findViewById(R.id.attendeeRelationSignatureDisplay);
+
+        if (signatureAllowed) {
+            traineeSignatureContainer.setVisibility(View.VISIBLE);
+        } else {
+            traineeSignatureContainer.setVisibility(View.GONE);
+        }
+
+        int index = parentGroup.getChildCount();
+        signatureRelationAttendee.setOnClickListener(v -> {
+            String attendeeName = etAttendeeName.getText().toString();
+            if (!attendeeName.trim().equalsIgnoreCase("")) {
+                signTrainingAttendee(attendeeName, index, attendeeRelationSignatureDisplay);
+            } else {
+                Toast.makeText(RegisterAdditionalTrainee.this, "Please enter the name first!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // Old
       //  String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
 
@@ -175,6 +240,9 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         lblAttendee.setText(getResources().getString(R.string.attendee)+" "+countAttendee);
 
         btnDeleteAttendee.setOnClickListener(view1 -> {
+
+            int signIndex = parentGroup.indexOfChild(childAttendeeView);
+            removeAndReindexSignature(relationSignatureMap, signIndex);
             parentGroup.removeView(childAttendeeView);
             if (parentGroup.getChildCount()<5){
                 btnAddAttendee.setEnabled(true);
@@ -208,6 +276,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         trainingRecordId = Integer.parseInt(bundle.getString("traineeRecordId"));
         farmerId=Long.valueOf(bundle.getString("farmerId"));
         editAttendee=bundle.getBoolean("isEdit");
+        signatureAllowed = bundle.getBoolean(Utilities.ATTENDEE_SIGNATURE);
     }
 
     private void fillTraineeRelationship() {
@@ -220,11 +289,14 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     String AgeItem = traineeRelationshipCursor.getString(traineeRelationshipCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE));
                     String relationshipItem = traineeRelationshipCursor.getString(traineeRelationshipCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID));
                     String genderItem = traineeRelationshipCursor.getString(traineeRelationshipCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID));
+                    String attendeeRelationSignature = traineeRelationshipCursor.getString(traineeRelationshipCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE));
 
                     View child = inflater.inflate(R.layout.layout_additional_trainee, containerLayout, false);
 
                     ImageView btnDeleteAttendee = (ImageView) child.findViewById(R.id.btndeleteAttendee);
                     btnDeleteAttendee.setOnClickListener(view1 -> {
+                        int index = parentGroup.indexOfChild(child);
+                        removeAndReindexSignature(relationSignatureMap, index);
                         parentGroup.removeView(child);
                     });
 
@@ -259,6 +331,38 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     spinnerGender.setAdapter(genderAdapter);
                     spinnerGender.setSelection(Integer.parseInt(genderItem));
 
+                    LinearLayout traineeSignatureContainer = (LinearLayout) child.findViewById(R.id.traineeSignatureContainer);
+                    LinearLayout signatureRelationAttendee = (LinearLayout) child.findViewById(R.id.signatureRelationAttendee);
+                    ImageButton attendeeRelationSignatureDisplay = (ImageButton) child.findViewById(R.id.attendeeRelationSignatureDisplay);
+
+                    if (signatureAllowed) {
+                        int index = parentGroup.getChildCount();
+                        traineeSignatureContainer.setVisibility(View.VISIBLE);
+                        if (attendeeRelationSignature != null) {
+                            File directory = new File(getFilesDir(), "signatures");
+                            File imageFile = new File(directory, attendeeRelationSignature);
+                            if (imageFile.exists()) {
+                                Bitmap signatureBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                                attendeeRelationSignatureDisplay.setImageBitmap(signatureBitmap);
+                                relationSignatureMap.put(index, new Pair<>(attendeeRelationSignature,signatureBitmap));
+
+                            }
+                        }
+                        signatureRelationAttendee.setOnClickListener(v -> {
+                            if (editAttendee) {
+                                String attendeeName = etAttendeeName.getText().toString();
+                                if (!attendeeName.trim().equalsIgnoreCase("")) {
+                                    signTrainingAttendee(attendeeName, index, attendeeRelationSignatureDisplay);
+                                } else {
+                                    Toast.makeText(RegisterAdditionalTrainee.this, getResources().getString(R.string.enter_attendee_relation_name), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    } else {
+                        traineeSignatureContainer.setVisibility(View.GONE);
+                    }
+
                     if (!editAttendee) {
                         btnDeleteAttendee.setVisibility(View.GONE);
                     }
@@ -280,5 +384,110 @@ public class RegisterAdditionalTrainee extends BaseActivity {
        scrollView=findViewById(R.id.scrollView);
        inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
        parentGroup = (ViewGroup)containerLayout;
+    }
+
+
+    public void signTrainingAttendee(String attendeeName, int index, ImageButton attendeeRelationSignatureDisplay) {
+        final boolean[] isSigned = {false};
+        final Dialog signatureDialog = new Dialog(RegisterAdditionalTrainee.this, android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        TextView tv_attendeeName = (TextView) signatureDialog.findViewById(R.id.tv_attendeeName);
+        tv_attendeeName.setVisibility(View.VISIBLE);
+        tv_attendeeName.setText(attendeeName);
+
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                isSigned[0] = true;
+            }
+
+            @Override
+            public void onClear() {
+                isSigned[0] = false;
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureDialog.dismiss();
+            }
+        });
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (isSigned[0]) {
+                        Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
+                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        relationSignatureMap.put(index, new Pair<>(signatureName,signatureBitmap));
+
+                        // using data inside hashmap for signature
+                        Pair<String, Bitmap> entry = relationSignatureMap.get(index);
+                        if (entry != null) {
+                            String name = entry.first;
+                            Bitmap signature = entry.second;
+                            attendeeRelationSignatureDisplay.setImageBitmap(signature);
+
+                        }
+                        signatureDialog.dismiss();
+
+                    } else {
+                        Toast.makeText(RegisterAdditionalTrainee.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        signatureDialog.show();
+    }
+
+    public static void removeAndReindexSignature(HashMap<Integer, Pair<String, Bitmap>> map, int keyToRemove) {
+        if (map.containsKey(keyToRemove)) {
+            map.remove(keyToRemove);
+            HashMap<Integer, Pair<String, Bitmap>> tempMap = new HashMap<>();
+
+            for (Map.Entry<Integer, Pair<String, Bitmap>> entry : map.entrySet()) {
+                int newKey = entry.getKey() > keyToRemove ? entry.getKey() - 1 : entry.getKey();
+                tempMap.put(newKey, entry.getValue());
+            }
+
+            map.clear();
+            map.putAll(tempMap);
+        } else {
+            HashMap<Integer, Pair<String, Bitmap>> tempMap = new HashMap<>();
+
+            for (Map.Entry<Integer, Pair<String, Bitmap>> entry : map.entrySet()) {
+                int newKey = entry.getKey() > keyToRemove ? entry.getKey() - 1 : entry.getKey();
+                tempMap.put(newKey, entry.getValue());
+            }
+
+            map.clear();
+            map.putAll(tempMap);
+        }
     }
 }

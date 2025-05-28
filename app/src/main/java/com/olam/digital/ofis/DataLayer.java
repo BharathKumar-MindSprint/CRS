@@ -7331,6 +7331,7 @@ public class DataLayer {
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID, attendee.getTraineeRelationshipId());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER, attendee.getTraineeGender());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID, attendee.getTraineeGenderId());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE, attendee.getTraineeRelationSignature());
                 db.insert(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, null, values);
             }
         }

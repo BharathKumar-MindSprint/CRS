@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@color/white"
     android:layout_height="wrap_content">
@@ -154,6 +155,64 @@
             android:layout_marginTop="5dp"
             android:textColor="@color/text_label_attendee"
             android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/traineeSignatureContainer"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/signatureRelationAttendee"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:text="@string/Signature"
+                android:textSize="@dimen/ofis_med_text"
+                android:gravity="bottom"
+                android:textColor="@color/ofis_base_font_dark" />
+
+            <ImageButton
+                android:layout_width="35dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
+                android:visibility="visible"
+                android:background="@drawable/signature_icon" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/left_border"
+            android:visibility="visible"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/attendeeRelationSignatureLayout"
+            android:gravity="center">
+            <ImageButton
+                android:background="@android:color/transparent"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:id="@+id/attendeeRelationSignatureDisplay"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@string/Add_Signature"
+                app:srcCompat="@drawable/empty_signature"
+                android:scaleType="fitCenter"
+                tools:ignore="NestedWeights" />
+        </LinearLayout>
 
     </LinearLayout>
 
