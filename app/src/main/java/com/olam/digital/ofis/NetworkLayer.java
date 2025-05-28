@@ -7167,7 +7167,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         try {
             final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
-            Cursor traineeAttendeeById = dl.getAllTraineeDataByRecordId(trainingRecordId);
+            Cursor traineeAttendeeById = dl.getAllTraineeDataByRecordId(trainingRecordId, false);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofistraining/signature/upload";
 
@@ -7181,6 +7181,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         isFileExists = true;
                         attendeeSignature.add(signatures);
                         ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ID)));
+                    }
+                }
+
+                Cursor traineeRelationCursor = dl.getAllTraineeDataByRecordId(trainingRecordId, true);
+                if (traineeRelationCursor.getCount() > 0) {
+                    while (traineeRelationCursor.moveToNext()) {
+                        String signatures = traineeRelationCursor.getString(traineeRelationCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE));
+                        if (signatures != null) {
+                            attendeeSignature.add(signatures);
+                        }
                     }
                 }
 

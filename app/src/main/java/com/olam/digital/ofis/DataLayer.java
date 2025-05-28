@@ -7291,6 +7291,7 @@ public class DataLayer {
                         jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );
                         jsonObject1.put("relationshipId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID)));
                         jsonObject1.put("attendeesGender", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER)));
+                        jsonObject1.put("signature", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE)));
                         jsonObject1.put("active", "true");
                         jsonArray.put(jsonObject1);
                     } while (cursor.moveToNext());
@@ -8831,9 +8832,28 @@ public class DataLayer {
         return true;
     }
 
-    public Cursor getAllTraineeDataByRecordId(long trainingRecordId) {
+    public Cursor getAllTraineeDataByRecordId(long trainingRecordId, boolean relation) {
         String[] columns = { "*" };
-        return queryTrainingAttendee(trainingRecordId, columns);
+        if (relation) {
+            return queryTrainingRelation(trainingRecordId, columns);
+        } else {
+            return queryTrainingAttendee(trainingRecordId, columns);
+        }
+    }
+
+    private Cursor queryTrainingRelation(long trainingRecordId, String[] columns) {
+        String selection = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(trainingRecordId) };
+
+        return db.query(
+                OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
     }
 
 
