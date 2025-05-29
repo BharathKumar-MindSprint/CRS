@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.RetrofitServices;
 
+import com.olam.digital.ofis.Common.Constants.IAPIConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
 import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
@@ -33,30 +34,30 @@ import retrofit2.http.Query;
 
 public interface ManageRecords {
 
-    @GET("ofistraining/ofis/mobile/course/master/allcourses")
+    @GET(IAPIConstants.GET_ALL_COURSES)
     Call<Course> getAllCourses();
 
-    @GET("ofistraining/ofis/mobile/course/module")
+    @GET(IAPIConstants.GET_ALL_MODULES)
     Call<Module> getAllModules(@Query("id") int id);
 
-    @GET("ofistraining/ofis/mobile/course/master/courselanguage")
+    @GET(IAPIConstants.GET_COURSE_LANGUAGE)
     Call<Languages> getAllLanguages(@Query("coursesTrainingModuleId") int courseTrainingModuleId);
 
-    @GET("ofistraining/ofis/mobile/course/module/assettype/language/files")
+    @GET(IAPIConstants.GET_ALL_DOCUMENTS)
     Call<DocumentList> getAllDocuments(@Query("coursesAssetTypeId") int coursesAssetTypeId
             , @Query("coursesLanguageId") int coursesLanguageId);
 
-    @GET("ofistraining/ofis/mobile/course/master/assetType")
+    @GET(IAPIConstants.GET_ALL_COURSE_ASSET)
     Call<Assets> getAllAsset(@Query("courseLanguageId") int courseLanguageId);
 
-    @GET("ofistraining/file/stream/{courseLanguageDocId}")
+    @GET(IAPIConstants.GET_COURSE_FILE)
     Call<ViewFile> getBytes(@Path("courseLanguageDocId") int courseLanguageDocId);
 
-    @POST("ofismaster/master/externalLogin")
+    @POST(IAPIConstants.EXTERNAL_LOGIN)
     Call<AccessTokenResp> getAccessToken(@Body AccessTokenReqBody accessTokenReqBody);
 
 
-    @GET("ofisreports/reports/farmplan")
+    @GET(IAPIConstants.GET_FARM_PLAN)
     Call<DownloadFormList> getAllFarmFormList(@Header("App-Id") int AppId
             , @Query("userId") String userId
             , @Query("enumeratorId") Integer enumeratorId
@@ -64,28 +65,26 @@ public interface ManageRecords {
 
 
     @Headers({"Content-Type: application/json"})
-    @POST("storageconnect/api/v1/common")
+    @POST(IAPIConstants.STORAGE_CONNECTOR_DOWNLOAD)
     Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
 
     //Diagnostic Module
-    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData")
+    @GET(IAPIConstants.GET_ALL_DIAGNOSTIC_MODULE_DATA)
     Call<ResponseModel> getAllDiagnosticModuleData();
 
-    @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
+    @POST(IAPIConstants.SUBMIT_DM_SURVEY)
     Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
                                                                   @Body String diagnosticModuleSurveyRequestBody);
-
-    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData")
+    @GET(IAPIConstants.GET_ALL_DM_FOLLOWUP_DATA)
     Call<FollowUpResponseModel> getAllFollowUpDMData();
 
-
-    @GET("ofissurvey/survey/getLocalUnitMasterData")
+    @GET(IAPIConstants.GET_LOCAL_UNIT_MASTER)
     Call<LocalUnitResponseModel> getAllLocalUnitResponseModel();
 
-    @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
+    @GET(IAPIConstants.GET_POLYGON_DATA)
     Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
 
-    @POST("ofissurvey/survey/getPhotoCheckboxImages")
+    @POST(IAPIConstants.GET_ALL_PHOTOCHECKBOX_IMAGES)
     Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate, @Body RequestBody photoModuleList);
 
     @GET("ofissupplier/supplier/mobile/getAllSupplierByEnum")

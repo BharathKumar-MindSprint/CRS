@@ -55,6 +55,8 @@ import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.UUID;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 public class TransactionItem extends BaseActivity {
 
     private Context context;
@@ -384,7 +386,7 @@ public class TransactionItem extends BaseActivity {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (nl.isPhoneOnline()) {
+                if (isNetworkAvailable(getApplicationContext())) {
 
                     rotation.setRepeatCount(Animation.INFINITE);
                     view.startAnimation(rotation);
@@ -816,7 +818,7 @@ public class TransactionItem extends BaseActivity {
                         is_mobileMoneyMode = true;
                     }
                 }
-                if (nl.isPhoneOnline()) {
+                if (isNetworkAvailable(getApplicationContext())) {
                     layout_mm_or_cash.setVisibility(View.VISIBLE);
                 } else {
                     is_mobileMoneyMode = false;
@@ -1757,7 +1759,7 @@ public class TransactionItem extends BaseActivity {
     }
 
     private void doMobileMoneyTransaction() {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(getApplicationContext())) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

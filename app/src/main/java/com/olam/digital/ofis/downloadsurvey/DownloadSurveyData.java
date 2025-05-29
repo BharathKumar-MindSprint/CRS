@@ -39,6 +39,8 @@ import com.olam.digital.ofis.downloadsurvey.listener.OnItemDownloadedSurveyClick
 
 import java.util.ArrayList;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 
 public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInterface {
 
@@ -173,8 +175,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
     }
 
     private void checkAuthenticate(){
-        NetworkLayer nl = new NetworkLayer(context, res);
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(getApplicationContext())) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), DownloadSurveyData.this);
             accessTokenTask.execute();
         }else{

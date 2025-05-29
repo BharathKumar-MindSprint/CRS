@@ -34,7 +34,7 @@
     </queries>
 
     <application
-        android:name=".EnableMultiDex"
+        android:name=".OFISApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
@@ -164,25 +164,11 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:resource="@drawable/ic_notification_icon" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/ofis_poi_screen_top_background_school" />
-
         <service
             android:name=".companionFirebaseInstanceIdService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".companionFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service

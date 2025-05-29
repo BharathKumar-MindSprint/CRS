@@ -55,7 +55,6 @@ import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 
 import org.json.JSONArray;
 import android.os.Handler;
@@ -79,6 +78,8 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 /**
  * Created by ben on 24/02/16.
@@ -152,7 +153,7 @@ public class SyncAllTask extends SyncTask {
         SyncTaskOperationType op = params[0];
 
         if (op == SyncTaskOperationType.CHECK_VERSION) {
-            if (isPhoneOnline()) {
+            if (isNetworkAvailable(context)) {
 
                 try {
                     checkVersion();
@@ -2031,7 +2032,7 @@ public class SyncAllTask extends SyncTask {
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
-                    if (!InternetConnectionHelper.isInternetAvailable(context)) {
+                    if (!isNetworkAvailable(context)) {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         return;
                     }
