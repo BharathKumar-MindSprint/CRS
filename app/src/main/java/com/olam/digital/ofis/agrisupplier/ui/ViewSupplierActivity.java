@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,22 +26,18 @@ import com.olam.digital.ofis.agrisupplier.dto.SupplierDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierTypeDto;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierWithGroups;
 import com.olam.digital.ofis.agrisupplier.listener.SupplierSurveyItemClickListener;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewSupplierActivity extends BaseListActivity {
     private Context context;
-    private String supplierName;
-    private Long supplierId;
+
     private Resources res;
 
     private SupplierDto supplier;
     private List<SupplierSurveyDto> supplierSurveys;
-    private List<Integer> supplierGroupIds = new ArrayList<>();
     private OFISRoomDB ofisRoomDB;
 
     @Override
@@ -87,15 +82,14 @@ public class ViewSupplierActivity extends BaseListActivity {
         TextView viewSupplierInfo = findViewById(R.id.viewSupplierInfo);
         ConstraintLayout clViewSupplierInfo = findViewById(R.id.clSupplierInfo);
 
-        SupplierWithGroups supplierGroup = ofisRoomDB.supplierDao().getSupplierWithGroups(supplier.getId());
-        StringBuilder groupNames = getGroupNames(supplierGroup);
+        SupplierGroup supplierGroup = ofisRoomDB.supplierGroupDao().getSupplierGroupById(supplier.getSupplierGroupId());
         SupplierTypeDto supplierTypeDto = ofisRoomDB.supplierTypeDao().getSupplierTypeNameById(supplier.getSupplierTypeId());
         String mobileNumber = supplier.getPrimaryPhoneNumber() + ", " + supplier.getSecondaryPhoneNumber();
 
         supplierName.setText(supplier.getSupplierName());
         supplierId.setText(supplier.getSupplierId());
         setBoldLabelText(phoneNumber, res.getString(R.string.PhoneNumberHint), mobileNumber);
-        setBoldLabelText(supplierGroupName, res.getString(R.string.supplier_group), groupNames.toString());
+        setBoldLabelText(supplierGroupName, res.getString(R.string.supplier_group), supplierGroup.supplierGroupName);
         setBoldLabelText(supplierType, res.getString(R.string.supplier_type), getSupplierTypeByLanguage(supplierTypeDto));
 
         viewSupplierInfo.setOnClickListener(new View.OnClickListener() {
@@ -106,22 +100,6 @@ public class ViewSupplierActivity extends BaseListActivity {
                 viewSupplierInfo.setCompoundDrawablesWithIntrinsicBounds(0,0, isExpanded ? R.drawable.ic_drop_down_collapse : R.drawable.ic_task_drop_down_expand, 0);
             }
         });
-
-
-    }
-
-    @NonNull
-    private StringBuilder getGroupNames(SupplierWithGroups supplierGroup) {
-        StringBuilder groupNames = new StringBuilder();
-        for (SupplierGroup group : supplierGroup.supplierGroups) {
-            groupNames.append(group.supplierGroupName).append(", ");
-            supplierGroupIds.add(group.supplierGroupId);
-        }
-
-        if (groupNames.length() > 0) {
-            groupNames.setLength(groupNames.length() - 2);
-        }
-        return groupNames;
     }
 
     private void setBoldLabelText(TextView textView, String label, String value) {
@@ -134,7 +112,7 @@ public class ViewSupplierActivity extends BaseListActivity {
     }
 
     private void intiSurveys() {
-        supplierSurveys = ofisRoomDB.dmMainModuleDao().getSupplierSurveys(supplier.getSupplierTypeId(), supplierGroupIds, supplier.getId());
+        supplierSurveys = ofisRoomDB.dmMainModuleDao().getSupplierSurveys(supplier.getSupplierTypeId(), supplier.getSupplierGroupId(), supplier.getId());
         RecyclerView rvSupplierSurvey = findViewById(R.id.rvSupplierSurvey);
         rvSupplierSurvey.setLayoutManager(new LinearLayoutManager(this));
         SupplierSurveyListAdapter adapter = new SupplierSurveyListAdapter(supplierSurveys, ofisRoomDB, res, context, supplier);

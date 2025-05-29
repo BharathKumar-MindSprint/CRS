@@ -97,9 +97,9 @@ public interface DmMainModuleDao {
     @Query("""
         SELECT *, m.surveyType AS moduleType FROM DmMainModule m INNER JOIN DmModuleAssignMents a ON m.id = a.moduleId
         WHERE m.diagnosticTypeId IS NULL AND m.surveyType = 9 AND m.supplierType = :supplierType
-        AND a.assignmentId = :supplierId AND a.assignmentType IN (:supplierGroupId)
+        AND a.assignmentId = :supplierId AND a.assignmentType = :supplierGroupId
 """)
-    List<SupplierSurveyDto> getSupplierSurveys(int supplierType, List<Integer> supplierGroupId, Long supplierId);
+    List<SupplierSurveyDto> getSupplierSurveys(Integer supplierType, Integer supplierGroupId, Long supplierId);
 
     @Query("SELECT *, surveyType AS moduleType FROM DmMainModule WHERE id =:moduleId")
     SupplierSurveyDto getModuleById(int moduleId);

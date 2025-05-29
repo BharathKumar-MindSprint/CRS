@@ -7,7 +7,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.agrisupplier.dto.SupplierMappingDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSubmittedModuleResponse;
@@ -16,7 +15,6 @@ import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyResponse;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
@@ -73,12 +71,10 @@ public class UpdateSupplierTask extends DatabaseTask {
                 List<Supplier> supplier = supplierResponse.getSuppliers();
                 List<SupplierGroup> supplierGroups = supplierResponse.getSupplierGroup();
                 List<SupplierType> supplierTypes = supplierResponse.getSupplierType();
-                List<SupplierSupplierGroupCrossRef> supplierSupplierGroupCrossRefs = getSupplierSupplierGroupCrossRef(supplierResponse.getSupplierGroupMapping());
 
                 roomDB.supplierDao().insertSuppliers(supplier);
                 roomDB.supplierGroupDao().insertSupplierGroups(supplierGroups);
                 roomDB.supplierTypeDao().insertSupplierType(supplierTypes);
-                roomDB.supplierDao().insertCrossRefs(supplierSupplierGroupCrossRefs);
             }
 
             if (supplierSurveys != null) {
@@ -451,19 +447,6 @@ public class UpdateSupplierTask extends DatabaseTask {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private List<SupplierSupplierGroupCrossRef> getSupplierSupplierGroupCrossRef(List<SupplierMappingDto> supplierMappings) {
-        List<SupplierSupplierGroupCrossRef> supplierSupplierGroupCrossRefs = new ArrayList<>();
-
-        for (SupplierMappingDto supplierMappingDto : supplierMappings) {
-            Long supplierId = supplierMappingDto.supplierId;
-            for (Integer supplierGroupId : supplierMappingDto.supplierGroupIds) {
-                supplierSupplierGroupCrossRefs.add(new SupplierSupplierGroupCrossRef(supplierId, supplierGroupId));
-            }
-        }
-
-        return supplierSupplierGroupCrossRefs;
     }
 
     private List<DmModuleAssignments> generateModuleAssignments(SupplierSurveyAssignments assignmentsModels, int moduleId) {

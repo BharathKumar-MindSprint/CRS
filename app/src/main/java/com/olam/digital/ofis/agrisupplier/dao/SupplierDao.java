@@ -8,10 +8,6 @@ import androidx.room.Transaction;
 
 import com.olam.digital.ofis.agrisupplier.dto.SupplierDto;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierGroupWithSuppliers;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierWithGroups;
 
 import java.util.List;
 
@@ -21,21 +17,13 @@ public interface SupplierDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSuppliers(List<Supplier> suppliers);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertCrossRefs(List<SupplierSupplierGroupCrossRef> crossRefs);
-
     @Transaction
-    @Query("SELECT * FROM supplier WHERE id = :supplierId")
-    SupplierWithGroups getSupplierWithGroups(Long supplierId);
-
-    @Transaction
-    @Query("SELECT * FROM supplier_group WHERE supplierGroupId = :groupId")
-    SupplierGroupWithSuppliers getGroupWithSuppliers(int groupId);
-
-    @Transaction
-    @Query("SELECT DISTINCT s.* FROM supplier s LEFT JOIN SupplierSupplierGroupCrossRef x ON s.id = x.id WHERE ((:query == '' OR (s.supplierName LIKE '%' || :query || '%')) OR (:query == '' OR (s.supplierId LIKE '%' || :query || '%'))) AND (:countryId == 0 OR s.countryId = :countryId) AND (:productId == 0 OR s.productId = :productId) AND (:supplierTypeId == 0 OR s.supplierTypeId = :supplierTypeId) AND (:supplierGroupCount == 0 OR x.supplierGroupId IN (:supplierGroup))")
+    @Query("SELECT DISTINCT * FROM supplier WHERE ((:query == '' OR (supplierName LIKE '%' || :query || '%')) OR (:query == '' OR (supplierId LIKE '%' || :query || '%'))) AND (:countryId == 0 OR countryId = :countryId) AND (:productId == 0 OR productId = :productId) AND (:supplierTypeId == 0 OR supplierTypeId = :supplierTypeId) AND (:supplierGroupCount == 0 OR supplierGroupId IN (:supplierGroup))")
     List<SupplierDto> getAllSuppliers(Long countryId, Long productId, Long supplierTypeId, List<Integer> supplierGroup, int supplierGroupCount, String query);
 
     @Query("DELETE FROM supplier")
     void deleteAll();
+
+    @Query("SELECT * FROM supplier WHERE id = :id")
+    Supplier getSupplierById(String id);
 }

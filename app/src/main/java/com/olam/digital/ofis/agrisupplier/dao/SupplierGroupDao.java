@@ -23,4 +23,7 @@ public interface SupplierGroupDao {
 
     @Query("DELETE FROM supplier_group")
     void deleteAll();
+
+    @Query("SELECT * FROM supplier_group WHERE supplierGroupId = :supplierGroupId")
+    SupplierGroup getSupplierGroupById(Integer supplierGroupId);
 }

@@ -20,4 +20,7 @@ public class SupplierGroup {
     public Integer productId;
     @SerializedName("supplierTypeId")
     public Integer supplierTypeId;
+
+    @SerializedName("supplierId")
+    public Integer supplierId;
 }

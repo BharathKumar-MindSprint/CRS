@@ -40,4 +40,7 @@ public class Supplier {
     @SerializedName("district")
     public String district;
 
+    @SerializedName("supplierGroupId")
+    public Integer supplierGroupId;
+
 }

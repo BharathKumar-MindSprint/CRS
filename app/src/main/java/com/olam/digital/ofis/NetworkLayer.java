@@ -25,8 +25,8 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierWithGroups;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
@@ -6902,16 +6902,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             String submissionDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT));
             String id = supplierId.substring(2);
 
-            SupplierWithGroups supplierWithGroups = db.supplierDao().getSupplierWithGroups(Long.valueOf(id));
-            int vendorGroupId = supplierWithGroups.supplierGroups.get(0).supplierGroupId;
+            Supplier supplier = db.supplierDao().getSupplierById(id);
 
             JSONObject hashMap = new JSONObject();
             hashMap.put("supplierId", id);
             hashMap.put("moduleId", moduleId);
             hashMap.put("enumeratorId", Utilities.getFromSharedPrefs(context));
             hashMap.put("submissionDate", submissionDate);
-            hashMap.put("productId", supplierWithGroups.supplier.productId);
-            hashMap.put("vendorGroupId", vendorGroupId);
+            hashMap.put("productId", supplier.productId);
+            hashMap.put("vendorGroupId", supplier.supplierGroupId);
             hashMap.put("location", location);
 
             JSONArray answers = new JSONArray();
