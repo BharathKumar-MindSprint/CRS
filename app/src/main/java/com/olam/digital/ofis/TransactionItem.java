@@ -1740,7 +1740,7 @@ public class TransactionItem extends BaseActivity {
                             String pdUpdate = res.getString(R.string.mm_transaction_checking);
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 1, pdUpdate);
                         }
-                        nl.checkMobileMoneyTransaction(syncHandler, transactionItemId);
+                        //nl.checkMobileMoneyTransaction(syncHandler, transactionItemId);
                     }
 
                     @Override
@@ -1774,7 +1774,7 @@ public class TransactionItem extends BaseActivity {
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 1, pdUpdate);
-                            checkMobileMoneyTransaction();
+                            //checkMobileMoneyTransaction();
                         }
                     } else if (msg.what == 2) {
                         if (countDownTimer != null) {
@@ -1799,7 +1799,7 @@ public class TransactionItem extends BaseActivity {
                     }
                 }
             };
-            nl.initiateMobileMoneyTransaction(syncHandler, transactionItemId, transacteeId);
+          //  nl.initiateMobileMoneyTransaction(syncHandler, transactionItemId, transacteeId);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
