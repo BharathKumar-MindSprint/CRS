@@ -1709,16 +1709,24 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
                         syncResultCount = syncResultCount + response.getInt("resultcount");
+                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
 
                         if (response.getString("status").equals("unchanged")) {
-                            String progress = res.getString(R.string.farmers_up_to_date);
+                            progress = res.getString(R.string.farmers_up_to_date);
+                        }
+                        farmerResponse = response;
+
+                        if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
                         }
-                        farmerResponse = response;
-                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                        else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
+                        }
+                        else {
+                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                        }
 
                     } else {
                         try {
@@ -2300,19 +2308,14 @@ public class SyncAllTask extends SyncTask {
                         dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
+                    } else if (response.code() == 400){
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
-                        FollowUpResponseModel followUpResponseModel = response.body();
-                        if (followUpResponseModel.getErrorMessage() != null && followUpResponseModel.getErrorMessage().equals(Utilities.DM_ERROR_MESSAGE)) {
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
-                        }
-                        else {
-                            String finalEndPoint = call.request().url().toString();
-                            int statusCode = response.code();
-                            String networkResponse = response.errorBody().toString();
-                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
-                            postFailureMessage(null);
-                        }
+                        String finalEndPoint = call.request().url().toString();
+                        int statusCode = response.code();
+                        String networkResponse = response.errorBody().toString();
+                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                        postFailureMessage(null);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
