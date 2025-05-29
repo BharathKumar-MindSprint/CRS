@@ -138,11 +138,6 @@
 
                         </LinearLayout>
 
-                        <!--<com.olam.digital.ofis.tasks.NonScrollListView
-                            android:layout_weight="10.8"
-                            android:id="@+id/list_nationalids"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>-->
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="30dp"
@@ -233,6 +228,17 @@
 
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/primary_phone_number_error_msg"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/ofis_btn_danger"
+                            android:textSize="@dimen/ofis_micro_text"
+                            android:text="@string/error_msg_phone_number"
+                            android:layout_marginBottom="@dimen/ofis_med_pad"
+                            android:visibility="gone"/>
                     </LinearLayout>
 
                     <LinearLayout
