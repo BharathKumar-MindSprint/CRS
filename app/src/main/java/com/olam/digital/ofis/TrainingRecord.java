@@ -528,11 +528,11 @@ public class TrainingRecord extends BaseListActivity{
     }
 
     public void showAttendeeSignature(int attendeeId, ImageButton attendeeSignature) {
-        String signNatureName = dl.getSignatureByAttendeeId(attendeeId);
+        String signatureName = dl.getSignatureByAttendeeId(attendeeId);
         if (attendeeId != -1) {
-            if (signNatureName != null) {
+            if (signatureName != null) {
                 File directory = new File(getFilesDir(), "signatures");
-                File imageFile = new File(directory, signNatureName);
+                File imageFile = new File(directory, signatureName);
                 if (imageFile.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
                     attendeeSignature.setImageBitmap(bitmap);

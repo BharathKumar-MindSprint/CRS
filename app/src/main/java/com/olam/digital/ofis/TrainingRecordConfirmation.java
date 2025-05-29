@@ -228,6 +228,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
                 }
 
+                dl.retainOrDeleteSignatureBasedOnAvailability(trainingRecordId);
 
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
