@@ -785,6 +785,10 @@
 
     <string name="mandate_survey">กรุณาทำแบบสำรวจที่จำเป็นให้เสร็จก่อน!</string>
     <string name="mandate_survey_not_synced">ขออภัย แต่แบบสำรวจที่จำเป็นยังไม่ได้รับการซิงค์ กรุณาซิงค์แบบสำรวจที่จำเป็นก่อน</string>
+    <string name="stakeholder_not_synced">ขออภัย แต่ stakeholder ยังไม่ได้รับการซิงค์ กรุณาซิงค์ stakeholder ก่อน</string>
+    <string name="consent_not_synced">ขออภัย แต่การยินยอมยังไม่ได้รับการซิงค์ กรุณาซิงค์การยินยอมก่อน</string>
+    <string name="survey_already_synced">แบบสำรวจนี้ได้รับการตอบโดยผู้สำรวจคนอื่นแล้ว กรุณาบันทึกและอัปเดตแอป OFIS ของคุณ</string>
+
     <string name="supplier_and_surveys">ซัพพลายเออร์และการสำรวจ</string>
     <string name="title_find_supplier_and_survey">ค้นหาซัพพลายเออร์</string>
     <string name="select_supplier">เลือกซัพพลายเออร์</string>

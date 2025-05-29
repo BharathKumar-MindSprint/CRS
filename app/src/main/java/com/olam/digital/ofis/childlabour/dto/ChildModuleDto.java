@@ -93,8 +93,6 @@ public class ChildModuleDto implements Serializable {
         this.isPlotSurvey = isPlotSurvey;
     }
 
-
-
     public String getPlotName() {
         return plotName;
     }
