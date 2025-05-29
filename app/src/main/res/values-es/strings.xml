@@ -891,6 +891,9 @@
     <string name="stakeholder_not_synced">Lo siento, pero el stakeholder aún no ha sido sincronizado. Por favor, sincronice el stakeholder primero</string>
     <string name="consent_not_synced">Lo siento, pero el consentimiento aún no ha sido sincronizado. Por favor, sincronice el consentimiento primero</string>
     <string name="survey_already_synced">Esta encuesta ya ha sido respondida por otro enumerador. Por favor, guarde y actualice su aplicación OFIS</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
 </resources>
 
