@@ -1731,16 +1731,19 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
                         syncResultCount = syncResultCount + response.getInt("resultcount");
+                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
 
                         if (response.getString("status").equals("unchanged")) {
-                            String progress = res.getString(R.string.farmers_up_to_date);
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                            progress = res.getString(R.string.farmers_up_to_date);
                         }
                         farmerResponse = response;
-                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+
+                        if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                        } else {
+                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                        }
 
                     } else {
                         try {
@@ -2310,6 +2313,8 @@ public class SyncAllTask extends SyncTask {
                     if (response.code() == 200) {
                         FollowUpResponseModel followUpResponseModel = response.body();
                         dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+                    } else if (response.code() == 400){
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
                         String finalEndPoint = call.request().url().toString();
