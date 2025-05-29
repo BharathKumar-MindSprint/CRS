@@ -1389,6 +1389,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
+            } else if (itemType.equalsIgnoreCase("phonenumbers")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                intent.putExtra("phoneNumber", true);
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {
         }
