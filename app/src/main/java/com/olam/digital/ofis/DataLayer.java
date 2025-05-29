@@ -8834,17 +8834,7 @@ public class DataLayer {
         }
         return true;
     }
-
-    public Cursor getAllTraineeDataByRecordId(long trainingRecordId, boolean relation) {
-        String[] columns = { "*" };
-        if (relation) {
-            return queryTrainingRelation(trainingRecordId, columns);
-        } else {
-            return queryTrainingAttendee(trainingRecordId, columns);
-        }
-    }
-
-    private Cursor queryTrainingRelation(long trainingRecordId, String[] columns) {
+    public Cursor queryTrainingRelation(long trainingRecordId, String[] columns) {
         String selection = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
         String[] selectionArgs = { String.valueOf(trainingRecordId) };
 

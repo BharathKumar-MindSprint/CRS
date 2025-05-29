@@ -7167,7 +7167,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         try {
             final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
-            Cursor traineeAttendeeById = dl.getAllTraineeDataByRecordId(trainingRecordId, false);
+            Cursor traineeAttendeeById = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofistraining/signature/upload";
 
@@ -7176,15 +7176,25 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             boolean isFileExists = false;
             if (traineeAttendeeById.getCount() > 0) {
                 while (traineeAttendeeById.moveToNext()) {
-                    String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
-                    if (signatures != null) {
-                        isFileExists = true;
-                        attendeeSignature.add(signatures);
-                        ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ID)));
+                    long farmerId = traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                    if (!dl.isFarmerSynced(farmerId)) {
+                        msg.what = 3;
+                        msg.arg1 = total;
+                        msg.arg2 = HomeActivity.progressItem = progress + 1;
+                        msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                        handler.dispatchMessage(msg);
+                        return;
+                    } else {
+                        String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                        if (signatures != null) {
+                            isFileExists = true;
+                            attendeeSignature.add(signatures);
+                            ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex("_id")));
+                        }
                     }
                 }
 
-                Cursor traineeRelationCursor = dl.getAllTraineeDataByRecordId(trainingRecordId, true);
+                Cursor traineeRelationCursor = dl.queryTrainingRelation(trainingRecordId, new String[]{"*"});
                 if (traineeRelationCursor.getCount() > 0) {
                     while (traineeRelationCursor.moveToNext()) {
                         String signatures = traineeRelationCursor.getString(traineeRelationCursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE));
