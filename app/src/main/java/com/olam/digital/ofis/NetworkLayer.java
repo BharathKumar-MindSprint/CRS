@@ -3537,7 +3537,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             }
                                             else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5047) {
                                                 dl.updateDuplicateStatusOfPhoneNumber(farmerId);
-                                                String errorMsg = response.optString("errorMsg", "Duplicate Primary Phone Number.");
+                                                String errorMsg = response.optString("message", "Duplicate Primary Phone Number.");
                                                 handler.postDelayed(() -> {
                                                     popupMsgInfo(errorMsg);
                                                     return;
@@ -4478,7 +4478,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
                                 else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5047) {
                                     dl.updateDuplicateStatusOfPhoneNumber(localFarmerId);
-                                    String errorMsg = errorObject.optString("errorMsg", "Duplicate Primary Phone Number");
+                                    String errorMsg = errorObject.optString("message", "Duplicate Primary Phone Number");
                                     handler.postDelayed(() -> {
                                         popupMsgInfo(errorMsg);
                                         return;
