@@ -33,4 +33,15 @@ public interface IAPIConstants {
 
   //TODO Check if this API call is required
    String EXTERNAL_LOGIN = "ofismaster/master/externalLogin";
+
+   //Farmer Registration
+   String REGISTER_FARMER = "ofisfarmer/farmer/registerFarmer";
+   String SAVE_FARMER_SIGNATURE="ofisfarmer/farmer/saveFarmerSignature";
+
+   //
+   String REGISTER_MULTISTAKEHOLDER = "ofisfarmer/multiStakeHolder/farmer/stakeHolderRegistration";
+
+   //CLMRS
+   String SAVE_CHILD_SURVEY = "ofischildsurvey/ofischildsurvey/childsurvey/save";
+    String SAVE_CHILD_VISIT_DETAILS = "ofischildsurvey/ofischildsurvey/childavailability/saveall";
 }
