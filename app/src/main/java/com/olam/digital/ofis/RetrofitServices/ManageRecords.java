@@ -56,7 +56,7 @@ public interface ManageRecords {
     @GET("ofisreports/reports/farmplan")
     Call<DownloadFormList> getAllFarmFormList(@Header("App-Id") int AppId
             , @Query("userId") String userId
-            , @Query("enumeratorId") Integer enumeratorId
+            , @Query("enumeratorId") Long enumeratorId
             , @Query("odAccessToken") String odAccessToken);
 
 
