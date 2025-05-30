@@ -174,7 +174,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     /*Get Down Load Farm Form List*/
     private void DownloadFormList() {
         ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Integer.valueOf(enumeratorId),odAccessToken);
+        Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Long.valueOf(enumeratorId),odAccessToken);
         call.enqueue(new Callback<DownloadFormList>() {
 
             @Override
