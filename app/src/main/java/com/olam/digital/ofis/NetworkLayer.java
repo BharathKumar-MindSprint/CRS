@@ -469,7 +469,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     JSONObject tasksPayload = new JSONObject();
                     JSONArray tasksItems = new JSONArray();
-
                     while (tasks.moveToNext()) {
                         JSONObject taskItem = new JSONObject();
 
@@ -478,13 +477,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED)));
                             taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE)));
                         }
-
                         taskItem.put(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_TASKTEXT)));
                         taskItem.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID)));
-
                         tasksItems.put(taskItem);
                     }
-
                     tasksPayload.put("tasks", tasksItems);
 
                     uploadSyncTask.put("status", "updated");
@@ -673,8 +669,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("transaction")) {
             //postTransaction(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("trainingrecord")) {
-            //     syncTasks(OFISDBContract.Task.COLUMN_NAME_SYNCED);
-           // postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
+            postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("phonenumbers")) {
             postPhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("farmer_photo")) {
@@ -716,6 +711,148 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (GpsTrackerLogic.getGeoPointCount(context) > 0) {
                 if (!isGpsSyncProcessing) syncGPSData();
             }
+        }
+    }
+
+    private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
+        Cursor trainingRecord = null;
+        try {
+            trainingRecord = dl.getTrainingRecordById(trainingRecordId, "");
+            if (trainingRecord.getCount() > 0) {
+                trainingRecord.moveToFirst();
+                final JSONObject jsonObject = new JSONObject();
+
+                // new code
+                try {
+                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID)));
+                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME)));
+                    jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
+                    jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID)));
+                    jsonObject.put("enumeratorId", Utilities.getFromSharedPrefs(context));
+                    if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
+                        jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
+                    }
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                }
+                // Sending pic in json format in base 64
+                try {
+                    String trainingPhotoPath = trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO));
+                    if (trainingPhotoPath != null && !trainingPhotoPath.isEmpty()) {
+                        String encodedImage = Utilities.base64ConversionForImage(trainingPhotoPath);
+                        jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, encodedImage);
+                    }
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                }
+                Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+                if (trainingAttendees.getCount() > 0) {
+                    // create json objects
+                    JSONArray attendeesJSON = new JSONArray();
+
+                    while (trainingAttendees.moveToNext()) {
+                        long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                        if (!dl.isFarmerSynced(farmerId)) {
+                            msg.what = 3;
+                            msg.arg1 = total;
+                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                            handler.dispatchMessage(msg);
+                            return;
+                        } else {
+                            try {
+                                JSONObject attendee = new JSONObject();
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
+                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
+                                attendeesJSON.put(attendee);
+                                jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
+                                jsonObject.put("training_attendees", attendeesJSON);
+
+                            } catch (JSONException e) {
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
+                            }
+
+                        }
+                    }
+                }
+                okHttpPost(context, IAPIConstants.CREATE_TRAINING_RECORDS, jsonObject, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+                        String statusMessage;
+                        if (postResponse.isSuccessful()) {
+                            try {
+                                JSONObject response = new JSONObject(postResponse.body().string());
+                            } catch (JSONException e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            } catch (IOException e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            }
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            dl.deleteTrainingRecord(trainingRecordId);
+                            dl.deleteTrainingAttendeeRelations(trainingRecordId);
+                            statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                        } else {
+                            try {
+                                if (postResponse.code() == 401) {
+                                    FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting training record");
+                                } else {
+                                    JSONObject response = new JSONObject(postResponse.body().string());
+                                    long server_item_id = 0, fully_synced = 0;
+                                    if (response.optJSONObject("trainingrecord") != null) {
+                                        JSONObject trainingrecord = response.getJSONObject("trainingrecord");
+                                        server_item_id = trainingrecord.getLong("id");
+                                        fully_synced = trainingrecord.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting training record");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting training record failure response"));
+                                }
+                            } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training record");
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting training record response " + e.getMessage());
+                            }
+                        }
+                        postResponse.close();
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        try {
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        } catch (Exception onfailEx) {
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                            onfailEx.printStackTrace();
+                        }
+                    }
+
+                });
+            }
+        } finally {
+            trainingRecord.close();
         }
     }
 
