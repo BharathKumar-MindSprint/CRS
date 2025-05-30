@@ -207,7 +207,7 @@
                 android:layout_width="70dp"
                 android:layout_height="40dp"
                 android:id="@+id/attendeeSignatureDisplay"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="15dp"
                 android:contentDescription="@string/Add_Signature"
                 app:srcCompat="@drawable/empty_signature"
                 android:scaleType="fitCenter"

@@ -537,6 +537,8 @@ public class TrainingRecord extends BaseListActivity{
                     Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
                     attendeeSignature.setImageBitmap(bitmap);
                 }
+            } else {
+                attendeeSignature.setImageDrawable(getResources().getDrawable(R.drawable.empty_signature));
             }
         }
     }
