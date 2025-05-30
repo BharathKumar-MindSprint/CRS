@@ -341,7 +341,7 @@ public class SyncAllTask extends SyncTask {
         JSONObject inputArgs = new JSONObject();
         String enumerator_id = Utilities.getFromSharedPrefs(context);
         if (enumerator_id != null) {
-            long enumeratorId = Integer.parseInt(enumerator_id);
+            long enumeratorId = Long.parseLong(enumerator_id);
             inputArgs.put("enumeratorId", enumeratorId);
 //            inputArgs.put("enumeratorId", 125);
         }
@@ -584,7 +584,7 @@ public class SyncAllTask extends SyncTask {
         long timestampUpdated = System.currentTimeMillis();
         Utilities.saveLongToSharedPrefs(context, "version_checked", timestampUpdated);
         JSONObject inputArgs = new JSONObject();
-        inputArgs.put("enumerator_id", Long.valueOf(Utilities.getFromSharedPrefs(context)));
+        inputArgs.put("enumerator_id", Long.parseLong(Utilities.getFromSharedPrefs(context)));
 //        inputArgs.put("enumerator_id",Utilities.getFromSharedPrefs(context));
         inputArgs.put("current_version", BuildConfig.VERSION_NAME);
 
@@ -1692,16 +1692,19 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
                         syncResultCount = syncResultCount + response.getInt("resultcount");
+                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
 
                         if (response.getString("status").equals("unchanged")) {
-                            String progress = res.getString(R.string.farmers_up_to_date);
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                            progress = res.getString(R.string.farmers_up_to_date);
                         }
                         farmerResponse = response;
-                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+
+                        if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                        } else {
+                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                        }
 
                     } else {
                         try {
@@ -2271,6 +2274,8 @@ public class SyncAllTask extends SyncTask {
                     if (response.code() == 200) {
                         FollowUpResponseModel followUpResponseModel = response.body();
                         dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+                    } else if (response.code() == 400){
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
                         String finalEndPoint = call.request().url().toString();
