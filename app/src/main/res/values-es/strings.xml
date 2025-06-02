@@ -885,5 +885,12 @@
     <string name="gallery_is_not_available_in_mobile">La galería no está disponible en el móvil</string>
     <string name="something_went_wrong_please_try_again">Algo salió mal, por favor intenta de nuevo</string>
     <string name="image_size_exceeds_5_mb">El tamaño de la imagen supera los 5 MB. Por favor, elige una imagen más pequeña.</string>
+
+    <string name="mandate_survey">¡Por favor, complete primero la encuesta obligatoria!</string>
+    <string name="mandate_survey_not_synced">Lo siento, pero la encuesta obligatoria aún no se ha sincronizado. Por favor, sincronice primero la encuesta obligatoria</string>
+    <string name="stakeholder_not_synced">Lo siento, pero el stakeholder aún no ha sido sincronizado. Por favor, sincronice el stakeholder primero</string>
+    <string name="consent_not_synced">Lo siento, pero el consentimiento aún no ha sido sincronizado. Por favor, sincronice el consentimiento primero</string>
+    <string name="survey_already_synced">Esta encuesta ya ha sido respondida por otro enumerador. Por favor, guarde y actualice su aplicación OFIS</string>
+
 </resources>
 

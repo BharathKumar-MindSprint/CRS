@@ -782,4 +782,11 @@
     <string name="something_went_wrong_please_try_again">เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง</string>
     <string name="image_size_exceeds_5_mb">ขนาดภาพเกิน 5MB กรุณาเลือกภาพที่มีขนาดเล็กกว่า</string>
     <string name="restriction_in_submodules">กรุณาตอบคำถามที่จำเป็นทั้งหมดเพื่อดำเนินการต่อ</string>
+
+    <string name="mandate_survey">กรุณาทำแบบสำรวจที่จำเป็นให้เสร็จก่อน!</string>
+    <string name="mandate_survey_not_synced">ขออภัย แต่แบบสำรวจที่จำเป็นยังไม่ได้รับการซิงค์ กรุณาซิงค์แบบสำรวจที่จำเป็นก่อน</string>
+    <string name="stakeholder_not_synced">ขออภัย แต่ stakeholder ยังไม่ได้รับการซิงค์ กรุณาซิงค์ stakeholder ก่อน</string>
+    <string name="consent_not_synced">ขออภัย แต่การยินยอมยังไม่ได้รับการซิงค์ กรุณาซิงค์การยินยอมก่อน</string>
+    <string name="survey_already_synced">แบบสำรวจนี้ได้รับการตอบโดยผู้สำรวจคนอื่นแล้ว กรุณาบันทึกและอัปเดตแอป OFIS ของคุณ</string>
+
 </resources>

@@ -21,7 +21,7 @@ public interface DMSurveyReportDao {
     @Query("UPDATE DMSurveyReport SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
     void updateFarmerId(int tempFarmerId, int farmerId);
 
-
-
+    @Query("DELETE FROM DMSurveyReport")
+    void deleteAll();
 }
 

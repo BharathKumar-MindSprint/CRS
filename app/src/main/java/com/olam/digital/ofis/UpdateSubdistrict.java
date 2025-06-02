@@ -2,23 +2,15 @@ package com.olam.digital.ofis;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Hashtable;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NavUtils;
@@ -31,34 +23,22 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     EditText newPlaceName;
     int selectedDistrict, selectedPlace;
     boolean editmode = false;
-    private TextView tv_country_name, tv_region_name, tv_district_name, tv_place_name;
     Spinner subdistrictSpinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_subdistrict);
-        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         farmerId=getIntent().getExtras().getInt(ChildLabourUtils.CHILD_FARMER_ID);
         editmode=getIntent().getExtras().getBoolean("EDIT_MODE");
         olamfarmername=getIntent().getExtras().getString("olamfarmername");
         initComponents();
         initEvents();
-
-    }
-
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     private void initEvents() {
@@ -68,15 +48,11 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     private void initComponents() {
         Cursor farmer = null;
         updateSubdistrict=findViewById(R.id.updateSubdistrict);
-       /* tv_country_name=findViewById(R.id.tv_country_name);
-        tv_region_name=findViewById(R.id.tv_region_name);
-        tv_district_name=findViewById(R.id.tv_district_name);
-        tv_place_name=findViewById(R.id.tv_place_name);*/
-        countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
-        regionSpinner = (Spinner) this.findViewById(R.id.spinner_region);
-        districtSpinner = (Spinner) this.findViewById(R.id.spinner_district);
-        subdistrictSpinner = (Spinner) this.findViewById(R.id.spinner_subdistrict);
-        placeSpinner = (Spinner) this.findViewById(R.id.spinner_place);
+        countrySpinner = this.findViewById(R.id.spinner_country);
+        regionSpinner = this.findViewById(R.id.spinner_region);
+        districtSpinner = this.findViewById(R.id.spinner_district);
+        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
+        placeSpinner = this.findViewById(R.id.spinner_place);
 
         try {
             farmer = dl.getFarmerById(farmerId);
@@ -91,22 +67,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                String countryName = dl.getCountryName(selectedCountry);
-//                tv_country_name.setText(countryName);
-                String regionName = dl.getRegionName(selectedRegion);
-//                tv_region_name.setText(regionName);
-                String districtName = dl.getDistrictName(selectedDistrict);
-//                tv_district_name.setText(districtName);
-                String placeName = dl.getPlaceName(selectedPlace);
-
-                String subdistricName = dl.getPlaceName(selectedSubDistrict);
-//                tv_place_name.setText(placeName);
                 dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, null, true, 3);
-//                dl.loadSubdistrictSpinner(this, context, selectedDistrict, 0);
-               /* countrySpinner.setEnabled(false);
-                regionSpinner.setEnabled(false);
-                districtSpinner.setEnabled(false);*/
-
             }
         }finally {
             farmer.close();
@@ -160,7 +121,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
             ContentValues contentValue=new ContentValues();
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID,selectedSubDistrict);
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID,selectedSubDistrict);
-//            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID,selectedPlace);
+
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID,selectedPlace);
             dl.updateSubdistrict(farmerId, contentValue, olamfarmername);
             Toast.makeText(this,getResources().getString(R.string.subdistrict_note), Toast.LENGTH_LONG).show();

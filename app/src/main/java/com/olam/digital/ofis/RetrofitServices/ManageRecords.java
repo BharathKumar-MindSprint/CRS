@@ -17,8 +17,6 @@ import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
-import org.json.JSONArray;
-
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,7 +56,7 @@ public interface ManageRecords {
     @GET("ofisreports/reports/farmplan")
     Call<DownloadFormList> getAllFarmFormList(@Header("App-Id") int AppId
             , @Query("userId") String userId
-            , @Query("enumeratorId") Integer enumeratorId
+            , @Query("enumeratorId") Long enumeratorId
             , @Query("odAccessToken") String odAccessToken);
 
 

@@ -29,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
-        versionCode 91
-        versionName "10.8.4"
+        versionCode 94
+        versionName "10.8.6"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -50,7 +50,6 @@ android {
         }
         release {
             lintOptions {
-                disable 'MissingTranslation'
                 checkReleaseBuilds false
                 abortOnError false
             }

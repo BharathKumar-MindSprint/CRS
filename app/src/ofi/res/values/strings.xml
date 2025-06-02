@@ -778,7 +778,7 @@
     <string name="select_country">Please select Country</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="odid">OD ID:</string>
-    <string name="duplicate_survey">Dupicate survey entry</string>
+    <string name="duplicate_survey">Duplicate survey entry</string>
     <string name="removing_duplicate_survey">Removing dupicate survey</string>
     <string name="attendee_name">Attendee Name:</string>
     <string name="attendee_age">Age</string>

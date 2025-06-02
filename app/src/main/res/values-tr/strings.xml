@@ -786,4 +786,11 @@
     <string name="something_went_wrong_please_try_again">Bir şeyler yanlış gitti, lütfen tekrar deneyin</string>
     <string name="image_size_exceeds_5_mb">Görüntü boyutu 5MB\'yi aşıyor. Lütfen daha küçük bir görüntü seçin.</string>
     <string name="restriction_in_submodules">Devam etmek için lütfen tüm zorunlu soruları yanıtlayın</string>
+
+    <string name="mandate_survey">Lütfen önce zorunlu anketi tamamlayın!</string>
+    <string name="mandate_survey_not_synced">Üzgünüz, ancak zorunlu anket henüz senkronize edilmedi. Lütfen önce zorunlu anketi senkronize edin</string>
+    <string name="stakeholder_not_synced">Üzgünüz, ancak paydaş henüz senkronize edilmedi. Lütfen önce paydaşı senkronize edin</string>
+    <string name="consent_not_synced">Üzgünüz, ancak onay henüz senkronize edilmedi. Lütfen önce onayı senkronize edin</string>
+    <string name="survey_already_synced">Bu anket başka bir sayıcı tarafından zaten yanıtlandı. Lütfen OFIS uygulamanızı kaydedin ve güncelleyin</string>
+
 </resources>
