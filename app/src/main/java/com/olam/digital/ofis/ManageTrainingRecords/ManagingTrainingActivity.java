@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -44,6 +44,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 public class ManagingTrainingActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
     private Spinner courseSpinner,moduleSpinner,languageSpinner;
     private Button retry_btn;
@@ -74,13 +76,10 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         progressDialog.setMessage(getString(R.string.Loading));
         progressDialog.show();
         mIntentFilter=new IntentFilter();
-        mIntentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         retry_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConnectivityManager connMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                @SuppressLint("MissingPermission") NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()) {
+                if (isNetworkAvailable(getApplicationContext())) {
                     Home_frame.setVisibility(View.VISIBLE);
                     Network_frame.setVisibility(View.INVISIBLE);
 
@@ -155,8 +154,8 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
-                if(isOnline(context)){
-                    if(CourseList_Flag==false){
+                if(isNetworkAvailable(context)){
+                    if(!CourseList_Flag){
                         Spinnerhint();
                         courseSpinnerMethod();
                     }
@@ -170,16 +169,6 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
             }
         }
     };
-
-    public boolean isOnline(Context c){
-        ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        @SuppressLint("MissingPermission") NetworkInfo ni=cm.getActiveNetworkInfo();
-        if(ni !=null && ni.isConnectedOrConnecting()){
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     private void showAlert(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -374,7 +363,6 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
 
     private void courseSpinnerMethod() {
         ManageRecords AllCourse=RetrofitClient.getRetrofit().create(ManageRecords.class);
-        String EnumeratorID=new AuthenticationHelper(context).getuserName();
         Call<Course> call=AllCourse.getAllCourses();
         call.enqueue(new Callback<Course>() {
             @Override

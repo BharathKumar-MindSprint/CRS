@@ -74,39 +74,6 @@ public class KeyboardUtils implements ViewTreeObserver.OnGlobalLayoutListener
         }
     }
 
-    /**
-     * Remove all registered keyboard listeners
-     */
-    public static void removeAllKeyboardToggleListeners()
-    {
-        for(SoftKeyboardToggleListener l : sListenerMap.keySet())
-            sListenerMap.get(l).removeListener();
-
-        sListenerMap.clear();
-    }
-
-    /**
-     * Manually toggle soft keyboard visibility
-     * @param context calling context
-     */
-    public static void toggleKeyboardVisibility(Context context)
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(inputMethodManager != null)
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    /**
-     * Force closes the soft keyboard
-     * @param activeView the view with the keyboard focus
-     */
-    public static void forceCloseKeyboard(View activeView)
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) activeView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(inputMethodManager != null)
-            inputMethodManager.hideSoftInputFromWindow(activeView.getWindowToken(), 0);
-    }
-
     private void removeListener()
     {
         mCallback = null;

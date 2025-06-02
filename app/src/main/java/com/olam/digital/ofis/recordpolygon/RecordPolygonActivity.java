@@ -18,7 +18,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -89,7 +88,6 @@ import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
@@ -142,6 +140,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -1485,7 +1484,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             map.getOverlays().remove(polygon);
         }
         if(isSyncedPlot(position)){
-            if (InternetConnectionHelper.isInternetAvailable(this)) {
+            if (isNetworkAvailable(this)) {
                 if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
