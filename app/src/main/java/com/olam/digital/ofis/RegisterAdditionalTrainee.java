@@ -244,6 +244,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
             }
         });
         parentGroup.addView(childAttendeeView);
+        addIconRefactor();
         // Disabling scroll option - OFIS-1172
 //        ViewTreeObserver vto = scrollView.getViewTreeObserver();
 //        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -253,6 +254,15 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 //        });
     }
 
+    public void addIconRefactor() {
+        if (parentGroup.getChildCount()<5) {
+            btnAddAttendee.setEnabled(true);
+            btnAddAttendee.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_active));
+        }else{
+            btnAddAttendee.setEnabled(false);
+            btnAddAttendee.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_disabled));
+        }
+    }
     private void setInitialData() {
        Cursor farmerCursor= dl.getFarmerById(farmerId);
        String name = null;
@@ -290,6 +300,10 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     ImageView btnDeleteAttendee = (ImageView) child.findViewById(R.id.btndeleteAttendee);
                     btnDeleteAttendee.setOnClickListener(view1 -> {
                         parentGroup.removeView(child);
+                        if (parentGroup.getChildCount()<5){
+                            btnAddAttendee.setEnabled(true);
+                            btnAddAttendee.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_active));
+                        }
                     });
 
                     TextView  lblAttendee=(TextView) child.findViewById(R.id.lblAttendee);
@@ -364,6 +378,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 
                 } while (traineeRelationshipCursor.moveToNext());
             }
+            addIconRefactor();
         }
     }
 
