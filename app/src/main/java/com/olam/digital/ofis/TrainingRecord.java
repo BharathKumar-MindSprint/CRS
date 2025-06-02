@@ -96,6 +96,7 @@ public class TrainingRecord extends BaseListActivity{
    public static boolean isCaptureAttendee;
 
     public boolean signatureAllowed;
+    String currentPhotoPathBackup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -834,11 +835,12 @@ public class TrainingRecord extends BaseListActivity{
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
                 } else {
-                    mCurrentPhotoPath = null;
+                    setCurrentPhotoPath(currentPhotoPathBackup);
                 }
         }
     }
     private void bindTrainingPhotoButton() {
+        currentPhotoPathBackup = getCurrentPhotoPath();
         // New
         File photoFile = null;
         try {
