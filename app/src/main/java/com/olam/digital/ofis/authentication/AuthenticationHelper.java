@@ -1,11 +1,8 @@
 package com.olam.digital.ofis.authentication;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Debug;
 
 import com.google.gson.Gson;
-import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.scottyab.aescrypt.AESCrypt;
 

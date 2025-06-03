@@ -147,6 +147,7 @@ public class Utilities {
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
     public static final String FLMRS = "FLMRS";
     public static final String SURVEY_TYPE_FLMRS = "8";
+    public static final String ATTENDEE_SIGNATURE = "ATTENDEE_SIGNATURE";
 
 
 

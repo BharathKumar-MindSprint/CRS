@@ -1,14 +1,11 @@
 package com.olam.digital.ofis.tasks;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.util.Base64;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
 import org.json.JSONArray;
@@ -17,7 +14,6 @@ import org.json.JSONObject;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -94,14 +90,6 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
             return null;
         }
 
-    }
-
-    boolean isPhoneOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     void okHttpPost(Context context, String url, JSONObject params, Callback callback) {

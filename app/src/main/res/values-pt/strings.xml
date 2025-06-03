@@ -893,5 +893,9 @@
 
     <string name="mandate_survey">Por favor, complete primeiro a pesquisa obrigatória!</string>
     <string name="mandate_survey_not_synced">Desculpe, mas a pesquisa obrigatória ainda não foi sincronizada. Por favor, sincronize primeiro a pesquisa obrigatória</string>
+    <string name="stakeholder_not_synced">Desculpe, mas o stakeholder ainda não foi sincronizado. Por favor, sincronize o stakeholder primeiro</string>
+    <string name="consent_not_synced">Desculpe, mas o consentimento ainda não foi sincronizado. Por favor, sincronize o consentimento primeiro</string>
+    <string name="survey_already_synced">Esta pesquisa já foi respondida por outro enumerador. Por favor, salve e atualize seu aplicativo OFIS</string>
+
 </resources>
 

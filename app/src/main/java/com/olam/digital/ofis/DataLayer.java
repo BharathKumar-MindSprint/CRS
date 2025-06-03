@@ -54,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class DataLayer {
     private static Resources res;
     private static SQLiteDatabase db;
     private static OFISRoomDB ofisRoomDB;
+    Context context;
 
 
     // constructor - update
@@ -90,6 +92,7 @@ public class DataLayer {
         res = res_;
         db = Utilities.getWriteableDb(context_);
         ofisRoomDB = OFISRoomDB.getDbInstance(context_);
+        this.context = context_;
     }
 
     boolean placeAlreadyExists(String placeName, long district_id) {
@@ -7291,6 +7294,7 @@ public class DataLayer {
                         jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );
                         jsonObject1.put("relationshipId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID)));
                         jsonObject1.put("attendeesGender", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER)));
+                        jsonObject1.put("signature", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE)));
                         jsonObject1.put("active", "true");
                         jsonArray.put(jsonObject1);
                     } while (cursor.moveToNext());
@@ -7331,6 +7335,7 @@ public class DataLayer {
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID, attendee.getTraineeRelationshipId());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER, attendee.getTraineeGender());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID, attendee.getTraineeGenderId());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE, attendee.getTraineeRelationSignature());
                 db.insert(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, null, values);
             }
         }
@@ -8813,26 +8818,114 @@ public class DataLayer {
     }
 
     public boolean areAllSignaturesPresent(long trainingRecordId) {
-        String[] columns = { OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE };
+        String[] attendeeColumns = { OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE };
+        String[] relationColumns = { OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE };
 
-        try (Cursor cursor = queryTrainingAttendee(trainingRecordId, columns)) {
+        return areSignaturesPresent(trainingRecordId, attendeeColumns, false) && areSignaturesPresent(trainingRecordId, relationColumns, true );
+    }
+
+    private boolean areSignaturesPresent(long trainingRecordId, String[] columns, boolean relation) {
+        Cursor cursor;
+        if (relation) {
+            cursor = queryTrainingRelation(trainingRecordId, new String[]{"*"});
+        } else {
+            cursor = queryTrainingAttendee(trainingRecordId, new String[]{"*"});
+        }
+        try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(columns[0]));
                     if (signature == null || signature.isEmpty()) {
                         return false;
                     }
                 } while (cursor.moveToNext());
-            } else {
-                return false;
             }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }
+    public Cursor queryTrainingRelation(long trainingRecordId, String[] columns) {
+        String selection = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(trainingRecordId) };
 
-    public Cursor getAllTraineeDataByRecordId(long trainingRecordId) {
-        String[] columns = { "*" };
-        return queryTrainingAttendee(trainingRecordId, columns);
+        return db.query(
+                OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+    }
+
+    public void retainOrDeleteSignatureBasedOnAvailability(long trainingRecordId) {
+        try {
+            int trainingModuleId = getTrainingModuleId(trainingRecordId);
+            boolean signatureAllowed = isSignatureAllowed(trainingModuleId);
+
+            if (!signatureAllowed) {
+                deleteSignatures(trainingRecordId, OFISDBContract.TrainingAttendee.TABLE_NAME, OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE, OFISDBContract.TrainingAttendee.COLUMN_NAME_ID, false);
+                deleteSignatures(trainingRecordId, OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE, OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getTrainingModuleId(long trainingRecordId) {
+        int trainingModuleId = 0;
+        String[] columns = { OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID };
+        String selection = OFISDBContract.TrainingRecord.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(trainingRecordId) };
+
+        Cursor trainingRecord = db.query(
+                OFISDBContract.TrainingRecord.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (trainingRecord != null) {
+            while (trainingRecord.moveToNext()) {
+                trainingModuleId = trainingRecord.getInt(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID));
+            }
+            trainingRecord.close();
+        }
+        return trainingModuleId;
+    }
+
+    private void deleteSignatures(long trainingRecordId, String tableName, String signatureColumn, String idColumn, boolean relation) {
+        Cursor cursor = null;
+        if (relation) {
+            cursor = queryTrainingRelation(trainingRecordId, new String[]{"*"});
+        } else {
+            cursor = queryTrainingAttendee(trainingRecordId, new String[]{"*"});
+        }
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String signatureName = cursor.getString(cursor.getColumnIndex(signatureColumn));
+                if (signatureName != null) {
+                    File directory = new File(context.getFilesDir(), "signatures");
+                    File imageFile = new File(directory, signatureName);
+                    if (imageFile.exists()) {
+                        imageFile.delete();
+                    }
+
+                    // Update the database value to null
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.putNull(signatureColumn);
+                    String whereClause = idColumn + " = ?";
+                    String[] whereArgs = { cursor.getString(cursor.getColumnIndex(idColumn)) };
+                    db.update(tableName, contentValues, whereClause, whereArgs);
+                }
+            }
+            cursor.close();
+        }
     }
 
 

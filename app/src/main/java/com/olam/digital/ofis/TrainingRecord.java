@@ -96,6 +96,7 @@ public class TrainingRecord extends BaseListActivity{
    public static boolean isCaptureAttendee;
 
     public boolean signatureAllowed;
+    String currentPhotoPathBackup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -528,15 +529,17 @@ public class TrainingRecord extends BaseListActivity{
     }
 
     public void showAttendeeSignature(int attendeeId, ImageButton attendeeSignature) {
-        String signNatureName = dl.getSignatureByAttendeeId(attendeeId);
+        String signatureName = dl.getSignatureByAttendeeId(attendeeId);
         if (attendeeId != -1) {
-            if (signNatureName != null) {
+            if (signatureName != null) {
                 File directory = new File(getFilesDir(), "signatures");
-                File imageFile = new File(directory, signNatureName);
+                File imageFile = new File(directory, signatureName);
                 if (imageFile.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
                     attendeeSignature.setImageBitmap(bitmap);
                 }
+            } else {
+                attendeeSignature.setImageDrawable(getResources().getDrawable(R.drawable.empty_signature));
             }
         }
     }
@@ -790,7 +793,7 @@ public class TrainingRecord extends BaseListActivity{
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else if (signatureAllowed) {
                         if (!dl.areAllSignaturesPresent(trainingRecordId)){
-                            Toast.makeText(context, "Sign all attendees", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, getResources().getString(R.string.sign_all_attendee), Toast.LENGTH_LONG).show();
                         } else {
                             addOrUpdateTrainingRecord();
                             Intent intent = new Intent(context, TrainingRecordConfirmation.class);
@@ -814,6 +817,11 @@ public class TrainingRecord extends BaseListActivity{
         if (editMode) {
          //   getTrainingRecord();
             getTrainingAttendees();
+            if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+            } else {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+            }
         }
 
     }
@@ -832,11 +840,12 @@ public class TrainingRecord extends BaseListActivity{
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
                 } else {
-                    mCurrentPhotoPath = null;
+                    setCurrentPhotoPath(currentPhotoPathBackup);
                 }
         }
     }
     private void bindTrainingPhotoButton() {
+        currentPhotoPathBackup = getCurrentPhotoPath();
         // New
         File photoFile = null;
         try {

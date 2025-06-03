@@ -888,5 +888,9 @@
 
     <string name="mandate_survey">¡Por favor, complete primero la encuesta obligatoria!</string>
     <string name="mandate_survey_not_synced">Lo siento, pero la encuesta obligatoria aún no se ha sincronizado. Por favor, sincronice primero la encuesta obligatoria</string>
+    <string name="stakeholder_not_synced">Lo siento, pero el stakeholder aún no ha sido sincronizado. Por favor, sincronice el stakeholder primero</string>
+    <string name="consent_not_synced">Lo siento, pero el consentimiento aún no ha sido sincronizado. Por favor, sincronice el consentimiento primero</string>
+    <string name="survey_already_synced">Esta encuesta ya ha sido respondida por otro enumerador. Por favor, guarde y actualice su aplicación OFIS</string>
+
 </resources>
 

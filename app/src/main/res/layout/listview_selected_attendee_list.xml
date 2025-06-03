@@ -74,12 +74,12 @@
 
                     <ImageButton
                         android:id="@+id/signatureAttendee"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="25dp"
+                        android:layout_height="26dp"
                         android:layout_marginStart="2dp"
                         android:visibility="gone"
                         android:layout_gravity="center"
-                        android:background="@drawable/edit_plot_circular_button" />
+                        android:background="@drawable/signature_icon" />
 
                     <ImageView
                         android:id="@+id/addTrainingAttendeesIv"
@@ -211,7 +211,7 @@
                 android:layout_width="70dp"
                 android:layout_height="40dp"
                 android:id="@+id/attendeeSignatureDisplay"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="15dp"
                 android:contentDescription="@string/Add_Signature"
                 app:srcCompat="@drawable/empty_signature"
                 android:scaleType="fitCenter"
