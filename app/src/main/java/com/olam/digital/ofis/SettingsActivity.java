@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,31 +38,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.olam.digital.ofis.RetrofitServices.ManageRecords;
-import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
-import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.model.CountriesDTO;
-import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
+
 import com.olam.digital.ofis.tasks.SyncAllTask;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 
 public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
@@ -219,8 +204,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     }
 
     private void checkAuthenticate(){
-        NetworkLayer nl = new NetworkLayer(context, res);
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), SettingsActivity.this);
             accessTokenTask.execute();
         }else{
@@ -308,10 +292,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 String helpDescription = faultDescription.getText().toString();
 
 
-                if (helpName.length() > 0 && helpDescription.length() > 0) {
-                    NetworkLayer nl = new NetworkLayer(context, getResources());
-
-                    if (nl.isPhoneOnline()) {
+                if (!helpName.isEmpty() && !helpDescription.isEmpty()) {
+                    if (isNetworkAvailable(context)) {
                         updateData=false;
                         checkAuthenticate();
                     } else {
@@ -621,7 +603,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
-                    if (!InternetConnectionHelper.isInternetAvailable(SettingsActivity.this)) {
+                    if (isNetworkAvailable(SettingsActivity.this)) {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         return;
                     }

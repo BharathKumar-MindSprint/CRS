@@ -20,12 +20,11 @@ public class RetrofitClient {
                  .addInterceptor(interceptor)
                  .build();
 
-        Retrofit retrofit =new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .client(okHttpClient)
                 .build();
-        return retrofit;
 
     }
     public static Retrofit getRetrofitImage(){
@@ -37,12 +36,11 @@ public class RetrofitClient {
                 .addInterceptor(interceptor)
                 .build();
 
-        Retrofit retrofit =new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl( BuildConfig.DOWNLOADURL )
                 .client(okHttpClient)
                 .build();
-        return retrofit;
 
     }
 }

@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -25,30 +26,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.OnGroundSurveyNotificationDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
@@ -58,7 +36,9 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
-@Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
+@Database(entities =
+        {
+        DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
         DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
@@ -66,8 +46,17 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class},
-        version = 17)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class,
+        //Version 18
+//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+//                Children.class,  Country.class,
+
+
+        },
+        version = 17
+       // autoMigrations ={@AutoMigration(from =17, to=18)}
+        )
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -123,6 +112,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
+
 
     public static OFISRoomDB getDbInstance(Context context) {
 
