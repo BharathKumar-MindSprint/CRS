@@ -10,6 +10,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.agrisupplier.dao.SupplierDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierGroupDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierSubmittedModuleDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierTypeDao;
+import com.olam.digital.ofis.agrisupplier.entity.Supplier;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
@@ -26,7 +34,30 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.OnGroundSurveyNotificationDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
@@ -46,7 +77,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class,
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
         //Version 18
 //        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
 //                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
@@ -54,7 +85,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 
 
         },
-        version = 17
+        version = 18
        // autoMigrations ={@AutoMigration(from =17, to=18)}
         )
 
@@ -110,6 +141,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract MultiStakeHolderDao multiStakeHolderDao();
 
     public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
+    public abstract SupplierTypeDao supplierTypeDao();
+    public abstract SupplierDao supplierDao();
+    public abstract SupplierGroupDao supplierGroupDao();
+    public abstract SupplierSubmittedModuleDao supplierSubmittedModuleDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -145,7 +180,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (" +
-                "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                         "msTempId INTEGER," +
                         "farmerId INTEGER," +
                         "msName TEXT," +
@@ -224,10 +259,62 @@ public abstract class OFISRoomDB extends RoomDatabase {
         };
 
 
+        final Migration MIGRATION_17_18 = new Migration(17, 18) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "supplierId TEXT NOT NULL, " +
+                        "supplierName TEXT, " +
+                        "primaryPhoneNumber TEXT, " +
+                        "secondaryPhoneNumber TEXT, " +
+                        "supplierTypeId INTEGER, " +
+                        "productId INTEGER, " +
+                        "countryId INTEGER, " +
+                        "region TEXT, " +
+                        "street TEXT, " +
+                        "city TEXT, " +
+                        "district TEXT, " +
+                        "supplierGroupId INTEGER)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_type (" +
+                        "supplierTypeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "type TEXT, " +
+                        "typeEs TEXT, " +
+                        "typeFr TEXT, " +
+                        "typeId TEXT, " +
+                        "typeIn TEXT, " +
+                        "typeLo TEXT, " +
+                        "typePt TEXT, " +
+                        "typeTh TEXT, " +
+                        "typeTr TEXT, " +
+                        "typeVi TEXT)");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_group (" +
+                        "supplierGroupId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "supplierGroupName TEXT, " +
+                        "countryId INTEGER, " +
+                        "productId INTEGER, " +
+                        "supplierTypeId INTEGER, " +
+                        "supplierId INTEGER)");
+
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
+
+                database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS supplier_submitted_modules (" +
+                                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "submitted_date TEXT, " +
+                                "supplier_id TEXT, " +
+                                "module_id TEXT, " +
+                                "sync_status TEXT)"
+                );
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18)
                     .fallbackToDestructiveMigration()
                     .build();
         }

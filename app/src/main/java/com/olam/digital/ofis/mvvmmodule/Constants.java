@@ -1,7 +1,21 @@
 package com.olam.digital.ofis.mvvmmodule;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
+import android.widget.Toast;
+
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +69,57 @@ public class Constants {
             extension = fileName.substring(dotIndex + 1);
         }
         return extension;
+    }
+
+    public static String getFileName(Uri uri, Context context) {
+        String fileName = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        fileName = cursor.getString(nameIndex);
+                    }
+                }
+            }
+        }
+        if (fileName == null) {
+            fileName = uri.getLastPathSegment();
+        }
+        return fileName;
+    }
+
+    public static File compressPdf(Uri uri, Context context, String fileName) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            File outputFile = new File(context.getCacheDir(), fileName);
+            OutputStream outputStream = new FileOutputStream(outputFile);
+            PdfReader reader = new PdfReader(inputStream);
+            PdfStamper stamper = new PdfStamper(reader, outputStream);
+            stamper.getWriter().setCompressionLevel(9);
+            int total = reader.getNumberOfPages() + 1;
+
+            for (int i = 1; i < total; i++) {
+                reader.setPageContent(i + 1, reader.getPageContent(i + 1));
+            }
+
+            stamper.setFullCompression();
+            stamper.close();
+            reader.close();
+
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+
+            return outputFile;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "Error compressing PDF", Toast.LENGTH_SHORT).show();
+            return null;
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

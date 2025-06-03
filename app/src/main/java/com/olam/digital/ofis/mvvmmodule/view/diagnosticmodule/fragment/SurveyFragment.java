@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
@@ -91,7 +92,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int j = 0; j < dmQuestionsSubModuleList.size(); j++) {
 
             DmQuestionsModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
-            dmQuestionsSubModule.question = getNamesbyLanguage(dmQuestionsSubModule);
+            dmQuestionsSubModule.question = Utilities.getNamesByLanguage(dmQuestionsSubModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -145,7 +146,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         for (int i = 0; i < dmSectionsItemList.size(); i++) {
             DmSectionsItem dmSectionsItem = dmSectionsItemList.get(i);
             TextView textView = new TextView(getActivity());
-            textView.setText(getModuleSectionByLanguage(dmSectionsItemList.get(i)));
+            textView.setText(Utilities.getModuleSectionByLanguage(dmSectionsItemList.get(i), true));
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setPadding(0, 10, 0, 0);
@@ -153,7 +154,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
 
             TextView textViewDesc = new TextView(getActivity());
-            textViewDesc.setText(getSectionDescriptionByLanguage(dmSectionsItemList.get(i)));
+            textViewDesc.setText(Utilities.getModuleSectionByLanguage(dmSectionsItemList.get(i), false));
             textViewDesc.setTextColor(getResources().getColor(R.color.black));
             textViewDesc.setTextSize(14);
             textViewDesc.setTypeface(null, Typeface.ITALIC);
@@ -174,7 +175,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         Constants.questionIds.clear();
         for (int m = 0; m < dmQuestionsModuleList.size(); m++) {
             DmQuestionsModule dmQuestionsModule = dmQuestionsModuleList.get(m);
-            dmQuestionsModule.question = getNamesbyLanguage(dmQuestionsModule);
+            dmQuestionsModule.question = Utilities.getNamesByLanguage(dmQuestionsModule);
             TextView textView = new TextView(getActivity());
 
             String star = "*";
@@ -249,7 +250,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
-            list.add(getLookupValuebyLanguage(dmLookupValuesISubmoduleList.get(k)));
+            list.add(Utilities.getLookupValueByLanguage(dmLookupValuesISubmoduleList.get(k)));
             ids.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesISubmoduleList.get(k).allowCustomActionPlan);
@@ -604,7 +605,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         isCaptureProof.add(false);
 
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
-            list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
+            list.add(Utilities.getLookupValueByLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesItemList.get(k).allowCustomActionPlan);
@@ -939,7 +940,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         Integer maxSelection = db.dmQuestionsModuleDao().getMaxSelectionCount(questionId);
         int[] selectedCheckboxCount = {0};
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
-            list.add(getLookupValuebyLanguage(dmLookupValuesItemList.get(k)));
+            list.add(Utilities.getLookupValueByLanguage(dmLookupValuesItemList.get(k)));
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
             complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
             allowCustomActionPlan.add(dmLookupValuesItemList.get(k).allowCustomActionPlan);
@@ -970,7 +971,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 tv.setPadding(40,0,0,0);
                 CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
                 tvId.setText(String.valueOf(item.id));
-                tv.setText(getLookupValuebyLanguage(item));
+                tv.setText(Utilities.getLookupValueByLanguage(item));
 
                 if (answerIdDbSet.contains(item.id)) {
                     cb.setChecked(true);
@@ -1255,75 +1256,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 tl.setBackground(layout.getBackground());
             }
         }
-    }
-
-
-    public String getNamesbyLanguage(DmQuestionsModule dmQuestionsModule){
-        String language = Locale.getDefault().getLanguage();
-        return switch (language) {
-            case "en" -> dmQuestionsModule.question;
-            case "es" -> dmQuestionsModule.questionEs;
-            case "fr" -> dmQuestionsModule.questionFr;
-            case "id" -> dmQuestionsModule.questionIdn;
-            case "in" -> dmQuestionsModule.questionIdn;
-            case "lo" -> dmQuestionsModule.questionLo;
-            case "pt" -> dmQuestionsModule.questionPt;
-            case "th" -> dmQuestionsModule.questionTh;
-            case "tr" -> dmQuestionsModule.questionTr;
-            case "vi" -> dmQuestionsModule.questionVi;
-            default -> dmQuestionsModule.question;
-        };
-    }
-
-    public String getModuleSectionByLanguage(DmSectionsItem dmSectionsItem){
-        String language = Locale.getDefault().getLanguage();
-        return switch (language) {
-            case "en" -> dmSectionsItem.name;
-            case "es" -> dmSectionsItem.nameEs;
-            case "fr" -> dmSectionsItem.nameFr;
-            case "id" -> dmSectionsItem.nameId;
-            case "in" -> dmSectionsItem.nameId;
-            case "lo" -> dmSectionsItem.nameLo;
-            case "pt" -> dmSectionsItem.namePt;
-            case "th" -> dmSectionsItem.nameTh;
-            case "tr" -> dmSectionsItem.nameTr;
-            case "vi" -> dmSectionsItem.nameVi;
-            default -> dmSectionsItem.name;
-        };
-    }
-
-    public String getSectionDescriptionByLanguage(DmSectionsItem dmSectionsItem){
-        String language = Locale.getDefault().getLanguage();
-        return switch (language) {
-            case "en" -> dmSectionsItem.description;
-            case "es" -> dmSectionsItem.descriptionEs;
-            case "fr" -> dmSectionsItem.descriptionFr;
-            case "id" -> dmSectionsItem.descriptionIdn;
-            case "in" -> dmSectionsItem.descriptionIdn;
-            case "lo" -> dmSectionsItem.descriptionLo;
-            case "pt" -> dmSectionsItem.descriptionPt;
-            case "th" -> dmSectionsItem.descriptionTh;
-            case "tr" -> dmSectionsItem.descriptionTr;
-            case "vi" -> dmSectionsItem.descriptionVi;
-            default -> dmSectionsItem.description;
-        };
-    }
-
-    public String getLookupValuebyLanguage(DmLookupValuesItem dmLookupValuesItem){
-        String language = Locale.getDefault().getLanguage();
-        return switch (language) {
-            case "en" -> dmLookupValuesItem.value;
-            case "es" -> dmLookupValuesItem.valueEs;
-            case "fr" -> dmLookupValuesItem.valueFr;
-            case "id" -> dmLookupValuesItem.valueId;
-            case "in" -> dmLookupValuesItem.valueId;
-            case "lo" -> dmLookupValuesItem.valueLo;
-            case "pt" -> dmLookupValuesItem.valuePt;
-            case "th" -> dmLookupValuesItem.valueTh;
-            case "tr" -> dmLookupValuesItem.valueTr;
-            case "vi" -> dmLookupValuesItem.valueVi;
-            default -> dmLookupValuesItem.value;
-        };
     }
 
     public void saveTextBoxAnswer(DmSurveyAnswerTable dmSurveyAnswerTable1, String questionId, int j) {

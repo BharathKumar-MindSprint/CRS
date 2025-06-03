@@ -29,6 +29,9 @@ import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSubmittedModuleResponse;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
@@ -106,7 +109,7 @@ public class SyncAllTask extends SyncTask {
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
-    public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse;
+    public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
@@ -279,6 +282,15 @@ public class SyncAllTask extends SyncTask {
         }
         else if (op == SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES) {
             GetAllFollowUpDMData();
+        }
+        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_DATA) {
+            syncSupplierDetails();
+        }
+        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA) {
+            syncSupplierSurveys();
+        }
+        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE) {
+            getAllSubmittedModules();
         }
 
         return null;
@@ -477,6 +489,10 @@ public class SyncAllTask extends SyncTask {
             farmerResponse = null;
             dmResponseObject = null;
             dmFollowUpResponse = null;
+
+            new UpdateSupplierTask(context).execute(supplierResponse,supplierSurveyResponse, supplierSurveySubmittedResponse);
+            supplierResponse = null;
+            supplierSurveyResponse = null;
 
             LocalUnitResponse(localUnitResponse);
             localUnitResponse = null;
@@ -709,6 +725,7 @@ public class SyncAllTask extends SyncTask {
                                 boolean calculateCompositeFlag = item.has(Utilities.CALCULATE_COMPOSITE_FLAG) && item.getBoolean(Utilities.CALCULATE_COMPOSITE_FLAG);
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
+                                Utilities.saveToSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, null, item.getBoolean(Utilities.IS_SUPPLIER_ENABLED));
 
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
@@ -1702,7 +1719,12 @@ public class SyncAllTask extends SyncTask {
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
-                        } else {
+                        }
+                        else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
+                        }
+                        else {
                             publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
                         }
 
@@ -2164,8 +2186,8 @@ public class SyncAllTask extends SyncTask {
                                 // store the data in a loop
                                 db.localUnitDao().insert(localUnit);
                             }
-                                // store in a single stretch
-                                // db.localUnitDao().insertAll(localUnits);
+                            // store in a single stretch
+                            // db.localUnitDao().insertAll(localUnits);
                         }
                     }
 
@@ -2233,8 +2255,16 @@ public class SyncAllTask extends SyncTask {
                         if (response.code() == 200) {
                             ResponseModel dmResponse = response.body();
                             dmResponseObject = new JSONObject(new Gson().toJson(dmResponse));
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
+
+                            if (dmResponse.getErrorMessage() != null && dmResponse.getErrorMessage().equals(Utilities.DM_ERROR_MESSAGE)) {
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
+                            }
+                            else {
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
+                            }
+
                         } else {
                             String finalEndPoint = call.request().url().toString();
                             int statusCode = response.code();
@@ -2244,6 +2274,7 @@ public class SyncAllTask extends SyncTask {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        postFailureMessage(null);
                     }
                 }
 
@@ -2260,7 +2291,8 @@ public class SyncAllTask extends SyncTask {
             });
         }
         else {
-            publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
         }
     }
 
@@ -2274,7 +2306,8 @@ public class SyncAllTask extends SyncTask {
                     if (response.code() == 200) {
                         FollowUpResponseModel followUpResponseModel = response.body();
                         dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
-                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
                     } else if (response.code() == 400){
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
@@ -2286,6 +2319,7 @@ public class SyncAllTask extends SyncTask {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    postFailureMessage(null);
                 }
             }
 
@@ -2301,6 +2335,133 @@ public class SyncAllTask extends SyncTask {
             }
         });
 
+    }
+
+    public void syncSupplierDetails() {
+        deleteSupplierDetails();
+        if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+            ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
+            retrofit2.Call<SupplierResponse> call = retrofitClient.getAllSupplierData();
+            call.enqueue(new retrofit2.Callback<SupplierResponse>() {
+                @Override
+                public void onResponse(retrofit2.Call<SupplierResponse> call, retrofit2.Response<SupplierResponse> response) {
+                    try {
+                        if (response.code() == 200) {
+                            supplierResponse = new JSONObject(new Gson().toJson(response.body()));
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Data");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
+                        }
+                        else {
+                            String finalEndPoint = call.request().url().toString();
+                            int statusCode = response.code();
+                            String networkResponse = response.errorBody().toString();
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                            postFailureMessage(null);
+                        }
+                    } catch (Exception e) {
+                        Log.e("RESPONSE", "Error with supplier response");
+                        e.printStackTrace();
+                        postFailureMessage(null);
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<SupplierResponse> call, Throwable t) {
+                    String failureMessage = res.getString(R.string.networking_error);
+                    if (t != null) {
+                        FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                        failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                    }
+
+                    publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+                }
+            });
+        }
+        else {
+            publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+        }
+    }
+
+    public void syncSupplierSurveys() {
+        ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<SupplierModuleResponse> call = retrofitClient.getAllSupplierSurveys();
+
+        call.enqueue(new retrofit2.Callback<SupplierModuleResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<SupplierModuleResponse> call, retrofit2.Response<SupplierModuleResponse> response) {
+                try {
+                    if (response.code() == 200) {
+                        supplierSurveyResponse = new JSONObject(new Gson().toJson(response.body()));
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Submitted Module Data");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
+                    }
+                    else {
+                        String finalEndPoint = call.request().url().toString();
+                        int statusCode = response.code();
+                        String networkResponse = response.errorBody().toString();
+                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                        postFailureMessage(null);
+                    }
+                }
+                catch (Exception e) {
+                    Log.e("RESPONSE", "Error with supplier response");
+                    e.printStackTrace();
+                    postFailureMessage(null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<SupplierModuleResponse> call, Throwable t) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+    }
+
+    public void getAllSubmittedModules() {
+        ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<SupplierSubmittedModuleResponse> call = retrofitClient.getSupplierSurveySubmittedModules();
+        call.enqueue(new retrofit2.Callback<SupplierSubmittedModuleResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<SupplierSubmittedModuleResponse> call, retrofit2.Response<SupplierSubmittedModuleResponse> response) {
+
+                try {
+                    if (response.code() == 200) {
+                        supplierSurveySubmittedResponse = new JSONObject(new Gson().toJson(response.body()));
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
+                    }
+                    else {
+                        String finalEndPoint = call.request().url().toString();
+                        int statusCode = response.code();
+                        String networkResponse = response.errorBody().toString();
+                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
+                        postFailureMessage(null);
+                    }
+                }
+                catch (Exception e) {
+                    Log.d("Error", "Issue in supplier survey submitted module response");
+                    e.printStackTrace();
+                    postFailureMessage(null);
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<SupplierSubmittedModuleResponse> call, Throwable t) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (t != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing supplier survey modules", t));
+                    failureMessage += (t.getMessage() != null) ? t.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
     }
 
     public void deleteRoomDbValues() {
@@ -2325,7 +2486,14 @@ public class SyncAllTask extends SyncTask {
         roomDB.onGroundSurveyNotificationDao().deleteAll();
         roomDB.dmSurveyReportDao().deleteAll();
         roomDB.followUpItemMainTableDao().deleteAll();
+        roomDB.dmComplaintFileTableDao().deleteAll();
     }
 
+    private void deleteSupplierDetails() {
+        roomDB.supplierDao().deleteAll();
+        roomDB.supplierGroupDao().deleteAll();
+        roomDB.supplierTypeDao().deleteAll();
+        roomDB.supplierSubmittedModuleDao().deleteAll();
+    }
 
 }

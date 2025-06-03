@@ -4950,6 +4950,15 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
+    public void deleteSupplierSurveyNetworkQueueItem(String supplierId, String type, int moduleId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? ";
+        String[] whereArgs = new String[]{supplierId, type, String.valueOf(moduleId)};
+        try {
+            db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
     public long deleteNetworkQueueItemByFarmerId(int farmerId, String type) {
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId), type};
@@ -8013,7 +8022,7 @@ public class DataLayer {
 
     public void updateNqForDMSurvey(String farmerId, String moduleId, String type, String moduleName, int plotId, String location){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        boolean updateWaiting = networkEntryTypeExistsByFarmerModuleId(type, Long.parseLong(farmerId), moduleId, plotId);
+        boolean updateWaiting = networkEntryTypeExistsByFarmerModuleId(type, farmerId, moduleId, plotId);
         String moduleType = plotId != 0 ? res.getString(R.string.dm_plot_survey) : res.getString(R.string.diagnostic_survey);
         if (updateWaiting) {
             ContentValues nqiValues = new ContentValues();
@@ -8038,7 +8047,7 @@ public class DataLayer {
         }
     }
 
-    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId, int plotId) {
+    public boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, String farmerId, String moduleId, int plotId) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND "
                 + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
@@ -8046,7 +8055,7 @@ public class DataLayer {
                 + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " = ?";
         String[] whereArgs = new String[]{
                 submission_type,
-                String.valueOf(farmerId),
+                farmerId,
                 moduleId,
                 String.valueOf(plotId)
         };

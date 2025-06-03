@@ -56,6 +56,9 @@ import com.google.gson.Gson;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
+import com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity;
+import com.olam.digital.ofis.agrisupplier.ui.SupplierSurveyActivity;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
@@ -181,6 +184,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
+    private static CardView cvSupplierAndSurvey;
+    private static Button supplierAndSurvey;
 
 
     @Override
@@ -584,6 +589,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (notificationButton != null) {
             notificationButton.setVisible(true);
         }
+        if (Utilities.getBoolFromSharedPrefs(staticContext, Utilities.IS_SUPPLIER_ENABLED, false)) {
+            cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+            supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(staticContext, FindSupplierAndSurveyActivity.class);
+                    staticContext.startActivity(intent);
+                }
+            });
+        }
+        else {
+            cvSupplierAndSurvey.setVisibility(View.GONE);
+        }
+
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
 
@@ -931,6 +950,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button captureLocation = findViewById(R.id.captureLocation);
         Button recordTraining = findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = findViewById(R.id.downloadSurveyData);
+        supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
+        cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
 
         syncAll = findViewById(R.id.syncAll);
         downloadSurveyWrap();
@@ -981,6 +1002,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+            if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+                supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else {
+                cvSupplierAndSurvey.setVisibility(View.GONE);
+            }
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1383,6 +1417,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
+            }
+            else if (itemType.equalsIgnoreCase("Supplier Survey")) {
+                int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+                String supplierId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String supplierName = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                SupplierSurveyDto supplierSurveyDto = db.dmMainModuleDao().getModuleById(moduleId);
+
+                Intent intent = new Intent(context, SupplierSurveyActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Utilities.SUPPLIER, supplierSurveyDto);
+                bundle.putString("SupplierId", supplierId);
+                bundle.putString("SupplierName", supplierName);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {
         }
