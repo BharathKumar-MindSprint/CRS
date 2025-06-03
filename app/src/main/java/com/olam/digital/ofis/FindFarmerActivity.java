@@ -739,21 +739,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         //we now view this farmer
         Intent intent;
-
-        if (transactionMode) {
-            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
-            intent = new Intent(context, TransactionItem.class);
-            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
-            intent.putExtra(TRANSACTEE_ID, id);
-            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
-            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
-            intent.putExtra(BACK_TO_FINDER, backtoFinder);
-            if (transactionItemId > 0) {
-                intent.putExtra(EDIT_MODE, true);
-            }
-            intent.putExtra(FARMER_ID, id);
-            context.startActivity(intent);
-        } else if (notificationType == null) {
+        if (notificationType == null) {
             ViewFarmerActivity.farmerId = id;
             ViewFarmerActivity.notificationType = null;
             intent = new Intent(context, ViewFarmerActivity.class);

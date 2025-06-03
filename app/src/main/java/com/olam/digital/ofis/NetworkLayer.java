@@ -17,12 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
@@ -35,7 +33,6 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
@@ -68,7 +65,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -77,7 +73,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -96,7 +91,6 @@ import okhttp3.Response;
  * All network functions carried out by the application
  */
 public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
-    private static final int BUFFER = 15 * 1024;
     private final Context context;
     private final Resources res;
     private static final String BASE_URL = BuildConfig.HOST;
@@ -188,7 +182,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
-
     private static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String commodity = Utilities.getCommoditySharedPrefs(context);
@@ -219,7 +212,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         okHttpClient.newCall(request).enqueue(callback);
     }
-
 
     private static void okHttpPut(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -310,20 +302,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private static void okHttpMultiPartPost1(Context context, String url, RequestBody requestBody, Callback callback) {
-        String enumeratorId = Utilities.getFromSharedPrefs(context);
-        String commodity = Utilities.getCommoditySharedPrefs(context);
-        String operatingUnit = Utilities.getOperatingUnitSharedPrefs(context);
-        String imeiNumber = Utilities.getIMEI(context);
-        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
-        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
-        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
-
         Request request = new Request.Builder()
-
                 .header("App-Id", "1")
-//                .header("AccessToken", AccessToken)
                 .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
                 .url(fullUrl)
                 .post(requestBody)
@@ -332,7 +313,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private static void okHttpMSPost(Context context, String url, JSONObject params, Callback callback) {
-        //   String fullUrl = getMSAbsoluteUrl(url);
         String fullUrl = getAbsoluteUrl(url);
         RequestBody body = RequestBody.create(JSONBody, params.toString());
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -355,11 +335,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
-
-    private static String getAbsoluteUrlMigration(String relativeUrl) {
-        return BASE_URL + relativeUrl;
-    }
-
     private void recordFailedUpload(long server_item_id, long fully_synced, long networkQueueItemId) {
         try {
             ContentValues failureValues = new ContentValues();
@@ -371,19 +346,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
-    }
-
-    private void recordFailedMobileMoneyUpload(long server_item_id, long fully_synced, long transactionItemId) {
-        Cursor transactionItem = dl.getTransactionItemById(transactionItemId);
-        int uploadAttemptsSoFar = 0;
-        if (transactionItem.moveToFirst()) {
-            uploadAttemptsSoFar = transactionItem.getInt(transactionItem.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS));
-        }
-        ContentValues failureValues = new ContentValues();
-        failureValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID, server_item_id);
-        failureValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_FULLY_SYNCED, fully_synced);
-        failureValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS, uploadAttemptsSoFar + 1);
-        dl.updateTransactionItem(failureValues, transactionItemId);
     }
 
     private void postFailureMessage(Handler handler, JSONObject response, Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) {
@@ -498,41 +460,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    void postFirebaseToken(final String token) {
-        String enumeratorId = Utilities.getFromSharedPrefs(context);
-        if (enumeratorId.length() > 0) {
-            JSONObject tokenObj = new JSONObject();
-            try {
-                tokenObj.put("firebasetoken", token);
-
-                okHttpPost(context, "enumerators/updateFBtoken", tokenObj, new Callback() {
-                    @Override
-                    public void onResponse(Call call, final Response response) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (response.isSuccessful()) {
-                                    Toast.makeText(context, res.getString(R.string.registeredForNotifications), Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(context, res.getString(R.string.registerForNotificationsFailed), Toast.LENGTH_LONG).show();
-                                    FirebaseCrash.report(new Throwable(res.getString(R.string.registerForNotificationsFailed)));
-                                }
-                            }
-                        });
-                        response.close();
-                    }
-
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting firebase token" + e.getMessage());
-                    }
-                });
-            } catch (JSONException e) {
-                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting firebase token" + e.getMessage());
-            }
-        }
-    }
-
     void syncTasks(final String syncedOrDelivered) {
         Cursor tasks = null;
         try {
@@ -542,50 +469,33 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     JSONObject tasksPayload = new JSONObject();
                     JSONArray tasksItems = new JSONArray();
-
                     while (tasks.moveToNext()) {
                         JSONObject taskItem = new JSONObject();
-//                    taskItem.put("task_id", tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_ID)));
-//                    if (syncedOrDelivered.equalsIgnoreCase(OFISDBContract.Task.COLUMN_NAME_SYNCED)) {
-//                        taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED)));
-//                        taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE)));
-//                    }
 
                         taskItem.put("id", tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_ID)));
                         if (syncedOrDelivered.equalsIgnoreCase(OFISDBContract.Task.COLUMN_NAME_SYNCED)) {
                             taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED)));
                             taskItem.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE)));
                         }
-
                         taskItem.put(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_TASKTEXT)));
                         taskItem.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID)));
-
                         tasksItems.put(taskItem);
                     }
-
                     tasksPayload.put("tasks", tasksItems);
 
                     uploadSyncTask.put("status", "updated");
                     uploadSyncTask.put("outputdata", tasksPayload);
                     uploadSyncTask.put("resultcount", tasksItems.length());
 
-                    String endPoint = "";
-                    // old endpoint
-                    // endPoint="tasks/sync_delivered_completed";
-                    //new end point
-                    endPoint = "ofistasks/activities/tasks/sync_tasks/updates";
 
-                    okHttpPut(context, endPoint, uploadSyncTask, new Callback() {
+                    okHttpPut(context, IAPIConstants.SYNC_TASKS, uploadSyncTask, new Callback() {
                         @Override
                         public void onResponse(Call call, final Response postResponse) {
                             try {
-                                if (postResponse.code() == 401) {
-
-                                } else {
+                                if (postResponse.code() == 200) {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     JSONObject outputdata = response.optJSONObject("outputdata");
                                     if (outputdata != null) {
-                                        //JSONArray taskIds = outputdata.optJSONArray("task_ids");
                                         JSONArray taskIds = outputdata.optJSONArray("tasks");
                                         if (taskIds != null && taskIds.length() > 0) {
                                             dl.markTasksAsSyncedOrDelivered(taskIds, syncedOrDelivered);
@@ -601,13 +511,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-//                        try{
-//                            FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
-//                        }catch (Exception ex){
-//                            ex.printStackTrace();
-//                        }
-
-
                         }
 
                     });
@@ -627,15 +530,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         File dbFile = context.getDatabasePath(dbName);
         RequestBody file = RequestBody.create(MEDIA_TYPE_SQLITE, dbFile);
 
-         /*  String backupDBPath = Environment.getExternalStorageDirectory().getPath() + "/OFIS-Filebackup";
-        final File backupDBFolder = new File(backupDBPath);
-        backupDBFolder.mkdirs();
-        File appDirectory = new File(Environment.getExternalStorageDirectory() + "/OFIS_V2/logs");
-        String[] s = new String[1];
-        s[0] = dbFile.getAbsolutePath();
-        s[1] = appDirectory.getAbsolutePath();
-        zip(s, backupDBPath + "/SQLiteDbAndText.zip");*/
-
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         RequestBody requestBody;
 
@@ -646,16 +540,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         bodyBuilder.addFormDataPart("userPhoneNo", helpPhoneNo);
         bodyBuilder.addFormDataPart("faultDescription", helpDescription);
         bodyBuilder.addFormDataPart("SQLiteDb", dbFile.getName(), file);
-//        bodyBuilder.addFormDataPart("SQLiteDbAndTextZip", dbFile.getName(), file);
         bodyBuilder.addFormDataPart("enumeratorId", Utilities.getFromSharedPrefs(context));
         bodyBuilder.addFormDataPart("appVersion", BuildConfig.VERSION_NAME);
-        //bodyBuilder.addFormDataPart("zippedDebugLog", dbFile.getName(), file);
         // Get length of file in bytes
         long fileSizeInBytes = dbFile.length();
-// Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+        // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
         long fileSizeInKB = fileSizeInBytes / 1024;
-// Convert the KB to MegaBytes (1 MB = 1024 KBytes)
-        long fileSizeInMB = fileSizeInKB / 1024;
         requestBody = bodyBuilder.build();
 
         okHttpMultiPartPost(context, IAPIConstants.REQUEST_HELP, requestBody, new Callback() {
@@ -746,41 +636,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void checkTls() {
-        if (android.os.Build.VERSION.SDK_INT < 21) {
-//            try {
-//                ProviderInstaller.installIfNeededAsync(context, new ProviderInstaller.ProviderInstallListener() {
-//                    @Override
-//                    public void onProviderInstalled() {
-//                        SSLContext sslContext = null;
-//                        try {
-//                            sslContext = SSLContext.getInstance("TLSv1.2");
-//                            sslContext.init(null, null, null);
-//                            SSLEngine engine = sslContext.createSSLEngine();
-//                        } catch (NoSuchAlgorithmException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyManagementException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onProviderInstallFailed(int i, Intent intent) {
-//                    }
-//                });
-            try {
-                ProviderInstaller.installIfNeeded(context);
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                SSLEngine engine = sslContext.createSSLEngine();
-            } catch (Exception e) {
-                FirebaseCrashlytics.getInstance().log(e.getMessage());
-            }
-        }
-    }
-
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
-
         postData(itemId, handler);
     }
 
@@ -807,13 +663,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //            syncCapturedFileDataQwr(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.QWR);
             postModule(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fmpreview")) {
-            postFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
+           // postFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("fullfmpreview")) {
-            postFullFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
+           // postFullFmpReview(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("transaction")) {
             //postTransaction(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("trainingrecord")) {
-            //     syncTasks(OFISDBContract.Task.COLUMN_NAME_SYNCED);
             postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("phonenumbers")) {
             postPhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId);
@@ -846,258 +701,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "DMSurvey");
         } else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
             syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "FollowUpSurvey");
-        }
-        else if (itemType.equalsIgnoreCase("update stakeholder")) {
+        } else if (itemType.equalsIgnoreCase("update stakeholder")) {
             postStakeHolderData(networkQueueItemId, handler, msg, total, progress, itemId);
         }
-
-
     }
 
     private void initGPSSync() {
         if (dl.checkToSyncGPS() == 0) {
-            try {
-                if (GpsTrackerLogic.getGeoPointCount(context) > 0) {
-                    if (!isGpsSyncProcessing) syncGPSData();
-                }
-            } catch (Exception e) {
-                FirebaseCrashlytics.getInstance().log(e.getMessage());
-            }
-        }
-    }
-
-    void initiateMobileMoneyTransaction(final Handler handler, final long transactionItemId, final long farmerId) {
-        // create json objects
-        final Message msg = handler.obtainMessage();
-        final JSONObject transactionItem = new JSONObject();
-
-        Cursor transactionItemRecord = null;
-        try {
-
-            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
-
-            if (transactionItemRecord.getCount() > 0) {
-                transactionItemRecord.moveToFirst();
-                final String transacteeType = transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE));
-
-                if (transacteeType.equalsIgnoreCase("farmer") && !dl.isFarmerSynced(farmerId)) {
-                    msg.what = 3;
-                    msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                    handler.dispatchMessage(msg);
-                } else if (!transacteeType.equalsIgnoreCase("farmer")) {
-                    msg.what = 3;
-                    msg.obj = String.valueOf(res.getString(R.string.cannot_do_mobile_money_non_farmer));
-                    handler.dispatchMessage(msg);
-                } else {
-                    try {
-                        transactionItem.put("buyingagent_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_BUYINGAGENT_ID)));
-                        transactionItem.put("transactee_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID)));
-                        transactionItem.put("transactee_type", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE)));
-                        transactionItem.put("transaction_date", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_DATE)));
-                        transactionItem.put("transactionitemgroup_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMGROUP_ID)));
-                        transactionItem.put("transactionitemtype_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMTYPE_ID)));
-                        transactionItem.put("direction_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_DIRECTION_ID)));
-                        transactionItem.put("unit_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_UNIT_ID)));
-                        transactionItem.put("product_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_ID)));
-                        transactionItem.put("productgrade_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_GRADE_ID)));
-                        transactionItem.put("currency_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_CURRENCY_ID)));
-                        transactionItem.put("quantity", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_QUANTITY)));
-                        transactionItem.put("price_per_unit", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRICE_PER_UNIT)));
-                        transactionItem.put("total_price", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TOTAL_PRICE)));
-                        transactionItem.put("amount_mobilemoney", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_MOBILEMONEY)));
-                        transactionItem.put("amount_paid", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_PAID)));
-                        transactionItem.put("amount_loaned", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED)));
-                        transactionItem.put("amount_gifted", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_GIFTED)));
-                        transactionItem.put("transaction_notes", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_NOTES)));
-                        transactionItem.put("transaction_status", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS)));
-                        transactionItem.put("signal_strength", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH)));
-                        String diallingCode = transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE));
-                        String phoneNumber = transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER));
-                        transactionItem.put("phone_number", diallingCode + phoneNumber);
-                        transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS, transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                        transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ID, transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ID)));
-                        if (transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID)) > 0 && transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                            transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID, transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID)));
-                        }
-
-                        okHttpPost(context, "mobilemoney/submit", transactionItem, new Callback() {
-                            @Override
-                            public void onResponse(Call call, Response postResponse) {
-                                String statusMessage;
-                                if (postResponse.isSuccessful()) {
-                                    JSONObject response = null;
-                                    try {
-                                        response = new JSONObject(postResponse.body().string());
-                                        ContentValues trValues = new ContentValues();
-                                        if (response.optString("mmpp_requestid", "").length() > 0) {
-                                            trValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID, response.getString("mmpp_requestid"));
-                                        }
-                                        if (response.optString("mmpp_transactionid", "").length() > 0) {
-                                            trValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID, response.getString("mmpp_transactionid"));
-                                        }
-                                        if (response.optString("transaction_status", "").length() > 0) {
-                                            trValues.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS, response.getString("transaction_status"));
-                                        }
-                                        dl.updateTransactionItem(trValues, transactionItemId);
-                                        startMobileMoneyTimer(response);
-
-                                    } catch (JSONException | IOException e) {
-                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in mobile money transaction post response " + e.getMessage());
-                                    }
-                                    statusMessage = res.getString(R.string.mm_transaction_initiated);
-                                    msg.what = 1;
-                                    msg.obj = statusMessage;
-                                    handler.dispatchMessage(msg);
-                                } else {
-                                    try {
-                                        JSONObject response = new JSONObject(postResponse.body().string());
-                                        long server_item_id = 0, fully_synced = 0;
-                                        if (response.optJSONObject("transactionitem") != null) {
-                                            JSONObject transactionitem = response.getJSONObject("transactionitem");
-                                            server_item_id = transactionitem.getLong("id");
-                                            fully_synced = transactionitem.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                        }
-                                        recordFailedMobileMoneyUpload(server_item_id, fully_synced, transactionItemId);
-                                        postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting transaction");
-                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting mobile money transaction"));
-                                    } catch (JSONException | IOException e) {
-                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting mobile money transaction post failure response " + e.getMessage());
-                                    }
-                                }
-                                postResponse.close();
-                            }
-
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                recordFailedMobileMoneyUpload(0, 0, transactionItemId);
-                                String failureMessage = res.getString(R.string.networking_error);
-                                if (e != null) {
-                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                }
-                                postFailureMessage(handler, null, msg, 2, 0, 0, failureMessage, "submitting mobile money transaction");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                            }
-
-                        });
-
-                    } catch (JSONException e) {
-                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction post object " + e.getMessage());
-
-                    }
-                }
-            }
-
-        } finally {
-            if (transactionItemRecord != null) {
-                transactionItemRecord.close();
-            }
-        }
-    }
-
-    private void startMobileMoneyTimer(JSONObject response) {
-        response.remove("transaction_status");
-        response.remove("error");
-        response.remove("mmpp_message");
-
-        okHttpPost(context, "mobilemoney/canceltimer", response, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-
-    void checkMobileMoneyTransaction(final Handler handler, final long transactionItemId) {
-        final Message msg = handler.obtainMessage();
-        // create json objects
-        JSONObject transactionItem = new JSONObject();
-        Cursor transactionItemRecord = null;
-        try {
-
-            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
-
-            if (transactionItemRecord.getCount() > 0) {
-                transactionItemRecord.moveToFirst();
-
-                try {
-                    transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_ID, transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_ID)));
-                    transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID, transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID)));
-                    transactionItem.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID, transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID)));
-
-                    okHttpPost(context, "mobilemoney/check", transactionItem, new Callback() {
-                        @Override
-                        public void onResponse(Call call, Response postResponse) {
-                            String statusMessage;
-                            if (postResponse.isSuccessful()) {
-                                JSONObject response = null;
-                                msg.what = 4;
-                                statusMessage = res.getString(R.string.mm_transaction_awaiting_response);
-                                try {
-                                    response = new JSONObject(postResponse.body().string());
-                                    String transaction_status = response.optString("transaction_status", "");
-                                    if (transaction_status.equalsIgnoreCase("initiated") || transaction_status.equalsIgnoreCase("confirmed") || transaction_status.equalsIgnoreCase("pending")) {
-                                        msg.what = 4;
-                                        statusMessage = res.getString(R.string.mm_transaction_inprogress);
-                                    }
-                                    if (transaction_status.equalsIgnoreCase("succeeded")) {
-                                        msg.what = 5;
-                                        statusMessage = res.getString(R.string.mm_transaction_complete);
-                                    }
-                                    if (transaction_status.equalsIgnoreCase("failed")) {
-                                        msg.what = 2;
-                                        statusMessage = res.getString(R.string.mm_transaction_failed);
-                                    }
-                                    if (transaction_status.length() > 0) {
-                                        ContentValues values = new ContentValues();
-                                        values.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS, transaction_status);
-                                        dl.updateTransactionItem(values, transactionItemId);
-                                    }
-                                } catch (JSONException | IOException e) {
-                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in mobile money transaction check response" + e.getMessage());
-
-                                }
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                            } else {
-                                try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    ContentValues values = new ContentValues();
-                                    values.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS, "failed");
-                                    dl.updateTransactionItem(values, transactionItemId);
-                                    postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting mobile money transaction");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : checking mobile money transaction"));
-                                } catch (JSONException | IOException e) {
-                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting mobile money transaction check failure response " + e.getMessage());
-
-                                }
-                            }
-                            postResponse.close();
-                        }
-
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                            }
-                            postFailureMessage(handler, null, msg, 2, 0, 0, failureMessage, "submitting mobile money transaction");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
-                        }
-
-                    });
-
-                } catch (JSONException e) {
-                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction check object " + e.getMessage());
-                }
-            }
-        } finally {
-            if (transactionItemRecord != null) {
-                transactionItemRecord.close();
+            if (GpsTrackerLogic.getGeoPointCount(context) > 0) {
+                if (!isGpsSyncProcessing) syncGPSData();
             }
         }
     }
@@ -1107,7 +719,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         Cursor trainingRecord = null;
         try {
             trainingRecord = dl.getTrainingRecordById(trainingRecordId, "");
-
             if (trainingRecord.getCount() > 0) {
                 trainingRecord.moveToFirst();
                 final JSONObject jsonObject = new JSONObject();
@@ -1120,7 +731,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
                     jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID)));
                     jsonObject.put("enumeratorId", Utilities.getFromSharedPrefs(context));
-
                     if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                         jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                     }
@@ -1130,14 +740,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 // Sending pic in json format in base 64
                 try {
                     String trainingPhotoPath = trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO));
-                    if (trainingPhotoPath != null && trainingPhotoPath.length() > 0) {
+                    if (trainingPhotoPath != null && !trainingPhotoPath.isEmpty()) {
                         String encodedImage = Utilities.base64ConversionForImage(trainingPhotoPath);
                         jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, encodedImage);
                     }
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
-
                 Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
                 if (trainingAttendees.getCount() > 0) {
                     // create json objects
@@ -1153,7 +762,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             return;
                         } else {
-
                             try {
                                 JSONObject attendee = new JSONObject();
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
@@ -1164,30 +772,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
                                 attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
-
                                 attendeesJSON.put(attendee);
-
+                                jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
+                                jsonObject.put("training_attendees", attendeesJSON);
 
                             } catch (JSONException e) {
                                 FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
                             }
 
-                            // Attach the training attendees - start
-                            try {
-                                jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
-                            } catch (Exception e) {
-                            }
-                            //- End
-
                         }
                     }
-
-                    try {
-                        jsonObject.put("training_attendees", attendeesJSON);
-                    } catch (Exception e) {
-                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                    }
-
                 }
                 okHttpPost(context, IAPIConstants.CREATE_TRAINING_RECORDS, jsonObject, new Callback() {
                     @Override
@@ -1200,7 +794,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                             } catch (IOException e) {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
-                            } finally {
                             }
                             dl.deleteNetworkQueueItem(networkQueueItemId);
                             dl.deleteTrainingRecord(trainingRecordId);
@@ -1258,437 +851,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 });
             }
-
         } finally {
             trainingRecord.close();
-        }
-    }
-
-
-
-    private void postTransaction(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        // create json objects
-        JSONObject transactionItem = new JSONObject();
-
-        final int transactionItemId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID));
-        final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-
-        Cursor transactionItemRecord = null;
-        try {
-            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
-
-            if (transactionItemRecord.getCount() > 0) {
-                transactionItemRecord.moveToFirst();
-                final String transacteeType = transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE));
-                final long transactionBalanceId = transactionItemRecord.getLong(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_BALANCE_ID));
-
-                if (transacteeType.equalsIgnoreCase("farmer") && !dl.isFarmerSynced(farmerId)) {
-                    msg.what = 3;
-                    msg.arg1 = total;
-                    msg.arg2 = progress;
-                    msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                    handler.dispatchMessage(msg);
-                } else {
-                    try {
-                        transactionItem.put("buyingagent_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_BUYINGAGENT_ID)));
-                        transactionItem.put("transactee_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID)));
-                        transactionItem.put("transactee_type", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE)));
-                        transactionItem.put("transaction_date", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_DATE)));
-                        transactionItem.put("transactionitemgroup_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMGROUP_ID)));
-                        transactionItem.put("transactionitemtype_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMTYPE_ID)));
-                        transactionItem.put("direction_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_DIRECTION_ID)));
-                        transactionItem.put("unit_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_UNIT_ID)));
-                        transactionItem.put("product_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_ID)));
-                        transactionItem.put("productgrade_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_GRADE_ID)));
-                        transactionItem.put("currency_id", transactionItemRecord.getInt(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_CURRENCY_ID)));
-                        transactionItem.put("quantity", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_QUANTITY)));
-                        transactionItem.put("price_per_unit", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_PRICE_PER_UNIT)));
-                        transactionItem.put("total_price", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TOTAL_PRICE)));
-                        transactionItem.put("amount_paid", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_PAID)));
-                        transactionItem.put("amount_loaned", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED)));
-                        transactionItem.put("amount_gifted", transactionItemRecord.getDouble(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_GIFTED)));
-                        transactionItem.put("transaction_notes", transactionItemRecord.getString(transactionItemRecord.getColumnIndex(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_NOTES)));
-                        transactionItem.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                        transactionItem.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-                        if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                            transactionItem.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-                        }
-
-                        okHttpPost(context, "transactions/submit", transactionItem, new Callback() {
-                            @Override
-                            public void onResponse(Call call, Response postResponse) {
-                                String statusMessage;
-                                if (postResponse.isSuccessful()) {
-                                    JSONObject response = null;
-                                    String newBalance = "0.00";
-                                    try {
-                                        response = new JSONObject(postResponse.body().string());
-                                        newBalance = response.optString("new_balance");
-                                    } catch (JSONException | IOException e) {
-
-                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in transaction post response" + e.getMessage());
-                                    }
-                                    dl.deleteNetworkQueueItem(networkQueueItemId);
-                                    dl.deleteTransactionItem(transactionItemId, true);
-                                    if (transactionBalanceId > 0) {
-                                        dl.updateTransactionBalance(transactionBalanceId, newBalance, 0, 0, null, 0, false, false, true, false);
-                                    }
-                                    statusMessage = res.getString(R.string.item_synced);
-                                    msg.what = 1;
-                                    msg.arg1 = total;
-                                    msg.arg2 = progress;
-                                    msg.obj = statusMessage;
-                                    handler.dispatchMessage(msg);
-                                    syncNetworkQueue(originalSyncRequestItemId, handler);
-                                } else {
-                                    try {
-                                        JSONObject response = new JSONObject(postResponse.body().string());
-                                        long server_item_id = 0, fully_synced = 0;
-                                        if (response.optJSONObject("transactionitem") != null) {
-                                            JSONObject transactionitem = response.getJSONObject("transactionitem");
-                                            server_item_id = transactionitem.getLong("id");
-                                            fully_synced = transactionitem.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                        }
-                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting transaction");
-                                    } catch (JSONException | IOException e) {
-                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting transaction post failure response" + e.getMessage());
-
-                                    }
-                                }
-                                postResponse.close();
-                            }
-
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                recordFailedUpload(0, 0, networkQueueItemId);
-                                String failureMessage = res.getString(R.string.networking_error);
-                                if (e != null) {
-                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                }
-                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting transaction");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                            }
-
-                        });
-
-                    } catch (JSONException e) {
-                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction post object " + e.getMessage());
-
-                    }
-                }
-            }
-        } finally {
-            if (transactionItemRecord != null) {
-                transactionItemRecord.close();
-            }
-        }
-    }
-
-    void syncTransactionBalance(long buyingagent_id, long transactee_id, String transactee_type, long currency_id, final Handler handler) {
-        JSONObject transactee = new JSONObject();
-        try {
-            transactee.put("buyingagent_id", buyingagent_id);
-            transactee.put("transactee_id", transactee_id);
-            transactee.put("transactee_type", transactee_type);
-            transactee.put("currency_id", currency_id);
-            final Message msg = handler.obtainMessage();
-
-            okHttpPost(context, "transactions/get_transaction_balance", transactee, new Callback() {
-                @Override
-                public void onResponse(Call call, Response postResponse) {
-                    try {
-                        if (postResponse.isSuccessful()) {
-                            JSONObject response = new JSONObject(postResponse.body().string());
-                            if (response.getString("status").equalsIgnoreCase("updated")) {
-                                msg.what = 1;
-                                msg.obj = Double.parseDouble(response.getString("new_balance"));
-                            } else {
-                                msg.what = 2;
-                            }
-                        } else {
-                            msg.what = 2;
-                        }
-                        handler.dispatchMessage(msg);
-                    } catch (JSONException | IOException e) {
-                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting transaction balance response" + e.getMessage());
-                    }
-                    postResponse.close();
-                }
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    msg.what = 2;
-                    handler.dispatchMessage(msg);
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error calling transaction balance update", e));
-                }
-
-            });
-
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction balance post object" + e.getMessage());
-
-        }
-
-    }
-
-    private void postFmpReview(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        // create the JSON object required to sync this review
-        JSONObject review = new JSONObject();
-        JSONArray entries = new JSONArray();
-        String enumeratorId = Utilities.getFromSharedPrefs(context);
-        String IMEI = Utilities.getIMEI(context);
-        final int fmpId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FMP_ID));
-        final int startingYear = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED));
-        final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-
-        try {
-            review.put("olam_enumerator_id", enumeratorId);
-            review.put("imei_number", IMEI);
-            review.put(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_STARTING_YEAR, startingYear);
-            review.put(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID, farmerId);
-            review.put(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_FMP_ID, fmpId);
-            review.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-            review.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-            if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                review.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-            }
-
-            Cursor reviewValues = dl.getFmpValuesByFmpId(fmpId);
-            while (reviewValues.moveToNext()) {
-                JSONObject value = new JSONObject();
-                value.put(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_FMP_ENTRY_ID, reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_FMP_ENTRY_ID)));
-                value.put(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_VALUE, reviewValues.getString(reviewValues.getColumnIndex(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_VALUE)));
-                entries.put(value);
-            }
-            review.put("entries", entries);
-
-            okHttpPost(context, "fmps/submit", review, new Callback() {
-                @Override
-                public void onResponse(Call call, Response postResponse) {
-                    String statusMessage;
-                    if (postResponse.isSuccessful()) {
-                        dl.syncFmp(fmpId);
-                        dl.deleteNetworkQueueItem(networkQueueItemId);
-                        statusMessage = res.getString(R.string.item_synced);
-                        msg.what = 1;
-                        msg.arg1 = total;
-                        msg.arg2 = HomeActivity.progressItem = progress + 1;
-                        msg.obj = statusMessage;
-                        handler.dispatchMessage(msg);
-                        syncNetworkQueue(originalSyncRequestItemId, handler);
-                    } else {
-                        try {
-                            if (postResponse.code() == 401) {
-                                FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
-                            } else {
-                                JSONObject response = new JSONObject(postResponse.body().string());
-                                long server_item_id = 0, fully_synced = 0;
-                                if (response.optJSONObject("fmpreview") != null) {
-                                    JSONObject fmpreview = response.getJSONObject("fmpreview");
-                                    server_item_id = fmpreview.getLong("id");
-                                    fully_synced = fmpreview.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                }
-                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting FMP review");
-                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
-                            }
-                        } catch (JSONException | IOException e) {
-                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting FMP review failure response " + e.getMessage());
-
-                        }
-                    }
-                    postResponse.close();
-                }
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    try {
-                        recordFailedUpload(0, 0, networkQueueItemId);
-
-                        String failureMessage = res.getString(R.string.networking_error);
-                        if (e != null) {
-                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                        }
-                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
-                    } catch (Exception onfailEx) {
-                        String failureMessage = res.getString(R.string.networking_error);
-                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
-                        onfailEx.printStackTrace();
-                    }
-                }
-
-            });
-
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating fmp review post object " + e.getMessage());
-        }
-    }
-
-    private void postFullFmpReview(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        // create the JSON object required to sync this module
-        JSONObject submission = new JSONObject();
-        JSONArray answers = new JSONArray();
-        Set<Integer> questions_included = new TreeSet<>();
-        String enumeratorId = Utilities.getFromSharedPrefs(context);
-        String IMEI = Utilities.getIMEI(context);
-        final int fmpId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FMP_ID));
-        final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-        final String olamFarmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-        final int farmId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-
-
-        try {
-            final String submissionDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
-            submission.put(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID, fmpId);
-            submission.put("submission_date", submissionDate);
-            submission.put("olam_enumerator_id", enumeratorId);
-            submission.put("imei_number", IMEI);
-            submission.put("fmpreview", true);
-            submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-            submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-            submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-            if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-            }
-
-            Cursor fmpAnswers = null;
-
-            try {
-                fmpAnswers = dl.getAnswersByFmpId(fmpId);
-
-                if (fmpAnswers.getCount() > 0) {
-
-                    while (fmpAnswers.moveToNext()) {
-                        questions_included.add(fmpAnswers.getInt(fmpAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                        JSONObject answer = new JSONObject();
-                        answer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, fmpAnswers.getInt(fmpAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                        answer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, fmpAnswers.getInt(fmpAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                        String datatype = fmpAnswers.getString(fmpAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
-                        if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
-                            answer.put("answer", fmpAnswers.getInt(fmpAnswers.getColumnIndex("answer_" + datatype)));
-                        } else if (datatype.equalsIgnoreCase("decimal")) {
-                            answer.put("answer", fmpAnswers.getDouble(fmpAnswers.getColumnIndex("answer_" + datatype)));
-                        } else {
-                            answer.put("answer", fmpAnswers.getString(fmpAnswers.getColumnIndex("answer_" + datatype)));
-                        }
-
-                        if (fmpAnswers.getString(fmpAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
-                            Cursor subAnswers = dl.getAnswersByFmpIdAndParentQuestionId(fmpId, fmpAnswers.getInt(fmpAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-
-                            if (subAnswers.getCount() > 0) {
-                                JSONArray subAnswersArray = new JSONArray();
-                                JSONArray subAnswersAnswerArray = new JSONArray();
-
-                                int repeaterItemPosition = 1;
-                                while (subAnswers.moveToNext()) {
-                                    questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                                    JSONObject subAnswer = new JSONObject();
-
-                                    if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
-                                        // start new subAnswersAnswerArray
-                                        subAnswersArray.put(subAnswersAnswerArray);
-                                        subAnswersAnswerArray = new JSONArray();
-                                    }
-
-                                    repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
-
-                                    subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                                    subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                                    String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
-                                    if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
-                                        subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                    } else if (subAnswerDatatype.equalsIgnoreCase("decimal")) {
-                                        answer.put("answer", subAnswers.getDouble(subAnswers.getColumnIndex("answer_" + datatype)));
-                                    } else {
-                                        subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                    }
-                                    subAnswersAnswerArray.put(subAnswer);
-
-                                }
-                                subAnswersArray.put(subAnswersAnswerArray);
-                                answer.put("sub_answers", subAnswersArray);
-                            }
-                        }
-                        answers.put(answer);
-                    }
-                    String questions_included_output = questions_included.toString();
-                    submission.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
-                    submission.put("answers", answers);
-
-                    okHttpPost(context, "modules/submit", submission, new Callback() {
-                        @Override
-                        public void onResponse(Call call, Response postResponse) {
-                            String statusMessage;
-                            if (postResponse.isSuccessful()) {
-                                dl.syncFmp(fmpId);
-                                dl.updateSubModuleAnswers(new ArrayList<JSONObject>(), fmpId, 0, farmerId, null, olamFarmerId, farmId, "fmp");
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
-                            } else {
-                                try {
-                                    if (postResponse.code() == 401) {
-                                        FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
-                                    } else {
-                                        JSONObject response = new JSONObject(postResponse.body().string());
-                                        long server_item_id = 0, fully_synced = 0;
-                                        if (response.optJSONObject("submittedmodule") != null) {
-                                            JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                            server_item_id = submittedModule.getLong("id");
-                                            fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                        }
-                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting FMP review");
-                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
-                                    }
-                                } catch (JSONException | IOException e) {
-                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting module submission failure response " + e.getMessage());
-                                }
-                            }
-                            postResponse.close();
-                        }
-
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            try {
-                                recordFailedUpload(0, 0, networkQueueItemId);
-
-                                String failureMessage = res.getString(R.string.networking_error);
-                                if (e != null) {
-                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                }
-                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                            } catch (Exception onfailEx) {
-                                String failureMessage = res.getString(R.string.networking_error);
-                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
-                                onfailEx.printStackTrace();
-                            }
-                        }
-
-                    });
-                    Log.i("POST", "" + submission.toString());
-                }
-
-            } finally {
-
-                if (fmpAnswers != null) {
-                    fmpAnswers.close();
-                }
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating full fmp review post object " + e.getMessage());
-
         }
     }
 
@@ -1699,7 +863,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             final long childNwId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
-            final String endpoint = "ofissurvey/image/upload";
             String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
 
             Cursor farmerModule = null;
@@ -1709,7 +872,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 } else if(itemType.equalsIgnoreCase(Utilities.CLMRS)) {
                     farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
                 }
-
                 assert farmerModule != null;
                 if (farmerModule.getCount() > 0) {
 
@@ -1768,9 +930,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
                                         RequestBody requestBody = builder.build();
-
-                                        if (!endpoint.isEmpty()) {
-                                            okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                                        okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
                                                 @Override
                                                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                                                     if (response.isSuccessful()) {
@@ -1816,7 +976,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     }
                                                 }
                                             });
-                                        }
                                     }
                                     if(!isFileExists) {
                                         if(itemType.equalsIgnoreCase(Utilities.QWR)) {
@@ -1858,15 +1017,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postModule(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
         try {
-            // end points
-            String endPoint = "";
-            // old end point
-            // endPoint="modules/submit";
-            //New endPoint
-            endPoint = "ofissurvey/survey/submitSurveyAppModule";
-
             // create the JSON object required to sync this module
             final JSONObject submission = new JSONObject();
             JSONArray answers = new JSONArray();
@@ -1876,14 +1027,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
             final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             final String stakeholderId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
-
-
             Cursor farmerModule = null;
             final Cursor[] moduleAnswers = {null};
             final Cursor[] extraInfo = {null};
             final AtomicReference<Cursor>[] farmer = new AtomicReference[]{new AtomicReference<>()};
-
-            //Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
             final int[] plotId = {0};
 
             try {
@@ -1899,9 +1046,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
                         if (!isConsentAvailableToSync) {
                             farmerModule.moveToFirst();
-
                             Cursor finalFarmerModule = farmerModule;
-                            String finalEndPoint1 = endPoint;
                             Runnable syncModule = () -> {
                                 try {
                                     final int moduleId = finalFarmerModule.getInt(finalFarmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID));
@@ -1942,8 +1087,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             submission.put("programmeId", programmeId==null ? 0 : Integer.parseInt(programmeId));
                                             submission.put("sectionId", farmer[0].get().getInt(farmer[0].get().getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
                                         }
-                                        boolean hasPhotos = false;
-                                        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                                         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
                                         submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
                                         if (stakeholderId!=null) {
@@ -1988,9 +1131,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 answer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.olamFarmerId);
 
-
-                                                int parentid = moduleAnswers[0].getInt(moduleAnswers[0].getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID));
-
                                                 Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers[0].getInt(moduleAnswers[0].getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
                                                 Set<Integer> sub_questions_included = new TreeSet<>();
 
@@ -2023,10 +1163,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                     answer.put("is_subset", "false");
                                                 }
-
-
-                                                String subquestion = "";
-
                                                 String datatypeID = "";
                                                 String displayTypeId = "";
                                                 String answerTypeId = "";
@@ -2035,7 +1171,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 String displayType = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                                                 datatypeID = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-                                                if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
+                                                if(displayType.replaceAll(" ", "").equalsIgnoreCase("textbox")){
                                                     // use answerType
                                                     try{
                                                         answerTypeId = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
@@ -2094,8 +1230,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     answer.put("answer", moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex("answer_" + datatype)));
                                                 }
                                                 if (moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
-                                                    hasPhotos = true;
-                                                    File photo = new File(storageDir + "/" + moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex("answer_" + datatype)));
                                                     answer.put("answer", Utilities.base64ConversionForImage(
                                                             storageDir
                                                                     + "/"
@@ -2149,7 +1283,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                             if (displayConfig.has("display")) {
                                                                 JSONObject display = displayConfig.getJSONObject("display");
                                                                 if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
-                                                                    hasPhotos = true;
                                                                     subAnswer.put("has_photo_upload", true);
                                                                     subAnswer.put("answer", Utilities.base64ConversionForImage(
                                                                             storageDir + "/" +
@@ -2179,11 +1312,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             submission.put("questions_included", "");
                                             submission.put("answers", answers);
                                         }
-
-                                        final String finalEndPoint = finalEndPoint1;
                                         final int finalFarmId = farmId;
                                         int finalPlotId = plotId[0];
-                                        okHttpPost(context, finalEndPoint1, submission, new Callback() {
+                                        okHttpPost(context, IAPIConstants.SUBMIT_SURVEY, submission, new Callback() {
                                             @Override
                                             public void onResponse(Call call, Response postResponse) {
                                                 String statusMessage;
@@ -2249,16 +1380,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         }
 
                                                     } catch (JSONException | IOException e) {
-                                                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : JSON Parsing Exception :" + postResponse.networkResponse().toString(), context);
-
                                                     }
                                                     //   End
                                                 } else {
-                                                    try {
-                                                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), "Request : " + submission.toString() + "Response : " + postResponse.networkResponse().toString(), context);
-                                                    } catch (Exception e) {
-                                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                                    }
                                                     try {
                                                         if (postResponse.code() == 401) {
                                                             FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
@@ -2361,9 +1485,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } catch (CursorIndexOutOfBoundsException e) {
         }
     }
+
     private Boolean getIsMandateSurveySynced(long farmerId, int moduleId) {
         boolean isMandate = false;
-
         // Get mandate modules
         Cursor moduleAssignments = dl.getAllModuleByFarmerId(farmerId);
         Set<Integer> readyToSyncSurvey = dl.getSurveyNQBasedOnFarmerId(farmerId);
@@ -2397,8 +1521,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             submittedModules = new JSONObject();
         }
 
-
-
         // Get list of all submitted moduleIds
         Set<Integer> allSubmittedModuleId = new HashSet<>(ViewFarmerActivity.getAllSubmittedModule(submittedModules));
         Cursor getCursorRecurrence = moduleAssignments;
@@ -2429,7 +1551,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         if (finalSubmittedRecurrence.containsAll(mandateSurveyList)) {
             isMandate = true;
         } else if (disabled_months.contains(itemMonth) && !containsAny(readyToSyncSurvey, mandateSurveyList)) {
@@ -2437,8 +1558,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (surveyYear < currentYear) {
             isMandate = true;
         }
-
-
         return isMandate;
     }
 
@@ -2453,7 +1572,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     public static List<Integer> getDisableMonths(Cursor getIdCursor) {
         List<Integer> disableMonthList = new ArrayList<>();
-        Calendar currentDate = Calendar.getInstance();
 
         while (getIdCursor.moveToNext()) {
             String checkMandate = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE));
@@ -2474,16 +1592,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
     private void postFarmPolygon(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        String endpoint = "";
-        // Old end point
-        // endpoint = "poi/add/farm";
-        // new End point
-        endpoint = "ofisfarmer/farmer/addfarm";
         final JSONObject params = new JSONObject();
-
-
-
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -2518,9 +1627,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                         }
                         params.put("primary_location", false);
-                        if (endpoint.length() > 0) {
-                            final String finalEndpoint = endpoint;
-                            okHttpPost(context, endpoint, params, new Callback() {
+                        okHttpPost(context, IAPIConstants.ADD_FARM, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) throws IOException {
                                     String statusMessage;
@@ -2530,7 +1637,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         try {
                                             JSONObject jsonServerRespObj = new JSONObject(postResponseStr.toString());
-
                                             // Getting JSON Array node
                                             JSONArray locationJsonArray = null;
                                             locationJsonArray = jsonServerRespObj.getJSONArray("plots");
@@ -2538,18 +1644,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             // looping through All locationJsonArray
                                             for (int i = 0; i < locationJsonArray.length(); i++) {
                                                 JSONObject plotDataObj = locationJsonArray.getJSONObject(i);
-//                                        dl.updatePlotGeoDataAfterSync(plotDataObj.getString("plotid"), Integer.toString(plotDataObj.getInt("serverid")));
                                                 dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
-                                                //                                {"farmId":216778,"farmerId":228862,"plots":[{"id":322982,"plotId":"plot1_CI-0001-AN59-0080","plotName":"t"}]}
-
                                                 dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID), plotDataObj.getString("plotId"), plotDataObj.getString("created_at"));
                                             }
-
                                         } catch (JSONException e) {
                                             FirebaseCrashlytics.getInstance().log(e.getMessage());
-
                                         }
-
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;
@@ -2559,11 +1659,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + "Response : " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         try {
                                             if (postResponse.code() == 401) {
                                                 FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm polygon");
@@ -2610,7 +1705,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
 
                             });
-                        }
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
@@ -2635,15 +1729,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postFarmLocation(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "";
-        // old
-        // endpoint = "poi/add/farm";
-        // new
-        endpoint = "ofisfarmer/farmer/addfarm";
-
         final JSONObject params = new JSONObject();
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -2679,9 +1765,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                         }
                         params.put("primary_location", true);
-                        if (endpoint.length() > 0) {
-                            final String finalEndpoint = endpoint;
-                            okHttpPost(context, endpoint, params, new Callback() {
+                        okHttpPost(context, IAPIConstants.ADD_FARM, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -2695,11 +1779,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         try {
                                             if (postResponse.code() == 401) {
                                                 FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2724,12 +1803,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                     postResponse.close();
                                 }
-
                                 @Override
                                 public void onFailure(Call call, IOException e) {
                                     try {
                                         recordFailedUpload(0, 0, networkQueueItemId);
-
                                         String failureMessage = res.getString(R.string.networking_error);
                                         if (e != null) {
                                             failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
@@ -2745,7 +1822,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
 
                             });
-                        }
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
@@ -2769,10 +1845,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postHouseholdLocation(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "";
-        endpoint = "ofisfarmerhousehold/farmerhousehold/farmerHouseHold";
-
         final JSONObject params = new JSONObject();
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -2799,9 +1871,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (enumeratorId != null) {
                             params.put("enumeratorId", enumeratorId);
                         }
-                        if (endpoint.length() > 0) {
-                            final String finalEndpoint = endpoint;
-                            okHttpPost(context, endpoint, params, new Callback() {
+                        okHttpPost(context, IAPIConstants.FARMER_HOUSE_HOLD, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -2815,11 +1885,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         try {
                                             if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                                 FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2865,7 +1930,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
 
                             });
-                        }
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
@@ -2889,10 +1953,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postSubdistrictData(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "";
-        endpoint = "ofisfarmer/farmer/subDistrictForExistingFarmer";
-
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -2913,10 +1973,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         params.put("farmerId", farmerID);
                         params.put("subdistrictId", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID)));
                         params.put("placeId", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID)));
-               /* String enumeratorId = Utilities.getFromSharedPrefs(context);
-                if(enumeratorId != null) {
-                    params.put("enumeratorId", enumeratorId);
-                }*/
                         // test for existence of new place name
                         Cursor place = null;
                         try {
@@ -2936,9 +1992,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 place.close();
                             }
                         }
-                        if (endpoint.length() > 0) {
-                            final String finalEndpoint = endpoint;
-                            okHttpPost(context, endpoint, params, new Callback() {
+                        okHttpPost(context, IAPIConstants.UPDATE_SUBDISTRICT, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -2953,11 +2007,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         try {
                                             if (postResponse.code() == 401) {
                                                 FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -3003,7 +2052,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
 
                             });
-                        }
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
@@ -3029,10 +2077,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
     private void postConsentStatement(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "";
-        endpoint = "ofisfarmerhousehold/farmerhousehold/consentStatement";
-
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -3065,9 +2109,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             params.put("farmerConfirmation", true);
                             params.put("childName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME)));
                             params.put("occupation", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION)));
-                            //                         params.put("farmerConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN)));
-//                         params.put("enumeratorConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN)));
-
 
                             String farmerSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN));
                             String enumSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN));
@@ -3143,9 +2184,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         child.close();
                     }
                 }
-                if (endpoint.length() > 0) {
-                    final String finalEndpoint = endpoint;
-                    okHttpPost(context, endpoint, params, new Callback() {
+                okHttpPost(context, IAPIConstants.CONSENT_STATEMENT, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
@@ -3159,11 +2198,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
-                                try {
-                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response " + postResponse.networkResponse().toString(), context);
-                                } catch (Exception e) {
-                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                }
                                 try {
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -3228,26 +2262,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
 
                     });
-                }
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
                 FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object" + e.getMessage());
             }
-        }
-    }
-
-    void syncNetworkQueueConsent(Integer itemId, Handler handler) {
-        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
-            if (networkQueueItems.moveToNext()) {
-                syncNetworkQueueItem(itemId, handler);
-            } else {
-                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
-                handler.dispatchMessage(msg);
-            }
-        } else {
-            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
-            handler.dispatchMessage(msg);
         }
     }
 
@@ -3277,19 +2296,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         alert.show();
     }
 
-    private void showDuplicateAlertMessage() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Farmer details are updated. Please sync again !")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     // get farmer phone numbers
     private JSONArray farmerPhoneNumbers(long id, String columnName) {
         Cursor phonenumbers = dl.getFarmerPhoneNumbers(id, false, columnName);
@@ -3298,7 +2304,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             while (phonenumbers.moveToNext()) {
                 JSONObject phonenumber = new JSONObject();
-
                 //New
                 phonenumber.put("farmerId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
                 phonenumber.put("countryId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))));
@@ -3306,13 +2311,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
 
                 numbersarray.put(phonenumber);
-
-//                FarmerRegistrationPhoneNumberDTO farmerRegistrationPhoneNumberDTO=new FarmerRegistrationPhoneNumberDTO();
-//                farmerRegistrationPhoneNumberDTO.setFarmerId(new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
-//                farmerRegistrationPhoneNumberDTO.setCountryId(new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))));
-//                farmerRegistrationPhoneNumberDTO.setPhoneNumber(phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
-//                farmerRegistrationPhoneNumberDTO.setPrimaryNumber(Utilities.convertDT(phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER))));
-//                farmerRegistrationPhoneNumberDTOList.add(farmerRegistrationPhoneNumberDTO);
             }
             return numbersarray;
         } catch (JSONException e) {
@@ -3320,7 +2318,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
         return null;
     }
-
 
     // get farmer national ids
     // OW-4590 Fix
@@ -3346,24 +2343,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)) != null) {
                     nationalids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                 }
-               /* Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                String date = format.format(today);
-                nationalids.put("expiryDate", date);*/
                 String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                 if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
-
                     try {
                         String encodedImage = Utilities.base64ConversionForImage(farmerNIDPath);
                         nationalids.put("photo", encodedImage);
-//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
                     } catch (Exception e) {
                         FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
-
                 }
-
 
                 numbersarray.put(nationalids);
             }
@@ -3374,8 +2362,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
         return null;
     }
-
-
 
     private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId, String columnName) {
         final JSONObject params = new JSONObject();
@@ -3396,10 +2382,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("farmerConfirmation", true);
                     params.put("childName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME)));
                     params.put("occupation", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION)));
-
-                    //                         params.put("farmerConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN)));
-//                         params.put("enumeratorConsentSignature", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN)));
-
 
                     String farmerSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN));
                     String enumSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN));
@@ -3479,12 +2461,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postPhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "ofisfarmer/farmer/updatephonenumbers";
         final JSONObject params = new JSONObject();
         JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
             msg.arg1 = total;
@@ -3508,10 +2487,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                         }
-
-                        if (numberstosend != null && !endpoint.isEmpty()) {
-                            final String finalEndpoint = endpoint;
-                            okHttpPost(context, endpoint, params, new Callback() {
+                        if (numberstosend != null) {
+                            okHttpPost(context, IAPIConstants.UPDATE_PHONENUMBERS, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -3525,11 +2502,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + "Response : " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         try {
                                             JSONObject response = new JSONObject(postResponse.body().string());
                                             if (postResponse.code() == 401) {
@@ -3608,14 +2580,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postInfrastructure(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        Hashtable<String, String> poitypes = new Hashtable<>();
-
         final JSONObject params = new JSONObject();
         JSONArray answers = new JSONArray();
         Set<Integer> questions_included = new TreeSet<>();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
-        String IMEI = Utilities.getIMEI(context);
-        boolean hasPhotos = false;
         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
 
         final String uploadId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
@@ -3627,7 +2595,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (enumeratorId != null) {
                     params.put("enumerator_id", enumeratorId);
                 }
-                //  params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, 0);
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID)));
 
 
@@ -3667,24 +2634,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put("sip_submodule_id", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID)));
                 params.put("sip_submodule", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE)));
 
-//            if (!networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)).equalsIgnoreCase("Clean water supply")) {
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID)));
-//            }
-/*
-
-            if (!networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)).equalsIgnoreCase("Buying centre")) {
-                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED)));
-            }
-*/
-
                 params.put("farm_id", 0);
 
                 // need to work
                 String sipPlotJson = dl.getPLotDataFromCategoryId(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
                 params.put("positionalData",sipPlotJson);
-//            params.put("Capacity", 0);
-//            params.put("Product_id", 0);
 
                 if (moduleAnswers.getCount() > 0) {
 
@@ -3703,8 +2659,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
 
                         if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
-                            hasPhotos = true;
-                            File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                             answer.put("answer", Utilities.base64ConversionForImage(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
                         }
 
@@ -3716,14 +2670,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("answers", answers);
 
                 }
-
-                final String url = "ofisfarmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
-                okHttpPost(context, url, params, new Callback() {
+                okHttpPost(context, IAPIConstants.SAVE_SIP_ANSWERS, params, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
                         String statusMessage;
                         if (postResponse.isSuccessful()) {
-//                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
                             dl.deleteSipPlotItem(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT)));
                             dl.deleteSipNetworkQueueItem(networkQueueItemId);
@@ -3736,13 +2687,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
 
-
                         } else {
-                            try {
-                                FabricLogsWriter.printCrashLog(TAG, url, postResponse.code(), "Request : " + params.toString() + " Response  : " + postResponse.networkResponse().toString(), context);
-                            } catch (Exception e) {
-                                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                            }
                             try {
                                 if (postResponse.code() == 401) {
                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
@@ -3902,17 +2847,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         syncAllTask.setResources(res);
         syncAllTask.setDelegate(this);
         syncAllTask.execute(SyncTaskOperationType.SYNC_SURVEYANSWERS);
-
     }
 
     //JIRA req OW-505
     private void postFarmerPhoto(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endpoint = "";
-        // old end point
-        // endpoint = "uploadFarmerFile";
-        // new end point
-        endpoint = "ofisutility/uploadFarmerFile";
         final JSONObject params = new JSONObject();
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         if (!dl.isFarmerSynced(farmerId)) {
@@ -3952,9 +2890,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 farmer.close();
                             }
                         }
-                        if (endpoint.length() > 0) {
-                            final String finalEndpoint = endpoint;
-                            okHttpMSPost(context, endpoint, params, new Callback() {
+                        okHttpMSPost(context, IAPIConstants.UPLOAD_FARMER_FILE, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -3969,11 +2905,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
                                         try {
-                                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response : " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
-                                        try {
                                             String failureMessage = res.getString(R.string.networking_error);
                                             if (postResponse.code() == 401) {
                                                 FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
@@ -3983,17 +2914,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
                                                 FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
-
-                                    /*      long server_item_id = 0, fully_synced = 0;
-                                    if (response.optJSONObject("farm") != null) {
-                                        JSONObject farm = response.getJSONObject("farm");
-                                        server_item_id = farm.getLong("id");
-                                        fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                    }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
-                              */
                                             }
                                         } catch (JSONException | IOException e) {
                                             recordFailedUpload(0, 0, networkQueueItemId);
@@ -4029,7 +2949,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
 
                             });
-                        }
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         String failureMessage = res.getString(R.string.networking_error);
@@ -4055,11 +2974,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
-
     // Child Registration Code
     private void postChild(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
@@ -4079,14 +2995,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             child = dl.getChildById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
 
                             int tempChildId = 0;
-                            final String endpoint = "ofischild/child/saveall";
 
                             if (child.getCount() > 0) {
                                 child.moveToFirst();
                                 JSONObject jsonObject = new JSONObject();
                                 try {
                                     tempChildId = child.getInt(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID));
-//                jsonObject.put("id",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
+
                                     jsonObject.put("farmerId", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID)));
                                     jsonObject.put("name", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)));
                                     jsonObject.put("age", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
@@ -4145,7 +3060,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } catch (Exception e) {
                                         FirebaseCrashlytics.getInstance().log(e.getMessage());
                                     }
-
                                     try {
                                         // fetching the product Id from farmer Group table
                                         long productID = dl.getProductIdByFarmerGroupId(farmerGroupID);
@@ -4153,10 +3067,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } catch (Exception e) {
                                         FirebaseCrashlytics.getInstance().log(e.getMessage());
                                     }
-
                                 }
-
-
                                 final JSONArray jsonArray = new JSONArray();
                                 jsonArray.put(jsonObject);
                                 JSONObject requstBody = new JSONObject();
@@ -4166,17 +3077,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException e) {
                                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
-                                if (endpoint.length() > 0) {
-
-                                    final int finalTempChildId = tempChildId;
-                                    okHttpPost(context, endpoint, requstBody, new Callback() {
+                                final int finalTempChildId = tempChildId;
+                                okHttpPost(context, IAPIConstants.SAVE_CHILD, requstBody, new Callback() {
                                         @Override
                                         public void onResponse(Call call, Response postResponse) {
                                             try {
                                                 String statusMessage;
                                                 if (postResponse.isSuccessful()) {
-                                                    // JSONObject farmerResponse = response.getJSONObject("farmer");
-
                                                     // Child Labour resonse
 
                                                     JSONObject outputObject = new JSONObject(postResponse.body().string());
@@ -4196,11 +3103,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     }
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 } else {
-                                                    try {
-                                                        FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
-                                                    } catch (Exception e) {
-                                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                                    }
                                                     long server_item_id = 0, fully_synced = 0;
 
                                                     // Added
@@ -4251,7 +3153,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
 
                                     });
-                                }
                             }
                         } finally {
                             if (child != null) {
@@ -4351,7 +3252,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                         jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                     }
-
                     jsonObject.put("enumeratorId", Long.parseLong(Utilities.getFromSharedPrefs(context)));
                     jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
                     jsonObject.put("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
@@ -5496,11 +4396,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postCertificationDetails(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        String endPoint = "";
-
-        endPoint = "ofisfarmer/farmer/updateCertifications";
-
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -5548,10 +4443,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
 
                     }
-
-                    if (endPoint.length() > 0) {
-                        final String finalEndpoint = endPoint;
-                        okHttpPost(context, endPoint, params, new Callback() {
+                    okHttpPost(context, IAPIConstants.GET_CERTIFICATIONS, params, new Callback() {
                             @Override
                             public void onResponse(Call call, Response postResponse) {
                                 String statusMessage;
@@ -5566,11 +4458,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     handler.dispatchMessage(msg);
                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                 } else {
-                                    try {
-                                        FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), "Request : " + params.toString() + " Response " + postResponse.networkResponse().toString(), context);
-                                    } catch (Exception e) {
-                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                    }
                                     try {
                                         if (postResponse.code() == 401) {
                                             FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -5615,8 +4502,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }
 
                         });
-                    }
-
                 } else {
                     msg.what = 8;
                     msg.arg1 = total;
@@ -5636,8 +4521,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postFarmerNationalids(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        final String endpoint = "ofisfarmer/farmer/saveFarmerUniqueId";
-
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
@@ -5671,9 +4554,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             final JSONArray jsonArray = new JSONArray();
                             jsonArray.put(jsonObject);
                             Log.e("NationalIdRequest", nidstosend.toString());
-                            if (endpoint.length() > 0) {
-
-                                okHttpArrayPost(context, endpoint, nidstosend, new Callback() {
+                            okHttpArrayPost(context, IAPIConstants.SAVE_NATIONAL_IDS, nidstosend, new Callback() {
                                     @Override
                                     public void onResponse(Call call, Response postResponse) {
                                         try {
@@ -5710,11 +4591,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 }
                                             } else {
-                                                try {
-                                                    FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
-                                                } catch (Exception e) {
-                                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                                }
                                                 if (postResponse.code() == 401) {
                                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                                 } else {
@@ -5792,7 +4668,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                 });
-                            }
                         }
                     } finally {
                         if (farmer != null) {
@@ -5818,7 +4693,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postUpdateFarmerNationalIds(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        final String endpoint = "ofisfarmer/farmer/updateFarmerUniqueId";
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
@@ -5852,10 +4726,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             final JSONArray jsonArray = new JSONArray();
                             jsonArray.put(jsonObject);
                             Log.e("NationalIdRequest", nidstosend.toString());
-
-                            if (endpoint.length() > 0) {
-
-                                okHttpPut(context, endpoint, nidstosend, new Callback() {
+                            okHttpPut(context, IAPIConstants.UPDATE_NATIONAL_ID, nidstosend, new Callback() {
                                     @Override
                                     public void onResponse(Call call, Response postResponse) {
                                         try {
@@ -5892,11 +4763,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 }
                                             } else {
-                                                try {
-                                                    FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
-                                                } catch (Exception e) {
-                                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                                }
                                                 if (postResponse.code() == 401) {
                                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                                 } else {
@@ -5974,7 +4840,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                 });
-                            }
                         }
                     } finally {
                         if (farmer != null) {
@@ -5998,20 +4863,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-
-
     public void syncGPSData() {
         try {
-            final String endpoint = GPSConstants.SYNC_END_POINT;
             final JSONArray jsonArray = new JSONArray();
-
             Cursor gpsData = dl.getGeoTrackList();
             if (gpsData.getCount() > 0) {
                 isGpsSyncProcessing = true;
                 while (gpsData.moveToNext()) {
                     try {
                         JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("id",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE)));
@@ -6057,10 +4917,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
-            // String requestData=jsonArray.toString();
-            if (endpoint.length() > 0) {
-
-                okHttpPost(context, endpoint, requstBody, new Callback() {
+            okHttpPost(context, IAPIConstants.ENUMERATOR_GPS_TRACKING, requstBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
 
@@ -6089,16 +4946,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         boolean gpsSynced = false;
                     }
                 });
-            }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
     public void postGpsNetworkQueue(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        final String endpoint = GPSConstants.SYNC_END_POINT;
         final JSONArray jsonArray = new JSONArray();
-
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
@@ -6127,9 +4981,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
-            if (endpoint.length() > 0) {
-
-                okHttpPost(context, endpoint, requstBody, new Callback() {
+            okHttpPost(context, IAPIConstants.ENUMERATOR_GPS_TRACKING, requstBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
                         String statusMessage;
@@ -6143,11 +4995,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
                         } else {
-                            try {
-                                FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + new Timestamp(System.currentTimeMillis()).toString() + "Response : " + postResponse.networkResponse().toString(), context);
-                            } catch (Exception e) {
-                                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                            }
                             try {
                                 if (postResponse.code() == 401) {
                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting GPS track module");
@@ -6186,38 +5033,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
                     }
                 });
-
-            }
         } catch (JSONException e) {
             recordFailedUpload(0, 0, networkQueueItemId);
             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object" + e.getMessage());
         }
-    }
-
-
-
-    public void popupMultifarmInfo(String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(false);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
-        builder.setView(dialogView);
-        TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
-        TextView tvTitle = dialogView.findViewById(R.id.tv_title);
-        tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setText("Notification");
-        tvTitle.setVisibility(View.GONE);
-        tvMsg.setText("Already farms are mapped with the stakeholder " + msg + ". Kindly map again");
-        Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
-        btnNo.setVisibility(View.GONE);
-        Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
-        btnYes.setText(res.getString(R.string.msg_ok));
-        AlertDialog alert = builder.create();
-        AlertDialog finalAlert = alert;
-        btnYes.setOnClickListener(view -> finalAlert.dismiss());
-        alert.show();
-        return;
     }
 
     public void popupMsgInfo(String msg) {
@@ -6226,25 +5046,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
         builder.setView(dialogView);
-        TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+        TextView tvMsg = dialogView.findViewById(R.id.tv_msg);
         TextView tvTitle = dialogView.findViewById(R.id.tv_title);
         tvTitle.setVisibility(View.GONE);
         tvTitle.setText("Notification");
         tvMsg.setText(msg);
-        Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+        Button btnNo = dialogView.findViewById(R.id.btn_no);
         btnNo.setVisibility(View.GONE);
-        Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+        Button btnYes = dialogView.findViewById(R.id.btn_yes);
         btnYes.setText(res.getString(R.string.msg_ok));
         AlertDialog alert = builder.create();
         AlertDialog finalAlert = alert;
         btnYes.setOnClickListener(view -> finalAlert.dismiss());
         alert.show();
-        return;
     }
 
     private void postDMSurvey(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        final String endpoint = "ofissurvey/survey/diagnosticmodule/submitSurvey";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -6252,9 +5069,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
-            if (endpoint.length() > 0) {
-
-                try {
+            try {
                     long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                     int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                     int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
@@ -6279,10 +5094,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
 
-                    String totalAmount = "0";
-
-                    ArrayList<JSONObject> answerArrayList = new ArrayList<>();
-
                     if (!dmSurveyAnswerTableList.isEmpty()) {
                         for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
                             JSONObject ans = new JSONObject();
@@ -6306,11 +5117,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
                                 jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
                             }
-
                             ans.put("captureProof", jsonArray);
                             answers.put(ans);
                             hashMap.put("answers", answers);
-
                         }
                     }
 
@@ -6340,7 +5149,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     JSONArray jsonArray = new JSONArray();
                     jsonArray.put(hashMap);
                     Log.d("DMSURVEY", jsonArray.toString());
-                    okHttpArrayPost(context, endpoint, jsonArray, new Callback() {
+                    okHttpArrayPost(context, IAPIConstants.DM_SUBMIT_SURVEY, jsonArray, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
@@ -6390,11 +5199,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             } else {
                                 try {
-                                    FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), " Response " + postResponse.networkResponse().toString(), context);
-                                } catch (Exception e) {
-                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                }
-                                try {
                                     if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     } else {
@@ -6440,17 +5244,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
-
-
         }
     }
 
     private void postFollowupSurvey(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-
-        final String endpoint = "ofissurvey/survey/diagnosticmodule/saveFollowUpData";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -6458,11 +5257,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
-
-
-            if (endpoint.length() > 0) {
-
-                try {
+            try {
                     long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                     int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                     int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
@@ -6508,7 +5303,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     followUpData.put("followups", answers);
                     Log.d("FollowUpSurvey", followUpData.toString());
 
-                    okHttpPost(context, endpoint, followUpData, new Callback() {
+                    okHttpPost(context, IAPIConstants.DM_SAVE_FOLLOWUP_SURVEY, followUpData, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
@@ -6550,11 +5345,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 //syncCapturedFileData();
 
                             } else {
-                                try {
-                                    FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), " Response " + postResponse.networkResponse().toString(), context);
-                                } catch (Exception e) {
-                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                }
                                 try {
                                     if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -6603,16 +5393,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
-
-
         }
     }
 
     public void syncCapturedFileData(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) {
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -6629,10 +5415,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     try {
                         int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                         int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
-
-                        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
                         final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
-                        final String endpoint = "ofissurvey/image/upload";
 
                         List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
                         boolean isFileNotExists = false;
@@ -6657,7 +5440,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 continue;
                             }
 
-                            List<MultipartBody.Part> parts = new ArrayList<>();
                             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                             for (int i = 0; i < filePaths.size(); i++) {
                                 File file = new File(filePaths.get(i));
@@ -6668,23 +5450,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             RequestBody requestBody = builder.build();
                             Log.d("question", String.valueOf(k));
-
-                            if (!endpoint.isEmpty()) {
-                                int finalK = k;
-                                okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
+                            okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
                                     @Override
                                     public void onResponse(Call call, Response postResponse) {
-                                        Log.d("UPLOAD_FILE_SUCCESS", "1");
-
                                         if (postResponse.isSuccessful()) {
-                                            Log.d("UPLOAD_FILE_SUCCESS", "2");
-
                                             for (int i = 0; i < ids.size(); i++) {
                                                 db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
                                             }
-
                                             int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
-
                                             if (fileSyncedCount == 0) {
                                                 if(itemType.equalsIgnoreCase("DMSurvey")) {
                                                     postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
@@ -6693,7 +5466,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
                                                 }
                                             }
-
                                         } else {
 
                                             // Added
@@ -6729,8 +5501,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
                                     }
                                 });
-
-                            }
                         }
 
                         if(!isFileNotExists) {
@@ -6760,14 +5530,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 handler.dispatchMessage(msg);
             }
         }
-
-
     }
 
     private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
-
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-
         boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
         if (!isConsentAvailableToSync) {
             Boolean isMandateSurveySynced = getIsMandateSurveySynced(farmerId, 0);
@@ -6775,11 +5541,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     MultiStakeHolder multiStakeHolder = db.multiStakeHolderDao().getStakeHolderById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)));
                     boolean isPhotoUpdate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO)).equalsIgnoreCase("true");
-                    final String endpoint = "ofisfarmer/multiStakeHolder/updateStakeholder";
-
                     if (multiStakeHolder != null) {
                         JSONObject jsonObject = new JSONObject();
-
                         jsonObject.put("msId", multiStakeHolder.msId);
                         jsonObject.put("farmerId", multiStakeHolder.farmerId);
                         jsonObject.put("farmId", multiStakeHolder.farmId);
@@ -6789,7 +5552,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put("olamMultiStakeHolderId", multiStakeHolder.olamMultiStakeholderId);
                         jsonObject.put("msRoleId", multiStakeHolder.msRoleId);
                         jsonObject.put("msPhoto", multiStakeHolder.msPhoto);
-
                         if (isPhotoUpdate) {
                             String stakeHolderPhotoPath = multiStakeHolder.msPhoto;
                             if (stakeHolderPhotoPath != null && !stakeHolderPhotoPath.isEmpty()) {
@@ -6804,7 +5566,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
                         jsonObject.put("msSignature", multiStakeHolder.msSignature);
 
-                        okHttpPost(context, endpoint, jsonObject, new Callback() {
+                        okHttpPost(context, IAPIConstants.UPDATE_STAKEHOLDER, jsonObject, new Callback() {
                             @Override
                             public void onResponse(Call call, Response postResponse) {
                                 try {
@@ -6821,11 +5583,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         syncNetworkQueue(itemId, handler);
 
                                     } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(),  " Response  " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                        }
                                         long server_item_id = 0, fully_synced = 0;
 
                                         if (postResponse.code() == 401) {
@@ -6840,14 +5597,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                     postResponse.close();
                                 } catch (JSONException | IOException e) {
-
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     String failureMessage = res.getString(R.string.item_sync_error);
                                     postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "update stakeholder");
                                     FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting update stakeholder post failure response" + e.getMessage());
                                 }
                             }
-
                             @Override
                             public void onFailure(Call call, IOException e) {
                                 try {
@@ -6870,7 +5625,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         });
 
                     }
-
                 }
                 catch (JSONException e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
