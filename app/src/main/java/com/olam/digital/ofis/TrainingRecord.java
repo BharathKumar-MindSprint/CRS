@@ -793,7 +793,7 @@ public class TrainingRecord extends BaseListActivity{
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else if (signatureAllowed) {
                         if (!dl.areAllSignaturesPresent(trainingRecordId)){
-                            Toast.makeText(context, "Sign all attendees", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, getResources().getString(R.string.sign_all_attendee), Toast.LENGTH_LONG).show();
                         } else {
                             addOrUpdateTrainingRecord();
                             Intent intent = new Intent(context, TrainingRecordConfirmation.class);
@@ -817,6 +817,11 @@ public class TrainingRecord extends BaseListActivity{
         if (editMode) {
          //   getTrainingRecord();
             getTrainingAttendees();
+            if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+            } else {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+            }
         }
 
     }

@@ -8818,19 +8818,30 @@ public class DataLayer {
     }
 
     public boolean areAllSignaturesPresent(long trainingRecordId) {
-        String[] columns = { OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE };
+        String[] attendeeColumns = { OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE };
+        String[] relationColumns = { OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE };
 
-        try (Cursor cursor = queryTrainingAttendee(trainingRecordId, columns)) {
+        return areSignaturesPresent(trainingRecordId, attendeeColumns, false) && areSignaturesPresent(trainingRecordId, relationColumns, true );
+    }
+
+    private boolean areSignaturesPresent(long trainingRecordId, String[] columns, boolean relation) {
+        Cursor cursor;
+        if (relation) {
+            cursor = queryTrainingRelation(trainingRecordId, new String[]{"*"});
+        } else {
+            cursor = queryTrainingAttendee(trainingRecordId, new String[]{"*"});
+        }
+        try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                    String signature = cursor.getString(cursor.getColumnIndexOrThrow(columns[0]));
                     if (signature == null || signature.isEmpty()) {
                         return false;
                     }
                 } while (cursor.moveToNext());
-            } else {
-                return false;
             }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }
