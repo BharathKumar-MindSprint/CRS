@@ -1381,12 +1381,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("transaction")) {
-                Intent intent = new Intent(context, TransactionItem.class);
-                intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-                intent.putExtra(EDIT_MODE, true);
-                intent.putExtra(READ_ONLY_MODE, true);
-                startActivity(intent);
             } else if (itemType.equalsIgnoreCase("trainingrecord")) {
                 Intent intent = new Intent(context, TrainingRecord.class);
                 intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
