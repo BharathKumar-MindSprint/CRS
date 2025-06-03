@@ -353,7 +353,7 @@ public class SyncAllTask extends SyncTask {
         JSONObject inputArgs = new JSONObject();
         String enumerator_id = Utilities.getFromSharedPrefs(context);
         if (enumerator_id != null) {
-            long enumeratorId = Integer.parseInt(enumerator_id);
+            long enumeratorId = Long.parseLong(enumerator_id);
             inputArgs.put("enumeratorId", enumeratorId);
 //            inputArgs.put("enumeratorId", 125);
         }
@@ -600,7 +600,7 @@ public class SyncAllTask extends SyncTask {
         long timestampUpdated = System.currentTimeMillis();
         Utilities.saveLongToSharedPrefs(context, "version_checked", timestampUpdated);
         JSONObject inputArgs = new JSONObject();
-        inputArgs.put("enumerator_id", Long.valueOf(Utilities.getFromSharedPrefs(context)));
+        inputArgs.put("enumerator_id", Long.parseLong(Utilities.getFromSharedPrefs(context)));
 //        inputArgs.put("enumerator_id",Utilities.getFromSharedPrefs(context));
         inputArgs.put("current_version", BuildConfig.VERSION_NAME);
 
