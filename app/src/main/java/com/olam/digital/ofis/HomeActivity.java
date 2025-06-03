@@ -1347,12 +1347,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("transaction")) {
-                Intent intent = new Intent(context, TransactionItem.class);
-                intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-                intent.putExtra(EDIT_MODE, true);
-                intent.putExtra(READ_ONLY_MODE, true);
-                startActivity(intent);
             } else if (itemType.equalsIgnoreCase("trainingrecord")) {
                 Intent intent = new Intent(context, TrainingRecord.class);
                 intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
@@ -1389,6 +1383,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
+            } else if (itemType.equalsIgnoreCase("phonenumbers")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                intent.putExtra("phoneNumber", true);
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {
         }
@@ -1471,7 +1470,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     /*Get DownLoad Farm Form List*/
     public static void DownloadFormList(String value) {
         ManageRecords AllFarmFormList = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
+        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Long.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
         call.enqueue(new Callback<DownloadFormList>() {
 
             @Override

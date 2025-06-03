@@ -792,5 +792,8 @@
     <string name="stakeholder_not_synced">Üzgünüz, ancak paydaş henüz senkronize edilmedi. Lütfen önce paydaşı senkronize edin</string>
     <string name="consent_not_synced">Üzgünüz, ancak onay henüz senkronize edilmedi. Lütfen önce onayı senkronize edin</string>
     <string name="survey_already_synced">Bu anket başka bir sayıcı tarafından zaten yanıtlandı. Lütfen OFIS uygulamanızı kaydedin ve güncelleyin</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
 </resources>

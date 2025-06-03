@@ -1745,6 +1745,7 @@ public class DataLayer {
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID, storeableNumber.getLong("country_id"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY, storeableNumber.getBoolean("primary_number"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, storeableNumber.getString("phonenumber"));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, storeableNumber.optString(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, null));
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }
         } catch (JSONException e) {
@@ -8739,5 +8740,15 @@ public class DataLayer {
             cursor.close();
         }
         return isMandate;
+    }
+
+    public void updateDuplicateStatusOfPhoneNumber(long localFarmerId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, "true");
+
+        String[] whereArgs = new String[]{String.valueOf(localFarmerId), "1"};
+        String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " = ? ";
+
+        db.update(OFISDBContract.PhoneNumber.TABLE_NAME, values, whereClause, whereArgs);
     }
 }

@@ -14,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 158;
+    private static final int DATABASE_VERSION = 159;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -475,7 +475,8 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER default null, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
-            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0,"
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_PHONENUMBERS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumberCopy.TABLE_NAME
             + " ( " + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -1093,6 +1094,9 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow157(sqLiteDatabase);
         }
 
+        if (oldVersion < 159) {
+            migrateFromVersionBelow158(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1367,6 +1371,14 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFromVersionBelow158(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }
