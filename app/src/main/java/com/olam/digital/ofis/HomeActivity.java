@@ -1476,7 +1476,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     /*Get DownLoad Farm Form List*/
     public static void DownloadFormList(String value) {
         ManageRecords AllFarmFormList = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
+        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Long.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
         call.enqueue(new Callback<DownloadFormList>() {
 
             @Override

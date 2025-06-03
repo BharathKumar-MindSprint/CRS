@@ -3625,7 +3625,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             try {
                 if (enumeratorId != null) {
-                    long enumerator_Id = Integer.parseInt(enumeratorId);
                     params.put("enumerator_id", enumeratorId);
                 }
                 //  params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, 0);
@@ -4163,7 +4162,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 JSONObject requstBody = new JSONObject();
                                 try {
                                     requstBody.put("children", jsonArray);
-                                    requstBody.put("olamEnumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
+                                    requstBody.put("olamEnumeratorId", Long.parseLong(Utilities.getFromSharedPrefs(context)));
                                 } catch (JSONException e) {
                                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
@@ -4352,7 +4351,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                         jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                     }
-                    jsonObject.put("enumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
+
+                    jsonObject.put("enumeratorId", Long.parseLong(Utilities.getFromSharedPrefs(context)));
                     jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
                     jsonObject.put("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
                     jsonObject.put("farmerRoleId", 1);
@@ -4586,7 +4586,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                                 }
 
-                                jsonObject.put("enumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
+                                jsonObject.put("enumeratorId", Long.parseLong(Utilities.getFromSharedPrefs(context)));
                             } catch (Exception e) {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
@@ -4937,7 +4937,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             submission.put("reportedData", submissionDate.substring(0, 10));
                             submission.put("submittedDate", submissionDate.substring(0, 10));
                             submission.put("uploadDate", timestamp.toString().substring(0, 10));
-                            submission.put("enumeratorId", Long.valueOf(enumeratorId));
+                            submission.put("enumeratorId", Long.parseLong(enumeratorId));
 
                             // child Request Body
                             submission.put("childrenId", childRegisteredId);
@@ -5291,7 +5291,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             value.put("surveyCode", reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
                             value.put("surveyDescription", reviewValues.getString(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
                             String enumeratorId = Utilities.getFromSharedPrefs(context);
-                            value.put("enumeratorId", Integer.parseInt(enumeratorId));
+                            value.put("enumeratorId", enumeratorId);
                             value.put("productId", (dl.getFarmerInfo(context, Long.valueOf(reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID))))).getProductId());
                             checkavailstatus.put(value);
                         }
@@ -6053,7 +6053,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             JSONObject requstBody = new JSONObject();
             try {
                 requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
-                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
+                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.parseLong(Utilities.getFromSharedPrefs(context)));
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
@@ -6123,7 +6123,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             JSONObject requstBody = new JSONObject();
             try {
                 requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
-                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
+                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.parseLong(Utilities.getFromSharedPrefs(context)));
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }

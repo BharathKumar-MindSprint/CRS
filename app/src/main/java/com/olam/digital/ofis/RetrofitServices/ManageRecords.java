@@ -57,7 +57,7 @@ public interface ManageRecords {
     @GET(IAPIConstants.GET_FARM_PLAN)
     Call<DownloadFormList> getAllFarmFormList(@Header("App-Id") int AppId
             , @Query("userId") String userId
-            , @Query("enumeratorId") Integer enumeratorId
+            , @Query("enumeratorId") Long enumeratorId
             , @Query("odAccessToken") String odAccessToken);
 
 
