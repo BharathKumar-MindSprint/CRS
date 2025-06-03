@@ -1,10 +1,10 @@
 package com.olam.digital.ofis.agrisupplier.adapter;
 
-import static com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils.areDatesEqual;
 import static com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils.calculateRecurrenceCount;
-import static com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils.findLastAttendedDate;
 import static com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils.getNewEndDate;
 import static com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils.getNewStartDate;
+
+import static org.apache.commons.lang3.time.DateUtils.isSameDay;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,8 +20,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierDto;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
 import com.olam.digital.ofis.agrisupplier.listener.SupplierSurveyItemClickListener;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
@@ -64,10 +66,15 @@ public class SupplierSurveyListAdapter extends RecyclerView.Adapter<SupplierSurv
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SupplierSurveyDto survey = supplierSurveys.get(position);
-        holder.moduleTitle.setText(survey.getName());
-        holder.textView.setText(survey.getDescription());
+        holder.moduleTitle.setText(Utilities.getContentByLanguage(survey, true));
 
         if (survey.getModuleType().equals("9")) {
+            holder.textView.setText(res.getString(R.string.supplier_survey));
+            holder.enabledItem.setText("false");
+            holder.linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+            holder.moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+            holder.textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+
             DmRecurrence dmRecurrence = ofisRoomDB.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(survey.getId()));
             String recurrenceType = dmRecurrence.recurrenceType;
             int recurrenceFrequency = dmRecurrence.recurrenceFrequency;
@@ -85,38 +92,38 @@ public class SupplierSurveyListAdapter extends RecyclerView.Adapter<SupplierSurv
                 startDateMain = null;
             }
 
-            Date lastRecurrenceEndDate = null;
-            if (startDateMain != null && recurrenceType != null) {
+
+            SupplierSubmittedModules supplierSubmittedModules = ofisRoomDB.supplierSubmittedModuleDao().getSubmittedModule(String.valueOf(survey.getId()), String.valueOf(supplier.getId()));
+
+            if (startDateMain != null && recurrenceType != null && supplierSubmittedModules != null && supplierSubmittedModules.syncStatus.equals("true")) {
                 try {
+                    Date submissionDate = inputDateFormat.parse(supplierSubmittedModules.submittedDate);
                     int recurrenceCount = calculateRecurrenceCount(survey.getStartDate(), recurrenceType, recurrenceFrequency);
-                    Date newStartDate = getNewStartDate(survey.getStartDate(), recurrenceType, recurrenceFrequency, recurrenceCount);
-                    Date newEndDate = getNewEndDate(newStartDate, recurrenceType, recurrenceFrequency);
-                    lastRecurrenceEndDate = findLastAttendedDate(startDateMain, newEndDate, recurrenceType, recurrenceFrequency, recurrenceCount + 1);
+                    Date currentRecurrenceStartDate = getNewStartDate(survey.getStartDate(), recurrenceType, recurrenceFrequency, recurrenceCount);
+
+                    if (submissionDate != null && submissionDate.before(currentRecurrenceStartDate)) {
+                        ofisRoomDB.supplierSubmittedModuleDao().deleteSubmittedModule(String.valueOf(survey.getId()) , String.valueOf(supplier.getId()), "true");
+                        renderCardView(holder);
+                    }
+                    else {
+                        holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                    }
                 } catch (ParseException e) {
                     throw new RuntimeException("Error processing recurrence dates", e);
                 }
             }
-
-            if (lastRecurrenceEndDate != null && currentDate.after(lastRecurrenceEndDate) && !areDatesEqual(currentDate,startDateMain)){
-                ofisRoomDB.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(survey.getId()) , String.valueOf(supplier.getId()), 0);
-            }
-
-            if(startDateMain != null && currentDate.after(startDateMain)) {
-                holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                holder.linearLayout.setBackgroundResource(R.drawable.list_item);
-                holder.moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                holder.textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                holder.textView.setText(res.getString(R.string.supplier_survey));
-            }
             else {
-                holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
-                holder.enabledItem.setText("false");
-                holder.linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                holder.moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                holder.textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                holder.textView.setText(res.getString(R.string.supplier_survey));
+                if(startDateMain != null && currentDate.after(startDateMain)) {
+                    renderCardView(holder);
+                    if (supplierSubmittedModules != null) {
+                        int drawableId = supplierSubmittedModules.isSurveyCompleted.equals("true") ? R.drawable.ic_status_completed : R.drawable.ic_status_saved;
+                        holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, drawableId));
+                    }
+                }
+                else {
+                    holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
+                }
             }
-
 
             if (holder.enabledItem.getText().toString().equals("true")) {
                 holder.linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +134,14 @@ public class SupplierSurveyListAdapter extends RecyclerView.Adapter<SupplierSurv
                 });
             }
         }
+    }
+
+    private void renderCardView(@NonNull ViewHolder holder) {
+        holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
+        holder.enabledItem.setText("true");
+        holder.linearLayout.setBackgroundResource(R.drawable.list_item);
+        holder.moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+        holder.textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
     }
 
     @Override

@@ -397,7 +397,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                 String displayType = fmpBaselineQuestions.getString(fmpBaselineQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
                 if (displayType.toLowerCase().equals("checkbox")) {
-                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, 0, false, false, -1, null, 0);
+                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, null,0, false, false, -1, null, 0);
                 } else if (displayType.toLowerCase().equals("datepicker")) {
                     dynamicQuestions.renderDatePickerQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                 } else if (displayType.toLowerCase().equals("decimal")) {
@@ -405,9 +405,9 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                 } else if (displayType.toLowerCase().equals("dropdown")) {
                     dynamicQuestions.renderDropDownQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.toLowerCase().equals("photocheckbox")) {
-                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId, 0, res, getPackageName(), false);
+                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId);
                 } else if (displayType.toLowerCase().equals("repeater")) {
-                    dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, olamFarmerId, 0, res, false);
+                    dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, null, olamFarmerId, 0, res, false);
                 } else if (displayType.toLowerCase().equals("textbox")) {
                     dynamicQuestions.renderTextBoxQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.toLowerCase().equals("yesno")) {
@@ -450,7 +450,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
 
     private void saveFmpReview() {
         if (dl.hasNqi("fullfmpreview", (int)fmpId)) {
-            dl.updateSubModuleAnswers(new ArrayList<JSONObject>(), fmpId, 0, farmerId, olamFarmerId, farmId, "fmp");
+            dl.updateSubModuleAnswers(new ArrayList<JSONObject>(), fmpId, 0, farmerId, null, olamFarmerId, farmId, "fmp");
             dl.deleteFmpNetworkQueueItem("fullfmpreview", farmerId, fmpId);
         }
 
@@ -494,7 +494,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
             dl.insertNetworkQueueEntry(nqiValues);
             statusStarted = 1;
         }
-        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, fmpId, 0, farmerId, olamFarmerId, farmId, "fmp");
+        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, fmpId, 0, farmerId, null, olamFarmerId, farmId, "fmp");
 
         ViewFarmerActivity.farmerId = farmerId;
         //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);

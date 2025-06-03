@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -18,6 +19,9 @@ public interface DmSurveyAnswerTableDao {
 
     @Insert
     void insert(DmSurveyAnswerTable... dmSurveyAnswerTables);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<DmSurveyAnswerTable> surveyAnswers);
 
     @Delete
     void delete(DmSurveyAnswerTable dmSurveyAnswerTables);
@@ -129,4 +133,7 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("SELECT DISTINCT answerID FROM DmSurveyAnswerTable WHERE questionID=:questionId AND farmerId=:farmerId AND moduleId=:moduleId")
     List<String> getLookupValuesBasedOnQuestionId(String questionId, String farmerId, String moduleId);
+
+    @Query("SELECT DISTINCT * from DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId = :supplierId AND moduleId = :moduleId")
+    DmSurveyAnswerTable getAnswerByQuestionsId(int questionId, String supplierId, int moduleId);
 }

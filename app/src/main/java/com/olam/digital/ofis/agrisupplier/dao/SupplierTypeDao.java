@@ -16,15 +16,12 @@ public interface SupplierTypeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSupplierType(List<SupplierType> supplierTypes);
 
-    @Query("SELECT * FROM supplier_type")
+    @Query("SELECT * FROM supplier_type LIMIT 2")
     List<SupplierTypeDto> getAllSupplierType();
-
-    @Query("SELECT type FROM supplier_type")
-    List<String> getAllSupplierTypeNames();
 
     @Query("DELETE FROM supplier_type")
     void deleteAll();
 
-    @Query("SELECT type FROM supplier_type WHERE supplierTypeId = :supplierTypeId")
-    String getSupplierTypeNameById(Integer supplierTypeId);
+    @Query("SELECT * FROM supplier_type WHERE supplierTypeId = :supplierTypeId")
+    SupplierTypeDto getSupplierTypeNameById(Integer supplierTypeId);
 }

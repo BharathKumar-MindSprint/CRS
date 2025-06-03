@@ -39,6 +39,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class FindSupplierAndSurveyActivity extends BaseListActivity {
@@ -111,7 +112,7 @@ public class FindSupplierAndSurveyActivity extends BaseListActivity {
 
     private void showSupplierList() {
         rvSupplierList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SupplierListAdapter(supplierList);
+        adapter = new SupplierListAdapter(supplierList, res);
         rvSupplierList.setAdapter(adapter);
         DividerItemDecoration decoration = new DividerItemDecoration(context, LinearLayoutManager.VERTICAL);
         decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider));
@@ -177,14 +178,8 @@ public class FindSupplierAndSurveyActivity extends BaseListActivity {
 
     public void bindSupplierType() {
         supplierTypeList = ofisRoomDb.supplierTypeDao().getAllSupplierType();
-        List<String> supplierTypeNames = ofisRoomDb.supplierTypeDao().getAllSupplierTypeNames();
+        List<String> supplierTypeNames = getSupplierNamesBasedOnLanguages(supplierTypeList);
         supplierTypeNames.add(0, res.getString(R.string.supplier_type));
-
-        if (!supplierTypeList.isEmpty()) {
-            supplierTypeList.remove(supplierTypeList.size() - 1);
-            supplierTypeNames.remove(supplierTypeNames.size() - 1);
-        }
-
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, supplierTypeNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -264,5 +259,31 @@ public class FindSupplierAndSurveyActivity extends BaseListActivity {
         }
         return null;
     };
+
+    private List<String> getSupplierNamesBasedOnLanguages(List<SupplierTypeDto> supplierTypeDto) {
+        List<String> supplierTypes = new ArrayList<>();
+
+        for (SupplierTypeDto supplierType : supplierTypeDto) {
+            supplierTypes.add(getSupplierTypeByLanguage(supplierType));
+        }
+        return supplierTypes;
+    }
+
+    public static String getSupplierTypeByLanguage(SupplierTypeDto supplierTypeDto) {
+        String language = Locale.getDefault().getLanguage();
+        String result = switch (language) {
+            case "es" -> supplierTypeDto.getTypeEs();
+            case "fr" -> supplierTypeDto.getTypeFr();
+            case  "id", "in" -> supplierTypeDto.getTypeIn();
+            case "lo" -> supplierTypeDto.getTypeLo();
+            case "pt" -> supplierTypeDto.getTypePt();
+            case "th" -> supplierTypeDto.getTypeTh();
+            case "tr" -> supplierTypeDto.getTypeTr();
+            case "vi" -> supplierTypeDto.getTypeVi();
+            default -> supplierTypeDto.getType();
+        };
+
+        return result != null && !result.isEmpty() ? result : supplierTypeDto.getType();
+    }
 
 }

@@ -39,8 +39,9 @@ public class RecurrenceUtils {
 
     public static int calculateRecurrenceCount(String startDateStr, String recurrenceType, int recurrenceFrequency)
             throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = sdf.parse(startDateStr);
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date startDate = inputDateFormat.parse(startDateStr);
         Date currentDate = new Date();
 
         Calendar startCalendar = Calendar.getInstance();
@@ -52,37 +53,48 @@ public class RecurrenceUtils {
 
         switch (recurrenceType.toLowerCase()) {
             case "days":
-                long daysDiff = (currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
+                long daysDiff = (currentDate.getTime() - startDate.getTime()) / (24L * 60 * 60 * 1000);
                 recurrenceCount = (int) (daysDiff / recurrenceFrequency);
                 break;
             case "weeks":
                 long weeksDiff = (currentCalendar.getTimeInMillis() - startCalendar.getTimeInMillis())
-                        / (7 * 24 * 60 * 60 * 1000);
+                        / (7L * 24 * 60 * 60 * 1000);
                 recurrenceCount = (int) (weeksDiff / recurrenceFrequency);
                 break;
             case "months":
                 int monthsDiff = (currentCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)) * 12
                         + currentCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+
+                if (currentCalendar.get(Calendar.DAY_OF_MONTH) < startCalendar.get(Calendar.DAY_OF_MONTH)) {
+                    monthsDiff--;
+                }
+
                 recurrenceCount = monthsDiff / recurrenceFrequency;
                 break;
             case "years":
                 int yearsDiff = currentCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+
+                if (currentCalendar.get(Calendar.MONTH) < startCalendar.get(Calendar.MONTH)
+                        || (currentCalendar.get(Calendar.MONTH) == startCalendar.get(Calendar.MONTH)
+                        && currentCalendar.get(Calendar.DAY_OF_MONTH) < startCalendar.get(Calendar.DAY_OF_MONTH))) {
+                    yearsDiff--;
+                }
+
                 recurrenceCount = yearsDiff / recurrenceFrequency;
                 break;
             default:
                 System.out.println("Unsupported recurrence frequency");
         }
 
-//        recurrenceCount++;
         return recurrenceCount;
     }
 
     public static Date getNewStartDate(String startDate, String recurrenceType, int recurrenceFrequency,
                                         int recurrenceCount) throws ParseException {
-//        recurrenceCount--;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         Calendar startCalendar = Calendar.getInstance();
-        startCalendar.setTime(sdf.parse(startDate));
+        startCalendar.setTime(inputDateFormat.parse(startDate));
 
         switch (recurrenceType.toLowerCase()) {
             case "days":
@@ -135,26 +147,24 @@ public class RecurrenceUtils {
 
         // Increment based on the recurrence type and frequency
         for (int i = 0; i < recurrenceCount; i++) {
-            if ("days".equals(recurrenceType)) {
+            if ("days".equalsIgnoreCase(recurrenceType)) {
                 calendar.add(Calendar.DAY_OF_MONTH, recurrenceFrequency);
-            } else if ("months".equals(recurrenceType)) {
+            } else if ("months".equalsIgnoreCase(recurrenceType)) {
                 calendar.add(Calendar.MONTH, recurrenceFrequency);
-            } else if ("weeks".equals(recurrenceType)) {
+            } else if ("weeks".equalsIgnoreCase(recurrenceType)) {
                 calendar.add(Calendar.WEEK_OF_MONTH, recurrenceFrequency);
-            } else if ("years".equals(recurrenceType)) {
+            } else if ("years".equalsIgnoreCase(recurrenceType)) {
                 calendar.add(Calendar.YEAR, recurrenceFrequency);
             }
 
-            // Check if the current date is after the old recurrence end date
             if (calendar.getTime().after(endDate)) {
-                // Subtract one recurrence interval to get the last attended date
-                if ("days".equals(recurrenceType)) {
+                if ("days".equalsIgnoreCase(recurrenceType)) {
                     calendar.add(Calendar.DAY_OF_MONTH, -recurrenceFrequency);
-                } else if ("months".equals(recurrenceType)) {
+                } else if ("months".equalsIgnoreCase(recurrenceType)) {
                     calendar.add(Calendar.MONTH, -recurrenceFrequency);
-                } else if ("weeks".equals(recurrenceType)) {
+                } else if ("weeks".equalsIgnoreCase(recurrenceType)) {
                     calendar.add(Calendar.WEEK_OF_MONTH, -recurrenceFrequency);
-                } else if ("years".equals(recurrenceType)) {
+                } else if ("years".equalsIgnoreCase(recurrenceType)) {
                     calendar.add(Calendar.YEAR, -recurrenceFrequency);
                 }
 

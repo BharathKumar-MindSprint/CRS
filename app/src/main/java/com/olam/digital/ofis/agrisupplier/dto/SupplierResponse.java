@@ -11,9 +11,6 @@ public class SupplierResponse {
     @SerializedName("suppliers")
     private List<Supplier> suppliers;
 
-    @SerializedName("supplierMappings")
-    private List<SupplierMappingDto> supplierMapping;
-
     @SerializedName("supplierType")
     private List<SupplierType> supplierType;
 
@@ -22,9 +19,8 @@ public class SupplierResponse {
     @SerializedName("errorMessage")
     private String errorMessage;
 
-    public SupplierResponse(List<Supplier> suppliers, List<SupplierMappingDto> supplierMappings, List<SupplierType> supplierType, List<SupplierGroup> supplierGroup, String errorMessage) {
+    public SupplierResponse(List<Supplier> suppliers, List<SupplierType> supplierType, List<SupplierGroup> supplierGroup, String errorMessage) {
         this.suppliers = suppliers;
-        supplierMapping = supplierMappings;
         this.supplierType = supplierType;
         this.supplierGroup = supplierGroup;
         this.errorMessage = errorMessage;
@@ -36,14 +32,6 @@ public class SupplierResponse {
 
     public void setSuppliers(List<Supplier> suppliers) {
         this.suppliers = suppliers;
-    }
-
-    public List<SupplierMappingDto> getSupplierGroupMapping() {
-        return supplierMapping;
-    }
-
-    public void setSupplierGroupMapping(List<SupplierMappingDto> supplierMapping) {
-        supplierMapping = supplierMapping;
     }
 
     public List<SupplierType> getSupplierType() {

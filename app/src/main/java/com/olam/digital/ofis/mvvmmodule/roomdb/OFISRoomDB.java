@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -11,10 +12,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.olam.digital.ofis.agrisupplier.dao.SupplierDao;
 import com.olam.digital.ofis.agrisupplier.dao.SupplierGroupDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierSubmittedModuleDao;
 import com.olam.digital.ofis.agrisupplier.dao.SupplierTypeDao;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
-import com.olam.digital.ofis.agrisupplier.entity.SupplierSupplierGroupCrossRef;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
@@ -65,7 +67,9 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
-@Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
+@Database(entities =
+        {
+        DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
         DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
@@ -73,8 +77,17 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSupplierGroupCrossRef.class},
-        version = 18)
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
+        //Version 18
+//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+//                Children.class,  Country.class,
+
+
+        },
+        version = 18
+       // autoMigrations ={@AutoMigration(from =17, to=18)}
+        )
 
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -131,8 +144,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract SupplierTypeDao supplierTypeDao();
     public abstract SupplierDao supplierDao();
     public abstract SupplierGroupDao supplierGroupDao();
+    public abstract SupplierSubmittedModuleDao supplierSubmittedModuleDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
+
 
     public static OFISRoomDB getDbInstance(Context context) {
 
@@ -249,37 +264,50 @@ public abstract class OFISRoomDB extends RoomDatabase {
             public void migrate(@NonNull SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        "supplierId INTEGER NOT NULL, " +
+                        "supplierId TEXT NOT NULL, " +
                         "supplierName TEXT, " +
                         "primaryPhoneNumber TEXT, " +
                         "secondaryPhoneNumber TEXT, " +
                         "supplierTypeId INTEGER, " +
                         "productId INTEGER, " +
-                        "countryId INTEGER)");
+                        "countryId INTEGER, " +
+                        "region TEXT, " +
+                        "street TEXT, " +
+                        "city TEXT, " +
+                        "district TEXT, " +
+                        "supplierGroupId INTEGER)");
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier_type (" +
                         "supplierTypeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "type TEXT)");
+                        "type TEXT, " +
+                        "typeEs TEXT, " +
+                        "typeFr TEXT, " +
+                        "typeId TEXT, " +
+                        "typeIn TEXT, " +
+                        "typeLo TEXT, " +
+                        "typePt TEXT, " +
+                        "typeTh TEXT, " +
+                        "typeTr TEXT, " +
+                        "typeVi TEXT)");
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier_group (" +
                         "supplierGroupId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                         "supplierGroupName TEXT, " +
                         "countryId INTEGER, " +
                         "productId INTEGER, " +
-                        "supplierTypeId INTEGER)");
+                        "supplierTypeId INTEGER, " +
+                        "supplierId INTEGER)");
+
+                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
 
                 database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS `SupplierSupplierGroupCrossRef` (" +
-                                "`id` INTEGER NOT NULL, " +
-                                "`supplierGroupId` INTEGER NOT NULL, " +
-                                "PRIMARY KEY(`id`, `supplierGroupId`), " +
-                                "FOREIGN KEY(`id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE, " +
-                                "FOREIGN KEY(`supplierGroupId`) REFERENCES `supplier_group`(`supplierGroupId`) ON DELETE CASCADE)"
+                        "CREATE TABLE IF NOT EXISTS supplier_submitted_modules (" +
+                                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "submitted_date TEXT, " +
+                                "supplier_id TEXT, " +
+                                "module_id TEXT, " +
+                                "sync_status TEXT)"
                 );
-
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_supplierGroupId` ON `SupplierSupplierGroupCrossRef`(`supplierGroupId`)");
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_SupplierSupplierGroupCrossRef_id` ON `SupplierSupplierGroupCrossRef`(`id`)");
-                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
             }
         };
 

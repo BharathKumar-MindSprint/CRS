@@ -38,6 +38,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_DESCRIPTION_TH = "descriptionTh";
         public static final String COLUMN_NAME_DESCRIPTION_TR = "descriptionTr";
         public static final String COLUMN_NAME_DESCRIPTION_VI = "descriptionVi";
+        public static final String COLUMN_NAME_SURVEY_TYPE = "surveyType";
+        public static final String COLUMN_NAME_IS_MANDATE = "isMandate";
+
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -63,6 +66,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_DESCRIPTION_TH);
                     add(COLUMN_NAME_DESCRIPTION_TR);
                     add(COLUMN_NAME_DESCRIPTION_VI);
+                    add(COLUMN_NAME_SURVEY_TYPE);
+                    add(COLUMN_NAME_IS_MANDATE);
                 }}
         );
     }
@@ -418,6 +423,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECORDED_LNG = "recorded_lng";
         public static final String COLUMN_NAME_STARTED_DATE = "started_date";
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -432,6 +438,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_RECORDED_LNG);
                     add(COLUMN_NAME_STARTED_DATE);
                     add(COLUMN_NAME_PLOT_ID);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
                 }}
         );
     }
@@ -697,6 +704,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID = "metric_global_id";
         public static final String COLUMN_NAME_ANSWER_METRIC_LOCAL_ID = "metric_local_id";
         public static final String COLUMN_NAME_ANSWER_METRIC = "metric_answer";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -719,6 +727,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID);
                     add(COLUMN_NAME_ANSWER_METRIC_LOCAL_ID);
                     add(COLUMN_NAME_ANSWER_METRIC);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
                 }}
         );
     }
@@ -741,6 +750,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
         public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
         public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -759,6 +769,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_DATE);
                     add(COLUMN_NAME_ANSWER_TEXT);
                     add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
                 }}
         );
     }

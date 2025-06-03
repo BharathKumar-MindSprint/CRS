@@ -39,11 +39,10 @@ public class ImageFilePath {
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
         // check here to KITKAT or new version
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         String selection = null;
         String[] selectionArgs = null;
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -51,11 +50,7 @@ public class ImageFilePath {
                 final String type = split[0];
 
                 String fullPath = getPathFromExtSD(split);
-                if (fullPath != "") {
-                    return fullPath;
-                } else {
-                    return null;
-                }
+                return !fullPath.isEmpty() ? fullPath : null;
             }
 
             // DownloadsProvider
@@ -104,7 +99,6 @@ public class ImageFilePath {
 
                 } else {
                     final String id = DocumentsContract.getDocumentId(uri);
-                    final boolean isOreo = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
                     if (id.startsWith("raw:")) {
                         return id.replaceFirst("raw:", "");
                     }

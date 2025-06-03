@@ -153,7 +153,7 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
                 Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
             } else {
                 StringBuilder certificationIds = new StringBuilder();
-                List<MultiSpinnerStatus> multiSpinnerStatus = (ArrayList<MultiSpinnerStatus>) certificationNameSpinner.getTag();
+                List<MultiSpinnerStatus> multiSpinnerStatus;
                 multiSpinnerStatus = (List<MultiSpinnerStatus>) certificationNameSpinner.getTag();
                 Boolean isChecked = getIsCertification(multiSpinnerStatus);
                 if (!isChecked) {

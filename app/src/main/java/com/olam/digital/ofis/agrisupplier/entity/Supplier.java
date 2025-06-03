@@ -14,7 +14,7 @@ public class Supplier {
     public Integer id;
 
     @SerializedName("supplierId")
-    public Long supplierId;
+    public String supplierId;
     @SerializedName("supplierName")
     public String supplierName;
     @SerializedName("primaryPhoneNumber")
@@ -27,5 +27,20 @@ public class Supplier {
     public Integer countryId;
     @SerializedName("productId")
     public Integer productId;
+
+    @SerializedName("region")
+    public String region;
+
+    @SerializedName("street")
+    public String street;
+
+    @SerializedName("city")
+    public String city;
+
+    @SerializedName("district")
+    public String district;
+
+    @SerializedName("supplierGroupId")
+    public Integer supplierGroupId;
 
 }

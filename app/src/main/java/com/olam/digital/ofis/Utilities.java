@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static org.apache.commons.lang3.time.DateUtils.isSameDay;
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,11 +33,17 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
 import com.scottyab.aescrypt.AESCrypt;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,12 +52,16 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,6 +82,7 @@ public class Utilities {
     public static final String IS_SUPPLIER_ENABLED = "isEnableSupplierModule";
 
     public  static  long farmerId;
+    public  static  String stakeholderId;
     public  static String productId;
     public  static String countryId;
     public  static int datatypeIdCLMRS;
@@ -108,7 +122,7 @@ public class Utilities {
     public static String NID_ERROR = "This national ID has already been added to the farmer";
 
     // OW-4529 Fix
-    public static String DUPLICATE_ERROR = "Dupicate survey entry";
+    public static String DUPLICATE_ERROR = "Duplicate survey entry";
 
     // OW-4516 Fix
     public static final int DATE_TIME_SETTING =6575;
@@ -137,6 +151,8 @@ public class Utilities {
     public static final String QWR = "QWR";
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
+    public static final String FLMRS = "FLMRS";
+    public static final String SURVEY_TYPE_FLMRS = "8";
     public static final String SUPPLIER = "supplier";
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
@@ -820,21 +836,68 @@ public  static String base64ConversionForImage(String filepath)  {
         };
     }
 
-    public static String getNamesBy(SupplierSurveyDto dmMainModule){
+    public static String getContentByLanguage(SupplierSurveyDto supplierSurveyDto, boolean isNames){
+        String language = Locale.getDefault().getLanguage();
+        String result = switch (language) {
+            case "es" -> isNames ? supplierSurveyDto.getNameEs() : supplierSurveyDto.getDescriptionEs();
+            case "fr" -> isNames ? supplierSurveyDto.getNameFr() : supplierSurveyDto.getDescriptionFr();
+            case "id", "in" -> isNames ? supplierSurveyDto.getNameIdn() : supplierSurveyDto.getDescriptionIdn();
+            case "lo" -> isNames ? supplierSurveyDto.getNameLo() : supplierSurveyDto.getDescriptionLo();
+            case "pt" -> isNames ? supplierSurveyDto.getNamePt() : supplierSurveyDto.getDescriptionPt();
+            case "th" -> isNames ? supplierSurveyDto.getNameTh() : supplierSurveyDto.getDescriptionTh();
+            case "tr" -> isNames ? supplierSurveyDto.getNameTr() : supplierSurveyDto.getDescriptionTr();
+            case "vi" -> isNames ? supplierSurveyDto.getNameVi() : supplierSurveyDto.getDescriptionVi();
+            default -> isNames ? supplierSurveyDto.getName() : supplierSurveyDto.getDescription();
+        };
+
+        return result != null ? result : "";
+    }
+
+    public static String getNamesByLanguage(DmQuestionsModule dmQuestionsModule){
         String language = Locale.getDefault().getLanguage();
         return switch (language) {
-            case "en" -> dmMainModule.getName();
-            case "es" -> dmMainModule.getNameEs();
-            case "fr" -> dmMainModule.getNameFr();
-            case "id", "in" -> dmMainModule.getNameId();
-            case "lo" -> dmMainModule.getNameLo();
-            case "pt" -> dmMainModule.getNamePt();
-            case "th" -> dmMainModule.getNameTh();
-            case "tr" -> dmMainModule.getNameTr();
-            case "vi" -> dmMainModule.getNameVi();
-            default -> dmMainModule.getName();
+            case "es" -> dmQuestionsModule.questionEs;
+            case "fr" -> dmQuestionsModule.questionFr;
+            case "id", "in" -> dmQuestionsModule.questionIdn;
+            case "lo" -> dmQuestionsModule.questionLo;
+            case "pt" -> dmQuestionsModule.questionPt;
+            case "th" -> dmQuestionsModule.questionTh;
+            case "tr" -> dmQuestionsModule.questionTr;
+            case "vi" -> dmQuestionsModule.questionVi;
+            default -> dmQuestionsModule.question;
         };
     }
+
+    public static String getModuleSectionByLanguage(DmSectionsItem dmSectionsItem, boolean isSectionName){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> isSectionName ? dmSectionsItem.nameEs : dmSectionsItem.descriptionEs;
+            case "fr" -> isSectionName ? dmSectionsItem.nameFr : dmSectionsItem.descriptionFr;
+            case "id", "in" -> isSectionName ? dmSectionsItem.nameId : dmSectionsItem.descriptionIdn;
+            case "lo" -> isSectionName ? dmSectionsItem.nameLo : dmSectionsItem.descriptionLo;
+            case "pt" -> isSectionName ? dmSectionsItem.namePt : dmSectionsItem.descriptionPt;
+            case "th" -> isSectionName ? dmSectionsItem.nameTh : dmSectionsItem.descriptionTh;
+            case "tr" -> isSectionName ? dmSectionsItem.nameTr : dmSectionsItem.descriptionTr;
+            case "vi" -> isSectionName ? dmSectionsItem.nameVi : dmSectionsItem.descriptionVi;
+            default -> isSectionName ? dmSectionsItem.name : dmSectionsItem.description;
+        };
+    }
+
+    public static String getLookupValueByLanguage(DmLookupValuesItem dmLookupValuesItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> dmLookupValuesItem.valueEs;
+            case "fr" -> dmLookupValuesItem.valueFr;
+            case "id", "in" -> dmLookupValuesItem.valueId;
+            case "lo" -> dmLookupValuesItem.valueLo;
+            case "pt" -> dmLookupValuesItem.valuePt;
+            case "th" -> dmLookupValuesItem.valueTh;
+            case "tr" -> dmLookupValuesItem.valueTr;
+            case "vi" -> dmLookupValuesItem.valueVi;
+            default -> dmLookupValuesItem.value;
+        };
+    }
+
 
     public static String appendSuffixForFarmName(String farmerName, String farmHoldingSuffix) {
         String language = Locale.getDefault().getLanguage();
@@ -900,5 +963,225 @@ public  static String base64ConversionForImage(String filepath)  {
         return true;
     }
 
+    public static Set<Integer> getSubmittedModuleWithRecurrence(Cursor getCursorRecurrence, Set<Integer> allSubmittedModuleId, JSONObject submittedModules, long farmerId, DataLayer dl) {
+        Set<Integer> recurrenceList = new HashSet<>(allSubmittedModuleId);
+        boolean isCurrentRecurrence ;
+        while (getCursorRecurrence.moveToNext()) {
+            int currentId = getCursorRecurrence.getInt(getCursorRecurrence.getColumnIndex("_id"));
+            try {
+                isCurrentRecurrence = isCurrentRecurrence(getCursorRecurrence, submittedModules, currentId, farmerId, dl);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            if (!isCurrentRecurrence) {
+                recurrenceList.remove(currentId);
+            }
+        }
+        return recurrenceList;
+    }
+
+    public static boolean isCurrentRecurrence(Cursor cursor, JSONObject submittedModules, int currentId, long farmerId, DataLayer dl) {
+        final Calendar currentDate = Calendar.getInstance();
+        final boolean hasSubmittedModules = (submittedModules.has("modules"));
+        JSONArray submittedModulesArray = null;
+        try {
+            if (hasSubmittedModules) {
+                submittedModulesArray = submittedModules.getJSONArray("modules");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+        List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+        String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
+
+        int month = 0;
+        int day = 0;
+        int year = 0;
+        Calendar recurrenceDate = Calendar.getInstance();
+        Date startDate = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            if (start_date_string != null) {
+                startDate = formatter.parse(start_date_string.split("T")[0]);
+                recurrenceDate.setTime(startDate);
+                month = recurrenceDate.get(Calendar.MONTH);
+                day =  recurrenceDate.get(Calendar.DAY_OF_MONTH);
+                year = recurrenceDate.get(Calendar.YEAR);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        boolean currentRecurrence = false;
+        if (hasSubmittedModules) {
+            try {
+                int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+                String recurrence_type = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+                Calendar calculationDate = (Calendar) currentDate.clone();
+
+                for (int i = 0; i < submittedModulesArray.length(); i++) {
+                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+
+                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
+
+                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                            // for recurring
+                            try {
+                                // get last submitted date
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                //O20HS-84 - To enable the annual survey.
+                                calculationDate = (Calendar) currentDate.clone();
+                                //
+
+                                try {
+                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                } catch (ParseException e) {
+                                    FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                                    e.printStackTrace();
+                                }
+
+                                // code for india spices survey
+                                String assignmentTypeColumn = "";
+                                String assignmentType = "1";
+
+                                switch (assignmentType){
+                                    case "1" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                        break;
+                                    case "2" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                        break;
+                                    case "3" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                        break;
+                                    case "4" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                        break;
+                                    case "5" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                        break;
+                                    case "6" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                        break;
+                                    case "7" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                        break;
+                                    case "8" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                        break;
+                                    case "9" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                        break;
+                                }
+
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                                if (recurrence_type != null) {
+                                    if (recurrence_type.equalsIgnoreCase("years")) {
+
+                                        if (Objects.equals(farmerAssignmentField, "48")){
+
+                                            // set the date according to start date
+                                            calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                            calculationDate.set(Calendar.MONTH, Calendar.JULY);
+                                            calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+
+                                        }else {
+                                            Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                            nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+
+                                            while (!currentDate.before(nextRecurrenceDate)) {
+                                                year += recurrence_frequency;
+                                                recurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                                nextRecurrenceDate.add(Calendar.YEAR, recurrence_frequency);
+                                            }
+
+                                            calculationDate.set(Calendar.YEAR, year);
+                                            calculationDate.set(Calendar.MONTH, month);
+                                            calculationDate.set(Calendar.DAY_OF_MONTH, day);
+                                        }
+                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                        Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                        Calendar previousRecurrenceDate = (Calendar) recurrenceDate.clone();
+                                        while (!currentDate.before(nextRecurrenceDate)) {
+                                            previousRecurrenceDate = (Calendar) nextRecurrenceDate.clone();
+                                            nextRecurrenceDate.add(Calendar.MONTH, recurrence_frequency);
+
+                                        }
+                                        int newYear = previousRecurrenceDate.get(Calendar.YEAR);
+                                        int newMonth = previousRecurrenceDate.get(Calendar.MONTH);
+
+                                        calculationDate.set(Calendar.YEAR, newYear);
+                                        calculationDate.set(Calendar.MONTH, newMonth);
+                                        calculationDate.set(Calendar.DAY_OF_MONTH, day);
+
+                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                        Calendar nextRecurrenceDate = (Calendar) recurrenceDate.clone();
+
+                                        long daysBetween = (currentDate.getTimeInMillis() - recurrenceDate.getTimeInMillis()) / (1000 * 60 * 60 * 24);
+
+                                        int weekDifference = (int) (daysBetween / 7);
+
+                                        int weeksPassed = weekDifference / recurrence_frequency;
+
+                                        nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, weeksPassed * recurrence_frequency);
+
+                                        if (currentDate.before(nextRecurrenceDate)) {
+                                            nextRecurrenceDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                        }
+
+                                        int newYear = nextRecurrenceDate.get(Calendar.YEAR);
+                                        int newMonth = nextRecurrenceDate.get(Calendar.MONTH);
+                                        int newDay = nextRecurrenceDate.get(Calendar.DAY_OF_MONTH);
+                                        calculationDate.set(Calendar.YEAR, newYear);
+                                        calculationDate.set(Calendar.MONTH, newMonth);
+                                        calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
+
+
+                                    } else {
+                                        Calendar finalReccurenceDate = (Calendar) recurrenceDate.clone();
+                                        Calendar nextRecurrenceDate = (Calendar) finalReccurenceDate.clone();
+
+                                        nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+
+                                        while (!currentDate.before(nextRecurrenceDate)) {
+                                            finalReccurenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                            nextRecurrenceDate.add(Calendar.DAY_OF_YEAR, recurrence_frequency);
+                                        }
+
+                                        int newYear = finalReccurenceDate.get(Calendar.YEAR);
+                                        int newMonth = finalReccurenceDate.get(Calendar.MONTH);
+                                        int newDay = finalReccurenceDate.get(Calendar.DAY_OF_MONTH);
+                                        calculationDate.set(Calendar.YEAR, newYear);
+                                        calculationDate.set(Calendar.MONTH, newMonth);
+                                        calculationDate.set(Calendar.DAY_OF_MONTH, newDay);
+                                    }
+
+                                    if (lastSubmittedDate.after(calculationDate) || isSameDay(lastSubmittedDate, calculationDate)) {
+                                        currentRecurrence = true;
+                                        break;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            currentRecurrence = true;
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return currentRecurrence;
+    }
 
 }

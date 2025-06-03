@@ -879,4 +879,28 @@
     <string name="gallery_is_not_available_in_mobile">Galeri tidak tersedia di Mobile</string>
     <string name="something_went_wrong_please_try_again">Terjadi kesalahan, silakan coba lagi</string>
     <string name="image_size_exceeds_5_mb">Ukuran gambar melebihi 5MB. Silakan pilih gambar yang lebih kecil.</string>
+
+    <string name="mandate_survey">Silakan selesaikan survei wajib terlebih dahulu!</string>
+    <string name="mandate_survey_not_synced">Maaf, tetapi survei wajib belum disinkronkan. Silakan sinkronkan survei wajib terlebih dahulu</string>
+    <string name="stakeholder_not_synced">Maaf, tetapi stakeholder belum disinkronkan. Harap sinkronkan stakeholder terlebih dahulu</string>
+    <string name="consent_not_synced">Maaf, tetapi persetujuan belum disinkronkan. Harap sinkronkan persetujuan terlebih dahulu</string>
+    <string name="survey_already_synced">Survei ini sudah dijawab oleh enumerator lain. Harap simpan dan perbarui aplikasi OFIS Anda</string>
+
+    <string name="supplier_and_surveys">Pemasok dan survei</string>
+    <string name="title_find_supplier_and_survey">Mencari pemasok</string>
+    <string name="select_supplier">Pilih pemasok</string>
+    <string name="supplier_not_found">Pemasok Tidak Ditemukan</string>
+    <string name="supplier_id">Identitas pemasok</string>
+    <string name="supplier_details">Detail pemasok</string>
+    <string name="view_supplier">Tampilkan pemasok</string>
+    <string name="view_supplier_information">Lihat detail pemasok</string>
+    <string name="supplier_type">Jenis pemasok</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Unggah Bukti</string>
+    <string name="supplier_survey">Survei Pemasok</string>
+    <string name="evidence_is_missing">Bukti Tidak Ada</string>
+    <string name="supplier_search_hint">Cari berdasarkan Nama Pemasok atau Id Pemasok</string>
+    <string name="spinner_supplier_group">Grup Pemasok</string>
+    <string name="supplier_group">Grup Pemasok</string>
 </resources>

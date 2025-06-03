@@ -110,5 +110,7 @@ public class DmMainModule {
     @ColumnInfo(name = "captureLocation")
     public String captureLocation;
 
+    @ColumnInfo(name = "supplierType")
+    public Integer supplierType;
 
 }
