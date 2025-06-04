@@ -4370,12 +4370,6 @@ public class DataLayer {
                 } catch (Exception e) {
                 }
 
-                ContentValues transacteeIdValue = new ContentValues();
-                transacteeIdValue.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID, id);
-
-                // update any saved transactions
-                db.update(OFISDBContract.TransactionItem.TABLE_NAME, transacteeIdValue, OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID + " = ? AND " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE + " = 'farmer'", whereArgs);
-
                 ContentValues farmerIdValue = new ContentValues();
                 farmerIdValue.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, id);
 
