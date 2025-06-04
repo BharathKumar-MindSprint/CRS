@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Describes and creates / updates all the tables the app needs in the SQLite database
  */
 class OFISDB extends SQLiteOpenHelper {
-    private static OFISDB sInstance;
+    private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 158;
+    private static final int DATABASE_VERSION = 159;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -475,16 +475,6 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
 
-    private static final String OFIS_PHONENUMBERS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumberCopy.TABLE_NAME
-            + " ( " + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_ID + " INTEGER , "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_NUMBER + " TEXT, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
-
-
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER, "
@@ -492,14 +482,6 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
-
-    private static final String OFIS_FAMRERNATIONALIDS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIdCopy.TABLE_NAME
-            + " ( " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_ID + " INTEGER, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER DEFAULT null, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_NUMBER + " TEXT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_EXPIRY_DATE + " TEXT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
@@ -664,113 +646,9 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.CountryCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountryCurrency.COLUMN_COUNTRY_ID
             + " INTEGER, " + OFISDBContract.CountryCurrency.COLUMN_CURRENCY_ID + " INTEGER )";
 
-    private static final String OFIS_DIRECTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Direction.TABLE_NAME
-            + " ( " + OFISDBContract.Direction.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_IS_GIVING_DIRECTION
-            + " INTEGER DEFAULT 0, " + OFISDBContract.Direction.COLUMN_NAME_IS_RECEIVING_DIRECTION + " INTEGER DEFAULT 0)";
-
-    private static final String OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemGroup.TABLE_NAME
-            + " ( " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_DIRECTION_ID
-            + " INTEGER, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER )";
-
-    private static final String OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_DIRECTION_ID
-            + " INTEGER, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemGroup.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ES + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_PT + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_LO + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TH + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
-
-    private static final String OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemType.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
-
-    private static final String OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductTransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_PRODUCT_ID
-            + " INTEGER, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemTypeUnit.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_TRANSACTIONITEMTYPE_ID
-            + " INTEGER, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_UNIT_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEM_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItem.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItem.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_ENUMERATOR_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_DATE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_UNIT_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_GRADE_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_MOBILEMONEYCASH_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_QUANTITY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRICE_PER_UNIT + " TEXT,"
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TOTAL_PRICE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_PAID + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_MOBILEMONEY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_GIFTED + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_BALANCE_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_IN_QUEUE + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED_TEXT + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_NOTES + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID + " INTEGER DEFAULT 0, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_FULLY_SYNCED + " INTEGER DEFAULT 0, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_CREATED_AT + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPDATED_AT + " TEXT )";
-
-    private static final String OFIS_PRODUCTGRADE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductGrade.TABLE_NAME
-            + " ( " + OFISDBContract.ProductGrade.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductGrade.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TH + " TEXT )";
-
-    private static final String OFIS_PRODUCTPRICE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductPrice.TABLE_NAME
-            + " ( " + OFISDBContract.ProductPrice.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductPrice.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.ProductPrice.COLUMN_NAME_DIRECTION_ID + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_FIXED_PRICE + " TEXT, " + OFISDBContract.ProductPrice.COLUMN_NAME_MIN_PRICE + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_MAX_PRICE + " INTEGER )";
-
     private static final String OFIS_UNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Unit.TABLE_NAME
             + " ( " + OFISDBContract.Unit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Unit.COLUMN_NAME_NAME
             + " TEXT )";
-
-    private static final String OFIS_BUYINGAGENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgent.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgent.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgent.COLUMN_NAME_NAME + " TEXT )";
-
-    private static final String OFIS_TRANSACTEE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Transactee.TABLE_NAME
-            + " ( " + OFISDBContract.Transactee.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Transactee.COLUMN_NAME_NAME + " TEXT )";
-
-    private static final String OFIS_TRANSACTION_BALANCES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionBalance.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionBalance.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT2_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BALANCE + " TEXT, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_OUT_OF_SYNC + " INTEGER DEFAULT 0 )";
-
-    private static final String OFIS_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingRule.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_PAY + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_MOBILEMONEY + " INTEGER DEFAULT 0, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_LOAN + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_GIFT + " INTEGER DEFAULT 0, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_REPAY + " INTEGER DEFAULT 0 )";
-
-    private static final String OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentBuyingRule.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGRULE_ID + " INTEGER )";
-
-    private static final String OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentCurrency.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_CURRENCY_ID + " INTEGER )";
 
     // training tables
     private static final String OFIS_COMPLETIONCRITERIA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CompletionCriteria.TABLE_NAME
@@ -917,23 +795,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_FMP_CURRENT_VALUES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CURRENCY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COUNTRY_CURRENCY_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTION_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEM_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTGRADE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTPRICE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_UNIT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTEE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTION_BALANCES_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGRULE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COMPLETIONCRITERIA_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COURSE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COURSEASSIGNMENT_TABLE_CREATE);
@@ -958,7 +820,6 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_GPS_MONITOR_TABLE_CREATE);
-
 
 //        nationalis
         sqLiteDatabase.execSQL(OFIS_NATIONALIDS_TABLE_CREATE);
@@ -997,7 +858,16 @@ class OFISDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-            migrateFromVersionBelow157(sqLiteDatabase);
+        switch(oldVersion){
+            case 158:
+                migrateFrom158To159(sqLiteDatabase);
+                break;
+            default:
+                migrateFromVersionBelow157(sqLiteDatabase);
+                migrateFrom158To159(sqLiteDatabase);
+                break;
+        }
+
     }
 
     private void migrateFromVersionBelow157(SQLiteDatabase sqLiteDatabase) {
@@ -1007,6 +877,29 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFrom158To159(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL("DROP TABLE buyingagent_buyingrule");
+            sqLiteDatabase.execSQL("DROP TABLE buyingagent_currency");
+            sqLiteDatabase.execSQL("DROP TABLE buyingagents");
+            sqLiteDatabase.execSQL("DROP TABLE buyingrules");
+            sqLiteDatabase.execSQL("DROP TABLE direction_transactionitemgroup");
+            sqLiteDatabase.execSQL("DROP TABLE direction_transactionitemtype");
+            sqLiteDatabase.execSQL("DROP TABLE directions");
+            sqLiteDatabase.execSQL("DROP TABLE transactees");
+            sqLiteDatabase.execSQL("DROP TABLE transactionbalances");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemgroups");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitems");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemtype_unit");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemtypes");
+            sqLiteDatabase.execSQL("DROP TABLE productgrades");
+            sqLiteDatabase.execSQL("DROP TABLE productprices");
+            sqLiteDatabase.execSQL("DROP TABLE product_transactionitemtype");
         } catch (SQLException e) {
             e.printStackTrace();
         }
