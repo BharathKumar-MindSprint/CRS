@@ -489,7 +489,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     uploadSyncTask.put("resultcount", tasksItems.length());
 
 
-                    okHttpPut(context, IAPIConstants.SYNC_TASKS, uploadSyncTask, new Callback() {
+                    okHttpPut(context, IAPIConstants.SYNC_TASKS_UPDATE, uploadSyncTask, new Callback() {
                         @Override
                         public void onResponse(Call call, final Response postResponse) {
                             try {

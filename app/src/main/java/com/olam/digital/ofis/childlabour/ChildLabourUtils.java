@@ -8,7 +8,6 @@ public class ChildLabourUtils {
 
     public static final String MALE="Male";
     public static final String FEMALE="Female";
-    public static final String CHILD_LABOUR_ENDPOINT="ofismaster/master/ischildenumerator";
     public static final String IS_CHILD_ENUMERATOR="child_enumerator";
     public static final String CHILD_FARMER_ID="farmer_id";
     public static final String CHILD_ID="child_id";

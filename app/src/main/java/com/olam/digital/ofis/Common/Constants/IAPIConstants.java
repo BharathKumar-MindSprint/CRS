@@ -47,7 +47,7 @@ public interface IAPIConstants {
    String SAVE_CHILD_VISIT_DETAILS = "ofischildsurvey/ofischildsurvey/childavailability/saveall";
    String SAVE_CHILD = "ofischild/child/saveall";
    //SYNC TASKS
-   String SYNC_TASKS = "ofistasks/activities/tasks/sync_tasks/updates";
+   String SYNC_TASKS_UPDATE = "ofistasks/activities/tasks/sync_tasks/updates";
    //Household
     String FARMER_HOUSE_HOLD = "ofisfarmerhousehold/farmerhousehold/farmerHouseHold";
     //Enumerator GPS Tracker
@@ -60,6 +60,23 @@ public interface IAPIConstants {
     String SUBMIT_SURVEY= "ofissurvey/survey/submitSurveyAppModule";
     //CHECK APP VERSION
     String CHECK_APP_VERSION = "ofismaster/master/checkAppVersion";
-    //String
+    String ENUMERATOR_ASSIGNMENT_CHECK = "ofismaster/master/enumeratorAssignmentsCheck";
+    String COUNTRY_SPINNERS ="ofisfarmer-data/farmerdata/getcountryspinners";
+     String GET_ALL_FL_DETAILS = "farmer/getAllFlBasicDetails";
+     String GET_ALL_QUESTIONNAIRE_DATA =  "ofissurvey/survey/questionnaire/getAllQuestionnaireData";
+     //TODO: REmove the below two APIs
+     String IS_CHILD_ENUMERATOR = "ofismaster/master/ischildenumerator";
+     String IS_FARMER_HH_ENUMERATOR = "ofismaster/master/isFarmerHHEnumerator";
+     String GET_ALL_FARM_ROLES =  "ofisfarmer/multifarm/roles";
+     String GET_STAKEHOLDER_BY_ENUMERATORID ="ofisfarmer/multiStakeHolder/getStakeholderByenumeratorId";
+     //TODO:Check if has t be removed
+     String IS_FL_ENUMERATOR = "ofismaster/master/isFLEnumerator";
+     String GET_NATIONALIDS_BY_ENUMERATOR = "ofismaster/master/nationalId/getNationalIDsByEnumerator";
+     String GET_ENUMERATOR_UNIQUEID = "ofisfarmer/farmer/getEnumeratorFarmersUniqueId";
+     String SYNC_TRAINING_DATA = "ofistraining/training/synctrainingdata";
+     String SYNC_TASKS ="ofistasks/activities/tasks/sync_tasks";
+     String GET_FARMER_DETAILS_ENUMERATOR_ID =  "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid";
+     String FIND_CHILD_SUBMITTEDMODULES="ofischild/child/findsubmittedmodulesbyenumeter";
+
 
 }
