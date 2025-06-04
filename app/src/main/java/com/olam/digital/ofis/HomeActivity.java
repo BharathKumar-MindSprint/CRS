@@ -1132,10 +1132,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             enableSync();
             Toast.makeText(HomeActivity.this, getString(R.string.authentication_attempt), Toast.LENGTH_LONG).show();
         } else {
-            try {
-                FabricLogsWriter.printCrashLog(TAG, "ofisoauth/authenticate", response.code(), "Request : :  " + new Gson().toJson(getAuthRequestDTO()).toString() + "   Response :  " + response.raw().networkResponse().toString() + "user Id :" + enumeratorID.getText().toString().trim(), context);
-            } catch (Exception e) {
-            }
             enableSync();
             if (response.code() == 401) {
                 validateLoginAttempts();

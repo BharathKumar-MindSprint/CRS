@@ -58,5 +58,8 @@ public interface IAPIConstants {
     //Survey
     String POST_SURVEY_IMAGE = "ofissurvey/image/upload";
     String SUBMIT_SURVEY= "ofissurvey/survey/submitSurveyAppModule";
+    //CHECK APP VERSION
+    String CHECK_APP_VERSION = "ofismaster/master/checkAppVersion";
+    //String
 
 }
