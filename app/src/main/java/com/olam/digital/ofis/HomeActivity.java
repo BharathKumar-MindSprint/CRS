@@ -136,7 +136,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Handler mainHandler;
 
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
-    private final static String EDIT_TRANSACTION_ITEM_ID = "EDIT_TRANSACTION_ITEM_ID";
     private final static String EDIT_TRAININGRECORD_ID = "EDIT_TRAININGRECORD_ID";
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
@@ -252,8 +251,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
-
-
         Account mAccount = CreateSyncAcount();
 
         ContentResolver.setSyncAutomatically(
