@@ -80,6 +80,7 @@ public interface IAPIConstants {
      String GET_CHILD_DETAILS = "ofischild/child/getdetailsbyenumaratorid?";
      String SAVE_DEVICE_INFO = "ofismaster/master/saveDeviceInfo";
      String SAVE_SURVEY_ANSWERS = "ofissurvey/survey/getRecentSurveyAnswers";
+     String GET_ALL_SIP_QUESTIONNAIRE_DATA = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
 
 
 

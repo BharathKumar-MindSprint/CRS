@@ -116,7 +116,6 @@ public class SyncAllTask extends SyncTask {
     public ProgressDialog pd;
     private Resources res;
     String counrtyCode;
-    int countrycount = 0;
     ArrayList<String> isoCodes = new ArrayList<>();
     ArrayList<String> countryIds = new ArrayList<>();
     private SyncAllTaskDelegate delegate;
@@ -310,12 +309,7 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
 
-                //  JSONObject response = new JSONObject(postResponse.body().string());
-                //  DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                 if (postResponse.isSuccessful()) {
-                    // positive response
-                   /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);*/
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_master_details));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
                 } else {
@@ -352,13 +346,8 @@ public class SyncAllTask extends SyncTask {
         if (enumerator_id != null) {
             long enumeratorId = Long.parseLong(enumerator_id);
             inputArgs.put("enumeratorId", enumeratorId);
-//            inputArgs.put("enumeratorId", 125);
         }
-
-//        String url = "http://13.76.131.132:8080/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
-        String url = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
-        final String finalEndpoint = url;
-        okHttpPost(context, url, inputArgs, new Callback() {
+        okHttpPost(context, IAPIConstants.GET_ALL_SIP_QUESTIONNAIRE_DATA, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -589,7 +578,6 @@ public class SyncAllTask extends SyncTask {
         Utilities.saveLongToSharedPrefs(context, "version_checked", timestampUpdated);
         JSONObject inputArgs = new JSONObject();
         inputArgs.put("enumerator_id", Long.parseLong(Utilities.getFromSharedPrefs(context)));
-//        inputArgs.put("enumerator_id",Utilities.getFromSharedPrefs(context));
         inputArgs.put("current_version", BuildConfig.VERSION_NAME);
 
         okHttpPost(context, IAPIConstants.CHECK_APP_VERSION, inputArgs, new Callback() {
@@ -680,7 +668,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncEnumAssignmentCheck() {
-        okHttpGet(context, IAPIConstants.ENUMERATOR_ASSIGNMENT_CHECK, null, new Callback() {
+        okHttpGet(context, IAPIConstants.ENUMERATOR_ASSIGNMENT_CHECK, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -714,7 +702,6 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", jsonText, null);
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
-                            countrycount = 1;
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
@@ -806,18 +793,14 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncSpinners() {
-        JSONObject inputArgs = new JSONObject();
-        okHttpGet(context, IAPIConstants.COUNTRY_SPINNERS, inputArgs, new Callback() {
+        okHttpGet(context, IAPIConstants.COUNTRY_SPINNERS, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-
-                        try {
                             String enumName= response.getJSONObject("outputdata").get(GPSConstants.COLUMN_ENUMERATOR_NAME).toString();
                             Utilities.setEnumeratorNameSharedPrefs(context,GPSConstants.COLUMN_ENUMERATOR_NAME,enumName);
-                        }catch (Exception e){}
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
                             JSONObject item = new JSONObject();
@@ -837,9 +820,6 @@ public class SyncAllTask extends SyncTask {
 
                         }
                         spinnerResponse = response;
-
-                       /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);*/
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
 
@@ -870,8 +850,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncFLDetails() {
-        JSONObject inputArgs = new JSONObject();
-        okHttpODGet(context, IAPIConstants.GET_ALL_FL_DETAILS, inputArgs, new Callback() {
+        okHttpODGet(context, IAPIConstants.GET_ALL_FL_DETAILS, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1038,7 +1017,7 @@ public class SyncAllTask extends SyncTask {
             inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
         }
 
-        okHttpGet(context, IAPIConstants.GET_ALL_QUESTIONNAIRE_DATA, inputArgs, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_ALL_QUESTIONNAIRE_DATA, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1081,7 +1060,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncChildEnumerator() {
-        okHttpGet(context, IAPIConstants.IS_CHILD_ENUMERATOR, null, new Callback() {
+        okHttpGet(context, IAPIConstants.IS_CHILD_ENUMERATOR, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1127,11 +1106,10 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncHouseholdEnumerator() {
-        okHttpGet(context, IAPIConstants.IS_FARMER_HH_ENUMERATOR, null, new Callback() {
+        okHttpGet(context, IAPIConstants.IS_FARMER_HH_ENUMERATOR, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
@@ -1169,7 +1147,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncMultiFarmRoles() {
-        okHttpGet(context, IAPIConstants.GET_ALL_FARM_ROLES, null, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_ALL_FARM_ROLES, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1204,7 +1182,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncExistingStakeHolders() {
-        okHttpGet(context, IAPIConstants.GET_STAKEHOLDER_BY_ENUMERATORID, null, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_STAKEHOLDER_BY_ENUMERATORID, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1239,7 +1217,7 @@ public class SyncAllTask extends SyncTask {
 
 
     private void syncFarmerLeadEnumerator() {
-        okHttpGet(context, IAPIConstants.IS_FL_ENUMERATOR, null, new Callback() {
+        okHttpGet(context, IAPIConstants.IS_FL_ENUMERATOR, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1281,7 +1259,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncNationalIDs() {
-        okHttpGet(context, IAPIConstants.GET_NATIONALIDS_BY_ENUMERATOR, null, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_NATIONALIDS_BY_ENUMERATOR, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1319,7 +1297,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncEnumNationalIDs() {
-        okHttpGet(context, IAPIConstants.GET_ENUMERATOR_UNIQUEID, null, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_ENUMERATOR_UNIQUEID, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1359,16 +1337,14 @@ public class SyncAllTask extends SyncTask {
 
 
     private void syncTraining() {
-        okHttpGet(context, IAPIConstants.SYNC_TRAINING_DATA, null, new Callback() {
+        okHttpGet(context, IAPIConstants.SYNC_TRAINING_DATA, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
-
                         trainingResponse = response;
-
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_tasks));
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
@@ -1400,21 +1376,15 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncTasks() {
-        okHttpGet(context, IAPIConstants.SYNC_TASKS, null, new Callback() {
+        okHttpGet(context, IAPIConstants.SYNC_TASKS, new Callback() {
+
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
-
                         tasksResponse = response;
-
-                       /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_master_details));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);*/
-                       /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);*/
-
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_enumerator_assignment));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);
                     } else {
@@ -1444,12 +1414,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncFarmers() throws JSONException {
-        JSONObject inputArgs = new JSONObject();
-        long enumeratorCountryId = Utilities.getLongFromSharedPrefs(context, "ENUMERATOR_COUNTRY_ID");
-        if (enumeratorCountryId != 0) {
-            inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
-        }
-        okHttpGet(context, IAPIConstants.GET_FARMER_DETAILS_ENUMERATOR_ID, inputArgs, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_FARMER_DETAILS_ENUMERATOR_ID, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1504,12 +1469,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncChildren() throws JSONException {
-        JSONObject inputArgs = new JSONObject();
-        long enumeratorCountryId = Utilities.getLongFromSharedPrefs(context, "ENUMERATOR_COUNTRY_ID");
-        if (enumeratorCountryId != 0) {
-            inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
-        }
-        okHttpGet(context, IAPIConstants.FIND_CHILD_SUBMITTEDMODULES, inputArgs, new Callback() {
+        okHttpGet(context, IAPIConstants.FIND_CHILD_SUBMITTEDMODULES, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1554,7 +1514,7 @@ public class SyncAllTask extends SyncTask {
         String endpoint = IAPIConstants.SAVE_SURVEY_ANSWERS + "?module_id="+Integer.parseInt(answerRequestDTO.getModule_id())
                 +"&farmergroup_id="+Integer.parseInt(answerRequestDTO.getFarmerGroupId())
                 +"&section_id="+Integer.parseInt(answerRequestDTO.getSectionId());
-        okHttpGet(context, endpoint, null, new Callback() {
+        okHttpGet(context, endpoint, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1597,7 +1557,7 @@ public class SyncAllTask extends SyncTask {
                 +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
                 +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
                 +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
-        okHttpGet(context, endpoint, null, new Callback() {
+        okHttpGet(context, endpoint,  new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
