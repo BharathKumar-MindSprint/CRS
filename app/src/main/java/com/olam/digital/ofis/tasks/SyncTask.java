@@ -34,7 +34,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 @SuppressWarnings("DefaultFileTemplate")
 abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String> {
 
-    private static final String BASE_URL = BuildConfig.HOST;
+    private static final String BASE_URL = BuildConfig.BASE_URL;
     private static final String ODBASE_URL = BuildConfig.ODHOST;
     final Context context;
 

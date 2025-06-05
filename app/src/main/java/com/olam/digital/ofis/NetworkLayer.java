@@ -94,7 +94,7 @@ import okhttp3.Response;
 public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private final Context context;
     private final Resources res;
-    private static final String BASE_URL = BuildConfig.HOST;
+    private static final String BASE_URL = BuildConfig.BASE_URL;
     public static final String TAG = "NetworkLayer";
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)

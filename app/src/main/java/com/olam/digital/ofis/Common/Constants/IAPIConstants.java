@@ -77,6 +77,10 @@ public interface IAPIConstants {
      String SYNC_TASKS ="ofistasks/activities/tasks/sync_tasks";
      String GET_FARMER_DETAILS_ENUMERATOR_ID =  "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid";
      String FIND_CHILD_SUBMITTEDMODULES="ofischild/child/findsubmittedmodulesbyenumeter";
+     String GET_CHILD_DETAILS = "ofischild/child/getdetailsbyenumaratorid?";
+     String SAVE_DEVICE_INFO = "ofismaster/master/saveDeviceInfo";
+     String SAVE_SURVEY_ANSWERS = "ofissurvey/survey/getRecentSurveyAnswers";
+
 
 
 }

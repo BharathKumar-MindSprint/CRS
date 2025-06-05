@@ -69,9 +69,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             resValue "string", "applicationName", "OFI DEV"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisdevscs-manna.olamdigital.com/"'
         }
 
         sitofi {
@@ -81,9 +81,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OFI SIT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofissitscs-manna.olamdigital.com/"'
         }
 
         uatofi{
@@ -93,9 +93,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OFI UAT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisuatscs-manna.olamdigital.com"'
         }
 
         preprodoga {
@@ -105,9 +105,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OFIS Companion"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauth.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-preprod-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofispreprodscs.olamdigital.com"'
         }
 
         preprodofi {
@@ -117,9 +117,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OFI PreProd"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-pre-prod/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-preprod-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-preprod-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofispreprodscs.olamdigital.com"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofispreprodscs.olamdigital.com"'
         }
 
         prodofi {
@@ -129,9 +129,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
             resValue "string", "applicationName", "OFIS Enumerator"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisprdscs.olamdigital.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisprdscs.olamdigital.com/"'
         }
 
         // OGA
@@ -142,9 +142,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             resValue "string", "applicationName", "OGA DEV"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisdevscs-manna.olamdigital.com/"'
         }
 
         sitoga {
@@ -154,9 +154,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OGA SIT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofissitscs-manna.olamdigital.com"'
         }
 
         uatoga {
@@ -166,9 +166,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
             resValue "string", "applicationName", "OGA UAT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisuatscs-manna.olamdigital.com"'
         }
 
         prodoga {
@@ -178,9 +178,9 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
             resValue "string", "applicationName", "OGA Companion"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/"'
-            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisprdscs.olamdigital.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisprdscs.olamdigital.com/"'
         }
     }
 

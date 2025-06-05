@@ -44,7 +44,6 @@ import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
-import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
@@ -300,7 +299,6 @@ public class SyncAllTask extends SyncTask {
 
     // Keycloak check version and Firebase token
     private void syncDeviceInfo() {
-        String endpoint = "";
         JSONObject inputArgs = new JSONObject();
         try {
             inputArgs.put("deviceId", DeviceIdExtractor.fetchDeviceID(context));
@@ -308,9 +306,7 @@ public class SyncAllTask extends SyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        endpoint = "ofismaster/master/saveDeviceInfo";
-        final String finalEndpoint = endpoint;
-        okHttpPost(context, endpoint, inputArgs, new Callback() {
+        okHttpPost(context, IAPIConstants.SAVE_DEVICE_INFO, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
 
@@ -521,13 +517,10 @@ public class SyncAllTask extends SyncTask {
                 Utilities.closeProgressDialog(pd, 0);
             }
             try {
-
                 // new Code
                 JSONObject rawResponse = new JSONObject((String) values[1]);
                 String responseVal = rawResponse.getString("app_Data");
                 final JSONObject response = new JSONObject(responseVal);
-
-                //    final JSONObject response = new JSONObject((String) values[1]);
                 String columnname = "responseMessage" + Utilities.getLocaleSuffix(res);
                 if (columnname.equalsIgnoreCase("responseMessage_en")) {
                     columnname = "responseMessage";
@@ -537,7 +530,7 @@ public class SyncAllTask extends SyncTask {
                         .setCancelable(true)
                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://otstgprd1001.blob.core.windows.net/mobileapp-download/OFIS-2.0-release.apk")));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl")));
                                 context.startActivity(intent);
                             }
                         })
@@ -545,13 +538,7 @@ public class SyncAllTask extends SyncTask {
                             public void onClick(DialogInterface dialog, int id) {
                                 long daysLeftToUpdate = Utilities.daysToUpdate(context);
                                 if (daysLeftToUpdate >= 0) {
-                                    /*String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
-                                    Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();*/
                                     dialog.cancel();
-                                   /* if (daysLeftToUpdate > 0) {
-                                        pd = Utilities.openProgressDialog(context, res.getString(R.string.Retrieving_data), false);
-                                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
-                                    }*/
                                 }
                             }
                         });
@@ -971,12 +958,6 @@ public class SyncAllTask extends SyncTask {
 
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
-
-                } else {
-                    String finalEndPoint = call.request().url().toString();
-                    int statusCode = response.code();
-                    String networkResponse = response.body().toString();
-                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
 
                 }
             }
@@ -1570,15 +1551,12 @@ public class SyncAllTask extends SyncTask {
 
     private void syncSurveyAnswers(){
 
-        String endpoint = "";
-        endpoint = "ofissurvey/survey/getRecentSurveyAnswers?module_id="+Integer.parseInt(answerRequestDTO.getModule_id())
+        String endpoint = IAPIConstants.SAVE_SURVEY_ANSWERS + "?module_id="+Integer.parseInt(answerRequestDTO.getModule_id())
                 +"&farmergroup_id="+Integer.parseInt(answerRequestDTO.getFarmerGroupId())
                 +"&section_id="+Integer.parseInt(answerRequestDTO.getSectionId());
-//        endpoint = "ofissurvey/survey/getRecentSurveyAnswers?module_id=3&farmergroup_id=1&section_id=659";
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
-//                try {
                 try {
                     JSONArray response = new JSONArray(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
@@ -1615,8 +1593,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncSmartNotification(int notificationModuleId, int pageNumber){
 
-        String endpoint = "";
-        endpoint = ChildLabourUtils.SMARTNOTIFICATION_ENDPOINT
+        String endpoint = IAPIConstants.GET_CHILD_DETAILS
                 +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
                 +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
                 +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
@@ -2011,10 +1988,6 @@ public class SyncAllTask extends SyncTask {
                             }
 
                         } else {
-                            String finalEndPoint = call.request().url().toString();
-                            int statusCode = response.code();
-                            String networkResponse = response.errorBody().toString();
-                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                             postFailureMessage(null);
                         }
                     } catch (Exception e) {
@@ -2056,10 +2029,6 @@ public class SyncAllTask extends SyncTask {
                     } else if (response.code() == 400){
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
-                        String finalEndPoint = call.request().url().toString();
-                        int statusCode = response.code();
-                        String networkResponse = response.errorBody().toString();
-                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                         postFailureMessage(null);
                     }
                 } catch (Exception e) {
@@ -2097,10 +2066,6 @@ public class SyncAllTask extends SyncTask {
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
                         }
                         else {
-                            String finalEndPoint = call.request().url().toString();
-                            int statusCode = response.code();
-                            String networkResponse = response.errorBody().toString();
-                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                             postFailureMessage(null);
                         }
                     } catch (Exception e) {
@@ -2141,10 +2106,6 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
                     }
                     else {
-                        String finalEndPoint = call.request().url().toString();
-                        int statusCode = response.code();
-                        String networkResponse = response.errorBody().toString();
-                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                         postFailureMessage(null);
                     }
                 }
@@ -2182,10 +2143,6 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
                     else {
-                        String finalEndPoint = call.request().url().toString();
-                        int statusCode = response.code();
-                        String networkResponse = response.errorBody().toString();
-                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint, statusCode, networkResponse, context);
                         postFailureMessage(null);
                     }
                 }
