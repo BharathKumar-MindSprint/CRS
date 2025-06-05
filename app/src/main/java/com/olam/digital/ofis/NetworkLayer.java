@@ -3384,6 +3384,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         return;
                                     }, 500);
                                     postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register phone number");
+                                } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5048) {
+                                    if (errorObject.has("duplicateNationalIds")) {
+                                        JSONArray duplicateNationalIds = errorObject.getJSONArray("duplicateNationalIds");
+                                        for (int i = 0; i < duplicateNationalIds.length(); i++) {
+                                            JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
+                                            String typeId = duplicate.getString("typeId");
+                                            dl.updateDuplicateStatusOfNationalId(localFarmerId, typeId);
+                                        }
+                                    }
+
+                                    String errorMsg = errorObject.optString("message", "Duplicate National Id");
+                                    handler.postDelayed(() -> {
+                                        popupMsgInfo(errorMsg);
+                                        return;
+                                    }, 500);
+                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register national id");
                                 }
                                 else {
                                     JSONArray jsonResponse = new JSONArray(postResponse.body().string());

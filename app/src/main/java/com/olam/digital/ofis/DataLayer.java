@@ -8751,4 +8751,14 @@ public class DataLayer {
 
         db.update(OFISDBContract.PhoneNumber.TABLE_NAME, values, whereClause, whereArgs);
     }
+
+    public void updateDuplicateStatusOfNationalId(long localFarmerId, String typeId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE, "true");
+
+        String[] whereArgs = new String[]{String.valueOf(localFarmerId), typeId};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
+
+        db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+    }
 }
