@@ -3,6 +3,7 @@
  import static com.olam.digital.ofis.Utilities.appendSuffixForFarmName;
 
  import android.Manifest;
+ import android.annotation.SuppressLint;
  import android.app.Activity;
  import android.app.DatePickerDialog;
  import android.app.Dialog;
@@ -208,7 +209,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             farmerDOB.setText(humanDate);
         }
     };
-    private EditText farmerIdPrefix, etFarmHoldingName, etFarmHoldingCode, farmerName;
+    private EditText farmerIdPrefix, etFarmHoldingName, etFarmHoldingCode, farmerName, farmerCode;
     private LinearLayout phonenumbers;
     private LinearLayout nationalids;
     private LayoutInflater inflater;
@@ -225,7 +226,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private TextView titleText, roleHeading;
     private Spinner farmerRoleSpinner;
     private EditText etFarmerRole;
-    private LinearLayout llFarmerGroup, llGeographyDetails;
+    private LinearLayout llFarmerGroup, llGeographyDetails,ll_farmer_code;
 
     private List<String> farmerRolesList;
      private List<FarmerRoleDto> farmerRoleDTOList;
@@ -234,6 +235,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
 
+     @SuppressLint("MissingInflatedId")
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -264,9 +266,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
         farmerName = findViewById(R.id.farmerName);
+
         llFarmerGroup = findViewById(R.id.llFarmerGroup);
         llGeographyDetails = findViewById(R.id.llGeographyDetails);
-
+         ll_farmer_code = findViewById(R.id.ll_farmer_code);
         ll_nidview = findViewById(R.id.ll_nidview);
         isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
         ll_nidview.setVisibility(isNIDAvailable ? View.VISIBLE : View.GONE);
@@ -280,6 +283,29 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         linear_certifications = (LinearLayout) findViewById(R.id.linear_certifications);
         certificationNameSpinner = (Spinner) findViewById(R.id.spinner_certificationName);
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
+
+         farmerCode = findViewById(R.id.farmerCode);
+         farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter});
+         farmerCode.addTextChangedListener(new TextWatcher() {
+             @Override
+             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+             }
+
+             @Override
+             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+             }
+
+             @Override
+             public void afterTextChanged(Editable s) {
+                 String input =  s.toString().trim();
+                 if(!input.isEmpty() && !(Character.isDigit(input.charAt(0)) ||  Character.isLetter(input.charAt(0)))){
+                     farmerCode.setText(input.substring(1));
+
+                 }
+             }
+         });
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
 
         getCountryId();
@@ -783,6 +809,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
         String farmCode = etFarmHoldingCode.getText().toString().trim();
+        String farmer_Code = farmerCode.getText().toString().trim();
 
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
@@ -1040,6 +1067,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, getCurrentPhotoPath());
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, place_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID, section_id);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE, farmer_Code);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
@@ -3257,4 +3285,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             bindFarmerPhotoButton();
          }
      }
+
+     public InputFilter LetterDigitHyphenFilter = new InputFilter() {
+         @Override
+         public CharSequence filter(CharSequence source, int start, int end,Spanned dest, int dstart, int dend) {
+             for (int i = start; i < end; i++) {
+                 char ch = source.charAt(i);
+                 if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '/') {
+                     return "";
+                 }
+             }
+             return null; // accept original input
+         }
+     };
+
  }

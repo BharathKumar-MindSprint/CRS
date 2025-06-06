@@ -466,6 +466,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView farmerOlamId = (TextView) findViewById(R.id.viewFarmerOlamFarmerID);
         ImageView farmerPhoto = (ImageView) findViewById(R.id.viewFarmerFarmerPhoto);
         TextView viewFarmerInfo = (TextView) findViewById(R.id.viewFarmerInfo);
+        TextView farmerCodeInfo = findViewById(R.id.farmer_code_info);
         LinearLayout linear_viewInfo = (LinearLayout) findViewById(R.id.linear_viewInfo);
         TextView genderInfo = (TextView) findViewById(R.id.genderInfo);
         TextView ageInfo = (TextView) findViewById(R.id.ageInfo);
@@ -532,6 +533,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             genderInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
             ageInfo.setText("- " +farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE)));
             pNumberInfo.setText("- " +phonenumberinfo.toString());
+            if(!farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)).isEmpty()){
+                farmerCodeInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
+            }else{
+                farmerCodeInfo.setText("-");
+            }
+
             if(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))!=null) {
                 ptInfo = db.partnersDao().getPartnerNameById(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))));
             }
