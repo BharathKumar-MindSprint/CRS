@@ -1010,13 +1010,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
                 JSONObject storeableNumber = new JSONObject();
                 boolean isPrimaryNumber = primary_number.isChecked();
-                boolean isDuplicateErrorMessageShown = isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue);
-
+                if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
+                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
+                    return new ContentValues();
+                }
                 try {
                     storeableNumber.put("country_id", countryId);
                     storeableNumber.put("primary_number", primary_number.isChecked());
                     storeableNumber.put("phonenumber", phoneNumberValue);
-                    storeableNumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, isDuplicateErrorMessageShown ? primaryPhoneNumberErrorMsg.getVisibility() == View.VISIBLE : null);
                     storeableNumbers.put(storeableNumber);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
@@ -1344,7 +1345,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 numberradio.setChecked(isPrimaryNumber);
                 numbertext.setText(phoneNumber);
 
-                primaryPhoneNumber = isPrimaryNumber ? phoneNumber : primaryPhoneNumber;
+                primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
 
                 phonenumbers.addView(phonenumberinclude);

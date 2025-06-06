@@ -2014,7 +2014,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 diallingCode.setText(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
                 numberText.setText(phoneNumber);
 
-                primaryPhoneNumber = isPrimaryNumber ? phoneNumber : primaryPhoneNumber;
+                primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
 
                 phonenumbers.addView(phoneNumberInclude);
@@ -2114,6 +2114,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int phoneRowsCount = phonenumbers.getChildCount();
                     Cursor fullFarmer = dl.getFlattenedFarmer(farmerId);
                     JSONArray storeableNumbers = new JSONArray();
+                    boolean isDuplicate = false;
 
                     for (int j = 0; j < phoneRowsCount; j++) {
                         LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
@@ -2124,13 +2125,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
                             boolean isPrimaryNumber = primary_number.isChecked();
                             JSONObject storeableNumber = new JSONObject();
-                            boolean isDuplicateErrorMessageShown = isPrimaryNumber && isPhoneNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue);
+                            if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
+                                Toast.makeText(ViewFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
+                                isDuplicate = true;
+                                break;
+                            }
 
                             try {
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
                                 storeableNumber.put("phonenumber", phoneNumberValue);
-                                storeableNumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, isDuplicateErrorMessageShown ? primaryPhoneNumberErrorMsg.getVisibility() == View.VISIBLE : null);
                                 storeableNumbers.put(storeableNumber);
                             } catch (JSONException e) {
                                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer phone number", e));
@@ -2139,6 +2143,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         }
                     }
 
+                    if (isDuplicate) {
+                        return;
+                    }
                     dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
 
                     if (mCurrentCapturedLocation != null) {
