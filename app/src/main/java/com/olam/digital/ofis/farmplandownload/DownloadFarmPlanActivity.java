@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -226,24 +227,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     }
 
     private void getDownloadUrl(){
-
-        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
-        OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl(BuildConfig.DOWNLOADURL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ManageRecords retrofitAPI = retrofit.create(ManageRecords.class);
-
+        ManageRecords retrofitAPI = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
 
         String currentString = filepath;
         String[] separated = currentString.split("/");
@@ -268,18 +252,10 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                 if (response.code()==200) {
                     progressDialog.hide();
-                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                    // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
                     Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
                     if (writtenToDisk) {
-                       /* File mediaStorageDir = new File(
-                                Environment
-                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                        +"/"+"OFIS");
-                        mediaStorageDir.mkdirs();*/
-
                         File root = android.os.Environment.getExternalStorageDirectory();
                         dir = new File (root.getAbsolutePath() +"/"+"OFIS");
                         dir.mkdirs();
@@ -288,9 +264,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                                 +finalFilepathPdf+ ".pdf");
 
                         fileNameDownload = mediaFile.getName();
-
-                        //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
-                        //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
                         file = new File(dir+"/"+fileNameDownload);
                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
                         try {

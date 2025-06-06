@@ -231,7 +231,6 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "sip_subgroup"; /// alise submodule
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_MODULE_ID = "sipGroupId";
-        //        public static final String COLUMN_NAME_POSITION = "position";
         public static final String COLUMN_NAME_CAPTURE_SIP_POLYGON = "captureSipPolygon";
         public static final String COLUMN_NAME_NAME = "sipName";
         public static final String COLUMN_NAME_NAME_FR = "sipName_fr";
@@ -250,7 +249,6 @@ public class OFISDBContract {
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_MODULE_ID);
-//                    add(COLUMN_NAME_POSITION);
                     add(COLUMN_NAME_CAPTURE_SIP_POLYGON);
                     add(COLUMN_NAME_NAME);
                     add(COLUMN_NAME_NAME_FR);
@@ -307,22 +305,17 @@ public class OFISDBContract {
         );
     }
 
-
     public static abstract class productSipEntry implements BaseColumns {
         public static final String TABLE_NAME = "products_sip";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_PRODUCT_ID = "productId";
         public static final String COLUMN_NAME_PRODUCT_NAME = "productName";
-//        public static final String COLUMN_NAME_DELETED_FLAG = "deletedFlag";
-//        public static final String COLUMN_NAME_TRANS_LIST = "translationsList";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_PRODUCT_NAME);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_PRODUCT_ID);
-//                    add(COLUMN_NAME_DELETED_FLAG);
-//                    add(COLUMN_NAME_TRANS_LIST);
 
                 }}
         );
@@ -532,7 +525,6 @@ public class OFISDBContract {
                 }}
         );
     }
-
 
     public static abstract class LookupValuesEntry implements BaseColumns {
         public static final String TABLE_NAME = "lookupvalues";
@@ -774,7 +766,6 @@ public class OFISDBContract {
         );
     }
 
-
     public static abstract class AnswerChildEntry implements BaseColumns {
         public static final String TABLE_NAME = "child_answers";
         public static final String COLUMN_NAME_ID = "id";
@@ -865,7 +856,6 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "children";
         public static final String COLUMN_NAME_ID = "tmpId";
         public static final String COLUMN_NAME_ONLINE_ID = "id";
-        //        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_CHILD_NAME = "name";
         public static final String COLUMN_NAME_CHILD_AGE = "age";
@@ -875,11 +865,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_MODULE_DTO = "moduleDTO";
         public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "ageOnYear";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
-        //        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submittedModule";
         public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
         public static final String COLUMN_NAME_CHILD_ACTION_TICKED="actionTickeds";
-        public static final String COLUMN_NAME_CHILD_MODULEDTO="moduleDTO";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1024,9 +1012,6 @@ public class OFISDBContract {
                 }}
         );
     }
-    // Child Registration Table End
-
-
 
     public static abstract class FarmerEntry implements BaseColumns {
         public static final String TABLE_NAME = "farmers";
@@ -1089,7 +1074,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_AGE = "age";
 
         public static final String COLUMN_NAME_COMPLAINCE_FLAG = "complainceFlag";
-        public static final String COLUMN_NAME_ORIGIN_CAPABILITIES = "originCapabilities";
         public static final String COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF = "conductSurveyForNonCompliant";
         public static final String COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF = "conductTrainingForNonCompliant";
         public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
@@ -1234,58 +1218,6 @@ public class OFISDBContract {
         );
     }
 
-    public static abstract class PhoneNumberCopy implements BaseColumns {
-        public static final String TABLE_NAME = "phoneNumbersCopy";
-        public static final String COLUMN_NAME_PHONE_NUMBER_ID = "phoneNumberId";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
-        public static final String COLUMN_NAME_MULTI_STAKEHOLDER_ID = "msId";
-        public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
-        public static final String COLUMN_NAME_NUMBER = "phonenumber";
-        public static final String COLUMN_NAME_PRIMARY = "primary_number";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_PHONE_NUMBER_ID);
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NAME_MULTI_STAKEHOLDER_ID);
-                    add(COLUMN_NAME_COUNTRY_ID);
-                    add(COLUMN_NAME_NUMBER);
-                    add(COLUMN_NAME_PRIMARY);
-                }}
-        );
-    }
-
-    public static abstract class FarmStakeHolderInformation implements BaseColumns {
-        public static final String TABLE_NAME = "farmStakeHolder";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_FARMER_NAME = "farmerName";
-
-        public static final String COLUMN_NAME_FARM_NAME = "farmName";
-        public static final String COLUMN_NAME_FARM_CODE = "farmCode";
-        public static final String COLUMN_NAME_FARM_ID = "farmID";
-
-        public static final String COLUMN_NAME_STAKE_HOLDER_FARMER_ID = "stakeHolderfarmerId";
-        public static final String COLUMN_NAME_STAKE_HOLDER_FARMER_NAME = "stakeHolderfarmerName";
-        public static final String COLUMN_NAME_STAKE_HOLDER_ROLE_ID = "stakeHolderRoleId";
-
-        public static final String COLUMN_NAME_STAKE_HOLDER_SYNC= "synced";
-
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NAME_FARM_NAME);
-                    add(COLUMN_NAME_FARM_CODE);
-                    add(COLUMN_NAME_STAKE_HOLDER_FARMER_ID);
-                    add(COLUMN_NAME_STAKE_HOLDER_ROLE_ID);
-                    add(COLUMN_NAME_STAKE_HOLDER_SYNC);
-                    add(COLUMN_NAME_STAKE_HOLDER_FARMER_NAME);
-                    add(COLUMN_NAME_FARM_ID);
-                }}
-        );
-    }
     public static abstract class FarmerNationalIDs implements BaseColumns {
         public static final String TABLE_NAME = "farmernationalids";
         public static final String COLUMN_NATIONAL_ID = "nationalId";
@@ -1314,33 +1246,6 @@ public class OFISDBContract {
         );
     }
 
-    public static abstract class FarmerNationalIdCopy implements BaseColumns {
-        public static final String TABLE_NAME = "farmerNationalIdCopy";
-        public static final String COLUMN_NATIONAL_ID = "nationalId";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_STAKEHOLDER_ID = "msId";
-        public static final String COLUMN_NID_TYPE = "nationalIdType";
-        public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
-        public static final String COLUMN_NID_PHOTO = "photo";
-        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
-        public static final String COLUMN_IS_SYNCED = "isSynced";
-        //        public static final String COLUMN_CREATEDDATE = "createddate";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NID_TYPE);
-                    add(COLUMN_NID_NUMBER);
-                    add(COLUMN_NID_PHOTO);
-                    add(COLUMN_NID_EXPIRY_DATE);
-                    add(COLUMN_IS_SYNCED);
-                    add(COLUMN_NAME_STAKEHOLDER_ID);
-//                    add(COLUMN_CREATEDDATE);
-                }}
-        );
-    }
-
     public static abstract class LocalFarmerNationalIDs implements BaseColumns {
         public static final String TABLE_NAME = "localfarmernationalids";
         public static final String COLUMN_NAME_ID = "id";
@@ -1349,7 +1254,6 @@ public class OFISDBContract {
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
-        //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1519,30 +1423,6 @@ public class OFISDBContract {
                 }}
         );
     }
-
-    /*public static abstract class Certifications implements BaseColumns {
-        public static final String TABLE_NAME = "subdistricts";
-        public static final String COLUMN_NAME_CERTIFICATIONS_ID = "certificationId";
-        public static final String COLUMN_NAME_CERTIFICATIONS_NAME = "certificationName";
-        public static final String COLUMN_NAME_CERTIFICATIONS_DESC = "certificationDesc";
-        public static final String COLUMN_NAME_CREATED_AT = "createdAt";
-        public static final String COLUMN_NAME_MODIFIED_AT = "modifiedAt";
-        public static final String COLUMN_NAME_APP_ID = "appId";
-        public static final String COLUMN_NAME_DELETED_FLAG = "deletedFlag";
-        public static final String COLUMN_NAME_ISACTIVE = "isActive";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_CERTIFICATIONS_ID);
-                    add(COLUMN_NAME_CERTIFICATIONS_NAME);
-                    add(COLUMN_NAME_CERTIFICATIONS_DESC);
-                    add(COLUMN_NAME_CREATED_AT);
-                    add(COLUMN_NAME_MODIFIED_AT);
-                    add(COLUMN_NAME_APP_ID);
-                    add(COLUMN_NAME_DELETED_FLAG);
-                    add(COLUMN_NAME_ISACTIVE);
-                }}
-        );
-    }*/
 
     public static abstract class PlacesEntry implements BaseColumns {
         public static final String TABLE_NAME = "places";
@@ -1904,296 +1784,6 @@ public class OFISDBContract {
         );
     }
 
-    public static abstract class Direction implements BaseColumns {
-        public static final String TABLE_NAME = "directions";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
-        public static final String COLUMN_NAME_IS_GIVING_DIRECTION = "is_giving_direction";
-        public static final String COLUMN_NAME_IS_RECEIVING_DIRECTION = "is_receiving_direction";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_NAME);
-                    add(COLUMN_NAME_NAME_FR);
-                    add(COLUMN_NAME_NAME_ES);
-                    add(COLUMN_NAME_NAME_ID);
-                    add(COLUMN_NAME_NAME_PT);
-                    add(COLUMN_NAME_NAME_TR);
-                    add(COLUMN_NAME_NAME_LO);
-                    add(COLUMN_NAME_NAME_VI);
-                    add(COLUMN_NAME_NAME_TH);
-                    add(COLUMN_NAME_IS_GIVING_DIRECTION);
-                    add(COLUMN_NAME_IS_RECEIVING_DIRECTION);
-                }}
-        );
-
-    }
-
-    public static abstract class DirectionTransactionItemGroup implements BaseColumns {
-        public static final String TABLE_NAME = "direction_transactionitemgroup";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMGROUP_ID = "transactionitemgroup_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_DIRECTION_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMGROUP_ID);
-                }}
-        );
-    }
-
-    public static abstract class DirectionTransactionItemType implements BaseColumns {
-        public static final String TABLE_NAME = "direction_transactionitemtype";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMTYPE_ID = "transactionitemtype_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_DIRECTION_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMTYPE_ID);
-                }}
-        );
-    }
-
-    public static abstract class TransactionItemGroup implements BaseColumns {
-        public static final String TABLE_NAME = "transactionitemgroups";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
-        public static final String COLUMN_NAME_DISPLAY_CONFIGURATION = "display_configuration";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_NAME);
-                    add(COLUMN_NAME_NAME_FR);
-                    add(COLUMN_NAME_NAME_ES);
-                    add(COLUMN_NAME_NAME_ID);
-                    add(COLUMN_NAME_NAME_PT);
-                    add(COLUMN_NAME_NAME_TR);
-                    add(COLUMN_NAME_NAME_LO);
-                    add(COLUMN_NAME_NAME_VI);
-                    add(COLUMN_NAME_NAME_TH);
-                    add(COLUMN_NAME_DISPLAY_CONFIGURATION);
-                }}
-        );
-
-    }
-
-    public static abstract class TransactionItemType implements BaseColumns {
-        public static final String TABLE_NAME = "transactionitemtypes";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMGROUP_ID = "transactionitemgroup_id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
-        public static final String COLUMN_NAME_DISPLAY_CONFIGURATION = "display_configuration";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMGROUP_ID);
-                    add(COLUMN_NAME_NAME);
-                    add(COLUMN_NAME_NAME_FR);
-                    add(COLUMN_NAME_NAME_ES);
-                    add(COLUMN_NAME_NAME_ID);
-                    add(COLUMN_NAME_NAME_PT);
-                    add(COLUMN_NAME_NAME_TR);
-                    add(COLUMN_NAME_NAME_LO);
-                    add(COLUMN_NAME_NAME_VI);
-                    add(COLUMN_NAME_NAME_TH);
-                    add(COLUMN_NAME_DISPLAY_CONFIGURATION);
-                }}
-        );
-
-    }
-
-    public static abstract class ProductTransactionItemType implements BaseColumns {
-        public static final String TABLE_NAME = "product_transactionitemtype";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMTYPE_ID = "transactionitemtype_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMTYPE_ID);
-                    add(COLUMN_NAME_PRODUCT_ID);
-                }}
-        );
-    }
-
-    public static abstract class TransactionItemTypeUnit implements BaseColumns {
-        public static final String TABLE_NAME = "transactionitemtype_unit";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMTYPE_ID = "transactionitemtype_id";
-        public static final String COLUMN_NAME_UNIT_ID = "unit_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMTYPE_ID);
-                    add(COLUMN_NAME_UNIT_ID);
-                }}
-        );
-    }
-
-    public static abstract class TransactionItem implements BaseColumns {
-        public static final String TABLE_NAME = "transactionitems";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMGROUP_ID = "transactionitemgroup_id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMTYPE_ID = "transactionitemtype_id";
-        public static final String COLUMN_NAME_BUYINGAGENT_ID = "buyingagent_id";
-        public static final String COLUMN_NAME_TRANSACTEE_ID = "transactee_id";
-        public static final String COLUMN_NAME_ENUMERATOR_ID = "enumerator_id";
-        public static final String COLUMN_NAME_TRANSACTION_DATE = "transaction_date";
-        public static final String COLUMN_NAME_TRANSACTEE_TYPE = "transactee_type";
-        public static final String COLUMN_NAME_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_NAME_UNIT_ID = "unit_id";
-        public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
-        public static final String COLUMN_NAME_PRODUCT_GRADE_ID = "productgrade_id";
-        public static final String COLUMN_NAME_CURRENCY_ID = "currency_id";
-        public static final String COLUMN_NAME_MOBILEMONEYCASH_ID = "mmcash_id";
-        public static final String COLUMN_NAME_QUANTITY = "quantity";
-        public static final String COLUMN_NAME_PRICE_PER_UNIT = "price_per_unit";
-        public static final String COLUMN_NAME_TOTAL_PRICE = "total_price";
-        public static final String COLUMN_NAME_AMOUNT_PAID = "amount_paid";
-        public static final String COLUMN_NAME_AMOUNT_MOBILEMONEY = "amount_mobilemoney";
-        public static final String COLUMN_NAME_AMOUNT_LOANED = "amount_loaned";
-        public static final String COLUMN_NAME_AMOUNT_GIFTED = "amount_gifted";
-        public static final String COLUMN_NAME_TRANSACTION_BALANCE_ID = "transactionbalance_id";
-        public static final String COLUMN_NAME_IN_QUEUE = "in_network_queue";
-        public static final String COLUMN_NAME_AMOUNT_LOANED_TEXT = "amount_loaned_text";
-        public static final String COLUMN_NAME_TRANSACTION_NOTES = "transaction_notes";
-        public static final String COLUMN_NAME_TRANSACTION_STATUS = "transaction_status";
-        public static final String COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID = "MMPP_transactionid";
-        public static final String COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID = "MMPP_requestid";
-        public static final String COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER = "MMPP_recipientnumber";
-        public static final String COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE = "MMPP_recipientdiallingcode";
-        public static final String COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH = "signal_strength";
-        public static final String COLUMN_NAME_SERVERITEM_ID = "server_item_id";
-        public static final String COLUMN_NAME_UPLOAD_ID = "upload_id";
-        public static final String COLUMN_NAME_FULLY_SYNCED = "fully_synced";
-        public static final String COLUMN_NAME_UPLOAD_ATTEMPTS = "upload_attempts";
-        public static final String COLUMN_NAME_CREATED_AT = "created_at";
-        public static final String COLUMN_NAME_UPDATED_AT = "updated_at";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMGROUP_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMTYPE_ID);
-                    add(COLUMN_NAME_BUYINGAGENT_ID);
-                    add(COLUMN_NAME_TRANSACTEE_ID);
-                    add(COLUMN_NAME_ENUMERATOR_ID);
-                    add(COLUMN_NAME_TRANSACTION_DATE);
-                    add(COLUMN_NAME_TRANSACTEE_TYPE);
-                    add(COLUMN_NAME_DIRECTION_ID);
-                    add(COLUMN_NAME_UNIT_ID);
-                    add(COLUMN_NAME_PRODUCT_ID);
-                    add(COLUMN_NAME_PRODUCT_GRADE_ID);
-                    add(COLUMN_NAME_CURRENCY_ID);
-                    add(COLUMN_NAME_MOBILEMONEYCASH_ID);
-                    add(COLUMN_NAME_QUANTITY);
-                    add(COLUMN_NAME_PRICE_PER_UNIT);
-                    add(COLUMN_NAME_TOTAL_PRICE);
-                    add(COLUMN_NAME_AMOUNT_PAID);
-                    add(COLUMN_NAME_AMOUNT_MOBILEMONEY);
-                    add(COLUMN_NAME_AMOUNT_LOANED);
-                    add(COLUMN_NAME_AMOUNT_GIFTED);
-                    add(COLUMN_NAME_TRANSACTION_BALANCE_ID);
-                    add(COLUMN_NAME_IN_QUEUE);
-                    add(COLUMN_NAME_AMOUNT_LOANED_TEXT);
-                    add(COLUMN_NAME_TRANSACTION_NOTES);
-                    add(COLUMN_NAME_TRANSACTION_STATUS);
-                    add(COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID);
-                    add(COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID);
-                    add(COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER);
-                    add(COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE);
-                    add(COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH);
-                    add(COLUMN_NAME_SERVERITEM_ID);
-                    add(COLUMN_NAME_UPLOAD_ID);
-                    add(COLUMN_NAME_FULLY_SYNCED);
-                    add(COLUMN_NAME_UPLOAD_ATTEMPTS);
-                    add(COLUMN_NAME_CREATED_AT);
-                    add(COLUMN_NAME_UPDATED_AT);
-                }}
-        );
-
-    }
-
-    public static abstract class ProductGrade implements BaseColumns {
-        public static final String TABLE_NAME = "productgrades";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "name_fr";
-        public static final String COLUMN_NAME_NAME_ES = "name_es";
-        public static final String COLUMN_NAME_NAME_ID = "name_id";
-        public static final String COLUMN_NAME_NAME_PT = "name_pt";
-        public static final String COLUMN_NAME_NAME_TR = "name_tr";
-        public static final String COLUMN_NAME_NAME_LO = "name_lo";
-        public static final String COLUMN_NAME_NAME_VI = "name_vi";
-        public static final String COLUMN_NAME_NAME_TH = "name_th";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_PRODUCT_ID);
-                    add(COLUMN_NAME_NAME);
-                    add(COLUMN_NAME_NAME_FR);
-                    add(COLUMN_NAME_NAME_ES);
-                    add(COLUMN_NAME_NAME_ID);
-                    add(COLUMN_NAME_NAME_PT);
-                    add(COLUMN_NAME_NAME_TR);
-                    add(COLUMN_NAME_NAME_LO);
-                    add(COLUMN_NAME_NAME_VI);
-                    add(COLUMN_NAME_NAME_TH);
-                }}
-        );
-
-    }
-
-    public static abstract class ProductPrice implements BaseColumns {
-        public static final String TABLE_NAME = "productprices";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
-        public static final String COLUMN_NAME_CURRENCY_ID = "currency_id";
-        public static final String COLUMN_NAME_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_NAME_FIXED_PRICE = "fixed_price";
-        public static final String COLUMN_NAME_MIN_PRICE = "min_price";
-        public static final String COLUMN_NAME_MAX_PRICE = "max_price";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_PRODUCT_ID);
-                    add(COLUMN_NAME_CURRENCY_ID);
-                    add(COLUMN_NAME_DIRECTION_ID);
-                    add(COLUMN_NAME_FIXED_PRICE);
-                    add(COLUMN_NAME_MIN_PRICE);
-                    add(COLUMN_NAME_MAX_PRICE);
-                }}
-        );
-
-    }
-
     public static abstract class Unit implements BaseColumns {
         public static final String TABLE_NAME = "units";
         public static final String COLUMN_NAME_ID = "id";
@@ -2202,110 +1792,6 @@ public class OFISDBContract {
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_NAME);
-                }}
-        );
-    }
-
-    public static abstract class BuyingAgent implements BaseColumns {
-        public static final String TABLE_NAME = "buyingagents";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_NAME);
-                }}
-        );
-    }
-
-    public static abstract class Transactee implements BaseColumns {
-        public static final String TABLE_NAME = "transactees";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_NAME);
-                }}
-        );
-    }
-
-    public static abstract class TransactionBalance implements BaseColumns {
-        public static final String TABLE_NAME = "transactionbalances";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_BUYINGAGENT_ID = "buyingagent_id";
-        public static final String COLUMN_NAME_BUYINGAGENT2_ID = "buyingagent2_id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
-        public static final String COLUMN_NAME_CURRENCY_ID = "currency_id";
-        public static final String COLUMN_NAME_BALANCE = "balance";
-        public static final String COLUMN_NAME_OUT_OF_SYNC = "out_of_sync";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_BUYINGAGENT_ID);
-                    add(COLUMN_NAME_BUYINGAGENT2_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NAME_CURRENCY_ID);
-                    add(COLUMN_NAME_BALANCE);
-                    add(COLUMN_NAME_OUT_OF_SYNC);
-                }}
-        );
-    }
-
-    public static abstract class BuyingRule implements BaseColumns {
-        public static final String TABLE_NAME = "buyingrules";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_BUYINGAGENT_ID = "buyingagent_id";
-        public static final String COLUMN_NAME_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_NAME_TRANSACTEE_TYPE = "transactee_type";
-        public static final String COLUMN_NAME_TRANSACTIONITEMGROUP_ID = "transactionitemgroup_id";
-        public static final String COLUMN_NAME_TRANSACTIONITEMTYPE_ID = "transactionitemtype_id";
-        public static final String COLUMN_NAME_CAN_MOBILEMONEY = "can_mobilemoney";
-        public static final String COLUMN_NAME_CAN_PAY = "can_pay";
-        public static final String COLUMN_NAME_CAN_LOAN = "can_loan";
-        public static final String COLUMN_NAME_CAN_GIFT = "can_gift";
-        public static final String COLUMN_NAME_CAN_REPAY = "can_repay";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_BUYINGAGENT_ID);
-                    add(COLUMN_NAME_DIRECTION_ID);
-                    add(COLUMN_NAME_TRANSACTEE_TYPE);
-                    add(COLUMN_NAME_TRANSACTIONITEMGROUP_ID);
-                    add(COLUMN_NAME_TRANSACTIONITEMTYPE_ID);
-                    add(COLUMN_NAME_CAN_MOBILEMONEY);
-                    add(COLUMN_NAME_CAN_PAY);
-                    add(COLUMN_NAME_CAN_LOAN);
-                    add(COLUMN_NAME_CAN_GIFT);
-                    add(COLUMN_NAME_CAN_REPAY);
-                }}
-        );
-    }
-
-    public static abstract class BuyingAgentBuyingRule implements BaseColumns {
-        public static final String TABLE_NAME = "buyingagent_buyingrule";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_BUYINGAGENT_ID = "buyingagent_id";
-        public static final String COLUMN_NAME_BUYINGRULE_ID = "buyingrule_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_BUYINGAGENT_ID);
-                    add(COLUMN_NAME_BUYINGRULE_ID);
-                }}
-        );
-    }
-
-    public static abstract class BuyingAgentCurrency implements BaseColumns {
-        public static final String TABLE_NAME = "buyingagent_currency";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_BUYINGAGENT_ID = "buyingagent_id";
-        public static final String COLUMN_NAME_CURRENCY_ID = "currency_id";
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_BUYINGAGENT_ID);
-                    add(COLUMN_NAME_CURRENCY_ID);
                 }}
         );
     }
@@ -2543,23 +2029,7 @@ public class OFISDBContract {
             new LinkedHashMap<String, List<String>>() {{
                 put(Currency.TABLE_NAME, Currency.COLUMN_LIST);
                 put(CountryCurrency.TABLE_NAME, CountryCurrency.COLUMN_LIST);
-                put(TransactionItemGroup.TABLE_NAME, TransactionItemGroup.COLUMN_LIST);
-                put(TransactionItemType.TABLE_NAME, TransactionItemType.COLUMN_LIST);
-                put(ProductTransactionItemType.TABLE_NAME, ProductTransactionItemType.COLUMN_LIST);
-                put(TransactionItemTypeUnit.TABLE_NAME, TransactionItemTypeUnit.COLUMN_LIST);
-                put(TransactionItem.TABLE_NAME, TransactionItem.COLUMN_LIST);
                 put(Unit.TABLE_NAME, Unit.COLUMN_LIST);
-                put(Direction.TABLE_NAME, Direction.COLUMN_LIST);
-                put(DirectionTransactionItemGroup.TABLE_NAME, DirectionTransactionItemGroup.COLUMN_LIST);
-                put(DirectionTransactionItemType.TABLE_NAME, DirectionTransactionItemType.COLUMN_LIST);
-                put(ProductGrade.TABLE_NAME, ProductGrade.COLUMN_LIST);
-                put(ProductPrice.TABLE_NAME, ProductPrice.COLUMN_LIST);
-                put(BuyingAgent.TABLE_NAME, BuyingAgent.COLUMN_LIST);
-                put(Transactee.TABLE_NAME, Transactee.COLUMN_LIST);
-                put(TransactionBalance.TABLE_NAME, TransactionBalance.COLUMN_LIST);
-                put(BuyingRule.TABLE_NAME, BuyingRule.COLUMN_LIST);
-                put(BuyingAgentBuyingRule.TABLE_NAME, BuyingAgentBuyingRule.COLUMN_LIST);
-                put(BuyingAgentCurrency.TABLE_NAME, BuyingAgentCurrency.COLUMN_LIST);
                 put(CompletionCriteria.TABLE_NAME, CompletionCriteria.COLUMN_LIST);
                 put(Course.TABLE_NAME, Course.COLUMN_LIST);
                 put(CourseAssignment.TABLE_NAME, CourseAssignment.COLUMN_LIST);
@@ -2662,64 +2132,6 @@ public class OFISDBContract {
         );
     }
 
-    public static abstract class MultiFarmFarms implements BaseColumns {
-        public static final String TABLE_NAME = "multifarmFarms";
-        public static final String COLUMN_NAME_ID = "farm_id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
-        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
-        public static final String COLUMN_NAME_NAME_FARM_ID = "farm_id";
-        public static final String COLUMN_NAME_EXISTING_FARM_TYPE = "farmType";
-        public static final String COLUMN_NAME_RECORDED_PLOTS= "positionData";
-        public static final String COLUMN_NAME_NAME_LATITUDE = "primary_lat";
-        public static final String COLUMN_NAME_NAME_LONGITUDE = "primary_lng";
-        public static final String COLUMN_NAME_NAME_STAKE_HOLDERS = "stakeHolders";
-        public static final String  COLUMN_NAME_IS_SYNCED="Synced";
-
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_NAME_FARM_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NAME_NAME_FARM_NAME);
-                    add(COLUMN_NAME_NAME_FARM_CODE);
-                    add(COLUMN_NAME_RECORDED_PLOTS);
-                    add(COLUMN_NAME_NAME_LATITUDE);
-                    add(COLUMN_NAME_NAME_LONGITUDE);
-                    add(COLUMN_NAME_NAME_STAKE_HOLDERS);
-                    add(COLUMN_NAME_IS_SYNCED);
-                }}
-        );
-    }
-
-
-    public static abstract class MultiFarmStakeholderFarms implements BaseColumns {
-        public static final String TABLE_NAME = "stakeHolders";
-        public static final String COLUMN_NAME_STAKE_HOLDER_ID = "keyId";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NAME_NAME_FARM_ID = "farmsId";
-        public static final String COLUMN_NAME_FARM_ROLE_ID = "farmerRoleId";
-        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
-        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
-        public static final String COLUMN_NAME_IS_SYNCED = "synced";
-        public static final String COLUMN_NAME_RESPONSIBILITIES = "responsibilities";
-
-
-
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_FARMER_ID);
-                    add(COLUMN_NAME_NAME_FARM_ID);
-                    add(COLUMN_NAME_FARM_ROLE_ID);
-                    add(COLUMN_NAME_NAME_FARM_NAME);
-                    add(COLUMN_NAME_NAME_FARM_CODE);
-                    add(COLUMN_NAME_IS_SYNCED);
-                    add(COLUMN_NAME_RESPONSIBILITIES);
-                }}
-        );
-    }
-
     public static abstract class DownloadedSurveyList implements BaseColumns {
         public static final String TABLE_NAME = "downloadedSurveys";
         public static final String COLUMN_NAME_ID = "id";
@@ -2810,36 +2222,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_MSG);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_TOTALCOUNT);
-                }}
-        );
-    }
-
-    public static abstract class Responsibility implements BaseColumns {
-        public static final String TABLE_NAME = "responsibilities";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_NAME_FR = "nameFr";
-        public static final String COLUMN_NAME_NAME_ES = "nameEs";
-        public static final String COLUMN_NAME_NAME_ID = "nameId";
-        public static final String COLUMN_NAME_NAME_PT = "namePt";
-        public static final String COLUMN_NAME_NAME_TR = "nameTr";
-        public static final String COLUMN_NAME_NAME_LO = "nameLo";
-        public static final String COLUMN_NAME_NAME_VI = "nameVi";
-        public static final String COLUMN_NAME_NAME_TH = "nameTh";
-
-
-        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-                new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
-                    add(COLUMN_NAME_NAME);
-                    add(COLUMN_NAME_NAME_FR);
-                    add(COLUMN_NAME_NAME_ES);
-                    add(COLUMN_NAME_NAME_ID);
-                    add(COLUMN_NAME_NAME_PT);
-                    add(COLUMN_NAME_NAME_TR);
-                    add(COLUMN_NAME_NAME_LO);
-                    add(COLUMN_NAME_NAME_VI);
-                    add(COLUMN_NAME_NAME_TH);
                 }}
         );
     }

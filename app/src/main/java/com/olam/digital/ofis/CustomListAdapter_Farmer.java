@@ -28,14 +28,12 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
     private final int layout;
     private final LayoutInflater inflater;
     private final Resources res;
-    private boolean transactionMode = false;
 
-    CustomListAdapter_Farmer(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean _transactionMode) {
+    CustomListAdapter_Farmer(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_) {
         super(c, R.layout.listview_farmer_list, cursor, adapterCols, adapterRowViews, 0);
         this.layout = R.layout.listview_farmer_list;
         this.inflater = LayoutInflater.from(c);
         this.res = res_;
-        this.transactionMode = _transactionMode;
     }
 
     @Override
@@ -47,17 +45,11 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
     public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
         super.bindView(view, context, cursor);
         try {
-            ImageView farmerPhoto = (ImageView) view.findViewById(R.id.farmerListIcon);
-            TextView ofisID = (TextView) view.findViewById(R.id.farmerListOlamFarmerId);
-            TextView odID = (TextView) view.findViewById(R.id.farmerListODFarmerId);
+            ImageView farmerPhoto = view.findViewById(R.id.farmerListIcon);
+            TextView ofisID = view.findViewById(R.id.farmerListOlamFarmerId);
+            TextView odID = view.findViewById(R.id.farmerListODFarmerId);
             int statusColIndex = cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED);
             int localColIndex = cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY);
-
-
-            if (transactionMode) {
-                TextView transacteetype = (TextView) view.findViewById(R.id.transacteeType);
-                transacteetype.setText(cursor.getString(cursor.getColumnIndex("transactee_type")));
-            }
             farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
             if (statusColIndex != -1 && cursor.getInt(statusColIndex) == 1) {
                 farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
@@ -77,17 +69,9 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
                     farmerPhoto.setImageBitmap(existingBitmap);
                 }
             } else {
-                if (transactionMode && cursor.getString(cursor.getColumnIndex("transactee_type")).equalsIgnoreCase("agent")) {
-                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_buying_agent));
-                } else {
                     farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
-                }
             }
-
             ofisID.setText("OFIS ID: "+cursor.getString(cursor.getColumnIndex("olam_farmer_id")));
-            String country_id = cursor.getString(cursor.getColumnIndex("country_id"));
-            DataLayer dl = new DataLayer(res,context);
-
 //            boolean isODOrigin = dl.isODOrigin(Integer.parseInt(country_id));
             boolean isODOrigin=false;
 
