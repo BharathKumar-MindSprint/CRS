@@ -8295,10 +8295,7 @@ public class DynamicQuestions {
 
                 if (hasAnswers) {
                     int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_" + datatype)) : 0;
-                    if (!questions.isNull(questions.getColumnIndex("answer_" + datatype)) && !zeroAcceptable){
-                        answer = -1;
-                    }
-                    spinner.setSelection(answer);
+                    spinner.setSelection(zeroAcceptable ? answer : answer - 1);
                 }
 
                 questionWrapper.addView(spinner);
