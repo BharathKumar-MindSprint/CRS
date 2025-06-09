@@ -811,6 +811,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         String farmCode = etFarmHoldingCode.getText().toString().trim();
         String farmer_Code = farmerCode.getText().toString().trim();
 
+        if(farmer_Code.length() > 0){
+            int count = dl.getFarmerCodeCount(farmer_Code);
+            if(count > 0){
+                Toast.makeText(context, "Already exists. Please provide a unique code.", Toast.LENGTH_LONG).show();
+                return values;
+            }
+
+        }
+
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();

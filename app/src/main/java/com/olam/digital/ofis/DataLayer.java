@@ -8043,4 +8043,21 @@ public class DataLayer {
         }
         return isMandate;
     }
+
+    public int getFarmerCodeCount(String farmerCode) {
+        String query = "SELECT COUNT(*) FROM " + OFISDBContract.FarmerEntry.TABLE_NAME +
+                " WHERE " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{farmerCode});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
+    }
 }

@@ -3249,6 +3249,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put("farmHoldingName", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME)) + "'s Farm Holding");
                     jsonObject.put("farmHoldingCode", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
                     jsonObject.put("farmerRoleId", 1);
+                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
 
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
