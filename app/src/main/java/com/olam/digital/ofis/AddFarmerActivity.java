@@ -951,7 +951,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 return values;
             }
             storeableNationalids = fetchnationalidvalues();
-            boolean isDuplicate = isDuplicateNationalId();
+            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
             if (isDuplicate) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return new ContentValues();
@@ -1576,7 +1576,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 boolean duplicateNid = existingPhoneNumber.containsKey(type) && Objects.equals(existingPhoneNumber.get(type), nidNumber);
                                 nidnumber.setBackground(getResources().getDrawable(duplicateNid ? R.drawable.edittext_bg_error : R.drawable.edittext_bg_light));
 
-                                boolean isDuplicate = isDuplicateNationalId();
+                                boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
                                 national_id_error_msg.setVisibility(isDuplicate ? View.VISIBLE : View.GONE);
                             }
                         });
@@ -1688,19 +1688,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             addNationId.setOnClickListener(this);
 
         }
-    }
-
-    public boolean isDuplicateNationalId() {
-        boolean isDuplicate = false;
-        if (!enteredPhoneNumber.isEmpty() && !existingPhoneNumber.isEmpty()) {
-            for (String nidNumbers : enteredPhoneNumber.values()) {
-                if (existingPhoneNumber.containsValue(nidNumbers)) {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-        }
-        return isDuplicate;
     }
 
     private void ValidateSpinnerTypes() {

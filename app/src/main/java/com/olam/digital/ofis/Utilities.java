@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -1184,4 +1185,16 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingPhoneNumber, HashMap<Integer, String> enteredPhoneNumber) {
+        boolean isDuplicate = false;
+        if (!enteredPhoneNumber.isEmpty() && !existingPhoneNumber.isEmpty()) {
+            for (String nidNumbers : enteredPhoneNumber.values()) {
+                if (existingPhoneNumber.containsValue(nidNumbers)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return isDuplicate;
+    }
 }

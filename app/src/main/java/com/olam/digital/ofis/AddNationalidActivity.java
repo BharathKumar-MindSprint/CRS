@@ -22,9 +22,11 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
 
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -114,7 +116,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     boolean isUpdateNationalIdAvailable;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
-
+    private TextView national_id_error_msg;
+    private final HashMap<Integer, String> existingPhoneNumber = new HashMap<>();
+    private HashMap<Integer, String> enteredPhoneNumber = new HashMap<>();
     private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -144,6 +148,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_nationalid);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        national_id_error_msg = (TextView) findViewById(R.id.national_id_error_msg);
 
         initComponents();
         try {
@@ -401,7 +406,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         niddelete.setVisibility(View.VISIBLE);
                     }
                     i++;
-                    nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                    String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
+                    nidnumber.setText(nidNumber);
                     try {
                         String expirydatevalue = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE));
                         long millisecond = Long.parseLong(expirydatevalue);
@@ -410,9 +416,49 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }catch (Exception e){
                         expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                     }
-                    String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
+                    Integer nidType = nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
+                    String selected_item = getNidTypebyid(nidType);
                     int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
                     spinner_nidtype.setSelection(spinnerPosition);
+
+                    String duplicateNationalId = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
+                    if (duplicateNationalId != null) {
+                        if (Objects.equals(duplicateNationalId , "true")) {
+                            nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_error));
+                            national_id_error_msg.setVisibility(View.VISIBLE);
+                            existingPhoneNumber.put(nidType, nidNumber);
+                            enteredPhoneNumber.put(nidType,nidNumber);
+                        } else {
+                            nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_light));
+                            national_id_error_msg.setVisibility(View.GONE);
+                        }
+                    }
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                            String selected_item = spinner_nidtype.getSelectedItem().toString();
+                            int type = getNidType(selected_item);
+                            String nidNumber = s.toString();
+                            enteredPhoneNumber.put(type, nidNumber);
+
+                            boolean duplicateNid = existingPhoneNumber.containsKey(type) && Objects.equals(existingPhoneNumber.get(type), nidNumber);
+                            nidnumber.setBackground(getResources().getDrawable(duplicateNid ? R.drawable.edittext_bg_error : R.drawable.edittext_bg_light));
+
+                            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+                            national_id_error_msg.setVisibility(isDuplicate ? View.VISIBLE : View.GONE);
+                        }
+                    });
 
 
                     if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
