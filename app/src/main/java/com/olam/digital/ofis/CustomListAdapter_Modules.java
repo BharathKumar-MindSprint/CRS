@@ -396,6 +396,7 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                         boolean isSynced = dl.getSyncedStatus(farmerId);
                         boolean availstatus = dl.isValueavailable(farmerId);
                         boolean isUpdateNationalId = dl.isUpdateNationalIdAvailable(farmerId);
+                        boolean isDuplicateNationalId = dl.checkNationalIdDuplicateByFarmerId(farmerId);
                         if (!nidupdateWaiting) {
                             nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("Update_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
                         }
@@ -413,7 +414,15 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                             }
                         }
 
-                        if (updateWaiting || nidupdateWaiting) {
+                        if (isDuplicateNationalId) {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                            enabledItem.setText("true");
+                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                            textView.setText(res.getString(R.string.update_tab_hint));
+                            moduleTitle.setText(res.getString(R.string.update_nationalid));
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        } else if (updateWaiting || nidupdateWaiting) {
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                             enabledItem.setText("false");
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);

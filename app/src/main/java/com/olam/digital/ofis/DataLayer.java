@@ -8064,4 +8064,28 @@ public class DataLayer {
 
         db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
     }
+
+
+    public boolean checkNationalIdDuplicateByFarmerId(long farmerId) {
+        boolean isDuplicate = false;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            Cursor cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String signature = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
+                    if (signature != null && Objects.equals(signature,"true")) {
+                        isDuplicate = true;
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return isDuplicate;
+    }
 }
