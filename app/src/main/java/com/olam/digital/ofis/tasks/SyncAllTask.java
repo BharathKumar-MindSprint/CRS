@@ -1767,25 +1767,15 @@ public class SyncAllTask extends SyncTask {
             inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
         }
 
-        String endpoint = "";
-        endpoint = "ofischild/child/findsubmittedmodulesbyenumeter";
+        String endpoint = "ofischild/child/findsubmittedmodulesbyenumeter";
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONArray  response = new JSONArray(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
-//                        syncResultCount = syncResultCount + response.getInt("resultcount");
-//
-//                        if (response.getString("status").equals("unchanged")) {
-//                            String progress = res.getString(R.string.farmers_up_to_date);
-//
-//                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
-//
-//                        }
                         JSONObject jsonObject=new JSONObject();
                         try {
                             jsonObject.put("child",response);

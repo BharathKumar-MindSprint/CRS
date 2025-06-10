@@ -156,6 +156,8 @@ public class Utilities {
     public static final String SUPPLIER = "supplier";
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
+    public static final String FOLLOW_UP_COUNT = "followUpCount";
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
