@@ -422,14 +422,6 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                             moduleTitle.setText(res.getString(R.string.update_nationalid));
                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                        } else if (updateWaiting || nidupdateWaiting) {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                            enabledItem.setText("false");
-                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                            textView.setText(res.getString(R.string.update_tab_hint));
-                            moduleTitle.setText(res.getString(R.string.update_nationalid));
-                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         } else {
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                             enabledItem.setText("true");

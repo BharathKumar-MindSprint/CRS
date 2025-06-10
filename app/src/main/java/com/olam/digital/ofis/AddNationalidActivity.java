@@ -163,12 +163,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         if (isSynced && !isUpdateNationalIdAvailable) {
             this.setTitle("View National ID");
-            addNationId.setVisibility(View.INVISIBLE);
-            save.setVisibility(View.INVISIBLE);
-        }
-        else if (isUpdateNationalIdAvailable) {
-            addNationId.setVisibility(View.INVISIBLE);
-            save.setVisibility(View.VISIBLE);
         }
 
         if (!editmode) {
@@ -363,13 +357,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
 
-        if (isSynced) {
-            niddelete.setVisibility(View.GONE);
-            spinner_nidtype.setEnabled(false);
-            actionbtn.setVisibility(View.INVISIBLE);
-            nidnumber.setEnabled(false);
-        }
-
     }
 
     private void bindNationalidValues() {
@@ -380,7 +367,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 int i = 0;
                 while (nids.moveToNext()) {
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
-                    nationalids.addView(nationalidinclude);
                     Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
                     LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
@@ -398,8 +384,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
                     String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                     actionbtn.setClickable(Objects.equals(farmerNIDPath, "null"));
-
-                    spinner_nidtype.setEnabled(false);
                     if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
                     } else {
@@ -558,26 +542,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
                     bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
 
-                    if (isSynced && (!Objects.equals(farmerNIDPath, "null"))) {
-                        niddelete.setVisibility(View.GONE);
-                        spinner_nidtype.setEnabled(false);
-                        actionbtn.setVisibility(View.INVISIBLE);
-                        nidnumber.setEnabled(false);
-                    }
-                    else if(Objects.equals(farmerNIDPath, "null")){
-                        niddelete.setVisibility(View.GONE);
-                        spinner_nidtype.setEnabled(false);
-                        actionbtn.setVisibility(View.VISIBLE);
-                        nidnumber.setEnabled(false);
-                    }
-                }
-
-                if (isUpdateNationalIdAvailable && nationalids.getChildCount() == 1) {
-                    Spinner nidType = nationalids.getChildAt(0).findViewById(R.id.idtypespinner);
-                    boolean captureStatus = getNidCaptureStatus(nidType.getSelectedItem().toString()).trim().equalsIgnoreCase("false");
-                    if (captureStatus) {
-                        save.setVisibility(View.INVISIBLE);
-                    }
+                    nationalids.addView(nationalidinclude);
                 }
 
             } catch (Exception e) {
@@ -883,6 +848,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 return;
             }
 
+            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+            if (isDuplicate) {
+                Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                return;
+            }
             storeableNationalids = fetchnationalidvalues();
             boolean statusmoduration;
             if (isUpdateNationalIdAvailable) {

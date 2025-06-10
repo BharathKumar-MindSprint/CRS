@@ -1527,7 +1527,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
                         spinner_nidtype.setAdapter(spinnerArrayAdapter);
                         actionbtn.setClickable(false);
-                        spinner_nidtype.setEnabled(false);
                         if (i == 0) {
                             niddelete.setVisibility(View.INVISIBLE);
                         } else {

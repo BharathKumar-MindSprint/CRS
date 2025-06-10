@@ -1229,10 +1229,7 @@ public class DataLayer {
                 if (isUnderModeration(storeableNumber.getString("nationalIdNumber"), String.valueOf(storeableNumber.getInt("nationalIdType")))) {
                     moderationstatus = true;
                 }
-
-                if (storeableNumber.getInt("nationalIdType") != 0 && !status.equals("updateNationalId")) {
-                    db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
-                }
+                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
 
                 if (status.equals("updateNationalId")) {
                     ContentValues values1 = new ContentValues();
@@ -1340,9 +1337,7 @@ public class DataLayer {
             whereArgs = new String[]{String.valueOf(id)};
         }
 
-        if (!status.equals("updateNationalId")) {
-            db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        }
+        db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
         return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
     }
 
@@ -3250,13 +3245,13 @@ public class DataLayer {
     }
 
     public boolean getSyncedStatus(long farmerId) {
-        boolean status = false;
+        boolean status = true;
         Cursor nids = getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
         try {
             while (nids.moveToNext()) {
                 String isSynced = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED));
-                if (isSynced.equalsIgnoreCase("1")) {
-                    status = true;
+                if (isSynced.equalsIgnoreCase("0")) {
+                    status = false;
                     break;
                 }
             }
@@ -5671,13 +5666,25 @@ public class DataLayer {
 
        // OW-4590 Fix
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, nationalidtype);
-
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, stakeHolderId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
 
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + "=?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(nationalidtype),
+                String.valueOf(farmerId),
+                submissionType,
+                context.getResources().getString(R.string.nationalid)
+        };
+
+        db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
         newEntry = insertNetworkQueueEntry(networkQueueValues);
         return newEntry;
 
