@@ -792,4 +792,22 @@
     <string name="select_primary_phone_number">please select primary phone number</string>
     <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
+    <string name="supplier_and_surveys">ซัพพลายเออร์และการสำรวจ</string>
+    <string name="title_find_supplier_and_survey">ค้นหาซัพพลายเออร์</string>
+    <string name="select_supplier">เลือกซัพพลายเออร์</string>
+    <string name="supplier_not_found">ไม่พบซัพพลายเออร์</string>
+    <string name="supplier_id">ข้อมูลประจำตัวของซัพพลายเออร์</string>
+    <string name="supplier_details">รายละเอียดซัพพลายเออร์</string>
+    <string name="view_supplier">แสดงซัพพลายเออร์</string>
+    <string name="view_supplier_information">ดูรายละเอียดซัพพลายเออร์</string>
+    <string name="supplier_type">ประเภทซัพพลายเออร์</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">อัปโหลดหลักฐาน</string>
+    <string name="supplier_survey">การสำรวจซัพพลายเออร์</string>
+    <string name="evidence_is_missing">หลักฐานหายไป</string>
+    <string name="supplier_search_hint">ค้นหาตามชื่อซัพพลายเออร์หรือรหัสซัพพลายเออร์</string>
+    <string name="spinner_supplier_group">กลุ่มซัพพลายเออร์</string>
+    <string name="supplier_group">กลุ่มซัพพลายเออร์</string>
+
 </resources>

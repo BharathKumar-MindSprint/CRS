@@ -1413,6 +1413,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
     <string name="edur_survey_remainder">EUDR Survey Reminder</string>
 
+
     <string-array name="all_notification">
         <item>FDP</item>
         <item>CLMRS Follow-up</item>
@@ -1433,5 +1434,23 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="fill_phone_number">Please fill in the primary phone number</string>
     <string name="select_primary_phone_number">please select primary phone number</string>
     <string name="error_msg_phone_number">* The primary phone number is already in use. Please enter a different phone number.</string>
+    <string name="error_msg_dup_national_id">The national Id is already in use. Please enter a different national ID.</string>
 
+    <string name="supplier_and_surveys">Supplier &amp; Surveys</string>
+    <string name="title_find_supplier_and_survey">Find Supplier</string>
+    <string name="select_supplier">Select Supplier</string>
+    <string name="supplier_search_hint">Search by Supplier Name or Supplier Id</string>
+    <string name="supplier_not_found">Supplier Not Found</string>
+    <string name="spinner_supplier_group">Supplier Group</string>
+    <string name="supplier_id">Supplier Id</string>
+    <string name="supplier_details">Supplier Details</string>
+    <string name="view_supplier">View Supplier</string>
+    <string name="view_supplier_information">View Supplier Information</string>
+    <string name="supplier_group">Supplier Group</string>
+    <string name="supplier_type">Supplier Type</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Evidence Upload</string>
+    <string name="supplier_survey">Supplier Survey</string>
+    <string name="evidence_is_missing">Evidence Is Missing</string>
 </resources>

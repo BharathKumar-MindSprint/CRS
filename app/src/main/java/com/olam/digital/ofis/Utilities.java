@@ -31,10 +31,14 @@ import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
 import com.scottyab.aescrypt.AESCrypt;
 
 import org.json.JSONArray;
@@ -52,6 +56,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -74,6 +79,8 @@ public class Utilities {
     public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
 
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
+
+    public static final String IS_SUPPLIER_ENABLED = "isEnableSupplierModule";
 
     public  static  long farmerId;
     public  static  String stakeholderId;
@@ -147,8 +154,9 @@ public class Utilities {
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
     public static final String FLMRS = "FLMRS";
     public static final String SURVEY_TYPE_FLMRS = "8";
-
-
+    public static final String SUPPLIER = "supplier";
+    public static final String SUPPLIER_SURVEY = "supplierSurvey";
+    public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -829,6 +837,69 @@ public  static String base64ConversionForImage(String filepath)  {
         };
     }
 
+    public static String getContentByLanguage(SupplierSurveyDto supplierSurveyDto, boolean isNames){
+        String language = Locale.getDefault().getLanguage();
+        String result = switch (language) {
+            case "es" -> isNames ? supplierSurveyDto.getNameEs() : supplierSurveyDto.getDescriptionEs();
+            case "fr" -> isNames ? supplierSurveyDto.getNameFr() : supplierSurveyDto.getDescriptionFr();
+            case "id", "in" -> isNames ? supplierSurveyDto.getNameIdn() : supplierSurveyDto.getDescriptionIdn();
+            case "lo" -> isNames ? supplierSurveyDto.getNameLo() : supplierSurveyDto.getDescriptionLo();
+            case "pt" -> isNames ? supplierSurveyDto.getNamePt() : supplierSurveyDto.getDescriptionPt();
+            case "th" -> isNames ? supplierSurveyDto.getNameTh() : supplierSurveyDto.getDescriptionTh();
+            case "tr" -> isNames ? supplierSurveyDto.getNameTr() : supplierSurveyDto.getDescriptionTr();
+            case "vi" -> isNames ? supplierSurveyDto.getNameVi() : supplierSurveyDto.getDescriptionVi();
+            default -> isNames ? supplierSurveyDto.getName() : supplierSurveyDto.getDescription();
+        };
+
+        return result != null ? result : "";
+    }
+
+    public static String getNamesByLanguage(DmQuestionsModule dmQuestionsModule){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> dmQuestionsModule.questionEs;
+            case "fr" -> dmQuestionsModule.questionFr;
+            case "id", "in" -> dmQuestionsModule.questionIdn;
+            case "lo" -> dmQuestionsModule.questionLo;
+            case "pt" -> dmQuestionsModule.questionPt;
+            case "th" -> dmQuestionsModule.questionTh;
+            case "tr" -> dmQuestionsModule.questionTr;
+            case "vi" -> dmQuestionsModule.questionVi;
+            default -> dmQuestionsModule.question;
+        };
+    }
+
+    public static String getModuleSectionByLanguage(DmSectionsItem dmSectionsItem, boolean isSectionName){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> isSectionName ? dmSectionsItem.nameEs : dmSectionsItem.descriptionEs;
+            case "fr" -> isSectionName ? dmSectionsItem.nameFr : dmSectionsItem.descriptionFr;
+            case "id", "in" -> isSectionName ? dmSectionsItem.nameId : dmSectionsItem.descriptionIdn;
+            case "lo" -> isSectionName ? dmSectionsItem.nameLo : dmSectionsItem.descriptionLo;
+            case "pt" -> isSectionName ? dmSectionsItem.namePt : dmSectionsItem.descriptionPt;
+            case "th" -> isSectionName ? dmSectionsItem.nameTh : dmSectionsItem.descriptionTh;
+            case "tr" -> isSectionName ? dmSectionsItem.nameTr : dmSectionsItem.descriptionTr;
+            case "vi" -> isSectionName ? dmSectionsItem.nameVi : dmSectionsItem.descriptionVi;
+            default -> isSectionName ? dmSectionsItem.name : dmSectionsItem.description;
+        };
+    }
+
+    public static String getLookupValueByLanguage(DmLookupValuesItem dmLookupValuesItem){
+        String language = Locale.getDefault().getLanguage();
+        return switch (language) {
+            case "es" -> dmLookupValuesItem.valueEs;
+            case "fr" -> dmLookupValuesItem.valueFr;
+            case "id", "in" -> dmLookupValuesItem.valueId;
+            case "lo" -> dmLookupValuesItem.valueLo;
+            case "pt" -> dmLookupValuesItem.valuePt;
+            case "th" -> dmLookupValuesItem.valueTh;
+            case "tr" -> dmLookupValuesItem.valueTr;
+            case "vi" -> dmLookupValuesItem.valueVi;
+            default -> dmLookupValuesItem.value;
+        };
+    }
+
+
     public static String appendSuffixForFarmName(String farmerName, String farmHoldingSuffix) {
         String language = Locale.getDefault().getLanguage();
 
@@ -1114,4 +1185,16 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingPhoneNumber, HashMap<Integer, String> enteredPhoneNumber) {
+        boolean isDuplicate = false;
+        if (!enteredPhoneNumber.isEmpty() && !existingPhoneNumber.isEmpty()) {
+            for (String nidNumbers : enteredPhoneNumber.values()) {
+                if (existingPhoneNumber.containsValue(nidNumbers)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return isDuplicate;
+    }
 }

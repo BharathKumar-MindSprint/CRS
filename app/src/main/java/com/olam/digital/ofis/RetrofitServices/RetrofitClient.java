@@ -10,37 +10,24 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    private static final String BASE_URL = BuildConfig.HOST;
     public static Retrofit getRetrofit(){
-        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
-         OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                 .connectTimeout(540, TimeUnit.SECONDS)
-                 .readTimeout(540, TimeUnit.SECONDS)
-                 .writeTimeout(540, TimeUnit.SECONDS)
-                 .addInterceptor(interceptor)
-                 .build();
-
-        return new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
-                .client(okHttpClient)
-                .build();
-
+        return buildRetroFit(BuildConfig.BASE_URL);
     }
-    public static Retrofit getRetrofitImage(){
+    public static Retrofit getRetrofitImage() {
+        return buildRetroFit(BuildConfig.IMAGE_BASE_URL);
+    }
+    private static Retrofit buildRetroFit(String baseURL){
         Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
         OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                .connectTimeout(180, TimeUnit.SECONDS)
+                .connectTimeout(540, TimeUnit.SECONDS)
                 .readTimeout(540, TimeUnit.SECONDS)
                 .writeTimeout(540, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
-
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl( BuildConfig.DOWNLOADURL )
+                .baseUrl(baseURL)
                 .client(okHttpClient)
                 .build();
-
     }
 }

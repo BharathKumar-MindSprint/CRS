@@ -889,4 +889,21 @@
     <string name="select_primary_phone_number">please select primary phone number</string>
     <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
+    <string name="supplier_and_surveys">Pemasok dan survei</string>
+    <string name="title_find_supplier_and_survey">Mencari pemasok</string>
+    <string name="select_supplier">Pilih pemasok</string>
+    <string name="supplier_not_found">Pemasok Tidak Ditemukan</string>
+    <string name="supplier_id">Identitas pemasok</string>
+    <string name="supplier_details">Detail pemasok</string>
+    <string name="view_supplier">Tampilkan pemasok</string>
+    <string name="view_supplier_information">Lihat detail pemasok</string>
+    <string name="supplier_type">Jenis pemasok</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Unggah Bukti</string>
+    <string name="supplier_survey">Survei Pemasok</string>
+    <string name="evidence_is_missing">Bukti Tidak Ada</string>
+    <string name="supplier_search_hint">Cari berdasarkan Nama Pemasok atau Id Pemasok</string>
+    <string name="spinner_supplier_group">Grup Pemasok</string>
+    <string name="supplier_group">Grup Pemasok</string>
 </resources>

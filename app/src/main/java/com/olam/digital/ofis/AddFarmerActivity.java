@@ -103,6 +103,7 @@
  import java.util.Hashtable;
  import java.util.List;
  import java.util.Locale;
+ import java.util.Objects;
  import java.util.Random;
 
  // update
@@ -223,7 +224,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private int nidvalue;
 
     private boolean isAddStakeHolder = false;
-    private TextView titleText, roleHeading, primaryPhoneNumberErrorMsg;
+    private TextView titleText, roleHeading, primaryPhoneNumberErrorMsg, national_id_error_msg;
     private Spinner farmerRoleSpinner;
     private EditText etFarmerRole;
     private LinearLayout llFarmerGroup, llGeographyDetails;
@@ -236,6 +237,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
 
      private String primaryPhoneNumber = "";
+     private final HashMap<Integer, String> existingPhoneNumber = new HashMap<>();
+     private HashMap<Integer, String> enteredPhoneNumber = new HashMap<>();
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,6 +287,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         linear_certifications = (LinearLayout) findViewById(R.id.linear_certifications);
         certificationNameSpinner = (Spinner) findViewById(R.id.spinner_certificationName);
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
+        national_id_error_msg = (TextView) findViewById(R.id.national_id_error_msg);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
 
         getCountryId();
@@ -947,8 +951,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 return values;
             }
             storeableNationalids = fetchnationalidvalues();
-
-
+            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+            if (isDuplicate) {
+                Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                return new ContentValues();
+            }
             // collect the national id types
             nationalIdTypes= new ArrayList<>();
             try{
@@ -1003,13 +1010,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
                 JSONObject storeableNumber = new JSONObject();
                 boolean isPrimaryNumber = primary_number.isChecked();
-                boolean isDuplicateErrorMessageShown = isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue);
-
+                if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
+                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
+                    return new ContentValues();
+                }
                 try {
                     storeableNumber.put("country_id", countryId);
                     storeableNumber.put("primary_number", primary_number.isChecked());
                     storeableNumber.put("phonenumber", phoneNumberValue);
-                    storeableNumber.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, isDuplicateErrorMessageShown ? primaryPhoneNumberErrorMsg.getVisibility() == View.VISIBLE : null);
                     storeableNumbers.put(storeableNumber);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
@@ -1337,7 +1345,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 numberradio.setChecked(isPrimaryNumber);
                 numbertext.setText(phoneNumber);
 
-                primaryPhoneNumber = isPrimaryNumber ? phoneNumber : primaryPhoneNumber;
+                primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
 
                 phonenumbers.addView(phonenumberinclude);
@@ -1526,11 +1534,52 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             niddelete.setVisibility(View.VISIBLE);
                         }
                         i++;
-                        nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                        String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
+                        Integer nidType = nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
+                        nidnumber.setText(nidNumber);
                         expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
-                        String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
+                        String selected_item = getNidTypebyid(nidType);
                         int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
                         spinner_nidtype.setSelection(spinnerPosition);
+
+                        String duplicateNationalId = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
+                        if (duplicateNationalId != null) {
+                            if (Objects.equals(duplicateNationalId , "true")) {
+                                nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_error));
+                                national_id_error_msg.setVisibility(View.VISIBLE);
+                                existingPhoneNumber.put(nidType, nidNumber);
+                                enteredPhoneNumber.put(nidType,nidNumber);
+                            } else {
+                                nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_light));
+                                national_id_error_msg.setVisibility(View.GONE);
+                            }
+                        }
+                        nidnumber.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+
+                                String selected_item = spinner_nidtype.getSelectedItem().toString();
+                                int type = getNidType(selected_item);
+                                String nidNumber = s.toString();
+                                enteredPhoneNumber.put(type, nidNumber);
+
+                                boolean duplicateNid = existingPhoneNumber.containsKey(type) && Objects.equals(existingPhoneNumber.get(type), nidNumber);
+                                nidnumber.setBackground(getResources().getDrawable(duplicateNid ? R.drawable.edittext_bg_error : R.drawable.edittext_bg_light));
+
+                                boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+                                national_id_error_msg.setVisibility(isDuplicate ? View.VISIBLE : View.GONE);
+                            }
+                        });
 
                         String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                         if (farmerNIDPath != null && farmerNIDPath.length() > 0) {

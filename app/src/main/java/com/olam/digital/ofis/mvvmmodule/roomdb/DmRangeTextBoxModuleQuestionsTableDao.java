@@ -30,4 +30,7 @@ public interface DmRangeTextBoxModuleQuestionsTableDao {
 
     @Query("SELECT proofFormat FROM DmRangeTextBoxModuleQuestionsTable WHERE questionId=:id AND complianceId =:complianceId AND id=:answerID")
     String getProofFormatByQuestionId (String id , String complianceId, String answerID);
+
+    @Query("SELECT * FROM DmRangeTextBoxModuleQuestionsTable WHERE questionId = :questionId AND :number >= minimumRange AND :number <= maximumRange")
+    DmRangeTextBoxModuleQuestionsTable getDmRangeTextBoxModuleQuestionsTableByAnswer(int questionId, double number);
 }
