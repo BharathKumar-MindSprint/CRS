@@ -1240,4 +1240,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="spinner_supplier_group">Groupe de fournisseurs</string>
     <string name="supplier_group">Groupe de fournisseurs</string>
 
+    <string name="farmer_code_already_exists">"Le code agriculteur existe déjà !"</string>
+    <string name="farmer_code">"Code Agriculteur"</string>
+
 </resources>

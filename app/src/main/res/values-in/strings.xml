@@ -903,4 +903,8 @@
     <string name="supplier_search_hint">Cari berdasarkan Nama Pemasok atau Id Pemasok</string>
     <string name="spinner_supplier_group">Grup Pemasok</string>
     <string name="supplier_group">Grup Pemasok</string>
+
+    <string name="farmer_code_already_exists">"Kode petani sudah ada!"</string>
+    <string name="farmer_code">"Kode Petani"</string>
+
 </resources>

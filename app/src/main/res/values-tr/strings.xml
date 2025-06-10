@@ -811,4 +811,6 @@
     <string name="spinner_supplier_group">Tedarikçi Grubu</string>
     <string name="supplier_group">Tedarikçi Grubu</string>
 
+    <string name="farmer_code_already_exists">"Çiftçi kodu zaten var!"</string>
+    <string name="farmer_code">"Çiftçi Kodu"</string>
 </resources>

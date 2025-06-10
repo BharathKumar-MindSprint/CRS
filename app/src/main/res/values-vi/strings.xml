@@ -811,4 +811,7 @@
     <string name="evidence_is_missing">Bằng chứng bị thiếu</string>
     <string name="spinner_supplier_group">Nhóm nhà cung cấp</string>
 
+    <string name="farmer_code_already_exists">"Mã nông dân đã tồn tại!"</string>
+    <string name="farmer_code">"Mã Nông Dân"</string>
+
 </resources>

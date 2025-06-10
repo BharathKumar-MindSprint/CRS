@@ -814,7 +814,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if(farmer_Code.length() > 0){
             int count = dl.getFarmerCodeCount(farmer_Code);
             if(count > 0){
-                Toast.makeText(context, "Already exists. Please provide a unique code.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.farmer_code_already_exists, Toast.LENGTH_LONG).show();
                 return values;
             }
 
@@ -1093,6 +1093,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE, farmCode);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmerNameValue);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);

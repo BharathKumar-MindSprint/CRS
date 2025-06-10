@@ -909,5 +909,8 @@
     <string name="supplier_survey">Encuesta a proveedores</string>
     <string name="evidence_is_missing">Faltan pruebas</string>
     <string name="limiter">%1$s - %2$s</string>
+
+    <string name="farmer_code_already_exists">"¡El código de agricultor ya existe!"</string>
+    <string name="farmer_code">"Código de Agricultor"</string>
 </resources>
 

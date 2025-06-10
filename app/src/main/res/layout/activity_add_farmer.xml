@@ -279,7 +279,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/ofis_text_field"
                         android:textSize="@dimen/ofis_small_text"
-                        android:text="Farmer Code"
+                        android:text="@string/farmer_code"
                         android:textStyle="bold"
                         android:layout_marginBottom="@dimen/ofis_med_pad"/>
 

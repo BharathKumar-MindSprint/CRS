@@ -915,5 +915,8 @@
     <string name="spinner_supplier_group">Grupo de fornecedores</string>
     <string name="supplier_group">Grupo de fornecedores</string>
 
+    <string name="farmer_code_already_exists">"O código do agricultor já existe!"</string>
+    <string name="farmer_code">"Código do Agricultor"</string>
+
 </resources>
 

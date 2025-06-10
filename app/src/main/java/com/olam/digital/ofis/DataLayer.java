@@ -8060,4 +8060,12 @@ public class DataLayer {
 
         return count; // Returns the count of occurrences
     }
+
+    public void updateDuplicateFarmerCode(long farmerId){
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE,"true");
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values,  whereClause , whereArgs);
+    }
 }
