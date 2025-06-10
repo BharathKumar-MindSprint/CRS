@@ -620,7 +620,7 @@
     <string name="name">Nombre:</string>
 
 
-    <string name="please_sign_within_the_boundary_box">Firme dentro del cuadro de límites</string>
+    <string name="please_sign_within_the_boundary_box">Firme dentro de la casilla</string>
     <string name="matching_farmer_records">Registros de agricultores coincidentes</string>
     <string name="matching_results_found">Se encontraron resultados coincidentes</string>
     <string name="back_to_search">Volver a la búsqueda</string>

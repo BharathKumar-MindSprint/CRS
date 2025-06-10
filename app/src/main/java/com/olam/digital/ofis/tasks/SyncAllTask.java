@@ -1716,6 +1716,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         farmerResponse = response;
 
+                        deleteRoomDbValues();
+                        deleteSupplierDetails();
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
@@ -1765,25 +1767,15 @@ public class SyncAllTask extends SyncTask {
             inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
         }
 
-        String endpoint = "";
-        endpoint = "ofischild/child/findsubmittedmodulesbyenumeter";
+        String endpoint = "ofischild/child/findsubmittedmodulesbyenumeter";
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONArray  response = new JSONArray(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
-//                        syncResultCount = syncResultCount + response.getInt("resultcount");
-//
-//                        if (response.getString("status").equals("unchanged")) {
-//                            String progress = res.getString(R.string.farmers_up_to_date);
-//
-//                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
-//
-//                        }
                         JSONObject jsonObject=new JSONObject();
                         try {
                             jsonObject.put("child",response);
@@ -2244,7 +2236,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void GetAllDiagnosticModule() {
-        deleteRoomDbValues();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
             ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
@@ -2338,7 +2329,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     public void syncSupplierDetails() {
-        deleteSupplierDetails();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
             ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<SupplierResponse> call = retrofitClient.getAllSupplierData();
