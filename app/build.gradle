@@ -292,6 +292,8 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.7.1'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1' // for OkHttp library
 }
 
 apply plugin: 'com.google.gms.google-services'
