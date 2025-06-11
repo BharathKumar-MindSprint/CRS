@@ -25,7 +25,6 @@ public class GPSConstants {
 
     public static final String OLAM_ENUMERATOR_ID = "olamEnumeratorId";
     public static final String GPS_TRACK_DETAILS = "gpsTrackDetails";
-    public static final String COLUMN_ENUMERATOR_NAME = "enumeratorName";
 
     //  OW-4574
     public static final String DIAGNOSTIC_SURVEY = "Diagnostic Survey";
