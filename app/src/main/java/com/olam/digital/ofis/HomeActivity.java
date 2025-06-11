@@ -1413,6 +1413,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 intent.putExtra("phoneNumber", true);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("Update_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
+            } else if (itemType.equalsIgnoreCase("National_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
             }
             else if (itemType.equalsIgnoreCase("Supplier Survey")) {
                 int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));

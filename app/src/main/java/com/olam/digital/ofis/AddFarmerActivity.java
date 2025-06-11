@@ -699,7 +699,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         int nidrowscount = nationalids.getChildCount();
 
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
 
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
@@ -750,8 +750,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         int rowscount = nationalids.getChildCount();
 
         for (int j = 0; j < rowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
-
+            View nidrow = nationalids.getChildAt(j);
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
 
@@ -1695,7 +1694,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectednationalidList = new ArrayList<String>();
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
@@ -2873,7 +2872,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectednationalidList = new ArrayList<String>();
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
@@ -2958,7 +2957,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          selectednationalidList = new ArrayList<String>();
          int nidrowscount = nationalids.getChildCount();
          for (int j = 0; j < nidrowscount; j++) {
-             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+             View nidrow = nationalids.getChildAt(j);
              EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
              TextView expiryDate = nidrow.findViewById(R.id.expirydate);
              Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);

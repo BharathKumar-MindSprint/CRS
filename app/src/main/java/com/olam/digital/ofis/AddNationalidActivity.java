@@ -253,7 +253,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private void bindnationalid() {
         ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
         LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
-        nationalids.addView(nationalidinclude);
 
         LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
         niddelete.setVisibility(View.GONE);
@@ -356,6 +355,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         });
 
         bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
+        nationalids.addView(nationalidinclude);
 
     }
 
@@ -579,7 +579,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
@@ -1143,7 +1143,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         selectednationalidList = new ArrayList<String>();
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);

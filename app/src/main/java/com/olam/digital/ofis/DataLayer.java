@@ -1210,6 +1210,9 @@ public class DataLayer {
 
     public boolean addFarmerNationalids(Context context, Long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         int arrayLength = storeableNationalids.length();
+        if (status.equalsIgnoreCase("2") || status.equals("updateNationalId")) {
+            deleteExistingNationalIdFromNq(context, farmerId);
+        }
         boolean moderationstatus = false;
         try {
             for (int i = 0; i < arrayLength; i++) {
@@ -5672,24 +5675,22 @@ public class DataLayer {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
 
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + "=? AND " +
-                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + "=? AND " +
-                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + "=? AND " +
-                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + "=?";
-
-        String[] whereArgs = new String[] {
-                String.valueOf(nationalidtype),
-                String.valueOf(farmerId),
-                submissionType,
-                context.getResources().getString(R.string.nationalid)
-        };
-
-        db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
         newEntry = insertNetworkQueueEntry(networkQueueValues);
         return newEntry;
 
     }
 
+    private void deleteExistingNationalIdFromNq(Context context, Long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + "=?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(farmerId),
+                context.getResources().getString(R.string.nationalid)
+        };
+
+        db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+    }
 
     // OW-4590 Fix
     public int getNIDTypeIDByName(String type) {
