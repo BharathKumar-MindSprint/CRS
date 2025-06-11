@@ -3382,20 +3382,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } else {
 
                                     long server_item_id = 0, fully_synced = 0;
-                                     JSONObject errorObject =  new JSONObject(postResponse.body().toString());
+                                    JSONObject jsonResponse1 = new JSONObject(postResponse.body().string());
+                                    String errorCode = jsonResponse1.getString("errorCode");
+                                    //JSONObject response2 = jsonResponse2.getJSONObject(0);
+                                  //  JSONArray errorObject =  new JSONArray(postResponse.body().string());
                                     // Added
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                     } else if(postResponse.code() == 400 &&
-                                            errorObject.has("errorCode") &&
-                                            errorObject.getInt("errorCode") == 2015 ) {
+
+                                            errorCode.equalsIgnoreCase("2015") ) {
                                         dl.updateDuplicateFarmerCode(localFarmerId);
-                                      String errorMsg = errorObject.optString("message","Already exists. Please provide a unique code.");
+                                      String errorMsg = jsonResponse1.optString("message","Farmer code already exists.");
                                       handler.postDelayed(() -> {
                                           popupMsgInfo(errorMsg);
                                           return;
                                       }, 500);
-                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "Farmer Code");
+                                        postFailureMessage(handler, jsonResponse1, msg, 2, total, progress, null, "Farmer Code");
                                     }
                                     else {
                                         JSONArray jsonResponse = new JSONArray(postResponse.body().string());
