@@ -3,10 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.room.AutoMigration;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+import androidx.room.*;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -29,35 +26,8 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.AssignmentTypeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.OnGroundSurveyNotificationDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
+import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.*;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
@@ -80,10 +50,11 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
         //Version 18
 //       SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-//               AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
 //                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
 //                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-//                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class,
+//                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
+//                Sections.class, Places.class, Products.class,
 //                Farmer.class,
 
         },
@@ -111,42 +82,35 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmRangeActionPlansItemsDao dmRangeActionPlansItemsDao();
     public abstract DMSurveyReportDao dmSurveyReportDao();
     public abstract FollowUpItemMainTableDao followUpItemMainTableDao();
-
-
     public abstract DmAssessmentResultTypeDao dmAssessmentResultTypeDao();
-
-    //CBU dao
     public abstract CertificationsDao certificationsDao();
-
     public abstract ValidationOnRangeDao validationOnRangeDao();
-
     public abstract ProgrammeDao programmeDao();
-
     public abstract PartnersDao partnersDao();
-
     public abstract GlobalUnitDao globalUnitDao();
-
     public abstract LocalUnitDao localUnitDao();
-
     public abstract PolygonHistoryDataDao polygonHistoryDataDao();
-
     public abstract PolygonPlotHistoryDao polygonPlotHistoryDao();
-
     public abstract AssignmentTypeDao assignmentTypeDao();
     public abstract SurveyDurationTypeDao surveyDurationTypeDao();
-
     public abstract PhotoCheckBoxDataDao photoCheckBoxDataDao();
-
     public abstract DmMasterDataDao dmMasterDataDao();
-
     public abstract DmModuleAssignmentsDao dmModuleAssignmentsDao();
     public abstract MultiStakeHolderDao multiStakeHolderDao();
-
     public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
     public abstract SupplierTypeDao supplierTypeDao();
     public abstract SupplierDao supplierDao();
     public abstract SupplierGroupDao supplierGroupDao();
     public abstract SupplierSubmittedModuleDao supplierSubmittedModuleDao();
+    //Migrated from Sqlite
+    public abstract ICountryDao countryDao();
+    public abstract IRegionsDao regionsDao();
+    public abstract IDistrictsDao districtsDao();
+    public abstract ISubDistrictsDao subDistrictsDao();
+    public abstract IPlacesDao placesDao();
+    public abstract IFarmerGroupDao farmerGroupDao();
+    public abstract ISectionsDao sectionsDao();
+    public abstract IProductsDao productsDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
