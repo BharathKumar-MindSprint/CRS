@@ -11,4 +11,8 @@ public class Country {
     public int id;
     @ColumnInfo(name = "code")
     public String code;
+    public String name;
+    public String dialling_code;
+    public String countryIsoCode;
+
 }

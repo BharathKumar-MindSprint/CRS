@@ -4806,10 +4806,26 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 }
                                             } else {
+                                                JSONObject response =  new JSONObject(postResponse.body().string());
                                                 if (postResponse.code() == 401) {
                                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
+                                                } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5048) {
+                                                    if (response.has("duplicateNationalIds")) {
+                                                        JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIds");
+                                                        for (int i = 0; i < duplicateNationalIds.length(); i++) {
+                                                            JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
+                                                            String typeId = duplicate.getString("typeId");
+                                                            dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
+                                                        }
+                                                    }
+
+                                                    String errorMsg = response.optString("message", "Duplicate National Id");
+                                                    handler.postDelayed(() -> {
+                                                        popupMsgInfo(errorMsg);
+                                                        return;
+                                                    }, 500);
+                                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "register national id");
                                                 } else {
-                                                    JSONObject response =  new JSONObject(postResponse.body().string());
                                                     recordFailedUpload(0, 0, networkQueueItemId);
                                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
                                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));

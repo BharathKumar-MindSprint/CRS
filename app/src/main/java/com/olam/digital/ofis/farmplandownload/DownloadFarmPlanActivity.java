@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.R;
@@ -58,9 +59,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     private RecyclerView recyclerView;
     DownloadFarmPlanAdapter downloadFarmPlanAdapter;
     List<DownloadFormList.data> data1;
-    ItemClickListener itemClickListener;
     String enumeratorId;
-    String userID = "ID_OFIS_DO_INTERFACE";
     ArrayList<String> isoCodes = new ArrayList<>();
     private ProgressDialog progressDialog;
     String counrtyCodeNew;
@@ -69,12 +68,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     String odAccessToken;
     String rootobject;
     String filepath;
-
-
     private long downloadId;
-
     TextView tv_down;
-    String downloadUrl;
     String fileNameDownload = "";
     File file;
     Uri uri;
@@ -111,11 +106,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         enumeratorId = Utilities.getFromSharedPrefs(context);
 
         try {
-
-            String isoCode = Utilities.getdatafromSharedPrefs(context,"CountryUserID");
-            Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+            String isoCode = Utilities.getdatafromSharedPrefs(context, StringConstants.COUNTRY_CODE);
             counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
-
         } catch (ActivityNotFoundException e) {
 
         }

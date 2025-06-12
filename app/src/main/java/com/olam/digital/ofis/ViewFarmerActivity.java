@@ -260,7 +260,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     boolean isMandateSurveyCompleted = false;
     boolean isToastShown = false;
 
-    private String primaryPhoneNumber = null;
+    private String primaryPhoneNumber = "";
     private boolean isPhoneNumber = false;
 
     @Override

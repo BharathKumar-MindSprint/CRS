@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -1413,6 +1414,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 intent.putExtra("phoneNumber", true);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("Update_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
+            } else if (itemType.equalsIgnoreCase("National_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
             }
             else if (itemType.equalsIgnoreCase("Supplier Survey")) {
                 int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
@@ -1465,8 +1482,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public static void GetAccessToken(String value) {
         ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
-        Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, StringConstants.COUNTRY_CODE);
         counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
 
         final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);

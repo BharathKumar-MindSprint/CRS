@@ -31,8 +31,8 @@ import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
@@ -338,10 +338,10 @@ public  static String base64ConversionForImage(String filepath)  {
     }
     public static String getEnumeratorNameSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String s=sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+        String s=sharedPreferences.getString(StringConstants.ENUMERATOR_NAME, "");
         String decryptedMsg="";
         try {
-            decryptedMsg = AESCrypt.decrypt(GPSConstants.COLUMN_ENUMERATOR_NAME, s);
+            decryptedMsg = AESCrypt.decrypt(StringConstants.ENUMERATOR_NAME, s);
         }catch (GeneralSecurityException e){
             //handle error - could be due to incorrect password or tampered encryptedMsg
         }
@@ -417,20 +417,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getInt(prefName, 0);
     }
 
-    public static String getStringFromSharedPrefs(Context context, String prefName) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        return sharedPreferences.getString(prefName, "");
-    }
-
     public static String getIMEI(Context c) {
         int permissionCheck = ContextCompat.checkSelfPermission(c, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            TelephonyManager telephonyManager = (TelephonyManager) c.getSystemService(Context.TELEPHONY_SERVICE);
             String android_id = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
-//            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
             return android_id;
-
         } else {
             return "imei not available";
         }
