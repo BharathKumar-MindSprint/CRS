@@ -2,7 +2,6 @@ package com.olam.digital.ofis;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 
 public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
@@ -40,17 +40,10 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isNetworkConnected()) {
-            String msg;
-            if (prefs.getBoolean("firstStart",false)) {
-                msg =getResources().getString(R.string.privacy_cache_offline);
-            }else{
-                msg=getResources().getString(R.string.privacy_no_cache_offline);
-            }
-            showAlertDialogMsg(msg);
+        if (!isNetworkAvailable(this)) {
+            showAlertDialogMsg(getResources().getString(R.string.privacy_no_cache_offline));
         }
     }
-
 
     private void webViewCode() {
         webView.getSettings().setLoadWithOverviewMode(true);
@@ -58,7 +51,6 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
-       //
         if (BuildConfig.FLAVOR.contains("oga")){
             webView.loadUrl("https://www.olamagri.com/privacy.html");
         }else {
@@ -81,11 +73,6 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
                     }
         }
 
-    }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
     void showAlertDialogMsg(String msg) {
@@ -122,7 +109,7 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
 
-            if (isNetworkConnected()){
+            if (isNetworkAvailable(PrivacyStatementWebViewActivity.this)){
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean("firstStart", true);
                 editor.apply();

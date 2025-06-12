@@ -71,17 +71,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
 
     private String searchQuery = "";
-
-    private final static String BUYING_AGENT_CONTEXT = "BUYING_AGENT_CONTEXT";
-    private final static String TRANSACTION_MODE = "TRANSACTION_MODE";
-    private final static String TRANSACTEE_ID = "TRANSACTEE_ID";
-    private final static String TRANSACTEE_TYPE = "TRANSACTEE_TYPE";
-    private final static String EDIT_TRANSACTION_ITEM_ID = "EDIT_TRANSACTION_ITEM_ID";
-    private final static String EDIT_MODE = "EDIT_MODE";
-    private final static String FARMER_ID = "FARMER_ID";
-    private final static String BACK_TO_FINDER = "BACK_TO_FINDER";
-    private boolean transactionMode = false, backtoFinder = false;
-    private long transactionItemId, buyingAgentId;
     private String blockCharacterSet = "~#^|$%&*!'\"";
     ArrayList<KeyPairBoolData> certificationStatus = new ArrayList<>();
     ArrayList<KeyPairBoolData> farmerGroupStatus = new ArrayList<>();
@@ -124,45 +113,32 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
         dl = new DataLayer(res, context);
 
-        farmerGroupSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_farmerGroup);
-        sectionSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_section);
-        countrySpinner = (Spinner) findViewById(R.id.spinner_country);
-        productSpinner = (Spinner) findViewById(R.id.spinner_product);
-        regionSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_region);
-        districtSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_district);
-        placeSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_place);
-        partnerSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_partner);
-        programSpinner =(MultiSpinnerSearch) findViewById(R.id.spinner_program);
-        certificationSpinner = (MultiSpinnerSearch) findViewById(R.id.spinner_certification);
-        advancedFilter = (TextView) findViewById(R.id.advancedFilters);
-        advancedFilterLayout = (LinearLayout) findViewById(R.id.advancedFilterLayout);
-        farmerTopSection = (LinearLayout) findViewById(R.id.topSection);
-        advancedFilters = (ScrollView) findViewById(R.id.svAdvancedFilters);
-        farmerNotFoundText = (TextView) findViewById(R.id.tvNoFarmerFound);
-        photoSearchButton = (ImageButton) findViewById(R.id.photoSearchButton);
-        ed = (EditText) findViewById(R.id.findFarmerSearchBox);
+        farmerGroupSpinner = findViewById(R.id.spinner_farmerGroup);
+        sectionSpinner = findViewById(R.id.spinner_section);
+        countrySpinner = findViewById(R.id.spinner_country);
+        productSpinner = findViewById(R.id.spinner_product);
+        regionSpinner = findViewById(R.id.spinner_region);
+        districtSpinner = findViewById(R.id.spinner_district);
+        placeSpinner = findViewById(R.id.spinner_place);
+        partnerSpinner = findViewById(R.id.spinner_partner);
+        programSpinner = findViewById(R.id.spinner_program);
+        certificationSpinner = findViewById(R.id.spinner_certification);
+        advancedFilter = findViewById(R.id.advancedFilters);
+        advancedFilterLayout = findViewById(R.id.advancedFilterLayout);
+        farmerTopSection = findViewById(R.id.topSection);
+        advancedFilters = findViewById(R.id.svAdvancedFilters);
+        farmerNotFoundText = findViewById(R.id.tvNoFarmerFound);
+        photoSearchButton = findViewById(R.id.photoSearchButton);
+        ed = findViewById(R.id.findFarmerSearchBox);
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         ed.setFilters(new InputFilter[] { filter });
         Intent intent = this.getIntent();
-        transactionMode = intent.getBooleanExtra(TRANSACTION_MODE, false);
-        backtoFinder = intent.getBooleanExtra(BACK_TO_FINDER, false);
-        transactionItemId = intent.getLongExtra(EDIT_TRANSACTION_ITEM_ID, 0);
-        buyingAgentId = intent.getLongExtra(BUYING_AGENT_CONTEXT, 0);
         notificationType = intent.getStringExtra(Utilities.NOTIFICATION_TYPE);
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
-        if (transactionMode) {
-            this.setTitle(R.string.title_activity_find_transactee);
-            TextView pageTitle = (TextView) findViewById(R.id.pageTitle);
-            pageTitle.setText(res.getString(R.string.select_transactee));
-
-            ed.setHint(R.string.farmer_or_buying_agent_name);
-        }
-
         if (notificationType == null) {
             notificationType = Utilities.notificationType;
             Utilities.notificationType = null;
         }
-
         bindFarmerList();
         showFarmerList();
 
@@ -181,9 +157,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     }
 
     private void bindFarmerList() {
-        if (transactionMode) {
-            farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, 0, 0);
-        } else if (notificationType == null) {
+        if (notificationType == null) {
             farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct,
                     selectedRegions, selectedDistricts, selectedPlaces, selectedPartners,
                     selectedProgrammes, selectedFarmerGroups, selectedSections, selectedCertifications);
@@ -224,7 +198,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     "odFarmerId"
             };
             int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId,R.id.farmerListODFarmerId};
-            customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res, transactionMode);
+            customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res);
             listView.setAdapter(customListAdapter_farmerAdapter);
         }
     }
@@ -631,7 +605,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                 selectedSections.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
-//                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                         selectedSections.add(Integer.parseInt(String.valueOf(items.get(i).getId())));
                     }else {
                         selectedSections.remove(selectedSections.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
@@ -644,7 +617,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     public void bindCertificationNameSpinner(){
         bindSpinnerSpec(certificationSpinner,res.getString(R.string.certification_name));
         List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
-        if(ofisRoomDB.certificationsDao().getCertifications().size() >0) {
+        if(!ofisRoomDB.certificationsDao().getCertifications().isEmpty()) {
             for (int i = 0; i < certificationsList.size(); i++) {
                 KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
                 keyPairBoolData.setId(certificationsList.get(i).certificationId);
@@ -659,7 +632,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     selectedCertifications.clear();
                     for (int i = 0; i < items.size(); i++) {
                         if (items.get(i).isSelected()) {
-//                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                             selectedCertifications.add(Integer.parseInt(String.valueOf(items.get(i).getId())));
                         }else {
                             selectedCertifications.remove(selectedCertifications.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
@@ -703,7 +675,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            if (transactionMode || notificationType != null) {
+            if (notificationType != null) {
                 finish();
             } else {
                 NavUtils.navigateUpFromSameTask(this);
@@ -739,21 +711,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         //we now view this farmer
         Intent intent;
-
-        if (transactionMode) {
-            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
-            intent = new Intent(context, TransactionItem.class);
-            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
-            intent.putExtra(TRANSACTEE_ID, id);
-            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
-            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
-            intent.putExtra(BACK_TO_FINDER, backtoFinder);
-            if (transactionItemId > 0) {
-                intent.putExtra(EDIT_MODE, true);
-            }
-            intent.putExtra(FARMER_ID, id);
-            context.startActivity(intent);
-        } else if (notificationType == null) {
+        if (notificationType == null) {
             ViewFarmerActivity.farmerId = id;
             ViewFarmerActivity.notificationType = null;
             intent = new Intent(context, ViewFarmerActivity.class);
