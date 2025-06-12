@@ -47,15 +47,15 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class,
         //Version 18
-//       SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-//                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
-//                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-//                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-//                Sections.class, Places.class, Products.class,
-//                Farmer.class,
+       SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
+                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
+                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
+                Sections.class, Places.class, Products.class,
+                Farmer.class,
 
         },
         version = 19
