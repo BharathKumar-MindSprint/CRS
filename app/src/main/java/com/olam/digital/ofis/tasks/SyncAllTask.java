@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -799,8 +800,8 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-                            String enumName= response.getJSONObject("outputdata").get(GPSConstants.COLUMN_ENUMERATOR_NAME).toString();
-                            Utilities.setEnumeratorNameSharedPrefs(context,GPSConstants.COLUMN_ENUMERATOR_NAME,enumName);
+                            String enumName= response.getJSONObject("outputdata").get(StringConstants.ENUMERATOR_NAME).toString();
+                            Utilities.setEnumeratorNameSharedPrefs(context,StringConstants.ENUMERATOR_NAME,enumName);
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
                             JSONObject item = new JSONObject();
