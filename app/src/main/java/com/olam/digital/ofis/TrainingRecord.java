@@ -815,7 +815,7 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         if (editMode) {
-         //   getTrainingRecord();
+            getTrainingRecord();
             getTrainingAttendees();
             if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                 completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
