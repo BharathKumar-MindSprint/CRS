@@ -1,8 +1,9 @@
 package com.olam.digital.ofis.RetrofitServices;
 
-import static com.olam.digital.ofis.EnableMultiDex.context;
+import android.content.Context;
 import android.os.SystemClock;
 import android.widget.Toast;
+import com.olam.digital.ofis.OFISApplication;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
@@ -16,12 +17,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Interceptor implements okhttp3.Interceptor {
     private static String accessToken;
     private static Response new_response;
+    private final Context context = OFISApplication.getContext();
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();

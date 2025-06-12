@@ -30,25 +30,6 @@ public class GpsTrackerLogic {
         return newGPSId;
     }
 
-    public List<TrackDetailsDTO> getGPSTrackList(Context context){
-        dataLayer = new DataLayer(context.getResources(), context);
-        List<TrackDetailsDTO> gpsTrackList=new ArrayList<>();
-        Cursor cursor=dataLayer.getGeoTrackList();
-        TrackDetailsDTO trackDetailsDTO;
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                trackDetailsDTO = new TrackDetailsDTO();
-                trackDetailsDTO.setModule(cursor.getString(cursor.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE)));
-                trackDetailsDTO.setLatitude(cursor.getString(cursor.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE)));
-                trackDetailsDTO.setLongitude(cursor.getString(cursor.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE)));
-                trackDetailsDTO.setRecordDate(cursor.getString(cursor.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE)));
-
-                gpsTrackList.add(trackDetailsDTO);
-            }
-        }
-        return gpsTrackList;
-    }
-
     public static int getGeoPointCount(Context context){
        DataLayer dataLayer = new DataLayer(context.getResources(), context);
         return  dataLayer.getGeoTrackList().getCount();

@@ -8,6 +8,8 @@ import android.content.SyncResult;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 /**
  * Created by ben on 08/11/2016.
  */
@@ -21,14 +23,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         nl = new NetworkLayer(context, Resources.getSystem());
     }
 
-    SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        nl = new NetworkLayer(context, Resources.getSystem());
-    }
-
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(getContext())) {
             nl.syncTasks(OFISDBContract.Task.COLUMN_NAME_SYNCED);
             nl.syncTasks(OFISDBContract.Task.COLUMN_NAME_DELIVERY_CONFIRMED);
         }

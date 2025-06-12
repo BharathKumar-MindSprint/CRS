@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.R;
@@ -43,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -53,13 +53,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickListener  {
     private RecyclerView recyclerView;
     DownloadFarmPlanAdapter downloadFarmPlanAdapter;
     List<DownloadFormList.data> data1;
-    ItemClickListener itemClickListener;
     String enumeratorId;
-    String userID = "ID_OFIS_DO_INTERFACE";
     ArrayList<String> isoCodes = new ArrayList<>();
     private ProgressDialog progressDialog;
     String counrtyCodeNew;
@@ -68,12 +68,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     String odAccessToken;
     String rootobject;
     String filepath;
-
-
     private long downloadId;
-
     TextView tv_down;
-    String downloadUrl;
     String fileNameDownload = "";
     File file;
     Uri uri;
@@ -110,17 +106,14 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         enumeratorId = Utilities.getFromSharedPrefs(context);
 
         try {
-
-            String isoCode = Utilities.getdatafromSharedPrefs(context,"CountryUserID");
-            Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+            String isoCode = Utilities.getdatafromSharedPrefs(context, StringConstants.COUNTRY_CODE);
             counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
-
         } catch (ActivityNotFoundException e) {
 
         }
 
         /*OD Access Token API*/
-        if(isOnline(getApplicationContext())){
+        if(isNetworkAvailable(getApplicationContext())){
             GetAccessToken();
         }else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
@@ -145,7 +138,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     //Toast.makeText(DownloadFarmPlanActivity.this,odAccessToken, Toast.LENGTH_SHORT).show();
                     Log.e("OD_AccessTOKEN",odAccessToken);
 
-                    if(isOnline(getApplicationContext())){
+                    if(isNetworkAvailable(getApplicationContext())){
                         DownloadFormList();
                     }else {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
@@ -226,24 +219,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     }
 
     private void getDownloadUrl(){
-
-        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
-        OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl(BuildConfig.DOWNLOADURL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ManageRecords retrofitAPI = retrofit.create(ManageRecords.class);
-
+        ManageRecords retrofitAPI = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
 
         String currentString = filepath;
         String[] separated = currentString.split("/");
@@ -268,18 +244,10 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                 if (response.code()==200) {
                     progressDialog.hide();
-                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                    // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
                     Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
                     if (writtenToDisk) {
-                       /* File mediaStorageDir = new File(
-                                Environment
-                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                        +"/"+"OFIS");
-                        mediaStorageDir.mkdirs();*/
-
                         File root = android.os.Environment.getExternalStorageDirectory();
                         dir = new File (root.getAbsolutePath() +"/"+"OFIS");
                         dir.mkdirs();
@@ -288,9 +256,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                                 +finalFilepathPdf+ ".pdf");
 
                         fileNameDownload = mediaFile.getName();
-
-                        //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
-                        //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
                         file = new File(dir+"/"+fileNameDownload);
                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
                         try {
@@ -408,17 +373,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
     }
 
-
-    public boolean isOnline(Context c){
-        ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        @SuppressLint("MissingPermission") NetworkInfo ni=cm.getActiveNetworkInfo();
-        if(ni !=null && ni.isConnectedOrConnecting()){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     @Override
     public void onClick(String fileUrl, String fileName) {
 
@@ -429,24 +383,15 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         String[] separated1 = currentString1.split("/");
         String finalFilepath1 = separated1[1].trim();
 
-
-        // Log.d("FINALRootObj",finalFilepath1);
-        // Log.d("FINALFilePATH",finalFilepath);
-
         String chapterNumbe1r = finalFilepath1;
         int index = chapterNumbe1r.indexOf(".");
-        String finalFilepathPdf1 = chapterNumbe1r.substring(0,index);
-
-        //String path = String.valueOf(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS+"/"+finalFilepath1);
-
-
         String path = (dir+"/"+finalFilepath1);
         File fileChk = new File(path);
         if (fileChk.exists()) {
             showAlertIsDownloadAgain("File is Already Available,Do You want to download it Again!!");
         } else {
             // ...
-            if(isOnline(getApplicationContext())){
+            if(isNetworkAvailable(getApplicationContext())){
                 getDownloadUrl();
                 Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
             }else {
@@ -498,7 +443,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         builder.setTitle(R.string.Alert_txt);
         builder.setCancelable(false);
         builder.setPositiveButton("YES", (DialogInterface.OnClickListener) (dialog, which) -> {
-            if(isOnline(getApplicationContext())){
+            if(isNetworkAvailable(getApplicationContext())){
                 getDownloadUrl();
                 Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
             }else {

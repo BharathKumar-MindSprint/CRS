@@ -231,7 +231,7 @@ public class SurveyResultsFragment extends Fragment {
                 db.dmSurveyReportDao().insert(dmSurveyReport);
                 DataLayer dl = new DataLayer(getResources(), getContext());
                 // OW-4574
-                if(!dl.networkEntryTypeExistsByFarmerModuleId("DMSurvey",Long.parseLong(Constants.FARMER_ID), Constants.MODULE_ID, Constants.PLOT_ID)) {
+                if(!dl.networkEntryTypeExistsByFarmerModuleId("DMSurvey", Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID)) {
                     collectGPSPoint(mCurrentCapturedLocation);
                     gpsTracker.stopLocationUpdates();
                 }
