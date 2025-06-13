@@ -533,7 +533,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             genderInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
             ageInfo.setText("- " +farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE)));
             pNumberInfo.setText("- " +phonenumberinfo.toString());
-            if(!farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)).isEmpty()){
+            if(!farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)).equals("null")){
                 farmerCodeInfo.setText("- " + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
             }else{
                 farmerCodeInfo.setText("-");
