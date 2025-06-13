@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +33,7 @@ import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
+import com.olam.digital.ofis.downloadsurvey.dto.ModuleCursorToDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
@@ -6769,56 +6769,18 @@ public class DataLayer {
         return cursor;
     }
 
-    public ArrayList<ModuleDTO> viewModuleList() {
+    public ArrayList<ModuleDTO> viewModuleList(Context context) {
         ArrayList<ModuleDTO> list= new ArrayList<ModuleDTO>();
         Cursor moduleList = getViewModules();
-        ModuleDTO moduleDTO;
         if (moduleList.getCount() > 0) {
-            while (moduleList.moveToNext()) {
-                moduleDTO = new ModuleDTO();
-                String moduleType = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_TYPE));
-                String assignmentId = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID));
-                String moduleId = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ID));
-                String moduleName = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME));
-                moduleDTO.setName_lo(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO)));
-                moduleDTO.setName_es(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ES)));
-                moduleDTO.setName_fr(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_FR)));
-                moduleDTO.setName_id(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID)));
-                moduleDTO.setName_pt(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT)));
-                moduleDTO.setName_th(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH)));
-                moduleDTO.setName_tr(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR)));
-                moduleDTO.setName_vi(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI)));
-                moduleDTO.setModule_id(moduleId);
-                moduleDTO.setName(moduleName);
-                moduleDTO.setModuleassignment_type(moduleType);
-                moduleDTO.setModuleassignment_id(assignmentId);
-                if (moduleType.equalsIgnoreCase("Country") && isValueExist(assignmentId, OFISDBContract.CountriesEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Region") && isValueExist(assignmentId, OFISDBContract.RegionsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("District") && isValueExist(assignmentId, OFISDBContract.DistrictsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Place") && isValueExist(assignmentId, OFISDBContract.PlacesEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Farmer Group") && isValueExist(assignmentId, OFISDBContract.FarmerGroupsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Section") && isValueExist(assignmentId, OFISDBContract.SectionsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Product") && isValueExist(assignmentId, OFISDBContract.ProductsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                }
-
-            }
+            list.addAll(ModuleCursorToDTO.cursorToDTOListModule(moduleList, db));
         }
-        return list;
-    }
 
-    public boolean isValueExist(String id,String table) {
-        Cursor cursor = db.query(table, new String[]{"*"}, "id = ?",
-                new String[]{id}, null, null, null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
+        ModuleDTO.Builder moduleDTOBuilder = new ModuleDTO.Builder();
+        moduleDTOBuilder.setName(context.getResources().getString(R.string.download_polygon_data))
+                .setShowType(Utilities.TYPE_POLYGON);
+        list.add(moduleDTOBuilder.build());
+        return list;
     }
 
     public boolean isSurveyAnsDownloaded(int submoduleId, long farmerId, String stakeholderId) {

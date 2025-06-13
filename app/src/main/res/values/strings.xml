@@ -1052,7 +1052,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="reenter_passcode">Logout</string>
     <string name="android_id">Device Install ID: </string>
     <string name="logout_note">Are you sure want to logout? </string>
-    <string name="download_survey_data">Download Data</string>
     <string name="select_fgsection">Select Farmer Group and Section</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading...</string>
@@ -1449,4 +1448,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="evidence_upload">Evidence Upload</string>
     <string name="supplier_survey">Supplier Survey</string>
     <string name="evidence_is_missing">Evidence Is Missing</string>
+
+    <string name="download_survey_data">Download Data</string>
+    <string name="download_polygon_data">Download Polygon Data</string>
 </resources>
