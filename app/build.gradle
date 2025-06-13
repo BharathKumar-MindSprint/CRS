@@ -75,10 +75,10 @@ android {
         }
 
         sitofi {
-            applicationId "com.olam.digital.ofispreprod"
+            applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             resValue "string", "applicationName", "OFI SIT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/"'
             buildConfigField 'String', 'BASE_URL', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
