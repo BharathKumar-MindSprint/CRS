@@ -53,9 +53,13 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
+import com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity;
+import com.olam.digital.ofis.agrisupplier.ui.SupplierSurveyActivity;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
@@ -82,8 +86,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.logging.FabricLogsWriter;
-
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -133,7 +135,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Handler mainHandler;
 
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
-    private final static String EDIT_TRANSACTION_ITEM_ID = "EDIT_TRANSACTION_ITEM_ID";
     private final static String EDIT_TRAININGRECORD_ID = "EDIT_TRAININGRECORD_ID";
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
@@ -181,6 +182,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
+    private static CardView cvSupplierAndSurvey;
+    private static Button supplierAndSurvey;
 
 
     @Override
@@ -247,8 +250,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
-
-
         Account mAccount = CreateSyncAcount();
 
         ContentResolver.setSyncAutomatically(
@@ -584,6 +585,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (notificationButton != null) {
             notificationButton.setVisible(true);
         }
+        if (Utilities.getBoolFromSharedPrefs(staticContext, Utilities.IS_SUPPLIER_ENABLED, false)) {
+            cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+            supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(staticContext, FindSupplierAndSurveyActivity.class);
+                    staticContext.startActivity(intent);
+                }
+            });
+        }
+        else {
+            cvSupplierAndSurvey.setVisibility(View.GONE);
+        }
+
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
 
@@ -931,6 +946,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button captureLocation = findViewById(R.id.captureLocation);
         Button recordTraining = findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = findViewById(R.id.downloadSurveyData);
+        supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
+        cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
 
         syncAll = findViewById(R.id.syncAll);
         downloadSurveyWrap();
@@ -981,6 +998,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+            if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+                supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else {
+                cvSupplierAndSurvey.setVisibility(View.GONE);
+            }
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1101,10 +1131,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             enableSync();
             Toast.makeText(HomeActivity.this, getString(R.string.authentication_attempt), Toast.LENGTH_LONG).show();
         } else {
-            try {
-                FabricLogsWriter.printCrashLog(TAG, "ofisoauth/authenticate", response.code(), "Request : :  " + new Gson().toJson(getAuthRequestDTO()).toString() + "   Response :  " + response.raw().networkResponse().toString() + "user Id :" + enumeratorID.getText().toString().trim(), context);
-            } catch (Exception e) {
-            }
             enableSync();
             if (response.code() == 401) {
                 validateLoginAttempts();
@@ -1384,6 +1410,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
             }
+            else if (itemType.equalsIgnoreCase("Supplier Survey")) {
+                int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+                String supplierId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String supplierName = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                SupplierSurveyDto supplierSurveyDto = db.dmMainModuleDao().getModuleById(moduleId);
+
+                Intent intent = new Intent(context, SupplierSurveyActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Utilities.SUPPLIER, supplierSurveyDto);
+                bundle.putString("SupplierId", supplierId);
+                bundle.putString("SupplierName", supplierName);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
         } catch (CursorIndexOutOfBoundsException ignored) {
         }
     }
@@ -1421,8 +1461,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public static void GetAccessToken(String value) {
         ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
-        Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, StringConstants.COUNTRY_CODE);
         counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
 
         final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);

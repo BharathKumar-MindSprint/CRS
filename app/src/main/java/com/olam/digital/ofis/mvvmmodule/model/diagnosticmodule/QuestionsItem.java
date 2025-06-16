@@ -34,9 +34,6 @@ public class QuestionsItem{
 	@SerializedName("displaytypeId")
 	private int displaytypeId;
 
-	@SerializedName("datatypeId")
-	private int datatypeId;
-
 	@SerializedName("isCriticalQuest")
 	private boolean isCriticalQuest;
 
@@ -78,7 +75,7 @@ public class QuestionsItem{
 		this.maxSelection = maxSelection;
 	}
 
-	public QuestionsItem(boolean mandate, TextBoxModuleQuestions textBoxModuleQuestions, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId, Integer maxSelection) {
+	public QuestionsItem(boolean mandate, TextBoxModuleQuestions textBoxModuleQuestions, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int displaytypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId, Integer maxSelection) {
 		this.mandate = mandate;
 		this.textBoxModuleQuestions = textBoxModuleQuestions;
 		this.question = question;
@@ -87,7 +84,6 @@ public class QuestionsItem{
 		this.questionPt = questionPt;
 		this.questionLo = questionLo;
 		this.displaytypeId = displaytypeId;
-		this.datatypeId = datatypeId;
 		this.isCriticalQuest = isCriticalQuest;
 		this.questionFr = questionFr;
 		this.displayType = displayType;
@@ -166,14 +162,6 @@ public class QuestionsItem{
 
 	public void setDisplaytypeId(int displaytypeId) {
 		this.displaytypeId = displaytypeId;
-	}
-
-	public int getDatatypeId() {
-		return datatypeId;
-	}
-
-	public void setDatatypeId(int datatypeId) {
-		this.datatypeId = datatypeId;
 	}
 
 	public boolean isCriticalQuest() {
