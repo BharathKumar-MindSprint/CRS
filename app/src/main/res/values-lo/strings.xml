@@ -1074,6 +1074,9 @@
 
     <string name="farmer_code_already_exists">"ລະຫັດກະສິກອນມີຢູ່ແລ້ວ!"</string>
     <string name="farmer_code">"ລະຫັດກະສິກອນ"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
 
 </resources>
 

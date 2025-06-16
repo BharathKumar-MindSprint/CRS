@@ -917,6 +917,9 @@
 
     <string name="farmer_code_already_exists">"O código do agricultor já existe!"</string>
     <string name="farmer_code">"Código do Agricultor"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
 
 </resources>
 

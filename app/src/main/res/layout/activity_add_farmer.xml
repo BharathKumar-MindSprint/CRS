@@ -292,10 +292,44 @@
                         android:id="@+id/farmerCode"
                         android:textColor="@color/ofis_base_font_dark"
                         android:textSize="@dimen/ofis_input_field_text"
-
+                        android:maxLength="50"
+                        android:textAllCaps="true"
                         android:textColorHint="@color/icon_grey_palette_2"
                         android:background="@drawable/border_white_background"
                         android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+
+                    <TextView
+                        android:id="@+id/error_msg_invalid_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/invalid_format"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <TextView
+                        android:id="@+id/error_msg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/cannot_have_consecutive_special_character"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <TextView
+                        android:id="@+id/error_msg_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/example_format"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
                     <!--
                                         <EditText
                                             android:layout_width="wrap_content"

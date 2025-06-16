@@ -168,7 +168,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
     private String dateStrToSend;
-    private TextView farmerDOB;
+    private TextView farmerDOB,farmerCodeError,farmerValidationError,farmerInvalidFormat,error_msg_format;
     boolean  csStatus;
     ContentValues consentValue;
     ArrayList<String> nationalIdTypes=null;
@@ -231,6 +231,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private List<String> farmerRolesList;
      private List<FarmerRoleDto> farmerRoleDTOList;
     private String localeSuffixColumn;
+
+    private boolean isFarmerCodeError = false;
+
+     private boolean isFarmerCodeConsecutiveError = false;
     MultiStakeHolder stakeHolder;
 
     private ArrayList<Integer> updatedNidValue = new ArrayList<Integer>();
@@ -266,6 +270,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
         farmerName = findViewById(R.id.farmerName);
+        farmerCodeError =  findViewById(R.id.error_msg);
+        farmerValidationError = findViewById(R.id.error_msg_format);
+        farmerInvalidFormat = findViewById(R.id.error_msg_invalid_format);
+         farmerValidationError.setText("Example Format :" + " WRL/GUD/13-J024");
+         farmerCodeError.setVisibility(View.GONE);
+         farmerValidationError.setVisibility(View.GONE);
+         farmerInvalidFormat.setVisibility(View.GONE);
 
         llFarmerGroup = findViewById(R.id.llFarmerGroup);
         llGeographyDetails = findViewById(R.id.llGeographyDetails);
@@ -285,7 +296,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
 
          farmerCode = findViewById(R.id.farmerCode);
-         farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter});
+         InputFilter lengthFilter = new InputFilter.LengthFilter(50);
+         InputFilter capsFilter = new InputFilter.AllCaps();
+         farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter,capsFilter});
+
          farmerCode.addTextChangedListener(new TextWatcher() {
              @Override
              public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -300,7 +314,33 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              @Override
              public void afterTextChanged(Editable s) {
                  String input =  s.toString().trim();
+
+                 if (containsConsecutiveSpecialChars(input)) {
+                     isFarmerCodeError = true;
+                     isFarmerCodeConsecutiveError = false;
+                     farmerCodeError.setVisibility(View.VISIBLE);
+                     farmerValidationError.setVisibility(View.VISIBLE);
+                     farmerCodeError.setText(R.string.cannot_have_consecutive_special_character);
+
+                 } else if (!input.isEmpty() && isSpecialCharacter(input.charAt(input.length() - 1))) {
+                     isFarmerCodeError = false;
+                     isFarmerCodeConsecutiveError = true;
+                     farmerCodeError.setVisibility(View.VISIBLE);
+                     farmerValidationError.setVisibility(View.VISIBLE);
+                     farmerCodeError.setText(R.string.invalid_format);
+
+                 } else {
+                     isFarmerCodeError = false;
+                     isFarmerCodeConsecutiveError = false;
+                     farmerCodeError.setVisibility(View.GONE);
+                     farmerValidationError.setVisibility(View.GONE);
+                     farmerCodeError.setText(null); // Remove error if valid
+                 }
+
+
                  if(!input.isEmpty() && !(Character.isDigit(input.charAt(0)) ||  Character.isLetter(input.charAt(0)))){
+                     farmerCodeError.setVisibility(View.GONE);
+                     farmerValidationError.setVisibility(View.GONE);
                      farmerCode.setText(input.substring(1));
 
                  }
@@ -383,6 +423,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
     }
+
+
 
     private InputFilter filter = new InputFilter() {
 
@@ -1900,6 +1942,24 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
 
+//                if(farmerCode.length() > 0 && isSpecialCharacter((char) (farmerCode.length() - 1))){
+//                    farmerCodeError.setVisibility(View.VISIBLE);
+//                }else{
+//                    farmerCodeError.setVisibility(View.GONE);
+//                }
+
+                if(isFarmerCodeError){
+                    Toast.makeText(context, R.string.cannot_have_consecutive_special_character, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if(isFarmerCodeConsecutiveError){
+                    Toast.makeText(context, R.string.invalid_format, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+
                 if (isNIDAvailable) {
                     if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
                         Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
@@ -3308,5 +3368,20 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              return null; // accept original input
          }
      };
+
+     private static boolean containsConsecutiveSpecialChars(String input) {
+         for (int i = 1; i < input.length(); i++) {
+             if (isSpecialCharacter(input.charAt(i)) && isSpecialCharacter(input.charAt(i - 1))) {
+                 return true;
+             }
+         }
+         return false;
+     }
+
+     private static boolean isSpecialCharacter(char ch) {
+         return "-/".indexOf(ch) != -1;
+     }
+
+
 
  }

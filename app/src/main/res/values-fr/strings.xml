@@ -1242,5 +1242,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="farmer_code_already_exists">"Le code agriculteur existe déjà !"</string>
     <string name="farmer_code">"Code Agriculteur"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
 
 </resources>

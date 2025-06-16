@@ -814,4 +814,8 @@
     <string name="farmer_code_already_exists">"Mã nông dân đã tồn tại!"</string>
     <string name="farmer_code">"Mã Nông Dân"</string>
 
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
 </resources>
