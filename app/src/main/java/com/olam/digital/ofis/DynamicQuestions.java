@@ -808,6 +808,8 @@ public class DynamicQuestions {
                 }
             } else if (answerId > 0) {
                 removeAnswerEntry(questionId, answerId);
+            } else if (answerId == 0 && repeaterItemPosition != -1) {
+                removeAnswerEntry(questionId, answerId, repeaterItemPosition);
             }
 
             Log.d("AnswerSetCheck", String.valueOf(answerSet));
@@ -817,6 +819,20 @@ public class DynamicQuestions {
         }
     }
 
+    private void removeAnswerEntry(int questionId, int answerId, int repeaterItemPosition) {
+        for (int i = 0; i < answerSet.size(); i++) {
+            JSONObject currentAnswer = answerSet.get(i);
+            if (currentAnswer != null) {
+                int currentQuestionId = currentAnswer.optInt("question_id");
+                int currentAnswerId = currentAnswer.optInt("answer_id");
+                int currentAnswerRepeaterPosition = currentAnswer.optInt("repeater_item_position");
+                if (currentQuestionId == questionId && currentAnswerId == answerId && currentAnswerRepeaterPosition == repeaterItemPosition) {
+                    answerSet.remove(i);
+                    break;
+                }
+            }
+        }
+    }
     private boolean checkvalues(float min, float max, String answer) {
         boolean val = true;
         try {
@@ -858,7 +874,8 @@ public class DynamicQuestions {
             JSONObject currentAnswer = answerSet.get(i);
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
-                if (currentQuestionId == questionId) {
+                int currentAnswerRepeaterPosition = currentAnswer.optInt("repeater_item_position");
+                if (currentQuestionId == questionId && currentAnswerRepeaterPosition == -1) {
                     answerSet.remove(i);
                     break;
                 }
@@ -8278,10 +8295,7 @@ public class DynamicQuestions {
 
                 if (hasAnswers) {
                     int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_" + datatype)) : 0;
-                    if (!questions.isNull(questions.getColumnIndex("answer_" + datatype)) && !zeroAcceptable){
-                        answer = -1;
-                    }
-                    spinner.setSelection(answer);
+                    spinner.setSelection(zeroAcceptable ? answer : answer - 1);
                 }
 
                 questionWrapper.addView(spinner);
