@@ -206,14 +206,14 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                         } else if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID) {
                             insertHelper.bind(columnKeys.get(k), item.optString("programId"));
                         } else {
-                            insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
+                            insertHelper.bind(columnKeys.get(k),getStringOrNull(item,columnList.get(k).toString()));
                         }
                     }
                     else if (tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME) || tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME)) {
                         insertHelper.bind(columnKeys.get(k), item.has(columnList.get(k).toString()) ? item.optString(columnList.get(k).toString()) : null);
                     }
                     else {
-                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
+                        insertHelper.bind(columnKeys.get(k), getStringOrNull(item,columnList.get(k).toString()));
                     }
                 }
             }
@@ -270,5 +270,12 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
+    private String getStringOrNull(JSONObject item, String key) {
+        if (item.isNull(key)) {
+            return null;
+        } else {
+            return item.optString(key);
+        }
+    }
 
 }
