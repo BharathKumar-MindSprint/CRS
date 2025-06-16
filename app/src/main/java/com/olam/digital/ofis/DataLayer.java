@@ -8083,8 +8083,8 @@ public class DataLayer {
             Cursor cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    String signature = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
-                    if (signature != null && Objects.equals(signature,"true")) {
+                    String isDuplicateData = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
+                    if (isDuplicateData != null && Objects.equals(isDuplicateData,"true")) {
                         isDuplicate = true;
                         break;
                     }

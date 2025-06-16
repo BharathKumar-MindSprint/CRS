@@ -161,9 +161,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         isSynced = dl.getSyncedStatus(farmerId);
         isUpdateNationalIdAvailable = dl.isUpdateNationalIdAvailable(farmerId);
 
-        if (isSynced && !isUpdateNationalIdAvailable) {
-            this.setTitle("View National ID");
-        }
+        boolean availstatus = dl.isValueavailable(farmerId);
+        this.setTitle(res.getString(availstatus ? R.string.update_nationalid : R.string.add_nationalid));
+
 
         if (!editmode) {
             bindnationalid();
