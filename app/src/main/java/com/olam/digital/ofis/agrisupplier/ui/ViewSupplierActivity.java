@@ -114,6 +114,9 @@ public class ViewSupplierActivity extends BaseListActivity {
     private void intiSurveys() {
         supplierSurveys = ofisRoomDB.dmMainModuleDao().getSupplierSurveys(supplier.getSupplierTypeId(), supplier.getSupplierGroupId(), supplier.getId());
         RecyclerView rvSupplierSurvey = findViewById(R.id.rvSupplierSurvey);
+        ConstraintLayout clSupplierSurvey = findViewById(R.id.clSupplierSurvey);
+        ConstraintLayout clNoTask = findViewById(R.id.clNoTask);
+
         rvSupplierSurvey.setLayoutManager(new LinearLayoutManager(this));
         SupplierSurveyListAdapter adapter = new SupplierSurveyListAdapter(supplierSurveys, ofisRoomDB, res, context, supplier);
         rvSupplierSurvey.setAdapter(adapter);
@@ -132,5 +135,15 @@ public class ViewSupplierActivity extends BaseListActivity {
                 startActivity(intent);
             }
         });
+
+        if (supplierSurveys.isEmpty()) {
+            clSupplierSurvey.setVisibility(View.GONE);
+            clNoTask.setVisibility(View.VISIBLE);
+        }
+        else {
+            clSupplierSurvey.setVisibility(View.VISIBLE);
+            clNoTask.setVisibility(View.GONE);
+        }
+
     }
 }
