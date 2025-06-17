@@ -270,6 +270,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
         farmerName = findViewById(R.id.farmerName);
+
         farmerCodeError =  findViewById(R.id.error_msg);
         farmerValidationError = findViewById(R.id.error_msg_format);
         farmerInvalidFormat = findViewById(R.id.error_msg_invalid_format);
@@ -3205,7 +3206,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          etFarmHoldingName.setText(appendSuffixForFarmName(farmerNameMs, res.getString(R.string.farm_holding_suffix)));
          etFarmHoldingCode.setText(farmHoldingCodeMs);
          roleHeading.setText(getResources().getString(R.string.stakeholder_role));
-
+         ll_farmer_code.setVisibility(View.GONE);
          LinearLayout phoneNumber = (LinearLayout) phonenumbers.getChildAt(0);
          EditText diallingCode = (EditText) phoneNumber.findViewById(R.id.dialling_code);
          String dialling_code = dl.getDiallingCodeByFarmerId(farmerIdMs);
