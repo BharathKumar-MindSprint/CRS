@@ -298,8 +298,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
          farmerCode = findViewById(R.id.farmerCode);
          InputFilter lengthFilter = new InputFilter.LengthFilter(50);
-         InputFilter capsFilter = new InputFilter.AllCaps();
-         farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter,capsFilter});
+
+         farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter});
 
          farmerCode.addTextChangedListener(new TextWatcher() {
              @Override
