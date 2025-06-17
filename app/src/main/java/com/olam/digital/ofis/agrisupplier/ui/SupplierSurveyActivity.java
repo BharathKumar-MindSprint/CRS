@@ -556,6 +556,8 @@ public class SupplierSurveyActivity extends BaseListActivity {
 
     private void saveCapturedEvidence(byte[] pdfByteArray2, StringBuilder OFISFileName, DmComplaintFileTable dmComplaintFileTable, String filename, TextView evidenceName, File destinationFolder, ImageView deleteFile, RelativeLayout rlEvidenceLayout, TextView tvEvidenceUpload, int questionId) {
         if (validateFileSize(pdfByteArray2.length)) {
+            rlEvidenceLayout.setVisibility(View.GONE);
+            tvEvidenceUpload.setVisibility(View.VISIBLE);
             return;
         }
 
