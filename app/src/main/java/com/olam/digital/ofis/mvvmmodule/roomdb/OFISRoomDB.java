@@ -77,16 +77,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
-        //Version 18
-//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-//                Children.class,  Country.class,
-
-
-        },
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class},
         version = 18
-       // autoMigrations ={@AutoMigration(from =17, to=18)}
         )
 
 public abstract class OFISRoomDB extends RoomDatabase {
@@ -264,7 +256,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             public void migrate(@NonNull SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        "supplierId TEXT NOT NULL, " +
+                        "supplierId TEXT, " +
                         "supplierName TEXT, " +
                         "primaryPhoneNumber TEXT, " +
                         "secondaryPhoneNumber TEXT, " +
@@ -306,8 +298,8 @@ public abstract class OFISRoomDB extends RoomDatabase {
                                 "submitted_date TEXT, " +
                                 "supplier_id TEXT, " +
                                 "module_id TEXT, " +
-                                "sync_status TEXT)"
-                );
+                                "sync_status TEXT, " +
+                                "is_survey_completed TEXT)");
             }
         };
 
