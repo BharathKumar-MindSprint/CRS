@@ -274,7 +274,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerCodeError =  findViewById(R.id.error_msg);
         farmerValidationError = findViewById(R.id.error_msg_format);
         farmerInvalidFormat = findViewById(R.id.error_msg_invalid_format);
-         farmerValidationError.setText("Example Format :" + " WRL/GUD/13-J024");
+         farmerValidationError.setText(res.getString(R.string.example_format) + ": WRL/GUD/13-J024");
          farmerCodeError.setVisibility(View.GONE);
          farmerValidationError.setVisibility(View.GONE);
          farmerInvalidFormat.setVisibility(View.GONE);
