@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ChildLabourLogic {
@@ -166,11 +167,13 @@ public class ChildLabourLogic {
     }
 
     // Collecting the list of survey needed to be shown to the child
-    public List<ChildModuleDto> getChildSurveyModuleList(Context context, Long id,String childId) {
+    public Object[] getChildSurveyModuleList(Context context, Long id,String childId, Integer followUpCount) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildModuleDto> childModuleDtoList = new ArrayList<ChildModuleDto>();
         Cursor moduleAssignments = dataLayer.getChildModulesByFarmer(id,childId);
         String moduleNameSuffix = Utilities.getLocaleSuffix(context.getResources());
+        ChildModuleDto followUpModule = null;
+        String surveyName = "Follow-up Survey";
 
         if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
             try {
@@ -192,12 +195,20 @@ public class ChildLabourLogic {
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
                         childModuleDto.setSurveyCode(surveyCode);
-                       String startDate=moduleAssignments.getString(moduleAssignments.getColumnIndex("startDate"));
+                        String startDate=moduleAssignments.getString(moduleAssignments.getColumnIndex("startDate"));
                         if(startDate!=null && !startDate.equalsIgnoreCase("null")) {
                             if (Utilities.currentTimeInMilliSeconds() > Utilities.dateStringToMilliSeconds(startDate)){
+                                if (surveyCode.equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                                    followUpModule = childModuleDto;
+                                    if (followUpCount != null && followUpCount >= 0) {
+                                        surveyName = childModuleDto.getName();
+                                        childModuleDto.setName(surveyName + " " + 1);
+                                    }
+                                }
                                 childModuleDtoList.add(childModuleDto);
                             }
                         }
+
                     }
                 }
             } finally {
@@ -205,10 +216,24 @@ public class ChildLabourLogic {
             }
         }
 
-            return childModuleDtoList;
+        if (followUpCount != null && followUpModule != null) {
+            for (int i = 1; i <= followUpCount; i++) {
+                ChildModuleDto followUpSurvey = new ChildModuleDto();
+                followUpSurvey.set_id(followUpModule.get_id());
+                followUpSurvey.setName(surveyName + " " + (i + 1));
+                followUpSurvey.setStatus_started(followUpModule.getStatus_started());
+                followUpSurvey.setStatus_finished(followUpModule.getStatus_finished());
+                followUpSurvey.setSurveyCode(followUpModule.getSurveyCode());
+                childModuleDtoList.add(followUpSurvey);
+            }
         }
 
-// getting farmer name by farmer Id from local db
+        Object[] result = new Object[2];
+        result[0] = followUpModule;
+        result[1] = childModuleDtoList;
+        return result;
+    }
+
     public String getFarmerName(Context context, String farmerId) {
         String farmerName=null;
         dataLayer = new DataLayer(context.getResources(), context);
@@ -218,5 +243,22 @@ public class ChildLabourLogic {
             farmerName= farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
         }
         return  farmerName;
+    }
+
+    public ChildModuleDto getChildFollowUpModule(ChildModuleDto followUpModule) {
+        ChildModuleDto module = new ChildModuleDto();
+        module.set_id(followUpModule.get_id());
+        module.setName(followUpModule.getName());
+        module.setName_fr(followUpModule.getName_fr());
+        module.setName_es(followUpModule.getName_es());
+        module.setName_id(followUpModule.getName_id());
+        module.setName_pt(followUpModule.getName_pt());
+        module.setName_tr(followUpModule.getName_tr());
+        module.setName_lo(followUpModule.getName_lo());
+        module.setName_vi(followUpModule.getName_vi());
+        module.setName_th(followUpModule.getName_th());
+        module.setAnnual_survey(followUpModule.getAnnual_survey());
+
+        return module;
     }
 }

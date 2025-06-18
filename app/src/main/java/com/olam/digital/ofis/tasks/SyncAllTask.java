@@ -1429,6 +1429,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         farmerResponse = response;
 
+                        deleteRoomDbValues();
+                        deleteSupplierDetails();
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
@@ -1925,7 +1927,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void GetAllDiagnosticModule() {
-        deleteRoomDbValues();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
             ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
@@ -2011,7 +2012,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     public void syncSupplierDetails() {
-        deleteSupplierDetails();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
             ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<SupplierResponse> call = retrofitClient.getAllSupplierData();

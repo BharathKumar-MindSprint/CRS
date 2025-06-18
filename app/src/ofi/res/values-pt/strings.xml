@@ -625,7 +625,7 @@
     <string name="name">Nome:</string>
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Por favor, assine dentro da caixa limite</string>
+    <string name="please_sign_within_the_boundary_box">Por favor, assine dentro da caixa</string>
 
     <string name="matching_farmer_records">Matching Farmer Records</string>
     <string name="matching_results_found">Resultados correspondentes encontrados</string>
