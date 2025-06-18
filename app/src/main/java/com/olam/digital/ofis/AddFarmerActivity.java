@@ -1894,7 +1894,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             if (updFarmerId > 0) {
                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                 ViewFarmerActivity.farmerId = editFarmerId;
-                                ViewFarmerActivity.farmSurvey = false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -1934,7 +1933,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
-                                ViewFarmerActivity.farmSurvey =false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);

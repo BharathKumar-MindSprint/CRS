@@ -489,8 +489,6 @@ public class SyncAllTask extends SyncTask {
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
-            }else{
-                SettingsActivity.completeSetup();
             }
             if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 photoCheckboxDownload();
