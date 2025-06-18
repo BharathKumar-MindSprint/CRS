@@ -77,16 +77,9 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class
-        //Version 18
-//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-//                Children.class,  Country.class,
-
-
-        },
-        version = 18
-       // autoMigrations ={@AutoMigration(from =17, to=18)}
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class},
+        version = 18,
+        autoMigrations = {@AutoMigration(from = 17, to = 18)}
         )
 
 public abstract class OFISRoomDB extends RoomDatabase {
@@ -258,63 +251,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
-
-        final Migration MIGRATION_17_18 = new Migration(17, 18) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS supplier (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        "supplierId TEXT NOT NULL, " +
-                        "supplierName TEXT, " +
-                        "primaryPhoneNumber TEXT, " +
-                        "secondaryPhoneNumber TEXT, " +
-                        "supplierTypeId INTEGER, " +
-                        "productId INTEGER, " +
-                        "countryId INTEGER, " +
-                        "region TEXT, " +
-                        "street TEXT, " +
-                        "city TEXT, " +
-                        "district TEXT, " +
-                        "supplierGroupId INTEGER)");
-
-                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_type (" +
-                        "supplierTypeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "type TEXT, " +
-                        "typeEs TEXT, " +
-                        "typeFr TEXT, " +
-                        "typeId TEXT, " +
-                        "typeIn TEXT, " +
-                        "typeLo TEXT, " +
-                        "typePt TEXT, " +
-                        "typeTh TEXT, " +
-                        "typeTr TEXT, " +
-                        "typeVi TEXT)");
-
-                database.execSQL("CREATE TABLE IF NOT EXISTS supplier_group (" +
-                        "supplierGroupId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "supplierGroupName TEXT, " +
-                        "countryId INTEGER, " +
-                        "productId INTEGER, " +
-                        "supplierTypeId INTEGER, " +
-                        "supplierId INTEGER)");
-
-                database.execSQL("ALTER TABLE DmMainModule ADD COLUMN supplierType INTEGER");
-
-                database.execSQL(
-                        "CREATE TABLE IF NOT EXISTS supplier_submitted_modules (" +
-                                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "submitted_date TEXT, " +
-                                "supplier_id TEXT, " +
-                                "module_id TEXT, " +
-                                "sync_status TEXT)"
-                );
-            }
-        };
-
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18)
+                    .addMigrations(MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
                     .fallbackToDestructiveMigration()
                     .build();
         }
