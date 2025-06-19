@@ -1221,7 +1221,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="stakeholder_not_synced">Désolé, mais le stakeholder n\'a pas encore été synchronisé. Veuillez synchroniser le stakeholder d\'abord</string>
     <string name="consent_not_synced">Désolé, mais le consentement n\'a pas encore été synchronisé. Veuillez synchroniser le consentement d\'abord</string>
     <string name="survey_already_synced">Ce sondage a déjà été répondu par un autre enquêteur. Veuillez enregistrer et mettre à jour votre application OFIS</string>
-
     <string name="supplier_and_surveys">Fournisseurs et enquêtes</string>
     <string name="title_find_supplier_and_survey">Trouver un fournisseur</string>
     <string name="select_supplier">Sélectionner un fournisseur</string>
@@ -1245,5 +1244,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
+
+
+    <string name="no_signature_available">Signature non disponible</string>
 
 </resources>

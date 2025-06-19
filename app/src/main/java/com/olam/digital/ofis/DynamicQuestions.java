@@ -710,7 +710,7 @@ public class DynamicQuestions {
     private void saveCalculatedAnswerEntry(int questionId, int answerId, int repeaterItemPosition, String answer, String subAnswers) {
         try {
             if (viewAnswer) return;
-            if (answer.length() > 0) {
+            if (answer != null && !answer.isEmpty()) {
                 boolean isNew = true;
                 for (int i = 0; i < answerSet.size(); i++) {
                     JSONObject currentAnswer = answerSet.get(i);
@@ -763,7 +763,7 @@ public class DynamicQuestions {
     public void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, Integer globalMetricId, Integer localMetricId, double metricAnswer) {
         try {
             if (viewAnswer) return;
-            if (answer.length() > 0) {
+            if (answer != null && !answer.isEmpty()) {
                 boolean isNew = true;
                 for (int i = 0; i < answerSet.size(); i++) {
                     JSONObject currentAnswer = answerSet.get(i);

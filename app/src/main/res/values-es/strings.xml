@@ -881,11 +881,9 @@
     <string name="skip">Saltar</string>
     <string name="eudr_survey_remainder_message">"Por favor complete la encuesta de de verificación de campo (on-ground verification survey) asignada "</string>
     <string name="edur_survey_remainder">Recordatorio de encuesta de EUDR</string>
-
     <string name="gallery_is_not_available_in_mobile">La galería no está disponible en el móvil</string>
     <string name="something_went_wrong_please_try_again">Algo salió mal, por favor intenta de nuevo</string>
     <string name="image_size_exceeds_5_mb">El tamaño de la imagen supera los 5 MB. Por favor, elige una imagen más pequeña.</string>
-
     <string name="mandate_survey">¡Por favor, complete primero la encuesta obligatoria!</string>
     <string name="mandate_survey_not_synced">Lo siento, pero la encuesta obligatoria aún no se ha sincronizado. Por favor, sincronice primero la encuesta obligatoria</string>
     <string name="stakeholder_not_synced">Lo siento, pero el stakeholder aún no ha sido sincronizado. Por favor, sincronice el stakeholder primero</string>
@@ -915,5 +913,8 @@
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
+
+    <string name="no_signature_available">Firma no disponible</string>
+
 </resources>
 

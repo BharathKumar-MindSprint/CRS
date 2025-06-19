@@ -3796,7 +3796,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     // Post Child Survey Registration
-
     private void postChildModule(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         // create the JSON object required to sync this module
         final JSONObject submission = new JSONObject();
@@ -3808,6 +3807,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         final long childNwId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
         final String surveyCode = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE));
+        final int followUpCount = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
         Cursor farmerModule = null;
         Cursor extraInfo = null;
         Cursor moduleAnswers = null;
@@ -3860,11 +3860,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             // child Request Body
                             submission.put("childrenId", childRegisteredId);
-//                        submission.put("surveyYear",submissionDate.substring(0,4));
                             submission.put("surveyYear", ChildLabourUtils.SURVEY_YEAR);
                             submission.put("moduleId", moduleId);
                             submission.put("farmerId", farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
                             submission.put("surveyCode", surveyCode);
+                            submission.put("followUpCount", followUpCount);
 
                             submission.put("uploadAttempts", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                             submission.put("uploadId", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
@@ -3970,7 +3970,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
                                                 dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
-                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.toLowerCase().equals("signature")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -3998,6 +3998,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         answer.put("has_photo_upload", true);
                                     } else {
                                         answer.put("has_photo_upload", false);
+                                    }
+
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().equals("signature")) {
+                                        answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
 
                                     if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {

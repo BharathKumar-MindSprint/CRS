@@ -63,19 +63,14 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private ProgressDialog m_ProgressDialog;
     Button buttonSave, buttonPhotoCheckbox;
     private static ProgressDialog progressDialog;
-    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
-    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX = 1111;
     private final static int MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX = 2222;
     Button buttonPrivacyConsent, buttonReenterPasscode;
     OFISRoomDB roomDB;
-
     private long lastClickTime = 0;
-    TextView deviceid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +152,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         buttonPrivacyConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   Intent intent=new Intent(SettingsActivity.this, PrivacyStatementActivity.class);
                 Intent intent=new Intent(SettingsActivity.this, PrivacyStatementWebViewActivity.class);
                 startActivity(intent);
 
@@ -173,14 +167,14 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     {
         super.onResume();
         String enumerator_id = Utilities.getFromSharedPrefs(context);
-        if (enumerator_id.length() > 0) {
+        if (!enumerator_id.isEmpty()) {
             enumeratorID.setText(enumerator_id);
         }
 
     }
 
     private void setupUI() {
-        enumeratorID = (EditText) findViewById(R.id.enumeratorID);
+        enumeratorID = findViewById(R.id.enumeratorID);
     }
 
     private void bindSaveButton() {
@@ -222,14 +216,14 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     private void bindHelpButton() {
 
-        Button askForHelp = (Button) findViewById(R.id.buttonAssistance);
-        Button sendForHelp = (Button) findViewById(R.id.buttonAssistanceSend);
-        final EditText name = (EditText) findViewById(R.id.UserName);
-        final Spinner countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
-        final EditText phoneNo = (EditText) findViewById(R.id.UserPhoneNo);
-        final EditText faultDescription = (EditText) findViewById(R.id.FaultDescription);
-        final ImageButton hideHelpBox = (ImageButton) findViewById(R.id.helpCloseButton);
-        final LinearLayout helpRequestHolder = (LinearLayout) findViewById(R.id.helpRequestHolder);
+        Button askForHelp = findViewById(R.id.buttonAssistance);
+        Button sendForHelp = findViewById(R.id.buttonAssistanceSend);
+        final EditText name = findViewById(R.id.UserName);
+        final Spinner countrySpinner = this.findViewById(R.id.spinner_country);
+        final EditText phoneNo = findViewById(R.id.UserPhoneNo);
+        final EditText faultDescription = findViewById(R.id.FaultDescription);
+        final ImageButton hideHelpBox = findViewById(R.id.helpCloseButton);
+        final LinearLayout helpRequestHolder = findViewById(R.id.helpRequestHolder);
         final Animation mSlideBottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
         final Animation mSlideBottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
 
@@ -570,11 +564,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         });
 
         alert.show();
-    }
-
-    public static void completeSetup() {
-        HomeActivity.GetAccessToken("settings");
-
     }
 
     public void photoCheckboxDownload(){
