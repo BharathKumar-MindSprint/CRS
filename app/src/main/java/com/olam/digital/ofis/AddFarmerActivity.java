@@ -1939,7 +1939,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             if (updFarmerId > 0) {
                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                 ViewFarmerActivity.farmerId = editFarmerId;
-                                ViewFarmerActivity.farmSurvey = false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -1979,7 +1978,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
-                                ViewFarmerActivity.farmSurvey =false;
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -2683,7 +2681,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                         signatureDialog.dismiss();
                     } else {
-                        Toast.makeText(AddFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddFarmerActivity.this, res.getString(R.string.no_signature_available), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                 }

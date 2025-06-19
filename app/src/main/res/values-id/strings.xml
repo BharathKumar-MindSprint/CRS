@@ -909,5 +909,5 @@
     <string name="supplier_search_hint">Cari berdasarkan Nama Pemasok atau Id Pemasok</string>
     <string name="spinner_supplier_group">Grup Pemasok</string>
     <string name="supplier_group">Grup Pemasok</string>
-
+    <string name="no_signature_available">Tanda tangan tidak tersedia</string>
 </resources>

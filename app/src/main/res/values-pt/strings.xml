@@ -917,6 +917,6 @@
     <string name="supplier_search_hint">Pesquisar por nome do fornecedor ou identificação do fornecedor</string>
     <string name="spinner_supplier_group">Grupo de fornecedores</string>
     <string name="supplier_group">Grupo de fornecedores</string>
-
+    <string name="no_signature_available">Assinatura não disponível</string>
 </resources>
 

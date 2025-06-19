@@ -63,11 +63,9 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
     private final boolean hasSubmittedModules;
     private final Calendar currentDate;
     private final DataLayer dl;
-    private final Context mContext;
     private JSONArray submittedModulesArray;
     private String moduleColumnSuffix = "";
     int roleId;
-    String viewModule = "0";
     long farmerId;
 
     boolean ispolygonCaptured;
@@ -75,16 +73,14 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
     boolean isAvailableInStakeHolderList;
     HashMap<Integer,SubmittedInfo> farmSubmittedHashMapList;
     boolean isAtLeastOnePlotSurveyCaptured;
-    boolean isMandateSurveyCompleted = false;
+    boolean isMandateSurveyCompleted;
     Set<Integer> mandateSurveyList = new HashSet<>();
-    String multiFarmId;
 
     OFISRoomDB db;
 
 
-    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_, int roleId, long farmerId, String multiFarmId, boolean isAtLeastOnePlotSurveyCaptured, boolean isMandateSurveyCompleted, Set<Integer> mandateSurveyList) throws JSONException {
+    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_, int roleId, long farmerId, boolean isAtLeastOnePlotSurveyCaptured, boolean isMandateSurveyCompleted, Set<Integer> mandateSurveyList) throws JSONException {
         super(c, R.layout.listview_module_list, cursor, adapterCols, adapterRowViews, 0);
-        this.mContext = c;
         this.layout = R.layout.listview_module_list;
         this.inflater = LayoutInflater.from(c);
         this.res = res_;
@@ -98,7 +94,6 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
         this.dl = new DataLayer(res, c);
         this.roleId=roleId;
         this.farmerId=farmerId;
-        this.multiFarmId=multiFarmId;
         this.isAtLeastOnePlotSurveyCaptured = isAtLeastOnePlotSurveyCaptured;
         this.isMandateSurveyCompleted = isMandateSurveyCompleted;
         this.mandateSurveyList = mandateSurveyList;

@@ -809,5 +809,5 @@
     <string name="supplier_search_hint">ค้นหาตามชื่อซัพพลายเออร์หรือรหัสซัพพลายเออร์</string>
     <string name="spinner_supplier_group">กลุ่มซัพพลายเออร์</string>
     <string name="supplier_group">กลุ่มซัพพลายเออร์</string>
-
+    <string name="no_signature_available">ลายเซ็นไม่พร้อมใช้งาน</string>
 </resources>
