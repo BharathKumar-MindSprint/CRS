@@ -786,11 +786,29 @@
     <string name="something_went_wrong_please_try_again">Bir şeyler yanlış gitti, lütfen tekrar deneyin</string>
     <string name="image_size_exceeds_5_mb">Görüntü boyutu 5MB\'yi aşıyor. Lütfen daha küçük bir görüntü seçin.</string>
     <string name="restriction_in_submodules">Devam etmek için lütfen tüm zorunlu soruları yanıtlayın</string>
-
+    <string name="no_signature_available">İmza mevcut değil</string>
     <string name="mandate_survey">Lütfen önce zorunlu anketi tamamlayın!</string>
     <string name="mandate_survey_not_synced">Üzgünüz, ancak zorunlu anket henüz senkronize edilmedi. Lütfen önce zorunlu anketi senkronize edin</string>
     <string name="stakeholder_not_synced">Üzgünüz, ancak paydaş henüz senkronize edilmedi. Lütfen önce paydaşı senkronize edin</string>
     <string name="consent_not_synced">Üzgünüz, ancak onay henüz senkronize edilmedi. Lütfen önce onayı senkronize edin</string>
     <string name="survey_already_synced">Bu anket başka bir sayıcı tarafından zaten yanıtlandı. Lütfen OFIS uygulamanızı kaydedin ve güncelleyin</string>
+
+    <string name="supplier_and_surveys">Tedarikçiler ve anketler</string>
+    <string name="title_find_supplier_and_survey">Tedarikçi arama</string>
+    <string name="select_supplier">Bir tedarikçi seçin</string>
+    <string name="supplier_not_found">Tedarikçi bulunamadı</string>
+    <string name="supplier_id">Tedarikçi Kimliği</string>
+    <string name="supplier_details">Tedarikçi detayları</string>
+    <string name="view_supplier">Tedarikçiyi görüntüle</string>
+    <string name="view_supplier_information">Tedarikçi bilgilerini görüntüleyin</string>
+    <string name="supplier_type">Tedarikçi tipi</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">Kanıt Yükleme</string>
+    <string name="supplier_survey">Tedarikçi Anketi</string>
+    <string name="evidence_is_missing">Kanıtlar Eksik</string>
+    <string name="supplier_search_hint">Tedarikçi Adı veya Tedarikçi Kimliğine Göre Arama</string>
+    <string name="spinner_supplier_group">Tedarikçi Grubu</string>
+    <string name="supplier_group">Tedarikçi Grubu</string>
 
 </resources>

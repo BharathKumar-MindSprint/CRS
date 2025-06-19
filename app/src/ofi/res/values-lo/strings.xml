@@ -770,7 +770,7 @@
     <string name="checking_hhgps_enumerator">ກວດ​ສອບ​ຕົວ​ເລກ GPS ຂອງ​ຄອບ​ຄົວ​</string>
     <string name="consent_statement">ຄຳສັ່ງ ຍິນຍອມ</string>
         <string name="Please_accept_consent">ທ່ານຕ້ອງຍອມຮັບການຍິນຍອມເພື່ອຊ່ວຍຊາວກະສິກອນ</string>
-        <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>
+        <string name="please_sign_within_the_boundary_box">ກະລຸນາເຂົ້າສູ່ລະບົບພາຍໃນກ່ອງ</string>
         <string name="zero_area_msg">ພື້ນທີ່ polygon ທີ່ບັນທຶກໄວ້ແມ່ນໜ້ອຍກວ່າພື້ນທີ່ກຳນົດຄ່າຂັ້ນຕ່ຳ (0.0009 HA). ກະລຸນາລອງບັນທຶກ polygon ອີກຄັ້ງ</string>
 
         <string name="direct_value_below_error">ກະລຸນາໃສ່ຄ່າຂອງຄຳຖາມ %1$d ຂ້າງລຸ່ມ %2$d</string>

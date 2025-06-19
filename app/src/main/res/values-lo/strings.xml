@@ -1043,7 +1043,6 @@
     <string name="skip">Skip</string>
     <string name="eudr_survey_remainder_message">"Please complete the assigned On-ground verification survey "</string>
     <string name="edur_survey_remainder">EUDR Survey Reminder</string>
-
     <string name="gallery_is_not_available_in_mobile">ຄັງຮູບບໍ່ມີໃຫ້ໃຊ້ງານໃນໂທລະສັບມືຖື</string>
     <string name="something_went_wrong_please_try_again">ມີບາງຢ່າງຜິດພາດ, ກະລຸນາລອງໃໝ່</string>
     <string name="image_size_exceeds_5_mb">ຂະໜາດຮູບເກີນ 5MB. ກະລຸນາເລືອກຮູບທີ່ນ້ອຍກວ່ານີ້.</string>
@@ -1054,6 +1053,24 @@
     <string name="stakeholder_not_synced">ຂໍອະໄພ, ແຕ່ stakeholder ຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງ stakeholder ກ່ອນ</string>
     <string name="consent_not_synced">ຂໍອະໄພ, ແຕ່ການຍິນຍອມຍັງບໍ່ໄດ້ຖືກຊິງ. ກະລຸນາຊິງການຍິນຍອມກ່ອນ</string>
     <string name="survey_already_synced">ການສຳຫຼວດນີ້ໄດ້ຖືກຕອບໂດຍຜູ້ສຳຫຼວດຄົນອື່ນແລ້ວ. ກະລຸນາບັນທຶກແລະອັບເດດແອັບ OFIS ຂອງທ່ານ</string>
+    <string name="supplier_and_surveys">ຜູ້ສະຫນອງແລະການສໍາຫຼວດ</string>
+    <string name="title_find_supplier_and_survey">ຄົ້ນຫາຜູ້ສະຫນອງ</string>
+    <string name="select_supplier">ເລືອກຜູ້ສະຫນອງ</string>
+    <string name="supplier_not_found">ບໍ່ພົບຜູ້ສະໜອງ</string>
+    <string name="supplier_id">ຕົວຕົນຂອງຜູ້ຜະລິດ</string>
+    <string name="supplier_details">ລາຍລະອຽດຜູ້ສະຫນອງ</string>
+    <string name="view_supplier">ຜູ້ຜະລິດສະແດງ</string>
+    <string name="view_supplier_information">ເບິ່ງລາຍລະອຽດຜູ້ສະຫນອງ</string>
+    <string name="supplier_type">ປະເພດຜູ້ສະຫນອງ</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">ອັບໂຫຼດຫຼັກຖານ</string>
+    <string name="supplier_survey">ການສໍາຫຼວດຜູ້ສະຫນອງ</string>
+    <string name="evidence_is_missing">ຫຼັກຖານຂາດຫາຍໄປ</string>
+    <string name="supplier_group">ກຸ່ມຜູ້ສະຫນອງ</string>
+    <string name="supplier_search_hint">ຄົ້ນຫາໂດຍຊື່ຜູ້ສະຫນອງຫຼື ID ຜູ້ສະຫນອງ</string>
+    <string name="spinner_supplier_group">ກຸ່ມຜູ້ສະຫນອງ</string>
+    <string name="no_signature_available">ລາຍເຊັນບໍ່ມີໃຫ້</string>
 </resources>
 
 

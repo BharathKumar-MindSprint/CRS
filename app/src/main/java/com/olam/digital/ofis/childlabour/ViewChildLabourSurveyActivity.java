@@ -18,6 +18,7 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.adapter.ChildSurveyRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
@@ -28,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,6 +45,8 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     private String moduleName;
     private List<ChildModuleDto> childModuleDtoList;
+    private ChildModuleDto followUpModule = null;
+    private Integer followUpCount = null;
     TextView childNameTv;
 
     private static final String FARMER_ID = "FARMER_ID";
@@ -84,14 +88,25 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         if (childID != null) {
             children = new ChildLabourLogic().getChildrenDTO(this, String.valueOf(childID));
         }
-        if (children!=null)
-        childNameTv.setText(children.getName());
+
+        if (children!=null) {
+            childNameTv.setText(children.getName());
+        }
+
     }
 
-    // method to populate the survey list
     private void populateSurveyList() {
-        childModuleDtoList = new ChildLabourLogic().getChildSurveyModuleList(this, farmerID,String.valueOf(children.getId()));
+        JSONObject moduleDtoJson=null;
+        try {
+            String moduleDetails=children.getModuleDTO();
+            moduleDtoJson=new JSONObject(moduleDetails);
+            followUpCount = Integer.valueOf(moduleDtoJson.optString("followUpCount"));
 
+        }catch (Exception e){}
+
+        Object[] childSurveyModules = new ChildLabourLogic().getChildSurveyModuleList(this, farmerID,String.valueOf(children.getId()), followUpCount);
+        followUpModule = (ChildModuleDto) childSurveyModules[0];
+        childModuleDtoList = (List<ChildModuleDto>) childSurveyModules[1];
         Collections.sort(childModuleDtoList, new SortbySurveyCode());
 
         JSONObject submittedModules = null;
@@ -103,25 +118,9 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
         }catch (Exception e){}
 
-        JSONObject actionTicked = null;
-        JSONArray actionTickedArray=null;
-        try {
-            String actionTickedJSON = children.getActionTicked();
-            actionTicked=new JSONObject(actionTickedJSON);
-            actionTickedArray= actionTicked.getJSONArray(ChildLabourUtils.CHILD_LABOUR_ACTION_TICK_LIST);
-
-        }catch (Exception e){}
-
-        JSONObject moduleDtoJson=null;
-        try {
-            String moduleDetails=children.getModuleDTO();
-            moduleDtoJson=new JSONObject(moduleDetails);
-        }catch (Exception e){}
-
-
-        if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
+        if (childModuleDtoList != null && !childModuleDtoList.isEmpty()) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,actionTickedArray,moduleDtoJson);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,moduleDtoJson, followUpCount);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -139,12 +138,16 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
                     moduleName=txtView.getText().toString();
                     Bundle bundle=new Bundle();
                     bundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerID));
+                    ChildModuleDto module = childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE) ? followUpModule : childModuleDto;
                     bundle.putSerializable("childModule", childModuleDto);
                     bundle.putSerializable("children", children);
+                    module.setName(childModuleDto.getName());
+                    bundle.putSerializable("childModule", module);
+                    bundle.putInt(Utilities.FOLLOW_UP_COUNT, followUpCount == null ? 0 : followUpCount);
 
                     Intent intent=new Intent(ViewChildLabourSurveyActivity.this,ChildLabourCompleteModuleActivity.class);
-                     intent.putExtras(bundle);
-                    setRequiredData(intent,childModuleDto);
+                    intent.putExtras(bundle);
+                    setRequiredData(intent,module);
                     // show the list of surveys
                     if (DynamicQuestions.getInstance() != null) {
                         DynamicQuestions.clearInstance();
@@ -224,15 +227,6 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         }
 
         intent.putExtra(MODULE_NAME, moduleName);
-
-//        intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
-//        intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
-//        intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
-//        intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
-//        intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
-//        intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
-
-
     }
 
     private void initData() {

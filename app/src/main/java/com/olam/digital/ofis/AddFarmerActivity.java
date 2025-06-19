@@ -2641,7 +2641,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                         signatureDialog.dismiss();
                     } else {
-                        Toast.makeText(AddFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddFarmerActivity.this, res.getString(R.string.no_signature_available), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                 }

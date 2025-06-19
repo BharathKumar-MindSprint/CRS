@@ -10,6 +10,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.olam.digital.ofis.agrisupplier.dao.SupplierDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierGroupDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierSubmittedModuleDao;
+import com.olam.digital.ofis.agrisupplier.dao.SupplierTypeDao;
+import com.olam.digital.ofis.agrisupplier.entity.Supplier;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
+import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
@@ -26,7 +34,30 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.DmMasterDataDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.OnGroundSurveyNotificationDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.SurveyDurationTypeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Programme;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
@@ -46,16 +77,9 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class,
-        //Version 18
-//        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-//                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-//                Children.class,  Country.class,
-
-
-        },
-        version = 17
-       // autoMigrations ={@AutoMigration(from =17, to=18)}
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class},
+        version = 18,
+        autoMigrations = {@AutoMigration(from = 17, to = 18)}
         )
 
 public abstract class OFISRoomDB extends RoomDatabase {
@@ -110,6 +134,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract MultiStakeHolderDao multiStakeHolderDao();
 
     public abstract OnGroundSurveyNotificationDao onGroundSurveyNotificationDao();
+    public abstract SupplierTypeDao supplierTypeDao();
+    public abstract SupplierDao supplierDao();
+    public abstract SupplierGroupDao supplierGroupDao();
+    public abstract SupplierSubmittedModuleDao supplierSubmittedModuleDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
@@ -145,7 +173,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS MultiStakeHolder (" +
-                "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                        "msId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                         "msTempId INTEGER," +
                         "farmerId INTEGER," +
                         "msName TEXT," +
@@ -222,7 +250,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
 
             }
         };
-
 
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
