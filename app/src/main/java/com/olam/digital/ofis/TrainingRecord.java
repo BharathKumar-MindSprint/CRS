@@ -1,6 +1,6 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,12 +10,11 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.location.Location;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -26,6 +25,7 @@ import androidx.core.content.FileProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,16 +35,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
-import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,6 +78,7 @@ public class TrainingRecord extends BaseListActivity{
     private boolean editMode, readOnlyMode, firstLoad = true;
 
     private Spinner courseSpinner, trainingModuleSpinner;
+    Button completeTrainingRecord;
     private String columnSuffix;
 
     private Cursor trainingAttendees, trainingRecord;
@@ -94,6 +94,9 @@ public class TrainingRecord extends BaseListActivity{
 
    public static HashMap<Long,Integer> farmerAttendeeList =null;
    public static boolean isCaptureAttendee;
+
+    public boolean signatureAllowed;
+    String currentPhotoPathBackup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +119,8 @@ public class TrainingRecord extends BaseListActivity{
 
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
+        completeTrainingRecord = (Button) findViewById(R.id.completeTrainingRecord);
+
 
         columnSuffix = Utilities.getLocaleSuffix(res);
         if (columnSuffix.equalsIgnoreCase("_en")) {
@@ -326,7 +331,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId);
+            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed);
             listView.setAdapter(customListAdapter_selectedAttendees);
             //setListAdapter(customListAdapter_selectedAttendees);
         }
@@ -367,6 +372,12 @@ public class TrainingRecord extends BaseListActivity{
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
+                    getTrainingAttendees();
+                    if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                        completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+                    } else {
+                        completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                    }
                 }
             }
         });
@@ -374,6 +385,86 @@ public class TrainingRecord extends BaseListActivity{
         alert.show();
 
 
+    }
+
+    public void signTrainingAttendee(int attendeeId) {
+        final boolean[] isSigned = {false};
+        long farmerId = dl.getFarmerByAttendeeItem(attendeeId);
+        Cursor farmer = dl.getFarmerById(farmerId);
+        final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        TextView tv_attendeeName = (TextView) signatureDialog.findViewById(R.id.tv_attendeeName);
+        if (farmer != null && farmer.getCount() > 0) {
+            farmer.moveToFirst();
+            tv_attendeeName.setVisibility(View.VISIBLE);
+            tv_attendeeName.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+        }
+
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                isSigned[0] = true;
+            }
+
+            @Override
+            public void onClear() {
+                isSigned[0] = false;
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureDialog.dismiss();
+            }
+        });
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (isSigned[0]) {
+                        Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
+                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        saveSignatureImage(signatureBitmap, signatureName);
+                        dl.saveAttendeeSignature(attendeeId, signatureName);
+                        signatureDialog.dismiss();
+                        getTrainingAttendees();
+
+                        if (dl.areAllSignaturesPresent(trainingRecordId)){
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                        }
+                    } else {
+                        Toast.makeText(TrainingRecord.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        signatureDialog.show();
     }
 
     //------------------------Temp Testing for OW-431 - Start-----------------------------
@@ -422,6 +513,35 @@ public class TrainingRecord extends BaseListActivity{
         }
         
         return multiSelectFlag;
+    }
+
+    public void saveSignatureImage(Bitmap bitmap, String signatureName) {
+        File directory = new File(getFilesDir(), "signatures");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File imageFile = new File(directory, signatureName);
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showAttendeeSignature(int attendeeId, ImageButton attendeeSignature) {
+        String signatureName = dl.getSignatureByAttendeeId(attendeeId);
+        if (attendeeId != -1) {
+            if (signatureName != null) {
+                File directory = new File(getFilesDir(), "signatures");
+                File imageFile = new File(directory, signatureName);
+                if (imageFile.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                    attendeeSignature.setImageBitmap(bitmap);
+                }
+            } else {
+                attendeeSignature.setImageDrawable(getResources().getDrawable(R.drawable.empty_signature));
+            }
+        }
     }
     //------------------------Temp Testing for OW-431 - End-----------------------------
 
@@ -505,6 +625,14 @@ public class TrainingRecord extends BaseListActivity{
                 // get the capture training Attendee eligibility
                 if (trainingModuleId != 0 ) {
                     isCaptureAttendee = dl.isCaptureAttendeeEligible(trainingModuleId);
+                    if (!readOnlyMode) {
+                        signatureAllowed = dl.isSignatureAllowed(trainingModuleId);
+                        if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+                        } else {
+                            completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+                        }
+                    }
                     getTrainingAttendees();
                 }
 
@@ -653,7 +781,6 @@ public class TrainingRecord extends BaseListActivity{
             });
         }
 
-        Button completeTrainingRecord = (Button) findViewById(R.id.completeTrainingRecord);
         if (readOnlyMode) {
             completeTrainingRecord.setVisibility(View.GONE);
         } else {
@@ -664,7 +791,16 @@ public class TrainingRecord extends BaseListActivity{
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
-                    } else {
+                    } else if (signatureAllowed) {
+                        if (!dl.areAllSignaturesPresent(trainingRecordId)){
+                            Toast.makeText(context, getResources().getString(R.string.sign_all_attendee), Toast.LENGTH_LONG).show();
+                        } else {
+                            addOrUpdateTrainingRecord();
+                            Intent intent = new Intent(context, TrainingRecordConfirmation.class);
+                            intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                            context.startActivity(intent);
+                        }
+                    }else {
                         addOrUpdateTrainingRecord();
                         Intent intent = new Intent(context, TrainingRecordConfirmation.class);
                         intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
@@ -679,8 +815,13 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         if (editMode) {
-         //   getTrainingRecord();
+            getTrainingRecord();
             getTrainingAttendees();
+            if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
+            } else {
+                completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
+            }
         }
 
     }
@@ -699,11 +840,12 @@ public class TrainingRecord extends BaseListActivity{
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
                 } else {
-                    mCurrentPhotoPath = null;
+                    setCurrentPhotoPath(currentPhotoPathBackup);
                 }
         }
     }
     private void bindTrainingPhotoButton() {
+        currentPhotoPathBackup = getCurrentPhotoPath();
         // New
         File photoFile = null;
         try {

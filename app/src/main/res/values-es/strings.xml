@@ -908,5 +908,9 @@
     <string name="evidence_is_missing">Faltan pruebas</string>
     <string name="limiter">%1$s - %2$s</string>
     <string name="no_signature_available">Firma no disponible</string>
+
+    <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
+    <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
+
 </resources>
 

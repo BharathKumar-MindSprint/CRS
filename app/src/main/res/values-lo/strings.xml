@@ -1071,6 +1071,9 @@
     <string name="supplier_search_hint">ຄົ້ນຫາໂດຍຊື່ຜູ້ສະຫນອງຫຼື ID ຜູ້ສະຫນອງ</string>
     <string name="spinner_supplier_group">ກຸ່ມຜູ້ສະຫນອງ</string>
     <string name="no_signature_available">ລາຍເຊັນບໍ່ມີໃຫ້</string>
+
+    <string name="enter_attendee_relation_name">ກະລຸນາໃສ່ຊື່ຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="sign_all_attendee">ຕ້ອງການລາຍເຊັນສຳລັບຜູ້ເຂົ້າຮ່ວມທຸກຄົນ!</string>
 </resources>
 
 

@@ -14,7 +14,7 @@ import android.util.Log;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 158;
+    private static final int DATABASE_VERSION = 159;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -797,14 +797,18 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " INTEGER, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED + " INTEGER DEFAULT 1, "
             + OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED + " INTEGER, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE + " TEXT, "
             + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + " TEXT, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + " TEXT, "
-            + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + " TEXT, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE + " TEXT )";
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + " TEXT, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE + " TEXT, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + " TEXT )";
 
     private static final String OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME
             + " ( " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " INTEGER, "
             + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " INTEGER, " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME + " TEXT, "
             + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE + " INTEGER, " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP + " TEXT, "
             + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID + " TEXT, "
-            + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER + " TEXT, " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID + " TEXT )";
+            + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE + " TEXT )";
 
     private static final String OFIS_TRAININGMODULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingModule.TABLE_NAME
             + " ( " + OFISDBContract.TrainingModule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingModule.COLUMN_NAME_COURSE_ID + " INTEGER, "
@@ -814,7 +818,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.TrainingModule.COLUMN_NAME_CAPTURE_ATTENDEE + " TEXT, "
             + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_LO + " TEXT, "
-            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TH + " TEXT )";
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_VI + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE + " TEXT )";
 
     private static final String OFIS_TRAININGRECORD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingRecord.TABLE_NAME
             + " ( " + OFISDBContract.TrainingRecord.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID + " INTEGER, "
@@ -1093,6 +1099,9 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow157(sqLiteDatabase);
         }
 
+        if (oldVersion < 159) {
+            migrateFromVersionBelow158(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1367,6 +1376,16 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFromVersionBelow158(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE +" TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }
