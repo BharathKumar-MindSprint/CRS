@@ -29,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
-        versionCode 94
-        versionName "10.8.6"
+        versionCode 95
+        versionName "10.8.7"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -75,10 +75,10 @@ android {
         }
 
         sitofi {
-            applicationId "com.olam.digital.ofispreprod"
+            applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             resValue "string", "applicationName", "OFI SIT"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/"'
             buildConfigField 'String', 'BASE_URL', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
@@ -292,6 +292,8 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.7.1'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1' // for OkHttp library
 }
 
 apply plugin: 'com.google.gms.google-services'

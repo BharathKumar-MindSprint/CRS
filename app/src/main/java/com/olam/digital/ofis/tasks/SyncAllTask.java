@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -488,8 +489,6 @@ public class SyncAllTask extends SyncTask {
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
-            }else{
-                SettingsActivity.completeSetup();
             }
             if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 photoCheckboxDownload();
@@ -799,8 +798,8 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-                            String enumName= response.getJSONObject("outputdata").get(GPSConstants.COLUMN_ENUMERATOR_NAME).toString();
-                            Utilities.setEnumeratorNameSharedPrefs(context,GPSConstants.COLUMN_ENUMERATOR_NAME,enumName);
+                            String enumName= response.getJSONObject("outputdata").get(StringConstants.ENUMERATOR_NAME).toString();
+                            Utilities.setEnumeratorNameSharedPrefs(context,StringConstants.ENUMERATOR_NAME,enumName);
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
                             JSONObject item = new JSONObject();
@@ -1430,6 +1429,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         farmerResponse = response;
 
+                        deleteRoomDbValues();
+                        deleteSupplierDetails();
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
@@ -1926,7 +1927,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void GetAllDiagnosticModule() {
-        deleteRoomDbValues();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
             ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
@@ -2012,7 +2012,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     public void syncSupplierDetails() {
-        deleteSupplierDetails();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
             ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<SupplierResponse> call = retrofitClient.getAllSupplierData();

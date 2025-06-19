@@ -788,7 +788,6 @@
     <string name="stakeholder_not_synced">ขออภัย แต่ stakeholder ยังไม่ได้รับการซิงค์ กรุณาซิงค์ stakeholder ก่อน</string>
     <string name="consent_not_synced">ขออภัย แต่การยินยอมยังไม่ได้รับการซิงค์ กรุณาซิงค์การยินยอมก่อน</string>
     <string name="survey_already_synced">แบบสำรวจนี้ได้รับการตอบโดยผู้สำรวจคนอื่นแล้ว กรุณาบันทึกและอัปเดตแอป OFIS ของคุณ</string>
-
     <string name="supplier_and_surveys">ซัพพลายเออร์และการสำรวจ</string>
     <string name="title_find_supplier_and_survey">ค้นหาซัพพลายเออร์</string>
     <string name="select_supplier">เลือกซัพพลายเออร์</string>
@@ -806,5 +805,15 @@
     <string name="supplier_search_hint">ค้นหาตามชื่อซัพพลายเออร์หรือรหัสซัพพลายเออร์</string>
     <string name="spinner_supplier_group">กลุ่มซัพพลายเออร์</string>
     <string name="supplier_group">กลุ่มซัพพลายเออร์</string>
+
+    <string name="farmer_code_already_exists">"รหัสเกษตรกรมีอยู่แล้ว!"</string>
+    <string name="farmer_code">"รหัสเกษตรกร"</string>
+
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
+
+    <string name="no_signature_available">ลายเซ็นไม่พร้อมใช้งาน</string>
 
 </resources>

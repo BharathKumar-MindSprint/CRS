@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -1460,8 +1461,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public static void GetAccessToken(String value) {
         ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
-        Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, StringConstants.COUNTRY_CODE);
         counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
 
         final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);

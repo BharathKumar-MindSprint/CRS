@@ -4440,7 +4440,7 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID +
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " in (" + submoduleIdsString + ") AND "
-                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " = 12 ORDER BY "
+                + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID +  " in  (12, 51) ORDER BY "
                 + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -8042,5 +8042,30 @@ public class DataLayer {
             cursor.close();
         }
         return isMandate;
+    }
+
+    public int getFarmerCodeCount(String farmerCode) {
+        String query = "SELECT COUNT(*) FROM " + OFISDBContract.FarmerEntry.TABLE_NAME +
+                " WHERE " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{farmerCode});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
+    }
+
+    public void updateDuplicateFarmerCode(long farmerId){
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE,"true");
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values,  whereClause , whereArgs);
     }
 }
