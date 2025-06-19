@@ -52,7 +52,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
 import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
@@ -927,7 +926,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void downloadSurveyWrap() {
         try {
-            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList(context);
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList == null || moduleList.size() == 0) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
@@ -1435,7 +1434,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         protected Boolean doInBackground(Object... objects) {
             try {
                 DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
-                ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+                ArrayList<ModuleDTO> duplicateList = dl.viewModuleList(staticContext);
                 moduleList = dl.removeDuplicateModule(duplicateList);
 
             } catch (Exception e) {

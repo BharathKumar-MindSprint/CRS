@@ -1056,7 +1056,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="reenter_passcode">Déconnexion</string>
     <string name="android_id">ID d\'installation de l\'appareil : </string>
     <string name="logout_note">Êtes-vous sûr de vouloir vous déconnecter ? </string>
-    <string name="download_survey_data">Télécharger les données de l\'enquête</string>
     <string name="select_fgsection">Sélectionnez le groupe d\'agriculteurs et la section</string>
     <string name="download">Télécharger</string>
     <string name="downloading">Téléchargement...</string>

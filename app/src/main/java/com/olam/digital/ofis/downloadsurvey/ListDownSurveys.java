@@ -14,11 +14,14 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.downloadsurvey.adapter.FilterModuleRecyclerAdapter;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.downloadsurvey.listener.OnItemSurveyClickListener;
+import com.olam.digital.ofis.downloadsurvey.polygondatadownload.PolygonFarmer;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ListDownSurveys extends BaseActivity {
 
@@ -36,7 +39,7 @@ public class ListDownSurveys extends BaseActivity {
 
     private void populateModuleList() {
         try {
-            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList(context);
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList != null && moduleList.size() > 0) {
                 filterModuleRecyclerAdapter = new FilterModuleRecyclerAdapter(moduleList, this);
@@ -53,14 +56,14 @@ public class ListDownSurveys extends BaseActivity {
                 filterModuleRecyclerAdapter.setOnItemClickListener(new OnItemSurveyClickListener() {
                     @Override
                     public void onModuleClick(View view, int position, ModuleDTO moduleDTO) {
-                    /*Toast.makeText(ListDownSurveys.this, moduleDTO.getName() +"\n id type:"
-                                    + moduleDTO.getModule_id() + "\n"
-                                    + moduleDTO.getModuleassignment_type() + "\n"
-                                    + moduleDTO.getModuleassignment_id()
-                            ,Toast.LENGTH_LONG).show();*/
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("module", moduleDTO);
-                        startActivity(new Intent(ListDownSurveys.this, DownloadSurveyData.class).putExtras(bundle));
+
+                        if (Objects.equals(moduleDTO.getShowType(), Utilities.TYPE_POLYGON)) {
+                            startActivity(new Intent(ListDownSurveys.this, PolygonFarmer.class));
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("module", moduleDTO);
+                            startActivity(new Intent(ListDownSurveys.this, DownloadSurveyData.class).putExtras(bundle));
+                        }
                     }
                 });
 
