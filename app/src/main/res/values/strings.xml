@@ -1447,4 +1447,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="supplier_survey">Supplier Survey</string>
     <string name="evidence_is_missing">Evidence Is Missing</string>
     <string name="no_signature_available">No signature is available</string>
+
+    <string name="enter_attendee_relation_name">Please enter the name of Attendee</string>
+    <string name="sign_all_attendee">Signature required for all participants!</string>
+
 </resources>

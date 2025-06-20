@@ -811,4 +811,7 @@
     <string name="spinner_supplier_group">Tedarikçi Grubu</string>
     <string name="supplier_group">Tedarikçi Grubu</string>
 
+    <string name="enter_attendee_relation_name">Lütfen katılımcının adını girin</string>
+    <string name="sign_all_attendee">Tüm katılımcılar için imza gereklidir!</string>
+
 </resources>
