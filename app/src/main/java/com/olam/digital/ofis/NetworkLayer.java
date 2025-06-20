@@ -86,6 +86,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by bengallienne on 29/11/14.
@@ -96,12 +97,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private final Resources res;
     private static final String BASE_URL = BuildConfig.BASE_URL;
     public static final String TAG = "NetworkLayer";
+    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
             .readTimeout(720, TimeUnit.SECONDS)
             .writeTimeout(720, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
+            .addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addNetworkInterceptor(interceptor)
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_SQLITE = MediaType.parse("application/x-sqlite3");
