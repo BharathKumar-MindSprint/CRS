@@ -327,6 +327,7 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
                 storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                storeableNids.put("backendDbId", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID)));
 
                 storeableNationalids.put(storeableNids);
 

@@ -1210,7 +1210,7 @@ public class DataLayer {
 
     public boolean addFarmerNationalids(Context context, Long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         int arrayLength = storeableNationalids.length();
-        if (status.equalsIgnoreCase("2") || status.equals("updateNationalId")) {
+        if (status.equalsIgnoreCase("2")) {
             deleteExistingNationalIdFromNq(context, farmerId);
         }
         boolean moderationstatus = false;
@@ -1223,6 +1223,7 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
+                String backendDbId = storeableNumber.has(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) ? storeableNumber.getString(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) : null;
                 if (storeableNumber.has("expiryDate")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
                 }
@@ -1232,7 +1233,15 @@ public class DataLayer {
                 if (isUnderModeration(storeableNumber.getString("nationalIdNumber"), String.valueOf(storeableNumber.getInt("nationalIdType")))) {
                     moderationstatus = true;
                 }
-                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                if (Objects.equals(backendDbId,null)) {
+                    db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                } else {
+                    String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " = ?";
+                    String[] whereArgs = new String[]{backendDbId};
+                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE, "false");
+                    db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values,whereClause,whereArgs);
+                }
+
 
                 if (status.equals("updateNationalId")) {
                     ContentValues values1 = new ContentValues();
@@ -1256,7 +1265,11 @@ public class DataLayer {
                 }
 
                 if (status.equalsIgnoreCase("2") || status.equals("updateNationalId")) {
-                    updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, status);
+                    if (backendDbId != null) {
+                        updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, "updateNationalId");
+                    } else {
+                        updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, "2");
+                    }
                 }
 
             }
@@ -1310,6 +1323,7 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID, storeableNationalids.getBackendDbId());
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
@@ -1332,11 +1346,14 @@ public class DataLayer {
     }
 
     public boolean updateFarmerNationalids(Context context, Long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
-        String whereClause = columnName + " = ?";
+        String whereClause;
         String[] whereArgs;
-        if (Objects.equals(columnName, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)){
+
+        if (Objects.equals(columnName, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+            whereClause = columnName + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL";
             whereArgs = new String[]{String.valueOf(stakeholderId)};
         } else {
+            whereClause = columnName + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL";
             whereArgs = new String[]{String.valueOf(id)};
         }
 
@@ -3171,7 +3188,7 @@ public class DataLayer {
         String[] columns = new String[]{"*"};
         String whereClause = columnName + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 

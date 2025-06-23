@@ -374,6 +374,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
                     LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                    TextView dbIdStore = nationalidinclude.findViewById(R.id.dbIdStore);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -383,6 +384,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
 
                     String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                    String dbId = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID));
+
                     actionbtn.setClickable(Objects.equals(farmerNIDPath, "null"));
                     if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
@@ -390,6 +393,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         niddelete.setVisibility(View.VISIBLE);
                     }
                     i++;
+                    if (dbId != null) {
+                        niddelete.setVisibility(View.GONE);
+                        dbIdStore.setTag(dbId);
+                    }
                     String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
                     nidnumber.setText(nidNumber);
                     try {
@@ -583,6 +590,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+            TextView dbIdStore = nidrow.findViewById(R.id.dbIdStore);
 
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -646,6 +654,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
                 idDTO.setNationalidtype(String.valueOf(type));
+                if (dbIdStore.getTag() != null) {
+                    idDTO.setBackendDbId(dbIdStore.getTag().toString());
+                }
                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
                     String photopath = null;
                     if (!editmode || isUpdateNationalIdAvailable) {
@@ -661,7 +672,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     idDTO.setExpiryDate(expDate);
                 }
                 dl.addnewLocalFarmerNationalids(idDTO);
-                nid_type.setEnabled(false);
             }
         }
         return status;
