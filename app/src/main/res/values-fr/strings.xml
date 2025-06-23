@@ -1248,4 +1248,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="no_signature_available">Signature non disponible</string>
 
+    <string name="enter_attendee_relation_name">Veuillez entrer le nom du participant</string>
+    <string name="sign_all_attendee">Signature requise pour tous les participants !</string>
+
+
 </resources>

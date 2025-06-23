@@ -923,5 +923,8 @@
 
     <string name="no_signature_available">Assinatura não disponível</string>
 
+    <string name="enter_attendee_relation_name">Por favor, insira o nome do participante</string>
+    <string name="sign_all_attendee">Assinatura necessária para todos os participantes!</string>
+
 </resources>
 

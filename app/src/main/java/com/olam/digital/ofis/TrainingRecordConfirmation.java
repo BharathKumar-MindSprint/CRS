@@ -21,8 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -195,7 +193,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId);
+            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId, false);
 
             listView.setAdapter(customListAdapter_selectedAttendees);
             listView.setOnItemClickListener(null);
@@ -230,6 +228,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
                 }
 
+                dl.retainOrDeleteSignatureBasedOnAvailability(trainingRecordId);
 
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 

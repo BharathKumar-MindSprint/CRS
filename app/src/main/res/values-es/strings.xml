@@ -916,5 +916,10 @@
 
     <string name="no_signature_available">Firma no disponible</string>
 
+
+    <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
+    <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
+
+
 </resources>
 

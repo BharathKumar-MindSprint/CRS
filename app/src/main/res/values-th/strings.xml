@@ -816,4 +816,7 @@
 
     <string name="no_signature_available">ลายเซ็นไม่พร้อมใช้งาน</string>
 
+    <string name="enter_attendee_relation_name">กรุณาใส่ชื่อผู้เข้าร่วม</string>
+    <string name="sign_all_attendee">ต้องการลายเซ็นสำหรับผู้เข้าร่วมทุกคน!</string>
+
 </resources>
