@@ -1178,11 +1178,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
-    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingPhoneNumber, HashMap<Integer, String> enteredPhoneNumber) {
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingNationalId, HashMap<Integer, String> enteredNationalId) {
         boolean isDuplicate = false;
-        if (!enteredPhoneNumber.isEmpty() && !existingPhoneNumber.isEmpty()) {
-            for (String nidNumbers : enteredPhoneNumber.values()) {
-                if (existingPhoneNumber.containsValue(nidNumbers)) {
+        if (!enteredNationalId.isEmpty() && !existingNationalId.isEmpty()) {
+            for (String nidNumbers : enteredNationalId.values()) {
+                if (existingNationalId.containsValue(nidNumbers)) {
                     isDuplicate = true;
                     break;
                 }
