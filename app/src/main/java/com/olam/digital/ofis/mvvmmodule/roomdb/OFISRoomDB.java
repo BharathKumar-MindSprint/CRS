@@ -56,12 +56,10 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
                 FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
                 Sections.class, Places.class, Products.class,
                 Farmer.class,
-
         },
         version = 18,
         autoMigrations = {@AutoMigration(from = 17, to = 18)}
         )
-
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();

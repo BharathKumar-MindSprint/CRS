@@ -2823,7 +2823,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         syncAllTask.sipModuleResponse = task.sipModuleResponse;
         syncAllTask.farmerResponse = task.farmerResponse;
         syncAllTask.fmpResponse = task.fmpResponse;
-        syncAllTask.transactionResponse = task.transactionResponse;
         syncAllTask.trainingResponse = task.trainingResponse;
         syncAllTask.tasksResponse = task.tasksResponse;
         syncAllTask.execute(nextOperation);
