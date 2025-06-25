@@ -229,7 +229,6 @@ public class SupplierSurveyAdapter extends RecyclerView.Adapter<SupplierSurveyAd
                         db.dmComplaintFileTableDao().deleteByQuestionId(questionId, supplierId);
                         btnUploadEvidence.setVisibility(View.GONE);
                         rlEvidenceLayout.setVisibility(View.GONE);
-                        userIsInteracting[0] = false;
                     }
 
                     if (!input.isEmpty()) {
@@ -401,8 +400,11 @@ public class SupplierSurveyAdapter extends RecyclerView.Adapter<SupplierSurveyAd
 
                     if (dmLookupValuesItem.isCaptureProof && userIsInteracting[0]) {
                         proofFormat[0] = dmLookupValuesItem.proofFormat;
-                        btnUploadEvidence.setVisibility(View.VISIBLE);
                         userIsInteracting[0] = false;
+                    }
+
+                    if (dmLookupValuesItem.isCaptureProof) {
+                        btnUploadEvidence.setVisibility(rlEvidenceLayout.getVisibility() != View.VISIBLE ? View.VISIBLE : View.GONE);
                     }
                 }
             }
