@@ -173,6 +173,7 @@ public class SupplierSurveyActivity extends BaseListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             super.onBackPressed();
+            ofisRoomDB.dmComplaintFileTableDao().deleteAllFilesBy(answerViews.keySet(), supplierId);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -501,7 +502,11 @@ public class SupplierSurveyActivity extends BaseListActivity {
                             }
                         }
                     }
-
+                }
+                else {
+                    evidenceName.setText("");
+                    rlEvidenceLayout.setVisibility(View.GONE);
+                    tvEvidenceUpload.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -544,7 +549,7 @@ public class SupplierSurveyActivity extends BaseListActivity {
                     saveCapturedEvidence(pdfByteArray2, OFISFileName, dmComplaintFileTable, filename, evidenceName, destinationFolder, deleteFile, rlEvidenceLayout, tvEvidenceUpload, questionId);
                 }
                 else {
-                    Toast.makeText(context, "Required Format:(.doc, .docx, .xls, .xlsx, .pdf, .csv)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Required Format:(.jpg, .png, .doc, .docx, .xls, .xlsx, .pdf, .csv)", Toast.LENGTH_SHORT).show();
                     evidenceName.setText("");
                     rlEvidenceLayout.setVisibility(View.GONE);
                     tvEvidenceUpload.setVisibility(View.VISIBLE);
