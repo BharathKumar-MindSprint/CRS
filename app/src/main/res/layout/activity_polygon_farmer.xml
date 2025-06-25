@@ -1,9 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".downloadsurvey.polygondatadownload.PolygonFarmer">
+    tools:context=".downloadsurvey.polygondatadownload.PolygonFarmer"
+    android:background="@color/ofis_page_background"
+    android:focusableInTouchMode="true"
+    tools:ignore="Overdraw">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Select_Farmer"
+                android:id="@+id/textview_StartA"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_large_text"
+                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="true"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="4"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/findFarmerSearchBoxPolygon"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:drawableRight="@drawable/ic_searchimg"
+                    android:drawablePadding="@dimen/margin_10"
+                    android:hint="@string/farmer_search_hint"
+                    android:inputType="textCapWords"
+                    android:padding="@dimen/margin_10"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_input_field_text" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSection"
+        android:layout_below="@+id/topSection">
+
+        <ListView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listFarmer"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
