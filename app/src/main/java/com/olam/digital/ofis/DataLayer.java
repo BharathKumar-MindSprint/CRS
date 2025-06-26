@@ -431,7 +431,7 @@ public class DataLayer {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     String plotId = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID));
-                    if (plotId != null && !"null".equals(plotId)) {
+                    if (plotId != null && !"null".equals(plotId) && !"0".equals(plotId)) {
                         plotIds.add(plotId);
                     }
                 } while (cursor.moveToNext());
