@@ -5861,21 +5861,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            if (response.isSuccessful() && response.body() != null) {
-                                String responseBody = response.body().string();
-                                Log.d("Response_Upload", response.body().toString());
-                                JSONObject jsonObject = null;
-                                try {
-                                    jsonObject = new JSONObject(responseBody);
-                                    postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
-
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-
-
-
-
+                            if (response.isSuccessful()) {
+                                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
 
                             } else {
                                 if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
