@@ -5867,7 +5867,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 JSONObject jsonObject = null;
                                 try {
                                     jsonObject = new JSONObject(responseBody);
-                                    String sessionId = jsonObject.getString("sessionId");
                                     postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
 
                                 } catch (JSONException e) {
