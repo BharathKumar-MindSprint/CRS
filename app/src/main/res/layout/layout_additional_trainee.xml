@@ -23,6 +23,7 @@
             android:layout_weight="0.1"
             android:text="Attendee"
             android:textStyle="bold"
+            android:textSize="@dimen/ofis_xlarge_text"
             android:layout_gravity="center_vertical|center_horizontal"
             android:textColor="@color/black_attendee"
             android:layout_height="wrap_content"/>
