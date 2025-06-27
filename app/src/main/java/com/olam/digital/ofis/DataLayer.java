@@ -7344,7 +7344,7 @@ public class DataLayer {
                                    List<Integer> selectedRegions, List<Integer> selectedDistricts,
                                    List<Integer> selectedPlaces, List<Integer> selectedPartners,
                                    List<Integer> selectedProgrammes, List<Integer> selectedFarmerGroups,
-                                   List<Integer> selectedSections, List<Integer> selectedCertifications
+                                   List<Integer> selectedSections, List<Integer> selectedCertifications, boolean isPlotCheck
     ) {
         String whereClause = "";
         String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
@@ -7463,6 +7463,15 @@ public class DataLayer {
                             + " LIKE '%";
                 }
             }
+        }
+
+        if (isPlotCheck){
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " = 'true' ";
         }
 
         String sql =  "select distinct(farmers.id) as _id, " +

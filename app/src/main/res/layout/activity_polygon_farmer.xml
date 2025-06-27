@@ -81,13 +81,25 @@
         android:id="@+id/bottomSection"
         android:layout_below="@+id/topSection">
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/listFarmer"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp"/>
+
+        <TextView
+            android:id="@+id/noFarmerFound"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/farmer_not_found"
+            android:textStyle="bold"
+            android:textColor="@color/btn_primary_disabled"
+            android:textSize="@dimen/ofis_xlarge_pad"
+            android:gravity="center"
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 
