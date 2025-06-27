@@ -798,12 +798,14 @@ public class TrainingRecord extends BaseListActivity{
                             addOrUpdateTrainingRecord();
                             Intent intent = new Intent(context, TrainingRecordConfirmation.class);
                             intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                            currentPhotoPathBackup = null;
                             context.startActivity(intent);
                         }
                     }else {
                         addOrUpdateTrainingRecord();
                         Intent intent = new Intent(context, TrainingRecordConfirmation.class);
                         intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                        currentPhotoPathBackup = null;
                         context.startActivity(intent);
                     }
                 }
@@ -815,7 +817,6 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         if (editMode) {
-            getTrainingRecord();
             getTrainingAttendees();
             if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                 completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
@@ -840,7 +841,9 @@ public class TrainingRecord extends BaseListActivity{
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
                 } else {
-                    setCurrentPhotoPath(currentPhotoPathBackup);
+                    if (currentPhotoPathBackup != null) {
+                        setCurrentPhotoPath(currentPhotoPathBackup);
+                    }
                 }
         }
     }
