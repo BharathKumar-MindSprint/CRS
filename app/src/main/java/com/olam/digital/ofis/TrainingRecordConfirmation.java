@@ -249,6 +249,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     if (dl.updateTrainingRecord(trainingRecordValues, trainingRecordId) > 0) {
                         Toast.makeText(context, R.string.trainingrecord_added_to_queue, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, TrainingRecords.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         context.startActivity(intent);
                     }
                 }
