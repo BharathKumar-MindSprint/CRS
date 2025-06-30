@@ -6,9 +6,12 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,7 @@ import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.FarmerPolygo
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class PolygonFarmer extends BaseListActivity {
@@ -34,6 +38,7 @@ public class PolygonFarmer extends BaseListActivity {
     private DownloadPolygonAdapter downloadPolygonAdapter;
 
     private TextView farmerNotFoundText;
+    private Button downloadDataPolygon;
     Cursor getFarmerWithPlots;
 
     List<FarmerPolygonDto> farmerListDto;
@@ -61,6 +66,7 @@ public class PolygonFarmer extends BaseListActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findFarmerSearchBox = (EditText) findViewById(R.id.findFarmerSearchBoxPolygon);
+        downloadDataPolygon = (Button) findViewById(R.id.downloadDataPolygon);
         listFarmer = (RecyclerView) findViewById(R.id.listFarmer);
         farmerNotFoundText = (TextView) findViewById(R.id.noFarmerFound);
         findFarmerSearchBox.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -72,18 +78,34 @@ public class PolygonFarmer extends BaseListActivity {
         bindFarmerList();
         if (!farmerListDto.isEmpty()) {
             listFarmer.setLayoutManager(new LinearLayoutManager(this));
-            downloadPolygonAdapter = new DownloadPolygonAdapter(farmerListDto, this);
+            downloadPolygonAdapter = new DownloadPolygonAdapter(farmerListDto, this, dl);
             listFarmer.setAdapter(downloadPolygonAdapter);
         }
 
-        findFarmerSearchBox.addTextChangedListener(new TextWatcher()
-        {
+        findFarmerSearchBox.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {  }
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 searchQuery = String.valueOf(findFarmerSearchBox.getText());
                 doSearch();
+            }
+        });
+
+        downloadDataPolygon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<Long, Long> selectedPlotSizes = downloadPolygonAdapter.getSelectedPlotSizes();
+                if (selectedPlotSizes.isEmpty()) {
+                    Toast.makeText(PolygonFarmer.this, getResources().getString(R.string.no_plot_selected), Toast.LENGTH_SHORT).show();
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (Long id : selectedPlotSizes.keySet()) {
+                        sb.append(id).append(",");
+                    }
+                    String finalString = sb.toString().replaceAll(",$", "");
+                    Log.d("Final String", finalString);
+                }
             }
         });
 

@@ -58,7 +58,7 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (isChecked) {
                 long newSize = calculateTotalSize() + getSizeInBytes(item.getPlotSize());
                 if (newSize > Utilities.SIZE_20_MB) {
-                    Toast.makeText(buttonView.getContext(), "Total size exceeds 20MB limit", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(buttonView.getContext(), context.getResources().getString(R.string.max_size_selection_plot), Toast.LENGTH_SHORT).show();
                     buttonView.setChecked(false);
                     return;
                 }

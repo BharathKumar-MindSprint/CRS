@@ -79,7 +79,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/bottomSection"
-        android:layout_below="@+id/topSection">
+        android:layout_below="@+id/topSection"
+        android:layout_above="@+id/downloadDataPolygon">
 
         <androidx.recyclerview.widget.RecyclerView
 
@@ -102,5 +103,20 @@
             />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/downloadDataPolygon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/btn_primary_background"
+        android:text="@string/download_survey_data"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:layout_marginTop="@dimen/mapview_magrin"
+        android:textSize="@dimen/ofis_small_text"
+        android:textColor="@color/ofis_base_font_white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
