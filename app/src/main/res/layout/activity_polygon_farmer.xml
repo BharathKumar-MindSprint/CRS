@@ -108,15 +108,18 @@
         android:id="@+id/downloadDataPolygon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/btn_primary_background"
+        android:background="@drawable/rounded_corner_button"
         android:text="@string/download_survey_data"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
         android:layout_marginBottom="@dimen/margin_10"
         android:layout_marginTop="@dimen/mapview_magrin"
         android:textSize="@dimen/ofis_small_text"
         android:textColor="@color/ofis_base_font_white"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:drawableEnd="@drawable/download_icon"
+        android:drawablePadding="10dp" />
+
 
 </RelativeLayout>
