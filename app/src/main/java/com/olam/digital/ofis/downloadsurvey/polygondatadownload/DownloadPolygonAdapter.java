@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.downloadsurvey.polygondatadownload;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,23 +10,34 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.FarmerPolygonDto;
+import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.PlotCursorToDto;
+import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.PlotDisplayDto;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
 
     private List<FarmerPolygonDto> getFarmerWithPlots;
     private Context context;
+    private RecyclerView.RecycledViewPool viewPool;
+    private DataLayer dl;
+    private Map<Long, Long> selectedPlotSizes = new HashMap<>();
 
-    public DownloadPolygonAdapter(List<FarmerPolygonDto> getFarmerWithPlots, Context context) {
+    public DownloadPolygonAdapter(List<FarmerPolygonDto> getFarmerWithPlots, Context context, DataLayer dl) {
         this.getFarmerWithPlots= new ArrayList<>(getFarmerWithPlots);
         this.context = context;
+        this.viewPool = new RecyclerView.RecycledViewPool();
+        this.dl = dl;
     }
 
     public void swapCursor(List<FarmerPolygonDto> newFarmerWithPlots) {
@@ -52,23 +64,40 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         farmerPlotViewHolder.olamFarmerId.setText(item.getOlamFarmerId());
         farmerPlotViewHolder.farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
 
+        List<PlotDisplayDto> plotList = getAllplotList(item);
+
+        PlotListAdapter childAdapter = new PlotListAdapter(plotList, context, selectedPlotSizes);
+        farmerPlotViewHolder.listPolygonCheckbox.setLayoutManager(new LinearLayoutManager(context));
+        farmerPlotViewHolder.listPolygonCheckbox.setAdapter(childAdapter);
+        farmerPlotViewHolder.listPolygonCheckbox.setRecycledViewPool(viewPool);
+    }
+
+    private List<PlotDisplayDto> getAllplotList(FarmerPolygonDto item) {
+
+        Cursor getAllPlot = dl.fetchAllPlotIds(String.valueOf(item.getId()));
+        return PlotCursorToDto.cursorToDtoFarmerList(getAllPlot, item.getName(), item.getId());
     }
 
     @Override
     public int getItemCount() {
         return getFarmerWithPlots.size();
     }
+    public Map<Long, Long> getSelectedPlotSizes() {
+        return selectedPlotSizes;
+    }
 
     public static class FarmerPlotViewHolder extends RecyclerView.ViewHolder {
         public TextView farmerName;
         public TextView olamFarmerId;
         public ImageView farmerPhoto;
+        public RecyclerView listPolygonCheckbox;
 
         public FarmerPlotViewHolder(@NonNull View itemView) {
             super(itemView);
             farmerPhoto = itemView.findViewById(R.id.farmerListIcon);
             farmerName = itemView.findViewById(R.id.farmerName);
             olamFarmerId = itemView.findViewById(R.id.olamFarmerId);
+            listPolygonCheckbox = itemView.findViewById(R.id.listPolygonCheckbox);
         }
     }
 }

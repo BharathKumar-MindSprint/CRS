@@ -161,6 +161,8 @@ public class Utilities {
 
     private static String blockCharacterSet = "~#^|$%&*!'\"";
 
+    public static long SIZE_20_MB = 20 * 1024 * 1024;
+
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
     try {

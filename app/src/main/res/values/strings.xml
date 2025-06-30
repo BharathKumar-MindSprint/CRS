@@ -1451,4 +1451,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="download_survey_data">Download Data</string>
     <string name="download_polygon_data">Download Polygon Data</string>
+    <string name="plot_number">Plot %1$d</string>
+    <string name="plot_size_polygon">Plot size - %1$.2f</string>
+    <string name="plot_pin">Plot Pin</string>
 </resources>
