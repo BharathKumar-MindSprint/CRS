@@ -666,7 +666,7 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
 
                         }catch (Exception e){e.printStackTrace();}
 
@@ -714,10 +714,8 @@ public class SyncAllTask extends SyncTask {
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
                                 item = countryArray.getJSONObject(j);
-                                counrtyCode = item.getString("countryIsoCode");
-
-                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
-                                Utilities.saveToSharedPrefs(context, "CountryUserID", counrtyCode.substring(0,2), null);
+                                String countryCode = item.getString("countryIsoCode");
+                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", countryCode.substring(0,2), null);
                             }
                         }catch (Exception e){e.printStackTrace();}
                         syncResultCount = syncResultCount + response.getInt("resultcount");
