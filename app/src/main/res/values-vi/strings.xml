@@ -820,4 +820,8 @@
 
     <string name="no_signature_available">Chữ ký không có sẵn</string>
 
+
+    <string name="enter_attendee_relation_name">Vui lòng nhập tên người tham dự</string>
+    <string name="sign_all_attendee">Chữ ký cần thiết cho tất cả các thành viên tham gia!</string>
+
 </resources>

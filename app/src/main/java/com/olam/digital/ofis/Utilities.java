@@ -157,6 +157,8 @@ public class Utilities {
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
     public static final String FOLLOW_UP_COUNT = "followUpCount";
+    public static final String ATTENDEE_SIGNATURE = "ATTENDEE_SIGNATURE";
+
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -265,17 +267,6 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
         editor.apply();
-//        Passcode added - Penetration testing
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        if (prefName.equalsIgnoreCase("ENUMERATOR_ID")) {
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Enumerator", value);
-            }
-        }else if(prefName.equalsIgnoreCase("PASSCODE")){
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Passcode", value);
-            }
-        }
     }
 
     public static void saveLongToSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName, long value) {

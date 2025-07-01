@@ -914,4 +914,7 @@
 
     <string name="no_signature_available">Tanda tangan tidak tersedia</string>
 
+    <string name="enter_attendee_relation_name">Silakan masukkan nama peserta</string>
+    <string name="sign_all_attendee">Tanda tangan diperlukan untuk semua peserta!</string>
+
 </resources>

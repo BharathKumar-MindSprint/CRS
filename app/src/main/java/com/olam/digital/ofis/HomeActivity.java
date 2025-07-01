@@ -1452,53 +1452,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
-
-            GetAccessToken("home");
-
-        }
-    }
-
-
-    public static void GetAccessToken(String value) {
-        ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, StringConstants.COUNTRY_CODE);
-        counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
-
-        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);
-        ManageRecords GetAccessToken = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<AccessTokenResp> call = GetAccessToken.getAccessToken(accessTokenReqBody);
-        call.enqueue(new Callback<AccessTokenResp>() {
-            @Override
-            public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
-                if (response.code() == 200) {
-                    odAccessToken = response.body().getAccessToken();
-                    Log.e("OD_AccessTOKEN", odAccessToken);
-
-                    DownloadFormList("home");
-                } else if (response.code() == 400) {
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                } else if (response.code() == 500) {
-
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                }
+            int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+            if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
+                showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
-
-            @Override
-            public void onFailure(Call<AccessTokenResp> call, Throwable t) {
-            }
-        });
-
-        int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
-        if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
-            showDailyRemainderPopUp(onGroundSurveyNotificationCount);
         }
-
     }
 
     /*Get DownLoad Farm Form List*/
