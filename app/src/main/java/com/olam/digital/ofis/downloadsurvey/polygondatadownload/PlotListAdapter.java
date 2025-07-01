@@ -54,6 +54,8 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             plotListViewHolder.plot_size.setText(context.getString(R.string.plot_pin));
         }
 
+        plotListViewHolder.plot_checkBox.setOnCheckedChangeListener(null);
+        plotListViewHolder.plot_checkBox.setChecked(selectedPlotSizes.containsKey(item.getPlotId()));
         plotListViewHolder.plot_checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 long newSize = calculateTotalSize() + getSizeInBytes(item.getPlotSize());
@@ -67,6 +69,7 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 selectedPlotSizes.remove(item.getPlotId());
             }
             item.setChecked(isChecked);
+            notifyItemChanged(position);
         });
 
     }
@@ -100,11 +103,15 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private long getSizeInBytes(String plotSize) {
-        try {
-            double sizeInKB = Double.parseDouble(plotSize);
-            return (long) (sizeInKB * 1024);
-        } catch (NumberFormatException e) {
+        if (plotSize == null) {
             return 0;
+        } else {
+            try {
+                double sizeInKB = Double.parseDouble(plotSize);
+                return (long) (sizeInKB * 1024);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
         }
     }
 }
