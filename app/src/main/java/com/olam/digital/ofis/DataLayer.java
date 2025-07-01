@@ -380,6 +380,45 @@ public class DataLayer {
 
     }
 
+    /*function to check the sync available*/
+    public List<String> fetchFinishedPlotIds(String farmerId) {
+        List<String> plotIds = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            String[] columns = new String[]{OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID};
+            String selection = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " = ?";
+            String[] selectionArgs = new String[]{farmerId, "1"};
+
+            cursor = db.query(
+                    OFISDBContract.FarmerModulesEntry.TABLE_NAME,
+                    columns,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String plotId = cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID));
+                    if (plotId != null && !"null".equals(plotId) && !"0".equals(plotId)) {
+                        plotIds.add(plotId);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return plotIds;
+    }
+
+
     public String getPlottedNameFromPlotGeoData(long farmerId, String plotName){
         String plottedName = "";
         Cursor cursor = null;

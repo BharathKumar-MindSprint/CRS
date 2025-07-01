@@ -9,6 +9,7 @@ import androidx.room.Query;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Dao
@@ -76,4 +77,7 @@ public interface DmComplaintFileTableDao {
 
     @Query("SELECT * from DmComplaintFileTable WHERE questionId = :questionId AND farmerId = :supplierId")
     DmComplaintFileTable getFileByQuestionId(int questionId, String supplierId);
+
+    @Query("DELETE FROM DmComplaintFileTable WHERE questionId IN (:id) AND farmerId = :supplierId")
+    void deleteAllFilesBy(Set<Integer> id, String supplierId);
 }
