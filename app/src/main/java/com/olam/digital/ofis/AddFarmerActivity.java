@@ -2943,7 +2943,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     idDTO.setExpiryDate(expDate);
                 }
                 dl.addnewLocalFarmerNationalids(idDTO);
-                nid_type.setEnabled(false);
             }
         }
         return status;
