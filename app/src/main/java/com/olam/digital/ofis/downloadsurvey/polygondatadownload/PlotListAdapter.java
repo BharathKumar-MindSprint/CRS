@@ -25,6 +25,7 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<PlotDisplayDto> plotList;
     private Context context;
     private Map<Long, Long> selectedPlotSizes;
+    private OnSelectedPlotSizesChangeListener listener;
 
 
     public PlotListAdapter(List<PlotDisplayDto> plotList, Context context, Map<Long, Long> selectedPlotSizes) {
@@ -38,6 +39,20 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.plot_row_layout, parent, false);
         return new PlotListViewHolder(itemView);
+    }
+
+    public interface OnSelectedPlotSizesChangeListener {
+        void onSelectedPlotSizesChanged(Map<Long, Long> updatedPlotSizes);
+    }
+
+    public void setOnSelectedPlotSizesChangeListener(OnSelectedPlotSizesChangeListener listener) {
+        this.listener = listener;
+    }
+
+    private void notifySelectedPlotSizesChanged() {
+        if (listener != null) {
+            listener.onSelectedPlotSizesChanged(selectedPlotSizes);
+        }
     }
 
     @Override
@@ -70,6 +85,7 @@ public class PlotListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             item.setChecked(isChecked);
             notifyItemChanged(position);
+            notifySelectedPlotSizesChanged();
         });
 
     }

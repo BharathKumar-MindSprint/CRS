@@ -32,6 +32,7 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private RecyclerView.RecycledViewPool viewPool;
     private DataLayer dl;
     private Map<Long, Long> selectedPlotSizes = new HashMap<>();
+    private OnSelectedPlotSizesChangeListener listener;
 
     public DownloadPolygonAdapter(List<FarmerPolygonDto> getFarmerWithPlots, Context context, DataLayer dl) {
         this.getFarmerWithPlots= new ArrayList<>(getFarmerWithPlots);
@@ -46,6 +47,14 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             this.getFarmerWithPlots.addAll(newFarmerWithPlots);
             notifyDataSetChanged();
         }
+    }
+
+    public interface OnSelectedPlotSizesChangeListener {
+        void onSelectedPlotSizesChanged(Map<Long, Long> updatedPlotSizes);
+    }
+
+    public void setOnSelectedPlotSizesChangeListener(OnSelectedPlotSizesChangeListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -70,8 +79,20 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         farmerPlotViewHolder.listPolygonCheckbox.setLayoutManager(new LinearLayoutManager(context));
         farmerPlotViewHolder.listPolygonCheckbox.setAdapter(childAdapter);
         farmerPlotViewHolder.listPolygonCheckbox.setRecycledViewPool(viewPool);
+        childAdapter.setOnSelectedPlotSizesChangeListener(new PlotListAdapter.OnSelectedPlotSizesChangeListener() {
+            @Override
+            public void onSelectedPlotSizesChanged(Map<Long, Long> updatedPlotSizes) {
+                selectedPlotSizes = updatedPlotSizes;
+                notifySelectedPlotSizesChanged();
+            }
+        });
     }
 
+    private void notifySelectedPlotSizesChanged() {
+        if (listener != null) {
+            listener.onSelectedPlotSizesChanged(selectedPlotSizes);
+        }
+    }
     private List<PlotDisplayDto> getAllplotList(FarmerPolygonDto item) {
 
         Cursor getAllPlot = dl.fetchAllPlotIds(String.valueOf(item.getId()));

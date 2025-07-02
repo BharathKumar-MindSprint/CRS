@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
     android:gravity="center_vertical"
-    android:layout_marginEnd="@dimen/ofis_bottom_section_padding_vertical"
+    android:layout_marginEnd="@dimen/record_status_right_magrin"
     android:weightSum="10">
 
     <TextView

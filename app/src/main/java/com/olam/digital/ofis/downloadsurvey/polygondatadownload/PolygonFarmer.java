@@ -42,7 +42,7 @@ public class PolygonFarmer extends BaseListActivity {
     private DataLayer dl;
     private DownloadPolygonAdapter downloadPolygonAdapter;
 
-    private TextView farmerNotFoundText;
+    private TextView farmerNotFoundText, selectedPlotCount;
     private Button downloadDataPolygon;
     Cursor getFarmerWithPlots;
 
@@ -76,17 +76,25 @@ public class PolygonFarmer extends BaseListActivity {
         downloadDataPolygon = (Button) findViewById(R.id.downloadDataPolygon);
         listFarmer = (RecyclerView) findViewById(R.id.listFarmer);
         farmerNotFoundText = (TextView) findViewById(R.id.noFarmerFound);
+        selectedPlotCount = (TextView) findViewById(R.id.selected_plot_count);
         findFarmerSearchBox.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         findFarmerSearchBox.setFilters(new InputFilter[] { Utilities.filter });
         findFarmerSearchBox.setHint(getResources().getString(R.string.Farmer_Name));
 
         dl = new DataLayer(getResources(), this);
+        selectedPlotCount.setText(getString(R.string.selected_plot) + 0);
 
         bindFarmerList();
         if (!farmerListDto.isEmpty()) {
             listFarmer.setLayoutManager(new LinearLayoutManager(this));
             downloadPolygonAdapter = new DownloadPolygonAdapter(farmerListDto, this, dl);
             listFarmer.setAdapter(downloadPolygonAdapter);
+            downloadPolygonAdapter.setOnSelectedPlotSizesChangeListener(new DownloadPolygonAdapter.OnSelectedPlotSizesChangeListener() {
+                @Override
+                public void onSelectedPlotSizesChanged(Map<Long, Long> updatedPlotSizes) {
+                    updateSelectedPlotCount(updatedPlotSizes.size());
+                }
+            });
         }
 
         findFarmerSearchBox.addTextChangedListener(new TextWatcher() {
@@ -118,6 +126,9 @@ public class PolygonFarmer extends BaseListActivity {
 
     }
 
+    public void updateSelectedPlotCount(int size) {
+        selectedPlotCount.setText(getString(R.string.selected_plot) + size);
+    }
     private void bindFarmerList() {
         getFarmerWithPlots = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct,
                 selectedRegions, selectedDistricts, selectedPlaces, selectedPartners,

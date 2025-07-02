@@ -40,10 +40,10 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,14 +63,22 @@
                     android:hint="@string/farmer_search_hint"
                     android:inputType="textCapWords"
                     android:padding="@dimen/margin_10"
-                    android:layout_marginTop="@dimen/margin_10"
                     android:textColor="@color/ofis_base_font_dark"
                     android:textColorHint="@color/icon_grey_palette_2"
                     android:textSize="@dimen/ofis_input_field_text" />
 
             </LinearLayout>
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/selected_plot_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/selected_plot"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_med_text"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_gravity="end" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -80,7 +88,7 @@
         android:layout_height="match_parent"
         android:id="@+id/bottomSection"
         android:layout_below="@+id/topSection"
-        android:layout_above="@+id/downloadDataPolygon">
+        android:layout_above="@+id/last_section">
 
         <androidx.recyclerview.widget.RecyclerView
 
@@ -101,25 +109,31 @@
             android:gravity="center"
             android:visibility="gone"
             />
-
     </LinearLayout>
 
-    <Button
-        android:id="@+id/downloadDataPolygon"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/last_section"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner_button"
-        android:text="@string/download_survey_data"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
-        android:layout_marginBottom="@dimen/margin_10"
-        android:layout_marginTop="@dimen/mapview_magrin"
-        android:textSize="@dimen/ofis_small_text"
-        android:textColor="@color/ofis_base_font_white"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:drawableEnd="@drawable/download_icon"
-        android:drawablePadding="10dp" />
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/downloadDataPolygon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_button"
+            android:text="@string/download_survey_data"
+            android:layout_gravity="center"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:layout_marginBottom="@dimen/mapview_magrin"
+            android:layout_marginTop="@dimen/mapview_magrin"
+            android:textSize="@dimen/ofis_micro_text"
+            android:textColor="@color/ofis_base_font_white"
+            android:drawableEnd="@drawable/download_icon"
+            android:drawablePadding="10dp" />
 
+    </LinearLayout>
 
 </RelativeLayout>

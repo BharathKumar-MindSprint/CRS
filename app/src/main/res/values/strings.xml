@@ -1461,4 +1461,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="downloaded_plot_message">Downloaded plot can be viewed inside the farmer plot section.</string>
     <string name="download_polygon">Download Polygon</string>
     <string name="ofis_olam_id">"OFIS ID: "</string>
+    <string name="selected_plot">"Selected Plots: "</string>
 </resources>
