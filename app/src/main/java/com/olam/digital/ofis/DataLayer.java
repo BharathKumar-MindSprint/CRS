@@ -1229,6 +1229,8 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
+
+
     void addFarmerPhoneNumbers(Long farmerId, String stakeHolder, JSONArray storeableNumbers) {
         int arrayLength = storeableNumbers.length();
 
@@ -8295,6 +8297,24 @@ public class DataLayer {
             }
             cursor.close();
         }
+    }
+
+
+    public int getDuplicateFarmerNumber(int phoneNumber) {
+        String query = "SELECT COUNT(*) FROM " +OFISDBContract.PhoneNumber.TABLE_NAME +
+                " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(phoneNumber)});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
     }
 
 

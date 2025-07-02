@@ -187,6 +187,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private LocationSettingsRequest mLocationSettingsRequest;
     private LocationCallback mLocationCallback;
     private Location mCurrentLocation;
+    private int deleteCount = 0;
 
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
@@ -249,6 +250,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     Set<Integer> mandateSurveyList = new HashSet<>();
     boolean isMandateSurveyCompleted = false;
     boolean isToastShown = false;
+
+    boolean isPhoneUpdated = false;
+
+    private Integer addCount;
 
 
     @Override
@@ -1920,11 +1925,24 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     }
 
     private void bindnumberdelete(ImageView trashbutton) {
+
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                addCount--;
+                ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
+                if(addCount < 5){
+
+                    addNumber.setVisibility(View.VISIBLE);
+                }else{
+                    addNumber.setVisibility(View.GONE);
+                }
+
+
+
             }
         });
     }
@@ -1951,7 +1969,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         phonenumbers.removeAllViews();
 
         Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-
+        if(existingNumbers.getCount() > 0  &&  existingNumbers.getCount() < 6){
+            addCount = existingNumbers.getCount();
+            isPhoneUpdated = true;
+        }else{
+            addCount = 1;
+            isPhoneUpdated = false;
+         }
         if (existingNumbers.getCount() > 0) {
             boolean firstNumber = true;
             while (existingNumbers.moveToNext()) {
@@ -2045,28 +2069,59 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         ImageButton hidenumbersBox = (ImageButton) findViewById(R.id.phonenumbersCloseButton);
         ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
         Button phonenumbersSave = (Button) findViewById(R.id.phonenumbersSave);
+        Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+        if(existingNumbers.getCount() > 0 && existingNumbers.getCount() < 6){
+            addCount = existingNumbers.getCount();
+            isPhoneUpdated = true;
+        }else{
+            addCount = 1;
+            isPhoneUpdated = false;
+        }
+
+        if(existingNumbers.getCount() == 5){
+            addNumber.setVisibility(View.GONE);
+        }
 
         hidenumbersBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 phoneNumbersHolder.startAnimation(mSlideBottomDown);
+               if(existingNumbers.getCount() == 5){
+                   addNumber.setVisibility(View.GONE);
+               }else{
+                   addNumber.setVisibility(View.VISIBLE);}
+
             }
         });
 
         addNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addCount = addCount + 1;
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 EditText diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
                 if (diallingCode != null) {
                     EditText newDiallingCode = (EditText) phonenumberinclude.findViewById(R.id.dialling_code);
                     newDiallingCode.setText(diallingCode.getText());
                 }
+
+                if(addCount == 5 && !isPhoneUpdated){
+                    addNumber.setVisibility(View.GONE);
+                    isPhoneUpdated = true;
+                }else{
+                    addNumber.setVisibility(View.VISIBLE);
+                    isPhoneUpdated = false;
+                }
+
+
                 phonenumbers.addView(phonenumberinclude);
+
                 bindnumberdelete((ImageView) phonenumberinclude.findViewById(R.id.deleteNumber));
                 bindnumberradio((RadioButton) phonenumberinclude.findViewById(R.id.primary_number));
             }
         });
+
+
 
         phonenumbersSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2075,6 +2130,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int phonerowscount = phonenumbers.getChildCount();
                     boolean hasNumber = false;
                     boolean hasMainNumber = false;
+                    boolean hasDuplicatePhoneNumber = false;
                     Cursor fullFarmer = dl.getFlattenedFarmer(farmerId);
                     int countryId = 0;
                     JSONArray storeableNumbers = new JSONArray();
@@ -2090,6 +2146,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         RadioButton primary_number = (RadioButton) phonenumberrow.findViewById(R.id.primary_number);
                         String phonenumberValue = String.valueOf(phonenumber.getText());
 
+                        if(phonenumberValue.length() > 0){
+                            int count = dl.getDuplicateFarmerNumber(Integer.parseInt(phonenumberValue));
+                            if(count > 1){
+                                hasDuplicatePhoneNumber = true;
+                            }
+                        }
+
                         if (phonenumberValue.length() > 0 && PhoneNumberUtils.isGlobalPhoneNumber(phonenumberValue)) {
                             hasNumber = true;
                             JSONObject storeableNumber = new JSONObject();
@@ -2104,13 +2167,21 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             }
                         }
 
+
+
                         if (primary_number.isChecked()) {
                             hasMainNumber = true;
                         }
                     }
+
+
                     if (!hasNumber || !hasMainNumber) {
+
                         Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                    } else if (hasDuplicatePhoneNumber) {
+                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
                     } else {
+
                         dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
                         ContentValues nqiValues = new ContentValues();
                         if (mCurrentCapturedLocation != null) {
