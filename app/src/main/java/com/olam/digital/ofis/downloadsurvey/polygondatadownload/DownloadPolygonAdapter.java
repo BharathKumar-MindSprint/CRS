@@ -61,7 +61,7 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         FarmerPlotViewHolder farmerPlotViewHolder = (FarmerPlotViewHolder) holder;
 
         farmerPlotViewHolder.farmerName.setText(item.getName());
-        farmerPlotViewHolder.olamFarmerId.setText(item.getOlamFarmerId());
+        farmerPlotViewHolder.olamFarmerId.setText(context.getString(R.string.ofis_olam_id) + item.getOlamFarmerId());
         farmerPlotViewHolder.farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
 
         List<PlotDisplayDto> plotList = getAllplotList(item);
