@@ -1456,4 +1456,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_pin">Plot Pin</string>
     <string name="max_size_selection_plot">Maximum selection reached. Please deselect one or more items to continue</string>
     <string name="no_plot_selected">No plots selected</string>
+    <string name="done">Done</string>
+    <string name="download_successful">Download Successful</string>
+    <string name="downloaded_plot_message">Downloaded plot can be viewed inside the farmer plot section.</string>
+    <string name="download_polygon">Download Polygon</string>
 </resources>
