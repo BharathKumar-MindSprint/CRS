@@ -1,4 +1,5 @@
 package com.olam.digital.ofis.downloadsurvey;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -58,7 +59,11 @@ public class ListDownSurveys extends BaseActivity {
                     public void onModuleClick(View view, int position, ModuleDTO moduleDTO) {
 
                         if (Objects.equals(moduleDTO.getShowType(), Utilities.TYPE_POLYGON)) {
-                            startActivity(new Intent(ListDownSurveys.this, PolygonFarmer.class));
+                            if (isNetworkAvailable(context)) {
+                                startActivity(new Intent(ListDownSurveys.this, PolygonFarmer.class));
+                            } else {
+                                Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("module", moduleDTO);

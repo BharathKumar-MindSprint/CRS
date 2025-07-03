@@ -1,12 +1,12 @@
 package com.olam.digital.ofis.downloadsurvey.dto;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.FarmerPolygonDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +68,24 @@ public class ModuleCursorToDTO {
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+    }
+
+    public static List<FarmerPolygonDto> cursorToDtoFarmerList(Cursor cursor) {
+        List<FarmerPolygonDto> farmerList = new ArrayList<>();
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                FarmerPolygonDto.Builder farmerListDto = new FarmerPolygonDto.Builder();
+                farmerListDto.setId(cursor.getLong(cursor.getColumnIndexOrThrow("_id")))
+                        .setName(cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)))
+                        .setOlamFarmerId(cursor.getString(cursor.getColumnIndexOrThrow(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+
+                farmerList.add(farmerListDto.build());
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return farmerList;
     }
 }

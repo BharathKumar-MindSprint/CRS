@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:gravity="center_vertical"
+    android:layout_marginEnd="@dimen/tracking_mode_button_width_height"
+    android:weightSum="10">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/plot_name"
+        android:layout_weight="3"
+        android:hint="@string/plot_number"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/plot_size"
+        android:paddingRight="@dimen/ofis_small_pad"
+        android:hint="@string/plot_size_polygon"
+        android:layout_weight="6" />
+    <CheckBox
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:id="@+id/plot_checkBox"
+        android:layout_weight="1"
+        style="@style/CheckboxStyle"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

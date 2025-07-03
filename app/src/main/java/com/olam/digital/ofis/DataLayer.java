@@ -7344,14 +7344,14 @@ public class DataLayer {
                                    List<Integer> selectedRegions, List<Integer> selectedDistricts,
                                    List<Integer> selectedPlaces, List<Integer> selectedPartners,
                                    List<Integer> selectedProgrammes, List<Integer> selectedFarmerGroups,
-                                   List<Integer> selectedSections, List<Integer> selectedCertifications
+                                   List<Integer> selectedSections, List<Integer> selectedCertifications, boolean isPlotCheck
     ) {
         String whereClause = "";
         String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
         if (query.length() > 0) {
-            whereClause = " WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+            whereClause = " WHERE ( " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "')";
         }
         if (selectedCountry > 0) {
             if (whereClause.length() == 0) {
@@ -7463,6 +7463,15 @@ public class DataLayer {
                             + " LIKE '%";
                 }
             }
+        }
+
+        if (isPlotCheck){
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " LIKE '%true%' ";
         }
 
         String sql =  "select distinct(farmers.id) as _id, " +

@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.widget.Spinner;
@@ -157,6 +158,10 @@ public class Utilities {
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
     public static final String TYPE_POLYGON = "POLYGON";
+
+    private static String blockCharacterSet = "~#^|$%&*!'\"";
+
+    public static long SIZE_20_MB = 20 * 1024 * 1024;
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -1176,4 +1181,17 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+
+        if (source != null && blockCharacterSet.contains(("" + source))) {
+            return "";
+        }
+        for (int i = start; i < end; i++) {
+            int type = Character.getType(source.charAt(i));
+            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                return "";
+            }
+        }
+        return null;
+    };
 }
