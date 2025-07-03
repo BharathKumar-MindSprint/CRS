@@ -48,7 +48,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                 try {
                     item = jsonArray.getJSONObject(j);
                     int itemId = item.optInt(OFISDBContract.Task.COLUMN_NAME_ID, 0);
-                    String itemText = getStringOrNull(item,OFISDBContract.Task.COLUMN_NAME_TASKTEXT);
+                    String itemText = item.optString(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, "");
 
                     if (itemId > 0 && itemText.length() > 0) {
                         ContentValues values = new ContentValues();
@@ -64,10 +64,10 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                         if (existingTask.getCount() > 0) {
                             db.update(OFISDBContract.Task.TABLE_NAME, values, whereClause, whereArgs);
                         } else {
-                            values.put(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, getStringOrNull(item,OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR));
-                            values.put(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, getStringOrNull(item,OFISDBContract.Task.COLUMN_NAME_CREATED_DATE));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, item.optString(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, ""));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, null));
                             values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, item.optInt(OFISDBContract.Task.COLUMN_NAME_COMPLETED, 0));
-                            values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, getStringOrNull(item,OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, null));
                             values.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, item.optInt(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, 0));
                             db.insert(OFISDBContract.Task.TABLE_NAME, null, values);
                         }
@@ -112,15 +112,15 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                     int farmerId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0);
                     int moduleId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 0);
                     int childId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0);
-                    String createdAt = getStringOrNull(item,OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT);
+                    String createdAt = item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, "");
 
                     if (farmerId > 0 && !createdAt.isEmpty()) {
                         ContentValues values = new ContentValues();
 
                         String[] columns = new String[]{"*"};
                         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ?";
+                                + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
+                                + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ?";
                         String[] whereArgs = new String[]{String.valueOf(farmerId),String.valueOf(childId),
                                 String.valueOf(moduleId)};
 
@@ -130,8 +130,8 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0));
                             values.put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 0));
-                            values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, getStringOrNull(item,OFISDBContract.NotificationAssignments.COLUMN_STATUS));
-                            values.put(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, getStringOrNull(item,OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, item.optString(OFISDBContract.NotificationAssignments.COLUMN_STATUS, null));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, ""));
                             db.insert(OFISDBContract.NotificationAssignments.TABLE_NAME, null, values);
                         }
                         else {
@@ -166,13 +166,13 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
     }
 
     public void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-      if ((!tableName.equalsIgnoreCase("stakeHolders"))
-              && (!tableName.equals(OFISDBContract.SavedAnswerEntry.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.DownloadedSurveyList.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME))){
-              db.delete(tableName, null, null);
-      }
+        if ((!tableName.equalsIgnoreCase("stakeHolders"))
+                && (!tableName.equals(OFISDBContract.SavedAnswerEntry.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.DownloadedSurveyList.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME))){
+            db.delete(tableName, null, null);
+        }
 
 
         @SuppressWarnings("deprecation") DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, tableName);
@@ -202,18 +202,18 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                 if (columnList.get(k).toString() != null) {
                     if (tableName.equals(OFISDBContract.FarmerEntry.TABLE_NAME)) {
                         if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID) {
-                            insertHelper.bind(columnKeys.get(k), getStringOrNull(item,"partnerId"));
+                            insertHelper.bind(columnKeys.get(k), item.optString("partnerId"));
                         } else if (columnList.get(k).toString() == OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID) {
-                            insertHelper.bind(columnKeys.get(k), getStringOrNull(item,"programId"));
+                            insertHelper.bind(columnKeys.get(k), item.optString("programId"));
                         } else {
-                            insertHelper.bind(columnKeys.get(k),getStringOrNull(item,columnList.get(k).toString()));
+                            insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                         }
                     }
                     else if (tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME) || tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME)) {
-                        insertHelper.bind(columnKeys.get(k), item.has(columnList.get(k).toString()) ? getStringOrNull(item,columnList.get(k).toString()) : null);
+                        insertHelper.bind(columnKeys.get(k), item.has(columnList.get(k).toString()) ? item.optString(columnList.get(k).toString()) : null);
                     }
                     else {
-                        insertHelper.bind(columnKeys.get(k), getStringOrNull(item,columnList.get(k).toString()));
+                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                     }
                 }
             }
@@ -270,12 +270,5 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
-    private String getStringOrNull(JSONObject item, String key) {
-        if (item.isNull(key)) {
-            return null;
-        } else {
-            return item.optString(key);
-        }
-    }
 
 }
