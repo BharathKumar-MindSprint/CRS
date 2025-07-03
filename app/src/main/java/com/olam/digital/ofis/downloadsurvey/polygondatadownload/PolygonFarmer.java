@@ -1,19 +1,23 @@
 package com.olam.digital.ofis.downloadsurvey.polygondatadownload;
 
-import android.app.AlertDialog;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.app.AlertDialog;
 import android.database.Cursor;
+
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,14 +29,22 @@ import com.olam.digital.ofis.BaseListActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleCursorToDTO;
 import com.olam.digital.ofis.downloadsurvey.polygondatadownload.dto.FarmerPolygonDto;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.Set;
 
 public class PolygonFarmer extends BaseListActivity {
 
@@ -45,7 +57,6 @@ public class PolygonFarmer extends BaseListActivity {
     private TextView farmerNotFoundText, selectedPlotCount;
     private Button downloadDataPolygon;
     Cursor getFarmerWithPlots;
-
     List<FarmerPolygonDto> farmerListDto;
     private String searchQuery = "";
 
@@ -66,11 +77,17 @@ public class PolygonFarmer extends BaseListActivity {
     private List<Integer> selectedPartners = new ArrayList<Integer>();
     private List<Integer> selectedCertifications = new ArrayList<Integer>();
 
+    private Context context;
+    private Resources res;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_polygon_farmer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = this;
+        res = getResources();
+        dl = new DataLayer(res, context);
 
         findFarmerSearchBox = (EditText) findViewById(R.id.findFarmerSearchBoxPolygon);
         downloadDataPolygon = (Button) findViewById(R.id.downloadDataPolygon);
@@ -114,16 +131,10 @@ public class PolygonFarmer extends BaseListActivity {
                 if (selectedPlotSizes.isEmpty()) {
                     Toast.makeText(PolygonFarmer.this, getResources().getString(R.string.no_plot_selected), Toast.LENGTH_SHORT).show();
                 } else {
-                    StringBuilder sb = new StringBuilder();
-                    for (Long id : selectedPlotSizes.keySet()) {
-                        sb.append(id).append(",");
-                    }
-                    String finalString = sb.toString().replaceAll(",$", "");
-                    Log.d("Final String", finalString);
+                    getPlotDetails(selectedPlotSizes.keySet());
                 }
             }
         });
-
     }
 
     public void updateSelectedPlotCount(int size) {
@@ -156,14 +167,46 @@ public class PolygonFarmer extends BaseListActivity {
     }
 
     private final Runnable returnRes = new Runnable() {
-
+        @Override
         public void run() {
             if (downloadPolygonAdapter != null) {
                 downloadPolygonAdapter.swapCursor(farmerListDto);
             }
-
         }
     };
+
+    private void getPlotDetails(Set<Long> plotIds) {
+        if (isNetworkAvailable(context)) {
+            ManageRecords retrofit = RetrofitClient.getRetrofit().create(ManageRecords.class);
+            retrofit2.Call<PolygonHistoryResponseModel> call = retrofit.getPolygonDataByPlotId(plotIds, 1);
+            showDialogPlot(true, false, null);
+            try {
+                call.enqueue(new Callback<PolygonHistoryResponseModel>() {
+                    @Override
+                    public void onResponse(Call<PolygonHistoryResponseModel> call, Response<PolygonHistoryResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            PolygonHistoryResponseModel plotDetails = response.body();
+                            if (plotDetails != null) {
+                                dl.updatePositionData(plotDetails.getPlot());
+                            }
+                            showDialogPlot(false, false, null);
+                        } else {
+                            showDialogPlot(false, true, getResources().getString(R.string.item_sync_error));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PolygonHistoryResponseModel> call, Throwable t) {
+                        showDialogPlot(false, true, getResources().getString(R.string.item_sync_error));
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
 
     public void showDialogPlot(boolean isDownloading, boolean isError, String errorMessage) {
         if (isDownloading) {

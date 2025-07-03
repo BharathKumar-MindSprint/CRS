@@ -22,7 +22,6 @@ public interface IAPIConstants {
    //LOCALUNIT MASTER
    String GET_LOCAL_UNIT_MASTER = "ofissurvey/survey/getLocalUnitMasterData";
    //POLYGON HISTORY
-   String GET_POLYGON_DATA = "ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}";
    String GET_ALL_PHOTOCHECKBOX_IMAGES = "ofissurvey/survey/getPhotoCheckboxImages";
   //TODO Check if this API call is required
    String EXTERNAL_LOGIN = "ofismaster/master/externalLogin";
@@ -82,6 +81,6 @@ public interface IAPIConstants {
      String SAVE_SURVEY_ANSWERS = "ofissurvey/survey/getRecentSurveyAnswers";
      String GET_ALL_SIP_QUESTIONNAIRE_DATA = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
 
-
+     String GET_POLYGON_DATA_BY_PLOT_ID = "ofisfarmer-data/farmerdata/polygonDataByPlotIds";
 
 }

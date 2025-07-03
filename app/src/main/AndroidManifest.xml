@@ -132,9 +132,6 @@
                 android:value="com.olam.digital.ofis.AddInfrastructureActivity" />
         </activity>
         <activity
-            android:name=".recordpolygon.polygonhistory.PolygonHistory"
-            android:exported="false" />
-        <activity
             android:name=".AddCertificationsActivity"
             android:label="@string/update_certification"
             android:parentActivityName=".ViewFarmerActivity"
