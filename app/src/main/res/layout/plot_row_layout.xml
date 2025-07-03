@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
     android:gravity="center_vertical"
-    android:layout_marginEnd="@dimen/tracking_mode_button_width_height"
+    android:layout_marginEnd="@dimen/margin_10"
     android:weightSum="10">
 
     <TextView

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class PolygonFarmer extends BaseListActivity {
     private DownloadPolygonAdapter downloadPolygonAdapter;
 
     private TextView farmerNotFoundText, selectedPlotCount;
-    private Button downloadDataPolygon;
+    private LinearLayout downloadDataPolygon;
     Cursor getFarmerWithPlots;
 
     List<FarmerPolygonDto> farmerListDto;
@@ -73,7 +74,7 @@ public class PolygonFarmer extends BaseListActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findFarmerSearchBox = (EditText) findViewById(R.id.findFarmerSearchBoxPolygon);
-        downloadDataPolygon = (Button) findViewById(R.id.downloadDataPolygon);
+        downloadDataPolygon = (LinearLayout) findViewById(R.id.downloadDataPolygon);
         listFarmer = (RecyclerView) findViewById(R.id.listFarmer);
         farmerNotFoundText = (TextView) findViewById(R.id.noFarmerFound);
         selectedPlotCount = (TextView) findViewById(R.id.selected_plot_count);

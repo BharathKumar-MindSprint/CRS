@@ -21,24 +21,31 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
 
-        <RelativeLayout
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/Select_Farmer"
+                android:text="@string/search_farmer"
                 android:id="@+id/textview_StartA"
                 android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_large_text"
+                android:layout_weight="1"
                 android:layout_centerInParent="true"
                 android:layout_alignParentLeft="true"/>
 
-
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/selected_plot_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/selected_plot"
+                android:layout_marginEnd="@dimen/record_status_right_magrin"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_med_text" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,16 +75,6 @@
                     android:textSize="@dimen/ofis_input_field_text" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/selected_plot_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/selected_plot"
-                android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_med_text"
-                android:layout_marginTop="@dimen/margin_10"
-                android:layout_gravity="end" />
         </LinearLayout>
 
     </LinearLayout>
@@ -116,24 +113,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
-        <Button
+        android:layout_alignParentBottom="true" >
+        <LinearLayout
             android:id="@+id/downloadDataPolygon"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
             android:background="@drawable/rounded_corner_button"
-            android:text="@string/download_survey_data"
-            android:layout_gravity="center"
-            android:paddingLeft="50dp"
-            android:paddingRight="50dp"
-            android:layout_marginBottom="@dimen/mapview_magrin"
-            android:layout_marginTop="@dimen/mapview_magrin"
-            android:textSize="@dimen/ofis_micro_text"
-            android:textColor="@color/ofis_base_font_white"
-            android:drawableEnd="@drawable/download_icon"
-            android:drawablePadding="10dp" />
-
+            android:layout_margin="@dimen/margin_10"
+            android:layout_alignParentBottom="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/margin_10"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/downloadDataPolygonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/download_survey_data"
+                    android:textSize="@dimen/ofis_micro_text"
+                    android:textColor="@color/ofis_base_font_white" />
+                <ImageView
+                    android:id="@+id/downloadIcon"
+                    android:layout_width="wrap_content"
+                    android:paddingStart="@dimen/margin_10"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/download_icon"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
 
 </RelativeLayout>
