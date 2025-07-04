@@ -117,8 +117,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
     private TextView national_id_error_msg;
-    private final HashMap<Integer, String> existingPhoneNumber = new HashMap<>();
-    private HashMap<Integer, String> enteredPhoneNumber = new HashMap<>();
+    private final HashMap<Integer, String> existingNationalId = new HashMap<>();
+    private HashMap<Integer, String> enteredNationalId = new HashMap<>();
     private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -161,9 +161,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         isSynced = dl.getSyncedStatus(farmerId);
         isUpdateNationalIdAvailable = dl.isUpdateNationalIdAvailable(farmerId);
 
-        if (isSynced && !isUpdateNationalIdAvailable) {
-            this.setTitle("View National ID");
-        }
+        boolean availstatus = dl.isValueavailable(farmerId);
+        this.setTitle(res.getString(availstatus ? R.string.update_nationalid : R.string.add_nationalid));
+
 
         if (!editmode) {
             bindnationalid();
@@ -374,6 +374,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
                     LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                    TextView dbIdStore = nationalidinclude.findViewById(R.id.dbIdStore);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -383,6 +384,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
 
                     String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                    String dbId = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID));
+
                     actionbtn.setClickable(Objects.equals(farmerNIDPath, "null"));
                     if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
@@ -390,6 +393,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         niddelete.setVisibility(View.VISIBLE);
                     }
                     i++;
+                    if (dbId != null) {
+                        niddelete.setVisibility(View.GONE);
+                        dbIdStore.setTag(dbId);
+                    }
                     String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
                     nidnumber.setText(nidNumber);
                     try {
@@ -410,8 +417,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         if (Objects.equals(duplicateNationalId , "true")) {
                             nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_error));
                             national_id_error_msg.setVisibility(View.VISIBLE);
-                            existingPhoneNumber.put(nidType, nidNumber);
-                            enteredPhoneNumber.put(nidType,nidNumber);
+                            existingNationalId.put(nidType, nidNumber);
+                            enteredNationalId.put(nidType,nidNumber);
                         } else {
                             nidnumber.setBackground(getResources().getDrawable(R.drawable.edittext_bg_light));
                             national_id_error_msg.setVisibility(View.GONE);
@@ -434,12 +441,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                             String selected_item = spinner_nidtype.getSelectedItem().toString();
                             int type = getNidType(selected_item);
                             String nidNumber = s.toString();
-                            enteredPhoneNumber.put(type, nidNumber);
+                            enteredNationalId.put(type, nidNumber);
 
-                            boolean duplicateNid = existingPhoneNumber.containsKey(type) && Objects.equals(existingPhoneNumber.get(type), nidNumber);
+                            boolean duplicateNid = existingNationalId.containsKey(type) && Objects.equals(existingNationalId.get(type), nidNumber);
                             nidnumber.setBackground(getResources().getDrawable(duplicateNid ? R.drawable.edittext_bg_error : R.drawable.edittext_bg_light));
 
-                            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+                            boolean isDuplicate = Utilities.isDuplicateNationalId(existingNationalId, enteredNationalId);
                             national_id_error_msg.setVisibility(isDuplicate ? View.VISIBLE : View.GONE);
                         }
                     });
@@ -583,6 +590,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+            TextView dbIdStore = nidrow.findViewById(R.id.dbIdStore);
 
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -646,6 +654,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
                 idDTO.setNationalidtype(String.valueOf(type));
+                if (dbIdStore.getTag() != null) {
+                    idDTO.setBackendDbId(dbIdStore.getTag().toString());
+                }
                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
                     String photopath = null;
                     if (!editmode || isUpdateNationalIdAvailable) {
@@ -661,7 +672,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     idDTO.setExpiryDate(expDate);
                 }
                 dl.addnewLocalFarmerNationalids(idDTO);
-                nid_type.setEnabled(false);
             }
         }
         return status;
@@ -679,6 +689,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 }
             }
             int type = getNidType(val);
+            existingNationalId.remove(type);
+            enteredNationalId.remove(type);
+            boolean isDuplicate = Utilities.isDuplicateNationalId(existingNationalId, enteredNationalId);
+            national_id_error_msg.setVisibility(isDuplicate ? View.VISIBLE : View.GONE);
             dl.removeNIDPhoto(type);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -848,7 +862,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 return;
             }
 
-            boolean isDuplicate = Utilities.isDuplicateNationalId(existingPhoneNumber, enteredPhoneNumber);
+            boolean isDuplicate = Utilities.isDuplicateNationalId(existingNationalId, enteredNationalId);
             if (isDuplicate) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return;

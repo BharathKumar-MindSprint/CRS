@@ -813,5 +813,5 @@
     <string name="supplier_search_hint">Tìm kiếm theo Tên nhà cung cấp hoặc Mã nhà cung cấp</string>
     <string name="evidence_is_missing">Bằng chứng bị thiếu</string>
     <string name="spinner_supplier_group">Nhóm nhà cung cấp</string>
-
+    <string name="no_signature_available">Chữ ký không có sẵn</string>
 </resources>

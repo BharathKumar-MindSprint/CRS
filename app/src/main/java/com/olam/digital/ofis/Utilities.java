@@ -157,6 +157,8 @@ public class Utilities {
     public static final String SUPPLIER = "supplier";
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
+    public static final String FOLLOW_UP_COUNT = "followUpCount";
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -1176,11 +1178,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
-    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingPhoneNumber, HashMap<Integer, String> enteredPhoneNumber) {
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingNationalId, HashMap<Integer, String> enteredNationalId) {
         boolean isDuplicate = false;
-        if (!enteredPhoneNumber.isEmpty() && !existingPhoneNumber.isEmpty()) {
-            for (String nidNumbers : enteredPhoneNumber.values()) {
-                if (existingPhoneNumber.containsValue(nidNumbers)) {
+        if (!enteredNationalId.isEmpty() && !existingNationalId.isEmpty()) {
+            for (String nidNumbers : enteredNationalId.values()) {
+                if (existingNationalId.containsValue(nidNumbers)) {
                     isDuplicate = true;
                     break;
                 }
