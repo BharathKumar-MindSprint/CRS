@@ -566,7 +566,9 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false' , " +
             OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE + " TEXT ," +
             OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " TEXT DEFAULT 'false' ," +
-            OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT )";
+            OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED + " TEXT )";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
@@ -910,6 +912,8 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " TEXT DEFAULT 'false' ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA);
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED);
 
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT ");
         } catch (SQLException e) {

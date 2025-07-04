@@ -8,11 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -45,6 +47,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -65,7 +68,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -77,11 +79,10 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.RetrofitServices.ManageRecords;
-import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -89,10 +90,6 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.list.PolygonHistoryDataList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,7 +124,6 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -140,10 +136,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
-import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
@@ -182,6 +174,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     private Button mStartLoggingButton;
 
     private TextView farmerName, olamFarmerId, txtPlotName;
+    private LinearLayout llDeActivationPlot, llResetDeactivatedPlot, llDeActivation, llDeActivationNotification;
     private EditText plot_textGpx, etPlotArea;
     private ImageButton capture_latLng;
     private ImageView recordingStatus;
@@ -238,21 +231,25 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private Marker currentLocationMarker , farmLocationMarker;
     private String plotArea;
+    
+    private Context context;
+    private Resources res;
+    private DataLayer dl;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
         Configuration.getInstance().setOsmdroidTileCache(new File(Environment.getExternalStorageDirectory(), "osmdroid/tiles"));
 
         boolean hwAccelerationOK = true;
         Configuration.getInstance().setMapViewHardwareAccelerated(hwAccelerationOK);
-
         setContentView(R.layout.activity_record_polygon);
-
+        context = this;
+        res = getResources();
+        dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -314,14 +311,17 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
-
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
         }
+
         spinnerPlotList = (Spinner) findViewById(R.id.plot_number);
         recordingStatus = (ImageView) findViewById(R.id.recording_status);
         pause = (Button) findViewById(R.id.pause_recording);
         mStartLoggingButton = (Button) findViewById(R.id.start_stop_recording);
         bttnSave = (Button) findViewById(R.id.save_recording);
+        llDeActivationPlot = findViewById(R.id.ll_flag_deactivation);
+        llResetDeactivatedPlot = findViewById(R.id.ll_reset_de_activated_plot);
+        llDeActivationNotification = findViewById(R.id.de_activation_notification);
+        llDeActivation = findViewById(R.id.ll_de_activation);
         LinearLayout plotPinLayout = findViewById(R.id.plotPinLayout);
         capture_latLng = (ImageButton) findViewById(R.id.get_latlngButton);
         if(plotPinLayout.getVisibility()== View.VISIBLE){
@@ -332,7 +332,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
               }
           });
         }
-        //currentLocation = (ImageButton) findViewById(R.id.current_location);
+
         pause.setEnabled(false);
         bttnSave.setEnabled(false);
         disableBtn(pause); disableBtn(bttnSave);
@@ -347,17 +347,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
-
-
                     Toast.makeText(RecordPolygonActivity.this, "Please remove pause state first", Toast.LENGTH_SHORT).show();
-
                 }
                 else{
                     handleStartStopLoggingButton();
                 }
-
             }
         });
+
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -389,18 +386,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         });
 
         SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
-
-        Context ctx = getApplicationContext();
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
 
         MAPBOXSATELLITELABELLED = new MapBoxTileSource("MapBoxSatelliteLabelled", 1, 19, 256, ".png");
         ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveAccessToken(this);
         ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveMapBoxMapId(this);
         TileSourceFactory.addTileSource(MAPBOXSATELLITELABELLED);
 
-
         map = (MapView) findViewById(R.id.map);
-
         map.setTilesScaledToDpi(true);
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
@@ -409,7 +402,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         //To use MapEventsReceiver methods, we add a MapEventsOverlay:
         MapEventsOverlay overlay = new MapEventsOverlay(this);
         map.getOverlays().add(overlay);
-
 
         myLocationOverlay = new DirectedLocationOverlay(this);
         map.getOverlays().add(myLocationOverlay);
@@ -440,7 +432,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 } catch (SecurityException e) {
                     e.printStackTrace();
                 }
-
             }
 
             startPoint = null;
@@ -458,12 +449,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(map);
         map.getOverlays().add(scaleBarOverlay);
 
-        // Itinerary markers:
         mItineraryMarkers = new FolderOverlay();
-        //mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         map.getOverlays().add(mItineraryMarkers);
 
-        //Tracking system:
         mTrackingModeButton = (ImageButton) findViewById(R.id.buttonTrackingMode);
         mTrackingModeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -696,9 +684,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     boolean checkPlotPinCapturedAlready() {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         String plot = dl.fetchCenterPlotById(String.valueOf(selectedPlotId));
-
         return plot != null && !plot.isEmpty();
     }
 
@@ -728,10 +714,15 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         int count = 0;
         try {
             for (int i = 0; i < lPlotCount; i++) {
-                LocationBeanList LocationBeanList = SharedPreferenceUtils.
-                        getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
+                LocationBeanList LocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
                 if (LocationBeanList != null && !LocationBeanList.getLocationBean().isEmpty()) {
                     count++;
+                }
+                else {
+                    PolygonDataDto plotData = getPlotId(i);
+                    if(plotData.isSynced.equalsIgnoreCase("0") && (plotData.centerPlot != null && !plotData.centerPlot.isEmpty())) {
+                        count++;
+                    }
                 }
             }
         }catch (Exception e){
@@ -821,7 +812,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }
 
             } else {
-//                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
                 editPlotAlertDialog();
             }
 
@@ -886,7 +876,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (mIsGPSLocationAvailable) {
                         dismissProgressDialog();
                         if (!mIsLoggingStarted) {
-                            DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                            
                             int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
                             if(farmPlotCount == 0) {
                                 if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
@@ -895,7 +885,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                     showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
                             }else{
                                 int loggedPlotCount = getTotalLoggedPlotCount() ;
-//                                int actualPlot = Integer.parseInt(StringUtils.split(currentTrackname)[1]);
                                 int actualPlot = extractLastNumber(currentTrackname);
                                 if(loggedPlotCount == 0 ){
                                     if(actualPlot == farmPlotCount + 1){
@@ -904,16 +893,17 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                         showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (farmPlotCount+1)));
                                     }
                                 }else{
-                                    int i = loggedPlotCount + farmPlotCount;
-                                    if(i+1 == actualPlot){
+                                    int i = loggedPlotCount + farmPlotCount + 1;
+                                    int position = spinnerPlotList.getSelectedItemPosition();
+                                    if(i == actualPlot || position < i) {
                                         showPlotLocationConfirmDialog(currentTrackname);
                                     }else{
-                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (i+1)));
+                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (i)));
                                     }
                                 }
                             }
                         } else {
-                            if (mLocationBeanList.size() > 0) {
+                            if (!mLocationBeanList.isEmpty()) {
                                 showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
                                 pause.setEnabled(false);
                                 disableBtn(pause);
@@ -921,17 +911,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                 enableSaveBtn(bttnSave);
                                 setButtonsLoggingState(false);
                             } else {
-
-
-
-
                                 showToastMessage(getResources().getString(R.string.location_not_yet_logged));
                                 pause.setEnabled(false);
                                 bttnSave.setEnabled(false);
                                 disableBtn(pause);
                                 disableBtn(bttnSave);
                                 setButtonsLoggingState(false);
-
                             }
                         }
                     } else {
@@ -1190,6 +1175,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelable("location", myLocationOverlay.getLocation());
         outState.putBoolean("tracking_mode", mTrackingMode);
         outState.putParcelable("start", startPoint);
@@ -1404,7 +1390,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
         currentTrackname = getResources().getString(R.string.plot, (position + 1));
 
@@ -1475,6 +1461,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
             return;
         }
+
         currentTrackname = getResources().getString(R.string.plot, (position + 1));
         if (position == 0)
             previousTrackname = getResources().getString(R.string.plot, (position + 1));
@@ -1483,37 +1470,50 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (polygon != null) {
             map.getOverlays().remove(polygon);
         }
-        if(isSyncedPlot(position)){
-            if (isNetworkAvailable(this)) {
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
-                } else {
-//                    getLastLocation();
-                    try {
-                        PolygonHistoryApiCall((int) mFarmerId, position);
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-//                    getFarmLocation();
-                }
-            } else {
-                showAlert(getString(R.string.no_internet_polygon));
-            }
+        if(isSyncedPlot(position)) {
             mStartLoggingButton.setVisibility(View.GONE);
             pause.setVisibility(View.GONE);
             bttnSave.setVisibility(View.GONE);
             recordingStatus.setVisibility(View.GONE);
             capture_latLng.setVisibility(View.GONE);
             etPlotArea.setEnabled(false);
+            llDeActivation.setVisibility(View.VISIBLE);
+            llDeActivationNotification.setVisibility(View.GONE);
+
+            PolygonDataDto polygonData = getPlotId(position);
+            if ((polygonData.centerPlot != null && !polygonData.centerPlot.isEmpty()) || (polygonData.positionData != null && !polygonData.positionData.isEmpty())) {
+                if (polygonData.deActivationFlag.equals("true")) {
+                    if (polygonData.isDeActivationFlagSynced.equalsIgnoreCase("false")) {
+                        enableResetDeActivatedPlot(polygonData);
+                    }
+                    else {
+                        llDeActivationNotification.setVisibility(View.VISIBLE);
+                        llDeActivation.setVisibility(View.GONE);
+                    }
+                }
+                else {
+                    llResetDeactivatedPlot.setVisibility(View.GONE);
+                }
+                enableDeActivePlotButton(polygonData);
+                plotGraphInMap(polygonData);
+                getLastLocation();
+            }
+            else {
+                llDeActivation.setVisibility(View.GONE);
+                Toast.makeText(RecordPolygonActivity.this, "Please download polygon data", Toast.LENGTH_LONG).show();
+            }
+
         }else {
             mStartLoggingButton.setVisibility(View.VISIBLE);
             pause.setVisibility(View.VISIBLE);
             bttnSave.setVisibility(View.VISIBLE);
             recordingStatus.setVisibility(View.VISIBLE);
-            if (!checkPlotEntryExistInPreference()) {
+            llDeActivationNotification.setVisibility(View.GONE);
+            llDeActivation.setVisibility(View.GONE);
+
+            PolygonDataDto polygonDataDto = getPlotId(position);
+            if (!checkPlotEntryExistInPreference() && (polygonDataDto.centerPlot == null || polygonDataDto.centerPlot.isEmpty())) {
                 showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
                 initializeKMLDocument();
                 loadMapWithPolygon(currentTrackname);
@@ -1524,20 +1524,114 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             capture_latLng.setVisibility(View.VISIBLE);
             etPlotArea.setEnabled(true);
         }
-
     }
 
-    private void showAlert(String msg) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setMessage(msg);
-        builder.setTitle(R.string.Alert_txt);
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
-            dialog.cancel();
+    private void enableResetDeActivatedPlot(PolygonDataDto plot) {
+        llResetDeactivatedPlot.setVisibility(View.VISIBLE);
+        llResetDeactivatedPlot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConfirmationPopUp(plot);
+            }
         });
-        android.app.AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+    }
 
+    private void showConfirmationPopUp(PolygonDataDto plot) {
+        View dialogView = getLayoutInflater().inflate(R.layout.confirmation_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        TextView title = dialogView.findViewById(R.id.dialog_title);
+        title.setText(R.string.reset_deactivation_plot);
+        title.setVisibility(View.VISIBLE);
+        TextView message = dialogView.findViewById(R.id.dialog_message);
+        Button btnYes = dialogView.findViewById(R.id.button_yes);
+        Button btnNo = dialogView.findViewById(R.id.button_no);
+        message.setText(res.getString(R.string.dialog_message));
+        btnNo.setText(res.getString(R.string.cancel));
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                plot.reasonForDeActivation = "";
+                plot.deActivationFlag = "false";
+                plot.isDeActivationFlagSynced = "false";
+                dl.updatePlot(String.valueOf(mFarmerId), mOlamFarmerId, mFarmerName, plot);
+                llResetDeactivatedPlot.setVisibility(View.GONE);
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void enableDeActivePlotButton(PolygonDataDto plot) {
+        llDeActivationPlot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeactivationPopUp(plot);
+            }
+        });
+    }
+
+    private void showDeactivationPopUp(PolygonDataDto plot) {
+        View dialogView = getLayoutInflater().inflate(R.layout.de_activation_reason_popup, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        EditText deActivationReason = dialogView.findViewById(R.id.etDeActivationReason);
+        deActivationReason.setText((plot.reasonForDeActivation != null && !plot.reasonForDeActivation.equalsIgnoreCase("null")) ? plot.reasonForDeActivation : "");
+        Button btnYes = dialogView.findViewById(R.id.button_yes);
+        Button btnNo = dialogView.findViewById(R.id.button_no);
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        deActivationReason.setFilters(new InputFilter[] {
+            new InputFilter() {
+                @Override
+                public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                    if (dest.length() == 0 && source.toString().startsWith(" ")) {
+                        return "";
+                    }
+                    return null;
+                }
+            }
+        });
+
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                plot.reasonForDeActivation = deActivationReason.getText().toString();
+                if (plot.reasonForDeActivation.isEmpty()) {
+                    Toast.makeText(context, res.getString(R.string.reason_error_msg), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.dismiss();
+                plot.deActivationFlag = "true";
+                plot.isDeActivationFlagSynced = "false";
+                dl.updatePlot(String.valueOf(mFarmerId), mOlamFarmerId, mFarmerName, plot);
+                Toast.makeText(context, res.getString(R.string.deactivation_successful), Toast.LENGTH_LONG).show();
+                enableResetDeActivatedPlot(plot);
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     protected Polygon mDestinationPolygon;
@@ -1593,11 +1687,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 updateUIWithPolygon(geoPoints, trackId);
             }
         }
-        if (lats.size() > 0) {
+        
+        if (!lats.isEmpty()) {
             double lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
-                // lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
                 lTotalArea = roundArea(lTotalArea,2);
                 areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(lTotalArea)));
             }
@@ -1668,8 +1762,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     e.printStackTrace();
                 }
 
-                //List<LocationBeanList> list = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
-
                 showToastMessage(getResources().getString(R.string.saved_successfully_msg, currentTrackname));
                 mLocationBeanList = new ArrayList<>();
                 bttnSave.setEnabled(false);
@@ -1682,7 +1774,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         });
 
         alert.show();
-
     }
 
 
@@ -1712,16 +1803,15 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
      * @param plotName    plot name is unique name for identifying plot
      */
     void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName, String enteredPlotName , String plotGpx, double plotArea) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotGeoJson != null) {
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
             if (plotName != null && plotGeoJson != null) {
                 dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName, mFarmerId,plotGpx, plotArea);
-                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId, plotGpx, plotArea);
+                dl.updatePlottedName(selectedPlotId, plotName, mFarmerId, plotGpx, plotArea, plotGeoJson);
             }
         }else {
             if (plotName != null ) {
-                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId, plotGpx, plotArea);
+                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId, plotGpx, plotArea, "");
             }
         }
     }
@@ -1736,20 +1826,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
      * @throws JSONException
      */
     String prepareJsonServerSync() throws JSONException {
-
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         Cursor c = dl.getPlotGeoData();
-
         JSONObject location = new JSONObject();
 
         if (c.getCount() > 0) {
             c.moveToFirst();
-
             JSONArray plotsArray = new JSONArray();
-
             for (int i = 0; i < c.getCount(); i++) {
                 String farmId = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID));
-
                 String syncFlag = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG));
                 if (farmId.equalsIgnoreCase(mOlamFarmerId) && syncFlag.equals("false")) {
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
@@ -1759,7 +1843,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     plotsObj.putOpt("plotArea", String.valueOf(c.getDouble(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE))));
                     plotsArray.put(plotsObj);
                 }
-
                 c.moveToNext();
             }
 
@@ -1780,33 +1863,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     void saveToSyncDatabase(String plotsJson , String plotId) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
             dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName, plotId);
         }
-    }
-
-    String getPlotsJsonFromLocationBeanList(List<LocationBeanList> aLocationBeanList, String plotId) {
-        PlotsList lPlotList = new PlotsList();
-        List<location> lplotsList = new ArrayList<>();
-        List<plots> lposition_dataList = new ArrayList<>();
-        location lplots = new location();
-        for (int i = 0; i < aLocationBeanList.size(); i++) {
-            List<plot> lplotList = new ArrayList<>();
-            plots lposition_data = new plots();
-            for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
-                lplotList.add(bean);
-            }
-            lposition_data.setPlot(lplotList);
-            lposition_data.setPlotId(plotId);
-            lposition_dataList.add(lposition_data);
-        }
-        lplots.setPlots(lposition_dataList);
-        lplotsList.add(lplots);
-        lPlotList.setLocation(lplotsList);
-        String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
-        return json;
     }
 
     void showPlotLocationConfirmDialog(final String aPlotName) {
@@ -1849,12 +1910,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     void showToastMessage(String aMessage) {
-        Toast.makeText(getApplicationContext(), aMessage,
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), aMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void showZeroAreaDialog(){
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -1876,69 +1935,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         });
         alert.show();
-
-
-
     }
 
-   /* public void showEditPlotsDialog(View view) {
-        final Dialog dialog = new Dialog(RecordPolygonActivity.this);
-        dialog.setContentView(R.layout.number_picker_dialog);
-        dialog.setTitle(R.string.edit_plot_dialog_title);
-
-        final NumberPicker numberPicker = dialog.findViewById(R.id.numberPicker);
-        Button buttonSave = dialog.findViewById(R.id.buttonSave);
-        Button buttonCancel = dialog.findViewById(R.id.buttonCancel);
-        TextView existingPlotCount = dialog.findViewById(R.id.existingPlotCount);
-        TextView existingPlotsLogged = dialog.findViewById(R.id.existingPlotsLogged);
-
-
-        existingPlotCount.setText(getResources().getString(R.string.existing_plots, lPlotCount));
-        existingPlotsLogged.setText(getResources().getString(
-                R.string.existing_plots_logged, getTotalLoggedPlotCount()));
-        numberPicker.setMaxValue(1000); // max value 1000
-        if (getTotalLoggedPlotCount() == 0)
-            numberPicker.setMinValue(getTotalLoggedPlotCount() + 1);
-        else
-            numberPicker.setMinValue(getTotalLoggedPlotCount());
-        numberPicker.setValue(lPlotCount);
-        numberPicker.setWrapSelectorWheel(false);
-        //numberPicker.setOnValueChangedListener(this);
-
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                lPlotCount = numberPicker.getValue();
-                spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
-                for (int i = 0; i < lPlotCount; i++) {
-                    spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
-                }
-                spinnerArrayAdapter = new ArrayAdapter<String>
-                        (RecordPolygonActivity.this, android.R.layout.simple_spinner_item,
-                                spinnerArray);
-                spinnerArrayAdapter.setDropDownViewResource(android.R.layout
-                        .simple_spinner_dropdown_item);
-                spinnerPlotList.setAdapter(spinnerArrayAdapter);
-                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mOlamFarmerId, lPlotCount);
-                dialog.dismiss();
-            }
-        });
-
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }*/
-
     public void showEditPlotsDialog(View v) {
-//        if(! mIsLoggingStarted) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
-
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
         builder.setCancelable(false);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -1948,7 +1948,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
         LinearLayout tvAddPlot = (LinearLayout) dialogView.findViewById(R.id.addPlot);
         plotList = (LinearLayout) dialogView.findViewById(R.id.plotList);
-//            EditText edTxtNumberOfPlots = (EditText) dialogView.findViewById(R.id.et_number_plot);
         tvTitle.setText(this.getResources().getString(R.string.record_polygon_input_title));
         tvMsg.setText(this.getResources().getString(R.string.record_polygon_input_messege));
         Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
@@ -1993,14 +1992,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
                 ArrayList<String> plotNames = getAllPlotValues();
                 dl.insertNewPlot(String.valueOf(mFarmerId), plotNames);
-                    /*String lPlotCountString = "1";
-                    int lPlotCount = 0;
-                    if (!TextUtils.isEmpty(lPlotCountString)) {
-                        lPlotCount = Integer.parseInt(lPlotCountString);
-                    }*/
                 int lPlotCount = plotNames.size();
                 if (lPlotCount > 0) {
                     spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
@@ -2020,16 +2013,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }
             }
         });
-
-//        }else{
-//            showToastMessage("Logging in progess! You can't edit plot data");
-//        }
     }
 
     public String loadPlotName(int position) {
         String name = "Plot 0";
         position = position + 1;
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
@@ -2065,7 +2054,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public boolean isSyncedPlot(int position){
         boolean status = false;
         position = position + 1;
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
@@ -2082,26 +2070,34 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return status;
     }
 
-    public int getPlotId(int position){
-        int status = 0;
+    public PolygonDataDto getPlotId(int position) {
         position = position + 1;
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        PolygonDataDto.Builder polygonDataBuilder = new PolygonDataDto.Builder();
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
                 plotIds.moveToNext();
-                if(position == i){
-                    status = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                if(position == i) {
+                    return polygonDataBuilder
+                            .id(plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID)))
+                            .centerPlot(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT)))
+                            .positionData(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA)))
+                            .plotArea(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE)))
+                            .deActivationFlag(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG)))
+                            .reasonForDeActivation(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON)))
+                            .isDeActivationFlagSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED)))
+                            .isSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED))).build();
 
                 }
             }
         }
-        return status;
+        return null;
     }
 
     public void loadPlotLayout(LayoutInflater inflater) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        
         plotList.removeAllViews();
         Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
         if(plotIds.getCount() > 0){
@@ -2119,7 +2115,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
-//                if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                     if (isSynced.equalsIgnoreCase("1")){
                         plotName.setEnabled(false);
@@ -2127,13 +2122,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     }else {
                         plotName.setEnabled(true);
                     }
-//                }
-                int count = getTotalLoggedPlotCount() + 1;
-                /*if(i == 1 || i <= count){
-                    plotDelete.setVisibility(View.INVISIBLE);
-                }else{
-                    plotDelete.setVisibility(View.VISIBLE);
-                }*/
                 plotDelete.setVisibility(View.VISIBLE);
                 if(isSynced.equalsIgnoreCase("1")){
                     plotDelete.setVisibility(View.INVISIBLE);
@@ -2160,7 +2148,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             public void onClick(View v) {
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 String plotNumber = (String) v.getTag();
-                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                
                 if(plotNumber!=null){
                     String plotName = plotNumber.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
 
@@ -2169,14 +2157,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (matcherPlotNumber.find()){
                         plotId = matcherPlotNumber.group(1);
                     }
-//                String plotId = plotNumber.substring(plotNumber.length() - 1);
                     Cursor c =dl.getPNamePlotGeoData(mOlamFarmerId);
                     if (c.getCount() > 0) {
                         c.moveToFirst();
                         for (int i = 1; i <= c.getCount(); i++) {
                             String pName = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME));
-//                        String [] pID = pName.split("_");
-//                        String pNameId = pID[0].substring(pID[0].length() - 1);
                             Pattern pattern = Pattern.compile("plot([^_]+)_");
                             Matcher matcher = pattern.matcher(pName);
 
@@ -2194,19 +2179,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             }
 
                             if (Integer.parseInt(pNameId) > Integer.parseInt(plotId)){
-                                //decrementing saved shared prefrences
                                 LocationBeanList beans = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList("Plot " + pNameId);
                                 SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + pNameId);
                                 int finalPlot = Integer.parseInt(pNameId) - 1;
                                 SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList("Plot " + finalPlot, beans);
-
-                                // updating db
                                 dl.updateGeoPlotDataAfterDelete(pName , Integer.parseInt(pNameId)-1 , mOlamFarmerId);
                             }
-
-
                             c.moveToNext();
-
                         }
                     }
                 }
@@ -2320,15 +2299,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     private double calculateArea() {
-        //record in the track the current location at current time:
-
         LocationBeanList lLocationBeanList = new LocationBeanList();
         lLocationBeanList.setLocationBean(mLocationBeanList);
 
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         ArrayList<Double> lats = new ArrayList<>();
         ArrayList<Double> lons = new ArrayList<>();
-        // LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(trackId);
 
         if (mLocationBeanList != null) {
             for (plot locationBean : mLocationBeanList) {
@@ -2339,7 +2315,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         }
         double lTotalArea = 0;
-        if (lats.size() > 0) {
+        if (!lats.isEmpty()) {
             lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
@@ -2352,24 +2328,18 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     public static double roundArea(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
         long factor = (long) Math.pow(10, places);
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
 
-
     private void getFarmLocation(double farmLatitude, double farmLongitude) {
-
-        // Create a GeoPoint from the last known location
         GeoPoint farmLocation = new GeoPoint(farmLatitude, farmLongitude);
-
         if (farmLocationMarker != null) {
             map.getOverlays().remove(farmLocationMarker);
         }
 
-        // Create a Marker for the current location
         farmLocationMarker = new Marker(map);
         farmLocationMarker.setPosition(farmLocation);
         farmLocationMarker.setTitle("Plot Location");
@@ -2381,10 +2351,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         farmLocationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
-//                            Toast.makeText(PolygonHistory.this, marker.getTitle() + "\n" + marker.getSnippet(), Toast.LENGTH_SHORT).show();
                 View dialogView = getLayoutInflater().inflate(R.layout.custom_location_dialog, null);
-
-                // Find views in the dialog layout
                 TextView textLatitude = dialogView.findViewById(R.id.textLatitude);
                 TextView textLongitude = dialogView.findViewById(R.id.textLongitude);
                 TextView farmerName = dialogView.findViewById(R.id.enumName);
@@ -2421,7 +2388,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     private void getLastLocation() {
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -2431,22 +2397,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
-                    // Use the last known location
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                    Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
-
-//                    // Get a reference to the MapView
-//                    MapView mapView = (MapView) findViewById(R.id.mapView);
-
-                    // Create a GeoPoint from the last known location
                     GeoPoint currentLocation = new GeoPoint(latitude, longitude);
                     if (currentLocationMarker != null) {
                         map.getOverlays().remove(currentLocationMarker);
                     }
-                    // Create a Marker for the current location
-                    currentLocationMarker = new Marker(map);
 
+                    currentLocationMarker = new Marker(map);
                     currentLocationMarker.setPosition(currentLocation);
                     currentLocationMarker.setTitle("Enumerator Current Location");
                     currentLocationMarker.setSnippet("Latitude: " + latitude + "\nLongitude: " + longitude); // Set the snippet with lat and long
@@ -2458,15 +2416,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     currentLocationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker, MapView mapView) {
-//                            Toast.makeText(PolygonHistory.this, marker.getTitle() + "\n" + marker.getSnippet(), Toast.LENGTH_SHORT).show();
                             View dialogView = getLayoutInflater().inflate(R.layout.custom_location_dialog, null);
 
                             // Find views in the dialog layout
                             TextView textLatitude = dialogView.findViewById(R.id.textLatitude);
                             TextView textLongitude = dialogView.findViewById(R.id.textLongitude);
                             TextView enumName = dialogView.findViewById(R.id.enumName);
-
-                            String enumerator_id = Utilities.getFromSharedPrefs(getApplicationContext());
                             String enumerator_name = Utilities.getEnumeratorNameSharedPrefs(getApplicationContext());
                             // Set the latitude and longitude in the dialog
                             enumName.setText("Name: " + enumerator_name);
@@ -2501,137 +2456,18 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             return true;
                         }
                     });
-
-                    // Zoom the MapView to the current location
-//                    map.getController().animateTo(currentLocation);
-//                    map.getController().setZoom(20.0);
-                } else {
-                    // No last known location is available
-                    Log.d("Location", "No last known location available.");
                 }
             }
         });
     }
 
-    private void PolygonHistoryApiCall(Integer farmerId, int position) {
-        ManageRecords getPolygonHistoryData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        retrofit2.Call<PolygonHistoryResponseModel> call = getPolygonHistoryData.getAllPolygonHistoryResponse(farmerId , 1);
+    private void plotGraphInMap(PolygonDataDto plot) {
+        plot_textGpx.setText(plot.centerPlot != null ? plot.centerPlot : "");
+        String plotSize = plot.plotArea != null ? String.valueOf(roundArea(plot.plotArea, 3)) : "";
+        etPlotArea.setText(plotSize);
+        String jsonString = plot.positionData;
 
-        call.enqueue(new retrofit2.Callback<PolygonHistoryResponseModel>() {
-
-            @Override
-            public void onResponse(Call<PolygonHistoryResponseModel> call, Response<PolygonHistoryResponseModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ProgressDialog pd = new ProgressDialog(RecordPolygonActivity.this);
-                    pd.setCancelable(false);
-                    pd.setIndeterminate(false);
-                    pd.setMessage(getResources().getString(R.string.fetching_data));
-                    pd.show();
-                    try {
-                        db = OFISRoomDB.getDbInstance(getApplicationContext());
-                        if (response.body() != null ) {
-                            PolygonHistoryResponseModel outputData = response.body();
-                            db.polygonHistoryDataDao().deleteAll();
-                            db.polygonPlotHistoryDao().deleteAll();
-                            if (outputData != null) {
-                                PolygonHistoryDataList polygonHistoryEntity = convertToEntity(outputData);
-                                // Insert into Room database
-//                                db.polygonHistoryDataDao().insertAll(polygonHistoryEntity);
-
-                                PolygonHistoryData data = new PolygonHistoryData();
-                                data.farmerName = polygonHistoryEntity.getFarmerName();
-                                data.olamFarmerId = polygonHistoryEntity.getOlamFarmerId();
-                                data.primaryLat = polygonHistoryEntity.getPrimaryLat();
-                                data.primaryLng = polygonHistoryEntity.getPrimaryLng();
-                                data.farmerId = polygonHistoryEntity.getFarmerId();
-                                data.farmerGroupId = polygonHistoryEntity.getFarmerGroupId();
-                                data.farmId = polygonHistoryEntity.getFarmId();
-                                data.farmCode = polygonHistoryEntity.getFarmCode();
-                                data.farmName = polygonHistoryEntity.getFarmName();
-                                db.polygonHistoryDataDao().insert(data);
-
-                                ArrayList<PolygonPlotHistory> polygonPlotHistories = polygonHistoryEntity.getPlot();
-                                if (polygonPlotHistories != null && !polygonPlotHistories.isEmpty()) {
-                                    for (PolygonPlotHistory polygonPlotHistories1 : polygonPlotHistories) {
-                                        db.polygonPlotHistoryDao().insert(polygonPlotHistories1);
-                                    }
-                                }
-
-                            }
-                            int plotId = getPlotId(position);
-                            plotGraphInMap(plotId);
-                            //getFarmLocation();
-                            getLastLocation();
-                        }else {
-                            try {
-                                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            pd.dismiss();
-                        }
-                    }, 2000);
-
-                }else {
-                    try {
-                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<PolygonHistoryResponseModel> call, Throwable t) {
-                Log.d("TAGFailure", "Network request failed", t);
-            }
-        });
-    }
-
-    private static PolygonHistoryDataList convertToEntity(PolygonHistoryResponseModel responseModel) {
-        PolygonHistoryDataList entity = new PolygonHistoryDataList();
-        entity.setFarmerName(responseModel.getFarmerName());
-        entity.setOlamFarmerId(responseModel.getOlamFarmerId());
-        entity.setPrimaryLat(responseModel.getPrimaryLat());
-        entity.setPrimaryLng(responseModel.getPrimaryLng());
-        entity.setFarmerId(responseModel.getFarmerId());
-        entity.setFarmerGroupId(responseModel.getFarmerGroupId());
-        entity.setFarmId(responseModel.getFarmId());
-        entity.setFarmCode(responseModel.getFarmCode());
-        entity.setFarmName(responseModel.getFarmName());
-        entity.setPlot(responseModel.getPlot());
-
-        return entity;
-    }
-
-    private void plotGraphInMap(long id){
-        String plotGPX = db.polygonPlotHistoryDao().getcenterPlotData(id);
-        Double plotArea = db.polygonPlotHistoryDao().getPlotAreaData(id);
-        plot_textGpx.setText(plotGPX);
-
-        if (plotArea != null) {
-//            String plotSize = String.valueOf(BigDecimal.valueOf(plotArea));
-            String plotSize = String.valueOf(roundArea(plotArea, 3));
-            etPlotArea.setText(plotSize);
-        }
-        else {
-            etPlotArea.setText("");
-        }
-
-        String jsonString = db.polygonPlotHistoryDao().getPositionData(id);
-
-        if (jsonString != null) {
+        if (jsonString != null && !jsonString.isEmpty()) {
             ArrayList<GeoPoint> plotPoints = PlotDataParser.parsePlotData(jsonString);
             IMapController mapController = map.getController();
             mapController.setZoom(21);
@@ -2648,12 +2484,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 polygon.setPoints(plotPoints);
                 map.getOverlays().add(polygon);
 
-                // Set map center to the first point
                 mapController.setCenter(plotPoints.get(0));
             }
         }
 
-        String[] multiPinPoints = plotGPX.split(",");
+        String[] multiPinPoints = plot.centerPlot != null ? plot.centerPlot.split(",") : new String[]{"",""};
         if (multiPinPoints.length == 2 && !multiPinPoints[0].isEmpty() && !multiPinPoints[1].isEmpty()) {
             getFarmLocation(Double.parseDouble(multiPinPoints[0]), Double.parseDouble(multiPinPoints[1]));
         }
@@ -2682,7 +2517,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 if (polygon != null) {
                     map.getOverlays().remove(polygon);
                 }
-                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                
                 dl.deletePlotDataFromNetworkQueue(plotName);
                 initiateLogging();
                 alert.dismiss();
@@ -2696,9 +2531,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         });
         alert.show();
-
-
-
     }
 
     private void editPinPlotAlertDialog(Location location) {
@@ -2722,7 +2554,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(currentTrackname);
                 mLocationBeanList = locationBeanList != null ? locationBeanList.getLocationBean() : mLocationBeanList;
                 SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
-                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                
                 dl.deletePlotDataFromNetworkQueue(plotName);
                 plot_textGpx.setText(location.getLatitude()+"," + location.getLongitude());
                 bttnSave.setEnabled(true);

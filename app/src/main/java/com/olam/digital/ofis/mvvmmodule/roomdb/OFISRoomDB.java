@@ -31,10 +31,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
 @Database(entities =
@@ -46,7 +42,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
         DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class,
         //Version 18
        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
@@ -89,8 +85,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract PartnersDao partnersDao();
     public abstract GlobalUnitDao globalUnitDao();
     public abstract LocalUnitDao localUnitDao();
-    public abstract PolygonHistoryDataDao polygonHistoryDataDao();
-    public abstract PolygonPlotHistoryDao polygonPlotHistoryDao();
     public abstract AssignmentTypeDao assignmentTypeDao();
     public abstract SurveyDurationTypeDao surveyDurationTypeDao();
     public abstract PhotoCheckBoxDataDao photoCheckBoxDataDao();
