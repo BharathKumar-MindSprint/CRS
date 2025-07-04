@@ -1937,6 +1937,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 if(addCount < 5){
 
                     addNumber.setVisibility(View.VISIBLE);
+                    isPhoneUpdated = false;
                 }else{
                     addNumber.setVisibility(View.GONE);
                 }
@@ -2177,7 +2178,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                     if (!hasNumber || !hasMainNumber) {
 
-                        Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "At least one mobile number is mandatory", Toast.LENGTH_LONG).show();
                     } else if (hasDuplicatePhoneNumber) {
                         Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
                     } else {
