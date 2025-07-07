@@ -761,8 +761,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         while (getIdCursor.moveToNext()) {
             int id = getIdCursor.getInt(getIdCursor.getColumnIndex("_id"));
             String checkMandate = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE));
-            if (checkMandate!=null) {
-                if (Boolean.parseBoolean(checkMandate)) {
+            if (checkMandate!=null && Boolean.parseBoolean(checkMandate)) {
                     String disabledMonthsString = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                     List<String> disabledMonths = Arrays.asList(disabledMonthsString.split("\\s*,\\s*"));
 
@@ -770,7 +769,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             (readyToSyncSurvey != null && readyToSyncSurvey.contains(id))) {
                         mandateList.add(id);
                     }
-                }
             }
         }
         return mandateList;
@@ -803,12 +801,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     for (int i = 0; i < submittedModulesArray.length(); i++) {
                         JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                         JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                        if (submittedModuleDetails.has("plotId") && !submittedModuleDetails.getString("plotId").equals("null")) {
+                        List<String> listOfReadyToSyncIds = dl.fetchFinishedPlotIds(String.valueOf(farmerId));
+                        if (submittedModuleDetails.has("plotId") && !submittedModuleDetails.getString("plotId").equals("null") || (!listOfReadyToSyncIds.isEmpty()) ) { //answer table check
                             valid = true;
                         }
                     }
                 }else{
-                    valid = false;
+                    List<String> listOfReadyToSyncIds = dl.fetchFinishedPlotIds(String.valueOf(farmerId));
+                    valid = !listOfReadyToSyncIds.isEmpty();
                 }
             }else {
                 valid = true;

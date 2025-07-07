@@ -315,7 +315,6 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                 String questionTh = questionsItemList.get(l).getQuestionTh();
                                 String questionVi = questionsItemList.get(l).getQuestionVi();
                                 int displayTypeId = questionsItemList.get(l).getDisplaytypeId();
-                                int datatypeId = questionsItemList.get(l).getDatatypeId();
                                 boolean isCriticalQuest = questionsItemList.get(l).isCriticalQuest();
                                 String displayType = questionsItemList.get(l).getDisplayType();
                                 int id_questionModule = questionsItemList.get(l).getId();
@@ -336,7 +335,6 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                 dmQuestionsModule.questionTh = questionTh;
                                 dmQuestionsModule.questionVi = questionVi;
                                 dmQuestionsModule.displaytypeId = displayTypeId;
-                                dmQuestionsModule.datatypeId = datatypeId;
                                 dmQuestionsModule.isCriticalQuest = isCriticalQuest;
                                 dmQuestionsModule.displayType = displayType;
                                 dmQuestionsModule.id = id_questionModule;
@@ -552,7 +550,6 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                         String questionTh = questionsItems.get(l).getQuestionTh();
                                         String questionVi = questionsItems.get(l).getQuestionVi();
                                         int displayTypeId = questionsItems.get(l).getDisplaytypeId();
-                                        int datatypeId = questionsItems.get(l).getDatatypeId();
                                         boolean isCriticalQuest = questionsItems.get(l).isCriticalQuest();
                                         String displayType = questionsItems.get(l).getDisplayType();
                                         int id_questionModule = questionsItems.get(l).getId();
@@ -573,7 +570,6 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                         dmQuestionsModule.questionTh = questionTh;
                                         dmQuestionsModule.questionVi = questionVi;
                                         dmQuestionsModule.displaytypeId = displayTypeId;
-                                        dmQuestionsModule.datatypeId = datatypeId;
                                         dmQuestionsModule.isCriticalQuest = isCriticalQuest;
                                         dmQuestionsModule.displayType = displayType;
                                         dmQuestionsModule.id = id_questionModule;

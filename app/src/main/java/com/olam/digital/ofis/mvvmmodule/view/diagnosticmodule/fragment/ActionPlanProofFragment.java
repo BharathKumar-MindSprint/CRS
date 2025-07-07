@@ -2503,13 +2503,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public static String getFileWithDate(String fileName, String fileSaperator, String dateFormat) {
-        String FileNamePrefix = fileName.substring(0, fileName.lastIndexOf(fileSaperator));
-        String FileNameSuffix = fileName.substring(fileName.lastIndexOf(fileSaperator)+1, fileName.length());
-
-        String newFileName = new SimpleDateFormat("'"+FileNamePrefix+"_'"+dateFormat+"'"+fileSaperator+FileNameSuffix+"'").format(new Date());
-        System.out.println("New File:"+newFileName);
-        return newFileName;
+    public static String getFileWithDate(String fileName, String fileSeparator, String dateFormat) {
+        String FileNamePrefix = fileName.substring(0, fileName.lastIndexOf(fileSeparator));
+        String FileNameSuffix = fileName.substring(fileName.lastIndexOf(fileSeparator) + 1);
+        return new SimpleDateFormat("'" + FileNamePrefix + "_'" + dateFormat + "'" + fileSeparator + FileNameSuffix + "'").format(new Date());
     }
 
     public boolean validateFileSize(int size, int totalSizeUntilNow) {

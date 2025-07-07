@@ -788,5 +788,26 @@
     <string name="stakeholder_not_synced">ขออภัย แต่ stakeholder ยังไม่ได้รับการซิงค์ กรุณาซิงค์ stakeholder ก่อน</string>
     <string name="consent_not_synced">ขออภัย แต่การยินยอมยังไม่ได้รับการซิงค์ กรุณาซิงค์การยินยอมก่อน</string>
     <string name="survey_already_synced">แบบสำรวจนี้ได้รับการตอบโดยผู้สำรวจคนอื่นแล้ว กรุณาบันทึกและอัปเดตแอป OFIS ของคุณ</string>
+    <string name="supplier_and_surveys">ซัพพลายเออร์และการสำรวจ</string>
+    <string name="title_find_supplier_and_survey">ค้นหาซัพพลายเออร์</string>
+    <string name="select_supplier">เลือกซัพพลายเออร์</string>
+    <string name="supplier_not_found">ไม่พบซัพพลายเออร์</string>
+    <string name="supplier_id">ข้อมูลประจำตัวของซัพพลายเออร์</string>
+    <string name="supplier_details">รายละเอียดซัพพลายเออร์</string>
+    <string name="view_supplier">แสดงซัพพลายเออร์</string>
+    <string name="view_supplier_information">ดูรายละเอียดซัพพลายเออร์</string>
+    <string name="supplier_type">ประเภทซัพพลายเออร์</string>
+    <string name="limiter">%1$s - %2$s</string>
+    <string name="module_icon">Module Icon</string>
+    <string name="evidence_upload">อัปโหลดหลักฐาน</string>
+    <string name="supplier_survey">การสำรวจซัพพลายเออร์</string>
+    <string name="evidence_is_missing">หลักฐานหายไป</string>
+    <string name="supplier_search_hint">ค้นหาตามชื่อซัพพลายเออร์หรือรหัสซัพพลายเออร์</string>
+    <string name="spinner_supplier_group">กลุ่มซัพพลายเออร์</string>
+    <string name="supplier_group">กลุ่มซัพพลายเออร์</string>
+    <string name="no_signature_available">ลายเซ็นไม่พร้อมใช้งาน</string>
+
+    <string name="enter_attendee_relation_name">กรุณาใส่ชื่อผู้เข้าร่วม</string>
+    <string name="sign_all_attendee">ต้องการลายเซ็นสำหรับผู้เข้าร่วมทุกคน!</string>
 
 </resources>

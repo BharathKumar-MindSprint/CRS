@@ -9,6 +9,7 @@ import androidx.room.Query;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Dao
@@ -66,10 +67,17 @@ public interface DmComplaintFileTableDao {
     int getTotalUnSyncFileSizeByQuestionId(String id, String farmerId, String surveyType, int plotId);
 
     @Query("SELECT COUNT(uid) FROM DmComplaintFileTable WHERE questionId IN (:questionIds) AND farmerId = :farmerId AND plotId = :plotId AND isFileSynced = 0")
-    int getUnSyncedFiles(List<Integer> questionIds, long farmerId, int plotId);
+    int getUnSyncedFiles(List<Integer> questionIds, String farmerId, int plotId);
 
     @Query("UPDATE DmComplaintFileTable SET farmerId = :farmerId WHERE farmerId = :tempFarmerId")
     void updateFarmerId(int tempFarmerId, int farmerId);
 
+    @Query("DELETE FROM DmComplaintFileTable WHERE questionId = :questionId AND farmerId = :supplierId")
+    void deleteByQuestionId(int questionId, String supplierId);
 
+    @Query("SELECT * from DmComplaintFileTable WHERE questionId = :questionId AND farmerId = :supplierId")
+    DmComplaintFileTable getFileByQuestionId(int questionId, String supplierId);
+
+    @Query("DELETE FROM DmComplaintFileTable WHERE questionId IN (:id) AND farmerId = :supplierId")
+    void deleteAllFilesBy(Set<Integer> id, String supplierId);
 }

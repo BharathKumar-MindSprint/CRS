@@ -20,7 +20,7 @@ public interface DmSectionsItemDao {
     String loadSingle(int id);
 
 
-    @Query("SELECT * FROM DmSectionsItem WHERE moduleId=:id")
+    @Query("SELECT * FROM DmSectionsItem WHERE moduleId=:id order by position")
     List<DmSectionsItem> getDmSectionsByModuleId(int id);
 
     @Insert

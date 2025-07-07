@@ -1,6 +1,5 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -18,8 +17,6 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -54,15 +51,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.crashlytics.android.answers.Answers;
-//import com.crashlytics.android.answers.LoginEvent;
-//import com.dynatrace.android.agent.Dynatrace;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
+import com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity;
+import com.olam.digital.ofis.agrisupplier.ui.SupplierSurveyActivity;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
@@ -92,49 +88,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssignmentsModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmMasterDataModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
-import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
-import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAnswerTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmAssessmentResultType;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMasterData;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmModuleAssignments;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionTypes;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeTextBoxModuleQuestionsTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSectionsItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
-import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
@@ -145,17 +99,13 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
- import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -181,11 +131,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static RelativeLayout mainSection;
     private static ScrollView firstRunSection;
     private static TextView queueCount;
-    private static CardView captureMyLocationWrapper;
-    private static CardView recordTrainingWrapper;
     private SharedPreferences sharedPreferences;
-    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
-    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private static MenuItem settingsButton, tasksButton, notificationButton;
     private Handler mainHandler;
 
@@ -209,7 +155,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
     private EditText enumeratorID;
-    //    Passcode added - Penetration test
     private EditText passcode;
     private Button saveUpdateButton;
     private static final int REQUEST_PERMISSIONS = 2507;
@@ -221,7 +166,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static int totalItems;
     public static int progressItem;
     private long lastClickTime = 0;
-    private long lastitemClickTime = 0;
     private boolean isChildSynced = true;
     ListView listView;
     private Boolean existingUser = false;
@@ -229,8 +173,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
     private Boolean newGps;
-    private boolean islocationenabled = false;
-    static String ipAddress, date;
     ImageButton syncAll;
     static CardView downloadSurveyWrapper;
     private static CardView cardview_downloadFarmplan;
@@ -242,7 +184,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
-    static boolean isEnableDM = false;
+    private static CardView cvSupplierAndSurvey;
+    private static Button supplierAndSurvey;
 
 
     @Override
@@ -251,35 +194,29 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         setContentView(R.layout.activity_home);
         listView = findViewById(R.id.list);
         listView.setOnItemClickListener(this);
-        checkTls();
         staticContext = this;
         context = me = this;
         staticRes = getResources();
         res = getResources();
         db = OFISRoomDB.getDbInstance(context);
-//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
-//        setTitle(R.string.applicationName);
 
         dl = new DataLayer(res, context);
         nl = new NetworkLayer(context, res);
         mainHandler = new Handler(Looper.getMainLooper());
         sharedPreferences = getSharedPreferences("com.olam.digital.ofis.app_prefs", MODE_PRIVATE);
 
-
         LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, listView, false);
         listView.addHeaderView(itemsHeader);
 
-        firstRunSection = (ScrollView) findViewById(R.id.firstRunWrapper);
-        mainSection = (RelativeLayout) findViewById(R.id.mainWrapper);
-        captureMyLocationWrapper = (CardView) findViewById(R.id.captureLocationWrapper);
-        recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
-        passcode = (EditText) findViewById(R.id.passcode);
-        saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
-        topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
-        downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
+        firstRunSection = findViewById(R.id.firstRunWrapper);
+        mainSection = findViewById(R.id.mainWrapper);
+        passcode = findViewById(R.id.passcode);
+        saveUpdateButton = findViewById(R.id.buttonSaveUpdate);
+        topSection = findViewById(R.id.topSectionWrapper);
+        downloadSurveyWrapper = findViewById(R.id.downloadSurveyWrapper);
 
 
-        enumeratorID = (EditText) findViewById(R.id.enumeratorID);
+        enumeratorID = findViewById(R.id.enumeratorID);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
@@ -292,7 +229,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        // checkTime();
         bindNetworkQueue(true);
         // Removed the check migrate existing enumerator while update Manna version
         String environment = BuildConfig.FLAVOR;
@@ -349,7 +285,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             cardview_downloadFarmplan.setVisibility(View.GONE);
         }
 
-        Button downloadFarmplan = (Button) findViewById(R.id.DownloadFarmPlan);
+        Button downloadFarmplan = findViewById(R.id.DownloadFarmPlan);
         downloadFarmplan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -405,88 +341,53 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
-        String clientSecret = null;
-        switch (environment) {
-            case "dev":
-                clientId = KeyCloakInfo.dev_client_Id;
-                clientSecret = KeyCloakInfo.dev_Client_Secret;
-
-                // fake
-//                clientId=KeyCloakInfo.dev_ofi_client_Id;
-//                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
-
-                break;
-            case "devofi":
+        String clientSecret = switch (environment) {
+            case "devofi" -> {
                 clientId = KeyCloakInfo.dev_ofi_client_Id;
-                clientSecret = KeyCloakInfo.dev_ofi_Client_Secret;
-                break;
-            case "sitofi":
+                yield KeyCloakInfo.dev_ofi_Client_Secret;
+            }
+            case "sitofi" -> {
                 clientId = KeyCloakInfo.sit_ofi_client_Id;
-                clientSecret = KeyCloakInfo.sit_ofi_Client_Secret;
-                break;
-            case "sit":
-                clientId = KeyCloakInfo.sit_non_ofi_client_Id;
-                clientSecret = KeyCloakInfo.sit_non_ofi_Client_Secret;
-                break;
-            case "uat":
-                clientId = KeyCloakInfo.uat_non_ofi_client_Id;
-                clientSecret = KeyCloakInfo.uat_non_ofi_Client_Secret;
-                break;
-            case "uatofi":
+                yield KeyCloakInfo.sit_ofi_Client_Secret;
+            }
+            case "uatofi" -> {
                 clientId = KeyCloakInfo.uat_ofi_client_Id;
-                clientSecret = KeyCloakInfo.uat_ofi_Client_Secret;
-                break;
-            case "prod":
-                clientId = KeyCloakInfo.prod_client_Id;
-                clientSecret = KeyCloakInfo.prod_Client_Secret;
-                break;
-            case "preprodofi":
+                yield KeyCloakInfo.uat_ofi_Client_Secret;
+            }
+            case "preprodofi" -> {
                 clientId = KeyCloakInfo.preprod_ofi_client_Id;
-                clientSecret = KeyCloakInfo.preprod_ofi_Client_Secret;
-                break;
-            case "prodofi":
+                yield KeyCloakInfo.preprod_ofi_Client_Secret;
+            }
+            case "prodofi" -> {
                 clientId = KeyCloakInfo.prod_ofi_client_Id;
-                clientSecret = KeyCloakInfo.prod_ofi_Client_Secret;
-                break;
+                yield KeyCloakInfo.prod_ofi_Client_Secret;
+            }
 
             // OGA
-            case "devoga":
+            case "devoga" -> {
                 clientId = KeyCloakInfo.dev_oga_client_Id;
-                clientSecret = KeyCloakInfo.dev_oga_Client_Secret;
-                break;
-            case "sitoga":
+                yield KeyCloakInfo.dev_oga_Client_Secret;
+            }
+            case "sitoga" -> {
                 clientId = KeyCloakInfo.sit_oga_client_Id;
-                clientSecret = KeyCloakInfo.sit_oga_Client_Secret;
-                break;
-            case "uatoga":
+                yield KeyCloakInfo.sit_oga_Client_Secret;
+            }
+            case "uatoga" -> {
                 clientId = KeyCloakInfo.uat_oga_client_Id;
-                clientSecret = KeyCloakInfo.uat_oga_Client_Secret;
-                break;
-            case "prodoga":
+                yield KeyCloakInfo.uat_oga_Client_Secret;
+            }
+            case "prodoga" -> {
                 clientId = KeyCloakInfo.prod_oga_client_Id;
-                clientSecret = KeyCloakInfo.prod_oga_Client_Secret;
-                break;
-
-        }
+                yield KeyCloakInfo.prod_oga_Client_Secret;
+            }
+            default -> null;
+        };
         Utilities.setKeycloakClientDetails(context, KeyCloakInfo.Client_Id, clientId);
         Utilities.setKeycloakClientDetails(context, KeyCloakInfo.Client_Secret, clientSecret);
     }
 
     private void setOperatingUnit(String environment) {
-        String OpUnit = "nil";
-        if (environment.equalsIgnoreCase("dev") || environment.equalsIgnoreCase("sit") ||
-                environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")) {
-            OpUnit = "NON OFI";
-        } else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi") || environment.equalsIgnoreCase("preprodofi")) {
-            OpUnit = "OFI";
-        } else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
-            OpUnit = "OGA";
-        } else {
-            OpUnit = "nil";
-        }
-        Utilities.setOperatingUnitSharedPrefs(context, OpUnit);
+        Utilities.setOperatingUnitSharedPrefs(context, environment.contains("oga") ? "OGA" : "OFI");
     }
 
     private void setCommodity() {
@@ -498,11 +399,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         String userpasscode = passcode.getText().toString().trim();
-        if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("") &&
-                userpasscode != null && !userpasscode.equalsIgnoreCase("")) {
-
-            // Current OFIS Authentication
-            // doAuthentication(userEnumerator,userpasscode);
+        if (!userEnumerator.equalsIgnoreCase("") && !userpasscode.equalsIgnoreCase("")) {
 
             if (isAccountLocked()) {
                 Toast.makeText(context, getString(R.string.account_locked), Toast.LENGTH_LONG).show();
@@ -539,23 +436,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authCall.enqueue(HomeActivity.this);
     }
 
-
-    protected void checkTls() {
-        if (android.os.Build.VERSION.SDK_INT < 21) {
-            try {
-                ProviderInstaller.installIfNeeded(HomeActivity.this);
-
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                SSLEngine engine = sslContext.createSSLEngine();
-                engine.setEnabledProtocols(new String[]{"TLSv1.2"});
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         checkTime();
@@ -573,39 +453,25 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void checkTime() {
-        try {
-            int auto_time_enabled = 0;
-            int auto_time_zone_enabled = 0;
-            if (Build.VERSION.SDK_INT <= 16) {
-                auto_time_enabled = Settings.System.getInt(getContentResolver(), Settings.System.AUTO_TIME, 0);
-                auto_time_zone_enabled = Settings.System.getInt(getContentResolver(), Settings.System.AUTO_TIME_ZONE);
-            } else {
-                auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
-                auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
-            }
+        int auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
+        int auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
 
-//
-            if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setCancelable(false);
-                builder.setMessage(res.getString(R.string.set_auto_time_message))
-                        .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                                startActivityForResult(intent, 6575);
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            } else {
-                autotimeEnabled = true;
-                bindButtons();
-            }
-        } catch (Settings.SettingNotFoundException e) {
-            FirebaseCrash.report(new Exception("HomeActivity: Error getting phone auto time settings", e));
-            e.printStackTrace();
+        if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            builder.setMessage(res.getString(R.string.set_auto_time_message))
+                    .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                            startActivityForResult(intent, 6575);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            autotimeEnabled = true;
+            bindButtons();
         }
-
     }
 
     @Override
@@ -625,7 +491,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void checkForUpdate() {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             @SuppressLint("HandlerLeak") Handler checkVersionHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
@@ -653,11 +519,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                               /* long daysLeftToUpdate = Utilities.daysToUpdate(context);
-                                                if (daysLeftToUpdate >= 0) {
-                                                    String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
-                                                    Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
-                                                }*/
+
                                             }
                                         });
                             } else {
@@ -675,11 +537,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                               /* long daysLeftToUpdate = Utilities.daysToUpdate(context);
-                                                if (daysLeftToUpdate >= 0) {
-                                                    String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
-                                                    Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
-                                                }*/
                                                 dialog.cancel();
                                             }
                                         });
@@ -712,7 +569,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } else {
                 completeFirstSetup();
             }
-            //nl.postFirebaseToken(FirebaseInstanceId.getInstance().getToken());
         } else {
             Toast.makeText(context, R.string.Please_fill_all_fields, Toast.LENGTH_SHORT).show();
         }
@@ -733,7 +589,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (notificationButton != null) {
             notificationButton.setVisible(true);
         }
-
+        if (Utilities.getBoolFromSharedPrefs(staticContext, Utilities.IS_SUPPLIER_ENABLED, false)) {
+            cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+            supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(staticContext, FindSupplierAndSurveyActivity.class);
+                    staticContext.startActivity(intent);
+                }
+            });
+        }
+        else {
+            cvSupplierAndSurvey.setVisibility(View.GONE);
+        }
 
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
@@ -760,11 +628,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
     private void bindNetworkQueue(boolean isClickable) {
-        TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
+        TextView nomodulestosubmittext = findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
 
         if (networkQueue.getCount() > 0) {
-            queueCount = (TextView) findViewById(R.id.networkQueueCount);
+            queueCount = findViewById(R.id.networkQueueCount);
             totalItems = networkQueue.getCount();
             String queueTotal = Integer.toString(totalItems);
             queueCount.setText(queueTotal);
@@ -796,7 +664,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         } else {
             listView.setAdapter(null);
-            queueCount = (TextView) findViewById(R.id.networkQueueCount);
+            queueCount = findViewById(R.id.networkQueueCount);
             queueCount.setText("0");
             if (Utilities.daysToUpdate(context) <= 0) {
                 nomodulestosubmittext.setText(R.string.ofis_update_overdue);
@@ -817,7 +685,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void checkAuthenticate() {
 
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
             accessTokenTask.execute();
         } else {
@@ -842,9 +710,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void startAllItemSync() {
-        if (nl.isPhoneOnline()) {
-
-
+        if (isNetworkAvailable(context)) {
             final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
             mainHandler.post(new Runnable() {
 
@@ -942,7 +808,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     public void startItemSync(int itemId) {
-        if (nl.isPhoneOnline()) {
+        if (isNetworkAvailable(context)) {
             mainHandler.post(new Runnable() {
 
                 @Override
@@ -1077,32 +943,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private static void downloadSurvey() {
-
-        try {
-            DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
-            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
-            ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
-            if (moduleList == null || moduleList.size() == 0) {
-                downloadSurveyWrapper.setVisibility(View.GONE);
-            } else {
-                downloadSurveyWrapper.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void bindButtons() {
-        Button addNewFarmer = (Button) findViewById(R.id.AddNewFarmer);
-        Button completeModule = (Button) findViewById(R.id.CompleteQuestionnaireModule);
-        Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
-        Button captureLocation = (Button) findViewById(R.id.captureLocation);
-        Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
-        Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
+        Button addNewFarmer = findViewById(R.id.AddNewFarmer);
+        Button completeModule = findViewById(R.id.CompleteQuestionnaireModule);
+        Button addSocialInfra = findViewById(R.id.AddSocialInfrastructure);
+        Button captureLocation = findViewById(R.id.captureLocation);
+        Button recordTraining = findViewById(R.id.RecordFarmerTraining);
+        Button downloadSurvey = findViewById(R.id.downloadSurveyData);
+        supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
+        cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
 
-        syncAll = (ImageButton) findViewById(R.id.syncAll);
-        boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
+        syncAll = findViewById(R.id.syncAll);
         downloadSurveyWrap();
         downloadSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1151,6 +1002,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+            if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                cvSupplierAndSurvey.setVisibility(View.VISIBLE);
+                supplierAndSurvey.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, FindSupplierAndSurveyActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+            else {
+                cvSupplierAndSurvey.setVisibility(View.GONE);
+            }
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1322,10 +1186,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
         showProgress(false);
         Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
-//        Answers.getInstance().logLogin(new LoginEvent()
-//                .putMethod("first")
-//                .putCustomAttribute("reason", "network error")
-//                .putSuccess(false));
     }
 
     private void doInitialCheck() {
@@ -1393,7 +1253,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             // Permission Denied
                             Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
                             String userEnumerator = enumeratorID.getText().toString().trim();
-                            if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("")) {
+                            if (!userEnumerator.equalsIgnoreCase("")) {
                                 doingAuthRequest();
                             }
 
@@ -1410,7 +1270,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 break;
             }
@@ -1486,21 +1346,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("biometric_update")) {
-                Intent intent = new Intent(this, ViewFarmerActivity.class);
-                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("farmpolygon")) {
+            }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
                 Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
                 final String lFarmID = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                 DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
                 dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                int count = 0;
-                try {
-                    count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                } catch (Exception e) {
-                    count = 0;
-                }
                 recordPolygonIntent.putExtra(FARMER_ID, Long.valueOf(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 recordPolygonIntent.putExtra(FARM_ID, lFarmID);
                 recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -1524,18 +1374,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } else if (itemType.equalsIgnoreCase("childmodule")) {
                 Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
                 ChildLabourCompleteModuleActivity.editMode = true;
-                ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-                ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+                ViewChildLabourSurveyActivity.farmerID = (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                ViewChildLabourSurveyActivity.childID = (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-                startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("transaction")) {
-                Intent intent = new Intent(context, TransactionItem.class);
-                intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-                intent.putExtra(EDIT_MODE, true);
-                intent.putExtra(READ_ONLY_MODE, true);
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("trainingrecord")) {
                 Intent intent = new Intent(context, TrainingRecord.class);
@@ -1553,7 +1397,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 in.putExtras(bundle);
                 startActivity(in);
             } else if (itemType.equalsIgnoreCase("farmer_photo")) {
-                //JIRA req OW-505
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
@@ -1575,14 +1418,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
             }
-        } catch (CursorIndexOutOfBoundsException e) {
-        }
-    }
+            else if (itemType.equalsIgnoreCase("Supplier Survey")) {
+                int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+                String supplierId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String supplierName = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                SupplierSurveyDto supplierSurveyDto = db.dmMainModuleDao().getModuleById(moduleId);
 
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, SupplierSurveyActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Utilities.SUPPLIER, supplierSurveyDto);
+                bundle.putString("SupplierId", supplierId);
+                bundle.putString("SupplierName", supplierName);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        } catch (CursorIndexOutOfBoundsException ignored) {
+        }
     }
 
     private static class viewSurveyWrapper extends AsyncTask<Object, Boolean, Boolean> {
@@ -1604,7 +1455,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
-            if (moduleList == null || moduleList.size() == 0) {
+            if (moduleList == null || moduleList.isEmpty()) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
             } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
@@ -1661,8 +1512,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     /*Get DownLoad Farm Form List*/
     public static void DownloadFormList(String value) {
-        //progressDialog.show();
-        // String userEnumeratorID = enumeratorID.getText().toString().trim();
         ManageRecords AllFarmFormList = RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Long.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
         call.enqueue(new Callback<DownloadFormList>() {
@@ -1703,27 +1552,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             }
                             Log.e("ListRespValue", response.body().getStatusMessage());
 
-                        } else {
-                            //Toast.makeText(DownloadFarmPlanActivity.this,response.body().getStatusMessage(), Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                            //showAlert(response.body().getStatusMessage());
                         }
-                    } else {
-                        // showAlert(response.body().getStatusMessage());
-                        // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                     }
-                } else if (response.code() == 400) {
-                    // progressDialog.hide();
-                    //showAlert(response.message().toString());
-                    //Toast.makeText(staticContext,"Bad Request", Toast.LENGTH_SHORT).show();
-                    Log.d("BadRequest-", response.message());
-                } else if (response.code() == 500) {
-                    //progressDialog.hide();
-                    //showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
-                } else {
-                    // showAlert("Server Issue!!"+response.message().toString());
                 }
-
             }
 
             @Override
