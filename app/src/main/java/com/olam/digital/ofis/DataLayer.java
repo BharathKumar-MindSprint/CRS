@@ -563,7 +563,17 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS, "null");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB != 0.0 ? String.valueOf(sizeInKB) : "null");
 
-            db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+            Long valueInserted = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+
+            if (Objects.equals(valueInserted, Long.parseLong(plotId))) {
+                ContentValues updatePlotAvailability = new ContentValues();
+                updatePlotAvailability.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE, "true");
+
+                String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+                String[] whereArgs = new String[]{String.valueOf(farmerId)};
+
+                db.update(OFISDBContract.FarmerEntry.TABLE_NAME, updatePlotAvailability, whereClause, whereArgs);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
