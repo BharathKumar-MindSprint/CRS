@@ -561,7 +561,7 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, positionData.equals("{\"plot\":[]}") ? "" : positionData);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON, "null");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS, "null");
-            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB != 0.0 ? String.valueOf(sizeInKB) : "null");
 
             db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
         }catch (Exception e){
