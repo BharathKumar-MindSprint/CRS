@@ -47,7 +47,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -82,7 +81,6 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -2019,7 +2017,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         String name = "Plot 0";
         position = position + 1;
         
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -2054,7 +2052,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public boolean isSyncedPlot(int position){
         boolean status = false;
         position = position + 1;
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -2073,7 +2071,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public PolygonDataDto getPlotId(int position) {
         position = position + 1;
         
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
         PolygonDataDto.Builder polygonDataBuilder = new PolygonDataDto.Builder();
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
@@ -2099,7 +2097,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void loadPlotLayout(LayoutInflater inflater) {
         
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {

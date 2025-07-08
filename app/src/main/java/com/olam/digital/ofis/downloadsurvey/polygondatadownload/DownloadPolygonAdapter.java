@@ -95,7 +95,7 @@ public class DownloadPolygonAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
     private List<PlotDisplayDto> getAllplotList(FarmerPolygonDto item) {
 
-        Cursor getAllPlot = dl.fetchAllPlotIds(String.valueOf(item.getId()));
+        Cursor getAllPlot = dl.fetchAllPlotIds(String.valueOf(item.getId()), true);
         return PlotCursorToDto.cursorToDtoFarmerList(getAllPlot, item.getName(), item.getId());
     }
 

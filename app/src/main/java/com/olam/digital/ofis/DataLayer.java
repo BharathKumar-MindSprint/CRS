@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import static com.olam.digital.ofis.Utilities.datatypeIdCLMRS;
-import static com.olam.digital.ofis.Utilities.scaleRotateAndSaveImage;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -279,10 +278,10 @@ public class DataLayer {
 
     }
 
-    public Cursor fetchAllPlotIds(String id) {
+    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(id)};
+        String whereClause = isDownloadPolygon ? OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? " : OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = isDownloadPolygon ? new String[]{String.valueOf(id), "1"} : new String[]{String.valueOf(id)};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data;
     }
