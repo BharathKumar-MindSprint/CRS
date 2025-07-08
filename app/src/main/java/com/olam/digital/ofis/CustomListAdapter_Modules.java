@@ -173,6 +173,15 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                         textView.setText(res.getString(R.string.update_phone_numbers_hint));
 
+                    } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("editFarmerData")) {
+                      //  imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
+                        enabledItem.setText("true");
+
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.update_phone_numbers_hint));
+
                     }
                     else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
                         int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));

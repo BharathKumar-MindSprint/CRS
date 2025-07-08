@@ -156,6 +156,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private static final String FARMER_NAME = "FARMER_NAME";
     private static final String PLOT_COUNT = "PLOT_COUNT";
     private static final String VIEW_MODULE = "VIEW_MODULE";
+    private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
+    private final static String EDIT_MODE = "EDIT_MODE";
 
     private RelativeLayout phoneNumbersHolder;
     private LinearLayout phonenumbers;
@@ -1212,6 +1214,45 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "farmpolygon","",""
                 });
+
+
+                mc.addRow(new String[]{
+                        "0",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "0",
+                        "",
+                        "",
+                        "",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "","","",
+                        "", "", "",
+                        "",
+                        "editFarmerData","",""
+                });
+
+
+
+
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -2596,6 +2637,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         polygon = false;
                         household = true;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
+                    } else if (recordedLng != null && recordedLng.getText().equals("editFarmerData")) {
+                        Intent in = new Intent(this, AddFarmerActivity.class);
+                        Bundle bundle = new Bundle();
+                        in.putExtra(EDIT_FARMER_ID, farmerId);
+                        bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        in.putExtra(EDIT_MODE, true);
+                        in.putExtras(bundle);
+                        startActivity(in);
+
                     }
                     else if (recordedLng != null && recordedLng.getText().equals("addFarmStakeholders")) {
                         Intent in = new Intent(this, AddFarmStakeHolderActivity.class);
