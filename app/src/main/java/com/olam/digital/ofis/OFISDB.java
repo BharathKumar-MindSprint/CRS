@@ -432,7 +432,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE + " TEXT,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " INTEGER DEFAULT 0,"
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT)";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
@@ -923,7 +923,7 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("DROP TABLE productgrades");
             sqLiteDatabase.execSQL("DROP TABLE productprices");
             sqLiteDatabase.execSQL("DROP TABLE product_transactionitemtype");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
