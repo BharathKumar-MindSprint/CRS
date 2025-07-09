@@ -1408,6 +1408,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
+            } else if (itemType.equalsIgnoreCase("phonenumbers")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                intent.putExtra("phoneNumber", true);
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("Update_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
+            } else if (itemType.equalsIgnoreCase("National_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
             }
             else if (itemType.equalsIgnoreCase("Supplier Survey")) {
                 int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
@@ -1451,53 +1472,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
-
-            GetAccessToken("home");
-
-        }
-    }
-
-
-    public static void GetAccessToken(String value) {
-        ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, StringConstants.COUNTRY_CODE);
-        counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
-
-        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);
-        ManageRecords GetAccessToken = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<AccessTokenResp> call = GetAccessToken.getAccessToken(accessTokenReqBody);
-        call.enqueue(new Callback<AccessTokenResp>() {
-            @Override
-            public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
-                if (response.code() == 200) {
-                    odAccessToken = response.body().getAccessToken();
-                    Log.e("OD_AccessTOKEN", odAccessToken);
-
-                    DownloadFormList("home");
-                } else if (response.code() == 400) {
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                } else if (response.code() == 500) {
-
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                }
+            int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+            if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
+                showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
-
-            @Override
-            public void onFailure(Call<AccessTokenResp> call, Throwable t) {
-            }
-        });
-
-        int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
-        if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
-            showDailyRemainderPopUp(onGroundSurveyNotificationCount);
         }
-
     }
 
     /*Get DownLoad Farm Form List*/
