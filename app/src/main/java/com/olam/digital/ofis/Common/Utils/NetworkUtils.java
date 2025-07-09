@@ -1,11 +1,15 @@
 package com.olam.digital.ofis.Common.Utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
+
+import com.olam.digital.ofis.R;
 
 public class NetworkUtils {
 
@@ -34,6 +38,19 @@ public class NetworkUtils {
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
+    }
+
+    public static void showAlert(String msg, Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(msg);
+        builder.setTitle(R.string.Alert_txt);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
+            dialog.cancel();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 }
 

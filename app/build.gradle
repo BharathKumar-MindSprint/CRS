@@ -29,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
-        versionCode 95
-        versionName "10.8.7"
+        versionCode 632
+        versionName "14.6.2"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -322,7 +322,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.7.1'
     annotationProcessor 'androidx.room:room-compiler:2.7.1'
     implementation 'com.itextpdf:itextg:5.5.10'
-    implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
+   // implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
+    implementation project(':library')
 }
 
 apply plugin: 'com.google.gms.google-services'
