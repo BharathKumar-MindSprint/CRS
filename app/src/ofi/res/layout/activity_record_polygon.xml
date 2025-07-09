@@ -91,7 +91,7 @@
 
                 <Spinner
                     android:id="@+id/plot_number"
-                    android:layout_width="78dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/ofis_base_font_white" />
 

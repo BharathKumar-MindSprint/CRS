@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import static com.olam.digital.ofis.Utilities.datatypeIdCLMRS;
-import static com.olam.digital.ofis.Utilities.scaleRotateAndSaveImage;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -279,10 +278,10 @@ public class DataLayer {
 
     }
 
-    public Cursor fetchAllPlotIds(String id) {
+    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(id)};
+        String whereClause = isDownloadPolygon ? OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? " : OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = isDownloadPolygon ? new String[]{String.valueOf(id), "1"} : new String[]{String.valueOf(id)};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data;
     }
@@ -562,9 +561,19 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, positionData.equals("{\"plot\":[]}") ? "" : positionData);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON, "null");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS, "null");
-            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB != 0.0 ? String.valueOf(sizeInKB) : "null");
 
-            db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+            Long valueInserted = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+
+            if (Objects.equals(valueInserted, Long.parseLong(plotId))) {
+                ContentValues updatePlotAvailability = new ContentValues();
+                updatePlotAvailability.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE, "true");
+
+                String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+                String[] whereArgs = new String[]{String.valueOf(farmerId)};
+
+                db.update(OFISDBContract.FarmerEntry.TABLE_NAME, updatePlotAvailability, whereClause, whereArgs);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
