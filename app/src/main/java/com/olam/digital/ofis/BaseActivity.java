@@ -25,6 +25,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -326,6 +327,7 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
                 storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                storeableNids.put("backendDbId", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID)));
 
                 storeableNationalids.put(storeableNids);
 
@@ -469,7 +471,7 @@ public class BaseActivity extends AppCompatActivity {
         int nidrowscount = nationalids.getChildCount();
 
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             ImageButton imageButton = nidrow.findViewById(R.id.nationalidphoto);
             String value = nid_type.getSelectedItem().toString();
@@ -484,7 +486,7 @@ public class BaseActivity extends AppCompatActivity {
     public void displayExpiryDateforNID(LinearLayout nationalids, int nidvalue, String expDate) {
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            View nidrow = nationalids.getChildAt(j);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             String value = nid_type.getSelectedItem().toString();

@@ -154,7 +154,7 @@
     <string name="Save">Save</string>
     <string name="Add_Signature">Signature:</string>
     <string name="Signature">Signature</string>
-
+<!--    <string name="Farmer_code">Farmer Code</string>-->
     <!-- Find a farmer related -->
     <!-- in XML -->
     <string name="Select_Farmer">Select Farmer</string>
@@ -1242,4 +1242,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="no_images_to_be_downloaded">There are no images to be downloaded</string>
     <string name="image_downloaded">Images successfully downloaded</string>
     <string name="image_download_start">Downloading Images for photo checkbox questions</string>
+    <string name="farmer_code_already_exists">"Farmer code already exists"</string>
+    <string name="farmer_code">"Farmer Code"</string>
 </resources>

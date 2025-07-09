@@ -1079,6 +1079,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF = "polygonCaptureForNonCompliant";
         public static final String COLUMN_NAME_FARM_CODE = "farmCode";
         public static final String COLUMN_NAME_FARM_NAME = "farmName";
+        public static final String COLUMN_NAME_FARMER_CODE = "farmerCode";
+        public static final String COLUMN_NAME_DUPLICATE_FARMER_CODE = "duplicateFarmerCode";
         public static final String COLUMN_NAME_PLOT_AVAILABLE = "plotAvailable";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1125,6 +1127,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                     add(COLUMN_NAME_FARM_CODE);
                     add(COLUMN_NAME_FARM_NAME);
+                    add(COLUMN_NAME_FARMER_CODE);
+                    add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
                     add(COLUMN_NAME_PLOT_AVAILABLE);
                 }}
         );
@@ -1164,6 +1168,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF);
                     add(COLUMN_NAME_FARM_CODE);
                     add(COLUMN_NAME_FARM_NAME);
+                    add(COLUMN_NAME_FARMER_CODE);
+                    add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
                     add(COLUMN_NAME_PLOT_AVAILABLE);
                 }}
         );
@@ -1207,6 +1213,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final String COLUMN_NAME_NUMBER = "phonenumber";
         public static final String COLUMN_NAME_PRIMARY = "primary_number";
+        public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1215,6 +1222,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_NUMBER);
                     add(COLUMN_NAME_PRIMARY);
+                    add(COLUMN_NAME_IS_DUPLICATE);
                 }}
         );
     }
@@ -1230,6 +1238,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
+        public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1241,6 +1250,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
+                    add(COLUMN_NAME_IS_DUPLICATE);
                 }}
         );
     }
@@ -1253,6 +1263,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
+        public static final String COLUMN_BACKEND_DB_ID = "backendDbId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1261,6 +1272,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
+                    add(COLUMN_BACKEND_DB_ID);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
@@ -1867,6 +1879,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SCORE = "score";
         public static final String COLUMN_NAME_PERCENTAGE = "percentage";
         public static final String COLUMN_NAME_GRADE = "grade";
+        public static final String COLUMN_NAME_TRAINEE_SIGNATURE = "trainee_signature";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1879,6 +1892,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SCORE);
                     add(COLUMN_NAME_PERCENTAGE);
                     add(COLUMN_NAME_GRADE);
+                    add(COLUMN_NAME_TRAINEE_SIGNATURE);
                 }}
         );
 
@@ -1895,6 +1909,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_TRAINEE_GENDER_ID = "trainee_gender_id";
         public static final String COLUMN_NAME_TRAINEE_RELATIONSHIP = "trainee_relationship";
         public static final String COLUMN_NAME_TRAINEE_RELATIONSHIP_ID = "Trainee_relationship_id";
+        public static final String COLUMN_NAME_TRAINEE_RELATION_SIGNATURE = "trainee_relation_signature";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1907,6 +1922,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_TRAINEE_GENDER_ID);
                     add(COLUMN_NAME_TRAINEE_RELATIONSHIP);
                     add(COLUMN_NAME_TRAINEE_RELATIONSHIP_ID);
+                    add(COLUMN_NAME_TRAINEE_RELATION_SIGNATURE);
                 }}
         );
 
@@ -1927,6 +1943,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_VI = "name_vi";
         public static final String COLUMN_NAME_NAME_TH = "name_th";
         public static final String COLUMN_NAME_CAPTURE_ATTENDEE = "captureAdditionalAttendees";
+        public static final String COLUMN_NAME_SIGNATURE = "captureSignature";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1942,6 +1959,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NAME_VI);
                     add(COLUMN_NAME_NAME_TH);
                     add(COLUMN_NAME_CAPTURE_ATTENDEE);
+                    add(COLUMN_NAME_SIGNATURE);
                 }}
         );
 

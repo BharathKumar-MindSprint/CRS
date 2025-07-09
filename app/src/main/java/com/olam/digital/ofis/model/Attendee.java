@@ -11,6 +11,8 @@ public class Attendee {
     private String traineeRelationship;
     private String traineeRelationshipId;
 
+    private String traineeRelationSignature;
+
     public int getFarmerId() {
         return farmerId;
     }
@@ -73,5 +75,13 @@ public class Attendee {
 
     public void setTraineeRelationshipId(String traineeRelationshipId) {
         this.traineeRelationshipId = traineeRelationshipId;
+    }
+
+    public String getTraineeRelationSignature() {
+        return traineeRelationSignature;
+    }
+
+    public void setTraineeRelationSignature(String traineeRelationSignature) {
+        this.traineeRelationSignature = traineeRelationSignature;
     }
 }

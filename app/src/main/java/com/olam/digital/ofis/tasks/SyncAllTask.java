@@ -29,7 +29,6 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
-import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierModuleResponse;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
@@ -44,7 +43,6 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
@@ -106,8 +104,8 @@ public class SyncAllTask extends SyncTask {
     }
 
     public static final String TAG = "SyncAllTask";
-    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
+    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
+    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
@@ -116,7 +114,6 @@ public class SyncAllTask extends SyncTask {
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
-    String counrtyCode;
     ArrayList<String> isoCodes = new ArrayList<>();
     ArrayList<String> countryIds = new ArrayList<>();
     private SyncAllTaskDelegate delegate;
@@ -169,14 +166,6 @@ public class SyncAllTask extends SyncTask {
 
         } else if (op == SyncTaskOperationType.SYNC_SPINNERS) {
             syncSpinners();
-        } else if (op == SyncTaskOperationType.SYNC_OD_FLDETAILS) {
-            syncFLDetails();
-        } else if (op == SyncTaskOperationType.SYNC_OD_TOKEN) {
-            try {
-                syncODRefreshToken();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         } else if (op == SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT) {
             syncEnumAssignmentCheck();
 
@@ -251,12 +240,6 @@ public class SyncAllTask extends SyncTask {
         }else if (op == SyncTaskOperationType.SYNC_HHGPS) {
             try {
                 syncHouseholdEnumerator();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else if (op == SyncTaskOperationType.SYNC_ISFL) {
-            try {
-                syncFarmerLeadEnumerator();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -453,9 +436,6 @@ public class SyncAllTask extends SyncTask {
             new UpdateChildrenTask(context).execute(childResponse);
             childResponse = null;
 
-            new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
-            farmerLeadResponse = null;
-
             new UpdateAssignmentTask(context).execute(assignmentCheckResponse);
             assignmentCheckResponse = null;
 
@@ -489,8 +469,6 @@ public class SyncAllTask extends SyncTask {
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
-            }else{
-                SettingsActivity.completeSetup();
             }
             if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
                 photoCheckboxDownload();
@@ -550,26 +528,10 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void postFailureMessage(JSONObject response) {
-
-
-        try {
-            Log.d("Testing Message", "Post Failure-----" + response.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         String failureMessage = context.getString(R.string.item_sync_error);
         if (response != null) {
-            try {
-                failureMessage = response.optString("message");
-                failureMessage = response.getString("errors") + " : ";
-            } catch (JSONException e) {
-                FirebaseCrash.report(e);
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            failureMessage = response.optString("errors");
         }
-
         publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
     }
 
@@ -702,10 +664,9 @@ public class SyncAllTask extends SyncTask {
                             String cid = gson.toJson(cidsList);
                             Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", jsonText, null);
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
-                            Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
 
                         }catch (Exception e){e.printStackTrace();}
 
@@ -738,61 +699,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncODRefreshToken() throws JSONException {
-
-        JSONObject inputArgs = new JSONObject();
-        Gson gson = new Gson();
-        String jsonText = Utilities.getdatafromSharedPrefs(context, "COUNTRY_CODE");
-        Type type = new TypeToken<ArrayList<String>>() {}.getType();
-        isoCodes = gson.fromJson(jsonText, type);
-        int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-        String counrtyCode = isoCodes.get(countrycount-1);
-        inputArgs.put("userId", counrtyCode + "_OFIS_DO_INTERFACE");
-        inputArgs.put("password", "Olam123+");
-        inputArgs.put("system", "od");
-
-        okHttpPost(context, IAPIConstants.EXTERNAL_LOGIN, inputArgs, new Callback() {
-            @Override
-            public void onResponse(Call call, final Response postResponse) {
-                try {
-                    JSONObject response = new JSONObject(postResponse.body().string());
-                    if (postResponse.isSuccessful()) {
-                        try {
-                            String accessToken= response.getString("accessToken");
-                            Utilities.saveToSharedPrefs(context,"ODTOKEN",accessToken,null);
-                        }catch (Exception e){}
-
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_fldetails));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_FLDETAILS);
-
-                    } else {
-                        postFailureMessage(response);
-                    }
-
-                } catch (JSONException | IOException e) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing spinners", e));
-                    e.printStackTrace();
-                } finally {
-                    postResponse.close();
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                String failureMessage = res.getString(R.string.networking_error);
-                if (e != null) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when checking app version", e));
-                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                }
-
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-
-            }
-        });
-    }
-
     private void syncSpinners() {
         okHttpGet(context, IAPIConstants.COUNTRY_SPINNERS, new Callback() {
             @Override
@@ -808,10 +714,8 @@ public class SyncAllTask extends SyncTask {
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
                                 item = countryArray.getJSONObject(j);
-                                counrtyCode = item.getString("countryIsoCode");
-
-                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
-                                Utilities.saveToSharedPrefs(context, "CountryUserID", counrtyCode.substring(0,2), null);
+                                String countryCode = item.getString("countryIsoCode");
+                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", countryCode.substring(0,2), null);
                             }
                         }catch (Exception e){e.printStackTrace();}
                         syncResultCount = syncResultCount + response.getInt("resultcount");
@@ -850,74 +754,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncFLDetails() {
-        okHttpODGet(context, IAPIConstants.GET_ALL_FL_DETAILS, new Callback() {
-            @Override
-            public void onResponse(Call call, final Response postResponse) {
-                try {
-                    Gson gson = new Gson();
-                    String jsonText = Utilities.getdatafromSharedPrefs(context, "COUNTRY_CODE");
-                    String cids = Utilities.getdatafromSharedPrefs(context, "COUNTRY_IDS");
-                    Type type = new TypeToken<ArrayList<String>>() {}.getType();
-                    isoCodes = gson.fromJson(jsonText, type);
-                    countryIds = gson.fromJson(cids, type);
-                    int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-                    String counrtyCode = isoCodes.get(countrycount-1);
-                    String counrtyid = countryIds.get(countrycount-1);
-                    JSONArray response = new JSONArray(postResponse.body().string());
-                    if (postResponse.isSuccessful()) {
-                        int length = response.length();
-                        for (int j = 0; j < length; j++) {
-                            response.getJSONObject(j).put("countryIsoCode",  counrtyCode);
-                            response.getJSONObject(j).put("countryId",  Integer.parseInt(counrtyid));
-                        }
-
-                        // store the value in Farmer lead data
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("farmerLeads", response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        farmerLeadResponse = jsonObject;
-                        Log.e("farmerLeadResponse", String.valueOf(farmerLeadResponse));
-                        if(countrycount == isoCodes.size()){
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
-                        }else {
-                            countrycount = countrycount +1;
-                            Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", countrycount);
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
-                        }
-
-
-                    } else {
-                        JSONObject responsedata = new JSONObject(postResponse.body().string());
-                        postFailureMessage(responsedata);
-                    }
-
-                } catch (IOException | JSONException e) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing spinners", e));
-                    e.printStackTrace();
-                } finally {
-                    postResponse.close();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                String failureMessage = res.getString(R.string.networking_error);
-                if (e != null) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing spinners", e));
-                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                }
-
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-            }
-
-        });
-    }
     private void syncLocalUnit() throws JSONException{
         ManageRecords getLocalUnitMasterData = RetrofitClient.getRetrofit().create(ManageRecords.class);
         retrofit2.Call<LocalUnitResponseModel> call = getLocalUnitMasterData.getAllLocalUnitResponseModel();
@@ -1216,49 +1052,6 @@ public class SyncAllTask extends SyncTask {
     }
 
 
-
-    private void syncFarmerLeadEnumerator() {
-        okHttpGet(context, IAPIConstants.IS_FL_ENUMERATOR, new Callback() {
-            @Override
-            public void onResponse(Call call, final Response postResponse) {
-                try {
-                    String output = postResponse.body().string();
-                    if (postResponse.isSuccessful()) {
-                        Boolean isflenumerator = Boolean.parseBoolean(output.trim());
-                        Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
-                        if(! isflenumerator) {
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
-                        }else{
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
-                        }
-
-
-                    } else {
-                        postFailureMessage(null);
-                    }
-                } catch (IOException e) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
-                    e.printStackTrace();
-                } finally {
-                    postResponse.close();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                String failureMessage = res.getString(R.string.networking_error);
-                if (e != null) {
-                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
-                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                }
-
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
-            }
-        });
-    }
-
     private void syncNationalIDs() {
         okHttpGet(context, IAPIConstants.GET_NATIONALIDS_BY_ENUMERATOR, new Callback() {
             @Override
@@ -1431,6 +1224,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         farmerResponse = response;
 
+                        deleteRoomDbValues();
+                        deleteSupplierDetails();
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
@@ -1927,7 +1722,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void GetAllDiagnosticModule() {
-        deleteRoomDbValues();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
             ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData();
@@ -2013,7 +1807,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     public void syncSupplierDetails() {
-        deleteSupplierDetails();
         if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
             ManageRecords retrofitClient = RetrofitClient.getRetrofit().create(ManageRecords.class);
             retrofit2.Call<SupplierResponse> call = retrofitClient.getAllSupplierData();

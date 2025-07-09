@@ -63,11 +63,9 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
     private final boolean hasSubmittedModules;
     private final Calendar currentDate;
     private final DataLayer dl;
-    private final Context mContext;
     private JSONArray submittedModulesArray;
     private String moduleColumnSuffix = "";
     int roleId;
-    String viewModule = "0";
     long farmerId;
 
     boolean ispolygonCaptured;
@@ -75,16 +73,14 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
     boolean isAvailableInStakeHolderList;
     HashMap<Integer,SubmittedInfo> farmSubmittedHashMapList;
     boolean isAtLeastOnePlotSurveyCaptured;
-    boolean isMandateSurveyCompleted = false;
+    boolean isMandateSurveyCompleted;
     Set<Integer> mandateSurveyList = new HashSet<>();
-    String multiFarmId;
 
     OFISRoomDB db;
 
 
-    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_, int roleId, long farmerId, String multiFarmId, boolean isAtLeastOnePlotSurveyCaptured, boolean isMandateSurveyCompleted, Set<Integer> mandateSurveyList) throws JSONException {
+    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_, int roleId, long farmerId, boolean isAtLeastOnePlotSurveyCaptured, boolean isMandateSurveyCompleted, Set<Integer> mandateSurveyList) throws JSONException {
         super(c, R.layout.listview_module_list, cursor, adapterCols, adapterRowViews, 0);
-        this.mContext = c;
         this.layout = R.layout.listview_module_list;
         this.inflater = LayoutInflater.from(c);
         this.res = res_;
@@ -98,7 +94,6 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
         this.dl = new DataLayer(res, c);
         this.roleId=roleId;
         this.farmerId=farmerId;
-        this.multiFarmId=multiFarmId;
         this.isAtLeastOnePlotSurveyCaptured = isAtLeastOnePlotSurveyCaptured;
         this.isMandateSurveyCompleted = isMandateSurveyCompleted;
         this.mandateSurveyList = mandateSurveyList;
@@ -140,12 +135,17 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
 
 
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                            enabledItem.setText("false");
-
-
-                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0){
+                                enabledItem.setText("false");
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            } else {
+                                enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                            }
                             try {
                                 if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
                                     if (dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
@@ -390,39 +390,25 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                         }
                     }
                     else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
-                        boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
-                        boolean nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
                         long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
-                        boolean isSynced = dl.getSyncedStatus(farmerId);
                         boolean availstatus = dl.isValueavailable(farmerId);
-                        boolean isUpdateNationalId = dl.isUpdateNationalIdAvailable(farmerId);
-                        if (!nidupdateWaiting) {
-                            nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("Update_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
-                        }
+                        boolean isDuplicateNationalId = dl.checkNationalIdDuplicateByFarmerId(farmerId);
 
-                        if (isSynced && !isUpdateNationalId) {
-                            textView.setText(res.getString(R.string.view_tab_hint));
-                            moduleTitle.setText(res.getString(R.string.view_nationalid));
+                        if (!availstatus) {
+                            textView.setText(res.getString(R.string.add_tab_hint));
+                            moduleTitle.setText(res.getString(R.string.add_nationalid));
                         } else {
-                            if (!availstatus && !isUpdateNationalId) {
-                                textView.setText(res.getString(R.string.add_tab_hint));
-                                moduleTitle.setText(res.getString(R.string.add_nationalid));
-                            } else {
-                                textView.setText(res.getString(R.string.update_tab_hint));
-                                moduleTitle.setText(res.getString(R.string.update_nationalid));
-                            }
-                        }
-
-                        if (updateWaiting || nidupdateWaiting) {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
-                            enabledItem.setText("false");
-                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                             textView.setText(res.getString(R.string.update_tab_hint));
                             moduleTitle.setText(res.getString(R.string.update_nationalid));
+                        }
+
+                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0){
+                            enabledItem.setText("false");
+                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         } else {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, isDuplicateNationalId ? R.drawable.ic_status_completed : R.drawable.ic_childsurvey));
                             enabledItem.setText("true");
                             linearLayout.setBackgroundResource(R.drawable.list_item);
                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
