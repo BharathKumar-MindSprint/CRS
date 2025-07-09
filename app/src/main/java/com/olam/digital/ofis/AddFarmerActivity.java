@@ -269,7 +269,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         etFarmHoldingCode = findViewById(R.id.etFarmHoldingCode);
         roleHeading = findViewById(R.id.roleHeading);
         etFarmerRole = findViewById(R.id.etFarmerRole);
-
+         farmerName = findViewById(R.id.farmerName);
         farmerCodeError =  findViewById(R.id.error_msg);
         farmerValidationError = findViewById(R.id.error_msg_format);
         farmerInvalidFormat = findViewById(R.id.error_msg_invalid_format);
@@ -296,7 +296,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
 
          farmerCode = findViewById(R.id.farmerCode);
-         farmerName = findViewById(R.id.farmerName);
+
          InputFilter lengthFilter = new InputFilter.LengthFilter(50);
          farmerName.setFilters(new InputFilter[]{LetterHypenFilter,lengthFilter});
          farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter});
@@ -364,8 +364,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Cursor existingItem = dl.getFlattenedFarmer(editFarmerId);
                 if (existingItem.getCount() > 0) {
                     existingItem.moveToFirst();
-
-                    farmerName.setText(getIntent().getExtras().getString("FARMER_NAME"));
                     populateExistingValues(existingItem);
                 }
             }
@@ -564,15 +562,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void populateExistingValues(final Cursor existingItem) {
+        farmerName = findViewById(R.id.farmerName);
         String name = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
 
+        farmerName.setText(name);
         etFarmHoldingName.setText(appendSuffixForFarmName(name, res.getString(R.string.farm_holding_suffix)));
         etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
         farmerCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         InputFilter lengthFilter = new InputFilter.LengthFilter(50);
         farmerName.setFilters(new InputFilter[]{LetterHypenFilter,lengthFilter});
-        farmerName.setText(name);
+
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
@@ -859,7 +859,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         String farmCode = etFarmHoldingCode.getText().toString().trim();
         String farmer_Code = farmerCode.getText().toString().trim();
 
-        if(farmer_Code.length() > 0){
+        if(farmer_Code.length() > 0 && !editMode){
             int count = dl.getFarmerCodeCount(farmer_Code);
             if(count > 0){
                 Toast.makeText(context, R.string.farmer_code_already_exists, Toast.LENGTH_LONG).show();
@@ -1010,7 +1010,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id ,subdistrict_id);
         }
 
-        if(! editMode) {
+        if(!editMode) {
             if (!csStatus) {
                 Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
                 return values;
@@ -1126,7 +1126,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID, section_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE, farmer_Code);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
+            if(!editMode){
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
+            }
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
@@ -3365,7 +3367,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              char c = source.charAt(i);
 
              // Allow: Unicode letters + . , /
-             if (Character.isLetter(c) || c == '.' || c == ',' || c == '/') {
+             if (Character.isLetter(c) || c == '.' || c == ',' || c == '/' || c == ' ') {
                  continue;
              } else {
                  return ""; // Reject character
