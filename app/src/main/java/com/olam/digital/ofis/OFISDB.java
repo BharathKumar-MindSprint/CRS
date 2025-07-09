@@ -475,19 +475,24 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER default null, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
-            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0,"
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
-            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
-            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID + " TEXT, "
             + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME
@@ -925,6 +930,11 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("DROP TABLE product_transactionitemtype");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " TEXT ");
+
+            // Farmer De-Duplication
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }
