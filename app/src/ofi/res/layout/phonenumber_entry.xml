@@ -50,6 +50,7 @@
         android:padding="@dimen/margin_10"
         android:textSize="@dimen/ofis_small_text"
         android:digits="0123456789"
+        android:maxLength="20"
         android:hint="@string/PhoneNumberHint"
         android:layout_marginLeft="@dimen/ofis_small_pad"
         android:inputType="phone"/>

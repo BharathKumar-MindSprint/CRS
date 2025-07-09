@@ -1211,6 +1211,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final String COLUMN_NAME_NUMBER = "phonenumber";
         public static final String COLUMN_NAME_PRIMARY = "primary_number";
+        public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1219,6 +1220,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_NUMBER);
                     add(COLUMN_NAME_PRIMARY);
+                    add(COLUMN_NAME_IS_DUPLICATE);
                 }}
         );
     }
@@ -1234,6 +1236,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
+        public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1245,6 +1248,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
+                    add(COLUMN_NAME_IS_DUPLICATE);
                 }}
         );
     }
@@ -1257,6 +1261,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
+        public static final String COLUMN_BACKEND_DB_ID = "backendDbId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1265,6 +1270,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
+                    add(COLUMN_BACKEND_DB_ID);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
