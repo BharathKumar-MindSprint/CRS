@@ -92,6 +92,7 @@
  import java.io.IOException;
  import java.lang.reflect.Method;
  import java.sql.Timestamp;
+ import java.text.ParseException;
  import java.text.SimpleDateFormat;
  import java.time.LocalDate;
  import java.time.Period;
@@ -575,15 +576,38 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerName.setText(name);
         etFarmHoldingName.setText(appendSuffixForFarmName(name, res.getString(R.string.farm_holding_suffix)));
         etFarmHoldingCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE)));
-        farmerCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
+       if(!Objects.equals(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)), "null")){
+           farmerCode.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE)));
+       }else{
+           farmerCode.setText("");
+       }
+
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         InputFilter lengthFilter = new InputFilter.LengthFilter(50);
         farmerName.setFilters(new InputFilter[]{LetterHypenFilter,lengthFilter});
 
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerDOB = findViewById(R.id.farmerDOB);
+
+
+
+
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
+//        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S", Locale.getDefault());
+//        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+//
+//        Date date = null;
+//        try {
+//            date = inputFormat.parse(dateStrToSend);
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+//        String formattedDate = outputFormat.format(date);
+
         farmerDOB.setText(dateStrToSend);
+
+
+      //  farmerDOB.setText(dateStrToSend);
 
         selectedCountry = existingItem.getInt(existingItem.getColumnIndex("country_id"));
 
@@ -679,6 +703,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         consentOthers.setEnabled(false);
 
     }
+
+
+
 
      private void populateExistingValuesMs(final MultiStakeHolder multiStakeHolder) {
          String name = multiStakeHolder.msName;
@@ -1123,6 +1150,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                LocalDate dob = LocalDate.parse(dateStrToSend);
+                LocalDate currentDate = LocalDate.now();
+                Period age = Period.between(dob, currentDate);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE, age.getYears());
+            }
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, genderValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, getCurrentPhotoPath());
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, place_id);
@@ -2325,7 +2358,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 final Calendar c = Calendar.getInstance();
-                c.add(Calendar.YEAR, -16);
+                c.add(Calendar.YEAR, -18);
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);

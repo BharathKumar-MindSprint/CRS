@@ -8344,7 +8344,7 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int getDuplicateFarmerNumber(int phoneNumber) {
+    public int getDuplicateFarmerNumber(Long phoneNumber) {
         String query = "SELECT COUNT(*) FROM " +OFISDBContract.PhoneNumber.TABLE_NAME +
                 " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
 

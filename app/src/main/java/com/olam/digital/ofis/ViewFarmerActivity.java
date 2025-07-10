@@ -2195,8 +2195,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         RadioButton primary_number = (RadioButton) phoneNumberRow.findViewById(R.id.primary_number);
                         String phoneNumberValue = String.valueOf(phoneNumber.getText());
 
-                        if(phoneNumberValue.length() > 0){
-                            int count = dl.getDuplicateFarmerNumber(Integer.parseInt(phoneNumberValue));
+                        if(!phoneNumberValue.isEmpty()){
+                            int count = dl.getDuplicateFarmerNumber(Long.parseLong(phoneNumberValue));
                             if(count > 1){
                                 hasDuplicatePhoneNumber = true;
                             }
@@ -2237,6 +2237,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Toast.makeText(context, "At least one mobile number is mandatory", Toast.LENGTH_LONG).show();
                     } else if (hasDuplicatePhoneNumber) {
                         Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                        return;
                     } else {
 
                         dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
@@ -2246,7 +2247,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if (isDuplicate) {
                         return;
                     }
-                    dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
+                    //dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
 
                     if (mCurrentCapturedLocation != null) {
                         collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
