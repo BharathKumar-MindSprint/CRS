@@ -21,8 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -195,7 +193,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId);
+            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId, false);
 
             listView.setAdapter(customListAdapter_selectedAttendees);
             listView.setOnItemClickListener(null);
@@ -230,6 +228,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
                 }
 
+                dl.retainOrDeleteSignatureBasedOnAvailability(trainingRecordId);
 
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -250,6 +249,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     if (dl.updateTrainingRecord(trainingRecordValues, trainingRecordId) > 0) {
                         Toast.makeText(context, R.string.trainingrecord_added_to_queue, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, TrainingRecords.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }
                 }

@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -156,6 +157,10 @@ public class Utilities {
     public static final String SUPPLIER = "supplier";
     public static final String SUPPLIER_SURVEY = "supplierSurvey";
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
+    public static final String FOLLOW_UP_COUNT = "followUpCount";
+    public static final String ATTENDEE_SIGNATURE = "ATTENDEE_SIGNATURE";
+
+
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -263,17 +268,6 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
         editor.apply();
-//        Passcode added - Penetration testing
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        if (prefName.equalsIgnoreCase("ENUMERATOR_ID")) {
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Enumerator", value);
-            }
-        }else if(prefName.equalsIgnoreCase("PASSCODE")){
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Passcode", value);
-            }
-        }
     }
 
     public static void saveLongToSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName, long value) {
@@ -1175,4 +1169,16 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingNationalId, HashMap<Integer, String> enteredNationalId) {
+        boolean isDuplicate = false;
+        if (!enteredNationalId.isEmpty() && !existingNationalId.isEmpty()) {
+            for (String nidNumbers : enteredNationalId.values()) {
+                if (existingNationalId.containsValue(nidNumbers)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return isDuplicate;
+    }
 }

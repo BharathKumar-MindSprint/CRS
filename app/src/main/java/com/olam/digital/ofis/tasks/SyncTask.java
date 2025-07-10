@@ -7,6 +7,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
 import org.json.JSONObject;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +42,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
             .addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addNetworkInterceptor(interceptor)
+            .addNetworkInterceptor(new StethoInterceptor())
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
 

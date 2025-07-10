@@ -67,7 +67,7 @@
             android:id="@+id/signature_pad"
             android:layout_width="match_parent"
             android:layout_above="@+id/ll_footer"
-            android:layout_below="@+id/tv_info"
+            android:layout_below="@+id/tv_attendeeName"
             android:background="@drawable/ic_signature_bg"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_10"/>
@@ -82,6 +82,22 @@
             android:textColor="@color/black"
             android:padding="10dp"
             android:text="@string/please_sign_within_the_boundary_box"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:src="@drawable/ic_consent_close"
+            android:id="@+id/tv_attendeeName"
+            android:layout_below="@id/tv_info"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:text="@string/farmer"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             android:layout_height="wrap_content" />

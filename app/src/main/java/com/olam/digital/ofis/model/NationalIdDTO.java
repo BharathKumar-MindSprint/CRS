@@ -6,6 +6,7 @@ import java.io.Serializable;
 public class NationalIdDTO implements Serializable {
 
     private int id;
+    private String backendDbId;
     private int farmerId;
     private String nationalidtype;
     private String nationalidNumber;
@@ -58,5 +59,13 @@ public class NationalIdDTO implements Serializable {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getBackendDbId() {
+        return backendDbId;
+    }
+
+    public void setBackendDbId(String backendDbId) {
+        this.backendDbId = backendDbId;
     }
 }
