@@ -6,6 +6,7 @@
     android:textColor="@color/ofis_base_font_dark"
     android:background="@drawable/edittext_bg_light"
     android:textSize="@dimen/ofis_input_field_text"
-    android:text="@string/record_farm_location_hint">
+    android:text="@string/record_farm_location_hint"
+    android:id="@+id/tvLocation">
 
 </TextView>
