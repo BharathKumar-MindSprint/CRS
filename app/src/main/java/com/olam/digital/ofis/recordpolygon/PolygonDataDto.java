@@ -11,6 +11,7 @@ public class PolygonDataDto {
     public String reasonForDeActivation;
     public String isDeActivationFlagSynced;
     public String isSynced;
+    public String isPolygonDataSynced;
 
 
     private PolygonDataDto(Builder builder) {
@@ -23,6 +24,7 @@ public class PolygonDataDto {
         this.reasonForDeActivation = builder.reasonForDeActivation;
         this.isDeActivationFlagSynced = builder.isDeActivationFlagSynced;
         this.isSynced = builder.isSynced;
+        this.isPolygonDataSynced = builder.isPolygonDataSynced;
     }
 
     // Static nested Builder class
@@ -36,6 +38,7 @@ public class PolygonDataDto {
         private String reasonForDeActivation;
         private String isDeActivationFlagSynced;
         private String isSynced;
+        private String isPolygonDataSynced;
 
         public Builder() {
             // default constructor
@@ -85,6 +88,12 @@ public class PolygonDataDto {
             this.isSynced = isSynced;
             return this;
         }
+
+        public Builder isPolygonDataSynced(String isPolygonDataSynced) {
+            this.isPolygonDataSynced = isPolygonDataSynced == null ? "false" : isPolygonDataSynced;
+            return this;
+        }
+
 
 
         public PolygonDataDto build() {

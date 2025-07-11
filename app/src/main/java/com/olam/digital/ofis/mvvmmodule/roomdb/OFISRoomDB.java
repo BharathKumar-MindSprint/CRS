@@ -56,8 +56,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
                 Sections.class, Places.class, Products.class,
                 Farmer.class,
         },
-        version = 18,
-        autoMigrations = {@AutoMigration(from = 17, to = 18)}
+        version = 19
+        //autoMigrations = {@AutoMigration(from = 17, to = 18)}
         )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -121,10 +121,17 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
+        final Migration MIGRATION_18_19 = new Migration(18, 19) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("DROP TABLE IF EXISTS 'PolygonHistoryData'");
+            }
+        };
+
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_16_17)
+                    .addMigrations(MIGRATION_16_17, MIGRATION_18_19)
                     .fallbackToDestructiveMigration()
                     .build();
         }

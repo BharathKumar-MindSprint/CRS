@@ -8375,6 +8375,7 @@ public class DataLayer {
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, polygonPlotHistory.positionData);
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, polygonPlotHistory.centerPlot);
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, polygonPlotHistory.plotArea);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA, "true");
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(polygonPlotHistory.id)};
 

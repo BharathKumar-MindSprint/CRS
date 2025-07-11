@@ -160,9 +160,7 @@ public class PolygonFarmer extends BaseListActivity {
         }
     }
 
-
-    private void doSearch()
-    {
+    private void doSearch() {
         getFarmerWithPlots.close();
         bindFarmerList();
         runOnUiThread(returnRes);

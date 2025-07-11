@@ -685,6 +685,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             accessTokenTask.execute();
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 
@@ -781,6 +782,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nl.syncNetworkQueue(null, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 
@@ -871,6 +873,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 

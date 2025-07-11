@@ -2192,6 +2192,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_MOB_DEACTIVATE_REASON = "mobDeactivateReason";
         public static final String COLUMN_NAME_POSITION_DATA = "positionData";
         public static final String COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED = "isDeactivationFlagSynced";
+        public static final String COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA = "isPolygonDataDownloaded";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2214,6 +2215,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_MOB_DEACTIVATE_REASON);
                     add(COLUMN_NAME_POSITION_DATA);
                     add(COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED);
+                    add(COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA);
                 }}
         );
     }

@@ -1471,4 +1471,16 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="download_polygon">Download Polygon</string>
     <string name="ofis_olam_id">"OFIS ID: "</string>
     <string name="selected_plot">"Selected Plots: "</string>
+    <string name="flag_for_deactivation">Deactivate Plot</string>
+    <string name="reset_deactivation_text">Reset \nDeactivated Plot</string>
+    <string name="flag_for_de_activation">Flag for Deactivation</string>
+    <string name="deactivate_reason">Deactivation  Reason</string>
+    <string name="deactivation_reason">Deactivation Reason..</string>
+    <string name="de_activation_reason_message">Please provide a reason for deactivating this plot. \n<b>Note:</b> Your request will be submitted for approval</string>
+    <string name="deactivation_pending">Deactivation pending approval</string>
+    <string name="deactivation_successful">Deactivation Successful</string>
+    <string name="dialog_message">Are you sure you want to reset the deactivation plot?</string>
+    <string name="reset_deactivation_plot">Reset Deactivated Plot</string>
+    <string name="reason_error_msg">please enter deactivation reason</string>
+    <string name="reset">Reset</string>
 </resources>

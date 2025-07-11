@@ -1480,7 +1480,10 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             llDeActivationNotification.setVisibility(View.GONE);
 
             PolygonDataDto polygonData = getPlotId(position);
-            if ((polygonData.centerPlot != null && !polygonData.centerPlot.isEmpty()) || (polygonData.positionData != null && !polygonData.positionData.isEmpty())) {
+            String plotSize = polygonData.plotArea != null ? String.valueOf(roundArea(polygonData.plotArea, 3)) : "";
+            etPlotArea.setText(plotSize);
+
+            if (polygonData.isPolygonDataSynced.equals("true") && (polygonData.centerPlot != null && !polygonData.centerPlot.isEmpty()) || (polygonData.positionData != null && !polygonData.positionData.isEmpty())) {
                 if (polygonData.deActivationFlag.equals("true")) {
                     if (polygonData.isDeActivationFlagSynced.equalsIgnoreCase("false")) {
                         enableResetDeActivatedPlot(polygonData);
@@ -2086,7 +2089,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             .deActivationFlag(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG)))
                             .reasonForDeActivation(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON)))
                             .isDeActivationFlagSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED)))
-                            .isSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED))).build();
+                            .isSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED)))
+                            .isPolygonDataSynced(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA))).build();
 
                 }
             }
@@ -2461,8 +2465,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private void plotGraphInMap(PolygonDataDto plot) {
         plot_textGpx.setText(plot.centerPlot != null ? plot.centerPlot : "");
-        String plotSize = plot.plotArea != null ? String.valueOf(roundArea(plot.plotArea, 3)) : "";
-        etPlotArea.setText(plotSize);
         String jsonString = plot.positionData;
 
         if (jsonString != null && !jsonString.isEmpty()) {

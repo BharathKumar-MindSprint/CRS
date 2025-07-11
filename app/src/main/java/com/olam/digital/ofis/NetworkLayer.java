@@ -1670,7 +1670,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                             for (int i = 0; i < locationJsonArray.length(); i++) {
                                                 JSONObject plotDataObj = locationJsonArray.getJSONObject(i);
-                                                boolean isFlagDeactivated = plotDataObj.has("mobDeactiveFlag") && !plotDataObj.getString("mobDeactiveFlag").equals("null") && plotDataObj.getBoolean("mobDeactiveFlag");
+                                                boolean isFlagDeactivated = plotDataObj.has("mobDeactiveFlag") && plotDataObj.getBoolean("mobDeactiveFlag");
                                                 if (isDeactivationPlotSync && isFlagDeactivated) {
                                                     dl.updatePlot(plotDataObj.getString("id"));
                                                 }
