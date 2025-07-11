@@ -1483,7 +1483,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             String plotSize = polygonData.plotArea != null ? String.valueOf(roundArea(polygonData.plotArea, 3)) : "";
             etPlotArea.setText(plotSize);
 
-            if (polygonData.isPolygonDataSynced.equals("true") && (polygonData.centerPlot != null && !polygonData.centerPlot.isEmpty()) || (polygonData.positionData != null && !polygonData.positionData.isEmpty())) {
+            if (polygonData.isPolygonDataSynced.equals("true") && ((polygonData.centerPlot != null && !polygonData.centerPlot.isEmpty()) || (polygonData.positionData != null && !polygonData.positionData.isEmpty()))) {
                 if (polygonData.deActivationFlag.equals("true")) {
                     if (polygonData.isDeActivationFlagSynced.equalsIgnoreCase("false")) {
                         enableResetDeActivatedPlot(polygonData);
