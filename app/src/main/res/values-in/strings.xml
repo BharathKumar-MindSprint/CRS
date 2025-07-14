@@ -906,5 +906,7 @@
 
     <string name="enter_attendee_relation_name">Silakan masukkan nama peserta</string>
     <string name="sign_all_attendee">Tanda tangan diperlukan untuk semua peserta!</string>
+    <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
+    <string name="Alert_txt">Peringatan !</string>
 
 </resources>

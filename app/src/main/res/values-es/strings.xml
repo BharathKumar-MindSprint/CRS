@@ -911,6 +911,8 @@
 
     <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
     <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
+    <string name="Alert_txt">Alerta !</string>
 
 </resources>
 
