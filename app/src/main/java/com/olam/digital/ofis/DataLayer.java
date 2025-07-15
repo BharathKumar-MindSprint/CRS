@@ -162,12 +162,15 @@ public class DataLayer {
 
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = sdf.format(timestamp);
+
             boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", farmerId, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
             if (updateWaiting) {
                 ContentValues nqiValues = new ContentValues();
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
                 updateNetworkQueueFarmPolygonEntry(nqiValues, farmerId);
             } else {
                 ContentValues nqiValues = new ContentValues();
@@ -177,8 +180,8 @@ public class DataLayer {
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME, plotId);
                 insertNetworkQueueEntry(nqiValues);
             }
@@ -8454,10 +8457,14 @@ public class DataLayer {
 
     public void addNetworkQueueEntry(int id, String farmerId, String farmerName, String olamFarmerId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(timestamp);
+
         boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", Long.parseLong(farmerId), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
         if (updateWaiting) {
             ContentValues nqiValues = new ContentValues();
-            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, res.getString(R.string.flag_for_de_activation));
             updateNetworkQueueFarmPolygonEntry(nqiValues, Long.parseLong(farmerId));
         } else {
@@ -8467,8 +8474,8 @@ public class DataLayer {
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.record_farm_polygon_complete));
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, res.getString(R.string.flag_for_de_activation));
             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, id);
             insertNetworkQueueEntry(nqiValues);
