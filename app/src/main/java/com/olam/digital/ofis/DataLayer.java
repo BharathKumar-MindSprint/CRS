@@ -8427,10 +8427,15 @@ public class DataLayer {
             cursor.moveToFirst();
             do {
                 String isUnSyncPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
-                if (isUnSyncPlot.equals("0")) {
+                String centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT));
+                String positionData = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA));
+                String mobDeactivationFlag = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG));
+                String isDeactivationFlagSynced = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED));
+
+                if (isUnSyncPlot.equals("0") && (!centerPlot.isEmpty() || positionData != null)) {
                     unSyncedPlotCount++;
                 }
-                else {
+                else if (mobDeactivationFlag.equals("true") && isDeactivationFlagSynced.equals("false")){
                     deActivePlotCount++;
                 }
             } while (cursor.moveToNext());
