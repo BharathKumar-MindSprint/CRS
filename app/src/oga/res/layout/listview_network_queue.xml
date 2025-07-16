@@ -58,6 +58,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Awaiting_Sync"
+                android:visibility="gone"
+                android:id="@+id/tvSubGroupType"
+                android:textColor="@color/ofis_list_item_subtitle"
+                android:textSize="@dimen/ofis_small_text" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Awaiting_Sync"
                 android:id="@+id/networkQueueOlamFarmerId"
                 android:textColor="@color/ofis_list_item_subtitle"
                 android:textSize="@dimen/ofis_small_text" />
@@ -81,8 +89,7 @@
                 android:id="@+id/imageView_pic"
                 app:srcCompat="@drawable/ic_upload_list"
                 android:contentDescription="@string/Farmer_Photo"
-                android:layout_gravity="center_vertical|center_horizontal"
-                tools:ignore="VectorDrawableCompat" />
+                android:layout_gravity="center_vertical|center_horizontal" />
         </LinearLayout>
     </LinearLayout>
 

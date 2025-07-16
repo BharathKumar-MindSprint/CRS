@@ -21,6 +21,9 @@ import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
+import java.util.List;
+import java.util.Set;
+
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -81,9 +84,6 @@ public interface ManageRecords {
     @GET(IAPIConstants.GET_LOCAL_UNIT_MASTER)
     Call<LocalUnitResponseModel> getAllLocalUnitResponseModel();
 
-    @GET(IAPIConstants.GET_POLYGON_DATA)
-    Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
-
     @POST(IAPIConstants.GET_ALL_PHOTOCHECKBOX_IMAGES)
     Call<PhotoCheckBoxResponseModel> getAllPhotoCheckBoxData(@Header("App-Id") int appId, @Query(value = "syncDate") String syncDate, @Body RequestBody photoModuleList);
 
@@ -95,4 +95,7 @@ public interface ManageRecords {
 
     @GET("ofissupplier/supplier/mobile/getAllSubmittedModuleDataForSupplier")
     Call<SupplierSubmittedModuleResponse> getSupplierSurveySubmittedModules();
+
+    @GET(IAPIConstants.GET_POLYGON_DATA_BY_PLOT_ID)
+    Call<PolygonHistoryResponseModel> getPolygonDataByPlotId(@Query(value = "plotId", encoded = true) Set<Long> plotIds, @Header("App-Id") int appId);
 }

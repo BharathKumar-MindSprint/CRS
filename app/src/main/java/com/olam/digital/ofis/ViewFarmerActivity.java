@@ -19,6 +19,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -1851,7 +1852,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void loadPlotLayout() {
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchAllPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIds = dl.fetchAllPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), false);
         Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
         int totalPlotCount = plotIdsSynced.getCount();
 
@@ -2977,6 +2978,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         btnYes.setText(res.getString(R.string.start_now));
         btnNo.setText(res.getString(R.string.skip));
         AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.setCancelable(false);
 
         btnYes.setOnClickListener(new View.OnClickListener() {

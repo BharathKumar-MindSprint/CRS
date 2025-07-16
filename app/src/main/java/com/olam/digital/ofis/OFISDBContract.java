@@ -1081,6 +1081,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_NAME = "farmName";
         public static final String COLUMN_NAME_FARMER_CODE = "farmerCode";
         public static final String COLUMN_NAME_DUPLICATE_FARMER_CODE = "duplicateFarmerCode";
+        public static final String COLUMN_NAME_PLOT_AVAILABLE = "plotAvailable";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1128,6 +1129,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_NAME);
                     add(COLUMN_NAME_FARMER_CODE);
                     add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
+                    add(COLUMN_NAME_PLOT_AVAILABLE);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1168,7 +1170,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_NAME);
                     add(COLUMN_NAME_FARMER_CODE);
                     add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
-
+                    add(COLUMN_NAME_PLOT_AVAILABLE);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -2185,6 +2187,12 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED = "isEUDRSurveyCompleted";
         public static final String COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED = "isPALegalityCompleted";
         public static final String COLUMN_NAME_GEO_DB_FLAG_STATUS = "geoDbFlagStatus";
+        public static final String COLUMN_NAME_POLYGON_SIZE = "polygonSize";
+        public static final String COLUMN_NAME_MOB_DEACTIVATE_FLAG = "mobDeactivateFlag";
+        public static final String COLUMN_NAME_MOB_DEACTIVATE_REASON = "mobDeactivateReason";
+        public static final String COLUMN_NAME_POSITION_DATA = "positionData";
+        public static final String COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED = "isDeactivationFlagSynced";
+        public static final String COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA = "isPolygonDataDownloaded";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2202,6 +2210,12 @@ public class OFISDBContract {
                     add(COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED);
                     add(COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED);
                     add(COLUMN_NAME_GEO_DB_FLAG_STATUS);
+                    add(COLUMN_NAME_POLYGON_SIZE);
+                    add(COLUMN_NAME_MOB_DEACTIVATE_FLAG);
+                    add(COLUMN_NAME_MOB_DEACTIVATE_REASON);
+                    add(COLUMN_NAME_POSITION_DATA);
+                    add(COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED);
+                    add(COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA);
                 }}
         );
     }

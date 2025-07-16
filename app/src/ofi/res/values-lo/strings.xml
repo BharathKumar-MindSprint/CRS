@@ -949,7 +949,6 @@
     <string name="reenter_passcode">ອອກ​ຈາກ​ລະ​ບົບ</string>
     <string name="android_id">ID ການຕິດຕັ້ງອຸປະກອນ:</string>
     <string name="logout_note">ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການອອກຈາກລະບົບ?</string>
-    <string name="download_survey_data">ດາວໂຫລດຂໍ້ມູນການສໍາຫຼວດ</string>
     <string name="select_fgsection">ເລືອກກຸ່ມຊາວກະສິກອນ ແລະພາກສ່ວນ</string>
     <string name="download">ດາວໂຫຼດ</string>
     <string name="downloading">ກຳລັງດາວໂຫຼດ...</string>
