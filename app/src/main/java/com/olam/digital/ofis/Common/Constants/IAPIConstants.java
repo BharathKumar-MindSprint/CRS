@@ -77,7 +77,7 @@ public interface IAPIConstants {
      String SAVE_DEVICE_INFO = "ofismaster/master/saveDeviceInfo";
      String SAVE_SURVEY_ANSWERS = "ofissurvey/survey/getRecentSurveyAnswers";
      String GET_ALL_SIP_QUESTIONNAIRE_DATA = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
-
+     String GET_CONDITIONAL_DETAILS = "ofissurvey/survey/questionnaire/conditionalQuestionDetails";
      String GET_POLYGON_DATA_BY_PLOT_ID = "ofisfarmer-data/farmerdata/polygonDataByPlotIds";
 
 }

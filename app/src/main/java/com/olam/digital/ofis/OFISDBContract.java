@@ -606,6 +606,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_METRIC = "metric";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE = "questionAssignmentType";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD = "questionAssignmentField";
+        public static final String COLUMN_NAME_IS_CONDITION_QUESTION = "isConditionaQuestion";
 
 
 
@@ -651,7 +652,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_METRIC);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD);
-
+                    add(COLUMN_NAME_IS_CONDITION_QUESTION);
                 }}
         );
     }

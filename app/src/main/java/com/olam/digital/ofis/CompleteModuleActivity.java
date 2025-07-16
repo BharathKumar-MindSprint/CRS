@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +82,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -341,6 +343,7 @@ public class CompleteModuleActivity extends BaseActivity {
         DynamicQuestions.getInstance().context = context;
         DynamicQuestions.getInstance().updatingHundredPercent = false;
         DynamicQuestions.getInstance().questionColumnSuffix = Utilities.getLocaleSuffix(res);
+        DynamicQuestions.getInstance().viewReference = new HashMap<>();
     }
 
     private void setupGPS() {
@@ -379,21 +382,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
     private void setPoiGPS(Location location) {
-        try {/*
-
-            poiLocation = location;
-            gpsField = (EditText) findViewById(R.id.gpsPosition);
-            String locationResult;
-            if (poiLocation != null) {
-                double latitude = poiLocation.getLatitude();
-                double longitude = poiLocation.getLongitude();
-                locationResult = latitude + "," + longitude;
-                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_found);
-            } else {
-                locationResult = res.getString(R.string.location_not_available);
-                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
-            }
-            gpsField.setText(locationResult);*/
+        try {
             Location moduleLocation = location;
             recordedLat = String.valueOf(moduleLocation.getLatitude());
             recordedLng = String.valueOf(moduleLocation.getLongitude());
@@ -406,7 +395,6 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
     protected void onStart() {
-//        googleApiClient.connect();
         super.onStart();
     }
 
@@ -545,11 +533,9 @@ public class CompleteModuleActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
                 if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     gpsTracker.getDeviceLocation();
                     startLocationUpdates();
                 } else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     stopLocationUpdates();
                 }
                 break;
@@ -591,7 +577,6 @@ public class CompleteModuleActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                             dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
-                            // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
                         } else {
                             Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
                         }
@@ -609,8 +594,6 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
     private void setupSubModuleQuestions() {
-        // loop through questions and generate the right control for each
-//        while (questions.moveToNext()) {
         if (questions != null && questions.moveToFirst()) {
             do {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
@@ -700,9 +683,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 }
 
             } while (questions.moveToNext());
+
+            if (!dynamicQuestions.answerSet.isEmpty()) {
+                dynamicQuestions.reRenderAllViews();
+            }
         }
-
-
     }
 
     private void setupFooter() {
@@ -1246,8 +1231,9 @@ public class CompleteModuleActivity extends BaseActivity {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         dynamicQuestions.renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String isConditionalValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION));
+
         int answerIdTemp = 0;
         final int answerId = answerIdTemp;
 
@@ -1308,6 +1294,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
             questionWrapper.addView(textView);
             parentLayout.addView(questionWrapper);
+            dynamicQuestions.viewReference.put(questionId, new Pair<>("location", questionWrapper));
 
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" + e.getMessage());
