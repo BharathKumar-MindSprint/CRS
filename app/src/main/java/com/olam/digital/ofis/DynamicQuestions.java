@@ -16,16 +16,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.MediaStore;
 
+import android.util.Pair;
 import android.widget.*;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -58,6 +58,7 @@ import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ConditionalLogic;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.json.JSONArray;
@@ -115,8 +116,8 @@ public class DynamicQuestions {
     private String mCurrentSignaturePhotoPath = null;
     private final static int REQUEST_IMAGE_GALLERY = 2;
     private static final String[] ACCEPTED_MIME_TYPES_IMG = {"image/jpeg", "image/png"};
-    private String imageURL = "";
-    //    private ImageView imageViewInfo;
+    public Map<Integer, Pair<String,View>> viewReference;
+    public Map<Integer, List<Integer>> answerMap;
 
     DynamicQuestions(Context context, String questionColumnSuffix, DataLayer dl) {
         this.answerSet = new ArrayList<>();
@@ -126,6 +127,8 @@ public class DynamicQuestions {
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
         this.roomDB = OFISRoomDB.getDbInstance(context);
+        this.viewReference = new HashMap<>();
+        this.answerMap = new HashMap<>();
     }
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
@@ -233,55 +236,6 @@ public class DynamicQuestions {
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
 
-    public boolean requiredFieldsMinMaxAnswered(int farmerModuleId, int moduleId) {
-        boolean status = true;
-
-        Cursor requiredQuestions = dl.getRequiredSurveyRangeQuestionIds(moduleId);
-//        CheckMinMaxforQuestion(requiredQuestions);
-        try {
-            if (requiredQuestions != null && requiredQuestions.moveToFirst()) {
-                do {
-                    JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    final String datatype = requiredQuestions.getString(requiredQuestions.getColumnIndex("datatype_id"));
-                    final String displaytype = requiredQuestions.getString(requiredQuestions.getColumnIndex("display_type"));
-                    final int questionId = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                    Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
-//                    int  answerId = requiredQuestions.getInt(requiredQuestions.getColumnIndex("answer_id"));
-//                    if(displaytype.equalsIgnoreCase("textbox")){
-                    if (datatype.equalsIgnoreCase("1") || datatype.equalsIgnoreCase("3")) {
-                        if (displayConfig.has("surveyrange")) {
-
-//                        if (getAnswerMinMaxvalidation(questionId, answerId) != "noval") {
-//                            float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
-//                            String ans = (getAnswer(completedAnswers, datatype, questionId));
-//                            if (String.valueOf(ans) != "noval") {
-                            String ans = (getAnswer(completedAnswers, datatype, questionId));
-                            if (String.valueOf(ans) != "null") {
-                                float answer = Float.valueOf(ans);
-                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0 || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-                                        status = false;
-
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                                        break;
-                                    }
-                                }
-//                            }
-                            }
-                        }
-                    }
-
-                } while (requiredQuestions.moveToNext());
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return status;
-    }
-
     private String getAnswer(Cursor completedAnswers, String datatype, int questionId) {
         String ans = "null";
         try {
@@ -333,42 +287,27 @@ public class DynamicQuestions {
     }
 
     private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable, Integer globalMetricId, Integer localMetricId, int metricsValue, final int repeaterItemPosition) {
-
-        // New
         Iterator<JSONObject> iterator = answerSet.iterator();
-        /*while (iterator.hasNext()) {
-            JSONObject currentAnswer = iterator.next();
-            if (currentAnswer != null) {
-                int currentQuestionId = currentAnswer.optInt("question_id");
-                if (currentQuestionId == questionId) {
-                    iterator.remove();
-                }
-            }
-        }*/
-
-        // Old
-//        for (int i = 0; i < answerSet.size(); i++) {
-//            JSONObject currentAnswer = answerSet.get(i);
-//            if (currentAnswer != null) {
-//                int currentQuestionId = currentAnswer.optInt("question_id");
-//                if (currentQuestionId == questionId) {
-//                    answerSet.remove(i);
-//                }
-//            }
-//        }
-
         if (repeaterItemPosition == -1) {
+            boolean isAnswersRemoved = false;
             while (iterator.hasNext()) {
                 JSONObject currentAnswer = iterator.next();
                 if (currentAnswer != null) {
                     int currentQuestionId = currentAnswer.optInt("question_id");
                     if (currentQuestionId == questionId) {
                         iterator.remove();
+                        isAnswersRemoved = true;
                     }
                 }
             }
 
+            List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+            if (isAnswersRemoved && !conditions.isEmpty()) {
+                renderViewsByAnswers(questionId, conditions, null);
+            }
+
             int tableRows = questionTable.getChildCount();
+            List<Integer> lookupId = new ArrayList<>();
             for (int j = 0; j < tableRows; j++) {
                 TableRow tr = (TableRow) questionTable.getChildAt(j);
                 TextView cbId = (TextView) tr.findViewById(R.id.cbId);
@@ -376,8 +315,15 @@ public class DynamicQuestions {
 
                 if (cb.isChecked()) {
                     saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
+                    lookupId.add(Integer.parseInt(String.valueOf(cbId.getText())));
                 }
             }
+
+            answerMap.put(questionId, lookupId);
+            if (!conditions.isEmpty() && !lookupId.isEmpty()) {
+                handleLogicForConditionalQuestions(questionId, null, conditions);
+            }
+
         } else {
             int count = 1;
             if (answerSet != null) {
@@ -414,19 +360,7 @@ public class DynamicQuestions {
                     saveAnswerEntry(questionId, Integer.parseInt((String) cbId.getText()), parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
                 }
             }
-
         }
-
-        /*int tableRows = questionTable.getChildCount();
-        for (int j = 0; j < tableRows; j++) {
-            TableRow tr = (TableRow) questionTable.getChildAt(j);
-            TextView cbId = (TextView) tr.findViewById(R.id.cbId);
-            CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-            if (cb.isChecked()) {
-                saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(cbId.getText()), globalMetricId, localMetricId, 0);
-            }
-        }*/
     }
 
     private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType,
@@ -458,8 +392,6 @@ public class DynamicQuestions {
                                     radioLocalMetrics[0] = entry.getKey();
                                     radioGlobalMetrics[0] = 0;
                                 }
-                                // Display a Toast with the selected localUnitId
-//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
 
                                 if (answerSet != null) {
                                     for (int i = 0; i < answerSet.size(); i++) {
@@ -545,32 +477,38 @@ public class DynamicQuestions {
             });
         }
 
+
         RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
+
+//        final boolean[] userIsInteracting = {false};
+//        radioGroup.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                userIsInteracting[0] = true;
+//                return false;
+//            }
+//        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                if (!userIsInteracting[0]) {
+//                    return;
+//                }
+//                userIsInteracting[0] = false;
+
                 for (int i = 0; i < group.getChildCount(); i++) {
                     RadioButton radioButton = (RadioButton) group.getChildAt(i);
                     radioButton.setChecked(radioButton.getId() == checkedId);
                 }
 
-                // Get the value (text) of the checked RadioButton
                 RadioButton checkedRadioButton = group.findViewById(checkedId);
                 String selectedText = checkedRadioButton.getText().toString();
                 int j = checkedRadioButton.getId();
-//                Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
-//                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
 
                 // If id =2 , survey-completion-check
                 String getNoValue = dl.getValueByLookUpID(String.valueOf(checkedId), questions, "_en");
-                int surveyCompletion = -1;
-                if (Objects.equals(getNoValue.toLowerCase(),"no")){
-                    surveyCompletion = 2;
-
-                } else if (Objects.equals(getNoValue.toLowerCase(),"yes")) {
-                    surveyCompletion = 1;
-                }
+                int surveyCompletion = Objects.equals(getNoValue.toLowerCase(),"no") ? 2 : 1;
                 if (surveyCompletion == finalSwitchId) {
                     questionWrapper.addView(finalYesNoConstraint);
                     surveySet.add(questionId);
@@ -586,13 +524,18 @@ public class DynamicQuestions {
                             JSONObject currentAnswer = answerSet.get(i);
                             if (currentAnswer != null) {
                                 if (currentAnswer.optInt("question_id") == questionId) {
+                                    List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+                                    if (!conditions.isEmpty()) {
+                                        renderViewsByAnswers(questionId, conditions, null);
+                                    }
                                     answerSet.remove(i);
                                 }
                             }
                         }
                     }
                     saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId), radioGlobalMetrics[0], radioLocalMetrics[0], 0);
-                } else {
+                }
+                else {
                     int count = 1;
                     if (answerSet != null) {
                         for (int i = 0; i < answerSet.size(); i++) {
@@ -619,7 +562,6 @@ public class DynamicQuestions {
                     }
 
                     saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId), radioGlobalMetrics[0], radioLocalMetrics[0], 0);
-
                 }
 
                 if (globalMetricId != null && !globalMetricId.equals(0)) {
@@ -646,7 +588,6 @@ public class DynamicQuestions {
                                         String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                         String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                         String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
                                         if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                             try {
                                                 // Perform your calculations and set the text
@@ -678,19 +619,9 @@ public class DynamicQuestions {
 
             }
         });
-
     }
 
     private void saveMultipleAnswerEntryForSUbQuestionAnswerSave(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable) {
-        /*for (int i = 0; i < answerSet.size(); i++) {
-            JSONObject currentAnswer = answerSet.get(i);
-            if (currentAnswer != null) {
-                int currentQuestionId = currentAnswer.optInt("question_id");
-                if (currentQuestionId == questionId) {
-                    answerSet.remove(i);
-                }
-            }
-        }*/
         int tableRows = questionTable.getChildCount();
         dl.prentidAnswerDelete(parentQuestionId, questionId);
         for (int j = 0; j < tableRows; j++) {
@@ -699,10 +630,7 @@ public class DynamicQuestions {
             CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
             if (cb.isChecked()) {
-
-
                 dl.prentidAnswer(Utilities.subModuleId, parentQuestionId, questionId, String.valueOf(cbId.getText()), 0 + "", Utilities.olamFarmerId, Utilities.moduleId + "");
-
             }
         }
     }
@@ -765,13 +693,20 @@ public class DynamicQuestions {
             if (viewAnswer) return;
             if (answer != null && !answer.isEmpty()) {
                 boolean isNew = true;
+                String questionType = viewReference.containsKey(questionId) && viewReference.get(questionId) != null ? viewReference.get(questionId).first : "";
+                List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+                String prevAnswer = null;
+
                 for (int i = 0; i < answerSet.size(); i++) {
                     JSONObject currentAnswer = answerSet.get(i);
                     if (currentAnswer != null) {
                         int currentQuestionId = currentAnswer.optInt("question_id");
                         int currentAnswerId = currentAnswer.optInt("answer_id");
-
                         if (currentQuestionId == questionId && currentAnswerId == answerId) {
+                            if ((questionType.equals("textbox") || questionType.equals("dropdown")) && repeaterItemPosition == -1) {
+                                prevAnswer = currentAnswer.optString("answer");
+                            }
+
                             if (repeaterItemPosition != -1) {
                                 int currentRepeaterItemPosition = currentAnswer.optInt("repeater_item_position");
                                 if (currentRepeaterItemPosition != repeaterItemPosition) {
@@ -789,9 +724,9 @@ public class DynamicQuestions {
                             isNew = false;
                             break;
                         }
-
                     }
                 }
+
                 if (isNew) {
                     JSONObject newAnswer = new JSONObject();
                     newAnswer.put("question_id", questionId);
@@ -806,13 +741,20 @@ public class DynamicQuestions {
                     newAnswer.put("metricAnswer", metricAnswer);
                     answerSet.add(newAnswer);
                 }
+
+                if (prevAnswer != null) {
+                    renderViewsByAnswers(questionId, conditions, prevAnswer);
+                }
+
+                boolean isCheckboxOrPhotoCheckbox = questionType.equalsIgnoreCase("checkbox") || questionType.equalsIgnoreCase("photocheckbox");
+                if (!conditions.isEmpty() && !isCheckboxOrPhotoCheckbox) {
+                    handleLogicForConditionalQuestions(questionId, answer, conditions);
+                }
             } else if (answerId > 0) {
                 removeAnswerEntry(questionId, answerId);
             } else if (answerId == 0 && repeaterItemPosition != -1) {
                 removeAnswerEntry(questionId, answerId, repeaterItemPosition);
             }
-
-            Log.d("AnswerSetCheck", String.valueOf(answerSet));
         } catch (JSONException e) {
             e.printStackTrace();
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -833,24 +775,6 @@ public class DynamicQuestions {
             }
         }
     }
-    private boolean checkvalues(float min, float max, String answer) {
-        boolean val = true;
-        try {
-
-            if (max != 0 || min != 0 ? true : false) {
-                if ((Float.parseFloat(answer) > max) || (Float.parseFloat(answer) < min)) {
-                    val = false;
-
-                }
-            }
-
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-            return false;
-        }
-        return val;
-    }
-
 
     private void removeAnswerEntry(int questionId, int answerId) {
         for (int i = 0; i < answerSet.size(); i++) {
@@ -859,15 +783,16 @@ public class DynamicQuestions {
                 int currentQuestionId = currentAnswer.optInt("question_id");
                 int currentAnswerId = currentAnswer.optInt("answer_id");
                 if (currentQuestionId == questionId && currentAnswerId == answerId) {
+                    List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+                    if (!conditions.isEmpty()) {
+                        renderViewsByAnswers(currentQuestionId, conditions, null);
+                    }
                     answerSet.remove(i);
                     break;
                 }
-
             }
         }
-
     }
-
 
     private void removeAnswerEntry(int questionId) {
         for (int i = 0; i < answerSet.size(); i++) {
@@ -876,6 +801,10 @@ public class DynamicQuestions {
                 int currentQuestionId = currentAnswer.optInt("question_id");
                 int currentAnswerRepeaterPosition = currentAnswer.optInt("repeater_item_position");
                 if (currentQuestionId == questionId && currentAnswerRepeaterPosition == -1) {
+                    List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+                    if (!conditions.isEmpty()) {
+                        renderViewsByAnswers(currentQuestionId, conditions, null);
+                    }
                     answerSet.remove(i);
                     break;
                 }
@@ -905,22 +834,18 @@ public class DynamicQuestions {
         ArrayList<Integer> questionList = new ArrayList<>();
         if (questions != null && questions.moveToFirst()) {
             do {
-
+                final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                boolean isVisible = viewReference.containsKey(questionId) && viewReference.get(questionId).second.getVisibility() == View.VISIBLE;
                 JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                 if (displayConfig.has("display")) {
                     JSONObject display = displayConfig.getJSONObject("display");
-                    if (display.optBoolean("requiredfield", false)) {
+                    if (isVisible && display.optBoolean("requiredfield", false)) {
                         String questionsString = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                         String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
-
-                        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-
-//                        check the type only for calcualted question. Calculated question FRANKLIN
                         if (!type.equalsIgnoreCase("Calculated") && !type.toLowerCase().replaceAll(" ","").equals("repeateritem") && isMandateQuestionOriginMatched(questionId)) {
                             questionList.add(Integer.parseInt(questionsString));
                         }
 
-                        // OCOM-176 - remove the Repeater Item If the parent question is 0
                         if (type.equalsIgnoreCase("Repeater Item") || type.equalsIgnoreCase("repeateritem")) {
                             int repeaterParentId = display.getInt("repeater_id");
                             String answerRepetaerParent = "";
@@ -995,11 +920,8 @@ public class DynamicQuestions {
                                 }
                             }
                         }
-
                     }
                 }
-
-
             } while (questions.moveToNext());
         }
 
@@ -1058,11 +980,8 @@ public class DynamicQuestions {
             JSONObject currentAnswer = answerSet.get(i);
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
-                int currentAnswerId = currentAnswer.optInt("answer_id");
-//                if (currentQuestionId == questionId && currentAnswerId == answerId) {
                 if (currentQuestionId == questionId) {
                     ans = currentAnswer.optString("answer");
-
                     break;
                 } else
                     ans = "noval";
@@ -1103,7 +1022,6 @@ public class DynamicQuestions {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
         combinedLayout.setOrientation(LinearLayout.VERTICAL);
-//        combinedLayout.setPadding(16, 16, 16, 16);
 
         LinearLayout textImgLayout = new LinearLayout(getInstance().context);
         textImgLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -1112,14 +1030,10 @@ public class DynamicQuestions {
         ));
         textImgLayout.setOrientation(LinearLayout.HORIZONTAL);
         textImgLayout.setWeightSum(2);
-//        combinedLayout.setPadding(16, 16, 16, 16);
 
 
-        TextView tv;
-        tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
+        TextView tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
         PopupWindow popupWindow = new PopupWindow(context);
-        ;
-        // for info
         ImageView imageViewInfo = new ImageView(context);
         imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -1235,9 +1149,8 @@ public class DynamicQuestions {
             if (qCursor != null && qCursor.moveToFirst()) {
                 do {
                     JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-//                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
                     final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-//                    int answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                    boolean isVisible = viewReference.containsKey(questionId) && viewReference.get(questionId).second.getVisibility() == View.VISIBLE;
                     JSONObject display = displayConfig.getJSONObject("display");
                     int validationOnRange = display.optInt("validationOnRangeId");
 
@@ -1245,10 +1158,9 @@ public class DynamicQuestions {
                     String assignmentType = "";
                     String assignmentField = "";
                     String assignmentFields = "";
-                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrict() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
+                    if (isVisible && (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrict() || validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview())) {
                         if (display.has("range")) {
                             JSONArray range = display.getJSONArray("range");
-//                            JSONObject rangeArray = range.getJSONObject(0);
 
                             int[] farmerOrderList = new int[]{6, 5, 8, 9, 4, 3, 2, 1, 7, 0};
                             boolean valueFound = false;
@@ -1282,20 +1194,12 @@ public class DynamicQuestions {
                                                         break;
                                                     }else {
                                                         double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
-//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
                                                         if (answer < min || answer > max) {
                                                             status = false;
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                                                             break;
                                                         }
                                                     }
-
                                                 }
-
-
                                                 valueFound = true;
                                                 break;
                                             } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
@@ -1309,20 +1213,12 @@ public class DynamicQuestions {
                                                         break;
                                                     }else {
                                                         double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
-//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
                                                         if (answer < min || answer > max) {
                                                             status = false;
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                                                             break;
                                                         }
                                                     }
-
                                                 }
-
-
                                             }
                                         } else if (!assignmentFields.equals("null") && !valueFound) {
 
@@ -1351,28 +1247,17 @@ public class DynamicQuestions {
                                                             break;
                                                         }else {
                                                             double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
-//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
                                                             if (answer < min || answer > max) {
                                                                 status = false;
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                                                                 break;
                                                             }
                                                         }
-
                                                     }
-
-
                                                     valueFound = true;
                                                     break;
                                                 }
-
                                             }
-
                                         }
-
                                     } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
                                         double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
                                         int max = rangeArray.optInt(AppConstants.RANGE_MAX);
@@ -1384,52 +1269,17 @@ public class DynamicQuestions {
                                                 break;
                                             }else {
                                                 double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
-//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
                                                 if (answer < min || answer > max) {
                                                     status = false;
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                                                     break;
                                                 }
                                             }
-
                                         }
-
                                     }
-
                                 }
-
                             }
-                            /*double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
-                            int max = rangeArray.optInt(AppConstants.RANGE_MAX);
-
-                            if (getAnswerMinMaxvalidation(questionId) != "noval") {
-                                String wrongValue = getAnswerMinMaxvalidation(questionId);
-                                if (wrongValue.equals("-")) {
-                                    status = false;
-                                    break;
-                                }else {
-                                    double answer = Double.parseDouble(getAnswerMinMaxvalidation(questionId));
-//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
-                                    if (answer < min || answer > max) {
-                                        status = false;
-//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                                        break;
-                                    }
-                                }
-
-                            }*/
-//                            }
-
                         }
                     }
-
-
                 } while (qCursor.moveToNext());
             }
         } catch (JSONException e) {
@@ -1445,56 +1295,18 @@ public class DynamicQuestions {
         return status;
     }
 
-    private void renderQuestiontest(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
-        TextView tv;
-        tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
-
-        // int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
-        if (qCursor != null) {
-            if (qCursor.moveToFirst()) {
-                do {
-                    String dir = qCursor.getString(qCursor.getColumnIndex("question"));
-                    tv.setText(dir);
-                } while (qCursor.moveToNext());
-            }
-        }
-
-        // String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
-
-        // get disp"lay config to see if question is required
-        /*try {
-            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-            if (displayConfig.has("display")) {
-                JSONObject display = displayConfig.getJSONObject("display");
-                if (display.optBoolean("requiredfield", false)) {
-                    tv.setText(Html.fromHtml(tv.getText().toString() + "&nbsp;<sup><font color='red'>*</font></sup>"), TextView.BufferType.SPANNABLE);
-                }
-            }
-        } catch (JSONException e) {
-            String questionId = "0";
-            if ((qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID) != -1)) {
-                questionId = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-            }
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting question display config - question " + questionId, e));
-            e.printStackTrace();
-        }*/
-
-        parentLayout.addView(tv);
-    }
-
-
     public void renderPhotoUploadQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+        final String isConditionalValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION));
+        final boolean isConditionalQuestion = isConditionalValue != null && isConditionalValue.equalsIgnoreCase("true");
+
 
         String oldDatatype = null;
-
         String datatype = null;
         if (dataTypeID == 6) {
             oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
@@ -1507,7 +1319,6 @@ public class DynamicQuestions {
                 datatype = "text";
             }
         }
-
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1578,7 +1389,7 @@ public class DynamicQuestions {
                                 Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU);
 
                     } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
                     }
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
@@ -1591,10 +1402,10 @@ public class DynamicQuestions {
                                 Utilities.REQUEST_PERMISSIONS_FOR_M);
 
                     } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
                     }
                 } else {
-                    bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
+                    bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
                 }
             }
         });
@@ -1604,11 +1415,12 @@ public class DynamicQuestions {
         } else {
             questionWrapper.addView(rl);
             parentLayout.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("photoupload", questionWrapper));
         }
     }
 
 
-    private void bindFarmerPhotoButton(ImageView mCurrentImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String finalDatatype) {
+    private void bindFarmerPhotoButton(ImageView mCurrentImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String finalDatatype, boolean isConditionalQuestion) {
         final CharSequence[] items = {context.getString(R.string.Camera), context.getString(R.string.Gallery)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -1627,7 +1439,6 @@ public class DynamicQuestions {
                     if (photoFile != null) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if ((intent.resolveActivity(context.getPackageManager()) != null)) {
-                            //Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
                             Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", photoFile);
 
                             // Samsung Galaxy S3 Fix
@@ -1643,23 +1454,15 @@ public class DynamicQuestions {
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                             setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                             if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());*/
-
                                 CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                                 completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());*/
-
                                 AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                                 addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else if (context.getClass().getSimpleName().equalsIgnoreCase(Utilities.CHILD_LABOUR_ACTIVITY)) {
                                 ChildLabourCompleteModuleActivity childLabourCompleteModuleActivity = (ChildLabourCompleteModuleActivity) context;
                                 childLabourCompleteModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             } else {
-                                /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                                StrictMode.setVmPolicy(builder.build());*/
                                 try {
                                     ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                                     reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
@@ -1671,7 +1474,6 @@ public class DynamicQuestions {
                             Toast.makeText(context,context.getResources().getString(R.string.gallery_is_not_available_in_mobile), Toast.LENGTH_LONG).show();
                         }
                     }
-
                 } else if (items[item].equals(context.getString(R.string.Gallery))) {
                     File photoFile = null;
                     try {
@@ -1690,21 +1492,15 @@ public class DynamicQuestions {
                         setCurrentPhotoPath(photoFile.getPath());
                         setCurrentImageView(mCurrentImageView);
                         if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
-                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());*/
                             CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                             completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
-                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());*/
                             AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
                             addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else if (context.getClass().getSimpleName().equalsIgnoreCase(Utilities.CHILD_LABOUR_ACTIVITY)) {
                             ChildLabourCompleteModuleActivity childLabourCompleteModuleActivity = (ChildLabourCompleteModuleActivity) context;
                             childLabourCompleteModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
                         } else {
-                            /*StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());*/
                             try {
                                 ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                                 reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
@@ -1713,7 +1509,6 @@ public class DynamicQuestions {
                             }
                         }
                     }
-
                 }
                 dialog.dismiss();
             }
@@ -1779,6 +1574,7 @@ public class DynamicQuestions {
         Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
 
         target.setImageBitmap(bitmap);
+        target.setTag(savedImagePath);
     }
 
 
@@ -1801,50 +1597,12 @@ public class DynamicQuestions {
 
 
         int answerIdTemp = 0;
-
-        /*if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }*/
         final int answerId = answerIdTemp;
 
         final RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.module_photo_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         final ImageView iv = (ImageView) rl.findViewById(R.id.modulePhotoQuestion);
 
-        /*if (hasAnswers) {
-            String currentAnswerValue = null;
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-            } else {
-                if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                    currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                }
-            }
-
-            if (currentAnswerValue != null) {
-                String externalPath = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() : "";
-                final String finalCurrentAnswerValue = externalPath + "/" + currentAnswerValue;
-                new CountDownTimer(1000, 100) {
-
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    public void onFinish() {
-                        displayBitmap(finalCurrentAnswerValue, iv, res);
-                    }
-                }.start();
-
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue);
-            }
-        }*/
-
         Button modulePhotoUploadButton = (Button) rl.findViewById(R.id.modulePhotoUpload);
-
         modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1994,10 +1752,8 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
         String oldDatatype = null;
@@ -2026,8 +1782,8 @@ public class DynamicQuestions {
                 }
             }
         }
+
         final int answerId = answerIdTemp;
-        // get display config
         try {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
             if (displayConfig.has("display")) {
@@ -2037,9 +1793,7 @@ public class DynamicQuestions {
                 boolean showyear = display.getBoolean("show_year");
 
                 if ((!showDay) && (!showMonth) && (showyear)) {
-                    // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                    //  String[] since1950 = Utilities.since1950();
                     String[] since1900 = Utilities.since1900();
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
@@ -2083,6 +1837,7 @@ public class DynamicQuestions {
                     } else {
                         questionWrapper.addView(spinner);
                         parentLayout.addView(questionWrapper);
+                        viewReference.put(questionId, new Pair<String, View>("datepicker", questionWrapper));
                     }
                 } else {
                     Calendar today = Calendar.getInstance();
@@ -2130,52 +1885,11 @@ public class DynamicQuestions {
                     } else {
                         questionWrapper.addView(dp);
                         parentLayout.addView(questionWrapper);
+                        viewReference.put(questionId, new Pair<>("datepicker", questionWrapper));
                     }
                 }
             }
-
-
         } catch (JSONException | ParseException e) {
-            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" + e.getMessage());
-        }
-    }
-
-    public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, Location mCurrentCapturedLocation) {
-        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        int answerIdTemp = 0;
-        if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }
-        final int answerId = answerIdTemp;
-
-        try {
-            final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-//                            String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
-                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue", 0, 0, 0);
-                    textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
-                    textView.setBackgroundResource(R.drawable.list_item_disabled);
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setEnabled(false);
-                }
-            });
-
-            questionWrapper.addView(textView);
-            parentLayout.addView(questionWrapper);
-
-        } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" + e.getMessage());
         }
     }
@@ -2199,24 +1913,11 @@ public class DynamicQuestions {
         final int questionId = questionIddouplicate;
         final String datatype = datatypeduplicate;
         int answerIdTemp = 0;
-        /*if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }*/
         final int answerId = answerIdTemp;
-
 
         // get display config
         try {
-
-
             int lookupvalue = 0;
-
             JSONObject displayConfig = new JSONObject();
             String columnNameduplicate = "";
             if (qCursor != null) {
@@ -2230,10 +1931,7 @@ public class DynamicQuestions {
                 }
             }
 
-
             final String columnName = columnNameduplicate;
-
-
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
                 boolean showDay = display.getBoolean("show_day");
@@ -2248,25 +1946,6 @@ public class DynamicQuestions {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner.setAdapter(adapter);
-
-                    /*if (hasAnswers) {
-                        String currentAnswerValue = null;
-                        if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                            currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-                        } else {
-                            if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                                currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                            }
-                        }
-                        if (currentAnswerValue != null) {
-                            for (int i = 0; i < spinner.getCount(); i++) {
-                                if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(currentAnswerValue.substring(0, 4))) {
-                                    spinner.setSelection(i);
-                                    break;
-                                }
-                            }
-                        }
-                    }*/
 
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
@@ -2290,25 +1969,7 @@ public class DynamicQuestions {
                     Calendar today = Calendar.getInstance();
                     DatePicker dp = (DatePicker) inflater.inflate(R.layout.module_datepicker, questionWrapper, false);
                     final SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
-                   /* if (hasAnswers) {
-                        String answerDateString = null;
-                        if (isRepeaterItem && repeaterAnswers != null) {
-                            if (repeaterAnswers.getCount() > 0) {
-                                answerDateString = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-                            }
-                        } else {
-                            answerDateString = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                        }
-                        if (answerDateString != null) {
-                            today.setTime(serverDateFormat.parse(answerDateString));
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
-                        }
-                    }*/
-
-
                     Cursor cursor = dl.getParentSubquestionAnswer(Utilities.subModuleId, parentQuestionId, questionId);
-
 
                     int position = 0;
                     if (cursor != null) {
@@ -2361,16 +2022,8 @@ public class DynamicQuestions {
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
-
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-
-        /* // for textbox getting datatype from answerType table
-        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));*/
 
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-
         final String answerTypeForDatatype;
         String datatypeOld = null;
         try {
@@ -2410,7 +2063,6 @@ public class DynamicQuestions {
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
 
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
-//        String metricGlobalId = "2";
         final Integer[] selectedLocalID = {0};
         final Integer[] selectedGlobalID = {0};
         final boolean[] unCheckAllBox = {false};
@@ -2455,9 +2107,7 @@ public class DynamicQuestions {
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
-
             if (unitMappings.isEmpty()) {
-
                 List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
                 selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
                 LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
@@ -2470,30 +2120,6 @@ public class DynamicQuestions {
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
-
-                /*if (hasAnswers){
-                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
-                    spinner.setSelection(localAnswer);
-                }else {
-//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
-                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), getGlobalUnit.keySet().toArray(new Integer[0])));
-                }*/
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Get the selected item from the adapter
-                        String selectedAbbreviation = spinnerAdapter.getItem(position);
-
-//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // Do nothing here if needed
-                    }
-                });
-
-
             } else {
                 isLocalUnit = true;
                 Map<Integer, String> spinnerData = new HashMap<>();
@@ -2527,7 +2153,6 @@ public class DynamicQuestions {
                     }
 
                 } else {
-//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
                     spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
                 }
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -2550,16 +2175,12 @@ public class DynamicQuestions {
                                 }
 
                                 unCheckAllBox[0] = true;
-
-                                // Display a Toast with the selected localUnitId
-//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 if (answerSet != null) {
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
 
                                         if (currentAnswer != null) {
                                             int currentQuestionId = currentAnswer.optInt("question_id");
-
                                             if (currentQuestionId == questionId) {
                                                 try {
                                                     currentAnswer.put("globalMetricId", selectedGlobalID[0]);
@@ -2592,8 +2213,6 @@ public class DynamicQuestions {
                                                 }
                                                 if (localMetricIdAnswer != 0) {
                                                     previewLayout.setVisibility(View.VISIBLE);
-//                                                    titleTextView.setVisibility(View.VISIBLE);
-//                                                    contentTextView.setVisibility(View.VISIBLE);
                                                     String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                                     String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
@@ -2602,10 +2221,7 @@ public class DynamicQuestions {
                                                 } else {
                                                     previewLayout.setVisibility(View.GONE);
                                                 }
-
-
                                             }
-
                                         }
                                     }
                                 }
@@ -2631,6 +2247,7 @@ public class DynamicQuestions {
             );
             et.setLayoutParams(editTextParams);
         }
+
         et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         et.setTag(questionId);
@@ -2646,7 +2263,6 @@ public class DynamicQuestions {
                     else {
                         currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
                     }
-
                 }
             }
 
@@ -2667,7 +2283,6 @@ public class DynamicQuestions {
         String answerType = "";
         String display_configuration = "";
         try {
-//            displayTypeID = qCursor.getInt(qCursor.getColumnIndex("displaytypeId"));
             answerType = dl.getAnswerTypeByQuestionID(questionId);
             answerValue = dl.getAnswerTypeValue(Integer.parseInt(answerType));
             display_configuration = dl.getDisplayConfigurationByQuestionID(questionId);
@@ -2697,8 +2312,8 @@ public class DynamicQuestions {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (answerValue.equals("Numbers Only")) {
-//                et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
+            else if (answerValue.equals("Numbers Only")) {
                 try {
                     int min = 0, max = 0;
                     JSONObject displayConfig = new JSONObject();
@@ -2843,7 +2458,8 @@ public class DynamicQuestions {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (answerValue.equals("Decimal")) {
+            }
+            else if (answerValue.equals("Decimal")) {
                 try {
                     double min = 0, max = 0;
                     JSONObject displayConfig = new JSONObject();
@@ -2994,7 +2610,8 @@ public class DynamicQuestions {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (answerValue.equals("Alphabetical")) {
+            }
+            else if (answerValue.equals("Alphabetical")) {
                 try {
                     JSONObject displayConfig = new JSONObject();
                     displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
@@ -3010,7 +2627,8 @@ public class DynamicQuestions {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (answerValue.equals("Percentage")) {
+            }
+            else if (answerValue.equals("Percentage")) {
                 InputFilter filter = new InputFilter() {
                     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
                         String filteredString = source.toString();
@@ -3023,13 +2641,12 @@ public class DynamicQuestions {
                 };
                 et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 et.setFilters(new InputFilter[]{filter});
+                et.setTag(6, 100);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // add tv to array if this is a 100% group question
-        // get display config
         boolean isHPQTemp = false;
         JSONObject displayConfig = new JSONObject();
         try {
@@ -3085,6 +2702,7 @@ public class DynamicQuestions {
                     }
                 }
             }
+
             if (answer.equalsIgnoreCase("")) {
                 et.setText(defaultValue);
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultValue, selectedGlobalID[0], selectedLocalID[0], 0);
@@ -3104,7 +2722,6 @@ public class DynamicQuestions {
         if (decimelRestrict > 0 && datatype.equals("decimal") ) {
             et.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(decimelRestrict)});
         }
-        // Decimal 2 digits concept - End
 
         Drawable originalDrawable = et.getBackground();
         String finalDefaultValue = defaultValue;
@@ -3139,23 +2756,17 @@ public class DynamicQuestions {
                     autofill100Percent(et);
                 }
                 double metricConversionValue = 0;
-                /*if (finalIsLocalUnit){
-                    if (finalDatatype.equals("int")){
-                        double conversionFactor = roomDB.localUnitDao().getConversionFactorById(selectedLocalID[0]);
-                        metricConversionValue = conversionFactor * Double.parseDouble(et.getText().toString());
-                    }
-                }*/
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString(), selectedGlobalID[0], selectedLocalID[0], metricConversionValue);
-
 
                 //   Check the dependent questions - OFS-44 Check
                 String beforeVal = et.getText().toString().trim();
                 boolean dotCheck = false;
-                if (beforeVal.length() > 0) {
+                if (!beforeVal.isEmpty()) {
                     if (beforeVal.substring(beforeVal.length() - 1).equalsIgnoreCase(".")) {
                         dotCheck = true;
                     }
                 }
+
                 if (!dotCheck) {
                     ArrayList<CommonPojo> commonPojos = new CoffeeConstraints(context, CompleteModuleActivity.allQuestions, answerSet, qCursor, dl).questionDependent(questionId);
                     for (CommonPojo commonPojo : commonPojos) {
@@ -3185,16 +2796,10 @@ public class DynamicQuestions {
                                 }
                             }
 
-                            //    Toast.makeText(context, " frank solution : " + editQuestionSet, Toast.LENGTH_SHORT).show();
 
-                        } else {
-                            // Toast.makeText(context, "Innum 6th question ans pannala", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
-
-
-
 
                 /* Contstraints Check- Coffee Survey Setup Project franklin*/
                 String value = et.getText().toString().trim();
@@ -3236,20 +2841,10 @@ public class DynamicQuestions {
                         if (constraint.isOverLimit()) {
                             constraintsSet.add(questionId);
                         }
-
-                        // Old remove Logic
-//                            if (et.getText().toString().trim().equalsIgnoreCase("")){
-//                                // Remove the data from existing Database if data persists
-//                                removeAnswerEntryDatabase((int) Utilities.farmerModuleId,questionId);
-//                            }else{
-//                                removeAnswerEntry(questionId);
-//                            }
-
                     } else {
                         et.setBackground(originalDrawable);
                         constraintsSet.remove(questionId);
                         editQuestionSet.remove(questionId);
-                        // et.setError(null);
                     }
                 }
 
@@ -3274,8 +2869,6 @@ public class DynamicQuestions {
                                         }
                                         if (localMetricIdAnswer != 0) {
                                             previewLayout.setVisibility(View.VISIBLE);
-//                                                    titleTextView.setVisibility(View.VISIBLE);
-//                                                    contentTextView.setVisibility(View.VISIBLE);
                                             String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                             String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                             String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
@@ -3284,9 +2877,7 @@ public class DynamicQuestions {
                                         } else {
                                             previewLayout.setVisibility(View.GONE);
                                         }
-
                                     }
-
                                 }
                             }
                         }
@@ -3294,7 +2885,6 @@ public class DynamicQuestions {
                 } else {
                     previewLayout.setVisibility(View.GONE);
                 }
-
             }
         });
 
@@ -3323,15 +2913,14 @@ public class DynamicQuestions {
             if (isRepeaterItem) {
                 innerWrapper.addView(et);
                 innerWrapper.addView(spinner);
-//                parentLayout.addView(previewLayout);
                 parentLayout.addView(innerWrapper);
 
             } else {
                 innerWrapper.addView(et);
                 innerWrapper.addView(spinner);
                 questionWrapper.addView(innerWrapper);
-//                questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
+                viewReference.put(questionId, new Pair<>("textbox", questionWrapper));
             }
         } else {
             if (isRepeaterItem) {
@@ -3339,6 +2928,7 @@ public class DynamicQuestions {
             } else {
                 questionWrapper.addView(et);
                 parentLayout.addView(questionWrapper);
+                viewReference.put(questionId, new Pair<>("textbox", questionWrapper));
             }
         }
     }
@@ -4252,10 +3842,8 @@ public class DynamicQuestions {
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         resources = res;
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
         final String displayType = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
         String oldDatatype = null;
@@ -4284,36 +3872,22 @@ public class DynamicQuestions {
                 }
             }
         }
-        final int answerId = answerIdTemp;
 
-        //Local unit
+        final int answerId = answerIdTemp;
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
-//        String metricGlobalId = "37";
         final Integer[] selectedLocalID = {0};
         final Integer[] selectedGlobalID = {0};
-        boolean isLocalUnit = false;
         // Create an inner wrapper
         LinearLayout innerWrapper = new LinearLayout(context);
+        innerWrapper.setId(R.id.linearLayout);
         LinearLayout.LayoutParams innerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
         innerParams.setMargins(0, 7, 0, 0);
         innerWrapper.setLayoutParams(innerParams);
-
         innerWrapper.setOrientation(LinearLayout.HORIZONTAL);
 
-
-        /*TextView text = new TextView(getInstance().context);
-        text.setText("Metrics:");
-        text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
-        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
-                0, // Width set to 0
-                LinearLayout.LayoutParams.MATCH_PARENT,2
-        );
-        text.setGravity(Gravity.CENTER);
-        text.setLayoutParams(textParams);
-        innerWrapper.addView(text);*/
 
         LinearLayout previewLayout = new LinearLayout(context);
         previewLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -4346,9 +3920,7 @@ public class DynamicQuestions {
         final Spinner spinnerLocal = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
-
             if (unitMappings.isEmpty()) {
-
                 List<String> getGlobalUnit = roomDB.globalUnitDao().getGlobalAbbreviation(Integer.parseInt(metricGlobalId));
                 selectedGlobalID[0] = Integer.parseInt(metricGlobalId);
                 LinearLayout.LayoutParams spinnerLocalParams = new LinearLayout.LayoutParams(
@@ -4356,38 +3928,13 @@ public class DynamicQuestions {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         2 // Weight set to 2 (20% of the total weight)
                 );
+
                 spinnerLocalParams.setMargins(7, 0, 0, 0);
                 spinnerLocal.setLayoutParams(spinnerLocalParams);
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinnerLocal.setAdapter(spinnerAdapter);
-
-
-                /*if (hasAnswers){
-                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
-                    spinnerLocal.setSelection(localAnswer);
-                }else {
-                    spinnerLocal.setSelection(Integer.parseInt(metricGlobalId));
-                }*/
-
-                spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Get the selected item from the adapter
-                        String selectedAbbreviation = spinnerAdapter.getItem(position);
-
-//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // Do nothing here if needed
-                    }
-                });
-
-
             } else {
-                isLocalUnit = true;
                 Map<Integer, String> spinnerData = new HashMap<>();
                 List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
                 for (GlobalUnitDao.UnitMapping unitMapping : globalMappings) {
@@ -4418,16 +3965,12 @@ public class DynamicQuestions {
                     }
 
                 } else {
-//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
                     spinnerLocal.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
                 }
                 spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Get the selected item from the adapter
                         String selectedAbbreviation = spinnerAdapter.getItem(position);
-
-                        // Find the corresponding localUnitId in the spinnerData map
                         for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
                             if (entry.getValue().equals(selectedAbbreviation)) {
                                 int selectedLocalUnitId = entry.getKey();
@@ -4439,16 +3982,12 @@ public class DynamicQuestions {
                                     selectedLocalID[0] = entry.getKey();
                                     selectedGlobalID[0] = 0;
                                 }
-                                // Display a Toast with the selected localUnitId
-//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
 
                                 if (answerSet != null) {
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
-
                                         if (currentAnswer != null) {
                                             int currentQuestionId = currentAnswer.optInt("question_id");
-
                                             if (currentQuestionId == questionId) {
                                                 try {
                                                     currentAnswer.put("globalMetricId", selectedGlobalID[0]);
@@ -4457,62 +3996,51 @@ public class DynamicQuestions {
                                                     e.printStackTrace();
                                                 }
                                             }
-
                                         }
                                     }
                                 }
+
                                 if (answerSet != null) {
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
-
                                         if (currentAnswer != null) {
                                             int currentQuestionId = currentAnswer.optInt("question_id");
                                             int answerJsonVal = currentAnswer.optInt("answer");
-
                                             if (currentQuestionId == questionId) {
                                                 Integer globalMetricIdAnswer = null;
                                                 Integer localMetricIdAnswer = null;
                                                 if (currentAnswer.has("globalMetricId")) {
                                                     globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
                                                 }
+
                                                 if (currentAnswer.has("localMetricId")) {
                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                 }
+
                                                 if (localMetricIdAnswer != 0) {
                                                     previewLayout.setVisibility(View.VISIBLE);
-//                                                    titleTextView.setVisibility(View.VISIBLE);
-//                                                    contentTextView.setVisibility(View.VISIBLE);
                                                     String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                                     String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
                                                     if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                                         try {
-                                                            // Perform your calculations and set the text
                                                             double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
                                                             contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
                                                         } catch (NumberFormatException e) {
-                                                            // Handle the case where parsing fails
                                                             e.printStackTrace();
                                                             previewLayout.setVisibility(View.GONE);
                                                         }
                                                     } else {
-                                                        // Handle the case where any of the variables is null
                                                         contentTextView.setText("Some values are null");
                                                     }
                                                 } else {
                                                     previewLayout.setVisibility(View.GONE);
                                                 }
-
-
                                             }
-
                                         }
                                     }
                                 }
-
-                                Log.d("AnswerNewSet", answerSet.toString());
                                 break;
                             }
                         }
@@ -4526,9 +4054,7 @@ public class DynamicQuestions {
             }
         }
 
-        // code end
 
-//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
         if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
@@ -4538,6 +4064,7 @@ public class DynamicQuestions {
             );
             spinner.setLayoutParams(spinnerParams);
         }
+
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, res.getStringArray(R.array.plotvariants));
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
@@ -4560,8 +4087,6 @@ public class DynamicQuestions {
             } else {
                 spinnervalues = dl.getLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName, dataTypeID);
             }
-
-//            MatrixCursor newSpinnerValue = new MatrixCursor(new String[]{"value"});
 
             String[] columnNames = spinnervalues.getColumnNames();
             MatrixCursor newCursor = new MatrixCursor(columnNames);
@@ -4590,20 +4115,17 @@ public class DynamicQuestions {
                             if (rangeArray.has("active")) {
                                 isActive = rangeArray.getString("active");
                             }
+
                             if (rangeArray.has("countryAndProductAssign")){
                                 countryAndProductAssign = rangeArray.getJSONArray("countryAndProductAssign");
                             }
+
                             long farmerId = Utilities.farmerId;
-
                             if (!assignmentField.equals("null")) {
-
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                 if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
-
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                         String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
-
                                         if (spinnervalues.moveToFirst()) {
                                             do {
                                                 String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
@@ -4612,7 +4134,6 @@ public class DynamicQuestions {
                                                 if (value.equals(checkBoxVal)) {
                                                     boolean idExists = false;
                                                     newCursor.moveToPosition(-1);
-
                                                     while (newCursor.moveToNext()) {
                                                         int existingId = newCursor.getInt(newCursor.getColumnIndex("_id"));
                                                         if (existingId == id) {
@@ -4628,9 +4149,7 @@ public class DynamicQuestions {
                                                         }
                                                         newCursor.addRow(rowData);
                                                     }
-
                                                 }
-
                                             } while (spinnervalues.moveToNext());
                                         }
                                     }
@@ -4644,7 +4163,6 @@ public class DynamicQuestions {
                                        do {
                                            String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
                                            int id = spinnervalues.getInt(spinnervalues.getColumnIndex("_id"));
-
                                            boolean idExists = false;
                                            newCursor.moveToPosition(-1);
 
@@ -4667,17 +4185,11 @@ public class DynamicQuestions {
                                        } while (spinnervalues.moveToNext());
                                    }
                                }
-
                             } else {
-
-                                // Remove square brackets and split the string into an array of strings
                                 String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
-
-
                                 if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
                                     if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                         String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
-
                                         if (spinnervalues.moveToFirst()) {
                                             do {
                                                 String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
@@ -4686,7 +4198,6 @@ public class DynamicQuestions {
                                                 if (value.equals(checkBoxVal)) {
                                                     boolean idExists = false;
                                                     newCursor.moveToPosition(-1);
-
                                                     while (newCursor.moveToNext()) {
                                                         int existingId = newCursor.getInt(newCursor.getColumnIndex("_id"));
                                                         if (existingId == id) {
@@ -4702,12 +4213,10 @@ public class DynamicQuestions {
                                                         }
                                                         newCursor.addRow(rowData);
                                                     }
-
                                                 }
 
                                             } while (spinnervalues.moveToNext());
                                         }
-
                                     }
                                 } else {
                                     // Convert the string array to an integer array
@@ -4718,14 +4227,10 @@ public class DynamicQuestions {
 
                                     // Iterate through the integer array using a for loop
                                     for (int fieldMultipleAssignment : intArray) {
-
                                         String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
-
                                             if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
                                                 String checkBoxVal = dl.getValueByLookUpID(lookupID, qCursor, questionColumnSuffix);
-
                                                 if (spinnervalues.moveToFirst()) {
                                                     do {
                                                         String value = spinnervalues.getString(spinnervalues.getColumnIndex(columnName));
@@ -4760,21 +4265,15 @@ public class DynamicQuestions {
                                         }
                                     }
                                 }
-
                             }
-
-
                         }
-
                         dl.bindDataDrivenSpinner(spinner, newCursor, context, R.string.ModuleAnswerHint, columnName, false);
                     } else {
                         dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                     }
-
                 } else {
                     dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -4870,8 +4369,6 @@ public class DynamicQuestions {
                             }
                         }
                     }
-                    //   saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(defaultLookUpValue));
-                    // }
                 }
             }
 
@@ -4881,19 +4378,9 @@ public class DynamicQuestions {
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-
-
-                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
-
-
-                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
                         if (finalDatatype.equals("int")) {
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id), selectedGlobalID[0], selectedLocalID[0], 0);
-
-                            long h = Long.parseLong("0026");
-
-
                         } else {
                             Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)), selectedGlobalID[0], selectedLocalID[0], 0);
@@ -4913,7 +4400,6 @@ public class DynamicQuestions {
                     if (isDensityQuestion) {
                         renderTreeDensityPlots(position, res);
                     }
-
 
                     if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                         if (answerSet.size() != 0) {
@@ -4968,8 +4454,6 @@ public class DynamicQuestions {
                             previewLayout.setVisibility(View.GONE);
                         }
                     }
-
-
                 }
 
                 @Override
@@ -4980,21 +4464,19 @@ public class DynamicQuestions {
                 }
             });
 
-
             if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 if (isRepeaterItem) {
                     innerWrapper.addView(spinner);
                     innerWrapper.addView(spinnerLocal);
                     parentLayout.addView(innerWrapper);
                     parentLayout.addView(previewLayout);
-//                parentLayout.addView(spinner);
                 } else {
                     innerWrapper.addView(spinner);
                     innerWrapper.addView(spinnerLocal);
                     questionWrapper.addView(innerWrapper);
-//                questionWrapper.addView(innerWrapper);
                     questionWrapper.addView(previewLayout);
                     parentLayout.addView(questionWrapper);
+                    viewReference.put(questionId, new Pair<>("dropdown", questionWrapper));
                 }
             } else {
                 if (isRepeaterItem) {
@@ -5002,25 +4484,21 @@ public class DynamicQuestions {
                 } else {
                     questionWrapper.addView(spinner);
                     parentLayout.addView(questionWrapper);
+                    viewReference.put(questionId, new Pair<>("dropdown", questionWrapper));
                 }
             }
-
 
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config " + e.getMessage());
         }
-
     }
 
     public void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout, long farmerId, String stakeholderId, long farmerModuleId, boolean isSavedAns, final int repeaterItemPosition, Cursor repeaterAnswers, final int parentQuestionId) {
-
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
         Utilities.datatypeIdCLMRS =dataTypeID;
 
@@ -5167,32 +4645,6 @@ public class DynamicQuestions {
                 spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
-
-                /*if (hasAnswers){
-                    int
-
-                    spinner.setSelection(localAnswer);
-                }else {
-                    spinner.setSelection(getGlobalUnit.indexOf(metricGlobalId));
-
-                }*/
-                ArrayAdapter<String> finalSpinnerAdapter1 = spinnerAdapter;
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Get the selected item from the adapter
-                        String selectedAbbreviation = finalSpinnerAdapter1.getItem(position);
-
-//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // Do nothing here if needed
-                    }
-                });
-
-
             } else {
                 isLocalUnit = true;
                 spinnerData = new HashMap<>();
@@ -5226,7 +4678,6 @@ public class DynamicQuestions {
                     }
 
                 } else {
-//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
                     spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
                 }
                 Map<Integer, String> finalSpinnerData = spinnerData;
@@ -5272,7 +4723,7 @@ public class DynamicQuestions {
                                     }
                                 }
 
-                                if (answerSet.size() != 0) {
+                                if (!answerSet.isEmpty()) {
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
 
@@ -5295,7 +4746,6 @@ public class DynamicQuestions {
                                                     String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
                                                     if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                                         try {
                                                             // Perform your calculations and set the text
@@ -5405,204 +4855,33 @@ public class DynamicQuestions {
                         if (rangeArray.has("active")) {
                             isActive = rangeArray.getString("active");
                         }
+
                         if (rangeArray.has("countryAndProductAssign")){
                             countryAndProductAssign = rangeArray.getJSONArray("countryAndProductAssign");
                         }
 
                         if (!assignmentField.equals("null")) {
-
                             String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                             if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
-
                                 if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                    //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
-//                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-                                    String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                    RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                        radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                    } else {
-                                        radioButton.setText(radioName);
-                                    }
-                                    radioButton.setId(Integer.parseInt(lookupID));
-
-                                    if (rbAnswers.getCount() == 0) {
-                                        if (isDefault.equalsIgnoreCase("true")) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            String finalDatatype = datatype;
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-                                    }
-
-
-                                    if (answerId != 0) {
-                                        if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-
-
-                                    }
-                                /*if (rbAnswers.getCount() > 0) {
-                                    // disable while loading the "Not Applicable"
-                                    if(Integer.parseInt(lookupID) == defaultLookUpValue){
-                                        radioButton.setEnabled(false);
-                                    }
-                                    //End
-                                    while (rbAnswers.moveToNext()) {
-                                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                    rbAnswers.moveToPosition(-1);
-                                }else {
-                                    // N/A Question for franklin
-                                    if (defaultLookUpValue != 0) {
-                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                }*/
-
-
-                                    radioGroup.addView(radioButton);
+                                    renderRadioView(questions, repeaterItemPosition, parentQuestionId, lookupID, radioGroup, metricGlobalId, rbAnswers, isDefault, datatype, questionId, selectedGlobalID, selectedLocalID, answerId);
                                 }
                             }
                         }
                         else if (assignmentFields.equals("null") && countryAndProductAssign != null && countryAndProductAssign.length() != 0){
                             boolean isFound = countryAndProductAssignLookup(countryAndProductAssign, farmerId);
-
                             if (isFound) {
                                 if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                    //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
-//                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-                                    String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                    RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                        radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                    } else {
-                                        radioButton.setText(radioName);
-                                    }
-                                    radioButton.setId(Integer.parseInt(lookupID));
-
-                                    if (rbAnswers.getCount() == 0) {
-                                        if (isDefault.equalsIgnoreCase("true")) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            String finalDatatype = datatype;
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-                                    }
-
-
-                                    if (answerId != 0) {
-                                        if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-
-
-                                    }
-                                /*if (rbAnswers.getCount() > 0) {
-                                    // disable while loading the "Not Applicable"
-                                    if(Integer.parseInt(lookupID) == defaultLookUpValue){
-                                        radioButton.setEnabled(false);
-                                    }
-                                    //End
-                                    while (rbAnswers.moveToNext()) {
-                                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                    rbAnswers.moveToPosition(-1);
-                                }else {
-                                    // N/A Question for franklin
-                                    if (defaultLookUpValue != 0) {
-                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                }*/
-
-
-                                    radioGroup.addView(radioButton);
+                                    renderRadioView(questions, repeaterItemPosition, parentQuestionId, lookupID, radioGroup, metricGlobalId, rbAnswers, isDefault, datatype, questionId, selectedGlobalID, selectedLocalID, answerId);
                                 }
                             }
-
                         }
                         else {
                             // Remove square brackets and split the string into an array of strings
                             String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
-
-
                             if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
                                 if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                    //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
-//                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-                                    String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                    RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                        radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                    } else {
-                                        radioButton.setText(radioName);
-                                    }
-                                    radioButton.setId(Integer.parseInt(lookupID));
-
-                                    if (rbAnswers.getCount() == 0) {
-                                        if (isDefault.equalsIgnoreCase("true")) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            String finalDatatype = datatype;
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-                                    }
-
-
-                                    if (answerId != 0) {
-                                        if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                            saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                        }
-
-
-                                    }
-                                /*if (rbAnswers.getCount() > 0) {
-                                    // disable while loading the "Not Applicable"
-                                    if(Integer.parseInt(lookupID) == defaultLookUpValue){
-                                        radioButton.setEnabled(false);
-                                    }
-                                    //End
-                                    while (rbAnswers.moveToNext()) {
-                                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                    rbAnswers.moveToPosition(-1);
-                                }else {
-                                    // N/A Question for franklin
-                                    if (defaultLookUpValue != 0) {
-                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                }*/
-
-
-                                    radioGroup.addView(radioButton);
+                                    renderRadioView(questions, repeaterItemPosition, parentQuestionId, lookupID, radioGroup, metricGlobalId, rbAnswers, isDefault, datatype, questionId, selectedGlobalID, selectedLocalID, answerId);
                                 }
                             } else {
                                 // Convert the string array to an integer array
@@ -5613,76 +4892,15 @@ public class DynamicQuestions {
 
                                 // Iterate through the integer array using a for loop
                                 for (int fieldMultipleAssignment : intArray) {
-
                                     String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                     if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
-
                                         if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                            //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
-//                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-                                            String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                            RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                            } else {
-                                                radioButton.setText(radioName);
-                                            }
-                                            radioButton.setId(Integer.parseInt(lookupID));
-
-                                            if (rbAnswers.getCount() == 0) {
-                                                if (isDefault.equalsIgnoreCase("true")) {
-                                                    radioButton.setChecked(true);
-                                                    radioButton.setEnabled(true);
-                                                    String finalDatatype = datatype;
-                                                    saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                                }
-                                            }
-
-
-                                            if (answerId != 0) {
-                                                if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
-                                                    radioButton.setChecked(true);
-                                                    radioButton.setEnabled(true);
-                                                    saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
-                                                }
-
-
-                                            }
-                                /*if (rbAnswers.getCount() > 0) {
-                                    // disable while loading the "Not Applicable"
-                                    if(Integer.parseInt(lookupID) == defaultLookUpValue){
-                                        radioButton.setEnabled(false);
-                                    }
-                                    //End
-                                    while (rbAnswers.moveToNext()) {
-                                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
+                                            renderRadioView(questions, repeaterItemPosition, parentQuestionId, lookupID, radioGroup, metricGlobalId, rbAnswers, isDefault, datatype, questionId, selectedGlobalID, selectedLocalID, answerId);
                                         }
                                     }
-                                    rbAnswers.moveToPosition(-1);
-                                }else {
-                                    // N/A Question for franklin
-                                    if (defaultLookUpValue != 0) {
-                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                            radioButton.setChecked(true);
-                                            radioButton.setEnabled(true);
-                                        }
-                                    }
-                                }*/
-
-
-                                            radioGroup.addView(radioButton);
-                                        }
-                                    }
-
                                 }
                             }
-
                         }
-
                     }
 
                     if (otherChoice.equals("true")) {
@@ -5704,10 +4922,11 @@ public class DynamicQuestions {
                 questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
-
+                viewReference.put(questionId, new Pair<>("radio", questionWrapper));
             } else {
                 questionWrapper.addView(linearLayout);
                 parentLayout.addView(questionWrapper);
+                viewReference.put(questionId, new Pair<>("radio", questionWrapper));
             }
 
             saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition, finalGlobalMetrics, selectedLocalID[0], 0, spinner, spinnerData, spinnerAdapter, previewLayout, contentTextView, questionWrapper, finalSwitchId, finalYesNoConstraint,questions);
@@ -5716,27 +4935,44 @@ public class DynamicQuestions {
 
     }
 
+    private void renderRadioView(Cursor questions, int repeaterItemPosition, int parentQuestionId, String lookupID, RadioGroup radioGroup, String metricGlobalId, Cursor rbAnswers, String isDefault, String datatype, int questionId, Integer[] selectedGlobalID, Integer[] selectedLocalID, int answerId) {
+        String radioName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
+        RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+            radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+        } else {
+            radioButton.setText(radioName);
+        }
+        radioButton.setId(Integer.parseInt(lookupID));
 
-    public void renderNextPage(LinearLayout parentLayout) {
-        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        ConstraintLayout linearLayout = (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.go_next_layout, null);
-        questionWrapper.addView(linearLayout);
-        parentLayout.addView(questionWrapper);
+        if (rbAnswers.getCount() == 0) {
+            if (isDefault.equalsIgnoreCase("true")) {
+                radioButton.setChecked(true);
+                radioButton.setEnabled(true);
+                String finalDatatype = datatype;
+                saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
+            }
+        }
+
+        if (answerId != 0) {
+            if (Integer.parseInt(lookupID) == Integer.parseInt(!Objects.equals(dl.radioAnswerValueFromAnswersTable(answerId), "") ? dl.radioAnswerValueFromAnswersTable(answerId) : dl.radioAnswerValueFromSavedAnswersTable(answerId))) {
+                radioButton.setChecked(true);
+                radioButton.setEnabled(true);
+                saveAnswerEntry(questionId, Integer.parseInt(lookupID), parentQuestionId, repeaterItemPosition, datatype, lookupID, selectedGlobalID[0], selectedLocalID[0], 0);
+            }
+        }
+        radioGroup.addView(radioButton);
     }
 
     void renderSipDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-
         String oldDatatype = null;
-
         String datatype = null;
         if (dataTypeID == 6) {
             oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
@@ -5748,7 +4984,6 @@ public class DynamicQuestions {
                 datatype = "int";
             }
         }
-
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -5823,12 +5058,6 @@ public class DynamicQuestions {
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-
-
-                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
-
-
-                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
                         if (finalDatatype.equals("int") && (!isDensityQuestion)) {
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id), 0, 0, 0);
@@ -5862,8 +5091,6 @@ public class DynamicQuestions {
                 questionWrapper.addView(spinner);
                 parentLayout.addView(questionWrapper);
             }
-
-
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config " + e.getMessage());
         }
@@ -5872,12 +5099,7 @@ public class DynamicQuestions {
 
     void renderDropDownQuestionSubQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        // renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-       /* final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-*/
-
 
         String datatypeduplicate = "";
         int questionIddouplicate = 0;
@@ -5895,26 +5117,8 @@ public class DynamicQuestions {
         final String datatype = datatypeduplicate;
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-
         int answerIdTemp = 0;
-
-        // answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-
-        /*if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }*/
-
-
-        //  answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
         final int answerId = answerIdTemp;
-
-//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, res.getStringArray(R.array.plotvariants));
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -5948,51 +5152,9 @@ public class DynamicQuestions {
             }
 
             final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
-
             dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
 
-            /*if (hasAnswers) {
-                if (datatype.equals("int") && (!isDensityQuestion)) {
-                    Integer currentAnswerInt = -1;
-                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                        currentAnswerInt = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
-                    } else {
-                        if (qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT) != -1) {
-                            currentAnswerInt = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
-                        }
-                    }
-
-                    for (int i = 0; i < spinner.getCount(); i++) {
-                        if (spinner.getItemIdAtPosition(i) == currentAnswerInt) {
-                            spinner.setSelection(i);
-                            break;
-                        }
-                    }
-
-                } else {
-                    String currentAnswerValue;
-                    if (isRepeaterItem && repeaterAnswers != null) {
-                        currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-                    } else {
-                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                    }
-
-                    for (int i = 0; i < spinner.getCount(); i++) {
-                        Cursor currentItem = (Cursor) spinner.getItemAtPosition(i);
-                        if (currentItem.getString(currentItem.getColumnIndex(columnName)).equalsIgnoreCase(currentAnswerValue)) {
-                            spinner.setSelection(i);
-                            break;
-                        }
-                    }
-                }
-            }
-
-*/
-
-
             Cursor cursor = dl.getParentSubquestionAnswer(Utilities.subModuleId, parentQuestionId, questionId);
-
-
             int position = 0;
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -6004,33 +5166,15 @@ public class DynamicQuestions {
                 }
             }
 
-
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-
-
+                    dl.prentidAnswerDelete(parentQuestionId, questionId);
                     if (id > 0) {
-
-
-                        int delete = dl.prentidAnswerDelete(parentQuestionId, questionId);
-                        long l = id;
-                        int i = (int) l;
+                        int i = (int) id;
                         dl.prentidAnswer(Utilities.subModuleId, parentQuestionId, questionId, i + "", position + "", Utilities.olamFarmerId, Utilities.moduleId + "");
-
-                        if (datatype.equals("int") && (!isDensityQuestion)) {
-
-                            long h = Long.parseLong("0026");
-
-
-                        } else {
-                            Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-
-
-                        }
-                    } else {
-                        int delete = dl.prentidAnswerDelete(parentQuestionId, questionId);
                     }
+
                     if (isDensityQuestion) {
                         renderTreeDensityPlots(position, res);
                     }
@@ -6050,12 +5194,9 @@ public class DynamicQuestions {
                 questionWrapper.addView(spinner);
                 parentLayout.addView(questionWrapper);
             }
-
-
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config " + e.getMessage());
         }
-
     }
 
 
@@ -6063,22 +5204,19 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-        Utilities.datatypeIdCLMRS =dataTypeID;
+        Utilities.datatypeIdCLMRS = dataTypeID;
 
         String oldDatatype = null;
-
         String datatype = null;
         if (dataTypeID == 6) {
             oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         } else {
             datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
         if (oldDatatype != null) {
             if (oldDatatype.equals("Checkbox")) {
                 datatype = "int";
@@ -6112,6 +5250,7 @@ public class DynamicQuestions {
                     cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, stakeholderId, farmerModuleId);
                 }
             }
+
             if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 try {
                     answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
@@ -6122,10 +5261,8 @@ public class DynamicQuestions {
 
             }
         }
-        final int answerId = answerIdTemp;
 
-        // is this a question we can only select one answer to?
-        // get display config
+        final int answerId = answerIdTemp;
         try {
             JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
             if (displayConfig.has("display")) {
@@ -6151,10 +5288,6 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
-
-        //code start
-//        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
-//        String metricGlobalId = "2";
         final Integer[] selectedLocalID = {0};
         final Integer[] selectedGlobalID = {0};
         final boolean[] unCheckAllBox = {false};
@@ -6201,9 +5334,6 @@ public class DynamicQuestions {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
 
-        // Add TextViews to the LinearLayout
-//        previewLayout.addView(titleTextView);
-//        previewLayout.addView(contentTextView);
         previewLayout.setVisibility(View.GONE);
 
 
@@ -6225,30 +5355,6 @@ public class DynamicQuestions {
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, getGlobalUnit);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
-
-                /*if (hasAnswers){
-                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
-                    spinner.setSelection(localAnswer);
-                }else {
-                    spinner.setSelection(Integer.parseInt(metricGlobalId));
-                }*/
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Get the selected item from the adapter
-                        String selectedAbbreviation = spinnerAdapter.getItem(position);
-
-
-//                        Toast.makeText(context, "Selected localUnitId: " + selectedAbbreviation, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // Do nothing here if needed
-                    }
-                });
-
-
             } else {
                 isLocalUnit = true;
                 Map<Integer, String> spinnerData = new HashMap<>();
@@ -6282,7 +5388,6 @@ public class DynamicQuestions {
                     }
 
                 } else {
-//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
                     spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
                 }
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -6304,10 +5409,7 @@ public class DynamicQuestions {
                                     selectedGlobalID[0] = 0;
                                 }
 
-//                                uncheckAllCheckbox(questionWrapper, checkboxes, questions, farmerId,cbAnswers, defaultLookUpValue);
                                 unCheckAllBox[0] = true;
-                                // Display a Toast with the selected localUnitId
-//                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 if (answerSet != null) {
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
@@ -6353,13 +5455,11 @@ public class DynamicQuestions {
                                                             LinearLayout.LayoutParams.WRAP_CONTENT,
                                                             LinearLayout.LayoutParams.WRAP_CONTENT
                                                     ));
-//                                                    titleTextView.setVisibility(View.VISIBLE);
-//                                                    contentTextView.setVisibility(View.VISIBLE);
+
                                                     String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                                     String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
                                                     if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
                                                         try {
                                                             // Perform your calculations and set the text
@@ -6404,8 +5504,6 @@ public class DynamicQuestions {
             }
         }
 
-        // code end
-
         final int[] checkboxCount = {0};
         if (checkboxes != null && checkboxes.getCount() > 0) {
             // add the table layout to the screen
@@ -6444,1196 +5542,44 @@ public class DynamicQuestions {
                             }
 
                             if (!assignmentField.equals("null")) {
-
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                 if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
-
-                                    if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                        // generate row item
-                                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                        CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                                        // last line
-
-//                                      final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-//                                      int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                        tvId.setText(lookupID);
-                                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                            tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                        } else {
-                                            tv.setText(checkBoxName);
-                                        }
-                                        tl.addView(tr);
-
-                                        /*if (cbAnswers.getCount() == 0) {
-                                            if (isDefault.equalsIgnoreCase("true")) {
-                                                cb.setChecked(true);
-                                                cb.setEnabled(true);
-                                            }
-                                        }*/
-
-                                        // initilaize default look up globally
-                                        // pre-fill checkboxes that have been previously ticked
-                                        if (cbAnswers.getCount() > 0) {
-                                            // disable while loading the "Not Applicable"
-                                            if (Integer.parseInt(lookupID) == defaultLookUpValue) {
-                                                cb.setEnabled(false);
-                                            }
-                                            //End
-                                            while (cbAnswers.moveToNext()) {
-                                                if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                    checkboxCount[0]++;
-                                                }
-                                            }
-                                            cbAnswers.moveToPosition(-1);
-                                        } else {
-                                            // N/A Question for franklin
-                                            if (defaultLookUpValue != 0) {
-                                                if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                }
-                                            }
-                                        }
-                                        tr.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                                checkbox.setChecked(!checkbox.isChecked());
-                                                checkbox.callOnClick();
-                                            }
-
-                                        });
-
-                                        //stick the answer in the question itself
-                                        int finalDefaultLookUpValue = defaultLookUpValue;
-                                        String finalDatatype = datatype;
-                                        String finalMaxSelection = maxSelection;
-                                        cb.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                                if (checkbox.isChecked()) {
-                                                    checkboxCount[0]++;
-                                                } else {
-                                                    checkboxCount[0]--;
-                                                }
-
-                                                if (singleSelect) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                        ssTcb.setChecked(false);
-                                                    }
-                                                    CheckBox clickedCb = (CheckBox) view;
-                                                    clickedCb.setChecked(true);
-                                                }
-
-                                                // Update the Not applicable field if none of the value is selected
-                                                if (finalDefaultLookUpValue != 0) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    boolean checkboxTicked = false;
-                                                    int count = 0;
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                        if (ssTcb.isChecked()) {
-                                                            checkboxTicked = true;
-                                                        }
-                                                        if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                            if (ssTcb.isChecked()) {
-                                                                count++;
-                                                            }
-                                                        }
-
-                                                    }
-                                                    if (!checkboxTicked) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(true);
-                                                                ssTcb.setEnabled(true);
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // Remove the Not applicable when other selected.
-                                                    if (count > 0) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(false);
-                                                                ssTcb.setEnabled(false);
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                                if (finalMaxSelection != "null") {
-                                                    if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                        cb.setChecked(false);
-                                                        checkboxCount[0]--;
-                                                        Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                if (unCheckAllBox[0]) {
-                                                    while (cbAnswers.moveToNext()) {
-                                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                            cb.setChecked(false);
-                                                            cb.setEnabled(false);
-                                                            checkboxCount[0]++;
-                                                        }
-                                                    }
-                                                }
-
-
-                                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-
-                                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                    if (answerSet.size() != 0) {
-                                                        ;
-                                                        previewLayout.removeAllViews();
-                                                        previewLayout.addView(titleTextView);
-                                                        for (int i = 0; i < answerSet.size(); i++) {
-                                                            JSONObject currentAnswer = answerSet.get(i);
-
-                                                            if (currentAnswer != null) {
-                                                                int currentQuestionId = currentAnswer.optInt("question_id");
-                                                                int answerJsonVal = currentAnswer.optInt("answer");
-
-                                                                if (currentQuestionId == questionId) {
-                                                                    Integer globalMetricIdAnswer = null;
-                                                                    Integer localMetricIdAnswer = null;
-                                                                    if (currentAnswer.has("globalMetricId")) {
-                                                                        globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
-                                                                    }
-                                                                    if (currentAnswer.has("localMetricId")) {
-                                                                        localMetricIdAnswer = currentAnswer.optInt("localMetricId");
-                                                                    }
-                                                                    if (localMetricIdAnswer != 0) {
-                                                                        TextView answerTextView = new TextView(context);
-                                                                        answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                        ));
-                                                                        String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
-                                                                        String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
-                                                                        String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
-                                                                        String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
-                                                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
-                                                                            try {
-                                                                                // Perform your calculations and set the text
-
-                                                                                if (canParseToDouble(answerValue)) {
-                                                                                    double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
-                                                                                    previewLayout.addView(answerTextView);
-                                                                                    previewLayout.setVisibility(View.VISIBLE);
-                                                                                }
-                                                                            } catch (
-                                                                                    NumberFormatException e) {
-                                                                                // Handle the case where parsing fails
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                        } else {
-                                                                            // Handle the case where any of the variables is null
-                                                                            contentTextView.setText("Some values are null");
-                                                                        }
-                                                                    } else {
-                                                                        previewLayout.setVisibility(View.GONE);
-                                                                    }
-
-                                                                } else {
-                                                                    previewLayout.setVisibility(View.GONE);
-                                                                }
-
-                                                            }
-                                                        }
-                                                    } else {
-                                                        previewLayout.setVisibility(View.GONE);
-                                                        previewLayout.removeAllViews();
-                                                    }
-                                                }
-
-                                            }
-                                        });
-
-                                    }
+                                    renderCheckBoxView(questions, repeaterItemPosition, parentQuestionId, isActive, tl, lookupID, metricGlobalId, cbAnswers, defaultLookUpValue, checkboxCount, datatype, maxSelection, singleSelect, unCheckAllBox, questionId, selectedGlobalID, selectedLocalID, previewLayout, titleTextView, contentTextView);
                                 }
                             }
                             else if (assignmentFields.equals("null") && countryAndProductAssign != null && countryAndProductAssign.length() != 0){
                                 boolean isFound = countryAndProductAssignLookup(countryAndProductAssign, farmerId);
 
                                 if (isFound) {
-                                    if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                        // generate row item
-                                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                        CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                                        // last line
-
-//                                      final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-//                                      int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                        tvId.setText(lookupID);
-                                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                            tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                        } else {
-                                            tv.setText(checkBoxName);
-                                        }
-                                        tl.addView(tr);
-
-                                        /*if (cbAnswers.getCount() == 0) {
-                                            if (isDefault.equalsIgnoreCase("true")) {
-                                                cb.setChecked(true);
-                                                cb.setEnabled(true);
-                                            }
-                                        }*/
-
-                                        // initilaize default look up globally
-                                        // pre-fill checkboxes that have been previously ticked
-                                        if (cbAnswers.getCount() > 0) {
-                                            // disable while loading the "Not Applicable"
-                                            if (Integer.parseInt(lookupID) == defaultLookUpValue) {
-                                                cb.setEnabled(false);
-                                            }
-                                            //End
-                                            while (cbAnswers.moveToNext()) {
-                                                if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                    checkboxCount[0]++;
-                                                }
-                                            }
-                                            cbAnswers.moveToPosition(-1);
-                                        } else {
-                                            // N/A Question for franklin
-                                            if (defaultLookUpValue != 0) {
-                                                if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                }
-                                            }
-                                        }
-                                        tr.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                                checkbox.setChecked(!checkbox.isChecked());
-                                                checkbox.callOnClick();
-                                            }
-
-                                        });
-
-                                        //stick the answer in the question itself
-                                        int finalDefaultLookUpValue = defaultLookUpValue;
-                                        String finalDatatype = datatype;
-                                        String finalMaxSelection = maxSelection;
-                                        cb.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                                if (checkbox.isChecked()) {
-                                                    checkboxCount[0]++;
-                                                } else {
-                                                    checkboxCount[0]--;
-                                                }
-
-                                                if (singleSelect) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                        ssTcb.setChecked(false);
-                                                    }
-                                                    CheckBox clickedCb = (CheckBox) view;
-                                                    clickedCb.setChecked(true);
-                                                }
-
-                                                // Update the Not applicable field if none of the value is selected
-                                                if (finalDefaultLookUpValue != 0) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    boolean checkboxTicked = false;
-                                                    int count = 0;
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                        if (ssTcb.isChecked()) {
-                                                            checkboxTicked = true;
-                                                        }
-                                                        if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                            if (ssTcb.isChecked()) {
-                                                                count++;
-                                                            }
-                                                        }
-
-                                                    }
-                                                    if (!checkboxTicked) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(true);
-                                                                ssTcb.setEnabled(true);
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // Remove the Not applicable when other selected.
-                                                    if (count > 0) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(false);
-                                                                ssTcb.setEnabled(false);
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                                if (finalMaxSelection != "null") {
-                                                    if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                        cb.setChecked(false);
-                                                        checkboxCount[0]--;
-                                                        Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                if (unCheckAllBox[0]) {
-                                                    while (cbAnswers.moveToNext()) {
-                                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                            cb.setChecked(false);
-                                                            cb.setEnabled(false);
-                                                            checkboxCount[0]++;
-                                                        }
-                                                    }
-                                                }
-
-
-                                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-
-                                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                    if (answerSet.size() != 0) {
-                                                        ;
-                                                        previewLayout.removeAllViews();
-                                                        previewLayout.addView(titleTextView);
-                                                        for (int i = 0; i < answerSet.size(); i++) {
-                                                            JSONObject currentAnswer = answerSet.get(i);
-
-                                                            if (currentAnswer != null) {
-                                                                int currentQuestionId = currentAnswer.optInt("question_id");
-                                                                int answerJsonVal = currentAnswer.optInt("answer");
-
-                                                                if (currentQuestionId == questionId) {
-                                                                    Integer globalMetricIdAnswer = null;
-                                                                    Integer localMetricIdAnswer = null;
-                                                                    if (currentAnswer.has("globalMetricId")) {
-                                                                        globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
-                                                                    }
-                                                                    if (currentAnswer.has("localMetricId")) {
-                                                                        localMetricIdAnswer = currentAnswer.optInt("localMetricId");
-                                                                    }
-                                                                    if (localMetricIdAnswer != 0) {
-                                                                        TextView answerTextView = new TextView(context);
-                                                                        answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                        ));
-                                                                        String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
-                                                                        String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
-                                                                        String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
-                                                                        String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
-                                                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
-                                                                            try {
-                                                                                // Perform your calculations and set the text
-
-                                                                                if (canParseToDouble(answerValue)) {
-                                                                                    double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
-                                                                                    previewLayout.addView(answerTextView);
-                                                                                    previewLayout.setVisibility(View.VISIBLE);
-                                                                                }
-                                                                            } catch (
-                                                                                    NumberFormatException e) {
-                                                                                // Handle the case where parsing fails
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                        } else {
-                                                                            // Handle the case where any of the variables is null
-                                                                            contentTextView.setText("Some values are null");
-                                                                        }
-                                                                    } else {
-                                                                        previewLayout.setVisibility(View.GONE);
-                                                                    }
-
-                                                                } else {
-                                                                    previewLayout.setVisibility(View.GONE);
-                                                                }
-
-                                                            }
-                                                        }
-                                                    } else {
-                                                        previewLayout.setVisibility(View.GONE);
-                                                        previewLayout.removeAllViews();
-                                                    }
-                                                }
-
-                                            }
-                                        });
-
-                                    }
+                                    renderCheckBoxView(questions, repeaterItemPosition, parentQuestionId, isActive, tl, lookupID, metricGlobalId, cbAnswers, defaultLookUpValue, checkboxCount, datatype, maxSelection, singleSelect, unCheckAllBox, questionId, selectedGlobalID, selectedLocalID, previewLayout, titleTextView, contentTextView);
                                 }
-
-                            } else {
-
-                                // Remove square brackets and split the string into an array of strings
-                                String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
-
+                            }
+                            else {
                                 if (assignmentFields.equals("null") || assignmentFields.equals("[]")) {
-                                    if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                        // generate row item
-                                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                        CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                                        String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                        tvId.setText(lookupID);
-                                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                            tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                        } else {
-                                            tv.setText(checkBoxName);
-                                        }
-                                        tl.addView(tr);
-
-
-                                        // initilaize default look up globally
-                                        // pre-fill checkboxes that have been previously ticked
-                                        if (cbAnswers.getCount() > 0) {
-                                            // disable while loading the "Not Applicable"
-                                            if (Integer.parseInt(lookupID) == defaultLookUpValue) {
-                                                cb.setEnabled(false);
-                                            }
-                                            //End
-                                            while (cbAnswers.moveToNext()) {
-                                                if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                    checkboxCount[0]++;
-                                                }
-                                            }
-                                            cbAnswers.moveToPosition(-1);
-                                        } else {
-                                            // N/A Question for franklin
-                                            if (defaultLookUpValue != 0) {
-                                                if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                                    cb.setChecked(true);
-                                                    cb.setEnabled(true);
-                                                }
-                                            }
-                                        }
-                                        tr.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                                checkbox.setChecked(!checkbox.isChecked());
-                                                checkbox.callOnClick();
-                                            }
-
-                                        });
-
-                                        //stick the answer in the question itself
-                                        int finalDefaultLookUpValue = defaultLookUpValue;
-                                        String finalDatatype = datatype;
-                                        String finalMaxSelection = maxSelection;
-                                        cb.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                                if (checkbox.isChecked()) {
-                                                    checkboxCount[0]++;
-                                                } else {
-                                                    checkboxCount[0]--;
-                                                }
-
-                                                if (singleSelect) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                        ssTcb.setChecked(false);
-                                                    }
-                                                    CheckBox clickedCb = (CheckBox) view;
-                                                    clickedCb.setChecked(true);
-                                                }
-
-                                                // Update the Not applicable field if none of the value is selected
-                                                if (finalDefaultLookUpValue != 0) {
-                                                    int ssTableRows = tl.getChildCount();
-                                                    boolean checkboxTicked = false;
-                                                    int count = 0;
-                                                    for (int j = 0; j < ssTableRows; j++) {
-                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                        if (ssTcb.isChecked()) {
-                                                            checkboxTicked = true;
-                                                        }
-                                                        if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                            if (ssTcb.isChecked()) {
-                                                                count++;
-                                                            }
-                                                        }
-
-                                                    }
-                                                    if (!checkboxTicked) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(true);
-                                                                ssTcb.setEnabled(true);
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // Remove the Not applicable when other selected.
-                                                    if (count > 0) {
-                                                        for (int j = 0; j < ssTableRows; j++) {
-                                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                ssTcb.setChecked(false);
-                                                                ssTcb.setEnabled(false);
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                                if (finalMaxSelection != "null") {
-                                                    if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                        cb.setChecked(false);
-                                                        checkboxCount[0]--;
-                                                        Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                if (unCheckAllBox[0]) {
-                                                    while (cbAnswers.moveToNext()) {
-                                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                            cb.setChecked(false);
-                                                            cb.setEnabled(false);
-                                                            checkboxCount[0]++;
-                                                        }
-                                                    }
-                                                }
-
-
-                                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-
-                                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                    if (answerSet.size() != 0) {
-                                                        ;
-                                                        previewLayout.removeAllViews();
-                                                        previewLayout.addView(titleTextView);
-                                                        for (int i = 0; i < answerSet.size(); i++) {
-                                                            JSONObject currentAnswer = answerSet.get(i);
-
-                                                            if (currentAnswer != null) {
-                                                                int currentQuestionId = currentAnswer.optInt("question_id");
-                                                                int answerJsonVal = currentAnswer.optInt("answer");
-
-                                                                if (currentQuestionId == questionId) {
-                                                                    Integer globalMetricIdAnswer = null;
-                                                                    Integer localMetricIdAnswer = null;
-                                                                    if (currentAnswer.has("globalMetricId")) {
-                                                                        globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
-                                                                    }
-                                                                    if (currentAnswer.has("localMetricId")) {
-                                                                        localMetricIdAnswer = currentAnswer.optInt("localMetricId");
-                                                                    }
-                                                                    if (localMetricIdAnswer != 0) {
-                                                                        TextView answerTextView = new TextView(context);
-                                                                        answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                        ));
-                                                                        String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
-                                                                        String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
-                                                                        String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
-                                                                        String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
-                                                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
-                                                                            try {
-                                                                                // Perform your calculations and set the text
-
-                                                                                if (canParseToDouble(answerValue)) {
-                                                                                    double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
-                                                                                    previewLayout.addView(answerTextView);
-                                                                                    previewLayout.setVisibility(View.VISIBLE);
-                                                                                }
-                                                                            } catch (
-                                                                                    NumberFormatException e) {
-                                                                                // Handle the case where parsing fails
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                        } else {
-                                                                            // Handle the case where any of the variables is null
-                                                                            contentTextView.setText("Some values are null");
-                                                                        }
-                                                                    } else {
-                                                                        previewLayout.setVisibility(View.GONE);
-                                                                    }
-
-                                                                } else {
-                                                                    previewLayout.setVisibility(View.GONE);
-                                                                }
-
-                                                            }
-                                                        }
-                                                    } else {
-                                                        previewLayout.setVisibility(View.GONE);
-                                                        previewLayout.removeAllViews();
-                                                    }
-                                                }
-
-                                            }
-                                        });
-
-                                    }
+                                    renderCheckBoxView(questions, repeaterItemPosition, parentQuestionId, isActive, tl, lookupID, metricGlobalId, cbAnswers, defaultLookUpValue, checkboxCount, datatype, maxSelection, singleSelect, unCheckAllBox, questionId, selectedGlobalID, selectedLocalID, previewLayout, titleTextView, contentTextView);
                                 } else {
-                                    // Convert the string array to an integer array
+                                    String[] stringArray = assignmentFields.substring(1, assignmentFields.length() - 1).split(",");
                                     int[] intArray = new int[stringArray.length];
                                     for (int m = 0; m < stringArray.length; m++) {
                                         intArray[m] = Integer.parseInt(stringArray[m]);
                                     }
 
-                                    // Iterate through the integer array using a for loop
                                     for (int fieldMultipleAssignment : intArray) {
-
                                         String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                         if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField) || assignmentType.equals("null") && String.valueOf(fieldMultipleAssignment).equals("null")) {
-
-                                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                                // generate row item
-                                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                                                String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
-                                                tvId.setText(lookupID);
-                                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                    tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
-                                                } else {
-                                                    tv.setText(checkBoxName);
-                                                }
-                                                tl.addView(tr);
-
-
-                                                // initilaize default look up globally
-                                                // pre-fill checkboxes that have been previously ticked
-                                                if (cbAnswers.getCount() > 0) {
-                                                    // disable while loading the "Not Applicable"
-                                                    if (Integer.parseInt(lookupID) == defaultLookUpValue) {
-                                                        cb.setEnabled(false);
-                                                    }
-                                                    //End
-                                                    while (cbAnswers.moveToNext()) {
-                                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                            cb.setChecked(true);
-                                                            cb.setEnabled(true);
-                                                            checkboxCount[0]++;
-                                                        }
-                                                    }
-                                                    cbAnswers.moveToPosition(-1);
-                                                } else {
-                                                    // N/A Question for franklin
-                                                    if (defaultLookUpValue != 0) {
-                                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                                            cb.setChecked(true);
-                                                            cb.setEnabled(true);
-                                                        }
-                                                    }
-                                                }
-                                                tr.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                                        checkbox.setChecked(!checkbox.isChecked());
-                                                        checkbox.callOnClick();
-                                                    }
-
-                                                });
-
-                                                //stick the answer in the question itself
-                                                int finalDefaultLookUpValue = defaultLookUpValue;
-                                                String finalDatatype = datatype;
-                                                String finalMaxSelection = maxSelection;
-                                                cb.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                                        if (checkbox.isChecked()) {
-                                                            checkboxCount[0]++;
-                                                        } else {
-                                                            checkboxCount[0]--;
-                                                        }
-
-                                                        if (singleSelect) {
-                                                            int ssTableRows = tl.getChildCount();
-                                                            for (int j = 0; j < ssTableRows; j++) {
-                                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                                ssTcb.setChecked(false);
-                                                            }
-                                                            CheckBox clickedCb = (CheckBox) view;
-                                                            clickedCb.setChecked(true);
-                                                        }
-
-                                                        // Update the Not applicable field if none of the value is selected
-                                                        if (finalDefaultLookUpValue != 0) {
-                                                            int ssTableRows = tl.getChildCount();
-                                                            boolean checkboxTicked = false;
-                                                            int count = 0;
-                                                            for (int j = 0; j < ssTableRows; j++) {
-                                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                                if (ssTcb.isChecked()) {
-                                                                    checkboxTicked = true;
-                                                                }
-                                                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                                    if (ssTcb.isChecked()) {
-                                                                        count++;
-                                                                    }
-                                                                }
-
-                                                            }
-                                                            if (!checkboxTicked) {
-                                                                for (int j = 0; j < ssTableRows; j++) {
-                                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                        ssTcb.setChecked(true);
-                                                                        ssTcb.setEnabled(true);
-                                                                    }
-                                                                }
-                                                            }
-
-                                                            // Remove the Not applicable when other selected.
-                                                            if (count > 0) {
-                                                                for (int j = 0; j < ssTableRows; j++) {
-                                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                                        ssTcb.setChecked(false);
-                                                                        ssTcb.setEnabled(false);
-                                                                    }
-                                                                }
-                                                            }
-
-                                                        }
-                                                        if (finalMaxSelection != "null") {
-                                                            if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                                cb.setChecked(false);
-                                                                checkboxCount[0]--;
-                                                                Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-
-                                                        if (unCheckAllBox[0]) {
-                                                            while (cbAnswers.moveToNext()) {
-                                                                if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                                                    cb.setChecked(false);
-                                                                    cb.setEnabled(false);
-                                                                    checkboxCount[0]++;
-                                                                }
-                                                            }
-                                                        }
-
-
-                                                        saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-
-                                                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
-                                                            if (answerSet.size() != 0) {
-                                                                ;
-                                                                previewLayout.removeAllViews();
-                                                                previewLayout.addView(titleTextView);
-                                                                for (int i = 0; i < answerSet.size(); i++) {
-                                                                    JSONObject currentAnswer = answerSet.get(i);
-
-                                                                    if (currentAnswer != null) {
-                                                                        int currentQuestionId = currentAnswer.optInt("question_id");
-                                                                        int answerJsonVal = currentAnswer.optInt("answer");
-
-                                                                        if (currentQuestionId == questionId) {
-                                                                            Integer globalMetricIdAnswer = null;
-                                                                            Integer localMetricIdAnswer = null;
-                                                                            if (currentAnswer.has("globalMetricId")) {
-                                                                                globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
-                                                                            }
-                                                                            if (currentAnswer.has("localMetricId")) {
-                                                                                localMetricIdAnswer = currentAnswer.optInt("localMetricId");
-                                                                            }
-                                                                            if (localMetricIdAnswer != 0) {
-                                                                                TextView answerTextView = new TextView(context);
-                                                                                answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
-                                                                                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                                ));
-                                                                                String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
-                                                                                String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
-                                                                                String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
-                                                                                String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
-                                                                                if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
-                                                                                    try {
-                                                                                        // Perform your calculations and set the text
-
-                                                                                        if (canParseToDouble(answerValue)) {
-                                                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                                                            answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
-                                                                                            previewLayout.addView(answerTextView);
-                                                                                            previewLayout.setVisibility(View.VISIBLE);
-                                                                                        }
-                                                                                    } catch (
-                                                                                            NumberFormatException e) {
-                                                                                        // Handle the case where parsing fails
-                                                                                        e.printStackTrace();
-                                                                                    }
-                                                                                } else {
-                                                                                    // Handle the case where any of the variables is null
-                                                                                    contentTextView.setText("Some values are null");
-                                                                                }
-                                                                            } else {
-                                                                                previewLayout.setVisibility(View.GONE);
-                                                                            }
-
-                                                                        } else {
-                                                                            previewLayout.setVisibility(View.GONE);
-                                                                        }
-
-                                                                    }
-                                                                }
-                                                            } else {
-                                                                previewLayout.setVisibility(View.GONE);
-                                                                previewLayout.removeAllViews();
-                                                            }
-                                                        }
-
-                                                    }
-                                                });
-
-                                            }
+                                            renderCheckBoxView(questions, repeaterItemPosition, parentQuestionId, isActive, tl, lookupID, metricGlobalId, cbAnswers, defaultLookUpValue, checkboxCount, datatype, maxSelection, singleSelect, unCheckAllBox, questionId, selectedGlobalID, selectedLocalID, previewLayout, titleTextView, contentTextView);
                                         }
                                     }
                                 }
-
-                                // end of multiple assignment
                             }
-
-
                         }
                     } else {
-                        while (checkboxes.moveToNext()) {
-                            // generate row item
-                            TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-
-                            final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-                            tvId.setText(String.valueOf(cbId));
-
-                            int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                            tv.setText(checkboxes.getString(columnIndex));
-
-                            CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-                            tl.addView(tr);
-                            // initilaize default look up globally
-                            // pre-fill checkboxes that have been previously ticked
-                            if (cbAnswers.getCount() > 0) {
-                                // disable while loading the "Not Applicable"
-                                if (cbId == defaultLookUpValue) {
-                                    cb.setEnabled(false);
-                                }
-                                //End
-                                while (cbAnswers.moveToNext()) {
-                                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                                        cb.setChecked(true);
-                                        cb.setEnabled(true);
-                                    }
-                                }
-                                cbAnswers.moveToPosition(-1);
-                            } else {
-                                // N/A Question for franklin
-                                if (defaultLookUpValue != 0) {
-                                    if (defaultLookUpValue == cbId) {
-                                        cb.setChecked(true);
-                                        cb.setEnabled(true);
-                                    }
-                                }
-                            }
-
-
-                            tr.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                    checkbox.setChecked(!checkbox.isChecked());
-                                    checkbox.callOnClick();
-                                }
-
-                            });
-
-                            //stick the answer in the question itself
-                            int finalDefaultLookUpValue = defaultLookUpValue;
-                            String finalDatatype1 = datatype;
-                            cb.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if (singleSelect) {
-                                        int ssTableRows = tl.getChildCount();
-                                        for (int j = 0; j < ssTableRows; j++) {
-                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                            ssTcb.setChecked(false);
-                                        }
-                                        CheckBox clickedCb = (CheckBox) view;
-                                        clickedCb.setChecked(true);
-                                    }
-
-                                    // Update the Not applicable field if none of the value is selected
-                                    if (finalDefaultLookUpValue != 0) {
-                                        int ssTableRows = tl.getChildCount();
-                                        boolean checkboxTicked = false;
-                                        int count = 0;
-                                        for (int j = 0; j < ssTableRows; j++) {
-                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                            if (ssTcb.isChecked()) {
-                                                checkboxTicked = true;
-                                            }
-                                            if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                if (ssTcb.isChecked()) {
-                                                    count++;
-                                                }
-                                            }
-
-                                        }
-                                        if (!checkboxTicked) {
-                                            for (int j = 0; j < ssTableRows; j++) {
-                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                    ssTcb.setChecked(true);
-                                                    ssTcb.setEnabled(true);
-                                                }
-                                            }
-                                        }
-
-                                        // Remove the Not applicable when other selected.
-                                        if (count > 0) {
-                                            for (int j = 0; j < ssTableRows; j++) {
-                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                    ssTcb.setChecked(false);
-                                                    ssTcb.setEnabled(false);
-                                                }
-                                            }
-                                        }
-
-                                    }
-
-                                    saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-                                }
-                            });
-
-
-                        }
+                        initializeCheckbox(repeaterItemPosition, parentQuestionId, checkboxes, tl, cbAnswers, defaultLookUpValue, datatype, singleSelect, questionId, selectedGlobalID, selectedLocalID);
                     }
-
-                } else {
-
-                    while (checkboxes.moveToNext()) {
-                        // generate row item
-                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-
-                        final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-                        tvId.setText(String.valueOf(cbId));
-
-                        int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                        tv.setText(checkboxes.getString(columnIndex));
-
-                        CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-                        tl.addView(tr);
-                        // initilaize default look up globally
-                        // pre-fill checkboxes that have been previously ticked
-                        if (cbAnswers.getCount() > 0) {
-                            // disable while loading the "Not Applicable"
-                            if (cbId == defaultLookUpValue) {
-                                cb.setEnabled(false);
-                            }
-                            //End
-                            while (cbAnswers.moveToNext()) {
-                                if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                                    cb.setChecked(true);
-                                    cb.setEnabled(true);
-                                }
-                            }
-                            cbAnswers.moveToPosition(-1);
-                        } else {
-                            // N/A Question for franklin
-                            if (defaultLookUpValue != 0) {
-                                if (defaultLookUpValue == cbId) {
-                                    cb.setChecked(true);
-                                    cb.setEnabled(true);
-                                }
-                            }
-                        }
-
-
-                        tr.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                checkbox.setChecked(!checkbox.isChecked());
-                                checkbox.callOnClick();
-                            }
-
-                        });
-
-                        //stick the answer in the question itself
-                        int finalDefaultLookUpValue = defaultLookUpValue;
-                        String finalDatatype1 = datatype;
-                        cb.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (singleSelect) {
-                                    int ssTableRows = tl.getChildCount();
-                                    for (int j = 0; j < ssTableRows; j++) {
-                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                        ssTcb.setChecked(false);
-                                    }
-                                    CheckBox clickedCb = (CheckBox) view;
-                                    clickedCb.setChecked(true);
-                                }
-
-                                // Update the Not applicable field if none of the value is selected
-                                if (finalDefaultLookUpValue != 0) {
-                                    int ssTableRows = tl.getChildCount();
-                                    boolean checkboxTicked = false;
-                                    int count = 0;
-                                    for (int j = 0; j < ssTableRows; j++) {
-                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                        if (ssTcb.isChecked()) {
-                                            checkboxTicked = true;
-                                        }
-                                        if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                            if (ssTcb.isChecked()) {
-                                                count++;
-                                            }
-                                        }
-
-                                    }
-                                    if (!checkboxTicked) {
-                                        for (int j = 0; j < ssTableRows; j++) {
-                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                ssTcb.setChecked(true);
-                                                ssTcb.setEnabled(true);
-                                            }
-                                        }
-                                    }
-
-                                    // Remove the Not applicable when other selected.
-                                    if (count > 0) {
-                                        for (int j = 0; j < ssTableRows; j++) {
-                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                            if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                ssTcb.setChecked(false);
-                                                ssTcb.setEnabled(false);
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                                saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
-                            }
-                        });
-
-
-                    }
-
                 }
-
+                else {
+                    initializeCheckbox(repeaterItemPosition, parentQuestionId, checkboxes, tl, cbAnswers, defaultLookUpValue, datatype, singleSelect, questionId, selectedGlobalID, selectedLocalID);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -7665,138 +5611,339 @@ public class DynamicQuestions {
                 questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
+                viewReference.put(questionId, new Pair<>("checkbox", questionWrapper));
             } else {
                 questionWrapper.addView(tl);
                 parentLayout.addView(questionWrapper);
+                viewReference.put(questionId, new Pair<>("checkbox", questionWrapper));
             }
-
-
             saveMultipleAnswerEntry(questionId, parentQuestionId, datatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
         }
     }
 
+    private void renderCheckBoxView(Cursor questions, int repeaterItemPosition, int parentQuestionId, String isActive, TableLayout tl, String lookupID, String metricGlobalId, Cursor cbAnswers, int defaultLookUpValue, int[] checkboxCount, String datatype, String maxSelection, boolean singleSelect, boolean[] unCheckAllBox, int questionId, Integer[] selectedGlobalID, Integer[] selectedLocalID, LinearLayout previewLayout, TextView titleTextView, TextView contentTextView) {
+        if (isActive.equalsIgnoreCase("true") || isActive.isEmpty()) {
+            TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+            CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-    // populate the child answers from dropdown and show
-    public void renderCheckBoxQuestionChild(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
-        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(questions, false, questionWrapper);
-
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
-        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-
-
-        String oldDatatype = null;
-
-        String datatype = null;
-        if (dataTypeID == 6) {
-            oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-        } else {
-            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
-        }
-        if (oldDatatype != null) {
-            if (oldDatatype.equals("Checkbox")) {
-                datatype = "int";
+            String checkBoxName = dl.getValueByLookUpID(lookupID, questions, questionColumnSuffix);
+            tvId.setText(lookupID);
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+            } else {
+                tv.setText(checkBoxName);
             }
-        }
 
+            tl.addView(tr);
 
-        final boolean singleSelect;
-        boolean tempSingleSelect = false;
-
-        Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
-
-        Cursor cbAnswers = dl.getAnswersForQuestionByChild(questionId, farmerId, Utilities.stakeholderId, farmerModuleId);
-
-        // is this a question we can only select one answer to?
-        // get display config
-        try {
-            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-            if (displayConfig.has("display")) {
-                JSONObject display = displayConfig.getJSONObject("display");
-                tempSingleSelect = display.optBoolean("single_select", false);
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting checkbox display config " + e.getMessage());
-        }
-
-        singleSelect = tempSingleSelect;
-
-        if (checkboxes != null && checkboxes.getCount() > 0) {
-            // add the table layout to the screen
-            final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
-            tl.setSaveEnabled(true);
-
-            while (checkboxes.moveToNext()) {
-                // generate row item
-                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-
-                final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-                tvId.setText(String.valueOf(cbId));
-
-                int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                tv.setText(checkboxes.getString(columnIndex));
-
-                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-                tl.addView(tr);
-
-                // pre-fill checkboxes that have been previously ticked
-                if (hasAnswers && cbAnswers.getCount() > 0) {
-                    while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                        }
-                    }
-                    cbAnswers.moveToPosition(-1);
+            // pre-fill checkboxes that have been previously ticked
+            if (cbAnswers.getCount() > 0) {
+                if (Integer.parseInt(lookupID) == defaultLookUpValue) {
+                    cb.setEnabled(false);
                 }
 
-                tr.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                while (cbAnswers.moveToNext()) {
+                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                        cb.setChecked(true);
+                        cb.setEnabled(true);
+                        checkboxCount[0]++;
+                    }
+                }
+                cbAnswers.moveToPosition(-1);
+            } else {
+                // N/A Question for franklin
+                if (defaultLookUpValue != 0) {
+                    if (defaultLookUpValue == Integer.parseInt(lookupID)) {
+                        cb.setChecked(true);
+                        cb.setEnabled(true);
+                    }
+                }
+            }
 
-                        checkbox.setChecked(!checkbox.isChecked());
-                        checkbox.callOnClick();
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                    checkbox.setChecked(!checkbox.isChecked());
+                    checkbox.callOnClick();
+                }
+
+            });
+
+            //stick the answer in the question itself
+            int finalDefaultLookUpValue = defaultLookUpValue;
+            String finalDatatype = datatype;
+            String finalMaxSelection = maxSelection;
+            cb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                    if (checkbox.isChecked()) {
+                        checkboxCount[0]++;
+                    } else {
+                        checkboxCount[0]--;
                     }
 
-                });
+                    if (singleSelect) {
+                        int ssTableRows = tl.getChildCount();
+                        for (int j = 0; j < ssTableRows; j++) {
+                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
 
-                //stick the answer in the question itself
-                String finalDatatype = datatype;
-                cb.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (singleSelect) {
-                            int ssTableRows = tl.getChildCount();
+                            ssTcb.setChecked(false);
+                        }
+                        CheckBox clickedCb = (CheckBox) view;
+                        clickedCb.setChecked(true);
+                    }
+
+                    // Update the Not applicable field if none of the value is selected
+                    if (finalDefaultLookUpValue != 0) {
+                        int ssTableRows = tl.getChildCount();
+                        boolean checkboxTicked = false;
+                        int count = 0;
+                        for (int j = 0; j < ssTableRows; j++) {
+                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                            if (ssTcb.isChecked()) {
+                                checkboxTicked = true;
+                            }
+
+                            if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
+                                if (ssTcb.isChecked()) {
+                                    count++;
+                                }
+                            }
+                        }
+
+                        if (!checkboxTicked) {
                             for (int j = 0; j < ssTableRows; j++) {
                                 TableRow ssTr = (TableRow) tl.getChildAt(j);
                                 CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                ssTcb.setChecked(false);
+                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                    ssTcb.setChecked(true);
+                                    ssTcb.setEnabled(true);
+                                }
                             }
-                            CheckBox clickedCb = (CheckBox) view;
-                            clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, 0, 0, 0,-1);
+
+                        // Remove the Not applicable when other selected.
+                        if (count > 0) {
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                    ssTcb.setChecked(false);
+                                    ssTcb.setEnabled(false);
+                                }
+                            }
+                        }
                     }
-                });
 
+                    if (finalMaxSelection != "null") {
+                        if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
+                            cb.setChecked(false);
+                            checkboxCount[0]--;
+                            Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-            }
+                    if (unCheckAllBox[0]) {
+                        while (cbAnswers.moveToNext()) {
+                            if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                cb.setChecked(false);
+                                cb.setEnabled(false);
+                                checkboxCount[0]++;
+                            }
+                        }
+                    }
 
-            questionWrapper.addView(tl);
-            parentLayout.addView(questionWrapper);
+                    saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
 
-            saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0,-1);
+                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
+                        if (!answerSet.isEmpty()) {
+                            previewLayout.removeAllViews();
+                            previewLayout.addView(titleTextView);
+                            for (int i = 0; i < answerSet.size(); i++) {
+                                JSONObject currentAnswer = answerSet.get(i);
+
+                                if (currentAnswer != null) {
+                                    int currentQuestionId = currentAnswer.optInt("question_id");
+                                    int answerJsonVal = currentAnswer.optInt("answer");
+
+                                    if (currentQuestionId == questionId) {
+                                        Integer globalMetricIdAnswer = null;
+                                        Integer localMetricIdAnswer = null;
+                                        if (currentAnswer.has("globalMetricId")) {
+                                            globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                        }
+                                        if (currentAnswer.has("localMetricId")) {
+                                            localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                        }
+                                        if (localMetricIdAnswer != 0) {
+                                            TextView answerTextView = new TextView(context);
+                                            answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                            ));
+                                            String globalAbb = roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
+                                            String localAbb = roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                            String localConversion = roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                            String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+                                            if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                try {
+                                                    // Perform your calculations and set the text
+
+                                                    if (canParseToDouble(answerValue)) {
+                                                        double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                        answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        previewLayout.addView(answerTextView);
+                                                        previewLayout.setVisibility(View.VISIBLE);
+                                                    }
+                                                } catch (
+                                                        NumberFormatException e) {
+                                                    // Handle the case where parsing fails
+                                                    e.printStackTrace();
+                                                }
+                                            } else {
+                                                // Handle the case where any of the variables is null
+                                                contentTextView.setText("Some values are null");
+                                            }
+                                        } else {
+                                            previewLayout.setVisibility(View.GONE);
+                                        }
+
+                                    } else {
+                                        previewLayout.setVisibility(View.GONE);
+                                    }
+
+                                }
+                            }
+                        } else {
+                            previewLayout.setVisibility(View.GONE);
+                            previewLayout.removeAllViews();
+                        }
+                    }
+                }
+            });
         }
     }
 
+    private void initializeCheckbox(int repeaterItemPosition, int parentQuestionId, Cursor checkboxes, TableLayout tl, Cursor cbAnswers, int defaultLookUpValue, String datatype, boolean singleSelect, int questionId, Integer[] selectedGlobalID, Integer[] selectedLocalID) {
+        while (checkboxes.moveToNext()) {
+            TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+
+            final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
+            tvId.setText(String.valueOf(cbId));
+
+            int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+            tv.setText(checkboxes.getString(columnIndex));
+
+            CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+            tl.addView(tr);
+
+            if (cbAnswers.getCount() > 0) {
+                if (cbId == defaultLookUpValue) {
+                    cb.setEnabled(false);
+                }
+
+                while (cbAnswers.moveToNext()) {
+                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                        cb.setChecked(true);
+                        cb.setEnabled(true);
+                    }
+                }
+                cbAnswers.moveToPosition(-1);
+            } else {
+                if (defaultLookUpValue != 0 && defaultLookUpValue == cbId) {
+                    cb.setChecked(true);
+                    cb.setEnabled(true);
+                }
+            }
+
+            tr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                    checkbox.setChecked(!checkbox.isChecked());
+                    checkbox.callOnClick();
+                }
+            });
+
+            //stick the answer in the question itself
+            int finalDefaultLookUpValue = defaultLookUpValue;
+            String finalDatatype1 = datatype;
+            cb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (singleSelect) {
+                        int ssTableRows = tl.getChildCount();
+                        for (int j = 0; j < ssTableRows; j++) {
+                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                            ssTcb.setChecked(false);
+                        }
+                        CheckBox clickedCb = (CheckBox) view;
+                        clickedCb.setChecked(true);
+                    }
+
+                    // Update the Not applicable field if none of the value is selected
+                    if (finalDefaultLookUpValue != 0) {
+                        int ssTableRows = tl.getChildCount();
+                        boolean checkboxTicked = false;
+                        int count = 0;
+
+                        for (int j = 0; j < ssTableRows; j++) {
+                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                            if (ssTcb.isChecked()) {
+                                checkboxTicked = true;
+                            }
+                            if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
+                                if (ssTcb.isChecked()) {
+                                    count++;
+                                }
+                            }
+                        }
+
+                        if (!checkboxTicked) {
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                    ssTcb.setChecked(true);
+                                    ssTcb.setEnabled(true);
+                                }
+                            }
+                        }
+
+                        // Remove the Not applicable when other selected.
+                        if (count > 0) {
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                    ssTcb.setChecked(false);
+                                    ssTcb.setEnabled(false);
+                                }
+                            }
+                        }
+
+                    }
+                    saveMultipleAnswerEntry(questionId, parentQuestionId, finalDatatype1, tl, selectedGlobalID[0], selectedLocalID[0], 0, repeaterItemPosition);
+                }
+            });
+        }
+    }
 
     void renderCheckBoxQuestionSubQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, String stakeholderId, long farmerModuleId, final int parentid) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
@@ -8068,6 +6215,7 @@ public class DynamicQuestions {
         Cursor photoCheckboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
         Cursor photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId);
         final int[] checkboxCount = {0};
+
         if (photoCheckboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_photo_table, questionWrapper, false);
@@ -8087,9 +6235,7 @@ public class DynamicQuestions {
                             String assignmentFields = rangeArray.getString("assignmentFields");
                             String isActive = rangeArray.optString("active");
                             if (!assignmentField.equals("null")) {
-
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
-
                                 if (assignmentField.equals(farmerAssignmentField)) {
                                     if (isActive.equalsIgnoreCase("true") || isActive.isEmpty()) {
                                         TableRow tr = addPhotoCheckboxTableRow(tl, lookupID, questions, questionId);
@@ -8132,6 +6278,7 @@ public class DynamicQuestions {
             }
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("photocheckbox", questionWrapper));
             saveMultipleAnswerEntry(questionId, 0, datatype, tl, 0, 0, 0, -1);
         }
 
@@ -8181,7 +6328,6 @@ public class DynamicQuestions {
         cb.setOnCheckedChangeListener((compoundButton, b) -> {
            onPhotoCheckboxCheckChanged(compoundButton, checkboxCount, singleSelect, tl, cb, maxSelection);
            saveMultipleAnswerEntry(questionId, 0,dataType, tl, 0,0,0,-1);
-
         });
     }
 
@@ -8194,6 +6340,7 @@ public class DynamicQuestions {
         } else {
             checkboxCount[0]--;
         }
+
         if(singleSelect) {
             for (int j = 0; j < tl.getChildCount(); j++) {
                 TableRow ssTr = (TableRow) tl.getChildAt(j);
@@ -8202,6 +6349,7 @@ public class DynamicQuestions {
             }
             cb.setChecked(true);
         }
+
         if (checkboxCount[0] > maxSelection) {
             cb.setChecked(false);
             checkboxCount[0]--;
@@ -8239,31 +6387,27 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
         String oldDatatype = null;
-
         String datatype = null;
         if (dataTypeID == 6) {
             oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         } else {
             datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
         if (oldDatatype != null) {
             if (oldDatatype.equals("Repeater")) {
                 datatype = "int";
             }
         }
 
-
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
 
-        // get display config
         try {
             JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
             if (displayConfig.has("display")) {
@@ -8281,14 +6425,7 @@ public class DynamicQuestions {
                         repeatOptions.add(String.valueOf(i));
                     }
                 }
-                /*for (int i = 1; i <= maxrepeats; i++) {
-                 *//*if (zeroAcceptable){
-                        if (!repeatOptions.contains("0")){
-                            repeatOptions.add("0");
-                        }
-                    }*//*
-                    repeatOptions.add(String.valueOf(i));
-                }*/
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, repeatOptions);
                 adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapter);
@@ -8302,7 +6439,7 @@ public class DynamicQuestions {
                 final LinearLayout repeaterItemsWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_container, questionWrapper, false);
                 questionWrapper.addView(repeaterItemsWrapper);
                 questionsSection.addView(questionWrapper);
-
+                viewReference.put(questionId, new Pair<>("repeater", questionWrapper));
 
                 String finalDatatype = datatype;
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -8611,8 +6748,6 @@ public class DynamicQuestions {
     }
 
     private void renderRepeaterItemstest(String questionId, int parentid, LinearLayout repeaterItemsWrapper, long farmerId, String stakeholderId, String olamFarmerId, long farmerModuleId, Resources res, boolean selectCondition) {
-        //Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion(questionId);
-
         int i = repeaterItemsWrapper.getChildCount();
         for (; i > 2; i--) {
             repeaterItemsWrapper.removeViewAt(i - 1);
@@ -8622,17 +6757,8 @@ public class DynamicQuestions {
         if (selectCondition) {
             for (String retval : questionId.split(",")) {
                 int question_id = Integer.parseInt(retval);
-
-                //logic for yes or no question
-                // Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion1(Integer.parseInt(retval));
-
-                //logic for drop down question
-                // Cursor repeaterQuestions = dl.getQuestionsAndAnswersBySubModuleId1(Utilities.subModuleId, Utilities.farmerId, Utilities.farmerModuleId, question_id);
                 Cursor repeaterQuestions = dl.getQuestionsBySubModuleId1(question_id);
-
-
                 LinearLayout repeateritemWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_item, repeaterItemsWrapper, false);
-                //  repeateritemWrapper.removeAllViews();
                 LinearLayout repeaterItemsInner = (LinearLayout) repeateritemWrapper.findViewById(R.id.repeater_item);
 
                 // add a text view with the item number in it
@@ -8650,11 +6776,6 @@ public class DynamicQuestions {
                 }
                 repeaterItemsWrapper.addView(repeateritemWrapper);
                 repeaterQuestions.moveToPosition(-1);
-
-              /*  repeaterQuestions = dl.getRepeaterItemsForQuestion1(question_id);
-                renderYesNoQuestiontest(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), 1, null, res);
-*/
-
 
                 if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                     renderDatePickerQuestiontest(repeaterQuestions, false, repeaterItemsWrapper, parentid, i, null);
@@ -8682,69 +6803,8 @@ public class DynamicQuestions {
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                     renderPhotoCheckboxQuestiontest(repeaterQuestions, repeaterItemsWrapper, farmerId, stakeholderId, farmerModuleId, resourcesforyesno, Utilities.packagename);
                 }
-
-                // renderRepeaterQuestionSubQuestion(repeaterQuestions, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, res,repeaterItemsWrapper);
-                // renderPhotoUploadQuestiontest(repeaterQuestions, true, repeaterItemsWrapper, 0, 0, null, res);
-                //renderTextBoxQuestiontest(repeaterQuestions, false, repeaterItemsWrapper, 0, -1, null);
-
-                //renderDatePickerQuestiontest(repeaterQuestions, false, repeaterItemsWrapper, 0, i, null);
-                //renderCheckBoxQuestionSubQuestion(repeaterQuestions, repeaterItemsWrapper, Utilities.farmerId, Utilities.farmerModuleId);
-                //renderDropDownQuestiontest(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), 1, null, res);
-                //renderYesNoQuestiontest(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), 1, null, res);
-            /*if (repetitions > 0) {
-                final int existingItemsSize = repeaterItemsWrapper.getChildCount();
-                if (repeaterQuestions.getCount() > 0 && repetitions > existingItemsSize) {
-                    for (int i = 1; i <= repetitions; i++) {
-
-                        if (i > existingItemsSize) {
-                            LinearLayout repeateritemWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_item, repeaterItemsWrapper, false);
-                            LinearLayout repeaterItemsInner = (LinearLayout) repeateritemWrapper.findViewById(R.id.repeater_item);
-
-                            // add a text view with the item number in it
-                            TextView tv = (TextView) repeateritemWrapper.findViewById(R.id.repeater_item_number);
-                            tv.setText(String.valueOf(i));
-
-                            while (repeaterQuestions.moveToNext()) {
-                                String displayType = repeaterItemDisplayType(repeaterQuestions);
-
-                                Cursor repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
-                                if (repeaterAnswers.getCount() > 0) {
-                                    repeaterAnswers.moveToFirst();
-                                }
-
-                                if (displayType.toLowerCase().equals("datepicker")) {
-                                    renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("decimal")) {
-                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("dropdown")) {
-                                    renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                } else if (displayType.toLowerCase().equals("textbox")) {
-                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("yesno")) {
-                                    renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                } else if (displayType.toLowerCase().equals("photoupload")) {
-                                    renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                }
-                            }
-
-                            repeaterItemsWrapper.addView(repeateritemWrapper);
-                            repeaterQuestions.moveToPosition(-1);
-                        }
-                    }
-                } else {
-                    if (repetitions > 0 && repetitions < existingItemsSize) {
-                        for (int j = existingItemsSize; j > repetitions; j--) {
-                            repeaterItemsWrapper.removeViewAt(j - 1);
-                            removeRepeaterAnswer(questionId, j);
-                        }
-                    }
-                }
-            }*/
             }
-        } else {
         }
-
-
     }
 
     public void renderYesNoQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
@@ -8754,41 +6814,24 @@ public class DynamicQuestions {
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        /*final String datatype;
-        if (Integer.parseInt(displayTypeID) == 6){
-            datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-        }else{
-            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        }
-*/
+
         String[] coloumnames = qCursor.getColumnNames();
-
         List<String> nameList = Arrays.asList(coloumnames);
-
         String is_subset_questions_requiredduplicate = "";
         String condition = "";
         if (nameList.contains("is_subset_questions_required")) {
-
-
             is_subset_questions_requiredduplicate = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
-
-
-            //final String is_subset_questions_required = "true";
             condition = qCursor.getString(qCursor.getColumnIndex("conditional_questions"));
-
-            // final String condition = "[{\"question\":\"125,109,162\",\"conditionCheck\":\"==NO\"},{\"question\":\"117,1173,119,67\",\"conditionCheck\":\"==YES\"}]";
-
         }
+
         int answerIdTemp = 0;
 
         try {
             if (is_subset_questions_requiredduplicate == null) {
-
                 is_subset_questions_requiredduplicate = "";
             }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
-
         }
         final String is_subset_questions_required = is_subset_questions_requiredduplicate;
         if (hasAnswers) {
@@ -8831,8 +6874,6 @@ public class DynamicQuestions {
 
         }
 
-        // End
-
         dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, null, false);
         Integer currentAnswer = -1;
         if (hasAnswers) {
@@ -8866,13 +6907,9 @@ public class DynamicQuestions {
 
 
         try {
-
-
             if (is_subset_questions_required.equalsIgnoreCase("true")) {
                 JSONArray json = new JSONArray(condition);
-
                 for (int i = 0; i < json.length(); i++) {
-
                     JSONObject jsonobject = json.getJSONObject(0);
                     question1 = jsonobject.getString("question");
                     String condtion1 = jsonobject.getString("conditionCheck");
@@ -8881,8 +6918,6 @@ public class DynamicQuestions {
                     question2 = jsonobject.getString("question");
                     String condtion2 = jsonobject.getString("conditionCheck");
                 }
-
-
             }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -8918,15 +6953,9 @@ public class DynamicQuestions {
                     }
                 }
             }
-
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
-
         }
-
-
-        //End
-
 
         int finalSwitchId = switchId;
         TextView finalYesNoConstraint = yesNoConstraint;
@@ -8935,12 +6964,6 @@ public class DynamicQuestions {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     if (id > 0) {
-                        //renderRepeaterItemstest(109, 2,  (isRepeaterItem) ? parentLayout : questionWrapper, 183488, "BR-0710-SM41-0003", 6, res);
-                        // renderRepeaterItemstest(109, 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                        //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-
-                        // If id =2 , pirachana thaan
                         if (id == finalSwitchId) {
                             questionWrapper.addView(finalYesNoConstraint);
                             surveySet.add(questionId);
@@ -8951,36 +6974,14 @@ public class DynamicQuestions {
                         }
 
                         if (is_subset_questions_required.equalsIgnoreCase("true")) {
-
                             try {
-
-
                                 if (id == 1) {
-
-                                    //renderRepeaterItemstest(Integer.parseInt(question1), 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                                    //Cursor repeaterQuestions = dl.getConditionallogic(questionId);
-                                    // Cursor repeaterQuestions=    dl.getQuestionsAndAnswersBySubModuleId(16, 186862, 4);
-
-
-                                    // renderRepeaterItemstest(question1, 3, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
                                     dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
-
-
                                     renderRepeaterItemstest(yesQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.stakeholderId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
-                                    //renderYesNoQuestion(repeaterQuestions, false, questionWrapper, 0, -1, null, res);
-
-
                                 } else if (id == 2) {
-
                                     dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
-
                                     renderRepeaterItemstest(noqQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.stakeholderId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
                                 }
-
-
                             } catch (Exception e) {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
@@ -8988,20 +6989,9 @@ public class DynamicQuestions {
                         }
                         Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                         saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")), 0, 0, 0);
-                        //                    if (questionId == 4333) {
-                        //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
-//                            TextView errorText = (TextView) spinner.getSelectedView();
-//                            errorText.setError("");
-//                            errorText.setTextColor(Color.RED);//just to highlight that this is an error
-//                            errorText.setText("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
-//                          //  errorText.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-
-                        //                       }
-
                     } else {
                         removeAnswerEntry(questionId, answerId);
                         renderRepeaterItemstest(null, 2, questionWrapper, Utilities.farmerId, Utilities.stakeholderId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, false);
-
                     }
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -9019,17 +7009,14 @@ public class DynamicQuestions {
         } else {
             questionWrapper.addView(spinner);
             parentLayout.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("yesno", questionWrapper));
         }
 
 
         try {
-
-
             if (is_subset_questions_required.equalsIgnoreCase("true")) {
                 JSONArray json = new JSONArray(condition);
-
                 for (int i = 0; i < json.length(); i++) {
-
                     JSONObject jsonobject = json.getJSONObject(0);
                     question1 = jsonobject.getString("question");
                     String condtion1 = jsonobject.getString("conditionCheck");
@@ -9050,10 +7037,7 @@ public class DynamicQuestions {
                         renderRepeaterItemstest(question2, questionId, questionWrapper, Utilities.farmerId, Utilities.stakeholderId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
 
                     }
-
                 }
-
-
             }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -9062,8 +7046,6 @@ public class DynamicQuestions {
 
     void renderYesNoQuestionSubQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int repeaterItemPosition, final int parentQuestionId, Cursor repeaterAnswers, Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-        //qCursor.getString(qCursor.getColumnIndex("question"));
         res = resourcesforyesno;
         String datatypeduplicate = "";
         int questionIddouplicate = 0;
@@ -9082,26 +7064,6 @@ public class DynamicQuestions {
 
 
         int answerIdTemp = 0;
-
-        /*if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-
-
-                    if (qCursor.moveToFirst()) {
-                        do {
-                            answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-
-
-                        } while (qCursor.moveToNext());
-                    }
-
-
-                }
-            }
-        }*/
         final int answerId = answerIdTemp;
 
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
@@ -9111,37 +7073,8 @@ public class DynamicQuestions {
         spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_no), "2", "0"});
 
         dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, null, false);
-        /*if (hasAnswers) {
-            String currentAnswerString = null;
-            Integer currentAnswer = -1;
-
-            currentAnswerString = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-
-            } else {
-                if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                    currentAnswerString = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                }
-            }
-
-            if (currentAnswerString != null) {
-                currentAnswer = Integer.parseInt(currentAnswerString);
-            }
-
-            if (currentAnswer == 1) {
-                spinner.setSelection(1, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
-            } else if (currentAnswer == 0) {
-                spinner.setSelection(2, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
-            }
-        }
-*/
 
         Cursor cursor = dl.getParentSubquestionAnswer(Utilities.subModuleId, parentQuestionId, questionId);
-
-
         int position = 0;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -9159,11 +7092,6 @@ public class DynamicQuestions {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (id > 0) {
-                    //renderRepeaterItemstest(109, 2,  (isRepeaterItem) ? parentLayout : questionWrapper, 183488, "BR-0710-SM41-0003", 6, res);
-                    // renderRepeaterItemstest(109, 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                    //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-
 
                     Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                     int delete = dl.prentidAnswerDelete(parentQuestionId, questionId);
@@ -9171,12 +7099,9 @@ public class DynamicQuestions {
                     int i = (int) l;
                     long h = dl.prentidAnswer(Utilities.subModuleId, parentQuestionId, questionId, i + "", position + "", Utilities.olamFarmerId, Utilities.moduleId + "");
                     Log.i(h + "", h + "");
-
-                    //saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
                 } else {
                     //removeAnswerEntry(questionId, answerId);
                     int delete = dl.prentidAnswerDelete(parentQuestionId, questionId);
-
                     Log.i(delete + "", delete + "");
                 }
             }
@@ -9193,18 +7118,10 @@ public class DynamicQuestions {
             questionWrapper.addView(spinner);
             parentLayout.addView(questionWrapper);
         }
-
     }
-
-    private void parentAnswersave(int i, int parentQuestionId, int questionId, long id) {
-
-
-    }
-
 
     @SuppressLint("SetTextI18n")
     private void recalculateDensity(Resources res) {
-
         if (densityPlotSection == null) {
             return;
         }
@@ -9350,7 +7267,6 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
         final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
@@ -9386,6 +7302,7 @@ public class DynamicQuestions {
             et.setText(calcAnswerValue);
             questionWrapper.addView(et);
             questionsSection.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("farmtreedensity", questionWrapper));
 
         } else {
 
@@ -9455,6 +7372,7 @@ public class DynamicQuestions {
             densityPlotSection = (LinearLayout) inflater.inflate(R.layout.module_repeater_container, questionWrapper, false);
             questionWrapper.addView(densityPlotSection);
             questionsSection.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("farmtreedensity", questionWrapper));
         }
 
     }
@@ -9494,7 +7412,6 @@ public class DynamicQuestions {
     }
 
     public static void resource(Resources res) {
-
         resourcesforyesno = res;
     }
 
@@ -9564,16 +7481,6 @@ public class DynamicQuestions {
                 CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
                 tl.addView(tr);
 
-                // pre-fill checkboxes that have been previously ticked
-               /* if (hasAnswers && cbAnswers.getCount() > 0) {
-                    while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                        }
-                    }
-                    cbAnswers.moveToPosition(-1);
-                }
-*/
                 tr.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -9834,16 +7741,6 @@ public class DynamicQuestions {
 
                 final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-                // pre-fill checkboxes that have been previously ticked
-                /*if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                    while (photoCbAnswers.moveToNext()) {
-                        if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                        }
-                    }
-                    photoCbAnswers.moveToPosition(-1);
-                }*/
-
                 tr.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -9986,35 +7883,7 @@ public class DynamicQuestions {
                         // add a text view with the item number in it
                         TextView tv = (TextView) repeateritemWrapper.findViewById(R.id.repeater_item_number);
                         tv.setText(String.valueOf(i));
-
-/*
-                        while (repeaterQuestions.moveToNext()) {
-                            String displayType = repeaterItemDisplayType(repeaterQuestions);
-
-                            Cursor repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
-                            if (repeaterAnswers.getCount() > 0) {
-                                repeaterAnswers.moveToFirst();
-                            }
-
-                            if (displayType.toLowerCase().equals("datepicker")) {
-                                renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                            } else if (displayType.toLowerCase().equals("decimal")) {
-                                renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                            } else if (displayType.toLowerCase().equals("dropdown")) {
-                                renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                            } else if (displayType.toLowerCase().equals("textbox")) {
-                                renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                            } else if (displayType.toLowerCase().equals("yesno")) {
-                                renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                            } else if (displayType.toLowerCase().equals("photoupload")) {
-                                renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                            }
-                        }
-
-                        repeaterItemsWrapper.addView(repeateritemWrapper);
-                        repeaterQuestions.moveToPosition(-1);*/
                     }
-
                 }
             } else {
                 if (repetitions > 0 && repetitions < existingItemsSize) {
@@ -10027,23 +7896,6 @@ public class DynamicQuestions {
         }
     }
 
-
-    public boolean requiredFieldsSIPAnswered(String uploadId, int moduleId, int subModuleId) {
-        Cursor completedAnswers = dl.getAllAnswersSipByUploadId(uploadId);
-        Cursor requiredQuestions = dl.getSipRequiredQuestionIds(moduleId, subModuleId);
-        Set<Integer> completedQuestionIds = new HashSet<>();
-        Set<Integer> requiredQuestionIds = new HashSet<>();
-
-        while (completedAnswers.moveToNext()) {
-            completedQuestionIds.add(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-        }
-
-        while (requiredQuestions.moveToNext()) {
-            requiredQuestionIds.add(requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)));
-        }
-
-        return completedQuestionIds.containsAll(requiredQuestionIds);
-    }
 
 
     private class EmojiExcludeFilter implements InputFilter {
@@ -10066,7 +7918,7 @@ public class DynamicQuestions {
                 return i;
             }
         }
-        return 0; // Default to the first item if the value is not found
+        return 0;
     }
 
     public static boolean canParseToDouble(String answerValue) {
@@ -10136,8 +7988,243 @@ public class DynamicQuestions {
                 }
             }
         }
-
         return false;
     }
 
+    public void handleLogicForConditionalQuestions(int questionId, String answer, List<ConditionalLogic> conditions) {
+        Set<Integer> skipQuestions = getSkipQuestions(questionId, answer, conditions);
+        if (skipQuestions.isEmpty()) {
+            return;
+        }
+
+        for (Integer id : skipQuestions) {
+            Pair<String, View> pair = viewReference.get(id);
+
+            if (pair != null) {
+                View view = pair.second;
+                String questionType = pair.first;
+
+                if (view.getVisibility() == View.VISIBLE) {
+                    removeAnswerEntry(id);
+                    updateViews(id, view, questionType);
+                }
+                view.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private boolean isAnswerWithinTheCondition(ConditionalLogic condition, String answer) {
+        String equalityCondition = roomDB.conditionalTypeDao().getConditionType(condition.getConditionalId());
+        if (condition.getConditionalText().isEmpty() || condition.getConditionalText() == null) {
+            return false;
+        }
+
+        double conditionalText = Double.parseDouble(condition.getConditionalText());
+        return switch (equalityCondition) {
+            case "Greater than" -> Double.parseDouble(answer) > conditionalText;
+            case "Lesser than" -> Double.parseDouble(answer) < conditionalText;
+            case "Equal to" -> Double.parseDouble(answer) == conditionalText;
+            case "Greater than equal to" -> Double.parseDouble(answer) >= conditionalText;
+            case "Lesser than equal to" -> Double.parseDouble(answer) <= conditionalText;
+            default -> false;
+        };
+    }
+
+    public void reRenderAllViews() {
+        List<JSONObject> answers = new ArrayList<>(answerSet);
+        for (JSONObject object : answers) {
+            int questionId = object.optInt("question_id");
+            String answer = object.optString("answer");
+
+            List<ConditionalLogic> conditions = roomDB.conditionalLogicDao().getConditionsPropertiesByQuestionId(questionId);
+            if (!conditions.isEmpty()) {
+                handleLogicForConditionalQuestions(questionId, answer, conditions);
+            }
+        }
+    }
+
+    public void renderViewsByAnswers(int questionId, List<ConditionalLogic> conditions, String prevAnswer) {
+        Set<Integer> skipQuestions = prevAnswer == null ? getAllSkipQuestions(conditions) : getSkipQuestionBasedOnAnswer(questionId, conditions, prevAnswer);
+        for (Integer id : skipQuestions) {
+            if (viewReference.containsKey(id)) {
+                Pair<String, View> pair = viewReference.get(id);
+                View view = pair.second;
+                String questionType = pair.first;
+
+                if (view != null) {
+                    if (view.getVisibility() == View.GONE) {
+                        updateViews(questionId, view, questionType);
+                    }
+                    view.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    public Set<Integer> getSkipQuestionBasedOnAnswer(int questionId, List<ConditionalLogic> conditions, String prevAnswer) {
+        Set<Integer> skipQuestions = new HashSet<>();
+        boolean isPercentageTypeInput = isPercentageTypeInput(questionId);
+
+        for (ConditionalLogic conditionalLogic : conditions) {
+            List<Integer> skipQuestionIds = extractQuestionsIds(conditionalLogic.getSkipQuestions());
+            if (conditionalLogic.getConditionalId() != null && !isPercentageTypeInput && isNumericOrDecimal(prevAnswer) && isAnswerWithinTheCondition(conditionalLogic, prevAnswer)) {
+                skipQuestions.addAll(skipQuestionIds);
+            }
+            else if (isNumericOrDecimal(prevAnswer) && conditionalLogic.getSkipLookupIds() != null && !conditionalLogic.getSkipLookupIds().isEmpty()) {
+                List<Integer> lookUpIds = extractQuestionsIds(conditionalLogic.getSkipLookupIds());
+                if (lookUpIds.contains(Integer.parseInt(prevAnswer))) {
+                    skipQuestions.addAll(skipQuestionIds);
+                }
+            }
+        }
+        return skipQuestions;
+    }
+
+    private void updateViews(int questionId, View view, String questionType) {
+        switch (questionType) {
+            case "location" -> {
+                TextView tvLocation = view.findViewById(R.id.tvLocation);
+                tvLocation.setText(context.getString(R.string.record_farm_location_hint));
+                tvLocation.setBackgroundResource(R.drawable.edittext_bg_light);
+                tvLocation.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                tvLocation.setEnabled(true);
+            }
+            case "photoupload" -> {
+                ImageView ivPhotoUpload = view.findViewById(R.id.modulePhotoQuestion);
+                ivPhotoUpload.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.ic_menu_gallery));
+                String savedImagePath = (String) ivPhotoUpload.getTag();
+                if (savedImagePath != null) {
+                    File file = new File(savedImagePath);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+            }
+            case "textbox" -> {
+                EditText et = view.findViewById(R.id.etForTextBox);
+                et.setText("");
+            }
+            case "radio" -> {
+                LinearLayout linearLayout = view.findViewById(R.id.llRadio);
+                RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
+                //radioGroup.clearCheck();
+            }
+            case "dropdown", "repeater", "yesno" -> {
+                LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
+                Spinner spinner = linearLayout != null ? linearLayout.findViewById(R.id.spinner) : view.findViewById(R.id.spinner);
+                spinner.setSelection(0);
+            }
+            case "datepicker" -> {
+                Spinner spinner = view.findViewById(R.id.spinner);
+                if (spinner != null) {
+                    spinner.setSelection(0);
+                }
+                else {
+                    DatePicker datePicker = view.findViewById(R.id.datePicker);
+                    Calendar calendar = Calendar.getInstance();
+                    int year = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH);
+                    int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                    datePicker.updateDate(year, month, day);
+                }
+            }
+            case "checkbox", "photocheckbox" -> {
+                TableLayout tableLayout = questionType.equalsIgnoreCase("checkbox") ? view.findViewById(R.id.tlCheckBox) : view.findViewById(R.id.tlPhotoCheckBox);
+                for (int i = 0; i < tableLayout.getChildCount(); i++) {
+                    TableRow tableRow = (TableRow) tableLayout.getChildAt(i);
+                    CheckBox cb = tableRow.findViewById(R.id.cbCheckBox);
+                    if (cb.isChecked()) {
+                        cb.setChecked(false);
+                        cb.callOnClick();
+                    }
+                }
+            }
+        }
+    }
+
+    private Set<Integer> getSkipQuestions(int questionId, String answer, List<ConditionalLogic> conditions) {
+        Set<Integer> skipQuestions = new HashSet<>();
+        boolean isPercentageTypeInput = isPercentageTypeInput(questionId);
+
+        for (ConditionalLogic conditionalLogic : conditions) {
+            List<Integer> skipQuestionIds = extractQuestionsIds(conditionalLogic.getSkipQuestions());
+            if (conditionalLogic.getAnswered() != null && conditionalLogic.getAnswered()) {
+                skipQuestions.addAll(skipQuestionIds);
+            }
+            else if (conditionalLogic.getConditionalId() != null && !isPercentageTypeInput && isNumericOrDecimal(answer) && isAnswerWithinTheCondition(conditionalLogic, answer)) {
+                skipQuestions.addAll(skipQuestionIds);
+            }
+            else if (conditionalLogic.getSkipLookupIds() != null && !conditionalLogic.getSkipLookupIds().isEmpty()) {
+                List<Integer> lookUpIds = extractQuestionsIds(conditionalLogic.getSkipLookupIds());
+                Set<Integer> selectedLookUpValues = new HashSet<>();
+
+                if (answer == null) {
+                    List<Integer> answerList = answerMap.get(questionId);
+                    if (answerList != null) {
+                        selectedLookUpValues.addAll(answerList);
+                    }
+                } else {
+                    selectedLookUpValues.add(Integer.parseInt(answer));
+                }
+
+                for (Integer lookupId : lookUpIds) {
+                    if (selectedLookUpValues.contains(lookupId)) {
+                        skipQuestions.addAll(skipQuestionIds);
+                        break;
+                    }
+                }
+            }
+        }
+        return skipQuestions;
+    }
+
+    private boolean isPercentageTypeInput(int questionId) {
+        boolean isPercentageTypeInput = false;
+
+        if (viewReference.containsKey(questionId)) {
+            Pair<String, View> pair = viewReference.get(questionId);
+            View view = pair.second;
+            String questionType = pair.first;
+
+            if (questionType.equals("textbox")) {
+                EditText et = view.findViewById(R.id.etForTextBox);
+                Integer val = (Integer) et.getTag(6);
+                isPercentageTypeInput = val != null && val == 100;
+            }
+        }
+        return isPercentageTypeInput;
+    }
+
+    private Set<Integer> getAllSkipQuestions(List<ConditionalLogic> conditions) {
+        Set<Integer> skipQuestions = new HashSet<>();
+
+        for (ConditionalLogic condition : conditions) {
+            skipQuestions.addAll(extractQuestionsIds(condition.getSkipQuestions()));
+        }
+        return skipQuestions;
+    }
+
+    public boolean isNumericOrDecimal(String s) {
+        return s != null && s.matches("^-?[0-9]+(\\.[0-9]+)?$");
+    }
+
+    public List<Integer> extractQuestionsIds(String input) {
+        List<Integer> numbers = new ArrayList<>();
+        String trimmed = input.replaceAll("\\[|\\]", "");
+        String[] parts = trimmed.split(",");
+
+        for (String part : parts) {
+            part = part.trim();
+            if (!part.isEmpty()) {
+                try {
+                    int num = Integer.parseInt(part);
+                    numbers.add(num);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return numbers;
+    }
 }

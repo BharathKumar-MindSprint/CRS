@@ -50,18 +50,16 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class,
-        //Version 18
-       SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
-                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-                Sections.class, Places.class, Products.class,
-                Farmer.class,
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class, ConditionalLogic.class, ConditionalType.class,
+        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+        AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+        Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
+        Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
+        FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
+        Sections.class, Places.class, Products.class, Farmer.class,
         },
-        version = 18,
-        autoMigrations = {@AutoMigration(from = 17, to = 18)}
+        version = 19,
+        autoMigrations ={@AutoMigration(from =18, to=19)}
         )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -112,18 +110,19 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract IFarmerGroupDao farmerGroupDao();
     public abstract ISectionsDao sectionsDao();
     public abstract IProductsDao productsDao();
+    public abstract ConditionalLogicDao conditionalLogicDao();
+    public abstract ConditionalTypeDao conditionalTypeDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
 
     public static OFISRoomDB getDbInstance(Context context) {
+
         final Migration MIGRATION_16_17 = new Migration(16, 17) {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
-
                 database.execSQL("ALTER TABLE DmQuestionsModule ADD COLUMN maxSelection INTEGER");
                 database.execSQL("ALTER TABLE DmSurveyAnswerTable ADD COLUMN displayType TEXT");
-
             }
         };
 
