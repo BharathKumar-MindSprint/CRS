@@ -45,6 +45,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.recordpolygon.PolygonDataDto;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
@@ -1618,8 +1619,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 Boolean isMandateSurveySynced = getIsMandateSurveySynced(farmerID, 0);
                 if (isMandateSurveySynced) {
                     try {
+                        String deactivatedFlag = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE));
+                        boolean isDeactivationPlotSync = deactivatedFlag != null && deactivatedFlag.equals(res.getString(R.string.flag_for_de_activation));
                         String olamFarmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                         params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
+
                         int farmId = dl.getFarmId(farmerID);
                         try {
                             if (farmId != 0) {
@@ -1639,25 +1643,41 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                         }
                         params.put("primary_location", false);
+
+                        JSONArray array = new JSONArray();
+                        if (isDeactivationPlotSync) {
+                            List<PolygonDataDto> plots = dl.getPlotData(farmerID);
+                            for (PolygonDataDto polygonData : plots) {
+                                JSONObject plot = new JSONObject();
+                                plot.put("plotId", polygonData.id);
+                                plot.put("deactivated_reason", polygonData.reasonForDeActivation);
+                                plot.put("deactivated_flag", "true");
+                                array.put(plot);
+                            }
+                        }
+                        params.put("deactivated_plots", array);
+                        
                         okHttpPost(context, IAPIConstants.ADD_FARM, params, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) throws IOException {
                                     String statusMessage;
                                     if (postResponse.isSuccessful()) {
-
                                         String postResponseStr = postResponse.body().string();
-
                                         try {
                                             JSONObject jsonServerRespObj = new JSONObject(postResponseStr.toString());
-                                            // Getting JSON Array node
-                                            JSONArray locationJsonArray = null;
-                                            locationJsonArray = jsonServerRespObj.getJSONArray("plots");
+                                            JSONArray locationJsonArray = jsonServerRespObj.getJSONArray("plots");
                                             SharedPreferenceUtils.getInstance(context).removeAllLocations(olamFarmerId);
-                                            // looping through All locationJsonArray
+
                                             for (int i = 0; i < locationJsonArray.length(); i++) {
                                                 JSONObject plotDataObj = locationJsonArray.getJSONObject(i);
-                                                dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
-                                                dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID), plotDataObj.getString("plotId"), plotDataObj.getString("created_at"));
+                                                boolean isFlagDeactivated = plotDataObj.has("mobDeactiveFlag") && plotDataObj.getBoolean("mobDeactiveFlag");
+                                                if (isDeactivationPlotSync && isFlagDeactivated) {
+                                                    dl.updatePlot(plotDataObj.getString("id"));
+                                                }
+                                                else {
+                                                    dl.updatePlotDataAfterSync(plotDataObj, String.valueOf(farmerID));
+                                                    dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
+                                                }
                                             }
                                         } catch (JSONException e) {
                                             FirebaseCrashlytics.getInstance().log(e.getMessage());

@@ -71,7 +71,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
 
     private String searchQuery = "";
-    private String blockCharacterSet = "~#^|$%&*!'\"";
     ArrayList<KeyPairBoolData> certificationStatus = new ArrayList<>();
     ArrayList<KeyPairBoolData> farmerGroupStatus = new ArrayList<>();
     ArrayList<KeyPairBoolData> sectionStatus = new ArrayList<>();
@@ -88,19 +87,6 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private OFISRoomDB ofisRoomDB;
 
     ListView listView;
-    private InputFilter filter = (source, start, end, dest, dstart, dend) -> {
-
-        if (source != null && blockCharacterSet.contains(("" + source))) {
-            return "";
-        }
-        for (int i = start; i < end; i++) {
-            int type = Character.getType(source.charAt(i));
-            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
-                return "";
-            }
-        }
-        return null;
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +117,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         photoSearchButton = findViewById(R.id.photoSearchButton);
         ed = findViewById(R.id.findFarmerSearchBox);
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        ed.setFilters(new InputFilter[] { filter });
+        ed.setFilters(new InputFilter[] { Utilities.filter });
         Intent intent = this.getIntent();
         notificationType = intent.getStringExtra(Utilities.NOTIFICATION_TYPE);
         ofisRoomDB = OFISRoomDB.getDbInstance(context);
@@ -160,7 +146,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (notificationType == null) {
             farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct,
                     selectedRegions, selectedDistricts, selectedPlaces, selectedPartners,
-                    selectedProgrammes, selectedFarmerGroups, selectedSections, selectedCertifications);
+                    selectedProgrammes, selectedFarmerGroups, selectedSections, selectedCertifications, false);
         }
         else {
             farmerList = ofisRoomDB.onGroundSurveyNotificationDao().getFarmersBySurveyType(notificationType, searchQuery, selectedCountry, selectedProduct);

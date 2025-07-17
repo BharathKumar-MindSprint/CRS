@@ -105,7 +105,7 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
+    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
@@ -275,6 +275,9 @@ public class SyncAllTask extends SyncTask {
         else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE) {
             getAllSubmittedModules();
         }
+        else if (op == SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS) {
+            syncConditionalLogicDetails();
+        }
 
         return null;
 
@@ -414,8 +417,9 @@ public class SyncAllTask extends SyncTask {
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
 
-            new UpdateModuleListsTask(context).execute(moduleResponse);
+            new UpdateModuleListsTask(context).execute(moduleResponse, conditionalLogicResponse);
             moduleResponse = null;
+            conditionalLogicResponse = null;
 
             // Goes directly to the AsyncTask
             new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
@@ -869,7 +873,7 @@ public class SyncAllTask extends SyncTask {
                         moduleResponse = response;
 
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS);
                     } else {
                         postFailureMessage(response);
                     }
@@ -893,6 +897,38 @@ public class SyncAllTask extends SyncTask {
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
             }
 
+        });
+    }
+
+    private void syncConditionalLogicDetails() {
+        okHttpGet(context, IAPIConstants.GET_CONDITIONAL_DETAILS, new Callback() {
+            @Override
+            public void onResponse(Call call, Response postResponse) {
+                try {
+                    if (postResponse.isSuccessful()) {
+                        JSONArray array = new JSONArray(postResponse.body().string());
+                        conditionalLogicResponse.put("conditions", array);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
+                    } else {
+                        postFailureMessage(null);
+                    }
+                } catch (JSONException | IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing conditional details", e));
+                    postFailureMessage(null);
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing conditional details", e));
+                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
         });
     }
 
