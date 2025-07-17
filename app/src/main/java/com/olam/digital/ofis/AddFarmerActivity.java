@@ -188,7 +188,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     String farmHoldingCodeMs;
     String farmerNameMs, farmId;
 
+    private boolean isDateEdited = false;
 
+    private int age;
     /**
      * Generate unique ID from UUID.
      *
@@ -202,6 +204,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             // get the date
             Calendar cal = Calendar.getInstance();
             cal.set(selectedYear, selectedMonth, selectedDay);
+            age = selectedYear;
 
             SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -306,7 +309,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          farmerCode = findViewById(R.id.farmerCode);
 
          InputFilter lengthFilter = new InputFilter.LengthFilter(50);
-         farmerName.setFilters(new InputFilter[]{LetterHypenFilter,lengthFilter});
+         farmerName.setFilters(new InputFilter[]{LetterHypenFilter,blockPiFilter,lengthFilter});
          farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter});
 
          farmerCode.addTextChangedListener(new TextWatcher() {
@@ -1150,12 +1153,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                LocalDate dob = LocalDate.parse(dateStrToSend);
-                LocalDate currentDate = LocalDate.now();
-                Period age = Period.between(dob, currentDate);
-                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE, age.getYears());
+            Date parseDate = parseDate((dateStrToSend));
+            if(parseDate != null){
+                int age = calculateAge(parseDate);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE, age);
             }
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                String dob = String.valueOf(parseDate(dateStrToSend));
+//                //LocalDate currentDate = LocalDate.now();
+//                Period ageCalcuate = Period.between(LocalDate.parse(dob), LocalDate.now());
+//                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE, ageCalcuate.getYears());
+//            }
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, genderValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, getCurrentPhotoPath());
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, place_id);
@@ -2357,11 +2365,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isDateEdited = true;
                 final Calendar c = Calendar.getInstance();
                 c.add(Calendar.YEAR, -18);
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
+
 
                 // Max Age: 110 Years
                 long minYearMilliseconds = (long) (365.2425 * 24 * 60 * 60 * 1000 * 110);
@@ -3440,7 +3450,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
              char c = source.charAt(i);
 
              // Allow: Unicode letters + . , /
-             if (Character.isLetter(c) || c == '.' || c == ',' || c == '/' || c == ' ') {
+             if (Character.isLetter(c) || c == '.' || c == '-' ||  c == ' ' ) {
                  continue;
              } else {
                  return ""; // Reject character
@@ -3462,6 +3472,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
          }
      };
 
+     public InputFilter blockPiFilter = (source, start, end, dest, dstart, dend) -> {
+         StringBuilder filtered = new StringBuilder();
+         for (int i = start; i < end; i++) {
+             char c = source.charAt(i);
+             if (c != '\u03C0') { // Unicode for π
+                 filtered.append(c);
+             }
+         }
+         return filtered.toString();
+     };
+
      private static boolean containsConsecutiveSpecialChars(String input) {
          for (int i = 1; i < input.length(); i++) {
              if (isSpecialCharacter(input.charAt(i)) && isSpecialCharacter(input.charAt(i - 1))) {
@@ -3473,6 +3494,41 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
      private static boolean isSpecialCharacter(char ch) {
          return "-/".indexOf(ch) != -1;
+     }
+
+     public static Date parseDate(String input) {
+         String[] formats = {
+                 "yyyy-MM-dd",
+                 "yyyy-MM-dd HH:mm:ss.S",
+                 "MMMM dd, yyyy",
+                 "yyyy-MM-dd'T'HH:mm:ss",
+         };
+
+         for (String format : formats) {
+             try {
+                 SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+                 sdf.setLenient(false); // Strict parsing
+                 return sdf.parse(input);
+             } catch (ParseException e) {
+                 // Ignore and try next format
+             }
+         }
+         return null; // No matching format
+     }
+
+     public static int calculateAge(Date birthDate) {
+         Calendar birthCal = Calendar.getInstance();
+         birthCal.setTime(birthDate);
+
+         Calendar today = Calendar.getInstance();
+
+         int age = today.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
+
+         // Adjust if birthday hasn't occurred yet this year
+         if (today.get(Calendar.DAY_OF_YEAR) < birthCal.get(Calendar.DAY_OF_YEAR)) {
+             age--;
+         }
+         return age;
      }
 
 
