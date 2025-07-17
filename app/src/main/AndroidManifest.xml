@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
@@ -41,12 +42,22 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:logo="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppCompactTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
+        <activity
+            android:name=".downloadsurvey.polygondatadownload.PolygonFarmer"
+            android:label="@string/download_polygon"
+            android:parentActivityName=".downloadsurvey.DownloadSurveyData"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.downloadsurvey.DownloadSurveyData" />
+        </activity>
 
         <activity
             android:name=".agrisupplier.ui.SupplierSurveyActivity"
@@ -120,9 +131,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.AddInfrastructureActivity" />
         </activity>
-        <activity
-            android:name=".recordpolygon.polygonhistory.PolygonHistory"
-            android:exported="false" />
         <activity
             android:name=".AddCertificationsActivity"
             android:label="@string/update_certification"

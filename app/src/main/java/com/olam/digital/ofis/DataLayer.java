@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +33,7 @@ import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
+import com.olam.digital.ofis.downloadsurvey.dto.ModuleCursorToDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
@@ -48,6 +48,8 @@ import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.OnGroundSurveyNotification;
+import com.olam.digital.ofis.recordpolygon.PolygonDataDto;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
@@ -150,23 +152,25 @@ public class DataLayer {
     }
 
     public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, String farmerName, String plotId) {
-        int updated;
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS, plotJson);
         String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
 
-        updated = db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+        int updated = db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
         db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
         if (updated > 0) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = sdf.format(timestamp);
+
             boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", farmerId, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
             if (updateWaiting) {
                 ContentValues nqiValues = new ContentValues();
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
                 updateNetworkQueueFarmPolygonEntry(nqiValues, farmerId);
             } else {
                 ContentValues nqiValues = new ContentValues();
@@ -175,10 +179,9 @@ public class DataLayer {
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.record_farm_polygon_complete));
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-//                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME, plotId);
                 insertNetworkQueueEntry(nqiValues);
             }
@@ -257,12 +260,13 @@ public class DataLayer {
         }
     }
 
-    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx, double plotArea) {
+    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId , String plotGpx, double plotArea, String plotJson) {
         try {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, plotName);
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, plotGpx);
             values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, plotArea);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, plotJson);
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
                     OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
             String[] whereArgs = new String[]{String.valueOf(mFarmerId),String.valueOf(selectedPlotId)};
@@ -280,10 +284,10 @@ public class DataLayer {
 
     }
 
-    public Cursor fetchAllPlotIds(String id) {
+    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(id)};
+        String whereClause = isDownloadPolygon ? OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? " : OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = isDownloadPolygon ? new String[]{String.valueOf(id), "1"} : new String[]{String.valueOf(id)};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data;
     }
@@ -440,7 +444,7 @@ public class DataLayer {
         }
         return plottedName;
     }
-    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName, boolean isPlotArea){
+    public String getCenterPlotFromPlotGeoData(long farmerId, String plotName, boolean isPlotArea, boolean isPositionData){
         String centerPlot = "";
         Cursor cursor = null;
         try {
@@ -449,8 +453,11 @@ public class DataLayer {
             String[] whereArgs = new String[]{String.valueOf(farmerId), plotName};
             cursor = db.query(OFISDBContract.PlotGeoData.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
             if(cursor != null){
-                while(cursor.moveToNext()){
-                    if (isPlotArea) {
+                while(cursor.moveToNext()) {
+                    if (isPositionData) {
+                        centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON));
+                    }
+                    else if (isPlotArea) {
                         centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE));
                     }
                     else {
@@ -489,8 +496,8 @@ public class DataLayer {
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, getPlottedNameFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i)));
-                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), false));
-                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), true));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), false, false));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), allPlotValues.get(i), true, false));
                 plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
                 long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
@@ -569,13 +576,24 @@ public class DataLayer {
         }
     }
 
-    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName, String created_date) {
+    public void updatePlotDataAfterSync(JSONObject plotData, String farmerId) {
         try {
+            String plotId = plotData.getString("id");
+            String plotName = plotData.getString("plotName");
+            String plottedName = plotData.getString("plotId");
+            String created_date = plotData.getString("created_at");
+            String centerPlot = plotData.getString("centerPlot");
+            String plotArea = plotData.getString("plotArea");
+            String positionData = getCenterPlotFromPlotGeoData(Long.parseLong(farmerId), plotName, false,true);
+            byte[] bytes = positionData.equals("{\"plot\":[]}") ? new byte[0] : positionData.getBytes("UTF-8");
+            double sizeInKB = bytes.length / 1024.0;
+
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
             String where = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
                     + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? AND "
                     + OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME + " = ? ";
-            String[] args = new String[]{String.valueOf(farmerId),"0",plottedName};
+            String[] args = new String[]{farmerId,"0",plottedName};
+
             db.delete(plotTable, where, args);
             ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, plotId);
@@ -583,7 +601,24 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, plotName);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT, created_date);
-            db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, plotArea);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, centerPlot);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, positionData.equals("{\"plot\":[]}") ? "" : positionData);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON, "null");
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS, "null");
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE, sizeInKB != 0.0 ? String.valueOf(sizeInKB) : "null");
+
+            Long valueInserted = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
+
+            if (Objects.equals(valueInserted, Long.parseLong(plotId))) {
+                ContentValues updatePlotAvailability = new ContentValues();
+                updatePlotAvailability.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE, "true");
+
+                String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+                String[] whereArgs = new String[]{String.valueOf(farmerId)};
+
+                db.update(OFISDBContract.FarmerEntry.TABLE_NAME, updatePlotAvailability, whereClause, whereArgs);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1229,6 +1264,8 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
+
+
     void addFarmerPhoneNumbers(Long farmerId, String stakeHolder, JSONArray storeableNumbers) {
         int arrayLength = storeableNumbers.length();
 
@@ -1241,6 +1278,7 @@ public class DataLayer {
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID, storeableNumber.getLong("country_id"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY, storeableNumber.getBoolean("primary_number"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, storeableNumber.getString("phonenumber"));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, storeableNumber.optString(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, null));
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }
         } catch (JSONException e) {
@@ -1252,6 +1290,9 @@ public class DataLayer {
 
     public boolean addFarmerNationalids(Context context, Long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         int arrayLength = storeableNationalids.length();
+        if (status.equalsIgnoreCase("2")) {
+            deleteExistingNationalIdFromNq(context, farmerId);
+        }
         boolean moderationstatus = false;
         try {
             for (int i = 0; i < arrayLength; i++) {
@@ -1262,6 +1303,7 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
+                String backendDbId = storeableNumber.has(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) ? storeableNumber.getString(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) : null;
                 if (storeableNumber.has("expiryDate")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
                 }
@@ -1271,10 +1313,15 @@ public class DataLayer {
                 if (isUnderModeration(storeableNumber.getString("nationalIdNumber"), String.valueOf(storeableNumber.getInt("nationalIdType")))) {
                     moderationstatus = true;
                 }
-
-                if (storeableNumber.getInt("nationalIdType") != 0 && !status.equals("updateNationalId")) {
+                if (Objects.equals(backendDbId,null)) {
                     db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                } else {
+                    String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " = ?";
+                    String[] whereArgs = new String[]{backendDbId};
+                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE, "false");
+                    db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values,whereClause,whereArgs);
                 }
+
 
                 if (status.equals("updateNationalId")) {
                     ContentValues values1 = new ContentValues();
@@ -1298,7 +1345,11 @@ public class DataLayer {
                 }
 
                 if (status.equalsIgnoreCase("2") || status.equals("updateNationalId")) {
-                    updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, status);
+                    if (backendDbId != null) {
+                        updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, "updateNationalId");
+                    } else {
+                        updateNetworkQueueNIDEntry(context, farmerId, stakeholderId, storeableNumber.getInt("nationalIdType"), farmername, "2");
+                    }
                 }
 
             }
@@ -1352,6 +1403,7 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID, storeableNationalids.getBackendDbId());
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
@@ -1374,17 +1426,18 @@ public class DataLayer {
     }
 
     public boolean updateFarmerNationalids(Context context, Long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
-        String whereClause = columnName + " = ?";
+        String whereClause;
         String[] whereArgs;
-        if (Objects.equals(columnName, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)){
+
+        if (Objects.equals(columnName, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID)) {
+            whereClause = columnName + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL";
             whereArgs = new String[]{String.valueOf(stakeholderId)};
         } else {
+            whereClause = columnName + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL";
             whereArgs = new String[]{String.valueOf(id)};
         }
 
-        if (!status.equals("updateNationalId")) {
-            db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        }
+        db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
         return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
     }
 
@@ -3215,7 +3268,7 @@ public class DataLayer {
         String[] columns = new String[]{"*"};
         String whereClause = columnName + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
@@ -3292,13 +3345,13 @@ public class DataLayer {
     }
 
     public boolean getSyncedStatus(long farmerId) {
-        boolean status = false;
+        boolean status = true;
         Cursor nids = getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
         try {
             while (nids.moveToNext()) {
                 String isSynced = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED));
-                if (isSynced.equalsIgnoreCase("1")) {
-                    status = true;
+                if (isSynced.equalsIgnoreCase("0")) {
+                    status = false;
                     break;
                 }
             }
@@ -3474,7 +3527,7 @@ public class DataLayer {
 
         return name;
     }
-    
+
     public boolean isMultipleCountries() {
         boolean status = false;
         Cursor ids = null;
@@ -3757,6 +3810,7 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
@@ -5713,7 +5767,6 @@ public class DataLayer {
 
        // OW-4590 Fix
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, nationalidtype);
-
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, stakeHolderId);
 
@@ -5725,6 +5778,17 @@ public class DataLayer {
 
     }
 
+    private void deleteExistingNationalIdFromNq(Context context, Long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + "=?";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(farmerId),
+                context.getResources().getString(R.string.nationalid)
+        };
+
+        db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+    }
 
     // OW-4590 Fix
     public int getNIDTypeIDByName(String type) {
@@ -6839,56 +6903,18 @@ public class DataLayer {
         return cursor;
     }
 
-    public ArrayList<ModuleDTO> viewModuleList() {
+    public ArrayList<ModuleDTO> viewModuleList(Context context) {
         ArrayList<ModuleDTO> list= new ArrayList<ModuleDTO>();
         Cursor moduleList = getViewModules();
-        ModuleDTO moduleDTO;
         if (moduleList.getCount() > 0) {
-            while (moduleList.moveToNext()) {
-                moduleDTO = new ModuleDTO();
-                String moduleType = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_TYPE));
-                String assignmentId = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID));
-                String moduleId = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ID));
-                String moduleName = moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME));
-                moduleDTO.setName_lo(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO)));
-                moduleDTO.setName_es(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ES)));
-                moduleDTO.setName_fr(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_FR)));
-                moduleDTO.setName_id(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID)));
-                moduleDTO.setName_pt(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT)));
-                moduleDTO.setName_th(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH)));
-                moduleDTO.setName_tr(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR)));
-                moduleDTO.setName_vi(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI)));
-                moduleDTO.setModule_id(moduleId);
-                moduleDTO.setName(moduleName);
-                moduleDTO.setModuleassignment_type(moduleType);
-                moduleDTO.setModuleassignment_id(assignmentId);
-                if (moduleType.equalsIgnoreCase("Country") && isValueExist(assignmentId, OFISDBContract.CountriesEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Region") && isValueExist(assignmentId, OFISDBContract.RegionsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("District") && isValueExist(assignmentId, OFISDBContract.DistrictsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Place") && isValueExist(assignmentId, OFISDBContract.PlacesEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Farmer Group") && isValueExist(assignmentId, OFISDBContract.FarmerGroupsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Section") && isValueExist(assignmentId, OFISDBContract.SectionsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                } else if (moduleType.equalsIgnoreCase("Product") && isValueExist(assignmentId, OFISDBContract.ProductsEntry.TABLE_NAME)) {
-                    list.add(moduleDTO);
-                }
-
-            }
+            list.addAll(ModuleCursorToDTO.cursorToDTOListModule(moduleList, db));
         }
-        return list;
-    }
 
-    public boolean isValueExist(String id,String table) {
-        Cursor cursor = db.query(table, new String[]{"*"}, "id = ?",
-                new String[]{id}, null, null, null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;
+        ModuleDTO.Builder moduleDTOBuilder = new ModuleDTO.Builder();
+        moduleDTOBuilder.setName(context.getResources().getString(R.string.download_polygon_data))
+                .setShowType(Utilities.TYPE_POLYGON);
+        list.add(moduleDTOBuilder.build());
+        return list;
     }
 
     public boolean isSurveyAnsDownloaded(int submoduleId, long farmerId, String stakeholderId) {
@@ -7452,14 +7478,14 @@ public class DataLayer {
                                    List<Integer> selectedRegions, List<Integer> selectedDistricts,
                                    List<Integer> selectedPlaces, List<Integer> selectedPartners,
                                    List<Integer> selectedProgrammes, List<Integer> selectedFarmerGroups,
-                                   List<Integer> selectedSections, List<Integer> selectedCertifications
+                                   List<Integer> selectedSections, List<Integer> selectedCertifications, boolean isPlotCheck
     ) {
         String whereClause = "";
         String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
         if (query.length() > 0) {
-            whereClause = " WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+            whereClause = " WHERE ( " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "')";
         }
         if (selectedCountry > 0) {
             if (whereClause.length() == 0) {
@@ -7571,6 +7597,15 @@ public class DataLayer {
                             + " LIKE '%";
                 }
             }
+        }
+
+        if (isPlotCheck){
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " LIKE '%true%' ";
         }
 
         String sql =  "select distinct(farmers.id) as _id, " +
@@ -8114,7 +8149,6 @@ public class DataLayer {
         return isMandate;
     }
 
-
     public int getFarmerCodeCount(String farmerCode) {
         String query = "SELECT COUNT(*) FROM " + OFISDBContract.FarmerEntry.TABLE_NAME +
                 " WHERE " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " = ?";
@@ -8297,6 +8331,204 @@ public class DataLayer {
         }
     }
 
+    public void updateDuplicateStatusOfPhoneNumber(long localFarmerId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, "true");
+
+        String[] whereArgs = new String[]{String.valueOf(localFarmerId), "1"};
+        String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " = ? ";
+
+        db.update(OFISDBContract.PhoneNumber.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateDuplicateStatusOfNationalId(long localFarmerId, String typeId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE, "true");
+
+        String[] whereArgs = new String[]{String.valueOf(localFarmerId), typeId};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
+
+        db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public int getDuplicateFarmerNumber(Long phoneNumber) {
+        String query = "SELECT COUNT(*) FROM " +OFISDBContract.PhoneNumber.TABLE_NAME +
+                " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(phoneNumber)});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
+    }
 
 
+
+    public boolean checkNationalIdDuplicateByFarmerId(long farmerId) {
+        boolean isDuplicate = false;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            Cursor cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String isDuplicateData = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE));
+                    if (isDuplicateData != null && Objects.equals(isDuplicateData,"true")) {
+                        isDuplicate = true;
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return isDuplicate;
+    }
+
+    public void updatePositionData(List<PolygonPlotHistory> plotDetails) {
+        for (PolygonPlotHistory polygonPlotHistory : plotDetails) {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA, polygonPlotHistory.positionData);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT, polygonPlotHistory.centerPlot);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE, polygonPlotHistory.plotArea);
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA, "true");
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(polygonPlotHistory.id)};
+
+            db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }
+    }
+
+    public void updatePlot(String farmerId, String olamFarmerId, String farmerName, PolygonDataDto plot) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON, plot.reasonForDeActivation);
+        values.put(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG, plot.deActivationFlag);
+        values.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED, plot.isDeActivationFlagSynced);
+
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(plot.id)};
+        db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+
+        if (plot.deActivationFlag.equalsIgnoreCase("true")) {
+            addNetworkQueueEntry(plot.id, farmerId, olamFarmerId, farmerName);
+        }
+        else {
+            if (!checkIFAnyPlotIsDeActivatedForThisFarmer(farmerId)) {
+                deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "farmpolygon");
+            }
+        }
+    }
+
+    public void updatePlot(String plotId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED, "true");
+
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(plotId)};
+        db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    private boolean checkIFAnyPlotIsDeActivatedForThisFarmer(String farmerId) {
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND (" +
+                OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? OR (" +
+                OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " = ? AND " +
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED + " = ?))";
+
+        String[] whereArgs = new String[]{farmerId,"0", "true", "false"};
+        Cursor cursor = db.query(OFISDBContract.PlotEntry.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, "", "", "");
+        int unSyncedPlotCount = 0;
+        int deActivePlotCount = 0;
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                String isUnSyncPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
+                String centerPlot = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT));
+                String positionData = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA));
+                String mobDeactivationFlag = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG));
+                String isDeactivationFlagSynced = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED));
+
+                if (isUnSyncPlot.equals("0") && (!centerPlot.isEmpty() || positionData != null)) {
+                    unSyncedPlotCount++;
+                }
+                else if (mobDeactivationFlag.equals("true") && isDeactivationFlagSynced.equals("false")){
+                    deActivePlotCount++;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (deActivePlotCount == 0) {
+            String clause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String[] args = new String[]{String.valueOf(farmerId), "farmpolygon"};
+            ContentValues value = new ContentValues();
+            value.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, "");
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, value, clause, args);
+
+        }
+        return unSyncedPlotCount +  deActivePlotCount > 0;
+    }
+
+    public void addNetworkQueueEntry(int id, String farmerId, String farmerName, String olamFarmerId) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(timestamp);
+
+        boolean updateWaiting = networkEntryTypeExistsByFarmerId("farmpolygon", Long.parseLong(farmerId), OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID);
+        if (updateWaiting) {
+            ContentValues nqiValues = new ContentValues();
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, res.getString(R.string.flag_for_de_activation));
+            updateNetworkQueueFarmPolygonEntry(nqiValues, Long.parseLong(farmerId));
+        } else {
+            ContentValues nqiValues = new ContentValues();
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmpolygon");
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.record_farm_polygon_complete));
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, date);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, res.getString(R.string.flag_for_de_activation));
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, id);
+            insertNetworkQueueEntry(nqiValues);
+        }
+    }
+
+    public List<PolygonDataDto> getPlotData(int farmerId) {
+        List<PolygonDataDto> plots = new ArrayList<>();
+
+        try {
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED + " = ?";
+
+            String[] whereArgs = new String[]{String.valueOf(farmerId), "true", "false"};
+            Cursor plot = db.query(OFISDBContract.PlotEntry.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, "", "", "");
+
+            if(plot.getCount() > 0) {
+                plot.moveToFirst();
+                do {
+                    PolygonDataDto polygonData = new PolygonDataDto.Builder()
+                            .id(plot.getInt(plot.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID)))
+                            .reasonForDeActivation(plot.getString(plot.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON)))
+                            .build();
+
+                    plots.add(polygonData);
+                }
+                while (plot.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return plots;
+    }
 }

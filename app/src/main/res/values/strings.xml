@@ -1052,7 +1052,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="reenter_passcode">Logout</string>
     <string name="android_id">Device Install ID: </string>
     <string name="logout_note">Are you sure want to logout? </string>
-    <string name="download_survey_data">Download Survey Data</string>
     <string name="select_fgsection">Select Farmer Group and Section</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading...</string>
@@ -1429,6 +1428,10 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="mandate_survey_not_synced">Sorry, but the mandatory survey has not yet been synced. Please sync the mandatory survey first</string>
     <string name="consent_not_synced">Sorry, but the consent has not yet been synced. Please sync the consent first</string>
     <string name="survey_already_synced">This survey has already been answered by another enumerator. Please Save and Update your OFIS app</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">* The primary phone number is already in use. Please enter a different phone number.</string>
+
     <string name="supplier_and_surveys">Supplier &amp; Surveys</string>
     <string name="title_find_supplier_and_survey">Find Supplier</string>
     <string name="select_supplier">Select Supplier</string>
@@ -1446,16 +1449,38 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="evidence_upload">Evidence Upload</string>
     <string name="supplier_survey">Supplier Survey</string>
     <string name="evidence_is_missing">Evidence Is Missing</string>
-
-
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
-
     <string name="no_signature_available">No signature is available</string>
-
     <string name="enter_attendee_relation_name">Please enter the name of Attendee</string>
     <string name="sign_all_attendee">Signature required for all participants!</string>
 
+    <string name="error_msg_dup_national_id">The national Id is already in use. Please enter a different national ID.</string>
 
+    <string name="download_survey_data">Download Data</string>
+    <string name="download_polygon_data">Download Polygon Data</string>
+    <string name="plot_number">Plot %1$d</string>
+    <string name="plot_size_polygon">Plot size - %1$.2fKB</string>
+    <string name="plot_pin">Plot Pin</string>
+    <string name="max_size_selection_plot">Maximum selection reached. Please deselect one or more items to continue</string>
+    <string name="no_plot_selected">No plots selected</string>
+    <string name="done">Done</string>
+    <string name="download_successful">Download Successful</string>
+    <string name="downloaded_plot_message">Downloaded plot can be viewed inside the farmer plot section.</string>
+    <string name="download_polygon">Download Polygon</string>
+    <string name="ofis_olam_id">"OFIS ID: "</string>
+    <string name="selected_plot">"Selected Plots: "</string>
+    <string name="flag_for_deactivation">Deactivate Plot</string>
+    <string name="reset_deactivation_text">Reset \nDeactivated Plot</string>
+    <string name="flag_for_de_activation">Flag for Deactivation</string>
+    <string name="deactivate_reason">Deactivation  Reason</string>
+    <string name="deactivation_reason">Deactivation Reason..</string>
+    <string name="de_activation_reason_message">Please provide a reason for deactivating this plot. \n<b>Note:</b> Your request will be submitted for approval</string>
+    <string name="deactivation_pending">Deactivation pending approval</string>
+    <string name="deactivation_successful">Deactivation Successful</string>
+    <string name="dialog_message">Are you sure you want to reset the deactivation plot?</string>
+    <string name="reset_deactivation_plot">Reset Deactivated Plot</string>
+    <string name="reason_error_msg">please enter deactivation reason</string>
+    <string name="reset">Reset</string>
 </resources>

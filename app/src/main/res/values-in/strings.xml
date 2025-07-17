@@ -885,6 +885,10 @@
     <string name="stakeholder_not_synced">Maaf, tetapi stakeholder belum disinkronkan. Harap sinkronkan stakeholder terlebih dahulu</string>
     <string name="consent_not_synced">Maaf, tetapi persetujuan belum disinkronkan. Harap sinkronkan persetujuan terlebih dahulu</string>
     <string name="survey_already_synced">Survei ini sudah dijawab oleh enumerator lain. Harap simpan dan perbarui aplikasi OFIS Anda</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
+
     <string name="supplier_and_surveys">Pemasok dan survei</string>
     <string name="title_find_supplier_and_survey">Mencari pemasok</string>
     <string name="select_supplier">Pilih pemasok</string>

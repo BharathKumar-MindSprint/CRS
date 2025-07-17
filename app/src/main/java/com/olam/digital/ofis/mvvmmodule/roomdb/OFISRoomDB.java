@@ -4,6 +4,9 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.room.*;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -31,10 +34,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.*;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
-import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
 @Database(entities =
@@ -46,19 +45,17 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class,
-        //Version 18
-       SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
-                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-                Sections.class, Places.class, Products.class,
-                Farmer.class,
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class, ConditionalLogic.class, ConditionalType.class,
+        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+        AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+        Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
+        Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
+        FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
+        Sections.class, Places.class, Products.class, Farmer.class,
         },
-        version = 18,
-        autoMigrations = {@AutoMigration(from = 17, to = 18)}
+        version = 19,
+        autoMigrations ={@AutoMigration(from =18, to=19)}
         )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -87,8 +84,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract PartnersDao partnersDao();
     public abstract GlobalUnitDao globalUnitDao();
     public abstract LocalUnitDao localUnitDao();
-    public abstract PolygonHistoryDataDao polygonHistoryDataDao();
-    public abstract PolygonPlotHistoryDao polygonPlotHistoryDao();
     public abstract AssignmentTypeDao assignmentTypeDao();
     public abstract SurveyDurationTypeDao surveyDurationTypeDao();
     public abstract PhotoCheckBoxDataDao photoCheckBoxDataDao();
@@ -109,25 +104,33 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract IFarmerGroupDao farmerGroupDao();
     public abstract ISectionsDao sectionsDao();
     public abstract IProductsDao productsDao();
+    public abstract ConditionalLogicDao conditionalLogicDao();
+    public abstract ConditionalTypeDao conditionalTypeDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
 
     public static OFISRoomDB getDbInstance(Context context) {
+
         final Migration MIGRATION_16_17 = new Migration(16, 17) {
             @Override
             public void migrate(SupportSQLiteDatabase database) {
-
                 database.execSQL("ALTER TABLE DmQuestionsModule ADD COLUMN maxSelection INTEGER");
                 database.execSQL("ALTER TABLE DmSurveyAnswerTable ADD COLUMN displayType TEXT");
+            }
+        };
 
+        final Migration MIGRATION_18_19 = new Migration(18, 19) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("DROP TABLE IF EXISTS 'PolygonHistoryData'");
             }
         };
 
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_16_17)
+                    .addMigrations(MIGRATION_16_17, MIGRATION_18_19)
                     .fallbackToDestructiveMigration()
                     .build();
         }

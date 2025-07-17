@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.widget.Spinner;
@@ -56,6 +57,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -158,8 +160,9 @@ public class Utilities {
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
     public static final String FOLLOW_UP_COUNT = "followUpCount";
     public static final String ATTENDEE_SIGNATURE = "ATTENDEE_SIGNATURE";
-
-
+    public static final String TYPE_POLYGON = "POLYGON";
+    private static String blockCharacterSet = "~#^|$%&*!'\"";
+    public static long SIZE_20_MB = 20 * 1024 * 1024;
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -1168,4 +1171,30 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingNationalId, HashMap<Integer, String> enteredNationalId) {
+        boolean isDuplicate = false;
+        if (!enteredNationalId.isEmpty() && !existingNationalId.isEmpty()) {
+            for (String nidNumbers : enteredNationalId.values()) {
+                if (existingNationalId.containsValue(nidNumbers)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return isDuplicate;
+    }
+
+    public static InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+
+        if (source != null && blockCharacterSet.contains(("" + source))) {
+            return "";
+        }
+        for (int i = start; i < end; i++) {
+            int type = Character.getType(source.charAt(i));
+            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                return "";
+            }
+        }
+        return null;
+    };
 }
