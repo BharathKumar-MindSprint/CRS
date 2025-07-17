@@ -25,6 +25,7 @@ import androidx.core.content.FileProvider;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -119,6 +120,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private TextView national_id_error_msg;
     private final HashMap<Integer, String> existingNationalId = new HashMap<>();
     private HashMap<Integer, String> enteredNationalId = new HashMap<>();
+
+    private int nationalIdCount;
     private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -266,6 +269,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
         nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
         nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
@@ -333,6 +337,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     InputFilter[] filters = new InputFilter[1];
                     filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
                     nidnumber.setFilters(filters);
+                    nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
                     if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
                         ll_capturephoto.setVisibility(View.GONE);
                     } else {
@@ -366,6 +371,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             try {
                 int i = 0;
                 while (nids.moveToNext()) {
+                    nationalIdCount = i;
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
                     Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
                     LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
@@ -377,6 +383,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     TextView dbIdStore = nationalidinclude.findViewById(R.id.dbIdStore);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+                    nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 //                    ll_captureexpiry.setVisibility(View.GONE);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.nidtype_spinner, refreshitem);
@@ -394,7 +401,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                     i++;
                     if (dbId != null) {
-                        niddelete.setVisibility(View.GONE);
+                       // niddelete.setVisibility(View.GONE);
                         dbIdStore.setTag(dbId);
                     }
                     String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
@@ -526,6 +533,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
                                 nidnumber.setFilters(filters);
+                                nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
                                 if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
                                     ll_capturephoto.setVisibility(View.GONE);
                                 } else {
@@ -567,6 +575,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nationalIdCount--;
+                if(nationalIdCount <= 9){
+                    addNationId.setVisibility(View.VISIBLE);
+                }else{
+                    addNationId.setVisibility(View.GONE);
+                }
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 removeSpinnerItem(numberrow);
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
@@ -593,6 +607,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             TextView dbIdStore = nidrow.findViewById(R.id.dbIdStore);
 
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+            nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
             ImageButton nidphotoActionButton = nidrow.findViewById(R.id.nidphotoActionButton);
@@ -705,6 +720,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         nationalids = findViewById(R.id.nationalids);
         addNationId = findViewById(R.id.addnid);
         save = findViewById(R.id.save);
+        if(nationalIdCount == 9){
+            addNationId.setVisibility(View.GONE);
+        }
         save.setOnClickListener(this);
         addNationId.setOnClickListener(this);
     }
@@ -715,6 +733,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         int id = v.getId();
 
         if (id == R.id.addnid) {
+            nationalIdCount++;
+            if(nationalIdCount == 9){
+                addNationId.setVisibility(View.GONE);
+            }else{
+                addNationId.setVisibility(View.VISIBLE);
+            }
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -741,6 +765,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
 //                    ll_captureexpiry.setVisibility(View.GONE);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+                    nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
@@ -804,6 +829,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
                                 nidnumber.setFilters(filters);
+                                nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter,blockPiFilter});
                                 if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
                                     ll_capturephoto.setVisibility(View.GONE);
                                 } else {
@@ -1149,6 +1175,32 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             }
         }
     }
+
+
+    public InputFilter LetterDigitHyphenFilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                char ch = source.charAt(i);
+                if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '.') {
+                    return "";
+                }
+            }
+            return null; // accept original input
+        }
+    };
+
+    public InputFilter blockPiFilter = (source, start, end, dest, dstart, dend) -> {
+        StringBuilder filtered = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            char c = source.charAt(i);
+            if (c != '\u03C0') { // Unicode for π
+                filtered.append(c);
+            }
+        }
+        return filtered.toString();
+    };
+
 
 
     private void ValidateSpinnerTypes() {

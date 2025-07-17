@@ -587,7 +587,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         InputFilter lengthFilter = new InputFilter.LengthFilter(50);
-        farmerName.setFilters(new InputFilter[]{LetterHypenFilter,lengthFilter});
+        farmerName.setFilters(new InputFilter[]{LetterHypenFilter,blockPiFilter,lengthFilter});
 
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerDOB = findViewById(R.id.farmerDOB);
