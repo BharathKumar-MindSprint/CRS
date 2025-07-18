@@ -3,16 +3,14 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by bengallienne on 29/11/14. - update
  * Describes and creates / updates all the tables the app needs in the SQLite database
  */
 class OFISDB extends SQLiteOpenHelper {
-    private static OFISDB sInstance;
+    private static volatile OFISDB sInstance;
 
     private static final int DATABASE_VERSION = 159;
 
@@ -355,7 +353,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT )";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION + " TEXT )";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -432,7 +431,10 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE + " TEXT,"
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " INTEGER DEFAULT 0,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT )";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
@@ -467,7 +469,10 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " TEXT DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE + " TEXT,"
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " INTEGER DEFAULT 0,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT )";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
 
@@ -475,37 +480,24 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER default null, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
-            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
-
-    private static final String OFIS_PHONENUMBERS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumberCopy.TABLE_NAME
-            + " ( " + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PHONE_NUMBER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_ID + " INTEGER , "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_NUMBER + " TEXT, "
-            + OFISDBContract.PhoneNumberCopy.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
-
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0,"
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
-            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
-            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
-
-    private static final String OFIS_FAMRERNATIONALIDS_COPY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIdCopy.TABLE_NAME
-            + " ( " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NATIONAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_ID + " INTEGER, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER DEFAULT null, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_NUMBER + " TEXT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_EXPIRY_DATE + " TEXT, "
-            + OFISDBContract.FarmerNationalIdCopy.COLUMN_NID_PHOTO + " TEXT )";
+            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID + " TEXT, "
             + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME
@@ -581,7 +573,13 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " TEXT DEFAULT 'Open' ," +
             OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS + " TEXT ," +
             OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ," +
-            OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false')";
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false' , " +
+            OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " TEXT DEFAULT 'false' ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA + " TEXT ," +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED + " TEXT, " +
+            OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA + " TEXT )";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
@@ -666,113 +664,9 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.CountryCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountryCurrency.COLUMN_COUNTRY_ID
             + " INTEGER, " + OFISDBContract.CountryCurrency.COLUMN_CURRENCY_ID + " INTEGER )";
 
-    private static final String OFIS_DIRECTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Direction.TABLE_NAME
-            + " ( " + OFISDBContract.Direction.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.Direction.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_IS_GIVING_DIRECTION
-            + " INTEGER DEFAULT 0, " + OFISDBContract.Direction.COLUMN_NAME_IS_RECEIVING_DIRECTION + " INTEGER DEFAULT 0)";
-
-    private static final String OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemGroup.TABLE_NAME
-            + " ( " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_DIRECTION_ID
-            + " INTEGER, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER )";
-
-    private static final String OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_DIRECTION_ID
-            + " INTEGER, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemGroup.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ES + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_PT + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_LO + " TEXT, "
-            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TH + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
-
-    private static final String OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemType.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
-
-    private static final String OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductTransactionItemType.TABLE_NAME
-            + " ( " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_PRODUCT_ID
-            + " INTEGER, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemTypeUnit.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_TRANSACTIONITEMTYPE_ID
-            + " INTEGER, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_UNIT_ID + " INTEGER )";
-
-    private static final String OFIS_TRANSACTIONITEM_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItem.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionItem.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_ENUMERATOR_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_DATE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_UNIT_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_GRADE_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_MOBILEMONEYCASH_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_QUANTITY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRICE_PER_UNIT + " TEXT,"
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TOTAL_PRICE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_PAID + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_MOBILEMONEY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_GIFTED + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_BALANCE_ID + " INTEGER, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_IN_QUEUE + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED_TEXT + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_NOTES + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID + " INTEGER DEFAULT 0, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_FULLY_SYNCED + " INTEGER DEFAULT 0, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_CREATED_AT + " TEXT, "
-            + OFISDBContract.TransactionItem.COLUMN_NAME_UPDATED_AT + " TEXT )";
-
-    private static final String OFIS_PRODUCTGRADE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductGrade.TABLE_NAME
-            + " ( " + OFISDBContract.ProductGrade.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductGrade.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_FR + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ID + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TR + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_VI + " TEXT, "
-            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TH + " TEXT )";
-
-    private static final String OFIS_PRODUCTPRICE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductPrice.TABLE_NAME
-            + " ( " + OFISDBContract.ProductPrice.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductPrice.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.ProductPrice.COLUMN_NAME_DIRECTION_ID + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_FIXED_PRICE + " TEXT, " + OFISDBContract.ProductPrice.COLUMN_NAME_MIN_PRICE + " INTEGER, "
-            + OFISDBContract.ProductPrice.COLUMN_NAME_MAX_PRICE + " INTEGER )";
-
     private static final String OFIS_UNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Unit.TABLE_NAME
             + " ( " + OFISDBContract.Unit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Unit.COLUMN_NAME_NAME
             + " TEXT )";
-
-    private static final String OFIS_BUYINGAGENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgent.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgent.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgent.COLUMN_NAME_NAME + " TEXT )";
-
-    private static final String OFIS_TRANSACTEE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Transactee.TABLE_NAME
-            + " ( " + OFISDBContract.Transactee.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Transactee.COLUMN_NAME_NAME + " TEXT )";
-
-    private static final String OFIS_TRANSACTION_BALANCES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionBalance.TABLE_NAME
-            + " ( " + OFISDBContract.TransactionBalance.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT2_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BALANCE + " TEXT, "
-            + OFISDBContract.TransactionBalance.COLUMN_NAME_OUT_OF_SYNC + " INTEGER DEFAULT 0 )";
-
-    private static final String OFIS_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingRule.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_PAY + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_MOBILEMONEY + " INTEGER DEFAULT 0, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_LOAN + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_GIFT + " INTEGER DEFAULT 0, "
-            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_REPAY + " INTEGER DEFAULT 0 )";
-
-    private static final String OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentBuyingRule.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGRULE_ID + " INTEGER )";
-
-    private static final String OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentCurrency.TABLE_NAME
-            + " ( " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
-            + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_CURRENCY_ID + " INTEGER )";
 
     // training tables
     private static final String OFIS_COMPLETIONCRITERIA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CompletionCriteria.TABLE_NAME
@@ -881,9 +775,6 @@ class OFISDB extends SQLiteOpenHelper {
 
 
     public static OFISDB getInstance(Context context) {
-        /*if (sInstance == null) {
-            sInstance = new OFISDB(context.getApplicationContext());
-        }*/
         if (sInstance == null) {
             synchronized (OFISDB.class) {
                 if (sInstance == null) {
@@ -928,23 +819,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_FMP_CURRENT_VALUES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CURRENCY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COUNTRY_CURRENCY_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTION_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEM_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTGRADE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PRODUCTPRICE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_UNIT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTEE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRANSACTION_BALANCES_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGRULE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COMPLETIONCRITERIA_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COURSE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_COURSEASSIGNMENT_TABLE_CREATE);
@@ -969,7 +844,6 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_GPS_MONITOR_TABLE_CREATE);
-
 
 //        nationalis
         sqLiteDatabase.execSQL(OFIS_NATIONALIDS_TABLE_CREATE);
@@ -1008,364 +882,20 @@ class OFISDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-//        droptables(sqLiteDatabase);
-//        master db if less than142
-        sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONS_TABLE_CREATE);
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN captureAdditionalAttendees TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
+        switch(oldVersion){
+            case 158:
+                migrateFromVersion158To159(sqLiteDatabase);
+                migrateFrom159To160(sqLiteDatabase);
+                break;
+            case 159:
+                migrateFrom159To160(sqLiteDatabase);
+                break;
 
-//      if less than 143
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN view_module INTEGER default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.LookupValuesEntry.TABLE_NAME + " ADD COLUMN countryLookUpValueDtos TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN isPlotSurvey TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN plot TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN plot_id INTEGER default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN plot_id INTEGER default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN enteredPlotName TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        if (oldVersion < 149) {
-            migrateFromVersionBelow148(sqLiteDatabase);
-        }
-
-        if (oldVersion < 150) {
-            migrateFromVersionBelow149(sqLiteDatabase);
-        }
-
-        if (oldVersion < 151) {
-            migrateFromVersionBelow150(sqLiteDatabase);
-        }
-
-        if (oldVersion < 152) {
-            migrateFromVersionBelow151(sqLiteDatabase);
-        }
-
-        if (oldVersion < 153) {
-            migrateFromVersionBelow152(sqLiteDatabase);
-        }
-        if (oldVersion < 154) {
-            migrateFromVersionBelow153(sqLiteDatabase);
-        }
-        if (oldVersion < 155) {
-            migrateFromVersionBelow154(sqLiteDatabase);
-        }
-
-        if (oldVersion < 156) {
-            migrateFromVersionBelow155(sqLiteDatabase);
-        }
-
-        if (oldVersion < 157) {
-            migrateFromVersionBelow156(sqLiteDatabase);
-        }
-
-        if (oldVersion < 158) {
-            migrateFromVersionBelow157(sqLiteDatabase);
-        }
-
-        if (oldVersion < 159) {
-            migrateFromVersionBelow158(sqLiteDatabase);
-        }
-
-        sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
-    }
-
-    private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase) {
-
-        sqLiteDatabase.execSQL("CREATE TABLE questions_copy as select " + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_MODEL
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_COLUM
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_Active
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_CREATED_AT
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_UPDATED_AT
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_APP_ID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPGROUPID
-                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY
-                + " from questions");
-        sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("CREATE TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " as select * from questions_copy");
-        sqLiteDatabase.execSQL("DROP TABLE questions_copy");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI + " TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH + " TEXT default null");
-    }
-
-    private void migrateFromVersionBelow149(SQLiteDatabase sqLiteDatabase) {
-        // QWR
-        sqLiteDatabase.execSQL(OFIS_QUESTIONTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_ANSWERTYPE_TABLE_CREATE);
-        sqLiteDatabase.execSQL(OFIS_RECURRENCETYPE_TABLE_CREATE);
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID + " TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ES + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_FR + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ID + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_LO + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_PT + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TH + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_IS_DEFAULT + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_SHOW_DESCRIPTION + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_ES + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_FR + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_ID + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_LO + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_PT + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_TH + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE + " TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-
-    private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase) {
-        try {
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT default null");
-
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT default null");
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC + " TEXT default null");
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT + " TEXT default null");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void migrateFromVersionBelow151(SQLiteDatabase sqLiteDatabase) {
-
-        try {
-            // Multiple assignment
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT default null");
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SipSubGroupEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_CAPTURE_SIP_POLYGON + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT + " TEXT default null");
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID + " TEXT default null");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID + " TEXT default null");
-
-            // Add farmerId in geoplot data
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_FARMER_ID + " TEXT default null");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void migrateFromVersionBelow152(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
-    }
-
-    private void migrateFromVersionBelow153(SQLiteDatabase sqLiteDatabase) {
-        try {
-
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_FARMER_ROLE_ID + " TEXT default null");
-
-            sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.MultiFarmRoles.TABLE_NAME);
-            sqLiteDatabase.execSQL(OFIS_MULTIFARM_ROLES_TABLE_CREATE);
-            // Module assignment
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER default null");
-            // survey duration
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_DURATION + " INTEGER default null");
-
-            // Compliance Flag Farmer - HRI & TTi
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + " INTEGER DEFAULT false");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_COMPLAINCE_FLAG + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_SURVEY_FOR_NCF + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF + " INTEGER DEFAULT 0");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_POLYGON_CAPTURE_FOR_NCF + " INTEGER DEFAULT 0");
-
-            // multi-pins centerplot
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN centerPlot TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " REAL ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.PlotGeoData.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SIZE + " REAL ");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void migrateFromVersionBelow154(SQLiteDatabase sqLiteDatabase) {
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MARITAL + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_PROFESSION + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CPF_NO + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_RG_NO + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FULL_ADDRESS + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CITY + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_STATE + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNAME + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBNATIONALITY + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBMARITAL + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBPROFESSION + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCPF_NO + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBRG_NO + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBFULL_ADDRESS + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBCITY + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_SUBSTATE + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONTACT + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_NAME + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_CPF + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_RG + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT1_SIGN + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN + " TEXT ");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void migrateFromVersionBelow155(SQLiteDatabase sqLiteDatabase) {
-        try {
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT + " TEXT DEFAULT 'false' ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT + " TEXT DEFAULT 'false' ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS + " TEXT DEFAULT 'Open' ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED + " TEXT DEFAULT 'false' ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerAssignments.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerAssignments.CALCULATE_COMPOSITE_FLAG + " TEXT ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void migrateFromVersionBelow156(SQLiteDatabase sqLiteDatabase) {
-        try {
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS multifarmFarms");
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS stakeHolders");
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS responsibilities");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER ");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " INTEGER ");
-
-            sqLiteDatabase.execSQL(OFIS_PHONENUMBERS_COPY_TABLE_CREATE);
-            sqLiteDatabase.execSQL("INSERT INTO phoneNumbersCopy (id, farmer_id, country_id, phonenumber, primary_number) SELECT id, farmer_id, country_id, phonenumber, primary_number FROM phonenumbers");
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS phonenumbers");
-            sqLiteDatabase.execSQL(OFIS_PHONENUMBERS_TABLE_CREATE);
-            sqLiteDatabase.execSQL("INSERT INTO phonenumbers (id, farmer_id, country_id, msId, phonenumber, primary_number) SELECT id, farmer_id, country_id, msId, phonenumber, primary_number FROM phoneNumbersCopy");
-
-            sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_COPY_TABLE_CREATE);
-            sqLiteDatabase.execSQL("INSERT INTO farmerNationalIdCopy (id, farmerId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced) SELECT id, farmerId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced FROM farmernationalids");
-            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS farmernationalids");
-            sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_TABLE_CREATE);
-            sqLiteDatabase.execSQL(" INSERT INTO farmernationalids (id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced) SELECT id, farmerId, msId, nationalIdType, nationalIdNumber, photo, expiryDate, isSynced FROM farmerNationalIdCopy ");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            default:
+                migrateFromVersionBelow157(sqLiteDatabase);
+                migrateFromVersion158To159(sqLiteDatabase);
+                migrateFrom159To160(sqLiteDatabase);
+                break;
         }
     }
 
@@ -1381,11 +911,54 @@ class OFISDB extends SQLiteOpenHelper {
         }
     }
 
-    private void migrateFromVersionBelow158(SQLiteDatabase sqLiteDatabase) {
+    private void migrateFromVersion158To159(SQLiteDatabase sqLiteDatabase) {
         try {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE +" TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE +" TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE +" TEXT ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFrom159To160(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL("DROP TABLE buyingagent_buyingrule");
+            sqLiteDatabase.execSQL("DROP TABLE buyingagent_currency");
+            sqLiteDatabase.execSQL("DROP TABLE buyingagents");
+            sqLiteDatabase.execSQL("DROP TABLE buyingrules");
+            sqLiteDatabase.execSQL("DROP TABLE direction_transactionitemgroup");
+            sqLiteDatabase.execSQL("DROP TABLE direction_transactionitemtype");
+            sqLiteDatabase.execSQL("DROP TABLE directions");
+            sqLiteDatabase.execSQL("DROP TABLE transactees");
+            sqLiteDatabase.execSQL("DROP TABLE transactionbalances");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemgroups");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitems");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemtype_unit");
+            sqLiteDatabase.execSQL("DROP TABLE transactionitemtypes");
+            sqLiteDatabase.execSQL("DROP TABLE productgrades");
+            sqLiteDatabase.execSQL("DROP TABLE productprices");
+            sqLiteDatabase.execSQL("DROP TABLE product_transactionitemtype");
+
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT ");
+
+
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION + " TEXT ");
+
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " TEXT DEFAULT 'false' ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA);
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED);
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }

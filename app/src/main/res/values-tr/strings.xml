@@ -792,6 +792,9 @@
     <string name="stakeholder_not_synced">Üzgünüz, ancak paydaş henüz senkronize edilmedi. Lütfen önce paydaşı senkronize edin</string>
     <string name="consent_not_synced">Üzgünüz, ancak onay henüz senkronize edilmedi. Lütfen önce onayı senkronize edin</string>
     <string name="survey_already_synced">Bu anket başka bir sayıcı tarafından zaten yanıtlandı. Lütfen OFIS uygulamanızı kaydedin ve güncelleyin</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">Tedarikçiler ve anketler</string>
     <string name="title_find_supplier_and_survey">Tedarikçi arama</string>
@@ -811,9 +814,18 @@
     <string name="spinner_supplier_group">Tedarikçi Grubu</string>
     <string name="supplier_group">Tedarikçi Grubu</string>
 
+
+    <string name="farmer_code_already_exists">"Çiftçi kodu zaten var!"</string>
+    <string name="farmer_code">"Çiftçi Kodu"</string>
+
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
     <string name="enter_attendee_relation_name">Lütfen katılımcının adını girin</string>
     <string name="sign_all_attendee">Tüm katılımcılar için imza gereklidir!</string>
     <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
     <string name="Alert_txt">Uyarı !</string>
+
 
 </resources>

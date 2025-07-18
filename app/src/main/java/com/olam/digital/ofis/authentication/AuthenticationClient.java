@@ -3,11 +3,10 @@ package com.olam.digital.ofis.authentication;
 import android.content.Context;
 
 
-import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.BuildConfig;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -21,29 +20,20 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by nitin.kumar35 on 8/19/2017.
+ * Keycloak Authentication
  */
 
 public class AuthenticationClient {
-
-    public static String API_KEYCLOAK_URL;
-
-    private AuthenticationClient() {
-        API_KEYCLOAK_URL = "";
-    }
-
-    // Authentication KeyCloak
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     private static Retrofit.Builder builder;
 
     private static Retrofit retrofit;
 
     private static void setup(Context context) {
-        API_KEYCLOAK_URL = context.getString(R.string.AUTH_SERVER_URL);
         if (builder == null) {
             builder =
                     new Retrofit.Builder()
-                            .baseUrl(API_KEYCLOAK_URL)
+                            .baseUrl(BuildConfig.AUTH_SERVER_URL)
                             .addConverterFactory(GsonConverterFactory.create());
         }
         if (retrofit == null) {
@@ -57,7 +47,9 @@ public class AuthenticationClient {
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
         httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-        httpClient.sslSocketFactory(getSSLSocketFactory());
+        if(BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
+            httpClient.sslSocketFactory(getSSLSocketFactory());
+        }
         httpClient.retryOnConnectionFailure(false);
         builder.client(httpClient.build());
         retrofit = builder.build();

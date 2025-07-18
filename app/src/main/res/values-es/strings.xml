@@ -889,6 +889,9 @@
     <string name="stakeholder_not_synced">Lo siento, pero el stakeholder aún no ha sido sincronizado. Por favor, sincronice el stakeholder primero</string>
     <string name="consent_not_synced">Lo siento, pero el consentimiento aún no ha sido sincronizado. Por favor, sincronice el consentimiento primero</string>
     <string name="survey_already_synced">Esta encuesta ya ha sido respondida por otro enumerador. Por favor, guarde y actualice su aplicación OFIS</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">Proveedores y encuestas</string>
     <string name="title_find_supplier_and_survey">Buscar un proveedor</string>
@@ -907,12 +910,21 @@
     <string name="supplier_survey">Encuesta a proveedores</string>
     <string name="evidence_is_missing">Faltan pruebas</string>
     <string name="limiter">%1$s - %2$s</string>
+
+    <string name="farmer_code_already_exists">"¡El código de agricultor ya existe!"</string>
+    <string name="farmer_code">"Código de Agricultor"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
     <string name="no_signature_available">Firma no disponible</string>
+
 
     <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
     <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
     <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
     <string name="Alert_txt">Alerta !</string>
+
 
 </resources>
 

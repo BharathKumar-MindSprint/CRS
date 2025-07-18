@@ -4,4 +4,5 @@
     android:layout_height="wrap_content"
     android:spinnersShown="true"
     android:datePickerMode="spinner"
-    android:calendarViewShown="false"/>
+    android:calendarViewShown="false"
+    android:id="@+id/datePicker"/>

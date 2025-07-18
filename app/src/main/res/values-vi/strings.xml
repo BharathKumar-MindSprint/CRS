@@ -791,6 +791,11 @@
     <string name="stakeholder_not_synced">Xin lỗi, nhưng stakeholder chưa được đồng bộ. Vui lòng đồng bộ stakeholder trước</string>
     <string name="consent_not_synced">Xin lỗi, nhưng sự đồng ý chưa được đồng bộ. Vui lòng đồng bộ sự đồng ý trước</string>
     <string name="survey_already_synced">Khảo sát này đã được trả lời bởi một người khảo sát khác. Vui lòng lưu và cập nhật ứng dụng OFIS của bạn</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
+
+
     <string name="supplier_and_surveys">Nhà cung cấp và khảo sát</string>
     <string name="title_find_supplier_and_survey">Tìm kiếm nhà cung cấp</string>
     <string name="select_supplier">Chọn nhà cung cấp</string>
@@ -808,7 +813,18 @@
     <string name="supplier_search_hint">Tìm kiếm theo Tên nhà cung cấp hoặc Mã nhà cung cấp</string>
     <string name="evidence_is_missing">Bằng chứng bị thiếu</string>
     <string name="spinner_supplier_group">Nhóm nhà cung cấp</string>
+
+
+    <string name="farmer_code_already_exists">"Mã nông dân đã tồn tại!"</string>
+    <string name="farmer_code">"Mã Nông Dân"</string>
+
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
+
     <string name="no_signature_available">Chữ ký không có sẵn</string>
+
 
     <string name="enter_attendee_relation_name">Vui lòng nhập tên người tham dự</string>
     <string name="sign_all_attendee">Chữ ký cần thiết cho tất cả các thành viên tham gia!</string>

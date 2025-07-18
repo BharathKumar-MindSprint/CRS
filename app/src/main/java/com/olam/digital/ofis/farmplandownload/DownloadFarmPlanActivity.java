@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.R;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -57,9 +59,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     private RecyclerView recyclerView;
     DownloadFarmPlanAdapter downloadFarmPlanAdapter;
     List<DownloadFormList.data> data1;
-    ItemClickListener itemClickListener;
     String enumeratorId;
-    String userID = "ID_OFIS_DO_INTERFACE";
     ArrayList<String> isoCodes = new ArrayList<>();
     private ProgressDialog progressDialog;
     String counrtyCodeNew;
@@ -68,12 +68,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     String odAccessToken;
     String rootobject;
     String filepath;
-
-
     private long downloadId;
-
     TextView tv_down;
-    String downloadUrl;
     String fileNameDownload = "";
     File file;
     Uri uri;
@@ -110,11 +106,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         enumeratorId = Utilities.getFromSharedPrefs(context);
 
         try {
-
-            String isoCode = Utilities.getdatafromSharedPrefs(context,"CountryUserID");
-            Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+            String isoCode = Utilities.getdatafromSharedPrefs(context, StringConstants.COUNTRY_CODE);
             counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
-
         } catch (ActivityNotFoundException e) {
 
         }
@@ -226,24 +219,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     }
 
     private void getDownloadUrl(){
-
-        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
-        OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl(BuildConfig.DOWNLOADURL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ManageRecords retrofitAPI = retrofit.create(ManageRecords.class);
-
+        ManageRecords retrofitAPI = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
 
         String currentString = filepath;
         String[] separated = currentString.split("/");
@@ -268,18 +244,10 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                 if (response.code()==200) {
                     progressDialog.hide();
-                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                    // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
                     Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
                     if (writtenToDisk) {
-                       /* File mediaStorageDir = new File(
-                                Environment
-                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                        +"/"+"OFIS");
-                        mediaStorageDir.mkdirs();*/
-
                         File root = android.os.Environment.getExternalStorageDirectory();
                         dir = new File (root.getAbsolutePath() +"/"+"OFIS");
                         dir.mkdirs();
@@ -288,9 +256,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                                 +finalFilepathPdf+ ".pdf");
 
                         fileNameDownload = mediaFile.getName();
-
-                        //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
-                        //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
                         file = new File(dir+"/"+fileNameDownload);
                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
                         try {

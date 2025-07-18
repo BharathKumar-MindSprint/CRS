@@ -138,11 +138,18 @@
 
                         </LinearLayout>
 
-                        <!--<com.olam.digital.ofis.tasks.NonScrollListView
-                            android:layout_weight="10.8"
-                            android:id="@+id/list_nationalids"
+                        <TextView
+                            android:id="@+id/national_id_error_msg"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>-->
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/ofis_btn_danger"
+                            android:textSize="@dimen/ofis_micro_text"
+                            android:text="@string/error_msg_dup_national_id"
+                            android:layout_marginBottom="@dimen/ofis_med_pad"
+                            android:visibility="gone" />
+
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="30dp"
@@ -233,6 +240,17 @@
 
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/primary_phone_number_error_msg"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/ofis_btn_danger"
+                            android:textSize="@dimen/ofis_micro_text"
+                            android:text="@string/error_msg_phone_number"
+                            android:layout_marginBottom="@dimen/ofis_med_pad"
+                            android:visibility="gone"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -259,6 +277,96 @@
 
                     </LinearLayout>
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_farmer_code"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:paddingLeft="@dimen/ofis_large_pad"
+
+                    android:paddingRight="@dimen/ofis_large_pad"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/border_white_background">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_text_field"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/farmer_code"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:id="@+id/farmerCode"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:maxLength="50"
+                        android:textAllCaps="true"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/border_white_background"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+
+                    <TextView
+                        android:id="@+id/error_msg_invalid_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/invalid_format"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <TextView
+                        android:id="@+id/error_msg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/cannot_have_consecutive_special_character"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <TextView
+                        android:id="@+id/error_msg_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_red"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/example_format"
+                        android:textStyle="bold"
+
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+                    <!--
+                                        <EditText
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:textColor="@color/ofis_text_field"
+                                            android:textColorHint="@color/ofis_text_field"
+                                            android:textSize="@dimen/ofis_input_field_text"
+                                            android:id="@+id/farmerDOB"
+                                            android:hint="@string/Date_of_Birth"
+                                            android:inputType="none"
+                                            android:nextFocusDown="@+id/spinner_farmerGroup"
+                                            tools:ignore="RtlHardcoded" />-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- geography groups -->

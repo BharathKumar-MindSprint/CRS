@@ -896,6 +896,10 @@
     <string name="stakeholder_not_synced">Desculpe, mas o stakeholder ainda não foi sincronizado. Por favor, sincronize o stakeholder primeiro</string>
     <string name="consent_not_synced">Desculpe, mas o consentimento ainda não foi sincronizado. Por favor, sincronize o consentimento primeiro</string>
     <string name="survey_already_synced">Esta pesquisa já foi respondida por outro enumerador. Por favor, salve e atualize seu aplicativo OFIS</string>
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
+
     <string name="supplier_and_surveys">Fornecedores e pesquisas</string>
     <string name="title_find_supplier_and_survey">Pesquisar um fornecedor</string>
     <string name="select_supplier">Selecione um fornecedor</string>
@@ -913,6 +917,14 @@
     <string name="supplier_search_hint">Pesquisar por nome do fornecedor ou identificação do fornecedor</string>
     <string name="spinner_supplier_group">Grupo de fornecedores</string>
     <string name="supplier_group">Grupo de fornecedores</string>
+
+    <string name="farmer_code_already_exists">"O código do agricultor já existe!"</string>
+    <string name="farmer_code">"Código do Agricultor"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
+
     <string name="no_signature_available">Assinatura não disponível</string>
 
     <string name="enter_attendee_relation_name">Por favor, insira o nome do participante</string>
