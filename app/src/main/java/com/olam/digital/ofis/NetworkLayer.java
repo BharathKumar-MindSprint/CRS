@@ -718,7 +718,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId, String sessionId) {
+    private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
         Cursor trainingRecord = null;
         try {
@@ -733,7 +733,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME)));
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-                    jsonObject.put("sessionId", sessionId);
                     jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID, trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID)));
                     jsonObject.put("enumeratorId", Utilities.getFromSharedPrefs(context));
                     if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -5807,6 +5806,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         try {
             final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
+            final String sessionId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
             Cursor traineeAttendeeById = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofistraining/signature/upload";
@@ -5851,31 +5851,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         File directory = new File(context.getFilesDir(), "signatures");
                         File imageFile = new File(directory, signNatureName);
                         RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, imageFile);
+
                         builder.addFormDataPart("signature", attendeeSignature.get(i), fileBody);
                     }
 
-
+                    builder.addFormDataPart("sessionId", sessionId);
                     RequestBody requestBody = builder.build();
 
                     okHttpMultiPartPost1(context, endpoint, requestBody, new Callback() {
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            if (response.isSuccessful() && response.body() != null) {
-                                String responseBody = response.body().string();
-                                Log.d("Response_Upload", response.body().toString());
-                                JSONObject jsonObject = null;
-                                try {
-                                    jsonObject = new JSONObject(responseBody);
-                                    String sessionId = jsonObject.getString("sessionId");
-                                    postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId, sessionId);
-
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-
-
-
-
+                            if (response.isSuccessful()) {
+                                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
 
                             } else {
                                 if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
@@ -5914,7 +5901,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
 
             if(!isFileExists) {
-                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId,null);
+                postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
             }
 
         } catch (Exception e) {
