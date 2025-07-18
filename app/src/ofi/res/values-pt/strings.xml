@@ -844,4 +844,6 @@
     <string name="image_downloaded">Imagens baixadas com sucesso</string>
     <string name="back">Voltar</string>
     <string name="Save">Salvar</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
+    <string name="Alert_txt">Alerta!</string>
 </resources>

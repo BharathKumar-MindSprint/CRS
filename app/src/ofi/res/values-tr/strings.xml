@@ -768,4 +768,6 @@
     <string name="ready_to_download_photo_checkbox">Fotoğraf onay kutusu soruları için indirilmesi gereken resimler var. Resimleri indirmeye şimdi devam etmek istiyor musunuz?</string>
     <string name="no_images_to_be_downloaded">İndirilecek resim yok</string>
     <string name="image_downloaded">Görüntüler başarıyla indirildi</string>
+    <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
+    <string name="Alert_txt">Uyarı !</string>
 </resources>
