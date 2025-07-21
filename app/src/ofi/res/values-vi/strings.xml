@@ -768,4 +768,6 @@
     <string name="ready_to_download_photo_checkbox">Có những hình ảnh cần được tải xuống cho các câu hỏi về hộp kiểm ảnh. Bạn có muốn tiếp tục tải hình ảnh bây giờ không?</string>
     <string name="no_images_to_be_downloaded">Không có hình ảnh nào để tải xuống</string>
     <string name="image_downloaded">Hình ảnh tải xuống thành công</string>
+    <string name="Please_check_the_Internet_Connection">Vui lòng kiểm tra kết nối Internet</string>
+    <string name="Alert_txt">Báo động !</string>
 </resources>

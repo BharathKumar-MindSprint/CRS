@@ -3282,9 +3282,12 @@ public class DynamicQuestions {
                     return "";
                 }
 
+
+
+
                 // Prevent multiple leading zeros if no decimal is present
-                if (!newValue.contains(".") && newValue.startsWith("0") && source.toString().equals("0")) {
-                    return "";
+                if (!newValue.contains(".")  && newValue.length()==1 && newValue.startsWith("0") && source.toString().equals("0")) {
+                    return newValue;
                 }
 
                 editText.setError(null);

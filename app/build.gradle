@@ -29,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true
-        versionCode 96
-        versionName "10.8.8"
+        versionCode 636
+        versionName "14.6.6"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -295,9 +295,7 @@ dependencies {
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1' // for OkHttp library
-
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
-
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -51,6 +51,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.internal.service.Common;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
@@ -104,6 +105,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.showAlert;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -394,6 +396,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         String userpasscode = passcode.getText().toString().trim();
+        if (!isNetworkAvailable(this))
+        {
+            showAlert(getString(R.string.Please_check_the_Internet_Connection),this);
+            return;
+        }
+
         if (!userEnumerator.equalsIgnoreCase("") && !userpasscode.equalsIgnoreCase("")) {
 
             if (isAccountLocked()) {
