@@ -8531,4 +8531,48 @@ public class DataLayer {
         }
         return plots;
     }
+
+    public int getLocalDuplicateNationaId(int nationalIdType,String nationalIdNumber) {
+
+
+        String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " = ? AND " +
+
+                OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE+ " = ?";
+
+        String[] whereArgs = new String[]{String.valueOf(nationalIdType),nationalIdNumber};
+        Cursor cursor = db.query(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, "", "", "");
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getCount(); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
+    }
+
+
+    public int getFarmerDuplicateNationaId(int nationalIdType,String nationalIdNumber) {
+
+
+        String query = "SELECT COUNT(*) FROM " +OFISDBContract.FarmerNationalIDs.TABLE_NAME +
+                " WHERE " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? AND " +
+                OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(nationalIdType),nationalIdNumber});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0); // Fetch count from result
+            }
+            cursor.close();
+        }
+
+        return count; // Returns the count of occurrences
+    }
+
+
 }

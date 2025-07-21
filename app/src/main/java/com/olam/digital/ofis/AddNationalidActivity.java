@@ -122,6 +122,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private HashMap<Integer, String> enteredNationalId = new HashMap<>();
 
     private int nationalIdCount;
+
+    private  boolean isSaveClicked = false;
     private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -616,6 +618,19 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             String nid = nidnumber.getText().toString();
             String expDate = expiryDate.getText().toString();
 
+            if(isSaveClicked){
+                int localDuplicateNationaIdCount =  dl.getFarmerDuplicateNationaId(type,nid);
+
+
+
+           if(localDuplicateNationaIdCount > 1){
+               Toast.makeText(this,"Duplicate National Id", Toast.LENGTH_SHORT).show();
+               return false;
+           }
+
+            }
+
+
             if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
                 Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
@@ -858,7 +873,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         }
         else if (id == R.id.save) {
-
+            isSaveClicked = true;
             // check the current location
             if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)){
                 // check the current location
