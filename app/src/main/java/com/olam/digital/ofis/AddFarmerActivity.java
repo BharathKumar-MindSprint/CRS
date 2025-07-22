@@ -2038,11 +2038,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
 
-//                if(farmerCode.length() > 0 && isSpecialCharacter((char) (farmerCode.length() - 1))){
-//                    farmerCodeError.setVisibility(View.VISIBLE);
-//                }else{
-//                    farmerCodeError.setVisibility(View.GONE);
-//                }
+
 
                 if(isFarmerCodeError){
                     Toast.makeText(context, R.string.cannot_have_consecutive_special_character, Toast.LENGTH_LONG).show();

@@ -8535,22 +8535,22 @@ public class DataLayer {
     public int getLocalDuplicateNationaId(int nationalIdType,String nationalIdNumber) {
 
 
-        String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " = ? AND " +
+        String query = "SELECT COUNT(*) FROM " +OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME +
+                " WHERE " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " = ? AND " +
+                OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " = ?";
 
-                OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE+ " = ?";
-
-        String[] whereArgs = new String[]{String.valueOf(nationalIdType),nationalIdNumber};
-        Cursor cursor = db.query(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, new String[]{"*"}, whereClause, whereArgs, "", "", "");
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(nationalIdType),nationalIdNumber});
 
         int count = 0;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                count = cursor.getCount(); // Fetch count from result
+                count = cursor.getInt(0); // Fetch count from result
             }
             cursor.close();
         }
 
         return count; // Returns the count of occurrences
+
     }
 
 
