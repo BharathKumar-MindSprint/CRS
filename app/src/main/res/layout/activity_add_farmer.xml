@@ -548,6 +548,7 @@
                 android:paddingRight="@dimen/ofis_large_pad"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
+                    android:id="@+id/farm_holding_ll"
                 android:background="@drawable/border_white_background"
                 android:layout_marginTop="@dimen/ofis_med_pad"
                 android:orientation="vertical">
@@ -879,6 +880,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:orientation="vertical"
+                    android:id="@+id/read_consent_ll"
                     android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin">
 
                     <Button

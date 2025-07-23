@@ -160,6 +160,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
     private final static String EDIT_MODE = "EDIT_MODE";
 
+    private final static String EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
+
     private RelativeLayout phoneNumbersHolder;
     private LinearLayout phonenumbers;
     private TextView primaryPhoneNumberErrorMsg;
@@ -2672,7 +2674,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Bundle bundle = new Bundle();
                         in.putExtra(EDIT_FARMER_ID, farmerId);
                         bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                        in.putExtra(EDIT_MODE, true);
+                        in.putExtra(EDIT_FARMER_MODE, true);
                         in.putExtras(bundle);
                         startActivity(in);
 
