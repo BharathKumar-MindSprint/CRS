@@ -900,6 +900,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/add_farmer_ll"
                     android:paddingBottom="10dp">
 
                     <Button
@@ -954,10 +955,55 @@
 
                 </LinearLayout>
 
+
+
             </LinearLayout>
+
+
         </ScrollView>
 
+
+
     </LinearLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/update_farmer_ll"
+
+       android:gravity="bottom"
+        >
+
+        <!-- First Button -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update"
+            android:id="@+id/updateFarmer"
+            android:background="@color/ofis_action_button_background"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_med_text"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_gravity="bottom|end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp" />
+
+        <!-- Second Button -->
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@color/btn_secondary_background"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/ofis_base_font_white"
+            android:layout_margin="16dp" />
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/llTitle"

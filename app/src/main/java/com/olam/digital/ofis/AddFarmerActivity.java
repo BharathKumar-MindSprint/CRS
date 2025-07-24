@@ -225,6 +225,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private EditText farmerIdPrefix, etFarmHoldingName, etFarmHoldingCode, farmerName, farmerCode;
     private LinearLayout phonenumbers;
     private LinearLayout nationalids;
+
+    LinearLayout add_farmer_ll;
+
+    RelativeLayout update_farmer_ll;
     private LayoutInflater inflater;
     private JSONArray storeableNumbers;
     private JSONArray storeableNationalids = new JSONArray();
@@ -324,7 +328,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
          farmerCode = findViewById(R.id.farmerCode);
         read_consent_ll = findViewById(R.id.read_consent_ll);
-
+        add_farmer_ll = findViewById(R.id.add_farmer_ll);
+        update_farmer_ll = findViewById(R.id.update_farmer_ll);
          InputFilter lengthFilter = new InputFilter.LengthFilter(50);
          farmerName.setFilters(new InputFilter[]{LetterHypenFilter,blockPiFilter,lengthFilter});
          farmerCode.setFilters(new InputFilter[]{LetterDigitHyphenFilter,lengthFilter});
@@ -429,6 +434,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             ll_farmer_code.setVisibility(View.GONE);
             ll_farmer_holding.setVisibility(View.GONE);
             read_consent_ll.setVisibility(View.GONE);
+            update_farmer_ll.setVisibility(View.VISIBLE);
+            add_farmer_ll.setVisibility(View.GONE);
+        }else{
+            update_farmer_ll.setVisibility(View.GONE);
+            add_farmer_ll.setVisibility(View.VISIBLE);
         }
 
         if (isAddStakeHolder) {
@@ -458,7 +468,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             stakeHolderUiChanges(farmerNameMs, farmHoldingCodeMs, farmerIdMs, stakeHolder);
 
         }
-        else {
+        else if(editFarmerMode){
+            bindUpdateButton();
+            bindCancelButton();
+            addFarmerRegistrationUiChanges();
+        } else {
             bindSaveButton();
             bindConsentButton();
             addFarmerRegistrationUiChanges();
@@ -1071,12 +1085,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id ,subdistrict_id);
         }
 
-        if(!editMode || !editFarmerMode) {
-            if (!csStatus) {
-                Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
-                return values;
+        if(!editFarmerMode){
+            if(!editMode) {
+                if (!csStatus) {
+                    Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
+                    return values;
+                }
             }
         }
+
+
+
+
 
        if(!editFarmerMode){
            if (isNIDAvailable) {
@@ -2254,6 +2274,60 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                  }
              }
          });
+     }
+
+     private void bindUpdateButton() {
+         Button updateButton = findViewById(R.id.updateFarmer);
+
+         updateButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 if (duplicatePhoneNumberValidation()) {
+                     ContentValues values = validateValues();
+                     if (values.size() > 0) {
+
+                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                             ofisRoomDB.multiStakeHolderDao().updateFarmNameAndCode(editFarmerId, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME), values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE));
+                             // update farmer name
+                             EditText farmerName = findViewById(R.id.farmerName);
+                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                             String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+                             new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
+                             dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                             if (isNIDAvailable) {
+                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+                                 if (moduretationstatus) {
+                                     statusmoduration = true;
+                                 }
+                             }
+
+                             if (updFarmerId > 0) {
+                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
+                                 ViewFarmerActivity.farmerId = editFarmerId;
+                                 finish();
+                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
+                                 startActivity(intent);
+                             }
+
+                         if (statusmoduration) {
+                             Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
+                         }
+
+                     }
+                 }
+             }
+         });
+     }
+
+     private void bindCancelButton(){
+        Button btnCancel = findViewById(R.id.cancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                startActivity(intent);
+            }
+        });
      }
 
     private void bindCertificationNameSpinner(){
