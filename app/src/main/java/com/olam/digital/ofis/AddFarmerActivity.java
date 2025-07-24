@@ -435,7 +435,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             ll_farmer_holding.setVisibility(View.GONE);
             read_consent_ll.setVisibility(View.GONE);
             update_farmer_ll.setVisibility(View.VISIBLE);
+            setTitle("Edit Farmer Details");
             add_farmer_ll.setVisibility(View.GONE);
+            titleText.setText("Edit Farmer");
         }else{
             update_farmer_ll.setVisibility(View.GONE);
             add_farmer_ll.setVisibility(View.VISIBLE);
@@ -932,7 +934,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         String farmer_Code = farmerCode.getText().toString().trim();
 
         if(!editFarmerMode){
-            if(farmer_Code.length() > 0){
+            if(farmer_Code.length() > 0 && !editMode){
                 int count = dl.getFarmerCodeCount(farmer_Code);
                 if(count > 0){
                     Toast.makeText(context, R.string.farmer_code_already_exists, Toast.LENGTH_LONG).show();
@@ -1208,7 +1210,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            Cursor existingItem = dl.getFlattenedFarmer(editFarmerId);
+            if (existingItem.getCount() > 0) {
+                existingItem.moveToFirst();
+                if(editFarmerMode){
+                    values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID,(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID))));
+                }else{
+                    values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+                }
+            }
+
+
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
             Date parseDate = parseDate((dateStrToSend));
@@ -2286,14 +2298,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                      ContentValues values = validateValues();
                      if (values.size() > 0) {
 
-                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                             long updFarmerId = dl.updateEditFarmer(values, editFarmerId);
                              ofisRoomDB.multiStakeHolderDao().updateFarmNameAndCode(editFarmerId, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME), values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE));
                              // update farmer name
                              EditText farmerName = findViewById(R.id.farmerName);
                              String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                              String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                              new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
-                             dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                            // dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                              if (isNIDAvailable) {
                                  boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                  if (moduretationstatus) {

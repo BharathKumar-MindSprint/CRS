@@ -1333,7 +1333,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 AddInfrastructureActivity.infrastructureID = id;
                 AddInfrastructureActivity.editMode = true;
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("farmer")) {
+            } else if (itemType.equalsIgnoreCase("farmer") || itemType.equalsIgnoreCase("edit farmer") ) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
