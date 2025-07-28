@@ -1407,7 +1407,7 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    void updateFarmerPhoneNumbers(Long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName) {
+    void updateFarmerPhoneNumbers(Long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName, boolean isNoPhoneNumber) {
         String whereClause = columnName + " = ?";
         String[] whereArgs;
         if (Objects.equals(columnName, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID)){
@@ -1418,12 +1418,20 @@ public class DataLayer {
 
         try {
             db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
-            addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
+            if (!isNoPhoneNumber) {
+                addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
+            }
         }catch (Exception e){}
 
     }
 
     public boolean updateFarmerNationalids(Context context, Long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
+
+        deleteFarmerNationaId(columnName, id, stakeholderId);
+        return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
+    }
+
+    public void deleteFarmerNationaId(String columnName, Long id, String stakeholderId) {
         String whereClause;
         String[] whereArgs;
 
@@ -1436,7 +1444,6 @@ public class DataLayer {
         }
 
         db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
     }
 
     void updateCertificationsByFarmerId(long farmerId, String certificationIds, String certificationText, String farmerName) {
@@ -8510,5 +8517,25 @@ public class DataLayer {
             e.printStackTrace();
         }
         return plots;
+    }
+    public boolean getNationalOrPhoneNumberApplicable(long editFarmerId, String columnNameIsNoPhoneNumber) {
+        boolean isNoRequired = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    isNoRequired = Objects.equals(cursor.getString(cursor.getColumnIndex(columnNameIsNoPhoneNumber)), "true");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return isNoRequired;
     }
 }
