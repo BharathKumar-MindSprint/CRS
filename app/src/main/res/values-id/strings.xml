@@ -888,9 +888,6 @@
     <string name="stakeholder_not_synced">Maaf, tetapi stakeholder belum disinkronkan. Harap sinkronkan stakeholder terlebih dahulu</string>
     <string name="consent_not_synced">Maaf, tetapi persetujuan belum disinkronkan. Harap sinkronkan persetujuan terlebih dahulu</string>
     <string name="survey_already_synced">Survei ini sudah dijawab oleh enumerator lain. Harap simpan dan perbarui aplikasi OFIS Anda</string>
-    <string name="fill_phone_number">Please fill in the primary phone number</string>
-    <string name="select_primary_phone_number">please select primary phone number</string>
-    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">Pemasok dan survei</string>
     <string name="title_find_supplier_and_survey">Mencari pemasok</string>
@@ -924,5 +921,36 @@
     <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
     <string name="Alert_txt">Peringatan !</string>
 
+    <string name="fill_phone_number">Silakan isi nomor telepon utama</string>
+    <string name="select_primary_phone_number">silakan pilih nomor telepon utama</string>
+    <string name="error_msg_phone_number">* Nomor telepon utama sudah digunakan. Silakan masukkan nomor lain.</string>
+    <string name="error_msg_dup_national_id">ID nasional sudah digunakan. Silakan masukkan ID nasional yang berbeda.</string>
+    <string name="download_survey_data">Unduh Data</string>
+    <string name="download_polygon_data">Unduh Data Poligon</string>
+    <string name="plot_number">Petak %1$d</string>
+    <string name="plot_size_polygon">Ukuran petak - %1$.2fKB</string>
+    <string name="plot_pin">Pin Petak</string>
+    <string name="max_size_selection_plot">Batas maksimum tercapai. Silakan batalkan pilihan satu atau lebih item untuk melanjutkan</string>
+    <string name="no_plot_selected">Tidak ada petak yang dipilih</string>
+    <string name="done">Selesai</string>
+    <string name="download_successful">Unduhan Berhasil</string>
+    <string name="downloaded_plot_message">Petak yang diunduh dapat dilihat di bagian petak petani.</string>
+    <string name="download_polygon">Unduh Poligon</string>
+    <string name="ofis_olam_id">"ID OFIS: "</string>
+    <string name="selected_plot">"Petak Terpilih: "</string>
+    <string name="flag_for_deactivation">Nonaktifkan Petak</string>
+    <string name="reset_deactivation_text">Atur Ulang \nPetak Nonaktif</string>
+    <string name="flag_for_de_activation">Tandai untuk Dinonaktifkan</string>
+    <string name="deactivate_reason">Alasan Dinonaktifkan</string>
+    <string name="deactivation_reason">Alasan Dinonaktifkan..</string>
+    <string name="de_activation_reason_message">Silakan berikan alasan untuk menonaktifkan petak ini. \n<b>Catatan:</b> Permintaan Anda akan dikirim untuk persetujuan</string>
+    <string name="deactivation_pending">Menunggu persetujuan penonaktifan</string>
+    <string name="deactivation_successful">Penonaktifan Berhasil</string>
+    <string name="dialog_message">Apakah Anda yakin ingin mengatur ulang petak yang dinonaktifkan?</string>
+    <string name="reset_deactivation_plot">Atur Ulang Petak Nonaktif</string>
+    <string name="reason_error_msg">silakan masukkan alasan penonaktifan</string>
+    <string name="reset">Atur Ulang</string>
+    <string name="no_national_id">Tidak Ada ID Nasional yang Berlaku!</string>
+    <string name="no_phone_number">Tidak Ada Nomor Telepon yang Berlaku!</string>
 
 </resources>

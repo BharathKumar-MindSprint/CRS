@@ -1428,9 +1428,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="mandate_survey_not_synced">Sorry, but the mandatory survey has not yet been synced. Please sync the mandatory survey first</string>
     <string name="consent_not_synced">Sorry, but the consent has not yet been synced. Please sync the consent first</string>
     <string name="survey_already_synced">This survey has already been answered by another enumerator. Please Save and Update your OFIS app</string>
-    <string name="fill_phone_number">Please fill in the primary phone number</string>
-    <string name="select_primary_phone_number">please select primary phone number</string>
-    <string name="error_msg_phone_number">* The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">Supplier &amp; Surveys</string>
     <string name="title_find_supplier_and_survey">Find Supplier</string>
@@ -1456,6 +1453,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="enter_attendee_relation_name">Please enter the name of Attendee</string>
     <string name="sign_all_attendee">Signature required for all participants!</string>
 
+    <string name="fill_phone_number">Please fill in the primary phone number</string>
+    <string name="select_primary_phone_number">please select primary phone number</string>
+    <string name="error_msg_phone_number">* The primary phone number is already in use. Please enter a different phone number.</string>
     <string name="error_msg_dup_national_id">The national Id is already in use. Please enter a different national ID.</string>
 
     <string name="download_survey_data">Download Data</string>
