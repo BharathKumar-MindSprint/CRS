@@ -80,4 +80,6 @@ public interface IAPIConstants {
      String GET_CONDITIONAL_DETAILS = "ofissurvey/survey/questionnaire/conditionalQuestionDetails";
      String GET_POLYGON_DATA_BY_PLOT_ID = "ofisfarmer-data/farmerdata/polygonDataByPlotIds";
 
+    String POST_UPDATE_FARMER = "ofisfarmer/farmer/updateFarmerDetailsFromApp";
+
 }
