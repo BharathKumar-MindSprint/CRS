@@ -680,7 +680,7 @@ public class DataLayer {
     }
 
     long updateFarmer(ContentValues values, long farmerId) {
-        long district_id = values.getAsLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
+       long district_id = values.getAsLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
         values.remove(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
         int updated = 0;
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " = ?";
@@ -719,7 +719,7 @@ public class DataLayer {
 
 
     long updateEditFarmer(ContentValues values, long farmerId) {
-        long district_id = values.getAsLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
+       long district_id = values.getAsLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
         values.remove(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
         int updated = 0;
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " = ?";
@@ -801,7 +801,7 @@ public class DataLayer {
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND"
         + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{
-
+                submissionType,
                 String.valueOf(farmerId)
         };
         try {
@@ -824,6 +824,16 @@ public class DataLayer {
     }
 
     int updateNetworkQueueFarmPolygonEntry(ContentValues values, long farmerId) {
+        int updated = 0;
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        try {
+            updated = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){}
+        return updated;
+    }
+
+    int updateNetworkEditedFarmer(ContentValues values, long farmerId) {
         int updated = 0;
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};

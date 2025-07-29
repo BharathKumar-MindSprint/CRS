@@ -140,6 +140,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
 
+    private final static String  EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
+
     private static final String FARMER_ID = "FARMER_ID";
     private static final String FARM_ID = "FARM_ID";
     private static final String PLOT_COUNT = "PLOT_COUNT";
@@ -1333,11 +1335,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 AddInfrastructureActivity.infrastructureID = id;
                 AddInfrastructureActivity.editMode = true;
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("farmer") || itemType.equalsIgnoreCase("edit farmer") ) {
+            } else if (itemType.equalsIgnoreCase("farmer")  ) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 intent.putExtra(EDIT_MODE, true);
+                startActivity(intent);
+            }else if (itemType.equalsIgnoreCase("Edit farmer")  ) {
+                Intent intent = new Intent(this, AddFarmerActivity.class);
+                intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                intent.putExtra(EDIT_FARMER_MODE, true);
+                intent.putExtra("isHome",true);
                 startActivity(intent);
             }else if (itemType.equalsIgnoreCase("stakeholder")) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
