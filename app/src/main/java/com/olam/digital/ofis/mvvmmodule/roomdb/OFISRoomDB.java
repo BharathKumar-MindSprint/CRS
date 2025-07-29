@@ -2,11 +2,11 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.room.*;
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -55,7 +55,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
         Sections.class, Places.class, Products.class, Farmer.class,
         },
         version = 19,
-        autoMigrations ={@AutoMigration(from =18, to=19)}
+        autoMigrations ={@AutoMigration(from =18, to=19, spec = OFISRoomDB.DeleteTable.class)}
         )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -107,6 +107,12 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract ConditionalLogicDao conditionalLogicDao();
     public abstract ConditionalTypeDao conditionalTypeDao();
 
+    @androidx.room.DeleteTable.Entries({
+            @androidx.room.DeleteTable(tableName = "PolygonHistoryData"),
+            @androidx.room.DeleteTable(tableName = "PolygonPlotHistory")
+    })
+    static class DeleteTable implements AutoMigrationSpec { }
+
     public static volatile OFISRoomDB INSTANCE = null;
 
 
@@ -120,17 +126,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
-        final Migration MIGRATION_18_19 = new Migration(18, 19) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("DROP TABLE IF EXISTS 'PolygonHistoryData'");
-            }
-        };
-
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_16_17, MIGRATION_18_19)
+                    .addMigrations(MIGRATION_16_17)
                     .fallbackToDestructiveMigration()
                     .build();
         }
