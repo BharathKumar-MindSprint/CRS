@@ -809,5 +809,7 @@
 
     <string name="enter_attendee_relation_name">กรุณาใส่ชื่อผู้เข้าร่วม</string>
     <string name="sign_all_attendee">ต้องการลายเซ็นสำหรับผู้เข้าร่วมทุกคน!</string>
+    <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
+    <string name="Alert_txt">เตือน !</string>
 
 </resources>

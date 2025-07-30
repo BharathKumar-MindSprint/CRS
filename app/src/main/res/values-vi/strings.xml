@@ -812,5 +812,7 @@
 
     <string name="enter_attendee_relation_name">Vui lòng nhập tên người tham dự</string>
     <string name="sign_all_attendee">Chữ ký cần thiết cho tất cả các thành viên tham gia!</string>
+    <string name="Please_check_the_Internet_Connection">Vui lòng kiểm tra kết nối Internet</string>
+    <string name="Alert_txt">Báo động !</string>
 
 </resources>

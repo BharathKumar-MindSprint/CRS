@@ -766,4 +766,6 @@
     <string name="ready_to_download_photo_checkbox">มีรูปภาพที่ต้องดาวน์โหลดสำหรับคำถามในช่องทำเครื่องหมายรูปภาพ คุณต้องการดาวน์โหลดภาพต่อไปหรือไม่?</string>
     <string name="no_images_to_be_downloaded">ไม่มีรูปภาพให้ดาวน์โหลด</string>
     <string name="image_downloaded">ดาวน์โหลดรูปภาพสําเร็จแล้ว</string>
+    <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
+    <string name="Alert_txt">การแจ้งเตือน</string>
 </resources>

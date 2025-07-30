@@ -776,4 +776,6 @@
     <string name="ready_to_download_photo_checkbox">Ada gambar yang perlu diunduh untuk pertanyaan kotak centang foto. Apakah Anda ingin terus mendownload gambar sekarang?</string>
     <string name="no_images_to_be_downloaded">Tidak ada gambar yang dapat diunduh</string>
     <string name="image_downloaded">Gambar berhasil diunduh</string>
+    <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
+    <string name="Alert_txt">Peringatan !</string>
 </resources>
