@@ -4373,6 +4373,16 @@ public class DataLayer {
 
     }
 
+
+    void deleteNetworkFarmerQueueItem(long farmerId,String type) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?  AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        try {
+            db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
     void updatePlacelocalupdate() {
         ContentValues newValues = new ContentValues();
         newValues.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "VILLAGE");
@@ -4588,6 +4598,14 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
+    }
+
+    Cursor getEditedFarmerIds() {
+        String[] columns = new String[]{"farmer_id"};
+        String whereClause = "submission_type = ?";
+        String[] whereArgs = new String[]{"Edit Farmer"};
+
+        return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
     Cursor getFarmerModuleById(int itemId) {
         String[] columns = new String[]{"*"};
