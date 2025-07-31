@@ -162,7 +162,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
-    private boolean syncOptionAll;
+    public static boolean syncOptionAll;
     private int itemId;
     public static int totalItems;
     public static int progressItem;
