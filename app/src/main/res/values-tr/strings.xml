@@ -855,6 +855,8 @@
     <string name="reset">Sıfırla</string>
     <string name="no_national_id">Geçerli bir ulusal kimlik yok!</string>
     <string name="no_phone_number">Geçerli bir telefon numarası yok!</string>
+    <string name="invalid_national_id">Geçersiz Ulusal Kimlik!</string>
+    <string name="invalid_phonenumber">Geçersiz Telefon Numarası!</string>
 
 
 </resources>

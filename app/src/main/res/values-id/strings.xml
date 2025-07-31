@@ -952,5 +952,7 @@
     <string name="reset">Atur Ulang</string>
     <string name="no_national_id">Tidak Ada ID Nasional yang Berlaku!</string>
     <string name="no_phone_number">Tidak Ada Nomor Telepon yang Berlaku!</string>
+    <string name="invalid_national_id">ID Nasional tidak valid!</string>
+    <string name="invalid_phonenumber">Nomor telepon tidak valid!</string>
 
 </resources>

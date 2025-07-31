@@ -1282,5 +1282,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="reset">Réinitialiser</string>
     <string name="no_national_id">Aucun identifiant national applicable !</string>
     <string name="no_phone_number">Aucun numéro de téléphone applicable !</string>
+    <string name="invalid_national_id">Identifiant national invalide !</string>
+    <string name="invalid_phonenumber">Numéro de téléphone invalide !</string>
 
 </resources>

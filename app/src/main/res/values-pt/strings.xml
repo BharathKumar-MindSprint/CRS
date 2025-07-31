@@ -960,7 +960,8 @@
     <string name="reset">Redefinir</string>
     <string name="no_national_id">Nenhum ID nacional aplicável!</string>
     <string name="no_phone_number">Nenhum número de telefone aplicável!</string>
-
+    <string name="invalid_national_id">Identificação nacional inválida!</string>
+    <string name="invalid_phonenumber">Número de telefone inválido!</string>
 
 </resources>
 

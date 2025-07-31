@@ -953,7 +953,8 @@
     <string name="reset">Restablecer</string>
     <string name="no_national_id">¡No hay ID nacional aplicable!</string>
     <string name="no_phone_number">¡No hay número de teléfono aplicable!</string>
-
+    <string name="invalid_national_id">¡Identificación nacional inválida!</string>
+    <string name="invalid_phonenumber">¡Número de teléfono inválido!</string>
 
 </resources>
 

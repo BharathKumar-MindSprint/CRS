@@ -1485,4 +1485,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="reset">Reset</string>
     <string name="farmer_code_already_exists">"Farmer code already exists"</string>
     <string name="farmer_code">"Farmer Code"</string>
+    <string name="invalid_national_id">Invalid National Id!</string>
+    <string name="invalid_phonenumber">Invalid Phone Number!</string>
 </resources>

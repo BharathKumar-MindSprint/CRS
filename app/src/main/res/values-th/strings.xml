@@ -853,6 +853,7 @@
     <string name="reset">รีเซ็ต</string>
     <string name="no_national_id">ไม่มีรหัสประจำตัวประชาชนที่ใช้ได้!</string>
     <string name="no_phone_number">ไม่มีหมายเลขโทรศัพท์ที่ใช้ได้!</string>
-
+    <string name="invalid_national_id">รหัสประจำตัวประชาชนไม่ถูกต้อง!</string>
+    <string name="invalid_phonenumber">หมายเลขโทรศัพท์ไม่ถูกต้อง!</string>
 
 </resources>

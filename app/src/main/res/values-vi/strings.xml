@@ -858,5 +858,7 @@
     <string name="reset">Đặt lại</string>
     <string name="no_national_id">Không có CMND hợp lệ!</string>
     <string name="no_phone_number">Không có số điện thoại hợp lệ!</string>
+    <string name="invalid_national_id">Mã số quốc gia không hợp lệ!</string>
+    <string name="invalid_phonenumber">Số điện thoại không hợp lệ!</string>
 
 </resources>
