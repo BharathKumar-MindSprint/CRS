@@ -1062,6 +1062,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ENTER_NID)) {
                 Toast.makeText(this, getResources().getString(R.string.enter_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
+            } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ONLY_ZERO_VALUE)) {
+                Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
+                return values;
             }
             if (!ValidateNIDValues()) {
                 return values;
@@ -1130,6 +1133,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     boolean isPrimaryNumber = primary_number.isChecked();
                     if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
                         Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
+                        return new ContentValues();
+                    }
+                    if (phoneNumberValue.matches("0+")) {
+                        Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.invalid_phonenumber), Toast.LENGTH_SHORT).show();
                         return new ContentValues();
                     }
                     try {
@@ -1279,6 +1286,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                  return null;
              } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(LIMIT_XED)) {
                  Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                 return null;
+             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ONLY_ZERO_VALUE)) {
+                 Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
                  return null;
              }
 

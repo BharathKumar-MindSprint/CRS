@@ -3882,7 +3882,7 @@ public class DynamicQuestions {
         final Integer[] selectedGlobalID = {0};
         // Create an inner wrapper
         LinearLayout innerWrapper = new LinearLayout(context);
-        innerWrapper.setId(R.id.linearLayout);
+        innerWrapper.setId(R.id.linear);
         LinearLayout.LayoutParams innerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -8113,7 +8113,7 @@ public class DynamicQuestions {
                 //radioGroup.clearCheck();
             }
             case "dropdown", "repeater", "yesno" -> {
-                LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
+                LinearLayout linearLayout = view.findViewById(R.id.linear);
                 Spinner spinner = linearLayout != null ? linearLayout.findViewById(R.id.spinner) : view.findViewById(R.id.spinner);
                 spinner.setSelection(0);
             }

@@ -860,6 +860,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ENTER_NID)) {
                 Toast.makeText(this, getResources().getString(R.string.enter_nationalids), Toast.LENGTH_SHORT).show();
                 return;
+            } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ONLY_ZERO_VALUE)) {
+                Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
+                return;
             }
 
             boolean isDuplicate = Utilities.isDuplicateNationalId(existingNationalId, enteredNationalId);

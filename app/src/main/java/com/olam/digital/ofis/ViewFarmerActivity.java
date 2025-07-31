@@ -19,8 +19,10 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.ParseException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -720,7 +722,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     String[] PERMISSIONS = new String[] {
-                            android.Manifest.permission.CAMERA,
+                            Manifest.permission.CAMERA,
                             Manifest.permission.READ_MEDIA_IMAGES
                     };
 
@@ -732,7 +734,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
                 else {
                     String[] PERMISSIONS = new String[] {
-                            android.Manifest.permission.CAMERA,
+                            Manifest.permission.CAMERA,
                             Manifest.permission.READ_EXTERNAL_STORAGE
                     };
 
@@ -2080,7 +2082,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int phoneRowsCount = phonenumbers.getChildCount();
                     Cursor fullFarmer = dl.getFlattenedFarmer(farmerId);
                     JSONArray storeableNumbers = new JSONArray();
-                    boolean isDuplicate = false;
+                    boolean isDuplicate = false, isNumberZero = false;
 
                     for (int j = 0; j < phoneRowsCount; j++) {
                         LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
@@ -2096,7 +2098,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 isDuplicate = true;
                                 break;
                             }
-
+                            if (phoneNumberValue.matches("0+")) {
+                                Toast.makeText(ViewFarmerActivity.this, getResources().getString(R.string.invalid_phonenumber), Toast.LENGTH_SHORT).show();
+                                isNumberZero = true;
+                                break;
+                            }
                             try {
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
@@ -2109,7 +2115,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         }
                     }
 
-                    if (isDuplicate) {
+                    if (isDuplicate || isNumberZero) {
                         return;
                     }
                     dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID, false);
@@ -2294,7 +2300,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.parse("package:" + context.getPackageName())));
                     }
                 })
@@ -2830,7 +2836,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 if (followUpDuration != null) {
                     endFollowUpDurationDate = dateFormat.parse(followUpDuration);
                 }
-            } catch (android.net.ParseException | java.text.ParseException e) {
+            } catch (ParseException | java.text.ParseException e) {
                 e.printStackTrace();
             }
 
@@ -2976,7 +2982,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         btnYes.setText(res.getString(R.string.start_now));
         btnNo.setText(res.getString(R.string.skip));
         AlertDialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCancelable(false);
 
         btnYes.setOnClickListener(new View.OnClickListener() {

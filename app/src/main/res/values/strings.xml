@@ -1483,7 +1483,10 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="reset_deactivation_plot">Reset Deactivated Plot</string>
     <string name="reason_error_msg">please enter deactivation reason</string>
     <string name="reset">Reset</string>
-
+    <string name="farmer_code_already_exists">"Farmer code already exists"</string>
+    <string name="farmer_code">"Farmer Code"</string>
+    <string name="invalid_national_id">Invalid National Id!</string>
+    <string name="invalid_phonenumber">Invalid Phone Number!</string>
     <string name="no_national_id">No National Id Applicable!</string>
     <string name="no_phone_number">No Phone Number Applicable!</string>
 </resources>
