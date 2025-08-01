@@ -113,7 +113,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private GPSTracker gpsTracker = null;
     GPSListener gpsListener = null;
 
-    boolean isUpdateNationalIdAvailable;
+    boolean isUpdateNationalIdAvailable, availableStatus;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
     private TextView national_id_error_msg;
@@ -161,8 +161,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         isSynced = dl.getSyncedStatus(farmerId);
         isUpdateNationalIdAvailable = dl.isUpdateNationalIdAvailable(farmerId);
 
-        boolean availstatus = dl.isValueavailable(farmerId);
-        this.setTitle(res.getString(availstatus ? R.string.update_nationalid : R.string.add_nationalid));
+        availableStatus = dl.isValueavailable(farmerId);
+        this.setTitle(res.getString(availableStatus ? R.string.update_nationalid : R.string.add_nationalid));
 
 
         if (!editmode) {
@@ -872,7 +872,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             }
             storeableNationalids = fetchnationalidvalues();
             boolean statusmoduration;
-            if (isUpdateNationalIdAvailable) {
+            if (isUpdateNationalIdAvailable || availableStatus) {
                 statusmoduration = dl.updateFarmerNationalids(context, farmerId, null, storeableNationalids, "updateNationalId", farmername, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             }
             else {
@@ -1143,9 +1143,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_NATIONALID_PIC_PERMISSIONS_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 bindFarmerNationalIDButton();
-            } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]) || !shouldShowRequestPermissionRationale(permissions[1]))) {
+            } else if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(permissions[0])) {
                 showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
             } else {
                 Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
