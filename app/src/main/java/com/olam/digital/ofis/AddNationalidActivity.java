@@ -371,6 +371,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         if (farmerId != 0) {
             Cursor nids = dl.getnationalidsbyfarmerids(farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
             ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+            if(nids.getCount() > 9){
+                addNationId.setVisibility(View.GONE);
+            }
             try {
                 int i = 0;
                 while (nids.moveToNext()) {
@@ -739,9 +742,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         nationalids = findViewById(R.id.nationalids);
         addNationId = findViewById(R.id.addnid);
         save = findViewById(R.id.save);
-        if (nationalIdCount == 9) {
-            addNationId.setVisibility(View.GONE);
-        }
+
+//        if (nationalIdCount > 2) {
+//            addNationId.setVisibility(View.GONE);
+//        }
         save.setOnClickListener(this);
         addNationId.setOnClickListener(this);
     }
@@ -904,6 +908,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 return;
             } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ENTER_NID)) {
                 Toast.makeText(this, getResources().getString(R.string.enter_nationalids), Toast.LENGTH_SHORT).show();
+                return;
+            } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ONLY_ZERO_VALUE)) {
+                Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
                 return;
             }
 
