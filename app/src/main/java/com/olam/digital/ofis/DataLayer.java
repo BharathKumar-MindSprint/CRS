@@ -1288,7 +1288,7 @@ public class DataLayer {
 
     public boolean addFarmerNationalids(Context context, Long farmerId, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
         int arrayLength = storeableNationalids.length();
-        if (status.equalsIgnoreCase("2")) {
+        if (status.equalsIgnoreCase("2") || status.equals("updateNationalId")) {
             deleteExistingNationalIdFromNq(context, farmerId);
         }
         boolean moderationstatus = false;

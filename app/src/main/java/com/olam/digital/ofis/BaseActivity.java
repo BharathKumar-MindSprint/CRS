@@ -407,7 +407,7 @@ public class BaseActivity extends AppCompatActivity {
             String nid = nidnumber.getText().toString();
             int limit = getNidLimit(value);
 
-            if (nid.matches("0+")) {
+            if (nid.replaceAll("\\s", "").matches("0+")) {
                 typeadded = ONLY_ZERO_VALUE;
             }
 
