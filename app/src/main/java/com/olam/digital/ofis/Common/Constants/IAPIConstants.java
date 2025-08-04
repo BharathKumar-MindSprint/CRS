@@ -82,4 +82,6 @@ public interface IAPIConstants {
 
     String POST_UPDATE_FARMER = "ofisfarmer/farmer/updateFarmerDetailsFromApp";
 
+    String SAVE_UPDATE_PHONE_NATIONAL = "ofisfarmer/farmer/saveOrUpdatePhNumAndNatId";
+
 }

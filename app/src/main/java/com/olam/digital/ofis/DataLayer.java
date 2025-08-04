@@ -4607,6 +4607,14 @@ public class DataLayer {
 
         return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+
+    Cursor getEditedFarmerPhoneIds() {
+        String[] columns = new String[]{"farmer_id"};
+        String whereClause = "submission_type = ?";
+        String[] whereArgs = new String[]{"phonenumbers"};
+
+        return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
     Cursor getFarmerModuleById(int itemId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " = ?";
