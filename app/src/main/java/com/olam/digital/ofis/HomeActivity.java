@@ -779,7 +779,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     }
-                    enableSync();
                 }
             };
             farmerSynced = true;

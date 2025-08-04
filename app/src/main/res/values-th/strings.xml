@@ -788,9 +788,6 @@
     <string name="stakeholder_not_synced">ขออภัย แต่ stakeholder ยังไม่ได้รับการซิงค์ กรุณาซิงค์ stakeholder ก่อน</string>
     <string name="consent_not_synced">ขออภัย แต่การยินยอมยังไม่ได้รับการซิงค์ กรุณาซิงค์การยินยอมก่อน</string>
     <string name="survey_already_synced">แบบสำรวจนี้ได้รับการตอบโดยผู้สำรวจคนอื่นแล้ว กรุณาบันทึกและอัปเดตแอป OFIS ของคุณ</string>
-    <string name="fill_phone_number">Please fill in the primary phone number</string>
-    <string name="select_primary_phone_number">please select primary phone number</string>
-    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">ซัพพลายเออร์และการสำรวจ</string>
     <string name="title_find_supplier_and_survey">ค้นหาซัพพลายเออร์</string>
@@ -824,5 +821,39 @@
     <string name="sign_all_attendee">ต้องการลายเซ็นสำหรับผู้เข้าร่วมทุกคน!</string>
     <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
     <string name="Alert_txt">เตือน !</string>
+
+    <string name="fill_phone_number">กรุณากรอกหมายเลขโทรศัพท์หลัก</string>
+    <string name="select_primary_phone_number">กรุณาเลือกหมายเลขโทรศัพท์หลัก</string>
+    <string name="error_msg_phone_number">* หมายเลขโทรศัพท์หลักถูกใช้งานแล้ว กรุณากรอกหมายเลขอื่น</string>
+    <string name="error_msg_dup_national_id">รหัสประจำตัวประชาชนถูกใช้งานแล้ว กรุณากรอกรหัสอื่น</string>
+    <string name="download_survey_data">ดาวน์โหลดข้อมูล</string>
+    <string name="download_polygon_data">ดาวน์โหลดข้อมูลรูปหลายเหลี่ยม</string>
+    <string name="plot_number">แปลง %1$d</string>
+    <string name="plot_size_polygon">ขนาดแปลง - %1$.2fKB</string>
+    <string name="plot_pin">รหัสแปลง</string>
+    <string name="max_size_selection_plot">ถึงขีดจำกัดการเลือก กรุณายกเลิกการเลือกบางรายการเพื่อดำเนินการต่อ</string>
+    <string name="no_plot_selected">ยังไม่ได้เลือกแปลง</string>
+    <string name="done">เสร็จสิ้น</string>
+    <string name="download_successful">ดาวน์โหลดสำเร็จ</string>
+    <string name="downloaded_plot_message">สามารถดูแปลงที่ดาวน์โหลดได้ในส่วนแปลงของเกษตรกร</string>
+    <string name="download_polygon">ดาวน์โหลดรูปหลายเหลี่ยม</string>
+    <string name="ofis_olam_id">"รหัส OFIS: "</string>
+    <string name="selected_plot">"แปลงที่เลือก: "</string>
+    <string name="flag_for_deactivation">ปิดใช้งานแปลง</string>
+    <string name="reset_deactivation_text">รีเซ็ต \nแปลงที่ปิดใช้งาน</string>
+    <string name="flag_for_de_activation">ตั้งค่าสถานะเพื่อปิดใช้งาน</string>
+    <string name="deactivate_reason">เหตุผลในการปิดใช้งาน</string>
+    <string name="deactivation_reason">เหตุผลในการปิดใช้งาน..</string>
+    <string name="de_activation_reason_message">กรุณาระบุเหตุผลในการปิดใช้งานแปลงนี้ \n<b>หมายเหตุ:</b> คำขอของคุณจะถูกส่งเพื่อขออนุมัติ</string>
+    <string name="deactivation_pending">รอการอนุมัติการปิดใช้งาน</string>
+    <string name="deactivation_successful">ปิดใช้งานสำเร็จ</string>
+    <string name="dialog_message">คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ตแปลงที่ปิดใช้งาน?</string>
+    <string name="reset_deactivation_plot">รีเซ็ตแปลงที่ปิดใช้งาน</string>
+    <string name="reason_error_msg">กรุณากรอกเหตุผลในการปิดใช้งาน</string>
+    <string name="reset">รีเซ็ต</string>
+    <string name="no_national_id">ไม่มีรหัสประจำตัวประชาชนที่ใช้ได้!</string>
+    <string name="no_phone_number">ไม่มีหมายเลขโทรศัพท์ที่ใช้ได้!</string>
+    <string name="invalid_national_id">รหัสประจำตัวประชาชนไม่ถูกต้อง!</string>
+    <string name="invalid_phonenumber">หมายเลขโทรศัพท์ไม่ถูกต้อง!</string>
 
 </resources>
