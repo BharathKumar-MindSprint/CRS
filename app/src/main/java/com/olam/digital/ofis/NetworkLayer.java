@@ -685,7 +685,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             syncCapturedTraineeSign(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("phonenumbers")) {
           //  postPhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId);
-            postUpdatePhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId,true);
+            postUpdatePhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId,true,false);
         } else if (itemType.equalsIgnoreCase("farmer_photo")) {
             //JIRA req OW-505
             postFarmerPhoto(networkQueueItemId, handler, msg, total, progress, itemId);
@@ -700,9 +700,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else if (itemType.equalsIgnoreCase("certification")) {
             postCertificationDetails(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("National_ID")) {
-            postFarmerNationalids(networkQueueItemId, handler, msg, total, progress, itemId);
+            postUpdatePhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId,false,true);
+           // postFarmerNationalids(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("Update_ID")) {
-            postUpdateFarmerNationalIds(networkQueueItemId, handler, msg, total, progress, itemId);
+            postUpdatePhoneNumbers(networkQueueItemId, handler, msg, total, progress, itemId,false,true);
+            //postUpdateFarmerNationalIds(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("gps_track")) {
             postGpsNetworkQueue(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("Household")) {
@@ -6374,7 +6376,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
-    private void postUpdatePhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId,boolean isPhoneNumber) {
+    private void postUpdatePhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId,boolean isPhoneNumber,boolean isNationalId) {
         Cursor cursor = dl.getEditedFarmerPhoneIds();
 //        boolean isConsentError = false;
 //        boolean isMandatoryError = false;
