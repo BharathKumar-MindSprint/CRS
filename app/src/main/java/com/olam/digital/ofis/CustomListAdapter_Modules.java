@@ -29,6 +29,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
@@ -246,27 +247,30 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                             if (currentDate.after(lastReccurenceEndDate) && !areDatesEqual(currentDate,startDateMain) ){
                                 db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId), 0);
                                 db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
+                                db.dmSurveyReportDao().delete(moduleId, farmerId, 0);
                             }
                         }
 
                         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                        DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(farmerId, moduleId, 0);
+                        boolean allEmpty = true;
+
                         if (!dmSurveyAnswerTableList.isEmpty()) {
-                            boolean allEmpty = true;
                             for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
                                 if (!Objects.equals(answerTable.actionPlanText, "")) {
                                     allEmpty = false;
                                     break;
                                 }
                             }
-
-                            if (allEmpty) {
-                                moduleWithActionPlan = false;
-                                moduleWithoutActionPlan = true;
-                            } else {
-                                moduleWithActionPlan = true;
-                                moduleWithoutActionPlan = false;
+                        }
+                        else {
+                            if (dmSurveyReport != null && dmSurveyReport.getFollowUpCount() >= 1) {
+                                allEmpty = false;
                             }
                         }
+
+                        moduleWithActionPlan = !allEmpty;
+                        moduleWithoutActionPlan = allEmpty;
 
                         if (startDateMain!=null){
                             if (!disableSurveyForNCF) {
@@ -286,7 +290,8 @@ CustomListAdapter_Modules extends SimpleCursorAdapter {
                                     textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                                 }
 
-                                if(!dmSurveyAnswerTableList.isEmpty() && moduleWithActionPlan){
+
+                                if(moduleWithActionPlan) {
                                     textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                                 }else{
                                     textView.setText(res.getString(R.string.dm_hint_txt));

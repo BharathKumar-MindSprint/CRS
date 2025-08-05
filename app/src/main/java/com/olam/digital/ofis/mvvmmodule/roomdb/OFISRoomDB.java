@@ -78,8 +78,8 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.Poly
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
         Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
         DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class},
-        version = 18,
-        autoMigrations = {@AutoMigration(from = 17, to = 18)}
+        version = 19,
+        autoMigrations = {@AutoMigration(from = 18, to = 19)}
         )
 
 public abstract class OFISRoomDB extends RoomDatabase {

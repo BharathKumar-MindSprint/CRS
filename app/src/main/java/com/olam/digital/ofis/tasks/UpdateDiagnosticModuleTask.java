@@ -850,6 +850,10 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                 int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
                                 int moduleId = existingModuleItemArrayList.get(k).getModuleId();
                                 int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
+                                int followUpCount = existingModuleItemArrayList.get(k).getFollowUpCount();
+                                String isFollowUpCompleted = existingModuleItemArrayList.get(k).getIsFollowUpCompleted();
+                                String firstFollowupDate = existingModuleItemArrayList.get(k).getFirstFollowupDate();
+
                                 ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
                                 answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
                                 Result result = existingModuleItemArrayList.get(k).getResult();
@@ -896,7 +900,7 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                         currencyId,
                                         submissionDate,
                                         result.getResultColour(),
-                                        result.getOverAllResult(), 0);
+                                        result.getOverAllResult(), 0, followUpCount, isFollowUpCompleted, firstFollowupDate);
                                 roomDB.dmSurveyReportDao().insert(dmSurveyReport);
                             }
                         }

@@ -5295,11 +5295,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             ans.put("status", followupList.get(i).status);
                             ans.put("complianceId", followupList.get(i).complianceId);
 
-                            List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
-
-                            complaintFileTableList.clear();
-
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt, plotId);
+                            List<DmComplaintFileTable> complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt, plotId);
 
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
@@ -5327,6 +5323,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         JSONObject jsonObject = jsonArray.getJSONObject(0);
                                         String errorCode = jsonObject.optString("errorCode");
                                         String errorItem = jsonObject.optString("error");
+                                        String createdAt = jsonObject.optString("createdAt");
                                         if (errorCode != null) {
                                             if (errorCode.equalsIgnoreCase("3035")) {
                                                 handler.postDelayed(() -> {
@@ -5337,6 +5334,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             }
                                         }
                                         db.followUpItemMainTableDao().updateSyncStatus(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                                        DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(farmerId, moduleId, 0);
+                                        if (dmSurveyReport != null) {
+                                            db.dmSurveyReportDao().updateFollowUpCount(farmerId, moduleId, 0, dmSurveyReport.getFollowUpCount() != null ? dmSurveyReport.getFollowUpCount() + 1 : 1, "false",(dmSurveyReport.getFirstFollowupDate()==null || dmSurveyReport.getFirstFollowupDate().isEmpty())?createdAt:dmSurveyReport.getFirstFollowupDate());
+                                        }
                                     }
 
                                     dl.deleteNetworkQueueItem(networkQueueItemId);
