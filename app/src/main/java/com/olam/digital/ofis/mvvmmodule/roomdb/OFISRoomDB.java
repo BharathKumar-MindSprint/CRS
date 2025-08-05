@@ -45,17 +45,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
         DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
         FollowUpItemMainTable.class, FollowUpAnswerTable.class,
         DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class, ConditionalLogic.class, ConditionalType.class,
-        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-        AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-        Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
-        Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-        FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-        Sections.class, Places.class, Products.class, Farmer.class,
-        },
+        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
+        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class},
         version = 19,
-        autoMigrations ={@AutoMigration(from =18, to=19, spec = OFISRoomDB.DeleteTable.class)}
+        autoMigrations = {@AutoMigration(from = 18, to = 19)}
         )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
