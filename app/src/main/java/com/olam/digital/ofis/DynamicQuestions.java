@@ -818,12 +818,23 @@ public class DynamicQuestions {
 
         // get List from Answered List
         ArrayList<Integer> answeredQuestionList = new ArrayList<>();
-        for (int i = 0; i < answerSet.size(); i++) {
-            JSONObject currentAnswer = answerSet.get(i);
+        List<JSONObject> removeAnswer = new ArrayList<>();
+
+        for (JSONObject currentAnswer : answerSet) {
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
-                answeredQuestionList.add(currentQuestionId);
+                boolean isVisible = viewReference.containsKey(currentQuestionId) && viewReference.get(currentQuestionId).second.getVisibility() == View.VISIBLE;
+                if (isVisible) {
+                    answeredQuestionList.add(currentQuestionId);
+                }
+                else {
+                    removeAnswer.add(currentAnswer);
+                }
             }
+        }
+
+        for (JSONObject answer : removeAnswer) {
+            answerSet.remove(answer);
         }
 
         //For repeater Items mandate check
