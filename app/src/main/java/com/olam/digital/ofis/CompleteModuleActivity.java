@@ -1232,7 +1232,6 @@ public class CompleteModuleActivity extends BaseActivity {
         dynamicQuestions.renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String isConditionalValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION));
 
         int answerIdTemp = 0;
         final int answerId = answerIdTemp;
