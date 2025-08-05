@@ -818,12 +818,23 @@ public class DynamicQuestions {
 
         // get List from Answered List
         ArrayList<Integer> answeredQuestionList = new ArrayList<>();
-        for (int i = 0; i < answerSet.size(); i++) {
-            JSONObject currentAnswer = answerSet.get(i);
+        List<JSONObject> removeAnswer = new ArrayList<>();
+
+        for (JSONObject currentAnswer : answerSet) {
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
-                answeredQuestionList.add(currentQuestionId);
+                boolean isVisible = viewReference.containsKey(currentQuestionId) && viewReference.get(currentQuestionId).second.getVisibility() == View.VISIBLE;
+                if (isVisible) {
+                    answeredQuestionList.add(currentQuestionId);
+                }
+                else {
+                    removeAnswer.add(currentAnswer);
+                }
             }
+        }
+
+        for (JSONObject answer : removeAnswer) {
+            answerSet.remove(answer);
         }
 
         //For repeater Items mandate check
@@ -1302,9 +1313,6 @@ public class DynamicQuestions {
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
         final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
-        final String isConditionalValue = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION));
-        final boolean isConditionalQuestion = isConditionalValue != null && isConditionalValue.equalsIgnoreCase("true");
-
 
         String oldDatatype = null;
         String datatype = null;
@@ -1389,7 +1397,7 @@ public class DynamicQuestions {
                                 Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU);
 
                     } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                     }
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
@@ -1402,10 +1410,10 @@ public class DynamicQuestions {
                                 Utilities.REQUEST_PERMISSIONS_FOR_M);
 
                     } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
+                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                     }
                 } else {
-                    bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, isConditionalQuestion);
+                    bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                 }
             }
         });
@@ -1420,7 +1428,7 @@ public class DynamicQuestions {
     }
 
 
-    private void bindFarmerPhotoButton(ImageView mCurrentImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String finalDatatype, boolean isConditionalQuestion) {
+    private void bindFarmerPhotoButton(ImageView mCurrentImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String finalDatatype) {
         final CharSequence[] items = {context.getString(R.string.Camera), context.getString(R.string.Gallery)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
