@@ -955,6 +955,8 @@
     <string name="no_phone_number">¡No hay número de teléfono aplicable!</string>
     <string name="invalid_national_id">¡Identificación nacional inválida!</string>
     <string name="invalid_phonenumber">¡Número de teléfono inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
+    <string name="Alert_txt">Alerta !</string>
 
 </resources>
 

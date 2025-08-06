@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
-    tools:context="com.olam.digital.ofis.FindFarmerActivity"
     android:id="@+id/layout_find_farmer"
     tools:ignore="Overdraw">
 
