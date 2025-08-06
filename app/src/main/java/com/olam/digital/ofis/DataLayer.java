@@ -4608,7 +4608,7 @@ public class DataLayer {
     }
 
     Cursor getEditedFarmerPhoneIds() {
-        String[] columns = new String[]{"farmer_id"};
+        String[] columns = new String[]{"*"};
         String whereClause = "submission_type = ?";
         String[] whereArgs = new String[]{"phonenumbers"};
 
