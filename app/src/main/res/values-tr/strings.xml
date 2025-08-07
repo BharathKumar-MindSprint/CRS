@@ -858,5 +858,7 @@
     <string name="invalid_national_id">Geçersiz Ulusal Kimlik!</string>
     <string name="invalid_phonenumber">Geçersiz Telefon Numarası!</string>
 
+    <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
+    <string name="Alert_txt">Uyarı !</string>
 
 </resources>

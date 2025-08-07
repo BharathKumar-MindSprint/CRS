@@ -2020,7 +2020,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         String name = "Plot 0";
         position = position + 1;
         
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false, false);
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -2055,7 +2055,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public boolean isSyncedPlot(int position){
         boolean status = false;
         position = position + 1;
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false, false);
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -2074,7 +2074,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public PolygonDataDto getPlotId(int position) {
         position = position + 1;
         
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false, true);
         PolygonDataDto.Builder polygonDataBuilder = new PolygonDataDto.Builder();
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
@@ -2101,7 +2101,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void loadPlotLayout(LayoutInflater inflater) {
         
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId), false, false);
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {

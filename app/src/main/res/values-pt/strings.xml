@@ -962,6 +962,8 @@
     <string name="no_phone_number">Nenhum número de telefone aplicável!</string>
     <string name="invalid_national_id">Identificação nacional inválida!</string>
     <string name="invalid_phonenumber">Número de telefone inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
+    <string name="Alert_txt">Alerta!</string>
 
 </resources>
 

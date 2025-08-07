@@ -284,8 +284,32 @@ public class DataLayer {
 
     }
 
-    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon) {
-        String[] columns = new String[]{"*"};
+    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon, boolean isAllColumn) {
+        String[] columns = new String[]{
+                OFISDBContract.PlotEntry.COLUMN_NAME_ID,
+                OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME,
+                OFISDBContract.PlotEntry.COLUMN_IS_SYNCED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS,
+                OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE,
+                OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG,
+                OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA
+        };
+
+        if (isAllColumn) {
+            columns = new String[]{"*"};
+        }
         String whereClause = isDownloadPolygon ? OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? " : OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String[] whereArgs = isDownloadPolygon ? new String[]{String.valueOf(id), "1"} : new String[]{String.valueOf(id)};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -293,7 +317,9 @@ public class DataLayer {
     }
 
     public Cursor syncedPlotIds(String id) {
-        String[] columns = new String[]{"*"};
+        String[] columns = new String[]{
+                OFISDBContract.PlotEntry.COLUMN_NAME_ID,
+        };
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " == ? ";
         String[] whereArgs = new String[]{String.valueOf(id),"1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
