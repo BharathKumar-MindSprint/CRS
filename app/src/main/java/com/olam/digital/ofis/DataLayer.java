@@ -1403,6 +1403,7 @@ public class DataLayer {
         try {
             for (int i = 0; i < arrayLength; i++) {
                 ContentValues values = new ContentValues();
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID, storeableNationalids.getJSONObject(i).getString("primary_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getJSONObject(i).getString("id_number"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, storeableNationalids.getJSONObject(i).getString("farmer_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
