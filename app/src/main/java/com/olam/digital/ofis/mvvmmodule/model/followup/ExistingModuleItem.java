@@ -36,6 +36,15 @@ public class ExistingModuleItem{
 	@SerializedName("currencyId")
 	private int currencyId;
 
+	@SerializedName("followupCount")
+	private int followUpCount;
+
+	@SerializedName("isFollowupComplete")
+	private String isFollowUpCompleted;
+
+	@SerializedName("firstFollowupDate")
+	private String firstFollowupDate;
+
 	public Result getResult() {
 		return result;
 	}
@@ -116,4 +125,27 @@ public class ExistingModuleItem{
 		this.currencyId = currencyId;
 	}
 
+	public int getFollowUpCount() {
+		return followUpCount;
+	}
+
+	public void setFollowUpCount(int followUpCount) {
+		this.followUpCount = followUpCount;
+	}
+
+	public String getIsFollowUpCompleted() {
+		return isFollowUpCompleted;
+	}
+
+	public void setIsFollowUpCompleted(String isFollowUpCompleted) {
+		this.isFollowUpCompleted = isFollowUpCompleted;
+	}
+
+	public String getFirstFollowupDate() {
+		return firstFollowupDate;
+	}
+
+	public void setFirstFollowupDate(String firstFollowupDate) {
+		this.firstFollowupDate = firstFollowupDate;
+	}
 }
