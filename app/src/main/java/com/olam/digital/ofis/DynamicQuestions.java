@@ -823,7 +823,7 @@ public class DynamicQuestions {
         for (JSONObject currentAnswer : answerSet) {
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
-                boolean isVisible = viewReference.containsKey(currentQuestionId) && viewReference.get(currentQuestionId).second.getVisibility() == View.VISIBLE;
+                boolean isVisible = viewReference.containsKey(currentQuestionId) ? viewReference.get(currentQuestionId).second.getVisibility() == View.VISIBLE : true;
                 if (isVisible) {
                     answeredQuestionList.add(currentQuestionId);
                 }
