@@ -819,9 +819,6 @@
 
     <string name="enter_attendee_relation_name">กรุณาใส่ชื่อผู้เข้าร่วม</string>
     <string name="sign_all_attendee">ต้องการลายเซ็นสำหรับผู้เข้าร่วมทุกคน!</string>
-    <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
-    <string name="Alert_txt">เตือน !</string>
-
     <string name="fill_phone_number">กรุณากรอกหมายเลขโทรศัพท์หลัก</string>
     <string name="select_primary_phone_number">กรุณาเลือกหมายเลขโทรศัพท์หลัก</string>
     <string name="error_msg_phone_number">* หมายเลขโทรศัพท์หลักถูกใช้งานแล้ว กรุณากรอกหมายเลขอื่น</string>
@@ -855,5 +852,7 @@
     <string name="no_phone_number">ไม่มีหมายเลขโทรศัพท์ที่ใช้ได้!</string>
     <string name="invalid_national_id">รหัสประจำตัวประชาชนไม่ถูกต้อง!</string>
     <string name="invalid_phonenumber">หมายเลขโทรศัพท์ไม่ถูกต้อง!</string>
+    <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
+    <string name="Alert_txt">เตือน !</string>
 
 </resources>

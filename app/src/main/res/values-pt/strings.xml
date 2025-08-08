@@ -926,8 +926,7 @@
 
     <string name="enter_attendee_relation_name">Por favor, insira o nome do participante</string>
     <string name="sign_all_attendee">Assinatura necessária para todos os participantes!</string>
-    <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
-    <string name="Alert_txt">Alerta!</string>
+
 
     <string name="fill_phone_number">Por favor, preencha o número de telefone principal</string>
     <string name="select_primary_phone_number">por favor selecione o número de telefone principal</string>
@@ -962,6 +961,8 @@
     <string name="no_phone_number">Nenhum número de telefone aplicável!</string>
     <string name="invalid_national_id">Identificação nacional inválida!</string>
     <string name="invalid_phonenumber">Número de telefone inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
+    <string name="Alert_txt">Alerta!</string>
 
 </resources>
 

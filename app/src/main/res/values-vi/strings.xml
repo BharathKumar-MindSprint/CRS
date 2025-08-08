@@ -827,6 +827,7 @@
     <string name="Please_check_the_Internet_Connection">Vui lòng kiểm tra kết nối Internet</string>
     <string name="Alert_txt">Báo động !</string>
 
+
     <string name="fill_phone_number">Vui lòng điền số điện thoại chính</string>
     <string name="select_primary_phone_number">vui lòng chọn số điện thoại chính</string>
     <string name="error_msg_phone_number">* Số điện thoại chính đã được sử dụng. Vui lòng nhập số khác.</string>

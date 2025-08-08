@@ -919,8 +919,7 @@
 
     <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
     <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
-    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
-    <string name="Alert_txt">Alerta !</string>
+
 
     <string name="fill_phone_number">Por favor, introduzca el número de teléfono principal</string>
     <string name="select_primary_phone_number">por favor seleccione el número de teléfono principal</string>
@@ -955,6 +954,8 @@
     <string name="no_phone_number">¡No hay número de teléfono aplicable!</string>
     <string name="invalid_national_id">¡Identificación nacional inválida!</string>
     <string name="invalid_phonenumber">¡Número de teléfono inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
+    <string name="Alert_txt">Alerta !</string>
 
 </resources>
 
