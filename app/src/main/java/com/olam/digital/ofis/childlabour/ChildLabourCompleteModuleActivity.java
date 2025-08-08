@@ -22,6 +22,8 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -1012,6 +1014,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         questionWrapper.addView(rl);
         parentLayout.addView(questionWrapper);
+        dynamicQuestions.viewReference.put(questionId, new Pair<>("signature", questionWrapper));
     }
 
     public void showSignatureDialogBox(ImageView signatureImageView, int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String dataType) {
