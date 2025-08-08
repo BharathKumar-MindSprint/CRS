@@ -3431,11 +3431,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }, 500);
                                         postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register phone number");
                                     } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5048) {
-                                        if (errorObject.has("duplicateNationalIDList")) {
-                                            JSONArray duplicateNationalIds = errorObject.getJSONArray("duplicateNationalIDList");
+                                        if (errorObject.has("duplicateNationalIds")) {
+                                            JSONArray duplicateNationalIds = errorObject.getJSONArray("duplicateNationalIds");
                                             for (int i = 0; i < duplicateNationalIds.length(); i++) {
                                                 JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                                String typeId = duplicate.getString("id_type");
+                                                String typeId = duplicate.getString("typeId");
                                                 dl.updateDuplicateStatusOfNationalId(localFarmerId, typeId);
                                             }
                                         }
@@ -4662,11 +4662,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 if (postResponse.code() == 401) {
                                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                                 } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5048) {
-                                                    if (response.has("duplicateNationalIDList")) {
-                                                        JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIDList");
+                                                    if (response.has("duplicateNationalIds")) {
+                                                        JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIds");
                                                         for (int i = 0; i < duplicateNationalIds.length(); i++) {
                                                             JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                                            String typeId = duplicate.getString("id_type");
+                                                            String typeId = duplicate.getString("typeId");
                                                             dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
                                                         }
                                                     }
@@ -4852,11 +4852,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 if (postResponse.code() == 401) {
                                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                                 } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5048) {
-                                                    if (response.has("duplicateNationalIDList")) {
-                                                        JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIDList");
+                                                    if (response.has("duplicateNationalIds")) {
+                                                        JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIds");
                                                         for (int i = 0; i < duplicateNationalIds.length(); i++) {
                                                             JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                                            String typeId = duplicate.getString("id_type");
+                                                            String typeId = duplicate.getString("typeId");
                                                             dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
                                                         }
                                                     }
