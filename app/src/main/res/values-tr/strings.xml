@@ -821,8 +821,7 @@
 
     <string name="enter_attendee_relation_name">Lütfen katılımcının adını girin</string>
     <string name="sign_all_attendee">Tüm katılımcılar için imza gereklidir!</string>
-    <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
-    <string name="Alert_txt">Uyarı !</string>
+
 
     <string name="fill_phone_number">Lütfen birincil telefon numarasını girin</string>
     <string name="select_primary_phone_number">lütfen birincil telefon numarasını seçin</string>
