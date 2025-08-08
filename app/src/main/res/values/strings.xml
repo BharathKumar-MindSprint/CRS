@@ -1487,4 +1487,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="farmer_code">"Farmer Code"</string>
     <string name="invalid_national_id">Invalid National Id!</string>
     <string name="invalid_phonenumber">Invalid Phone Number!</string>
+    <string name="no_national_id">No National Id Applicable!</string>
+    <string name="no_phone_number">No Phone Number Applicable!</string>
 </resources>
