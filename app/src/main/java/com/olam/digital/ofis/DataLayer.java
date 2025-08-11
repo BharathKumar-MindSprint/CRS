@@ -284,8 +284,32 @@ public class DataLayer {
 
     }
 
-    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon) {
-        String[] columns = new String[]{"*"};
+    public Cursor fetchAllPlotIds(String id, boolean isDownloadPolygon, boolean isAllColumn) {
+        String[] columns = new String[]{
+                OFISDBContract.PlotEntry.COLUMN_NAME_ID,
+                OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME,
+                OFISDBContract.PlotEntry.COLUMN_IS_SYNCED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_CENTER_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_DEFORESTATION_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_PLOT,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_CLEANSED_STATUS,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_EUDR_SURVEY_COMPLETED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_PA_LEGALITY_SURVEY_COMPLETED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_GEO_DB_FLAG_STATUS,
+                OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE,
+                OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG,
+                OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED,
+                OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA
+        };
+
+        if (isAllColumn) {
+            columns = new String[]{"*"};
+        }
         String whereClause = isDownloadPolygon ? OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? " : OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String[] whereArgs = isDownloadPolygon ? new String[]{String.valueOf(id), "1"} : new String[]{String.valueOf(id)};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -293,7 +317,9 @@ public class DataLayer {
     }
 
     public Cursor syncedPlotIds(String id) {
-        String[] columns = new String[]{"*"};
+        String[] columns = new String[]{
+                OFISDBContract.PlotEntry.COLUMN_NAME_ID,
+        };
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " == ? ";
         String[] whereArgs = new String[]{String.valueOf(id),"1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -1425,6 +1451,7 @@ public class DataLayer {
         try {
             for (int i = 0; i < arrayLength; i++) {
                 ContentValues values = new ContentValues();
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID, storeableNationalids.getJSONObject(i).getString("primary_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getJSONObject(i).getString("id_number"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, storeableNationalids.getJSONObject(i).getString("farmer_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
@@ -1455,7 +1482,7 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    void updateFarmerPhoneNumbers(Long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName) {
+    void updateFarmerPhoneNumbers(Long farmerId, String stakeHolderId, JSONArray storeableNumbers, String columnName, boolean isNoPhoneNumber) {
         String whereClause = columnName + " = ?";
         String[] whereArgs;
         if (Objects.equals(columnName, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID)){
@@ -1466,12 +1493,20 @@ public class DataLayer {
 
         try {
             db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
-            addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
+            if (!isNoPhoneNumber) {
+                addFarmerPhoneNumbers(farmerId, stakeHolderId, storeableNumbers);
+            }
         }catch (Exception e){}
 
     }
 
     public boolean updateFarmerNationalids(Context context, Long id, String stakeholderId, JSONArray storeableNationalids, String status, String farmername, String columnName) {
+
+        deleteFarmerNationaId(columnName, id, stakeholderId);
+        return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
+    }
+
+    public void deleteFarmerNationaId(String columnName, Long id, String stakeholderId) {
         String whereClause;
         String[] whereArgs;
 
@@ -1484,7 +1519,6 @@ public class DataLayer {
         }
 
         db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        return addFarmerNationalids(context, id, stakeholderId, storeableNationalids, status, farmername, columnName);
     }
 
     void updateCertificationsByFarmerId(long farmerId, String certificationIds, String certificationText, String farmerName) {
@@ -8603,6 +8637,7 @@ public class DataLayer {
         return plots;
     }
 
+
     public int getLocalDuplicateNationaId(int nationalIdType,String nationalIdNumber) {
 
 
@@ -8645,5 +8680,27 @@ public class DataLayer {
         return count; // Returns the count of occurrences
     }
 
+
+
+    public boolean getNationalOrPhoneNumberApplicable(long editFarmerId, String columnNameIsNoPhoneNumber) {
+        boolean isNoRequired = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+            cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    isNoRequired = Objects.equals(cursor.getString(cursor.getColumnIndex(columnNameIsNoPhoneNumber)), "true");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return isNoRequired;
+    }
 
 }

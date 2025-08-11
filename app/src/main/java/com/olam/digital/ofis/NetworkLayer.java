@@ -3349,6 +3349,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     jsonObject.put("consentStatement", consentStatement);
 
+                    jsonObject.put("isNoNationalId", Objects.equals(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID)), "true"));
+                    jsonObject.put("isNoPhoneNumber", Objects.equals(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER)), "true"));
+
                     if (numbersToSend != null) {
                         jsonObject.put("phoneNumbers", numbersToSend);
                     }
