@@ -345,7 +345,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         CheckBox noPhoneNumberCheckbox = (CheckBox) findViewById(R.id.no_phone_number);
 
-
+        if (isAddStakeHolder){
+            noNationalIdHandler.setVisibility(View.GONE);
+            noPhoneNumberHandler.setVisibility(View.GONE);
+        }
 
         farmerCode = findViewById(R.id.farmerCode);
         read_consent_ll = findViewById(R.id.read_consent_ll);
