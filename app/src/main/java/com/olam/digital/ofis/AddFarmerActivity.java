@@ -42,6 +42,7 @@
  import android.widget.AdapterView;
  import android.widget.ArrayAdapter;
  import android.widget.Button;
+ import android.widget.CheckBox;
  import android.widget.CompoundButton;
  import android.widget.DatePicker;
  import android.widget.EditText;
@@ -243,6 +244,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String primaryPhoneNumber = "";
     private final HashMap<Integer, String> existingPhoneNumber = new HashMap<>();
     private HashMap<Integer, String> enteredPhoneNumber = new HashMap<>();
+    private LinearLayout nationalIdLayout, phoneNumberLayout,noNationalIdHandler, noPhoneNumberHandler;
+    private boolean isNoNationalId, isNoPhoneNumber;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -302,6 +305,40 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         certificationNameSpinner = (Spinner) findViewById(R.id.spinner_certificationName);
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
         national_id_error_msg = (TextView) findViewById(R.id.national_id_error_msg);
+
+        nationalIdLayout = (LinearLayout) findViewById(R.id.nationalIdLayout);
+        phoneNumberLayout = (LinearLayout) findViewById(R.id.phoneNumberLayout);
+        noNationalIdHandler = (LinearLayout) findViewById(R.id.noNationalIdHandler);
+        noPhoneNumberHandler = (LinearLayout) findViewById(R.id.noPhoneNumberHandler);
+        CheckBox noNationalIdCheckbox = (CheckBox) findViewById(R.id.no_national_id);
+        CheckBox noPhoneNumberCheckbox = (CheckBox) findViewById(R.id.no_phone_number);
+
+        if (isAddStakeHolder){
+            noNationalIdHandler.setVisibility(View.GONE);
+            noPhoneNumberHandler.setVisibility(View.GONE);
+        }
+
+        if (editMode) {
+            isNoNationalId = dl.getNationalOrPhoneNumberApplicable(editFarmerId, OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID);
+            isNoPhoneNumber = dl.getNationalOrPhoneNumberApplicable(editFarmerId, OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER);
+
+            noNationalIdCheckbox.setChecked(isNoNationalId);
+            noPhoneNumberCheckbox.setChecked(isNoPhoneNumber);
+
+            nationalIdLayout.setVisibility(isNoNationalId ? View.GONE : View.VISIBLE);
+            phoneNumberLayout.setVisibility(isNoPhoneNumber ? View.GONE : View.VISIBLE);
+
+        }
+
+        noNationalIdCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            isNoNationalId = isChecked;
+            nationalIdLayout.setVisibility(isNoNationalId ? View.GONE : View.VISIBLE);
+        }));
+
+        noPhoneNumberCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            isNoPhoneNumber = isChecked;
+            phoneNumberLayout.setVisibility(isNoPhoneNumber ? View.GONE : View.VISIBLE);
+        }));
 
          farmerCode = findViewById(R.id.farmerCode);
          InputFilter lengthFilter = new InputFilter.LengthFilter(50);
@@ -778,33 +815,35 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private boolean duplicatePhoneNumberValidation() {
-        phoneNumberList = new HashSet<>();
-        int phoneRowsCount = phonenumbers.getChildCount();
-        boolean isRadioChecked = false;
+        if (!isNoPhoneNumber) {
+            phoneNumberList = new HashSet<>();
+            int phoneRowsCount = phonenumbers.getChildCount();
+            boolean isRadioChecked = false;
 
-        for (int j = 0; j < phoneRowsCount; j++) {
-            LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
-            RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
-            EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
-            String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
+            for (int j = 0; j < phoneRowsCount; j++) {
+                LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+                RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
+                EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
+                String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
 
-            if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
-                Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
-                return false;
-            }
-
-            isRadioChecked = numberRadio.isChecked() || isRadioChecked;
-            if (!phoneNumberValue.isEmpty()) {
-                if (!phoneNumberList.add(phoneNumberValue)) {
-                    Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
+                    Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
                     return false;
                 }
-            }
-        }
 
-        if (!isRadioChecked) {
-            Toast.makeText(context, res.getString(R.string.select_primary_phone_number), Toast.LENGTH_LONG).show();
-            return false;
+                isRadioChecked = numberRadio.isChecked() || isRadioChecked;
+                if (!phoneNumberValue.isEmpty()) {
+                    if (!phoneNumberList.add(phoneNumberValue)) {
+                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+            }
+
+            if (!isRadioChecked) {
+                Toast.makeText(context, res.getString(R.string.select_primary_phone_number), Toast.LENGTH_LONG).show();
+                return false;
+            }
         }
 
         return true;
@@ -1010,7 +1049,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
 
-        if (isNIDAvailable) {
+        if (isNIDAvailable && !isNoNationalId) {
             if(editMode){
                 for (Integer updatedValue : updatedNidValue) {
                     dl.removeNIDPhotostatusByType(String.valueOf(updatedValue), editFarmerId);
@@ -1082,32 +1121,35 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         long subDistrictId = subdistrictSpinner.getSelectedItemId();
         long farmerGroupId = farmerGroupSpinner.getSelectedItemId();
         storeableNumbers = new JSONArray();
-        for (int j = 0; j < phonerowscount; j++) {
-            LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
 
-            EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
-            RadioButton primary_number = phoneNumberRow.findViewById(R.id.primary_number);
-            String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
+        if (!isNoPhoneNumber) {
+            for (int j = 0; j < phonerowscount; j++) {
+                LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
 
-            if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
-                JSONObject storeableNumber = new JSONObject();
-                boolean isPrimaryNumber = primary_number.isChecked();
-                if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
-                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
-                    return new ContentValues();
-                }
-                if (phoneNumberValue.matches("0+")) {
-                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.invalid_phonenumber), Toast.LENGTH_SHORT).show();
-                    return new ContentValues();
-                }
-                try {
-                    storeableNumber.put("country_id", countryId);
-                    storeableNumber.put("primary_number", primary_number.isChecked());
-                    storeableNumber.put("phonenumber", phoneNumberValue);
-                    storeableNumbers.put(storeableNumber);
-                } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
-                    e.printStackTrace();
+                EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
+                RadioButton primary_number = phoneNumberRow.findViewById(R.id.primary_number);
+                String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
+
+                if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
+                    JSONObject storeableNumber = new JSONObject();
+                    boolean isPrimaryNumber = primary_number.isChecked();
+                    if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
+                        Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
+                        return new ContentValues();
+                    }
+                    if (phoneNumberValue.matches("0+")) {
+                        Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.invalid_phonenumber), Toast.LENGTH_SHORT).show();
+                        return new ContentValues();
+                    }
+                    try {
+                        storeableNumber.put("country_id", countryId);
+                        storeableNumber.put("primary_number", primary_number.isChecked());
+                        storeableNumber.put("phonenumber", phoneNumberValue);
+                        storeableNumbers.put(storeableNumber);
+                    } catch (JSONException e) {
+                        FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1150,6 +1192,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONDUCT_TRAINING_FOR_NCF, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE, "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_CODE, farmCode);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID, isNoNationalId ? "true" : "false");
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER, isNoPhoneNumber ? "true" : "false");
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME, farmerNameValue);
            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
@@ -1178,7 +1222,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
             }
-            if (!editMode) {
+            if (!editMode && !isNoNationalId) {
                 boolean isUnique = dl.isFarmerEntryUnique(values);
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, isUnique);
                 if (!isUnique) {
@@ -2019,11 +2063,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
 
 
-
-                if (isNIDAvailable) {
-                    if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
-                        Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
-                        return;
+                if(!isNoNationalId) {
+                    if (isNIDAvailable) {
+                        if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
+                            Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
+                            return;
+                        }
                     }
                 }
 
@@ -2038,12 +2083,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                             String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                             new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
-                            dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-                            if (isNIDAvailable) {
+                            dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID, isNoPhoneNumber);
+                            if (isNIDAvailable && !isNoNationalId) {
                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                 if (moduretationstatus) {
                                     statusmoduration = true;
                                 }
+                            } else {
+                                dl.deleteFarmerNationaId(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, editFarmerId, null);
                             }
 
                             if (updFarmerId > 0) {
@@ -2067,7 +2114,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                            long newFarmerId = dl.insertFarmer(values);
 
                             if (newFarmerId != -1) {
-                                dl.updateFarmerPhoneNumbers(newFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
+                                dl.updateFarmerPhoneNumbers(newFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID, isNoPhoneNumber);
                                 EditText farmerName = findViewById(R.id.farmerName);
                                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,newFarmerId);
@@ -2075,7 +2122,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
 
                                 dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new", "Farmer consent captured");
-                                if (isNIDAvailable) {
+                                if (isNIDAvailable && !isNoNationalId) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                     if (moduretationstatus) {
                                         statusmoduration = true;
@@ -2119,7 +2166,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                          String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                          new GpsTrackerLogic().updateFarmerDetails(context,multiStakeHolder.msId,farmerNameValue,genderValue);
-                         dl.updateFarmerPhoneNumbers(null, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                         dl.updateFarmerPhoneNumbers(null, String.valueOf(multiStakeHolder.msId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID, isNoPhoneNumber);
                          if (isNIDAvailable) {
                              dl.updateFarmerNationalids(context,null , String.valueOf(multiStakeHolder.msId), storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_STAKEHOLDER_ID);
                          }
@@ -2145,7 +2192,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                          long newStakeholderId = dl.insertStakeHolder(multiStakeHolder);
 
                          if (newStakeholderId != -1) {
-                             dl.updateFarmerPhoneNumbers(null, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID);
+                             dl.updateFarmerPhoneNumbers(null, String.valueOf(newStakeholderId), storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID, isNoPhoneNumber);
                              EditText farmerName = findViewById(R.id.farmerName);
                              String farmerNameValue = String.valueOf(farmerName.getText()).trim();
                              consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerIdMs);
