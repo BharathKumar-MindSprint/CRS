@@ -2142,6 +2142,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, countryID);
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID, productId);
+                        dl.deleteExistingPhoneNumberFromNq(farmerId);
                         dl.insertNetworkQueueEntry(nqiValues);
 
                         LinearLayout linearLayout = (LinearLayout) phoneNumbersListItem.findViewById(R.id.rowlin);
