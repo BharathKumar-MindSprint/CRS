@@ -1,6 +1,5 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -13,7 +12,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,10 +23,8 @@ import androidx.core.content.FileProvider;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,7 +32,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -46,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -60,11 +54,9 @@ import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -626,11 +618,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
                 else if (isUpdateNationalIdAvailable) {
-                    if (getUpdateNIDPhotoStatusByType(String.valueOf(type), farmerId)) {
+                    /*if (getUpdateNIDPhotoStatusByType(String.valueOf(type), farmerId)) {
                         continue;
-                    }
+                    }*/
 
-                    if (!getPhotostatusByType(String.valueOf(type))) {
+                    if (!getPhotostatusByTypeBlob(String.valueOf(type), farmerId)) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
@@ -659,7 +651,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 }
                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
                     String photopath = null;
-                    if (!editmode || isUpdateNationalIdAvailable) {
+                    if (!editmode || isUpdateNationalIdAvailable || availableStatus) {
                         photopath = getPhotobytype(type);
                     } else {
                         photopath = getNIDPhotoByType(String.valueOf(type), farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
@@ -1131,9 +1123,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             setCurrentPhotoPath(savedImagePath);
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editmode && !isUpdateNationalIdAvailable) {
+            /*if (editmode && !isUpdateNationalIdAvailable) {
                 dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), farmerId);
-            }
+            }*/
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
         }
     }
