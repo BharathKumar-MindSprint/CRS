@@ -1350,6 +1350,7 @@ public class DataLayer {
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID, storeableNumber.getLong("country_id"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY, storeableNumber.getBoolean("primary_number"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, storeableNumber.getString("phonenumber"));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_ID, storeableNumber.has("id") ? storeableNumber.getString("id") : null);
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, storeableNumber.optString(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, null));
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }

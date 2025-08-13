@@ -2048,7 +2048,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 boolean isPrimaryNumber = (existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)).equalsIgnoreCase("true") || (existingNumbers.getInt(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)) == 1));
                 String isDuplicateValue = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE));
                 boolean isDuplicate = isDuplicateValue != null && isDuplicateValue.equalsIgnoreCase("true");
-
+                numberText.setTag(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_ID)));
 
                 numberRadio.setChecked(isPrimaryNumber);
                 diallingCode.setText(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
@@ -2226,6 +2226,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
                                 storeableNumber.put("phonenumber", phoneNumberValue);
+                                storeableNumber.put("id",phoneNumber.getTag());
                                 storeableNumbers.put(storeableNumber);
                             } catch (JSONException e) {
                                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer phone number", e));
