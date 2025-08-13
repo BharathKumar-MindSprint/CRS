@@ -5896,6 +5896,18 @@ public class DataLayer {
         db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
+    public void deleteExistingPhoneNumberFromNq(Long farmerId) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + "=? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + "=?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(farmerId),
+                "phonenumbers"
+        };
+
+        db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
     // OW-4590 Fix
     public int getNIDTypeIDByName(String type) {
         int id = 0;
