@@ -792,9 +792,6 @@
     <string name="stakeholder_not_synced">Üzgünüz, ancak paydaş henüz senkronize edilmedi. Lütfen önce paydaşı senkronize edin</string>
     <string name="consent_not_synced">Üzgünüz, ancak onay henüz senkronize edilmedi. Lütfen önce onayı senkronize edin</string>
     <string name="survey_already_synced">Bu anket başka bir sayıcı tarafından zaten yanıtlandı. Lütfen OFIS uygulamanızı kaydedin ve güncelleyin</string>
-    <string name="fill_phone_number">Please fill in the primary phone number</string>
-    <string name="select_primary_phone_number">please select primary phone number</string>
-    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
 
     <string name="supplier_and_surveys">Tedarikçiler ve anketler</string>
     <string name="title_find_supplier_and_survey">Tedarikçi arama</string>
@@ -825,5 +822,42 @@
     <string name="enter_attendee_relation_name">Lütfen katılımcının adını girin</string>
     <string name="sign_all_attendee">Tüm katılımcılar için imza gereklidir!</string>
 
+
+    <string name="fill_phone_number">Lütfen birincil telefon numarasını girin</string>
+    <string name="select_primary_phone_number">lütfen birincil telefon numarasını seçin</string>
+    <string name="error_msg_phone_number">* Birincil telefon numarası zaten kullanılıyor. Lütfen farklı bir numara girin.</string>
+    <string name="error_msg_dup_national_id">Ulusal kimlik zaten kullanılıyor. Lütfen farklı bir kimlik numarası girin.</string>
+    <string name="download_survey_data">Verileri İndir</string>
+    <string name="download_polygon_data">Poligon Verilerini İndir</string>
+    <string name="plot_number">Parsel %1$d</string>
+    <string name="plot_size_polygon">Parsel boyutu - %1$.2fKB</string>
+    <string name="plot_pin">Parsel Kodu</string>
+    <string name="max_size_selection_plot">Maksimum seçim sınırına ulaşıldı. Devam etmek için bir veya daha fazla öğenin seçimini kaldırın</string>
+    <string name="no_plot_selected">Hiçbir parsel seçilmedi</string>
+    <string name="done">Tamamlandı</string>
+    <string name="download_successful">İndirme Başarılı</string>
+    <string name="downloaded_plot_message">İndirilen parsel, çiftçi parseli bölümünde görüntülenebilir.</string>
+    <string name="download_polygon">Poligon İndir</string>
+    <string name="ofis_olam_id">"OFIS Kimliği: "</string>
+    <string name="selected_plot">"Seçilen Parseller: "</string>
+    <string name="flag_for_deactivation">Parseli Devre Dışı Bırak</string>
+    <string name="reset_deactivation_text">Sıfırla \nDevre Dışı Parsel</string>
+    <string name="flag_for_de_activation">Devre Dışı Bırakmak İçin İşaretle</string>
+    <string name="deactivate_reason">Devre Dışı Bırakma Nedeni</string>
+    <string name="deactivation_reason">Devre Dışı Bırakma Nedeni..</string>
+    <string name="de_activation_reason_message">Lütfen bu parseli devre dışı bırakma nedenini belirtin. \n<b>Not:</b> Talebiniz onaya gönderilecektir</string>
+    <string name="deactivation_pending">Devre dışı bırakma onayı bekleniyor</string>
+    <string name="deactivation_successful">Devre Dışı Bırakma Başarılı</string>
+    <string name="dialog_message">Devre dışı bırakılan parseli sıfırlamak istediğinizden emin misiniz?</string>
+    <string name="reset_deactivation_plot">Devre Dışı Parseli Sıfırla</string>
+    <string name="reason_error_msg">lütfen devre dışı bırakma nedenini girin</string>
+    <string name="reset">Sıfırla</string>
+    <string name="no_national_id">Geçerli bir ulusal kimlik yok!</string>
+    <string name="no_phone_number">Geçerli bir telefon numarası yok!</string>
+    <string name="invalid_national_id">Geçersiz Ulusal Kimlik!</string>
+    <string name="invalid_phonenumber">Geçersiz Telefon Numarası!</string>
+
+    <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
+    <string name="Alert_txt">Uyarı !</string>
 
 </resources>

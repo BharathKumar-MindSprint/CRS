@@ -34,7 +34,8 @@ public interface DmSurveyAnswerTableDao {
 
 
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType")
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType " +
+            "AND ((actionplanId is not null AND actionplanId !='') AND (actionPlanText is not null AND actionPlanText !=''))")
     List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId, int plotId, String displayType);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId")
@@ -136,4 +137,7 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("SELECT DISTINCT * from DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId = :supplierId AND moduleId = :moduleId")
     DmSurveyAnswerTable getAnswerByQuestionsId(int questionId, String supplierId, int moduleId);
+
+    @Query("SELECT  * from DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId = :supplierId AND moduleId = :moduleId")
+    List<DmSurveyAnswerTable> getAnswerByQuestionsIds(int questionId, String supplierId, int moduleId);
 }

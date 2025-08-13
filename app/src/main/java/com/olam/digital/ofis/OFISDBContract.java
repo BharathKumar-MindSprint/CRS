@@ -606,8 +606,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_METRIC = "metric";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE = "questionAssignmentType";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD = "questionAssignmentField";
-        public static final String COLUMN_NAME_IS_CONDITION_QUESTION = "isConditionaQuestion";
-
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -652,7 +650,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_METRIC);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD);
-                    add(COLUMN_NAME_IS_CONDITION_QUESTION);
                 }}
         );
     }
@@ -1083,6 +1080,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMER_CODE = "farmerCode";
         public static final String COLUMN_NAME_DUPLICATE_FARMER_CODE = "duplicateFarmerCode";
         public static final String COLUMN_NAME_PLOT_AVAILABLE = "plotAvailable";
+        public static final String COLUMN_NAME_IS_NO_NATIONAL_ID = "isNoNationalId";
+        public static final String COLUMN_NAME_IS_NO_PHONE_NUMBER = "isNoPhoneNumber";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1131,6 +1130,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_CODE);
                     add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
                     add(COLUMN_NAME_PLOT_AVAILABLE);
+                    add(COLUMN_NAME_IS_NO_NATIONAL_ID);
+                    add(COLUMN_NAME_IS_NO_PHONE_NUMBER);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1172,6 +1173,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_CODE);
                     add(COLUMN_NAME_DUPLICATE_FARMER_CODE);
                     add(COLUMN_NAME_PLOT_AVAILABLE);
+                    add(COLUMN_NAME_IS_NO_NATIONAL_ID);
+                    add(COLUMN_NAME_IS_NO_PHONE_NUMBER);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";

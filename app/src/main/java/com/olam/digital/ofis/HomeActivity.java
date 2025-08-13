@@ -51,6 +51,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.internal.service.Common;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
@@ -104,6 +105,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.showAlert;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -138,6 +140,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
 
+    private final static String  EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
+
     private static final String FARMER_ID = "FARMER_ID";
     private static final String FARM_ID = "FARM_ID";
     private static final String PLOT_COUNT = "PLOT_COUNT";
@@ -158,7 +162,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
-    private boolean syncOptionAll;
+    public static boolean syncOptionAll;
     private int itemId;
     public static int totalItems;
     public static int progressItem;
@@ -394,6 +398,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         String userpasscode = passcode.getText().toString().trim();
+        if (!isNetworkAvailable(this))
+        {
+            showAlert(getString(R.string.Please_check_the_Internet_Connection),this);
+            return;
+        }
+
         if (!userEnumerator.equalsIgnoreCase("") && !userpasscode.equalsIgnoreCase("")) {
 
             if (isAccountLocked()) {
@@ -771,7 +781,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     } else if (msg.what == 9) {
                         closePopup(msg);
                     }
-                    enableSync();
                 }
             };
             farmerSynced = true;
@@ -1325,11 +1334,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 AddInfrastructureActivity.infrastructureID = id;
                 AddInfrastructureActivity.editMode = true;
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("farmer")) {
+            } else if (itemType.equalsIgnoreCase("farmer")  ) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 intent.putExtra(EDIT_MODE, true);
+                startActivity(intent);
+            }else if (itemType.equalsIgnoreCase("Edit farmer")  ) {
+                Intent intent = new Intent(this, AddFarmerActivity.class);
+                intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                intent.putExtra(EDIT_FARMER_MODE, true);
+                intent.putExtra("isHome",true);
                 startActivity(intent);
             }else if (itemType.equalsIgnoreCase("stakeholder")) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);

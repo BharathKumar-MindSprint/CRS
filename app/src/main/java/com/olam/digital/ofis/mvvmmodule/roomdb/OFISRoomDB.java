@@ -2,11 +2,11 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.room.*;
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -38,25 +38,25 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
 
 @Database(entities =
         {
-        DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
-        DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
-        DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
-        DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
-        DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
-        FollowUpItemMainTable.class, FollowUpAnswerTable.class,
-        DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
-        Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
-        DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class, ConditionalLogic.class, ConditionalType.class,
-        SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
-        AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
-        Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
-        Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
-        FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-        Sections.class, Places.class, Products.class, Farmer.class,
+                DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
+                DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
+                DmSectionsItem.class, DmRecurrence.class, DmComplaintFileTable.class,
+                DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
+                DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,
+                FollowUpItemMainTable.class, FollowUpAnswerTable.class,
+                DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class,
+                Partners.class, Programme.class, GlobalUnit.class, LocalUnit.class, AssignmentType.class, SurveyDurationType.class, PhotoCheckBoxData.class,
+                DmMasterData.class, DmModuleAssignments.class, MultiStakeHolder.class, OnGroundSurveyNotification.class, Supplier.class, SupplierGroup.class, SupplierType.class, SupplierSubmittedModules.class, ConditionalLogic.class, ConditionalType.class,
+                SubQuestionAnswer.class, AllCountries.class, AnswerType.class, Answers.class,
+                AnswersSIP.class, Assignments.class, ChildAnswers.class, ChildVisit.class, ChildVisitDetails.class,
+                Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
+                Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
+                FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
+                Sections.class, Places.class, Products.class, Farmer.class,
         },
         version = 19,
-        autoMigrations ={@AutoMigration(from =18, to=19)}
-        )
+        autoMigrations ={@AutoMigration(from =18, to=19, spec = OFISRoomDB.DeleteTable.class)}
+)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -107,6 +107,12 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract ConditionalLogicDao conditionalLogicDao();
     public abstract ConditionalTypeDao conditionalTypeDao();
 
+    @androidx.room.DeleteTable.Entries({
+            @androidx.room.DeleteTable(tableName = "PolygonHistoryData"),
+            @androidx.room.DeleteTable(tableName = "PolygonPlotHistory")
+    })
+    static class DeleteTable implements AutoMigrationSpec { }
+
     public static volatile OFISRoomDB INSTANCE = null;
 
 
@@ -120,17 +126,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
             }
         };
 
-        final Migration MIGRATION_18_19 = new Migration(18, 19) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("DROP TABLE IF EXISTS 'PolygonHistoryData'");
-            }
-        };
-
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), OFISRoomDB.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_16_17, MIGRATION_18_19)
+                    .addMigrations(MIGRATION_16_17)
                     .fallbackToDestructiveMigration()
                     .build();
         }

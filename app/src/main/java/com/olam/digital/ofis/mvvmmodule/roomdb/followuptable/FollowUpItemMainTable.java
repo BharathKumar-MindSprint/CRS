@@ -15,6 +15,11 @@ public class FollowUpItemMainTable {
     @ColumnInfo(name = "questionId")
     public int questionId;
 
+    @ColumnInfo(name = "answerID")
+    public String answerID;
+
+    @ColumnInfo(name = "answer")
+    public String answer;
     @ColumnInfo(name = "updatedBy")
     public String updatedBy;
 

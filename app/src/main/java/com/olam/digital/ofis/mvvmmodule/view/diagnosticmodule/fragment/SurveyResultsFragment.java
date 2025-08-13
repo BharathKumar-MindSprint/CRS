@@ -227,7 +227,11 @@ public class SurveyResultsFragment extends Fragment {
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
                         Integer.parseInt(currencyId),formattedUtcDateTime,resultColor,
                         overAllResultComplianceID,
-                        Constants.PLOT_ID);
+                        Constants.PLOT_ID,
+                        0,
+                        "false",
+                        ""
+                        );
                 db.dmSurveyReportDao().insert(dmSurveyReport);
                 DataLayer dl = new DataLayer(getResources(), getContext());
                 // OW-4574

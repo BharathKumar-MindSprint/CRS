@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 159;
+    private static final int DATABASE_VERSION = 160;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -353,8 +353,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION + " TEXT )";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT )";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -434,7 +433,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER + " TEXT )";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
@@ -472,7 +473,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_NAME + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_CODE + " INTEGER DEFAULT 0,"
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE + " TEXT default null, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT )";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER + " TEXT )";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
 
@@ -949,16 +952,20 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_CONDITION_QUESTION + " TEXT ");
 
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT_AVAILABLE + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_SIZE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_POLYGON_SIZE + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_FLAG + " TEXT DEFAULT 'false' ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_MOB_DEACTIVATE_REASON + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA);
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED);
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_POSITION_DATA + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_DE_ACTIVATION_FLAG_SYNCED + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_IS_POLYGON_DOWNLOADED_DATA + " TEXT ");
+
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -791,10 +791,6 @@
     <string name="stakeholder_not_synced">Xin lỗi, nhưng stakeholder chưa được đồng bộ. Vui lòng đồng bộ stakeholder trước</string>
     <string name="consent_not_synced">Xin lỗi, nhưng sự đồng ý chưa được đồng bộ. Vui lòng đồng bộ sự đồng ý trước</string>
     <string name="survey_already_synced">Khảo sát này đã được trả lời bởi một người khảo sát khác. Vui lòng lưu và cập nhật ứng dụng OFIS của bạn</string>
-    <string name="fill_phone_number">Please fill in the primary phone number</string>
-    <string name="select_primary_phone_number">please select primary phone number</string>
-    <string name="error_msg_phone_number">The primary phone number is already in use. Please enter a different phone number.</string>
-
 
     <string name="supplier_and_surveys">Nhà cung cấp và khảo sát</string>
     <string name="title_find_supplier_and_survey">Tìm kiếm nhà cung cấp</string>
@@ -828,5 +824,42 @@
 
     <string name="enter_attendee_relation_name">Vui lòng nhập tên người tham dự</string>
     <string name="sign_all_attendee">Chữ ký cần thiết cho tất cả các thành viên tham gia!</string>
+    <string name="Please_check_the_Internet_Connection">Vui lòng kiểm tra kết nối Internet</string>
+    <string name="Alert_txt">Báo động !</string>
+
+
+    <string name="fill_phone_number">Vui lòng điền số điện thoại chính</string>
+    <string name="select_primary_phone_number">vui lòng chọn số điện thoại chính</string>
+    <string name="error_msg_phone_number">* Số điện thoại chính đã được sử dụng. Vui lòng nhập số khác.</string>
+    <string name="error_msg_dup_national_id">Số CMND đã được sử dụng. Vui lòng nhập số khác.</string>
+    <string name="download_survey_data">Tải dữ liệu</string>
+    <string name="download_polygon_data">Tải dữ liệu đa giác</string>
+    <string name="plot_number">Thửa đất %1$d</string>
+    <string name="plot_size_polygon">Kích thước thửa đất - %1$.2fKB</string>
+    <string name="plot_pin">Mã thửa đất</string>
+    <string name="max_size_selection_plot">Đã đạt giới hạn lựa chọn. Vui lòng bỏ chọn một hoặc nhiều mục để tiếp tục</string>
+    <string name="no_plot_selected">Chưa chọn thửa đất nào</string>
+    <string name="done">Hoàn tất</string>
+    <string name="download_successful">Tải xuống thành công</string>
+    <string name="downloaded_plot_message">Thửa đất đã tải có thể xem trong phần thửa đất của nông dân.</string>
+    <string name="download_polygon">Tải đa giác</string>
+    <string name="ofis_olam_id">"ID OFIS: "</string>
+    <string name="selected_plot">"Thửa đất đã chọn: "</string>
+    <string name="flag_for_deactivation">Hủy kích hoạt thửa đất</string>
+    <string name="reset_deactivation_text">Đặt lại \nThửa đất đã hủy</string>
+    <string name="flag_for_de_activation">Đánh dấu để hủy kích hoạt</string>
+    <string name="deactivate_reason">Lý do hủy kích hoạt</string>
+    <string name="deactivation_reason">Lý do hủy kích hoạt..</string>
+    <string name="de_activation_reason_message">Vui lòng cung cấp lý do hủy kích hoạt thửa đất này. \n<b>Lưu ý:</b> Yêu cầu của bạn sẽ được gửi để phê duyệt</string>
+    <string name="deactivation_pending">Đang chờ phê duyệt hủy kích hoạt</string>
+    <string name="deactivation_successful">Hủy kích hoạt thành công</string>
+    <string name="dialog_message">Bạn có chắc chắn muốn đặt lại thửa đất đã hủy không?</string>
+    <string name="reset_deactivation_plot">Đặt lại thửa đất đã hủy</string>
+    <string name="reason_error_msg">vui lòng nhập lý do hủy kích hoạt</string>
+    <string name="reset">Đặt lại</string>
+    <string name="no_national_id">Không có CMND hợp lệ!</string>
+    <string name="no_phone_number">Không có số điện thoại hợp lệ!</string>
+    <string name="invalid_national_id">Mã số quốc gia không hợp lệ!</string>
+    <string name="invalid_phonenumber">Số điện thoại không hợp lệ!</string>
 
 </resources>

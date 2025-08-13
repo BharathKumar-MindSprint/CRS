@@ -72,6 +72,7 @@ public class BaseActivity extends AppCompatActivity {
     public final static String CONSENTVALUE = "CONSENTVALUE";
     public final static String NEW = "new";
     public final static String UPDATE = "update";
+    public final static String ONLY_ZERO_VALUE = "onlyZeroValue";
 
     private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -404,7 +405,12 @@ public class BaseActivity extends AppCompatActivity {
             String value = idtypespinner.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();
-            int limit = getNidLimit(idtypespinner.getSelectedItem().toString());
+            int limit = getNidLimit(value);
+
+            if (nid.replaceAll("\\s", "").matches("0+")) {
+                typeadded = ONLY_ZERO_VALUE;
+            }
+
             if (limit < nid.length()) {
                 typeadded = LIMIT_XED;
             }
@@ -417,7 +423,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         Set<String> store = new HashSet<>();
         for (String name : names) {
-            if (store.add(name) == false) {
+            if (!store.add(name)) {
                 typeadded = DUPLICATE;
             }
         }
