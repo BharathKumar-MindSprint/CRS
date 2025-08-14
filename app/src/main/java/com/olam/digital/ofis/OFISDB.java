@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 160;
+    private static final int DATABASE_VERSION = 161;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -484,6 +484,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " INTEGER default null, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0,"
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED + " INTEGER DEFAULT 0,"
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED + " INTEGER DEFAULT 0,"
             + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
@@ -888,16 +890,20 @@ class OFISDB extends SQLiteOpenHelper {
         switch(oldVersion){
             case 158:
                 migrateFromVersion158To159(sqLiteDatabase);
-                migrateFrom159To160(sqLiteDatabase);
                 break;
             case 159:
                 migrateFrom159To160(sqLiteDatabase);
+                break;
+
+            case 160:
+                migrateFrom160To161(sqLiteDatabase);
                 break;
 
             default:
                 migrateFromVersionBelow157(sqLiteDatabase);
                 migrateFromVersion158To159(sqLiteDatabase);
                 migrateFrom159To160(sqLiteDatabase);
+                migrateFrom160To161(sqLiteDatabase);
                 break;
         }
     }
@@ -912,6 +918,7 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     private void migrateFromVersion158To159(SQLiteDatabase sqLiteDatabase) {
@@ -922,6 +929,7 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        migrateFrom159To160(sqLiteDatabase);
     }
 
     private void migrateFrom159To160(SQLiteDatabase sqLiteDatabase) {
@@ -969,6 +977,17 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        migrateFrom160To161(sqLiteDatabase);
+    }
+
+    private void migrateFrom160To161(SQLiteDatabase sqLiteDatabase){
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED +  " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED +  " TEXT ");
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

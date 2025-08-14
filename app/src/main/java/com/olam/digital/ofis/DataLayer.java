@@ -1336,6 +1336,43 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
+    public Cursor getNewAndUpdatedPhoneNumbers(long id, String columnName) {
+        String numbersTable = OFISDBContract.PhoneNumber.TABLE_NAME;
+        String countriesTable = OFISDBContract.CountriesEntry.TABLE_NAME;
+
+        String sql = "SELECT " + numbersTable + ".*, " + countriesTable + "." + OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE + " "
+                + "FROM " + numbersTable + " LEFT JOIN " + countriesTable + " ON " + numbersTable + "." + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID
+                + " = " + countriesTable + "." + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " WHERE " + numbersTable + "." + columnName
+                + " = ? AND (" + numbersTable + "." + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " IS NULL OR " + numbersTable + "." + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED + " LIKE 'true' OR " + numbersTable + "." + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED + " LIKE 'true')";
+
+
+        String[] whereArgs = new String[]{String.valueOf(id)};
+
+        return  db.rawQuery(sql, whereArgs);
+
+//        JSONArray numbersArray = new JSONArray();
+//
+//        try {
+//            while (phoneNumbers.moveToNext()) {
+//                JSONObject phonenumber = new JSONObject();
+//                //New
+//                if(Utilities.convertDT(String.valueOf(phoneNumbers.getInt(phoneNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED))))){
+//                    phonenumber.put("farmerPhoneNumberId",phoneNumbers.getString(phoneNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_ID)));
+//                    phonenumber.put("phoneNumber", phoneNumbers.getString(phoneNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+//                    phonenumber.put("deletedFlag",Utilities.convertDT(String.valueOf(phoneNumbers.getInt(phoneNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)))));
+//                    phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phoneNumbers.getInt(phoneNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
+//
+//                }
+//
+//                numbersArray.put(phonenumber);
+//            }
+//            return numbersArray;
+//        } catch (JSONException e) {
+//            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object " + e.getMessage());
+//        }
+//        return null;
+    }
+
 
 
     void addFarmerPhoneNumbers(Long farmerId, String stakeHolder, JSONArray storeableNumbers) {
@@ -1352,6 +1389,8 @@ public class DataLayer {
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, storeableNumber.getString("phonenumber"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_ID, storeableNumber.has("id") ? storeableNumber.getString("id") : null);
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, storeableNumber.optString(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, null));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED, storeableNumber.getString("is_deleted"));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED,  storeableNumber.has("is_updated") ? storeableNumber.getString("is_updated") : null);
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }
         } catch (JSONException e) {
@@ -8714,6 +8753,18 @@ public class DataLayer {
             cursor.close();
         }
         return isNoRequired;
+    }
+
+    public void updatePhoneDeltedFlag(String farmerid, String phoneNumber) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED, true);
+        String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid),String.valueOf(farmerid)};
+        try {
+            db.update(OFISDBContract.PhoneNumber.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){}
+
     }
 
 }

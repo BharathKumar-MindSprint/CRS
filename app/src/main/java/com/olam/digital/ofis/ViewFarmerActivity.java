@@ -42,6 +42,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -173,6 +175,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private View phoneNumbersListItem, clickedLocationItem;
     private long farmerPlaceId;
     private ProgressDialog pd;
+
+    private final String IS_UPDATED = "";
+    private final String EXISTING_ID = "";
 
     // location updates interval - 2sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
@@ -1990,7 +1995,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
 
                 LinearLayout numberrow = (LinearLayout) v.getParent();
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                numberrow.setVisibility(View.GONE);
+                //((ViewGroup) numberrow.getParent()).removeView(numberrow);
                 addCount--;
                 ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
                 if(addCount < 5){
@@ -2038,6 +2044,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         if (existingNumbers.getCount() > 0) {
             boolean firstNumber = true;
             while (existingNumbers.moveToNext()) {
+
                 LinearLayout phoneNumberInclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 RadioButton numberRadio = (RadioButton) phoneNumberInclude.findViewById(R.id.primary_number);
                 TextView diallingCode = (TextView) phoneNumberInclude.findViewById(R.id.dialling_code);
@@ -2049,14 +2056,37 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 String isDuplicateValue = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE));
                 boolean isDuplicate = isDuplicateValue != null && isDuplicateValue.equalsIgnoreCase("true");
                 numberText.setTag(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_ID)));
+                if(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED)) != null){
+                    numberText.setTag(R.id.phonenumbers, existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED)).equals("true"));
+                }
+
+                String farmerId =  existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID));
 
                 numberRadio.setChecked(isPrimaryNumber);
                 diallingCode.setText(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
                 numberText.setText(phoneNumber);
+                numberText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        numberText.setTag(R.id.phonenumbers,true);
+                    }
+                });
 
                 primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
 
+                boolean isDeleted = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)).equals("true");
+                phoneNumberInclude.setVisibility(isDeleted ? View.GONE : View.VISIBLE);
                 phonenumbers.addView(phoneNumberInclude);
                 if (firstNumber) {
                     numberDelete.setVisibility(View.GONE);
@@ -2169,6 +2199,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
 
 
+
+
                 phonenumbers.addView(phonenumberinclude);
 
                 bindnumberdelete((ImageView) phonenumberinclude.findViewById(R.id.deleteNumber));
@@ -2194,6 +2226,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                     for (int j = 0; j < phonerowscount; j++) {
                         LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+                        boolean isdeleted = phoneNumberRow.getVisibility() == View.GONE;
 
                         EditText phoneNumber = (EditText) phoneNumberRow.findViewById(R.id.phonenumber);
                         RadioButton primary_number = (RadioButton) phoneNumberRow.findViewById(R.id.primary_number);
@@ -2227,6 +2260,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 storeableNumber.put("primary_number", isPrimaryNumber);
                                 storeableNumber.put("phonenumber", phoneNumberValue);
                                 storeableNumber.put("id",phoneNumber.getTag());
+                                storeableNumber.put("is_deleted",isdeleted);
+                                storeableNumber.put("is_updated",phoneNumber.getTag(R.id.phonenumbers));
                                 storeableNumbers.put(storeableNumber);
                             } catch (JSONException e) {
                                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer phone number", e));
