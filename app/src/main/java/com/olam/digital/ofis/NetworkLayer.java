@@ -2332,8 +2332,31 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         alert.show();
     }
 
-    // get farmer phone numbers
     private JSONArray farmerPhoneNumbers(long id, String columnName) {
+        Cursor phonenumbers = dl.getFarmerPhoneNumbers(id, false, columnName);
+        JSONArray numbersarray = new JSONArray();
+
+        try {
+            while (phonenumbers.moveToNext()) {
+                JSONObject phonenumber = new JSONObject();
+                //New
+                phonenumber.put("farmerId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
+                phonenumber.put("countryId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))));
+                phonenumber.put("phoneNumber", phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
+
+                numbersarray.put(phonenumber);
+            }
+            return numbersarray;
+        } catch (JSONException e) {
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    // get farmer phone numbers
+    private JSONArray farmerNewPhoneNumbers(long id, String columnName) {
         Cursor phonenumbers = dl.getNewAndUpdatedPhoneNumbers(id, columnName);
         JSONArray numbersarray = new JSONArray();
 
@@ -3853,7 +3876,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     do {
                         try {
-                            JSONArray numberstosend = farmerPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                            JSONArray numberstosend = farmerNewPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                             updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                             updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
                             updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
@@ -3919,7 +3942,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
             try {
-                JSONArray numberstosend = farmerPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                JSONArray numberstosend = farmerNewPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
                 updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
                 updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
@@ -6536,7 +6559,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
-                                    } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5047) {
+                                    } else if (postResponse.code() == 400 && response.has("errorCode") && (response.getInt("errorCode") == 5047 || response.getInt("errorCode") == 5054)) {
                                         dl.updateDuplicateStatusOfPhoneNumber(farmerId);
                                         String errorMsg = response.optString("message", "Duplicate Primary Phone Number.");
                                         handler.postDelayed(() -> {

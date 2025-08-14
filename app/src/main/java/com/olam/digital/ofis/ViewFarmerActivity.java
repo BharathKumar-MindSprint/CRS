@@ -1996,6 +1996,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 numberrow.setVisibility(View.GONE);
+               // phonenumbers.removeView(numberrow);
                 //((ViewGroup) numberrow.getParent()).removeView(numberrow);
                 addCount--;
                 ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
@@ -2122,6 +2123,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         for (int j = 0; j < phoneRowsCount; j++) {
             LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+            boolean isdeleted = phoneNumberRow.getVisibility() == View.GONE;
             RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
             EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
             String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
@@ -2130,12 +2132,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
                 return false;
             }
+            if(!isdeleted){
+                if (!phoneNumberValue.isEmpty()) {
+                    if (!phoneNumberList.add(phoneNumberValue)) {
 
-            if (!phoneNumberValue.isEmpty()) {
-                if (!phoneNumberList.add(phoneNumberValue)) {
-                    Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
-                    return false;
-                }
+                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                        return false;
+
+                    }
+            }
+
             }
         }
         return true;
@@ -2232,7 +2238,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         RadioButton primary_number = (RadioButton) phoneNumberRow.findViewById(R.id.primary_number);
                         String phoneNumberValue = String.valueOf(phoneNumber.getText());
 
-                        if(!phoneNumberValue.isEmpty()){
+                        if(!phoneNumberValue.isEmpty() && !isdeleted){
                             int count = dl.getDuplicateFarmerNumber(Long.parseLong(phoneNumberValue));
                             if(count > 1){
                                 hasDuplicatePhoneNumber = true;
