@@ -4683,8 +4683,8 @@ public class DataLayer {
 
     Cursor getEditedFarmerPhoneIds() {
         String[] columns = new String[]{"*"};
-        String whereClause = "submission_type = ?";
-        String[] whereArgs = new String[]{"phonenumbers"};
+        String whereClause = "submission_type IN (?, ?, ?)";
+        String[] whereArgs = new String[]{"phonenumbers","Update_ID","National_ID"};
 
         return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }

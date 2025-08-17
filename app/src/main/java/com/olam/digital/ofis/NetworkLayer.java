@@ -6530,20 +6530,50 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             if (postResponse.isSuccessful()) {
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 if (isNationalId) {
-                                    //Need to change length
-                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
-
-                                        //Need to get from API
-                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                                        String typeName = dl.getNidTypebyid((int) typeID);
-                                        if (typeID <= 0) {
-                                            typeID = dl.getNIDTypeIDByName(typeName);
+                                    try {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        if (response.has("nationalIds")){
+                                            JSONArray nationalIdList = response.getJSONArray("nationalIds");
+                                            for (int i = 0; i < nationalIdList.length(); i++){
+                                                long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                                // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                                String typeName = dl.getNidTypebyid((int) typeID);
+                                                if (typeID <= 0) {
+                                                    typeID = dl.getNIDTypeIDByName(typeName);
+                                                }
+                                                //Need to Update from API
+                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                                        typeID);
+                                            }
                                         }
-                                        //Need to Update from API
-                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                                typeID);
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
                                     }
+
+//                                    try {
+//                                        JSONArray nationalList = new JSONArray(postResponse.body().toString());
+//                                        for(int i = 0 ; i < nationalList.length() ; i++){
+//
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        throw new RuntimeException(e);
+//                                    }
+                                    //Need to change length
+//                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
+//
+//                                        //Need to get from API
+//                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                                        String typeName = dl.getNidTypebyid((int) typeID);
+//                                        if (typeID <= 0) {
+//                                            typeID = dl.getNIDTypeIDByName(typeName);
+//                                        }
+//                                        //Need to Update from API
+//                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+//                                                typeID);
+//                                    }
 
                                 }
 
@@ -6568,11 +6598,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }, 500);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "updating phone number");
                                     } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5048) {
-                                        if (response.has("duplicateNationalIds")) {
-                                            JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIds");
+                                        if (response.has("duplicateNationalIDList")) {
+                                            JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIDList");
                                             for (int i = 0; i < duplicateNationalIds.length(); i++) {
                                                 JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                                String typeId = duplicate.getString("typeId");
+                                                String typeId = duplicate.getString("id_type");
                                                 dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
                                             }
                                         }
