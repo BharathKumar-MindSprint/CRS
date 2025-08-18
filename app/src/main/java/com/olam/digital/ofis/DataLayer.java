@@ -8755,6 +8755,7 @@ public class DataLayer {
         return isNoRequired;
     }
 
+
     public void updatePhoneDeltedFlag(String farmerid, String phoneNumber) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED, true);
@@ -8767,4 +8768,23 @@ public class DataLayer {
 
     }
 
+
+    public String blobPhotoAvailable(String type, Long farmerId) {
+        String photoLink = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(farmerId), type };
+            cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (cursor!=null){
+                while (cursor.moveToNext()){
+                    photoLink = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return photoLink;
+    }
 }

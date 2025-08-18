@@ -298,6 +298,12 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
+    public boolean getPhotostatusByTypeBlob(String type, Long farmerId) {
+        String blobPhotoAvailable = dl.blobPhotoAvailable(type, farmerId);
+        boolean photostatus = !"null".equals(blobPhotoAvailable) || dl.getPhotostatusByType(type).getCount() > 0;
+        return photostatus;
+    }
+
     public void removehmvalue(HashMap<Integer, String> hm_uripath, int val) {
         Iterator<Integer> iterator = hm_uripath.keySet().iterator();
         while (iterator.hasNext()) {
