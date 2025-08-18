@@ -2361,7 +2361,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (duplicatePhoneNumberValidation()) {
+
                     ContentValues values = validateValues();
 
                     if (values.size() > 0) {
@@ -2454,7 +2454,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
 
                     }
-                }
+
             }
         });
     }

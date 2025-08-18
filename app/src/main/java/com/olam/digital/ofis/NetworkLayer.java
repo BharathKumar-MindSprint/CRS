@@ -3629,7 +3629,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
 
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DATE_OF_BIRTH, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
+                        jsonObject.put("dob", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
 
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
@@ -3805,7 +3805,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                            profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DATE_OF_BIRTH, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
+                            profileUpdated.put("dob", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
 
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
