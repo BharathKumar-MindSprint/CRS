@@ -1317,6 +1317,7 @@ public class DataLayer {
         db.update(OFISDBContract.TrainingAttendee.TABLE_NAME, values, whereClause, whereArgs);
     }
 
+
     // Phone Number tasks
     public Cursor getFarmerPhoneNumbers(long id, boolean primaryOnly, String columnName) {
         String numbersTable = OFISDBContract.PhoneNumber.TABLE_NAME;
@@ -1335,6 +1336,7 @@ public class DataLayer {
 
         return db.rawQuery(sql, whereArgs);
     }
+
 
     public Cursor getNewAndUpdatedPhoneNumbers(long id, String columnName) {
         String numbersTable = OFISDBContract.PhoneNumber.TABLE_NAME;
@@ -1389,12 +1391,12 @@ public class DataLayer {
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER, storeableNumber.getString("phonenumber"));
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_ID, storeableNumber.has("id") ? storeableNumber.getString("id") : null);
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, storeableNumber.optString(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE, null));
-                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED, storeableNumber.getString("is_deleted"));
+                values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED, storeableNumber.has("is_deleted") ? storeableNumber.getString("is_deleted") : null);
                 values.put(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED,  storeableNumber.has("is_updated") ? storeableNumber.getString("is_updated") : null);
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }
         } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
+              FirebaseCrashlytics.getInstance().log(e.getMessage());
             e.printStackTrace();
         }
 
@@ -1517,6 +1519,9 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID, storeableNationalids.getBackendDbId());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_DELETED, storeableNationalids.isDeletedFlag());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED, storeableNationalids.isUpdated());
+
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
