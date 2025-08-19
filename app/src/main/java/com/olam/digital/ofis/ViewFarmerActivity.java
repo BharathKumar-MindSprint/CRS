@@ -2085,9 +2085,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
+                if(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)) != null){
+                    boolean isDeleted = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)).equals("true");
+                    phoneNumberInclude.setVisibility(isDeleted ? View.GONE : View.VISIBLE);
+                }
 
-                boolean isDeleted = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)).equals("true");
-                phoneNumberInclude.setVisibility(isDeleted ? View.GONE : View.VISIBLE);
                 phonenumbers.addView(phoneNumberInclude);
                 if (firstNumber) {
                     numberDelete.setVisibility(View.GONE);
