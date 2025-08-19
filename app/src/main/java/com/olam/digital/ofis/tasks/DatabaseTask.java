@@ -119,8 +119,8 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
                         String[] columns = new String[]{"*"};
                         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
-                                            + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ?";
+                                + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
+                                + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ?";
                         String[] whereArgs = new String[]{String.valueOf(farmerId),String.valueOf(childId),
                                 String.valueOf(moduleId)};
 
@@ -166,13 +166,13 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
     }
 
     public void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-      if ((!tableName.equalsIgnoreCase("stakeHolders"))
-              && (!tableName.equals(OFISDBContract.SavedAnswerEntry.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.DownloadedSurveyList.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME))
-              && (!tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME))){
-              db.delete(tableName, null, null);
-      }
+        if ((!tableName.equalsIgnoreCase("stakeHolders"))
+                && (!tableName.equals(OFISDBContract.SavedAnswerEntry.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.DownloadedSurveyList.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME))
+                && (!tableName.equals(OFISDBContract.PhoneNumber.TABLE_NAME))){
+            db.delete(tableName, null, null);
+        }
 
 
         @SuppressWarnings("deprecation") DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, tableName);

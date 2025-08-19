@@ -2,8 +2,6 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
-import static com.olam.digital.ofis.mvvmmodule.Constants.getUniqueQuestion;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -69,7 +67,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
@@ -80,7 +77,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,7 +84,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -356,18 +351,41 @@ public class FollowUpActionPlan extends Fragment {
             if (isActionPlanRequired || isActionPlanCheckbox) {
                 dmSurveyAnswerTableList.addAll(dmSurveyAnswerCheckbox);
 
-                // remove all the question where the followup is resolved
                 List<DmSurveyAnswerTable> answer = new ArrayList<>();
-                for(DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
-                    if (!resolvedQuestionId.contains(Integer.parseInt(answerTable.questionID))){
-                        answer.add(answerTable);
+                if (!dmSurveyAnswerTableList.isEmpty() && Constants.ATTEMPT==1) {
+                    for(DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                        if (!resolvedQuestionId.contains(Integer.parseInt(answerTable.questionID))){
+                            answer.add(answerTable);
+                        }
                     }
                 }
-
+                else {
+                    answer.addAll(getFollowUpNotResolvedStatus(complaint_id,dmSurveyAnswerTableList));
+                }
                 renderSurveyQuestions(answer, complaint_id, linearLayoutItems);
             }
-
         }
+    }
+
+    private List<DmSurveyAnswerTable> getFollowUpNotResolvedStatus(String complianceId, List<DmSurveyAnswerTable> dmSurveyAnswerTableList) {
+        List<FollowUpItemMainTable> followUpItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(Constants.FARMER_ID, Constants.MODULE_ID, true, Constants.NOTRESOLVED, Constants.ATTEMPT - 1, complianceId);
+        List<DmSurveyAnswerTable> dmSurveyAnswers = new ArrayList<>();
+        for (FollowUpItemMainTable followUp : followUpItems) {
+            DmSurveyAnswerTable answer = new DmSurveyAnswerTable();
+            answer.questionID = String.valueOf(followUp.questionId);
+            answer.question = db.dmQuestionsModuleDao().getQuestionById(followUp.questionId);
+            answer.actionplanId = followUp.actionPlanId;
+            answer.actionPlanText = followUp.actionPlanText;
+           //db things  fetchParents answerId
+            List<DmSurveyAnswerTable> answerIdList = db.dmSurveyAnswerTableDao()
+                    .getAnswerByQuestionsIds(followUp.questionId, String.valueOf(followUp.farmerId),followUp.moduleId);
+           if (!answerIdList.isEmpty())
+           {
+               answer.answerID = answerIdList.get(0).answerID;
+           }
+            dmSurveyAnswers.add(answer);
+        }
+        return dmSurveyAnswers;
     }
 
     private void renderSurveyQuestions(List<DmSurveyAnswerTable> surveyList, String complaintId, LinearLayout linearLayout) {
@@ -514,7 +532,7 @@ public class FollowUpActionPlan extends Fragment {
 
     @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems, String answerID, DmSurveyAnswerTable dmQuestionsModule) {
-        boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
+        boolean isCheckbox = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(id)).get(0).displayType.equalsIgnoreCase(Constants.CHECKBOX);
         boolean captureProof = false;
         boolean customActionPlan = false;
 
@@ -542,26 +560,14 @@ public class FollowUpActionPlan extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        List<FollowUpItemMainTable> followUpItemMainTableList = new ArrayList<>();
-        if (Objects.equals(Constants.ATTEMPT, 1)){
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID, Constants.PLOT_ID);
-        } else {
-            followUpItemMainTableList = db.followUpItemMainTableDao().getFollowUpDataByQuestionId(id, Constants.FARMER_ID, Constants.ATTEMPT - 1);
-        }
 
-        if (!dmSurveyAnswerTableList.isEmpty() || !followUpItemMainTableList.isEmpty()) {
+        if (dmQuestionsModule!=null) {
             String answerIdDb = null;
             String questionIdDb = null;
             String actionPlanText = null;
 
-            if (!dmSurveyAnswerTableList.isEmpty()) {
-                answerIdDb = dmSurveyAnswerTableList.get(0).actionplanId;
-                actionPlanText = dmSurveyAnswerTableList.get(0).actionPlanText;
-            } else if (!followUpItemMainTableList.isEmpty()) {
-                answerIdDb = followUpItemMainTableList.get(0).actionPlanId;
-                actionPlanText = followUpItemMainTableList.get(0).actionPlanText;
-            }
+            answerIdDb = dmQuestionsModule.actionplanId;
+            actionPlanText = dmQuestionsModule.actionPlanText;
             if (!Objects.equals(answerIdDb, null)) {
                 if (!Objects.equals(answerIdDb, "1") && !Objects.equals(answerIdDb,"0") && !Objects.equals(answerIdDb,"")){
                     DmRangeActionPlansItems answerActionPlan = db.dmRangeActionPlansItemsDao().getActionPlanItem(Integer.parseInt(answerIdDb));
@@ -602,18 +608,12 @@ public class FollowUpActionPlan extends Fragment {
         linearLayoutImage.setOrientation(LinearLayout.VERTICAL);
 
         ArrayList<String> retrievedArray = new ArrayList<>();
-        retrievedArray.clear();
-
         ArrayList<Long> retrievedArrayFile = new ArrayList<>();
-        retrievedArrayFile.clear();
-
-        List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-        dmComplaintFileTableList.clear();
-        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, Constants.ATTEMPT, Constants.PLOT_ID);
+        List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, Constants.ATTEMPT, Constants.PLOT_ID);
 
         boolean isFilesUploaded = false;
 
-        if (dmComplaintFileTableList.size() != 0) {
+        if (!dmComplaintFileTableList.isEmpty()) {
             for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                 if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
                     retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -710,22 +710,16 @@ public class FollowUpActionPlan extends Fragment {
                             String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
                             if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")){
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                 options = new CharSequence[]{ getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
                                 options = new CharSequence[]{getResources().getString(R.string.take_photo),  getResources().getString(R.string.dm_choose_from_gallery), getResources().getString(R.string.cancel)};
-//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
                         }
 
                         CharSequence[] finalOptions = options;
-
-
-//                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle(getResources().getString(R.string.dm_add_photo));
 
@@ -734,19 +728,16 @@ public class FollowUpActionPlan extends Fragment {
                             public void onClick(DialogInterface dialog, int item) {
                                 if (finalOptions[item].equals(getResources().getString(R.string.take_photo))) {
                                     if (isStoragePermissionCameraGranted()) {
-//                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
                                         GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        // Ensure that there's a camera activity to handle the intent
                                         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                            // Create the File where the photo should go
                                             File photoFile = null;
                                             try {
                                                 photoFile = createImageFile();
-                                            } catch (IOException ex) {
-                                                // Error occurred while creating the File
-
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
                                             }
+
                                             // Continue only if the File was successfully created
                                             if (photoFile != null) {
                                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -755,7 +746,6 @@ public class FollowUpActionPlan extends Fragment {
                                                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                                             }
                                         }
-
 
                                     } else {
                                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
@@ -768,7 +758,6 @@ public class FollowUpActionPlan extends Fragment {
                                         String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
                                         String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
                                         if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
-//                                        GALLERY_PICK_DOCX = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                             galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
@@ -778,7 +767,6 @@ public class FollowUpActionPlan extends Fragment {
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
                                         }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")){
-//                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                             galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
@@ -786,7 +774,6 @@ public class FollowUpActionPlan extends Fragment {
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                         } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
-//                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                             Intent galleryIntent = new Intent();
                                             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                             galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
@@ -794,8 +781,6 @@ public class FollowUpActionPlan extends Fragment {
                                             GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                             startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                         }
-
-
                                     } else {
                                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
@@ -805,17 +790,10 @@ public class FollowUpActionPlan extends Fragment {
                             }
                         });
                         builder.show();
-
                     }
-
-
-
-
                 }
             });
         }
-
-
 
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
@@ -851,12 +829,6 @@ public class FollowUpActionPlan extends Fragment {
 
 
         if (!answers.isEmpty()) {
-            for (DmSurveyAnswerTable answer : answers) {
-                if (answer.isCaptureProof!=null && answer.isCaptureProof) {
-                    captureProof = true;
-                    break;
-                }
-            }
             for (DmSurveyAnswerTable answer : answers) {
                 if (answer.allowCustomActionPlan!=null && answer.allowCustomActionPlan) {
                     customActionPlan = true;
@@ -903,7 +875,7 @@ public class FollowUpActionPlan extends Fragment {
 
         String actionPlanT = "0";
         int actionPlanId = 0;
-        if (dmSurveyAnswerTableList1.size() != 0) {
+        if (!dmSurveyAnswerTableList1.isEmpty()) {
             actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
             try {
                 actionPlanId = Integer.parseInt(dmSurveyAnswerTableList1.get(0).actionPlanId);
@@ -1139,51 +1111,13 @@ public class FollowUpActionPlan extends Fragment {
 
     }
 
-    private boolean checkAllowCustomActionPlan(String questionId, String ans, int ansId, String displayType) {
-        boolean allowCustomActionPlan = false;
-        if(displayType.equalsIgnoreCase("text box")){
-            if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
-                if (ans != null) {
-                    String value = ans.trim();
-
-                    for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
-
-                        try {
-                            if (Objects.equals(value, "-")) {
-                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                            }
-                            else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
-                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                            }
-                            else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
-                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                            }
-                        }catch (Exception e){e.printStackTrace();}
-                    }
-
-                }
-            }
-        }else{
-            List<DmLookupValuesItem> dmLookupValuesISubmoduleList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(Integer.parseInt(questionId));
-            for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
-                if(ans.equalsIgnoreCase(dmLookupValuesISubmoduleList.get(k).value)) {
-                    allowCustomActionPlan = dmLookupValuesISubmoduleList.get(k).allowCustomActionPlan;
-                }
-            }
-        }
-
-        return allowCustomActionPlan;
-    }
-
     private boolean checkAllowCaptureProof(String questionId, String ans, int ansId, String displayType) {
         boolean allowCaptureProof = false;
         if(displayType.equalsIgnoreCase("text box")){
-            if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+            if (!db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).isEmpty()) {
                 if (ans != null) {
                     String value = ans.trim();
-
                     for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
-
                         try {
                             if (Objects.equals(value, "-")) {
                                 allowCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
@@ -1196,7 +1130,6 @@ public class FollowUpActionPlan extends Fragment {
                             }
                         }catch (Exception e){e.printStackTrace();}
                     }
-
                 }
             }
         } else if (displayType.equalsIgnoreCase(Constants.CHECKBOX)) {
@@ -1213,6 +1146,7 @@ public class FollowUpActionPlan extends Fragment {
 
         return allowCaptureProof;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -2197,13 +2131,8 @@ public class FollowUpActionPlan extends Fragment {
 
 
         final List<String> list = new ArrayList<String>();
-        list.clear();
-
         final List<String> ids = new ArrayList<String>();
-        ids.clear();
-
         final List<String> isDefaultCurrency = new ArrayList<String>();
-        isDefaultCurrency.clear();
 
         for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
             int currencyId = dmCurrenciesItemList.get(c).currencyId;
@@ -2222,12 +2151,10 @@ public class FollowUpActionPlan extends Fragment {
 
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID);
 
-        if (dmActionPlanCurrenciesTables.size() != 0) {
+        if (!dmActionPlanCurrenciesTables.isEmpty()) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
         }
-
-
 
         int selectedPosition = 0;
 

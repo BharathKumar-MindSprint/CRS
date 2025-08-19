@@ -10,6 +10,37 @@
     android:weightSum="20"
     tools:context="com.olam.digital.ofis.recordpolygon.RecordPolygonActivity">
 
+    <LinearLayout
+        android:id="@+id/de_activation_notification"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:background="@color/color_secondary_3"
+        android:padding="@dimen/home_activity_horizontal_margin"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:layout_below="@+id/linear_viewInfo"
+        android:baselineAligned="false">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_info_icon"
+            android:layout_weight="0.1"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="0.8"
+            android:textSize="16sp"
+            android:text="@string/deactivation_pending"
+            android:textColor="@color/ofis_base_font_white" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/topSection"
@@ -60,21 +91,20 @@
 
                     <Spinner
                         android:id="@+id/plot_number"
-                        android:layout_width="wrap_content"
+                        android:layout_width="84dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:textColor="@color/ofis_base_font_white" />
 
                     <TextView
                         android:id="@+id/plot_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                         android:layout_marginLeft="@dimen/ofis_input_field_bottom_margin"
                         android:background="@drawable/edittext_bg_dark"
                         android:padding="@dimen/margin_10"
                         android:maxLines="1"
-                        android:layout_weight="4"
+                        android:ellipsize="end"
                         android:textColor="@color/ofis_base_font_dark"
                         android:textColorHint="@color/icon_grey_palette_2"
                         android:textSize="@dimen/ofis_input_field_text" />
@@ -170,6 +200,7 @@
                     android:visibility="visible"
                     android:background="@drawable/ic_gps_black"/>
             </LinearLayout>
+
 
         </LinearLayout>
 
@@ -302,6 +333,62 @@
             android:text="@string/save_button_text"
             android:textColor="@color/ofis_base_font_white"
             android:textSize="@dimen/ofis_med_text" />
+
+        <LinearLayout
+            android:id="@+id/ll_de_activation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="20dp"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_flag_deactivation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:gravity="center"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/flag_deactivation_background"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/de_active_plot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/flag_for_deactivation"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_reset_de_activated_plot"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:gravity="center"
+                android:background="@drawable/flag_deactivation_background">
+
+                <TextView
+                    android:id="@+id/reset_deactivated_plot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:gravity="center"
+                    android:text="@string/reset_deactivation_text"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

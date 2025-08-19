@@ -844,6 +844,8 @@
     <string name="ready_to_download_photo_checkbox">Hay imágenes que deben descargarse para las preguntas sobre las casillas de verificación de fotografías. ¿Quieres continuar descargando las imágenes ahora?</string>
     <string name="no_images_to_be_downloaded">No hay imágenes para descargar.</string>
     <string name="image_downloaded">Imágenes descargadas con éxito</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
+    <string name="Alert_txt">Alerta !</string>
 
 </resources>
 

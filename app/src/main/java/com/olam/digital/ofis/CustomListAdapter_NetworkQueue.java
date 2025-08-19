@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -26,6 +27,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
     private final HomeActivity homeActivity;
     private long mLastClickTime = 0;
     public boolean isClickable;
+    public Resources res;
 
     public CustomListAdapter_NetworkQueue(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, HomeActivity ha, boolean isClickable) {
         super(c, R.layout.listview_network_queue, cursor, adapterCols, adapterRowViews, 0);
@@ -33,6 +35,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
         this.inflater = LayoutInflater.from(c);
         this.homeActivity = ha;
         this.isClickable = isClickable;
+        this.res = c.getResources();
     }
 
 
@@ -47,42 +50,27 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView_pic);
         final TextView networkQueueId = (TextView) view.findViewById(R.id.networkQueueId);
 
-       /* String environment=BuildConfig.FLAVOR;
-        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+        if (isClickable) {
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+            imageView.setEnabled(true);
+        } else {
+            imageView.setEnabled(false);
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+        }
 
-            if (isClickable) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_blacklocation));
-                imageView.setEnabled(true);
-            } else {
-                imageView.setEnabled(false);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_graylocation));
-            }
-        }else {*/
-            if (isClickable) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-                imageView.setEnabled(true);
-            } else {
-                imageView.setEnabled(false);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
-            }
-//        }
+        String itemType = cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
+        String subType = cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE));
+        if (itemType.equalsIgnoreCase("farmpolygon") && (subType != null && subType.equalsIgnoreCase(res.getString(R.string.flag_for_de_activation)))) {
+            TextView tvSubGroupType = view.findViewById(R.id.tvSubGroupType);
+            tvSubGroupType.setVisibility(View.VISIBLE);
+            tvSubGroupType.setText(subType);
+        }
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                imageView.setEnabled(false);
-//                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
-
                 int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
                 homeActivity.startItemSyncAuth(itemId);
-               /* final Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-                        imageView.setEnabled(true);
-                    }
-                }, 5000);*/
             }
         });
     }

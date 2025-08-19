@@ -3,6 +3,7 @@ package com.olam.digital.ofis.tasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -68,6 +69,8 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
     JSONObject dmFollowUp;
     OFISRoomDB roomDB;
     DataLayer dl;
+
+    private SQLiteDatabase db;
     public UpdateDiagnosticModuleTask(Context context, JSONObject dm, JSONObject dmFollowUpResponse, Resources res, JSONObject farmerResponse) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
@@ -75,6 +78,7 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
         this.dmFollowUp = dmFollowUpResponse;
         roomDB = OFISRoomDB.getDbInstance(context);
         dl = new DataLayer(res, context);
+        db = Utilities.getWriteableDb(context);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
             if (farmerResponse.getInt("resultcount") > 0) {
                 JSONObject response = farmerResponse.getJSONObject("outputData");
                 JSONArray farmerArray = response.getJSONArray(OFISDBContract.FarmerEntry.TABLE_NAME);
-                
+               db.delete(OFISDBContract.PlotEntry.TABLE_NAME, null, null);
                 for (int j = 0; j < farmerArray.length(); j++) {
                     JSONObject farmerObject = farmerArray.getJSONObject(j);
                     JSONArray plotArray = farmerObject.getJSONArray(OFISDBContract.PlotEntry.TABLE_NAME);
@@ -850,6 +854,10 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                 int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
                                 int moduleId = existingModuleItemArrayList.get(k).getModuleId();
                                 int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
+                                int followUpCount = existingModuleItemArrayList.get(k).getFollowUpCount();
+                                String isFollowUpCompleted = existingModuleItemArrayList.get(k).getIsFollowUpCompleted();
+                                String firstFollowupDate = existingModuleItemArrayList.get(k).getFirstFollowupDate();
+
                                 ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
                                 answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
                                 Result result = existingModuleItemArrayList.get(k).getResult();
@@ -896,7 +904,7 @@ public class UpdateDiagnosticModuleTask extends DatabaseTask {
                                         currencyId,
                                         submissionDate,
                                         result.getResultColour(),
-                                        result.getOverAllResult(), 0);
+                                        result.getOverAllResult(), 0, followUpCount, isFollowUpCompleted, firstFollowupDate);
                                 roomDB.dmSurveyReportDao().insert(dmSurveyReport);
                             }
                         }

@@ -51,8 +51,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.internal.service.Common;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -85,8 +86,6 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.logging.FabricLogsWriter;
-
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -106,6 +105,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.showAlert;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -136,7 +136,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Handler mainHandler;
 
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
-    private final static String EDIT_TRANSACTION_ITEM_ID = "EDIT_TRANSACTION_ITEM_ID";
     private final static String EDIT_TRAININGRECORD_ID = "EDIT_TRAININGRECORD_ID";
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
@@ -252,8 +251,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
-
-
         Account mAccount = CreateSyncAcount();
 
         ContentResolver.setSyncAutomatically(
@@ -399,6 +396,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         String userpasscode = passcode.getText().toString().trim();
+        if (!isNetworkAvailable(this))
+        {
+            showAlert(getString(R.string.Please_check_the_Internet_Connection),this);
+            return;
+        }
+
         if (!userEnumerator.equalsIgnoreCase("") && !userpasscode.equalsIgnoreCase("")) {
 
             if (isAccountLocked()) {
@@ -690,6 +693,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             accessTokenTask.execute();
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 
@@ -786,6 +790,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nl.syncNetworkQueue(null, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 
@@ -876,6 +881,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
         }
     }
 
@@ -931,7 +937,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void downloadSurveyWrap() {
         try {
-            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList(context);
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList == null || moduleList.size() == 0) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
@@ -1135,10 +1141,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             enableSync();
             Toast.makeText(HomeActivity.this, getString(R.string.authentication_attempt), Toast.LENGTH_LONG).show();
         } else {
-            try {
-                FabricLogsWriter.printCrashLog(TAG, "ofisoauth/authenticate", response.code(), "Request : :  " + new Gson().toJson(getAuthRequestDTO()).toString() + "   Response :  " + response.raw().networkResponse().toString() + "user Id :" + enumeratorID.getText().toString().trim(), context);
-            } catch (Exception e) {
-            }
             enableSync();
             if (response.code() == 401) {
                 validateLoginAttempts();
@@ -1417,6 +1419,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putLong(Utilities.FARMER_ID, Long.parseLong(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString(Utilities.STAKE_HOLDER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID))));
                 startActivity(new Intent(this, ViewStakeHolderActivity.class).putExtras(bundle));
+            } else if (itemType.equalsIgnoreCase("phonenumbers")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                intent.putExtra("phoneNumber", true);
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("Update_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
+            } else if (itemType.equalsIgnoreCase("National_ID")) {
+                Intent in = new Intent(this, AddNationalidActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                bundle.putBoolean("edit_mode", true);
+                in.putExtras(bundle);
+                startActivity(in);
             }
             else if (itemType.equalsIgnoreCase("Supplier Survey")) {
                 int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
@@ -1443,7 +1466,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         protected Boolean doInBackground(Object... objects) {
             try {
                 DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
-                ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+                ArrayList<ModuleDTO> duplicateList = dl.viewModuleList(staticContext);
                 moduleList = dl.removeDuplicateModule(duplicateList);
 
             } catch (Exception e) {
@@ -1460,54 +1483,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
-
-            GetAccessToken("home");
-
-        }
-    }
-
-
-    public static void GetAccessToken(String value) {
-        ((Activity) staticContext).invalidateOptionsMenu();
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
-        Log.d("COUNTRY_CODENEWPREFFF", isoCode);
-        counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
-
-        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);
-        ManageRecords GetAccessToken = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<AccessTokenResp> call = GetAccessToken.getAccessToken(accessTokenReqBody);
-        call.enqueue(new Callback<AccessTokenResp>() {
-            @Override
-            public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
-                if (response.code() == 200) {
-                    odAccessToken = response.body().getAccessToken();
-                    Log.e("OD_AccessTOKEN", odAccessToken);
-
-                    DownloadFormList("home");
-                } else if (response.code() == 400) {
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                } else if (response.code() == 500) {
-
-                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if (value.equalsIgnoreCase("home")) {
-                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                    }
-                }
+            int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
+            if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
+                showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
-
-            @Override
-            public void onFailure(Call<AccessTokenResp> call, Throwable t) {
-            }
-        });
-
-        int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
-        if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
-            showDailyRemainderPopUp(onGroundSurveyNotificationCount);
         }
-
     }
 
     /*Get DownLoad Farm Form List*/

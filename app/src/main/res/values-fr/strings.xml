@@ -1056,7 +1056,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="reenter_passcode">Déconnexion</string>
     <string name="android_id">ID d\'installation de l\'appareil : </string>
     <string name="logout_note">Êtes-vous sûr de vouloir vous déconnecter ? </string>
-    <string name="download_survey_data">Télécharger les données de l\'enquête</string>
     <string name="select_fgsection">Sélectionnez le groupe d\'agriculteurs et la section</string>
     <string name="download">Télécharger</string>
     <string name="downloading">Téléchargement...</string>
@@ -1221,6 +1220,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="stakeholder_not_synced">Désolé, mais le stakeholder n\'a pas encore été synchronisé. Veuillez synchroniser le stakeholder d\'abord</string>
     <string name="consent_not_synced">Désolé, mais le consentement n\'a pas encore été synchronisé. Veuillez synchroniser le consentement d\'abord</string>
     <string name="survey_already_synced">Ce sondage a déjà été répondu par un autre enquêteur. Veuillez enregistrer et mettre à jour votre application OFIS</string>
+
     <string name="supplier_and_surveys">Fournisseurs et enquêtes</string>
     <string name="title_find_supplier_and_survey">Trouver un fournisseur</string>
     <string name="select_supplier">Sélectionner un fournisseur</string>
@@ -1238,9 +1238,51 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="supplier_search_hint">Recherche par nom ou numéro d\'identification du fournisseur</string>
     <string name="spinner_supplier_group">Groupe de fournisseurs</string>
     <string name="supplier_group">Groupe de fournisseurs</string>
+
+    <string name="farmer_code_already_exists">"Le code agriculteur existe déjà !"</string>
+    <string name="farmer_code">"Code Agriculteur"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
+
     <string name="no_signature_available">Signature non disponible</string>
 
     <string name="enter_attendee_relation_name">Veuillez entrer le nom du participant</string>
     <string name="sign_all_attendee">Signature requise pour tous les participants !</string>
+
+    <string name="fill_phone_number">Veuillez remplir le numéro de téléphone principal</string>
+    <string name="select_primary_phone_number">veuillez sélectionner le numéro de téléphone principal</string>
+    <string name="error_msg_phone_number">* Le numéro de téléphone principal est déjà utilisé. Veuillez entrer un autre numéro.</string>
+    <string name="error_msg_dup_national_id">L\'identifiant national est déjà utilisé. Veuillez entrer un autre identifiant.</string>
+    <string name="download_survey_data">Télécharger les données</string>
+    <string name="download_polygon_data">Télécharger les données du polygone</string>
+    <string name="plot_number">Parcelle %1$d</string>
+    <string name="plot_size_polygon">Taille de la parcelle - %1$.2fKB</string>
+    <string name="plot_pin">Code de la parcelle</string>
+    <string name="max_size_selection_plot">Sélection maximale atteinte. Veuillez désélectionner un ou plusieurs éléments pour continuer</string>
+    <string name="no_plot_selected">Aucune parcelle sélectionnée</string>
+    <string name="done">Terminé</string>
+    <string name="download_successful">Téléchargement réussi</string>
+    <string name="downloaded_plot_message">La parcelle téléchargée peut être consultée dans la section des parcelles agricoles.</string>
+    <string name="download_polygon">Télécharger le polygone</string>
+    <string name="ofis_olam_id">"ID OFIS : "</string>
+    <string name="selected_plot">"Parcelles sélectionnées : "</string>
+    <string name="flag_for_deactivation">Désactiver la parcelle</string>
+    <string name="reset_deactivation_text">Réinitialiser \nParcelle désactivée</string>
+    <string name="flag_for_de_activation">Marquer pour désactivation</string>
+    <string name="deactivate_reason">Raison de la désactivation</string>
+    <string name="deactivation_reason">Raison de la désactivation..</string>
+    <string name="de_activation_reason_message">Veuillez fournir une raison pour désactiver cette parcelle. \n<b>Remarque :</b> Votre demande sera soumise pour approbation</string>
+    <string name="deactivation_pending">Désactivation en attente d\'approbation</string>
+    <string name="deactivation_successful">Désactivation réussie</string>
+    <string name="dialog_message">Êtes-vous sûr de vouloir réinitialiser la parcelle désactivée ?</string>
+    <string name="reset_deactivation_plot">Réinitialiser la parcelle désactivée</string>
+    <string name="reason_error_msg">veuillez entrer la raison de la désactivation</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="no_national_id">Aucun identifiant national applicable !</string>
+    <string name="no_phone_number">Aucun numéro de téléphone applicable !</string>
+    <string name="invalid_national_id">Identifiant national invalide !</string>
+    <string name="invalid_phonenumber">Numéro de téléphone invalide !</string>
 
 </resources>

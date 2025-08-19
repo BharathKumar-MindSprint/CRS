@@ -896,6 +896,7 @@
     <string name="stakeholder_not_synced">Desculpe, mas o stakeholder ainda não foi sincronizado. Por favor, sincronize o stakeholder primeiro</string>
     <string name="consent_not_synced">Desculpe, mas o consentimento ainda não foi sincronizado. Por favor, sincronize o consentimento primeiro</string>
     <string name="survey_already_synced">Esta pesquisa já foi respondida por outro enumerador. Por favor, salve e atualize seu aplicativo OFIS</string>
+
     <string name="supplier_and_surveys">Fornecedores e pesquisas</string>
     <string name="title_find_supplier_and_survey">Pesquisar um fornecedor</string>
     <string name="select_supplier">Selecione um fornecedor</string>
@@ -913,10 +914,55 @@
     <string name="supplier_search_hint">Pesquisar por nome do fornecedor ou identificação do fornecedor</string>
     <string name="spinner_supplier_group">Grupo de fornecedores</string>
     <string name="supplier_group">Grupo de fornecedores</string>
+
+    <string name="farmer_code_already_exists">"O código do agricultor já existe!"</string>
+    <string name="farmer_code">"Código do Agricultor"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
+
     <string name="no_signature_available">Assinatura não disponível</string>
 
     <string name="enter_attendee_relation_name">Por favor, insira o nome do participante</string>
     <string name="sign_all_attendee">Assinatura necessária para todos os participantes!</string>
+
+
+    <string name="fill_phone_number">Por favor, preencha o número de telefone principal</string>
+    <string name="select_primary_phone_number">por favor selecione o número de telefone principal</string>
+    <string name="error_msg_phone_number">* O número de telefone principal já está em uso. Por favor, insira um número diferente.</string>
+    <string name="error_msg_dup_national_id">O ID nacional já está em uso. Por favor, insira um ID diferente.</string>
+    <string name="download_survey_data">Baixar dados</string>
+    <string name="download_polygon_data">Baixar dados do polígono</string>
+    <string name="plot_number">Lote %1$d</string>
+    <string name="plot_size_polygon">Tamanho do lote - %1$.2fKB</string>
+    <string name="plot_pin">PIN do lote</string>
+    <string name="max_size_selection_plot">Seleção máxima atingida. Por favor, desmarque um ou mais itens para continuar</string>
+    <string name="no_plot_selected">Nenhum lote selecionado</string>
+    <string name="done">Concluído</string>
+    <string name="download_successful">Download bem-sucedido</string>
+    <string name="downloaded_plot_message">O lote baixado pode ser visualizado na seção de lotes do agricultor.</string>
+    <string name="download_polygon">Baixar polígono</string>
+    <string name="ofis_olam_id">"ID OFIS: "</string>
+    <string name="selected_plot">"Lotes selecionados: "</string>
+    <string name="flag_for_deactivation">Desativar lote</string>
+    <string name="reset_deactivation_text">Redefinir \nLote desativado</string>
+    <string name="flag_for_de_activation">Marcar para desativação</string>
+    <string name="deactivate_reason">Motivo da desativação</string>
+    <string name="deactivation_reason">Motivo da desativação..</string>
+    <string name="de_activation_reason_message">Por favor, forneça um motivo para desativar este lote. \n<b>Nota:</b> Sua solicitação será enviada para aprovação</string>
+    <string name="deactivation_pending">Desativação pendente de aprovação</string>
+    <string name="deactivation_successful">Desativação bem-sucedida</string>
+    <string name="dialog_message">Tem certeza de que deseja redefinir o lote desativado?</string>
+    <string name="reset_deactivation_plot">Redefinir lote desativado</string>
+    <string name="reason_error_msg">por favor insira o motivo da desativação</string>
+    <string name="reset">Redefinir</string>
+    <string name="no_national_id">Nenhum ID nacional aplicável!</string>
+    <string name="no_phone_number">Nenhum número de telefone aplicável!</string>
+    <string name="invalid_national_id">Identificação nacional inválida!</string>
+    <string name="invalid_phonenumber">Número de telefone inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
+    <string name="Alert_txt">Alerta!</string>
 
 </resources>
 

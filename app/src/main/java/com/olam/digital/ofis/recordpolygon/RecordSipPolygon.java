@@ -482,7 +482,7 @@ public class RecordSipPolygon extends AppCompatActivity {
         }
 
         if (id == R.id.action_home) {
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this,  HomeActivity.class);
             startActivity(intent);
             return true;
         }

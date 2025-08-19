@@ -1,1 +1,1 @@
-include ':app', ':InAppLib_1.8'/*,':library'*/
+include ':app', ':InAppLib_1.8'

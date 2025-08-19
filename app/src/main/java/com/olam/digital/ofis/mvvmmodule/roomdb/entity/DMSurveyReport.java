@@ -74,6 +74,15 @@ public class DMSurveyReport {
     @ColumnInfo(name = "plotId", defaultValue = "0")
     private Integer plotId;
 
+    @ColumnInfo(name = "followUpCount")
+    private Integer followUpCount;
+
+    @ColumnInfo(name = "isFollowUpCompleted")
+    private String isFollowUpCompleted;
+
+    @ColumnInfo(name = "firstFollowupDate")
+    private String firstFollowupDate;
+
     public String getOverAllResult() {
         return overAllResult;
     }
@@ -109,7 +118,7 @@ public class DMSurveyReport {
 
     public DMSurveyReport(int totalComplaint, int totalSatisfactory, int totalNonComplaint, int totalActionPlan,
                           double totalBudget, String resultType, String resultValue, String resultRemarks ,long farmerId,
-                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour,String overAllResult, int plotId) {
+                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour,String overAllResult, int plotId, Integer followUpCount, String isFollowUpCompleted, String firstFollowupDate) {
         this.totalComplaint = totalComplaint;
         this.totalSatisfactory = totalSatisfactory;
         this.totalNonComplaint = totalNonComplaint;
@@ -126,6 +135,9 @@ public class DMSurveyReport {
         this.resultColour = resultColour;
         this.overAllResult = overAllResult;
         this.plotId = plotId;
+        this.followUpCount = followUpCount;
+        this.isFollowUpCompleted = isFollowUpCompleted;
+        this.firstFollowupDate = firstFollowupDate;
     }
 
     // Getters and setters for the properties
@@ -219,4 +231,27 @@ public class DMSurveyReport {
         this.plotId = plotId;
     }
 
+    public Integer getFollowUpCount() {
+        return followUpCount;
+    }
+
+    public void setFollowUpCount(Integer followUpCount) {
+        this.followUpCount = followUpCount;
+    }
+
+    public String getIsFollowUpCompleted() {
+        return isFollowUpCompleted;
+    }
+
+    public void setIsFollowUpCompleted(String isFollowUpCompleted) {
+        this.isFollowUpCompleted = isFollowUpCompleted;
+    }
+
+    public String getFirstFollowupDate() {
+        return firstFollowupDate;
+    }
+
+    public void setFirstFollowupDate(String firstFollowupDate) {
+        this.firstFollowupDate = firstFollowupDate;
+    }
 }

@@ -25,14 +25,15 @@ import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmQuestionsModule;
@@ -56,6 +57,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -158,8 +160,9 @@ public class Utilities {
     public static final String DM_ERROR_MESSAGE = "No Diagnostic module assigned for user";
     public static final String FOLLOW_UP_COUNT = "followUpCount";
     public static final String ATTENDEE_SIGNATURE = "ATTENDEE_SIGNATURE";
-
-
+    public static final String TYPE_POLYGON = "POLYGON";
+    private static String blockCharacterSet = "~#^|$%&*!'\"";
+    public static long SIZE_20_MB = 20 * 1024 * 1024;
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -267,17 +270,6 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
         editor.apply();
-//        Passcode added - Penetration testing
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        if (prefName.equalsIgnoreCase("ENUMERATOR_ID")) {
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Enumerator", value);
-            }
-        }else if(prefName.equalsIgnoreCase("PASSCODE")){
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Passcode", value);
-            }
-        }
     }
 
     public static void saveLongToSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName, long value) {
@@ -341,10 +333,10 @@ public  static String base64ConversionForImage(String filepath)  {
     }
     public static String getEnumeratorNameSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        String s=sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+        String s=sharedPreferences.getString(StringConstants.ENUMERATOR_NAME, "");
         String decryptedMsg="";
         try {
-            decryptedMsg = AESCrypt.decrypt(GPSConstants.COLUMN_ENUMERATOR_NAME, s);
+            decryptedMsg = AESCrypt.decrypt(StringConstants.ENUMERATOR_NAME, s);
         }catch (GeneralSecurityException e){
             //handle error - could be due to incorrect password or tampered encryptedMsg
         }
@@ -420,20 +412,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getInt(prefName, 0);
     }
 
-    public static String getStringFromSharedPrefs(Context context, String prefName) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        return sharedPreferences.getString(prefName, "");
-    }
-
     public static String getIMEI(Context c) {
         int permissionCheck = ContextCompat.checkSelfPermission(c, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            TelephonyManager telephonyManager = (TelephonyManager) c.getSystemService(Context.TELEPHONY_SERVICE);
             String android_id = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
-//            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
             return android_id;
-
         } else {
             return "imei not available";
         }
@@ -1188,4 +1171,30 @@ public  static String base64ConversionForImage(String filepath)  {
         return currentRecurrence;
     }
 
+    public static boolean isDuplicateNationalId(HashMap<Integer, String> existingNationalId, HashMap<Integer, String> enteredNationalId) {
+        boolean isDuplicate = false;
+        if (!enteredNationalId.isEmpty() && !existingNationalId.isEmpty()) {
+            for (String nidNumbers : enteredNationalId.values()) {
+                if (existingNationalId.containsValue(nidNumbers)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return isDuplicate;
+    }
+
+    public static InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+
+        if (source != null && blockCharacterSet.contains(("" + source))) {
+            return "";
+        }
+        for (int i = start; i < end; i++) {
+            int type = Character.getType(source.charAt(i));
+            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                return "";
+            }
+        }
+        return null;
+    };
 }

@@ -907,10 +907,55 @@
     <string name="supplier_survey">Encuesta a proveedores</string>
     <string name="evidence_is_missing">Faltan pruebas</string>
     <string name="limiter">%1$s - %2$s</string>
+
+    <string name="farmer_code_already_exists">"¡El código de agricultor ya existe!"</string>
+    <string name="farmer_code">"Código de Agricultor"</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
+    <string name="example_format">Example Format </string>
+
     <string name="no_signature_available">Firma no disponible</string>
+
 
     <string name="enter_attendee_relation_name">Por favor, ingrese el nombre del asistente</string>
     <string name="sign_all_attendee">¡Firma requerida para todos los participantes!</string>
+
+
+    <string name="fill_phone_number">Por favor, introduzca el número de teléfono principal</string>
+    <string name="select_primary_phone_number">por favor seleccione el número de teléfono principal</string>
+    <string name="error_msg_phone_number">* El número de teléfono principal ya está en uso. Por favor, introduzca otro número.</string>
+    <string name="error_msg_dup_national_id">El ID nacional ya está en uso. Por favor, introduzca otro ID.</string>
+    <string name="download_survey_data">Descargar datos</string>
+    <string name="download_polygon_data">Descargar datos del polígono</string>
+    <string name="plot_number">Parcela %1$d</string>
+    <string name="plot_size_polygon">Tamaño de la parcela - %1$.2fKB</string>
+    <string name="plot_pin">Pin de la parcela</string>
+    <string name="max_size_selection_plot">Selección máxima alcanzada. Por favor, deseleccione uno o más elementos para continuar</string>
+    <string name="no_plot_selected">No se seleccionaron parcelas</string>
+    <string name="done">Hecho</string>
+    <string name="download_successful">Descarga exitosa</string>
+    <string name="downloaded_plot_message">La parcela descargada se puede ver en la sección de parcelas del agricultor.</string>
+    <string name="download_polygon">Descargar polígono</string>
+    <string name="ofis_olam_id">"ID OFIS: "</string>
+    <string name="selected_plot">"Parcelas seleccionadas: "</string>
+    <string name="flag_for_deactivation">Desactivar parcela</string>
+    <string name="reset_deactivation_text">Restablecer \nParcela desactivada</string>
+    <string name="flag_for_de_activation">Marcar para desactivación</string>
+    <string name="deactivate_reason">Razón de desactivación</string>
+    <string name="deactivation_reason">Razón de desactivación..</string>
+    <string name="de_activation_reason_message">Por favor, proporcione una razón para desactivar esta parcela. \n<b>Nota:</b> Su solicitud será enviada para aprobación</string>
+    <string name="deactivation_pending">Desactivación pendiente de aprobación</string>
+    <string name="deactivation_successful">Desactivación exitosa</string>
+    <string name="dialog_message">¿Está seguro de que desea restablecer la parcela desactivada?</string>
+    <string name="reset_deactivation_plot">Restablecer parcela desactivada</string>
+    <string name="reason_error_msg">por favor ingrese la razón de desactivación</string>
+    <string name="reset">Restablecer</string>
+    <string name="no_national_id">¡No hay ID nacional aplicable!</string>
+    <string name="no_phone_number">¡No hay número de teléfono aplicable!</string>
+    <string name="invalid_national_id">¡Identificación nacional inválida!</string>
+    <string name="invalid_phonenumber">¡Número de teléfono inválido!</string>
+    <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
+    <string name="Alert_txt">Alerta !</string>
 
 </resources>
 
