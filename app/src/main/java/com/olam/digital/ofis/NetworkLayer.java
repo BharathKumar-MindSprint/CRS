@@ -2384,12 +2384,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     // OW-4590 Fix
     private JSONArray farmernationalids(long farmerId, long nid, String value, String columnName, Long countryId, Long productId) {
         Cursor nids;
-        if (value.equalsIgnoreCase("2") || value.equals("updateNationalId")) {
-            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
-        } else {
-            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
-        }
-
+//        if (value.equalsIgnoreCase("2") || value.equals("updateNationalId")) {
+//            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
+//        } else {
+//            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
+//        }
+        nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
         JSONArray numbersarray = new JSONArray();
 
         try {

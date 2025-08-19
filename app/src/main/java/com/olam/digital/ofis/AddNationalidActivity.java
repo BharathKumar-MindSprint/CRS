@@ -583,7 +583,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 }
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 removeSpinnerItem(numberrow);
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                numberrow.setVisibility(View.GONE);
+               // ((ViewGroup) numberrow.getParent()).removeView(numberrow);
                 removehmvalue(hm_uripath, (int) trashbutton.getTag());
                 removehmURIvalue(hm_uri, (int) trashbutton.getTag());
                 refreshTags(nationalids);
@@ -603,11 +604,28 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
             View nidrow = nationalids.getChildAt(j);
+            boolean isdeleted = nidrow.getVisibility() == View.GONE;
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             TextView dbIdStore = nidrow.findViewById(R.id.dbIdStore);
+            NationalIdDTO updateDTO = new NationalIdDTO();
+            nidnumber.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                  updateDTO.setUpdated(true);
+                }
+            });
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -650,7 +668,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 nidtype_list.add(value);
                 selectednationalidList.add(value);
             }
-            if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+            if (getNidCaptureStatus(value).equalsIgnoreCase("true") && !isdeleted) {
                 if (!editmode) {
                     if (!getPhotostatusByType(String.valueOf(type))) {
                         nidphotoActionButton.setClickable(true);
@@ -677,7 +695,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             }
-            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true") && !isdeleted) {
                 if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
                     Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
                     return false;
@@ -687,6 +705,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
                 idDTO.setNationalidtype(String.valueOf(type));
+                idDTO.setDeletedFlag(isdeleted);
+                idDTO.setUpdated(updateDTO.isUpdated());
                 if (dbIdStore.getTag() != null) {
                     idDTO.setBackendDbId(dbIdStore.getTag().toString());
                 }
