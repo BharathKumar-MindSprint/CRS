@@ -1197,4 +1197,11 @@ public  static String base64ConversionForImage(String filepath)  {
         }
         return null;
     };
+
+    public static double roundArea(double value, int places) {
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
 }

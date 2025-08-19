@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 160;
+    private static final int DATABASE_VERSION = 161;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -353,7 +353,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT )";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT )";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -889,15 +890,21 @@ class OFISDB extends SQLiteOpenHelper {
             case 158:
                 migrateFromVersion158To159(sqLiteDatabase);
                 migrateFrom159To160(sqLiteDatabase);
+                migrateFrom160To161(sqLiteDatabase);
                 break;
             case 159:
                 migrateFrom159To160(sqLiteDatabase);
+                migrateFrom160To161(sqLiteDatabase);
+                break;
+            case 160:
+                migrateFrom160To161(sqLiteDatabase);
                 break;
 
             default:
                 migrateFromVersionBelow157(sqLiteDatabase);
                 migrateFromVersion158To159(sqLiteDatabase);
                 migrateFrom159To160(sqLiteDatabase);
+                migrateFrom160To161(sqLiteDatabase);
                 break;
         }
     }
@@ -967,6 +974,15 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_NATIONAL_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_IS_NO_PHONE_NUMBER + " TEXT ");
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void migrateFrom160To161(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT ");
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }
