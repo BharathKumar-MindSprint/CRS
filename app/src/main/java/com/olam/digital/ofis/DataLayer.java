@@ -1417,6 +1417,8 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED, storeableNumber.has("deletedFlag") ? storeableNumber.getString("deletedFlag") : null);
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED, storeableNumber.has("updatedFlag") ? storeableNumber.getString("updatedFlag") : null);
                 String backendDbId = storeableNumber.has(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) ? storeableNumber.getString(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID) : null;
                 if (storeableNumber.has("expiryDate")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
@@ -3392,6 +3394,14 @@ public class DataLayer {
     public Cursor getnationalidsbyfarmerids(long id, String columnName) {
         String[] columns = new String[]{"*"};
         String whereClause = columnName + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getnationalidsbyfarmerid(long id, String columnName) {
+        String[] columns = new String[]{"*"};
+        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS 0 OR " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " LIKE 'true' OR " +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 'true')";
         String[] whereArgs = new String[]{String.valueOf(id)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);

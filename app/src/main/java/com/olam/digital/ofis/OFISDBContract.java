@@ -1247,7 +1247,8 @@ public class OFISDBContract {
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
-
+        public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
+        public static final String COLUMN_NAME_IS_UPDATED = "is_updated";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1259,6 +1260,8 @@ public class OFISDBContract {
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
                     add(COLUMN_NAME_IS_DUPLICATE);
+                    add(COLUMN_NAME_IS_UPDATED);
+                    add(COLUMN_NAME_IS_DELETED);
                 }}
         );
     }

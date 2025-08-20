@@ -496,6 +496,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DUPLICATE + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
@@ -988,6 +990,8 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PhoneNumber.TABLE_NAME + " ADD COLUMN " + OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_DELETED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED +  " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED +  " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED +  " TEXT ");
         }catch (SQLException e) {
             e.printStackTrace();
         }

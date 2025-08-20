@@ -263,8 +263,24 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_nidtype.setAdapter(spinnerArrayAdapter);
-
+         NationalIdDTO updateDTO = new NationalIdDTO();
         EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+        nidnumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateDTO.setUpdated(true);
+            }
+        });
         nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
         nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
         nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -380,6 +396,23 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
                     LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                    NationalIdDTO updateDTO = new NationalIdDTO();
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            updateDTO.setUpdated(true);
+                        }
+                    });
                     TextView dbIdStore = nationalidinclude.findViewById(R.id.dbIdStore);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
@@ -804,6 +837,23 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     nationalidphoto.setTag(nationalids.getChildCount());
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
 //                    ll_captureexpiry.setVisibility(View.GONE);
+                    NationalIdDTO updateDTO = new NationalIdDTO();
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            updateDTO.setUpdated(true);
+                        }
+                    });
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
