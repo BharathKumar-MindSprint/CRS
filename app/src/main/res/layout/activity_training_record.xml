@@ -168,16 +168,150 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <ListView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list"
-        android:divider="@android:color/transparent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
         android:layout_below="@+id/trainingAttendeesHeader"
         android:layout_above="@+id/buttonContainer"
         android:paddingBottom="@dimen/ofis_list_itemseparator"
-        android:layout_margin="@dimen/margin_10"
-        android:dividerHeight="0dp" />
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginEnd="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:weightSum="10">
+
+        <!-- Farmer List -->
+        <LinearLayout
+            android:id="@+id/farmer_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/btn_white_rec"
+            android:layout_weight="9"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/attendee_icon"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Primary Farmers"
+                    android:paddingStart="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="8" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:background="@color/light_orange"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/toggle_icon_farmer"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_down"
+                        card_view:tint="@color/ic_orange" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/list_farmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+
+        </LinearLayout>
+
+        <!-- Stakeholder List -->
+        <LinearLayout
+            android:id="@+id/stakeholder_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/btn_white_rec"
+            android:layout_marginTop="@dimen/ofis_bottom_section_padding_horizontal"
+            android:layout_weight="1"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/attendee_icon"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Stakeholders"
+                    android:paddingStart="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="8" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:background="@color/light_orange"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/toggle_icon_stakeholder"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_down"
+                        card_view:tint="@color/ic_orange" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/list_stakeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <!-- base button -->
     <RelativeLayout

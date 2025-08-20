@@ -25,11 +25,13 @@ import androidx.core.content.FileProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -90,23 +92,35 @@ public class TrainingRecord extends BaseListActivity{
 
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
     private static final int REQUEST_CHECK_SETTINGS = 100;
-    ListView listView;
-
    public static HashMap<Long,Integer> farmerAttendeeList =null;
    public static boolean isCaptureAttendee;
 
     public boolean signatureAllowed;
     String currentPhotoPathBackup;
 
+    private ImageView toggleFarmerIcon, toggleStakeholderIcon;
+    private ListView farmerList, stakeholderList;
+
+    private boolean isFarmerOpen = false;
+    private boolean isStakeholderOpen = false;
+    private LinearLayout farmerSection, stakeholderSection;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
-        listView=findViewById(R.id.list);
+        farmerList=findViewById(R.id.list_farmer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         context = me = this;
         res = getResources();
+
+        farmerSection = findViewById(R.id.farmer_section);
+        stakeholderSection = findViewById(R.id.stakeholder_section);
+        toggleFarmerIcon = findViewById(R.id.toggle_icon_farmer);
+        toggleStakeholderIcon = findViewById(R.id.toggle_icon_stakeholder);
+        stakeholderList = findViewById(R.id.list_stakeholder);
 
         dl = new DataLayer(res, context);
 
@@ -166,7 +180,72 @@ public class TrainingRecord extends BaseListActivity{
 
         bindSpinners();
         bindButtons();
+
+        farmerList.setVisibility(View.VISIBLE);
+        stakeholderList.setVisibility(View.GONE);
+        toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_up);
+        toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+        updateWeights(farmerSection, 9);
+        updateWeights(stakeholderSection, 1);
+
+        toggleSection(true);
+        toggleFarmerIcon.setOnClickListener(v -> toggleSection(true));
+        toggleStakeholderIcon.setOnClickListener(v -> toggleSection(false));
+
     }
+
+    private void toggleSection(boolean isOpeningFarmer) {
+        boolean isCurrentlyOpen = isOpeningFarmer ? isFarmerOpen : isStakeholderOpen;
+
+        if (!isCurrentlyOpen) {
+            farmerList.setVisibility(isOpeningFarmer ? View.VISIBLE : View.GONE);
+            stakeholderList.setVisibility(isOpeningFarmer ? View.GONE : View.VISIBLE);
+
+            toggleFarmerIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+            toggleStakeholderIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up);
+
+            updateWeights(farmerSection, isOpeningFarmer ? 9 : 1);
+            updateWeights(stakeholderSection, isOpeningFarmer ? 1 : 9);
+
+            isFarmerOpen = isOpeningFarmer;
+            isStakeholderOpen = !isOpeningFarmer;
+        } else {
+            if (isOpeningFarmer) {
+                farmerList.setVisibility(View.GONE);
+                toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_down);
+            } else {
+                stakeholderList.setVisibility(View.GONE);
+                toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+            }
+
+            updateWeights(farmerSection, 1);
+            updateWeights(stakeholderSection, 1);
+
+            isFarmerOpen = false;
+            isStakeholderOpen = false;
+        }
+    }
+
+    private void updateWeights(LinearLayout layout, int weight) {
+        ViewGroup.MarginLayoutParams oldParams = (ViewGroup.MarginLayoutParams) layout.getLayoutParams();
+
+        LinearLayout.LayoutParams newParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                weight
+        );
+
+        newParams.setMargins(
+                oldParams.leftMargin,
+                oldParams.topMargin,
+                oldParams.rightMargin,
+                oldParams.bottomMargin
+        );
+
+        layout.setLayoutParams(newParams);
+    }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -332,7 +411,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_grade
             };
             customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed);
-            listView.setAdapter(customListAdapter_selectedAttendees);
+            farmerList.setAdapter(customListAdapter_selectedAttendees);
             //setListAdapter(customListAdapter_selectedAttendees);
         }
     }
