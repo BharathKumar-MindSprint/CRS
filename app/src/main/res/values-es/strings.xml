@@ -956,6 +956,9 @@
     <string name="invalid_phonenumber">¡Número de teléfono inválido!</string>
     <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
     <string name="Alert_txt">Alerta !</string>
-
+    <string name="calculated_question_note_message">Nota: El resultado de esta pregunta calculada depende de la pregunta</string>
+    <string name="alert_review_hint_calculated">Por favor, asegúrese de que el valor calculado esté dentro del rango %.2f - %.2f</string>
+    <string name="no_dependent_message">Nota: Esta pregunta no depende de ninguna otra pregunta.</string>
+    <string name="alert_review_hint_calculated_decimal">Por favor, asegúrese de que el valor calculado esté dentro del rango %.2f - %.2f</string>
 </resources>
 

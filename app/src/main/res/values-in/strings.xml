@@ -911,14 +911,9 @@
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
-
-
     <string name="no_signature_available">Tanda tangan tidak tersedia</string>
-
     <string name="enter_attendee_relation_name">Silakan masukkan nama peserta</string>
     <string name="sign_all_attendee">Tanda tangan diperlukan untuk semua peserta!</string>
-
-
     <string name="fill_phone_number">Silakan isi nomor telepon utama</string>
     <string name="select_primary_phone_number">silakan pilih nomor telepon utama</string>
     <string name="error_msg_phone_number">* Nomor telepon utama sudah digunakan. Silakan masukkan nomor lain.</string>
@@ -954,5 +949,8 @@
     <string name="invalid_phonenumber">Nomor telepon tidak valid!</string>
     <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
     <string name="Alert_txt">Peringatan !</string>
-
+    <string name="calculated_question_note_message">Catatan: Hasil dari pertanyaan yang dihitung ini bergantung pada pertanyaan</string>
+    <string name="alert_review_hint_calculated">Pastikan nilai yang dihitung berada dalam kisaran %.2f - %.2f</string>
+    <string name="no_dependent_message">Catatan: Pertanyaan ini tidak bergantung pada pertanyaan lain.</string>
+    <string name="alert_review_hint_calculated_decimal">Pastikan nilai yang dihitung berada dalam kisaran %.2f - %.2f</string>
 </resources>

@@ -2970,8 +2970,12 @@ public class DynamicQuestions {
                     String formula = pair.second;
                     EditText et = pair.first;
                     List<String> tokens = tokenizeExpression(formula);
-                    double ans = getCalculatedValue(tokens);
-                    et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+                    try {
+                        double ans = getCalculatedValue(tokens);
+                        et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+                    } catch (Exception e) {
+                        et.setText("");
+                    }
                 }
             }
         }
@@ -3021,32 +3025,37 @@ public class DynamicQuestions {
             }
 
             String nextToken = tokens.get(i + 1);
-            double secondValue = decodeTokenValue(nextToken);
-            result = evaluateExpression(result, secondValue, operator);
-            i += 2;
+
+            try {
+                double secondValue = decodeTokenValue(nextToken);
+                result = evaluateExpression(result, secondValue, operator);
+                i += 2;
+            } catch (Exception e) {
+                throw new NumberFormatException("No Data");
+            }
         }
 
         return result;
     }
 
-    private double decodeTokenValue(String token) {
+    private double decodeTokenValue(String token) throws NumberFormatException {
         double secondValue = 0.0;
         if (token.charAt(0) == 'Q') {
             int questionId;
             try {
                 questionId = Integer.parseInt(token.substring(1));
             } catch (NumberFormatException e) {
-                return 0;
+                throw new NumberFormatException("No data");
             }
 
             if (calculatedQuestions.containsKey(questionId)) {
                 Pair<EditText, String> pair = calculatedQuestions.get(questionId);
                 EditText et = pair.first;
-                if (et != null && !et.getText().toString().trim().isEmpty()) {
+                if (et != null) {
                     try {
                         secondValue = Double.parseDouble(et.getText().toString().trim());
                     } catch (NumberFormatException e) {
-                        secondValue = 0.0;
+                        throw new NumberFormatException("No data");
                     }
                 }
             }
@@ -3054,7 +3063,7 @@ public class DynamicQuestions {
             try {
                 secondValue = Double.parseDouble(token);
             } catch (NumberFormatException e) {
-                secondValue = 0.0;
+                throw new NumberFormatException("No data");
             }
         }
         return secondValue;
@@ -8181,8 +8190,13 @@ public class DynamicQuestions {
 
         if (!formula.isEmpty() && !formula.contains("Q")) {
             List<String> tokens = tokenizeExpression(formula);
-            double ans = getCalculatedValue(tokens);
-            et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+
+            try {
+                double ans = getCalculatedValue(tokens);
+                et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+            } catch (Exception e) {
+                et.setText("");
+            }
         }
 
         questionWrapper.addView(et);
