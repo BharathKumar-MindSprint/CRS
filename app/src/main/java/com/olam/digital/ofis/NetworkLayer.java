@@ -2428,12 +2428,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private JSONArray farmerChangenationalids(long farmerId, long nid, String value, String columnName, Long countryId, Long productId, boolean isSyncAll) {
         Cursor nids;
 //        if(value.equalsIgnoreCase("2") || value.equals("updateNationalId"))
-        if (!isSyncAll) {
-            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
-        } else {
-            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
-        }
-        // nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
+//        if (!isSyncAll) {
+//            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
+//        } else {
+//            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
+//        }
+         nids = dl.getnationalidsbyfarmerid(farmerId, columnName);
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -5426,6 +5426,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     handler.dispatchMessage(msg);
                                                     //String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                                                     // OW-4590 Fix
+//                                                    for(int i = 0 ; i < nationIdList.length() ; i++){
+//                                                        JSONObject duplicateNational = nationIdList.getJSONObject(i);
+//                                                        int typeId ;
+//                                                        if(duplicateNational.getInt("id_type") <= 0){
+//                                                            typeId = dl.getNIDTypeIDByName(typeName);
+//                                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+//                                                        }else {
+//                                                            for (int i = 0; i < nationIdList.length(); i++) {
+//                                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                                int id_type = entry.getInt("id_type");
+//                                                                dl.deleteNetworkQueueItemByfarmerId(entry.getInt("farmer_id"), id_type);
+//                                                            }
+//                                                    }
                                                     if (typeID <= 0) {
                                                         typeID = dl.getNIDTypeIDByName(typeName);
                                                         dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -5433,11 +5446,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         for (int i = 0; i < nationIdList.length(); i++) {
                                                             JSONObject entry = nationIdList.getJSONObject(i);
                                                             int id_type = entry.getInt("id_type");
-                                                            dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+                                                            dl.deleteNetworkQueueItemByfarmerId(entry.getInt("farmer_id"), id_type);
                                                         }
                                                     }
-                                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+
+                                                    for(int i=0 ; i <nationIdList.length() ; i++){
+                                                        JSONObject duplicateupdate = nationIdList.getJSONObject(i);
+                                                        dl.updateSyncedStatus(duplicateupdate.getInt("farmer_id"), duplicateupdate.getInt("id_type"));
+                                                        dl.addFarmerNationalids(nationIdList, duplicateupdate.getInt("farmer_id"), duplicateupdate.getInt("id_type"));
+
+                                                    }
 
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -6538,16 +6556,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postUpdatePhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId, boolean isPhoneNumber, boolean isNationalId, String value) {
-        //  Cursor cursor = dl.getEditedFarmerPhoneIds();
-//        Cursor farmer = null;
-//        try {
-//            farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-        //Cursor cursor = dl.getEditedFarmerIds();
-//        boolean isConsentError = false;
-//        boolean isMandatoryError = false;
-        // do {
+
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         //  long farmerId = dl.getFarmerById(cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
             msg.arg1 = total;
@@ -6572,55 +6584,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
-
                             if (postResponse.isSuccessful()) {
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                if (isNationalId) {
-                                    try {
-                                        JSONObject response = new JSONObject(postResponse.body().string());
-                                        if (response.has("nationalIds")){
-                                            JSONArray nationalIdList = response.getJSONArray("nationalIds");
-                                            for (int i = 0; i < nationalIdList.length(); i++){
-                                                long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                                                // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                                                String typeName = dl.getNidTypebyid((int) typeID);
-                                                if (typeID <= 0) {
-                                                    typeID = dl.getNIDTypeIDByName(typeName);
-                                                }
-                                                //Need to Update from API
-                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                                        typeID);
-                                            }
-                                        }
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
+                                if(isNationalId){
+                                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                    // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                    String typeName = dl.getNidTypebyid((int) typeID);
+
+                                    if (typeID <= 0) {
+                                        typeID = dl.getNIDTypeIDByName(typeName);
                                     }
-
-//                                    try {
-//                                        JSONArray nationalList = new JSONArray(postResponse.body().toString());
-//                                        for(int i = 0 ; i < nationalList.length() ; i++){
-//
-//                                        }
-//                                    } catch (JSONException e) {
-//                                        throw new RuntimeException(e);
-//                                    }
-                                    //Need to change length
-//                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
-//
-//                                        //Need to get from API
-//                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-//                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-//                                        String typeName = dl.getNidTypebyid((int) typeID);
-//                                        if (typeID <= 0) {
-//                                            typeID = dl.getNIDTypeIDByName(typeName);
-//                                        }
-//                                        //Need to Update from API
-//                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-//                                                typeID);
-//                                    }
-
+                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                            typeID);
                                 }
 
                                 statusMessage = res.getString(R.string.item_synced);
@@ -6629,6 +6604,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 msg.arg2 = progress;
                                 msg.obj = statusMessage;
                                 handler.dispatchMessage(msg);
+                                // update the cursor if this is part of a multi-sync
+                                if (originalSyncRequestItemId == null) {
+                                    getNetworkQueue(null);
+                                }
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
                                 try {
@@ -6660,13 +6639,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }, 500);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "register national id");
                                     } else {
+                                        recordFailedUpload(0, 0, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+
                                         String errorMessage = response.getString("message");
-                                        JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+                                      //  JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
                                         String errorCode = response.getString("errorCode");
                                         //int typeID = 0;
                                        // String typeName = "";
-                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                                        String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+
                                         if (errorCode.equalsIgnoreCase("3043") && errorMessage.equalsIgnoreCase(Utilities.NID_ERROR)) {
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
@@ -6675,20 +6657,117 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             msg.obj = statusMessage;
                                             handler.dispatchMessage(msg);
                                         }
+                                        try {
+                                            JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+                                            long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                            String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                            if (typeID<=0) {
+                                                typeID = dl.getNIDTypeIDByName(typeName);
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            } else {
+                                                for (int i = 0; i < nationIdList.length(); i++) {
+                                                    JSONObject entry = nationIdList.getJSONObject(i);
+                                                    int id_type = entry.getInt("id_type");
+                                                    dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+                                                }
+                                            }
+                                            dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                                            typeID);
+
+                                            dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+
+//                                            if (response.has("duplicateNationalIDList")){
+//                                                JSONArray nationalIdList = response.getJSONArray("duplicateNationalIDList");
+//                                                for (int i = 0; i < nationalIdList.length(); i++){
+//                                                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                                                    // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                                                    String typeName = dl.getNidTypebyid((int) typeID);
+//                                                    if (typeID <= 0) {
+//                                                        typeID = dl.getNIDTypeIDByName(typeName);
+//                                                    }else {
+//                                                        for (int j = 0; j < nationIdList.length(); j++) {
+//                                                            JSONObject entry = nationIdList.getJSONObject(i);
+//                                                            int id_type = entry.getInt("id_type");
+//                                                            dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                                        }
+//                                                    }
+//                                                    //Need to Update from API
+//                                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+//                                                            typeID);
+//
+//                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                                }
+//                                            }
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+
+//                                        if (isNationalId) {
+//                                            try {
+//
+//                                                if (response.has("duplicateNationalIDList")){
+//                                                    JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+//                                                    for (int i = 0; i < nationIdList.length(); i++){
+//                                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                                                        String typeName = dl.getNidTypebyid((int) typeID);
+//                                                        if (typeID <= 0) {
+//                                                            typeID = dl.getNIDTypeIDByName(typeName);
+//                                                        }else {
+//                                                            for (int j = 0; j < nationIdList.length(); j++) {
+//                                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                                int id_type = entry.getInt("id_type");
+//                                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                                            }
+//                                                        }
+//                                                        //Need to Update from API
+//                                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+//                                                                typeID);
+//                                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                                    }
+//                                                }
+//                                            } catch (JSONException e) {
+//                                                throw new RuntimeException(e);
+//                                            }
+//
+////                                    try {
+////                                        JSONArray nationalList = new JSONArray(postResponse.body().toString());
+////                                        for(int i = 0 ; i < nationalList.length() ; i++){
+////
+////                                        }
+////                                    } catch (JSONException e) {
+////                                        throw new RuntimeException(e);
+////                                    }
+//                                            //Need to change length
+////                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
+////
+////                                        //Need to get from API
+////                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+////                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+////                                        String typeName = dl.getNidTypebyid((int) typeID);
+////                                        if (typeID <= 0) {
+////                                            typeID = dl.getNIDTypeIDByName(typeName);
+////                                        }
+////                                        //Need to Update from API
+////                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+////                                                typeID);
+////                                    }
+//
+//                                        }
 
                                         // OW-4590 Fix
-                                        if (typeID <= 0) {
-                                            typeID = dl.getNIDTypeIDByName(typeName);
-                                            dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        } else {
-                                            for (int i = 0; i < nationIdList.length(); i++) {
-                                                JSONObject entry = nationIdList.getJSONObject(i);
-                                                int id_type = entry.getInt("id_type");
-                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
-                                            }
-                                        }
-                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                        if (typeID <= 0) {
+//                                            typeID = dl.getNIDTypeIDByName(typeName);
+//                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+//                                        } else {
+//                                            for (int i = 0; i < nationIdList.length(); i++) {
+//                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                int id_type = entry.getInt("id_type");
+//                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                            }
+//                                        }
+//                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override

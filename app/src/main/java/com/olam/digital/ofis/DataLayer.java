@@ -902,6 +902,41 @@ public class DataLayer {
         return newRowId;
     }
 
+    public long insertNationalNetworkQueueEntry(ContentValues values) {
+        long newRowId = 0;
+
+        // Ensure upload_id is present
+        if (!values.containsKey(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)) {
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, UUID.randomUUID().toString());
+        }
+
+        // Check for existing farmer_id
+        String farmerId = values.getAsString("farmer_id");
+//        String idType = values.getAsString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID);
+//        String typeName =
+        Cursor cursor = db.query(
+                OFISDBContract.NetworkQueueEntry.TABLE_NAME,
+                new String[] { "farmer_id" },
+                "farmer_id = ?",
+                new String[] { farmerId },
+                null, null, null
+        );
+
+        boolean exists = (cursor != null && cursor.moveToFirst());
+        if (cursor != null) cursor.close();
+
+        if (!exists) {
+            try {
+                newRowId = db.insert(OFISDBContract.NetworkQueueEntry.TABLE_NAME, null, values);
+            } catch (Exception e) {
+                e.printStackTrace(); // Optional: log the error
+            }
+        }
+
+        return newRowId;
+    }
+
+
     boolean networkEntryTypeExistsByFarmerId(String submission_type, long farmerId, String columnName) {
         String[] columns = new String[]{"id"};
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " + columnName + " = ?";
@@ -1501,6 +1536,7 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getJSONObject(i).getString("id_type"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, 1);
+
                 db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
 
             }
@@ -3401,7 +3437,7 @@ public class DataLayer {
 
     public Cursor getnationalidsbyfarmerid(long id, String columnName) {
         String[] columns = new String[]{"*"};
-        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS 0 OR " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " LIKE 'true' OR " +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 'true')";
+        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL OR " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " LIKE 1 OR " +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 1)";
         String[] whereArgs = new String[]{String.valueOf(id)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
@@ -5919,21 +5955,22 @@ public class DataLayer {
             submissionType = "Update_ID";
         }
 
+
         ContentValues networkQueueValues = new ContentValues();
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, submissionType);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.nationalid));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmername);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, getNidTypebyid(nationalidtype));
 
-       // OW-4590 Fix
+        // OW-4590 Fix
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, nationalidtype);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, stakeHolderId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-
-        newEntry = insertNetworkQueueEntry(networkQueueValues);
+         newEntry = insertNationalNetworkQueueEntry(networkQueueValues);
+        //newEntry = insertNetworkQueueEntry(networkQueueValues);
         return newEntry;
 
     }
