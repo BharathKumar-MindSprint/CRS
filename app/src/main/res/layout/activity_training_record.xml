@@ -154,17 +154,6 @@
                 android:textSize="@dimen/ofis_small_text"
                 android:maxLines="1" />
 
-            <ImageButton
-                android:layout_width="@dimen/standard_button_width_height"
-                android:layout_height="@dimen/standard_button_width_height"
-                android:id="@+id/addTrainingAttendees"
-                card_view:srcCompat="@drawable/ic_ofis_add"
-                android:scaleType="fitXY"
-                android:background="@android:color/transparent"
-                android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
-                android:contentDescription="@string/Add"
-                />
-
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -198,24 +187,35 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/button_width_height"
                     android:src="@drawable/attendee_icon"
                     android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Primary Farmers"
+                    android:text="@string/primary_farmer"
                     android:paddingStart="@dimen/margin_10"
                     android:textColor="@color/ofis_base_font_dark"
-                    android:textSize="@dimen/ofis_large_text"
+                    android:textSize="@dimen/ofis_med_text"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8" />
+                    android:layout_weight="7" />
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_width_height"
+                    android:id="@+id/addTrainingAttendees"
+                    card_view:srcCompat="@drawable/ic_ofis_add"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent"
+                    android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
+                    android:contentDescription="@string/Add"
+                    android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/button_width_height"
                     android:background="@color/light_orange"
                     android:gravity="center"
                     android:padding="4dp"
@@ -264,24 +264,35 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/button_width_height"
                     android:src="@drawable/attendee_icon"
                     android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Stakeholders"
+                    android:text="@string/stakeholder_attendee"
                     android:paddingStart="@dimen/margin_10"
                     android:textColor="@color/ofis_base_font_dark"
-                    android:textSize="@dimen/ofis_large_text"
+                    android:textSize="@dimen/ofis_med_text"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8" />
+                    android:layout_weight="7" />
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_width_height"
+                    android:id="@+id/addTrainingAttendeesStakeholder"
+                    card_view:srcCompat="@drawable/ic_ofis_add"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent"
+                    android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
+                    android:contentDescription="@string/Add"
+                    android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/button_width_height"
                     android:background="@color/light_orange"
                     android:gravity="center"
                     android:padding="4dp"
