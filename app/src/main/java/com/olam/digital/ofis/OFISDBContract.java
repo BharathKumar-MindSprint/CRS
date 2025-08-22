@@ -1885,6 +1885,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_GRADE = "grade";
         public static final String COLUMN_NAME_TRAINEE_SIGNATURE = "trainee_signature";
         public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
+        public static final String COLUMN_NAME_TRAINEE_NAME = "trainee_name";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1899,6 +1900,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_GRADE);
                     add(COLUMN_NAME_TRAINEE_SIGNATURE);
                     add(COLUMN_NAME_STAKEHOLDER_ID);
+                    add(COLUMN_NAME_TRAINEE_NAME);
                 }}
         );
 

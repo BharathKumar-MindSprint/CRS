@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TrainingAttendees extends BaseListActivity implements AdapterView.OnItemClickListener {
 
@@ -54,8 +55,8 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
     private GradientDrawable attendeeCountBackground;
     private Spinner farmerGroupSpinner, sectionSpinner;
 
-    public ArrayList<Long> selectedFarmers;
-    public ArrayList<Long> selectedStakeholders;
+    public HashMap<Long, String> selectedFarmers;
+    public HashMap<Long, String> selectedStakeholders;
     ListView listView;
     private boolean isStakeholder = false;
     private Integer stakeholderRole = 0;
@@ -86,8 +87,8 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         mCurrentPhotoPath = intent.getStringExtra(TRAINING_PHOTO);
         isStakeholder = intent.getBooleanExtra(Utilities.IS_STAKE_HOLDER, false);
 
-        selectedFarmers = new ArrayList<>();
-        selectedStakeholders = new ArrayList<>();
+        selectedFarmers = new HashMap<>();
+        selectedStakeholders = new HashMap<>();
         attendeeCount = (TextView) findViewById(R.id.attendeeCount);
        // attendeeCountBackground = (GradientDrawable) attendeeCount.getBackground();
 
@@ -107,12 +108,15 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         if (existingAttendees.getCount() > 0) {
             while (existingAttendees.moveToNext()) {
                 long attendeeId;
+                String attendeeName;
                 if (isStakeholder) {
                     attendeeId = existingAttendees.getLong(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
-                    selectedStakeholders.add(attendeeId);
+                    attendeeName = existingAttendees.getString(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME));
+                    selectedStakeholders.put(attendeeId, attendeeName);
                 } else {
                     attendeeId = existingAttendees.getLong(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
-                    selectedFarmers.add(attendeeId);
+                    attendeeName = existingAttendees.getString(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME));
+                    selectedFarmers.put(attendeeId, attendeeName);
                 }
             }
             attendeeCount.setText(String.valueOf(existingAttendees.getCount()));
@@ -135,7 +139,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
                     trainingRecordId = dl.insertTrainingRecord(newRecord);
                 }
 
-                ArrayList<Long> selectedList = isStakeholder ? selectedStakeholders : selectedFarmers;
+                HashMap<Long, String> selectedList = isStakeholder ? selectedStakeholders : selectedFarmers;
 
                 if (!selectedList.isEmpty()) {
                     resultCount = dl.updateTrainingModuleAttendees(selectedList, trainingRecordId, isStakeholder);
@@ -272,6 +276,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
         TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
+        TextView attendeeName = (TextView) v.findViewById(R.id.farmerListFarmerName);
         LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
         boolean selectedState = Boolean.parseBoolean(state.getText().toString());
         if (selectedState) {
@@ -288,9 +293,9 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
             //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             state.setText("true");
             if (isStakeholder) {
-                selectedStakeholders.add(id);
+                selectedStakeholders.put(id, attendeeName.getText().toString() );
             } else {
-                selectedFarmers.add(id);
+                selectedFarmers.put(id, attendeeName.getText().toString());
             }
         }
         animateAttendeeSelection();

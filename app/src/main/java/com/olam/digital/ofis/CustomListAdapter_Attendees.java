@@ -89,8 +89,8 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
             LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
             TextView state = (TextView) view.findViewById(R.id.attendeeStatus);
             boolean isSelected = isStakeholder
-                    ? trainingAttendees.selectedStakeholders.contains(id)
-                    : trainingAttendees.selectedFarmers.contains(id);
+                    ? trainingAttendees.selectedStakeholders.containsKey(id)
+                    : trainingAttendees.selectedFarmers.containsKey(id);
 
             int drawableRes = isSelected
                     ? R.drawable.ic_check_box
