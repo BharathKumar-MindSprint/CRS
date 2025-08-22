@@ -14,12 +14,10 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,7 +55,10 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
     private Spinner farmerGroupSpinner, sectionSpinner;
 
     public ArrayList<Long> selectedFarmers;
+    public ArrayList<Long> selectedStakeholders;
     ListView listView;
+    private boolean isStakeholder = false;
+    private Integer stakeholderRole = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,50 +84,36 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         trainingModuleId = intent.getLongExtra(TRAINING_MODULE_ID, 0);
         boolean editMode = intent.getBooleanExtra(EDIT_MODE, false);
         mCurrentPhotoPath = intent.getStringExtra(TRAINING_PHOTO);
+        isStakeholder = intent.getBooleanExtra(Utilities.IS_STAKE_HOLDER, false);
 
         selectedFarmers = new ArrayList<>();
+        selectedStakeholders = new ArrayList<>();
         attendeeCount = (TextView) findViewById(R.id.attendeeCount);
        // attendeeCountBackground = (GradientDrawable) attendeeCount.getBackground();
 
         if (editMode) {
-            getExistingAttendees();
+            getExistingAttendees(isStakeholder);
         }
 
         bindFarmerList();
-        showFarmerList();
+        showAttendeeList();
         setUpSearchFunctionality();
         bindButtons();
     }
 
-//    @SuppressLint("SetTextI18n")
-//    @Override
-//    protected void onListItemClick (ListView l, View v, int position, long id) {
-//        ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
-//        TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
-//        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
-//        boolean selectedState = Boolean.parseBoolean(state.getText().toString());
-//
-//        if (selectedState) {
-//            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-//            linearLayout.setBackgroundResource(R.drawable.list_item);
-//            state.setText("false");
-//            selectedFarmers.remove(id);
-//        } else {
-//            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
-//            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
-//            state.setText("true");
-//            selectedFarmers.add(id);
-//        }
-//        animateAttendeeSelection();
-//        attendeeCount.setText(String.valueOf(selectedFarmers.size()));
-//    }
-
-    private void getExistingAttendees() {
-        Cursor existingAttendees = dl.getTrainingAttendeeIdsByTrainingRecordId(trainingRecordId);
+    private void getExistingAttendees(boolean isStakeholder) {
+        Cursor existingAttendees = dl.getTrainingAttendeeIdsByTrainingRecordId(trainingRecordId, isStakeholder);
 
         if (existingAttendees.getCount() > 0) {
             while (existingAttendees.moveToNext()) {
-                selectedFarmers.add(existingAttendees.getLong(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+                long attendeeId;
+                if (isStakeholder) {
+                    attendeeId = existingAttendees.getLong(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
+                    selectedStakeholders.add(attendeeId);
+                } else {
+                    attendeeId = existingAttendees.getLong(existingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                    selectedFarmers.add(attendeeId);
+                }
             }
             attendeeCount.setText(String.valueOf(existingAttendees.getCount()));
         }
@@ -148,8 +135,10 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
                     trainingRecordId = dl.insertTrainingRecord(newRecord);
                 }
 
-                if (selectedFarmers.size() > 0) {
-                    resultCount = dl.updateTrainingModuleAttendees(selectedFarmers, trainingRecordId);
+                ArrayList<Long> selectedList = isStakeholder ? selectedStakeholders : selectedFarmers;
+
+                if (!selectedList.isEmpty()) {
+                    resultCount = dl.updateTrainingModuleAttendees(selectedList, trainingRecordId, isStakeholder);
                 }
 
                 Toast.makeText(context, resultCount + " " + res.getString(R.string.attendees_saved), Toast.LENGTH_LONG).show();
@@ -159,30 +148,36 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
                 intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
                 intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
                 intent.putExtra(EDIT_MODE, true);
+                intent.putExtra(Utilities.IS_STAKE_HOLDER, isStakeholder);
                 context.startActivity(intent);
             }
         });
     }
 
     private void bindFarmerList() {
-        farmerList = dl.getTrainingAttendeeList(searchQuery,selectedFarmerGroup,selectedSection, courseId);
-        if (farmerList.getCount() == 0) {
-            farmerList = dl.getFindFarmerList(searchQuery,selectedFarmerGroup,selectedSection);
+        if (isStakeholder) {
+            farmerList = dl.getTrainingAttendeeListStakeholder(searchQuery,selectedFarmerGroup,selectedSection, courseId, stakeholderRole);
+            if (farmerList.getCount() == 0) {
+                farmerList = dl.getFindStakeholderList(searchQuery,selectedFarmerGroup,selectedSection, stakeholderRole);
+            }
+        } else {
+            farmerList = dl.getTrainingAttendeeList(searchQuery,selectedFarmerGroup,selectedSection, courseId);
+            if (farmerList.getCount() == 0) {
+                farmerList = dl.getFindFarmerList(searchQuery,selectedFarmerGroup,selectedSection);
+            }
         }
     }
-
-    private void showFarmerList() {
-        if (farmerList.getCount() > 0) {
-            String[] adapterCols = new String[]{
-                    "name",
-                    "olam_farmer_id"
-            };
-            int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
-            customListAdapter_attendees = new CustomListAdapter_Attendees(context, farmerList, adapterCols, adapterRowViews, res, me);
-            listView.setAdapter(customListAdapter_attendees);
-            //setListAdapter(customListAdapter_attendees);
-
+    private void showAttendeeList() {
+        if (farmerList == null || farmerList.getCount() <= 0) return;
+        String[] adapterCols;
+        if (isStakeholder) {
+            adapterCols = new String[]{"msName", "olamMultiStakeHolderId"};
+        } else {
+            adapterCols = new String[]{"name", "olam_farmer_id"};
         }
+        int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
+        customListAdapter_attendees = new CustomListAdapter_Attendees(context, farmerList, adapterCols, adapterRowViews, res, me, isStakeholder);
+        listView.setAdapter(customListAdapter_attendees);
     }
 
     private void setUpSearchFunctionality()
@@ -279,19 +274,31 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
         LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
         boolean selectedState = Boolean.parseBoolean(state.getText().toString());
-
         if (selectedState) {
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
             //linearLayout.setBackgroundResource(R.drawable.list_item);
             state.setText("false");
-            selectedFarmers.remove(id);
+            if (isStakeholder) {
+                selectedStakeholders.remove(id);
+            } else {
+                selectedFarmers.remove(id);
+            }
         } else {
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
             //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             state.setText("true");
-            selectedFarmers.add(id);
+            if (isStakeholder) {
+                selectedStakeholders.add(id);
+            } else {
+                selectedFarmers.add(id);
+            }
         }
         animateAttendeeSelection();
-        attendeeCount.setText(String.valueOf(selectedFarmers.size()));
+        if (isStakeholder) {
+            attendeeCount.setText(String.valueOf(selectedStakeholders.size()));
+        } else {
+            attendeeCount.setText(String.valueOf(selectedFarmers.size()));
+        }
+
     }
 }

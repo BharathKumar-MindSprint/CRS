@@ -163,6 +163,7 @@ public class Utilities {
     public static final String TYPE_POLYGON = "POLYGON";
     private static String blockCharacterSet = "~#^|$%&*!'\"";
     public static long SIZE_20_MB = 20 * 1024 * 1024;
+    public static final String IS_STAKE_HOLDER = "isStakeholder";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";

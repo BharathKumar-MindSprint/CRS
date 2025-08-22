@@ -44,8 +44,10 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private long trainingRecordId;
 
     Boolean signatureAllowed;
+    private boolean isStakeholder;
 
-    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_, DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed) {
+    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,
+                                               DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -60,6 +62,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.farmerAttendeeList=farmerAttendeeList;
         this.trainingRecordId=trainingRecordId;
         this.signatureAllowed = signatureAllowed;
+        this.isStakeholder = isStakeholder;
     }
 
     @Override
@@ -140,7 +143,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
             // View Attendees logic
             if (TrainingRecord.isCaptureAttendee && !readOnlyMode) {
-                long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                long id = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                 if (farmerAttendeeList.get(id) > 0) {
                     tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
                     tvViewAttendees.setVisibility(View.VISIBLE);
@@ -150,7 +153,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
                 tvAddAttendee.setOnClickListener(view1 -> {
 
-                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    int farmerId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();
@@ -163,7 +166,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                 });
 
                 tvViewAttendees.setOnClickListener(view12 -> {
-                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    int farmerId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();

@@ -83,8 +83,9 @@ public class TrainingRecord extends BaseListActivity{
     Button completeTrainingRecord;
     private String columnSuffix;
 
-    private Cursor trainingAttendees, trainingRecord;
+    private Cursor trainingAttendees, trainingRecord, trainingAttendeesStakeholder;
     private CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees;
+    private CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendeesStakeholder;
     private ImageButton trainingPhotoActionButton;
 
     // Runtime Permission Request Code
@@ -104,6 +105,8 @@ public class TrainingRecord extends BaseListActivity{
     private boolean isFarmerOpen = false;
     private boolean isStakeholderOpen = false;
     private LinearLayout farmerSection, stakeholderSection;
+
+    private Boolean isStakeholder;
 
 
     @Override
@@ -130,6 +133,7 @@ public class TrainingRecord extends BaseListActivity{
         trainingModuleId = intent.getLongExtra(TRAINING_MODULE_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
         readOnlyMode = intent.getBooleanExtra(READ_ONLY_MODE, false);
+        isStakeholder = intent.getBooleanExtra(Utilities.IS_STAKE_HOLDER, false);
 
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
@@ -385,7 +389,7 @@ public class TrainingRecord extends BaseListActivity{
         trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
 
         //Get All Training Attendees Counts
-         farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendees,Integer.parseInt(String.valueOf(trainingRecordId)));
+         farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendees,Integer.parseInt(String.valueOf(trainingRecordId)), false);
 
         if (trainingAttendees.getCount() > 0) {
             String[] adapterCols = new String[]{
@@ -410,9 +414,43 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed);
+            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed, false);
             farmerList.setAdapter(customListAdapter_selectedAttendees);
             //setListAdapter(customListAdapter_selectedAttendees);
+        }
+    }
+
+    private void getTrainingAttendeesStakeholder() {
+        trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+
+        //Get All Training Attendees Counts
+        farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendeesStakeholder,Integer.parseInt(String.valueOf(trainingRecordId)), true);
+
+        if (trainingAttendeesStakeholder.getCount() > 0) {
+            String[] adapterCols = new String[]{
+                    "_id",
+                    OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
+            };
+            int[] adapterRowViews = new int[]{
+                    R.id.trainingAttendeeId,
+                    R.id.attendeeName,
+                    R.id.criterion_attended,
+                    R.id.criterion_passed,
+                    R.id.criterion_prescore,
+                    R.id.criterion_postscore,
+                    R.id.criterion_score,
+                    R.id.criterion_percentage,
+                    R.id.criterion_grade
+            };
+            customListAdapter_selectedAttendeesStakeholder = new CustomListAdapter_SelectedAttendees(context, trainingAttendeesStakeholder, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed, true);
+            stakeholderList.setAdapter(customListAdapter_selectedAttendeesStakeholder);
         }
     }
 
@@ -449,9 +487,15 @@ public class TrainingRecord extends BaseListActivity{
                     trainingAttendees.close();
                     trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
+
+                    trainingAttendeesStakeholder.close();
+                    trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+                    customListAdapter_selectedAttendeesStakeholder.swapCursor(trainingAttendeesStakeholder);
+
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
                     getTrainingAttendees();
+                    getTrainingAttendeesStakeholder();
                     if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                         completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
                     } else {
@@ -468,7 +512,7 @@ public class TrainingRecord extends BaseListActivity{
 
     public void signTrainingAttendee(int attendeeId) {
         final boolean[] isSigned = {false};
-        long farmerId = dl.getFarmerByAttendeeItem(attendeeId);
+        long farmerId = dl.getAttendeeIdByItem(attendeeId, false);
         Cursor farmer = dl.getFarmerById(farmerId);
         final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -531,6 +575,7 @@ public class TrainingRecord extends BaseListActivity{
                         dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();
                         getTrainingAttendees();
+                        getTrainingAttendeesStakeholder();
 
                         if (dl.areAllSignaturesPresent(trainingRecordId)){
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
@@ -713,6 +758,7 @@ public class TrainingRecord extends BaseListActivity{
                         }
                     }
                     getTrainingAttendees();
+                    getTrainingAttendeesStakeholder();
                 }
 
                 if (editMode && trainingModuleId != 0 && !firstLoad && hasSwapped) {
@@ -723,6 +769,10 @@ public class TrainingRecord extends BaseListActivity{
                         dl.wipeAttendeeScores(trainingRecordId);
                         getTrainingAttendees();
                     }
+
+                    if (trainingAttendeesStakeholder != null && trainingAttendeesStakeholder.getCount() > 0) {
+                        dl.wipeAttendeeScores(trainingRecordId);
+                        getTrainingAttendeesStakeholder();                    }
                 }
             }
 
@@ -812,6 +862,31 @@ public class TrainingRecord extends BaseListActivity{
                         intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
                         intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
                         intent.putExtra(EDIT_MODE, editMode);
+                        intent.putExtra(Utilities.IS_STAKE_HOLDER , false);
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        }
+
+        ImageButton addAttendeesStakeholder = (ImageButton) findViewById(R.id.addTrainingAttendeesStakeholder);
+        if (readOnlyMode) {
+            addAttendeesStakeholder.setVisibility(View.GONE);
+        } else {
+            addAttendeesStakeholder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
+                        Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
+                    } else {
+                        addOrUpdateTrainingRecord();
+                        Intent intent = new Intent(context, TrainingAttendees.class);
+                        intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                        intent.putExtra(COURSE_ID, courseId);
+                        intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
+                        intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
+                        intent.putExtra(EDIT_MODE, editMode);
+                        intent.putExtra(Utilities.IS_STAKE_HOLDER , true);
                         context.startActivity(intent);
                     }
                 }
@@ -897,6 +972,7 @@ public class TrainingRecord extends BaseListActivity{
         super.onResume();
         if (editMode) {
             getTrainingAttendees();
+            getTrainingAttendeesStakeholder();
             if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                 completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
             } else {

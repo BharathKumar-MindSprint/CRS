@@ -284,7 +284,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
     }
 
     private void fillTraineeRelationship() {
-        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, farmerId);
+        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, farmerId, false);
         int count =1;
         if (traineeRelationshipCursor.getCount()>0){
             if(traineeRelationshipCursor != null && traineeRelationshipCursor.moveToFirst()) {
