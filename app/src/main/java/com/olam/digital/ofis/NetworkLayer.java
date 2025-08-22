@@ -2426,14 +2426,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private JSONArray farmerChangenationalids(long farmerId, long nid, String value, String columnName, Long countryId, Long productId, boolean isSyncAll) {
-        Cursor nids;
+        Cursor nids = null;
 //        if(value.equalsIgnoreCase("2") || value.equals("updateNationalId"))
 //        if (!isSyncAll) {
 //            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
 //        } else {
 //            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
 //        }
-         nids = dl.getnationalidsbyfarmerid(farmerId, columnName);
+//        if(value.equalsIgnoreCase("updateNationalId")){
+//            nids = dl.getnationalidsbyfarmerid(farmerId, columnName,true);
+//        }else if(value.equalsIgnoreCase("2")){
+//            nids = dl.getnationalidsbyfarmerid(farmerId, columnName,false);
+//        }
+        nids = dl.getnationalidsbyfarmerid(farmerId, columnName,true);
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -3450,8 +3455,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                 if (errorCode.equalsIgnoreCase("OFIS_3042")) {
                                     postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
-                                } else {
-                                    dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
+                                } else {dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                     dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
                                     String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
 
@@ -3586,7 +3590,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         JSONObject farmer = updateFarmers.getJSONObject(i);
                                         String farmerId = farmer.getString("id");
                                         // String name = farmer.getString("name");
-
+                                         dl.markFarmerAsSynced(Integer.parseInt(farmerId));
                                         // dl.markFarmerAsSynced(farmerId, "", "", "", "", jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), "");
 
                                         dl.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "Edit Farmer");
@@ -3747,7 +3751,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             String farmerId = farmer.getString("id");
                                             // String name = farmer.getString("name");
                                             dl.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "Edit Farmer");
-
+                                            dl.markFarmerAsSynced(Integer.parseInt(farmerId));
                                             initGPSSync();
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
@@ -5247,7 +5251,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         }
                                                     }
                                                     dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+                                                   // dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
 
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -5439,6 +5443,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                                                                dl.deleteNetworkQueueItemByfarmerId(entry.getInt("farmer_id"), id_type);
 //                                                            }
 //                                                    }
+                                                    dl.deleteNetworkQueueItem(networkQueueItemId);
                                                     if (typeID <= 0) {
                                                         typeID = dl.getNIDTypeIDByName(typeName);
                                                         dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -6615,6 +6620,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     } else if (postResponse.code() == 400 && response.has("errorCode") && (response.getInt("errorCode") == 5047 || response.getInt("errorCode") == 5054)) {
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
                                         dl.updateDuplicateStatusOfPhoneNumber(farmerId);
                                         String errorMsg = response.optString("message", "Duplicate Primary Phone Number.");
                                         handler.postDelayed(() -> {
@@ -6631,7 +6637,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
                                             }
                                         }
-
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
                                         String errorMsg = response.optString("message", "Duplicate National Id");
                                         handler.postDelayed(() -> {
                                             popupMsgInfo(errorMsg);
@@ -6671,6 +6677,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
                                                 }
                                             }
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
                                             dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                                                             typeID);
 

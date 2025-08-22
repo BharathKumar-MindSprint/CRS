@@ -3435,9 +3435,9 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
-    public Cursor getnationalidsbyfarmerid(long id, String columnName) {
+    public Cursor getnationalidsbyfarmerid(long id, String columnName,boolean isUpdate) {
         String[] columns = new String[]{"*"};
-        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL OR " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " LIKE 1 OR " +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 1)";
+        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " IS NULL OR "  +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED + " LIKE 1 OR " +OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 1)";
         String[] whereArgs = new String[]{String.valueOf(id)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
@@ -4573,6 +4573,13 @@ public class DataLayer {
             child.close();
         }
 
+    }
+
+    void markFarmerAsSynced(int localFarmerId){
+        String[] whereArgs = new String[]{String.valueOf(localFarmerId)};
+        ContentValues newValues = new ContentValues();
+        newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
+        db.update(OFISDBContract.FarmerEntry.TABLE_NAME, newValues, OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?", whereArgs);
     }
 
     void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId, String complainceFlag) {
@@ -5969,7 +5976,7 @@ public class DataLayer {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-         newEntry = insertNationalNetworkQueueEntry(networkQueueValues);
+        newEntry = insertNationalNetworkQueueEntry(networkQueueValues);
         //newEntry = insertNetworkQueueEntry(networkQueueValues);
         return newEntry;
 
@@ -8560,7 +8567,7 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int getDuplicateFarmerNumber(Long phoneNumber) {
+    public int getDuplicateFarmerNumber(String phoneNumber) {
         String query = "SELECT COUNT(*) FROM " +OFISDBContract.PhoneNumber.TABLE_NAME +
                 " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
 
