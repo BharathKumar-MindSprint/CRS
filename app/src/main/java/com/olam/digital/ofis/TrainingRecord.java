@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +107,7 @@ public class TrainingRecord extends BaseListActivity{
     private boolean isStakeholderOpen = false;
     private LinearLayout farmerSection, stakeholderSection;
 
-    private Boolean isStakeholder;
+    private OFISRoomDB ofisRoomDB;
 
 
     @Override
@@ -118,6 +119,7 @@ public class TrainingRecord extends BaseListActivity{
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         context = me = this;
         res = getResources();
+        ofisRoomDB = OFISRoomDB.getDbInstance(context);
 
         farmerSection = findViewById(R.id.farmer_section);
         stakeholderSection = findViewById(R.id.stakeholder_section);
@@ -133,7 +135,6 @@ public class TrainingRecord extends BaseListActivity{
         trainingModuleId = intent.getLongExtra(TRAINING_MODULE_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
         readOnlyMode = intent.getBooleanExtra(READ_ONLY_MODE, false);
-        isStakeholder = intent.getBooleanExtra(Utilities.IS_STAKE_HOLDER, false);
 
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
@@ -512,8 +513,9 @@ public class TrainingRecord extends BaseListActivity{
 
     public void signTrainingAttendee(int attendeeId) {
         final boolean[] isSigned = {false};
-        long farmerId = dl.getAttendeeIdByItem(attendeeId, false);
-        Cursor farmer = dl.getFarmerById(farmerId);
+        boolean isStakeholder = false;
+        long attendeeIdByItem = 0;
+        attendeeIdByItem = dl.getAttendeeIdByItem(attendeeId, false);
         final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -523,10 +525,24 @@ public class TrainingRecord extends BaseListActivity{
         Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
         Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
         TextView tv_attendeeName = (TextView) signatureDialog.findViewById(R.id.tv_attendeeName);
-        if (farmer != null && farmer.getCount() > 0) {
-            farmer.moveToFirst();
-            tv_attendeeName.setVisibility(View.VISIBLE);
-            tv_attendeeName.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
+        if (attendeeIdByItem == 0) {
+            attendeeIdByItem = dl.getAttendeeIdByItem(attendeeId, true);
+            isStakeholder = true;
+        }
+
+        tv_attendeeName.setVisibility(View.VISIBLE);
+
+        if (isStakeholder) {
+            String stakeholderName = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(attendeeIdByItem).msName;
+            tv_attendeeName.setText(stakeholderName);
+        } else {
+            Cursor farmer = dl.getFarmerById(attendeeIdByItem);
+            if (farmer != null && farmer.moveToFirst()) {
+                String farmerName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                tv_attendeeName.setText(farmerName);
+                farmer.close();
+            }
         }
 
         bt_confirm.setEnabled(true);
@@ -564,13 +580,14 @@ public class TrainingRecord extends BaseListActivity{
             }
         });
 
+        long finalAttendee = attendeeIdByItem;
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     if (isSigned[0]) {
                         Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        String signatureName = finalAttendee + "_" + System.currentTimeMillis() + ".png";
                         saveSignatureImage(signatureBitmap, signatureName);
                         dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();

@@ -6954,11 +6954,16 @@ public class DataLayer {
         return jsonArray;
     }
 
-    public void addOrUpdateTrainees(Context context, long farmerId, int trainingRecordId, ArrayList<Attendee> attendeeList) {
+    public void addOrUpdateTrainees(long attendeeId, int trainingRecordId, ArrayList<Attendee> attendeeList, boolean isStakeholder) {
 
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        String whereClause ;
+         if (isStakeholder) {
+             whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " = ?";
+         } else {
+             whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+         }
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(attendeeId)};
         Cursor traineeCursor=null;
         try {
             traineeCursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -6972,7 +6977,11 @@ public class DataLayer {
         if (attendeeList.size()>0) {
             for (Attendee attendee : attendeeList) {
                 ContentValues values = new ContentValues();
-                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                if (isStakeholder) {
+                    values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID, attendeeId);
+                } else {
+                    values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, attendeeId);
+                }
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME, attendee.getTraineeName());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE, attendee.getTraineeAge());

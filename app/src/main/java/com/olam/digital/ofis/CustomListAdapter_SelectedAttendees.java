@@ -153,27 +153,29 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
                 tvAddAttendee.setOnClickListener(view1 -> {
 
-                    int farmerId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
+                    int attendeeIdByItem = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putString(Utilities.FARMER_OR_STAKEHOLDER, String.valueOf(attendeeIdByItem));
                     bundle.putBoolean("isEdit", true);
                     bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
+                    bundle.putBoolean(Utilities.IS_STAKE_HOLDER, isStakeholder);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });
 
                 tvViewAttendees.setOnClickListener(view12 -> {
-                    int farmerId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
+                    int attendeeIdByItem = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putString(Utilities.FARMER_OR_STAKEHOLDER, String.valueOf(attendeeIdByItem));
                     bundle.putBoolean("isEdit", false);
                     bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
+                    bundle.putBoolean(Utilities.IS_STAKE_HOLDER, isStakeholder);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });
@@ -202,25 +204,6 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             attendeeSignature.setImageDrawable(null);
             trainingRecord.showAttendeeSignature(attendeeId, attendeeSignature);
         } else  {
-            // Confirmation screen
-            // View Attendees logic
-//            long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
-//            if (farmerAttendeeList.get(id)>0) {
-//                tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
-//                tvViewAttendees.setVisibility(View.VISIBLE);
-//            } else{
-//                tvViewAttendees.setVisibility(View.INVISIBLE);
-//            }
-//            tvViewAttendees.setOnClickListener(view12 -> {
-//                int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
-//                Intent addIntent =new Intent(mContext, RegisterAdditionalTrainee.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-//                bundle.putString("farmerId", String.valueOf(farmerId));
-//                bundle.putBoolean("isEdit",false);
-//                addIntent.putExtras(bundle);
-//                mContext.startActivity(addIntent);
-//            });
 
             tvViewAttendees.setVisibility(View.GONE);
             tvAddAttendee.setVisibility(View.GONE);

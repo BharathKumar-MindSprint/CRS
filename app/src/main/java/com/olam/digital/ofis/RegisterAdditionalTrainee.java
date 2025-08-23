@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,12 +52,15 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 
     //Variables
     int trainingRecordId;
-    long farmerId;
+    long attendeeIdByItem;
     boolean editAttendee;
     private List<AttendeeRelations> attendeeRelationsList=null;
     private List<String> relationShipList=new ArrayList<>();
     private String[] relationShips=null;
     private boolean signatureAllowed;
+    private boolean isStakeholder;
+    private OFISRoomDB ofisRoomDB;
+
 
 
     @Override
@@ -65,6 +69,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         setContentView(R.layout.layout_register_additional_trainee);
         initWidget();
         getIntentDetails();
+        ofisRoomDB = OFISRoomDB.getDbInstance(this);
 
         // get Relationships
         String locale=Utilities.getLocaleSuffix(res);
@@ -153,7 +158,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     Toast.makeText(RegisterAdditionalTrainee.this,getResources().getString(R.string.mandatory_msg),Toast.LENGTH_LONG).show();
                 }else {
                     // Add/Update the transaction Id
-                    dl.addOrUpdateTrainees(context, farmerId, trainingRecordId, attendeeList);
+                    dl.addOrUpdateTrainees(attendeeIdByItem, trainingRecordId, attendeeList, isStakeholder);
                     finish();
                 }
             }
@@ -264,11 +269,15 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         }
     }
     private void setInitialData() {
-       Cursor farmerCursor= dl.getFarmerById(farmerId);
-       String name = null;
-        if (farmerCursor.getCount() > 0) {
-            farmerCursor.moveToFirst();
-            name = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+        String name = null;
+        if (isStakeholder) {
+            name = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(attendeeIdByItem).msName;
+        } else {
+            Cursor farmerCursor = dl.getFarmerById(attendeeIdByItem);
+            if (farmerCursor.getCount() > 0) {
+                farmerCursor.moveToFirst();
+                name = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+            }
         }
         tvFarmerName.setText(name);
 
@@ -278,13 +287,14 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         //Get the bundle
         Bundle bundle = getIntent().getExtras();
         trainingRecordId = Integer.parseInt(bundle.getString("traineeRecordId"));
-        farmerId=Long.valueOf(bundle.getString("farmerId"));
+        attendeeIdByItem = Long.valueOf(bundle.getString(Utilities.FARMER_OR_STAKEHOLDER));
         editAttendee=bundle.getBoolean("isEdit");
         signatureAllowed = bundle.getBoolean(Utilities.ATTENDEE_SIGNATURE);
+        isStakeholder = bundle.getBoolean(Utilities.IS_STAKE_HOLDER);
     }
 
     private void fillTraineeRelationship() {
-        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, farmerId, false);
+        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, attendeeIdByItem, isStakeholder);
         int count =1;
         if (traineeRelationshipCursor.getCount()>0){
             if(traineeRelationshipCursor != null && traineeRelationshipCursor.moveToFirst()) {
@@ -449,7 +459,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                 try {
                     if (isSigned[0]) {
                         Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        String signatureName = attendeeIdByItem + "_" + System.currentTimeMillis() + ".png";
                         attendeeRelationSignatureDisplay.setImageBitmap(signatureBitmap);
                         signatureRelationAttendee.setTag(signatureName);
                         signatureDialog.dismiss();
