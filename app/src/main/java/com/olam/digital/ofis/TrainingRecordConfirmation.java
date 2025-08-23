@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 public class TrainingRecordConfirmation extends BaseListActivity {
@@ -101,8 +102,12 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
         if (trainingRecordId > 0) {
             getTrainingRecord();
-            getTrainingAttendees();
-            getTrainingAttendeesStakeholder();
+
+            // To load Farmer
+            getTrainingAttendees(false);
+            // To load Stakeholder
+            getTrainingAttendees(true);
+
             bindButton();
 
             TextView itemCount = (TextView) findViewById(R.id.trainingAttendeesTotal);
@@ -238,47 +243,23 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             gpsTracker.stopLocationUpdates();
         }
     }
+    private void getTrainingAttendees(boolean isStakeholder) {
+        Cursor trainingAttendees;
+        HashMap<Long,Integer> attendeeList;
+        ListView listView;
 
-    private void getTrainingAttendees() {
-        Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+        if (isStakeholder) {
+            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+            attendeeList = TrainingRecord.stakeholderAttendeeList;
+            listView = stakeholderList;
+        } else {
+            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+            attendeeList = TrainingRecord.farmerAttendeeList;
+            listView = farmerList;
+        }
 
         if (trainingAttendees.getCount() > 0) {
-
-            attendeeCount+= trainingAttendees.getCount();
-            String[] adapterCols = new String[]{
-                    "_id",
-                    OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
-            };
-            int[] adapterRowViews = new int[]{
-                    R.id.trainingAttendeeId,
-                    R.id.attendeeName,
-                    R.id.criterion_attended,
-                    R.id.criterion_passed,
-                    R.id.criterion_prescore,
-                    R.id.criterion_postscore,
-                    R.id.criterion_score,
-                    R.id.criterion_percentage,
-                    R.id.criterion_grade
-            };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId, false, false);
-
-            farmerList.setAdapter(customListAdapter_selectedAttendees);
-            farmerList.setOnItemClickListener(null);
-        }
-    }
-
-    private void getTrainingAttendeesStakeholder() {
-        Cursor trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
-
-        if (trainingAttendeesStakeholder.getCount() > 0) {
-            attendeeCount+= trainingAttendeesStakeholder.getCount();
+            attendeeCount += trainingAttendees.getCount();
 
             String[] adapterCols = new String[]{
                     "_id",
@@ -302,10 +283,14 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendeesStakeholder = new CustomListAdapter_SelectedAttendees(context, trainingAttendeesStakeholder, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.stakeholderAttendeeList ,trainingRecordId, false, true);
-            stakeholderList.setAdapter(customListAdapter_selectedAttendeesStakeholder);
+
+            CustomListAdapter_SelectedAttendees customListAdapter = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix, dl, attendeeList, trainingRecordId, false, isStakeholder);
+
+            listView.setAdapter(customListAdapter);
+            listView.setOnItemClickListener(null);
         }
     }
+
 
     private void bindButton() {
         Button confirmButton = (Button) findViewById(R.id.confirmTrainingRecord);

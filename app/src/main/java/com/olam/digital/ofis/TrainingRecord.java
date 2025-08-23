@@ -386,14 +386,15 @@ public class TrainingRecord extends BaseListActivity{
             }
         }
     }
+    private void getTrainingAttendees(boolean isStakeholder, ListView listView) {
+        Cursor attendeesCursor = isStakeholder
+                ? dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId)
+                : dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
 
-    private void getTrainingAttendees() {
-        trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+        HashMap<Long, Integer> attendeeCountMap = dl.prepareAttendeeCountList(attendeesCursor, Integer.parseInt(String.valueOf(trainingRecordId)), isStakeholder
+        );
 
-        //Get All Training Attendees Counts
-         farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendees,Integer.parseInt(String.valueOf(trainingRecordId)), false);
-
-        if (trainingAttendees.getCount() > 0) {
+        if (attendeesCursor.getCount() > 0) {
             String[] adapterCols = new String[]{
                     "_id",
                     OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
@@ -405,6 +406,7 @@ public class TrainingRecord extends BaseListActivity{
                     OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
                     OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
             };
+
             int[] adapterRowViews = new int[]{
                     R.id.trainingAttendeeId,
                     R.id.attendeeName,
@@ -416,45 +418,23 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed, false);
-            farmerList.setAdapter(customListAdapter_selectedAttendees);
-            //setListAdapter(customListAdapter_selectedAttendees);
+
+            CustomListAdapter_SelectedAttendees adapter = new CustomListAdapter_SelectedAttendees(context, attendeesCursor, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix, dl, attendeeCountMap, trainingRecordId, signatureAllowed, isStakeholder);
+
+            listView.setAdapter(adapter);
+
+            if (isStakeholder) {
+                trainingAttendeesStakeholder = attendeesCursor;
+                stakeholderAttendeeList = attendeeCountMap;
+                customListAdapter_selectedAttendeesStakeholder = adapter;
+            } else {
+                trainingAttendees = attendeesCursor;
+                farmerAttendeeList = attendeeCountMap;
+                customListAdapter_selectedAttendees = adapter;
+            }
         }
     }
 
-    private void getTrainingAttendeesStakeholder() {
-        trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
-
-        //Get All Training Attendees Counts
-        stakeholderAttendeeList=dl.prepareAttendeeCountList(trainingAttendeesStakeholder,Integer.parseInt(String.valueOf(trainingRecordId)), true);
-
-        if (trainingAttendeesStakeholder.getCount() > 0) {
-            String[] adapterCols = new String[]{
-                    "_id",
-                    OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
-                    OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
-            };
-            int[] adapterRowViews = new int[]{
-                    R.id.trainingAttendeeId,
-                    R.id.attendeeName,
-                    R.id.criterion_attended,
-                    R.id.criterion_passed,
-                    R.id.criterion_prescore,
-                    R.id.criterion_postscore,
-                    R.id.criterion_score,
-                    R.id.criterion_percentage,
-                    R.id.criterion_grade
-            };
-            customListAdapter_selectedAttendeesStakeholder = new CustomListAdapter_SelectedAttendees(context, trainingAttendeesStakeholder, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,stakeholderAttendeeList,trainingRecordId, signatureAllowed, true);
-            stakeholderList.setAdapter(customListAdapter_selectedAttendeesStakeholder);
-        }
-    }
 
     public void deleteTrainingAttendee(final int attendeeId) {
 
@@ -496,8 +476,12 @@ public class TrainingRecord extends BaseListActivity{
 
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
-                    getTrainingAttendees();
-                    getTrainingAttendeesStakeholder();
+
+                    // To load farmer attendees
+                    getTrainingAttendees(false, farmerList);
+                    // To load stakeholder attendees
+                    getTrainingAttendees(true, stakeholderList);
+
                     if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                         completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
                     } else {
@@ -592,8 +576,10 @@ public class TrainingRecord extends BaseListActivity{
                         saveSignatureImage(signatureBitmap, signatureName);
                         dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();
-                        getTrainingAttendees();
-                        getTrainingAttendeesStakeholder();
+                        // To load farmer attendees
+                        getTrainingAttendees(false, farmerList);
+                        // To load stakeholder attendees
+                        getTrainingAttendees(true, stakeholderList);
 
                         if (dl.areAllSignaturesPresent(trainingRecordId)){
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
@@ -775,8 +761,10 @@ public class TrainingRecord extends BaseListActivity{
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
                         }
                     }
-                    getTrainingAttendees();
-                    getTrainingAttendeesStakeholder();
+                    // To load farmer attendees
+                    getTrainingAttendees(false, farmerList);
+                    // To load stakeholder attendees
+                    getTrainingAttendees(true, stakeholderList);
                 }
 
                 if (editMode && trainingModuleId != 0 && !firstLoad && hasSwapped) {
@@ -785,12 +773,14 @@ public class TrainingRecord extends BaseListActivity{
 
                     if (trainingAttendees != null && trainingAttendees.getCount() > 0) {
                         dl.wipeAttendeeScores(trainingRecordId);
-                        getTrainingAttendees();
+                        // To load farmer attendees
+                        getTrainingAttendees(false, farmerList);
                     }
 
                     if (trainingAttendeesStakeholder != null && trainingAttendeesStakeholder.getCount() > 0) {
                         dl.wipeAttendeeScores(trainingRecordId);
-                        getTrainingAttendeesStakeholder();                    }
+                        // To load stakeholder attendees
+                        getTrainingAttendees(true, stakeholderList);                    }
                 }
             }
 
@@ -989,8 +979,10 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         if (editMode) {
-            getTrainingAttendees();
-            getTrainingAttendeesStakeholder();
+            // To load farmer attendees
+            getTrainingAttendees(false, farmerList);
+            // To load stakeholder attendees
+            getTrainingAttendees(true, stakeholderList);
             if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                 completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
             } else {
