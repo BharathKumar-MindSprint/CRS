@@ -40,14 +40,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private final String columnSuffix;
     private final  Context mContext;
     private DataLayer dl;
-    private HashMap<Long,Integer> farmerAttendeeList;
+    private HashMap<Long,Integer> attendeeList;
     private long trainingRecordId;
 
     Boolean signatureAllowed;
     private boolean isStakeholder;
 
     public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,
-                                               DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder) {
+                                               DataLayer dl_, HashMap<Long,Integer> attendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -59,7 +59,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.columnSuffix = columnSuffix_;
         this.mContext=c;
         this.dl=dl_;
-        this.farmerAttendeeList=farmerAttendeeList;
+        this.attendeeList=attendeeList;
         this.trainingRecordId=trainingRecordId;
         this.signatureAllowed = signatureAllowed;
         this.isStakeholder = isStakeholder;
@@ -144,8 +144,8 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             // View Attendees logic
             if (TrainingRecord.isCaptureAttendee && !readOnlyMode) {
                 long id = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
-                if (farmerAttendeeList.get(id) > 0) {
-                    tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
+                if (attendeeList.get(id) > 0) {
+                    tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(attendeeList.get(id))));
                     tvViewAttendees.setVisibility(View.VISIBLE);
                 } else {
                     tvViewAttendees.setVisibility(View.INVISIBLE);

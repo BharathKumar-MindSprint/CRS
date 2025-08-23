@@ -95,6 +95,7 @@ public class TrainingRecord extends BaseListActivity{
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
     private static final int REQUEST_CHECK_SETTINGS = 100;
    public static HashMap<Long,Integer> farmerAttendeeList =null;
+   public static HashMap<Long,Integer> stakeholderAttendeeList =null;
    public static boolean isCaptureAttendee;
 
     public boolean signatureAllowed;
@@ -425,7 +426,7 @@ public class TrainingRecord extends BaseListActivity{
         trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
 
         //Get All Training Attendees Counts
-        farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendeesStakeholder,Integer.parseInt(String.valueOf(trainingRecordId)), true);
+        stakeholderAttendeeList=dl.prepareAttendeeCountList(trainingAttendeesStakeholder,Integer.parseInt(String.valueOf(trainingRecordId)), true);
 
         if (trainingAttendeesStakeholder.getCount() > 0) {
             String[] adapterCols = new String[]{
@@ -450,7 +451,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendeesStakeholder = new CustomListAdapter_SelectedAttendees(context, trainingAttendeesStakeholder, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed, true);
+            customListAdapter_selectedAttendeesStakeholder = new CustomListAdapter_SelectedAttendees(context, trainingAttendeesStakeholder, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,stakeholderAttendeeList,trainingRecordId, signatureAllowed, true);
             stakeholderList.setAdapter(customListAdapter_selectedAttendeesStakeholder);
         }
     }
