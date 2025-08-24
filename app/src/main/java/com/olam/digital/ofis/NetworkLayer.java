@@ -72,6 +72,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.net.ssl.SSLContext;
@@ -5920,17 +5921,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
             final String sessionId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
-            Cursor traineeAttendeeById = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+            Cursor traineeAttendeeById = dl.getFarmerStakeholderAttendeesByTrainingRecordId(trainingRecordId);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofistraining/signature/upload";
 
             List<String> attendeeSignature = new ArrayList<>();
             List<Long> ids = new ArrayList<>();
-            boolean isFileExists = false;
+            AtomicBoolean isFileExists = new AtomicBoolean(false);
             if (traineeAttendeeById.getCount() > 0) {
                 while (traineeAttendeeById.moveToNext()) {
-                    long farmerId = traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
-                    if (!dl.isFarmerSynced(farmerId)) {
+                    String farmerId = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                    String stakeholderId = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
+                    if (farmerId != null && !dl.isFarmerSynced(Long.parseLong(farmerId))) {
                         msg.what = 3;
                         msg.arg1 = total;
                         msg.arg2 = HomeActivity.progressItem = progress + 1;
@@ -5938,11 +5940,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         handler.dispatchMessage(msg);
                         return;
                     } else {
-                        String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
-                        if (signatures != null) {
-                            isFileExists = true;
-                            attendeeSignature.add(signatures);
-                            ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex("_id")));
+                        Runnable syncTrainingPhoto = () -> {
+                            String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                            if (signatures != null) {
+                                isFileExists.set(true);
+                                attendeeSignature.add(signatures);
+                                ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex("_id")));
+                            }
+                        };
+
+                        if (stakeholderId != null){
+                            MultiStakeHolder stakeHolder = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
+                            if (stakeHolder.synced == 0){
+                                msg.what = 11;
+                                msg.arg1 = total;
+                                msg.arg2 = progress;
+                                msg.obj = String.valueOf(res.getString(R.string.stakeholder_not_synced));
+                                handler.dispatchMessage(msg);
+                            } else {
+                                syncTrainingPhoto.run();
+                            }
+                        } else {
+                            syncTrainingPhoto.run();
                         }
                     }
                 }
@@ -5957,7 +5976,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
 
-                if (isFileExists) {
+                if (isFileExists.get()) {
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     for (int i = 0; i < attendeeSignature.size(); i++) {
                         String signNatureName = attendeeSignature.get(i);
@@ -6013,7 +6032,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
 
-            if(!isFileExists) {
+            if(!isFileExists.get()) {
                 postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
             }
 
