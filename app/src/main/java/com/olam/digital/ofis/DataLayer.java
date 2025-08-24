@@ -1199,6 +1199,29 @@ public class DataLayer {
 
         return db.rawQuery(sql, null);
     }
+
+    Cursor getFarmerStakeholderAttendeesByTrainingRecordId(long trainingRecordId) {
+        String trainingAttendeesTable = OFISDBContract.TrainingAttendee.TABLE_NAME;
+
+        String sql = "SELECT " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " AS _id, "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
+                + " FROM " + trainingAttendeesTable
+                + " WHERE " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
+                + " = " + trainingRecordId
+                + " ORDER BY " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " ASC";
+
+        return db.rawQuery(sql, null);
+    }
+
     Cursor getTrainingAttendeesByTrainingRecordIdStakeholder(long trainingRecordId) {
         String trainingAttendeesTable = OFISDBContract.TrainingAttendee.TABLE_NAME;
 
@@ -1216,7 +1239,8 @@ public class DataLayer {
                 + " FROM " + trainingAttendeesTable
                 + " WHERE " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
                 + " = " + trainingRecordId
-                + " AND " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " IS NULL ";
+                + " AND " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " IS NULL "
+                + " ORDER BY " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " ASC";
 
         return db.rawQuery(sql, null);
     }
@@ -4737,6 +4761,13 @@ public class DataLayer {
                 // update any saved phone numbers
                 db.update(OFISDBContract.PhoneNumber.TABLE_NAME, stakeHolderIdValue, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " = ?", whereArgs);
 
+                ContentValues stakeHolderIdValueTraining = new ContentValues();
+                stakeHolderIdValueTraining.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, msId);
+
+                // update any training attendee stakeholderId
+                db.update(OFISDBContract.TrainingAttendee.TABLE_NAME, stakeHolderIdValueTraining, OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
+                db.update(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, stakeHolderIdValueTraining, OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
+
                 // update any network queue items
                 db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, stakeHolderIdValue, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
             }
@@ -6933,7 +6964,13 @@ public class DataLayer {
                 if(cursor != null && cursor.moveToFirst()) {
                     do {
                         JSONObject jsonObject1=new JSONObject();
-                        jsonObject1.put("trainingattendeesId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        String farmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID));
+                        String stakeholderId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID));
+                        if (farmerId != null) {
+                            jsonObject1.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                        } else {
+                            jsonObject1.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID, stakeholderId);
+                        }
                         jsonObject1.put("enumeratorsId",Utilities.getFromSharedPrefs(context));
                         jsonObject1.put("attendeesName",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME)));
                         jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );

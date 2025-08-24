@@ -757,14 +757,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
-                Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+                Cursor trainingAttendees = dl.getFarmerStakeholderAttendeesByTrainingRecordId(trainingRecordId);
                 if (trainingAttendees.getCount() > 0) {
                     // create json objects
                     JSONArray attendeesJSON = new JSONArray();
 
                     while (trainingAttendees.moveToNext()) {
-                        long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
-                        if (!dl.isFarmerSynced(farmerId)) {
+                        String farmerId = trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                        String stakeholderId = trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
+                        if (farmerId != null && !dl.isFarmerSynced(Long.parseLong(farmerId))) {
                             msg.what = 3;
                             msg.arg1 = total;
                             msg.arg2 = HomeActivity.progressItem = progress + 1;
@@ -772,24 +773,45 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             return;
                         } else {
-                            try {
-                                JSONObject attendee = new JSONObject();
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
-                                attendee.put("signature", trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE)));
+                            Runnable syncTraining = () -> {
+                                try {
+                                    JSONObject attendee = new JSONObject();
+                                     if (farmerId != null) {
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, Long.parseLong(farmerId) );
+                                     } else {
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, Long.parseLong(stakeholderId));
+                                     }
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
+                                    attendee.put("signature", trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE)));
 
-                                attendeesJSON.put(attendee);
-                                jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
-                                jsonObject.put("training_attendees", attendeesJSON);
+                                    attendeesJSON.put(attendee);
+                                    jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
+                                    jsonObject.put("training_attendees", attendeesJSON);
 
-                            } catch (JSONException e) {
-                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
+                                } catch (JSONException e) {
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
+                                }
+                            };
+
+                            if (stakeholderId != null){
+                                MultiStakeHolder stakeHolder = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
+                                if (stakeHolder.synced == 0){
+                                    msg.what = 11;
+                                    msg.arg1 = total;
+                                    msg.arg2 = progress;
+                                    msg.obj = String.valueOf(res.getString(R.string.stakeholder_not_synced));
+                                    handler.dispatchMessage(msg);
+                                } else {
+                                    syncTraining.run();
+                                }
+                            } else {
+                                syncTraining.run();
                             }
 
                         }
