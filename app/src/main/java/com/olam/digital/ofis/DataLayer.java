@@ -4713,6 +4713,29 @@ public class DataLayer {
                 } catch (Exception e) {
                 }
 
+                // Update the photo and photo data in storage for training
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendee.TABLE_NAME,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(id)
+                );
+
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(id)
+                );
+
                 ContentValues farmerIdValue = new ContentValues();
                 farmerIdValue.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, id);
 
@@ -4761,6 +4784,30 @@ public class DataLayer {
                 // update any saved phone numbers
                 db.update(OFISDBContract.PhoneNumber.TABLE_NAME, stakeHolderIdValue, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " = ?", whereArgs);
 
+
+                // Update the photo and photo data in storage for training
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendee.TABLE_NAME,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(msId)
+                );
+
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(msId)
+                );
+
                 ContentValues stakeHolderIdValueTraining = new ContentValues();
                 stakeHolderIdValueTraining.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, msId);
 
@@ -4776,6 +4823,51 @@ public class DataLayer {
             e.printStackTrace();
         }
     }
+    private void updateSignatureFileAndDB(SQLiteDatabase db, Context context, String tableName, String columnId, String columnFarmerOrStakeholderId, String columnSignature, long localFarmerId, String newIdPrefix) {
+
+        String[] projection = {
+                columnId,
+                columnSignature
+        };
+
+        String selection = columnFarmerOrStakeholderId + " = ?";
+        String[] selectionArgs = { String.valueOf(localFarmerId) };
+
+        Cursor cursor = db.query(tableName, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(cursor.getColumnIndexOrThrow(columnId));
+                String oldSignature = cursor.getString(cursor.getColumnIndexOrThrow(columnSignature));
+
+                if (oldSignature != null && oldSignature.startsWith(localFarmerId + "_")) {
+                    String newSignature = oldSignature.replaceFirst(localFarmerId + "_", newIdPrefix + "_");
+
+                    // Rename signature file in internal storage
+                    File directory = new File(context.getFilesDir(), "signatures");
+                    File oldFile = new File(directory, oldSignature);
+                    File newFile = new File(directory, newSignature);
+
+                    if (oldFile.exists()) {
+                        boolean renamed = oldFile.renameTo(newFile);
+                        if (!renamed) {
+                            Log.e("SignatureUpdate", "Failed to rename file: " + oldSignature);
+                        }
+                    } else {
+                        Log.w("SignatureUpdate", "Old file does not exist: " + oldFile.getAbsolutePath());
+                    }
+
+                    // Update signature in DB
+                    ContentValues values = new ContentValues();
+                    values.put(columnSignature, newSignature);
+
+                    db.update(tableName, values, columnId + " = ?", new String[]{ String.valueOf(rowId) });
+                }
+            }
+        }
+        cursor.close();
+    }
+
 
     Cursor getAllUnUploadedPhotoById(Integer farmerModuleId, ArrayList<Integer> submoduleList) {
         StringBuilder submoduleIds = new StringBuilder();
