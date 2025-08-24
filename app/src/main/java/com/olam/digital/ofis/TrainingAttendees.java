@@ -17,6 +17,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,10 +27,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TrainingAttendees extends BaseListActivity implements AdapterView.OnItemClickListener {
 
@@ -53,13 +56,15 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
     private EditText ed;
     private TextView attendeeCount;
     private GradientDrawable attendeeCountBackground;
-    private Spinner farmerGroupSpinner, sectionSpinner;
+    private Spinner farmerGroupSpinner, sectionSpinner, stakeholderRoleSpinner;
 
     public HashMap<Long, String> selectedFarmers;
     public HashMap<Long, String> selectedStakeholders;
     ListView listView;
     private boolean isStakeholder = false;
     private Integer stakeholderRole = 0;
+    private List<FarmerRoleDto> farmerRoleDTOList;
+    private List<String> farmerRolesList;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +81,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
 
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
+        stakeholderRoleSpinner = (Spinner) findViewById(R.id.spinner_stakeholder_role);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
         ed.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -94,6 +100,18 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
 
         if (editMode) {
             getExistingAttendees(isStakeholder);
+        }
+
+        farmerRoleDTOList = new ArrayList<>();
+        farmerRolesList = new ArrayList<>();
+        if (isStakeholder) {
+            stakeholderRoleSpinner.setVisibility(View.VISIBLE);
+
+            farmerRoleDTOList = dl.getFarmerRoles(Utilities.getColumnNameByLanguage());
+            farmerRolesList.add(res.getString(R.string.stakeholder_role));
+            for (FarmerRoleDto farmerRoleDTO : farmerRoleDTOList){
+                farmerRolesList.add(farmerRoleDTO.getName());
+            }
         }
 
         bindFarmerList();
@@ -219,6 +237,11 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
             }
         });
 
+        // Stakeholder role spinner
+        if (isStakeholder) {
+            bindFarmerRoles();
+        }
+
         ed.addTextChangedListener(new TextWatcher()
         {
             public void afterTextChanged(Editable s) {  }
@@ -228,6 +251,32 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
                 //searches and populates the list with the appropriate info
                 searchQuery = String.valueOf(ed.getText());
                 doSearch();
+            }
+        });
+    }
+
+    private void bindFarmerRoles() {
+
+        String[] farmerRoles = farmerRolesList.toArray(new String[farmerRolesList.size()]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(TrainingAttendees.this, R.layout.spinner_item_white, R.id.ofis_spinner_text_view,  farmerRoles);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        stakeholderRoleSpinner.setAdapter(adapter);
+
+        stakeholderRoleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0 && position <= farmerRoleDTOList.size()) {
+                    FarmerRoleDto farmRoleDTO = farmerRoleDTOList.get(position - 1);
+                    stakeholderRole = farmRoleDTO.getId();
+                } else {
+                    stakeholderRole = 0;
+                }
+                doSearch();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
