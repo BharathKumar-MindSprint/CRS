@@ -1,6 +1,5 @@
 package com.olam.digital.ofis;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -13,7 +12,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -26,6 +24,7 @@ import androidx.core.content.FileProvider;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -38,7 +37,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -62,11 +59,9 @@ import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,6 +85,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private final static String CAPTURED_SIGNATURE_PHOTO_URI_KEY = "mCapturedSignatureImageURI";
     Long farmerId;
     ImageButton addNationId;
+
+    boolean isNidUpdated = false;
     ArrayList<String> selectednationalidList = new ArrayList<String>();
     ArrayList<String> nidtype;
     String farmername;
@@ -269,8 +266,24 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_nidtype.setAdapter(spinnerArrayAdapter);
-
+         NationalIdDTO updateDTO = new NationalIdDTO();
         EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+        nidnumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateDTO.setUpdated(true);
+            }
+        });
         nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
         nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
         nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -337,6 +350,22 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
                     int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            updateDTO.setUpdated(true);
+                        }
+                    });
                     InputFilter[] filters = new InputFilter[1];
                     filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
                     nidnumber.setFilters(filters);
@@ -376,6 +405,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             }
             try {
                 int i = 0;
+
                 while (nids.moveToNext()) {
                     nationalIdCount = i;
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
@@ -386,6 +416,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
                     LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+
                     TextView dbIdStore = nationalidinclude.findViewById(R.id.dbIdStore);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
@@ -412,6 +443,24 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                     String nidNumber = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
                     nidnumber.setText(nidNumber);
+                    NationalIdDTO updateDTO = new NationalIdDTO();
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            Log.d("Before Text","New Text Added");
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            Log.d("On Text","New Text Added");
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            nidnumber.setTag(R.id.nidnumber,true);
+//                            isNidUpdated = true;
+                        }
+                    });
                     try {
                         String expirydatevalue = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE));
                         long millisecond = Long.parseLong(expirydatevalue);
@@ -534,7 +583,22 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
-
+//                                nidnumber.addTextChangedListener(new TextWatcher() {
+//                                    @Override
+//                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void afterTextChanged(Editable s) {
+//                                        updateDTO.setUpdated(true);
+//                                    }
+//                                });
                                 int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
@@ -589,7 +653,8 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 }
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 removeSpinnerItem(numberrow);
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                numberrow.setVisibility(View.GONE);
+               // ((ViewGroup) numberrow.getParent()).removeView(numberrow);
                 removehmvalue(hm_uripath, (int) trashbutton.getTag());
                 removehmURIvalue(hm_uri, (int) trashbutton.getTag());
                 refreshTags(nationalids);
@@ -609,11 +674,30 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
             View nidrow = nationalids.getChildAt(j);
+            boolean isdeleted = nidrow.getVisibility() == View.GONE;
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             TextView dbIdStore = nidrow.findViewById(R.id.dbIdStore);
+            NationalIdDTO updateDTO = new NationalIdDTO();
+            nidnumber.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                   nidnumber.setTag(R.id.nidnumber,true);
+                  //  boolean isUpdated = tag instanceof Boolean && (Boolean) tag;
+                // isNidUpdated = true;
+                }
+            });
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -656,19 +740,21 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 nidtype_list.add(value);
                 selectednationalidList.add(value);
             }
-            if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+            if (getNidCaptureStatus(value).equalsIgnoreCase("true") && !isdeleted) {
                 if (!editmode) {
                     if (!getPhotostatusByType(String.valueOf(type))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                } else if (isUpdateNationalIdAvailable) {
-                    if (getUpdateNIDPhotoStatusByType(String.valueOf(type), farmerId)) {
+                }
+                else if (isUpdateNationalIdAvailable) {
+                    /*if (getUpdateNIDPhotoStatusByType(String.valueOf(type), farmerId)) {
+>>>>>>> 4de1421b7c3ee5ebac5718d8f9e7af67fbe7a2de
                         continue;
-                    }
+                    }*/
 
-                    if (!getPhotostatusByType(String.valueOf(type))) {
+                    if (!getPhotostatusByTypeBlob(String.valueOf(type), farmerId)) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
@@ -681,7 +767,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             }
-            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true") && !isdeleted) {
                 if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
                     Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
                     return false;
@@ -691,12 +777,17 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
                 idDTO.setNationalidtype(String.valueOf(type));
+                idDTO.setDeletedFlag(isdeleted);
+                Object tag = nidnumber.getTag(R.id.nidnumber);
+                boolean isUpdated = tag instanceof Boolean && (Boolean) tag;
+               // boolean isUpdated = nidnumber.getTag(R.id.nidnumber);
+                idDTO.setUpdated(isUpdated);
                 if (dbIdStore.getTag() != null) {
                     idDTO.setBackendDbId(dbIdStore.getTag().toString());
                 }
                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
                     String photopath = null;
-                    if (!editmode || isUpdateNationalIdAvailable) {
+                    if (!editmode || isUpdateNationalIdAvailable || availableStatus) {
                         photopath = getPhotobytype(type);
                     } else {
                         photopath = getNIDPhotoByType(String.valueOf(type), farmerId, OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
@@ -788,6 +879,23 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     nationalidphoto.setTag(nationalids.getChildCount());
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
 //                    ll_captureexpiry.setVisibility(View.GONE);
+                    NationalIdDTO updateDTO = new NationalIdDTO();
+                    nidnumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            updateDTO.setUpdated(true);
+                        }
+                    });
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setFilters(new InputFilter[]{LetterDigitHyphenFilter, blockPiFilter});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -850,6 +958,22 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
                                 int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                                nidnumber.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        updateDTO.setUpdated(true);
+                                    }
+                                });
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
                                 nidnumber.setFilters(filters);
@@ -1177,9 +1301,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             setCurrentPhotoPath(savedImagePath);
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if (editmode && !isUpdateNationalIdAvailable) {
+            /*if (editmode && !isUpdateNationalIdAvailable) {
                 dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), farmerId);
-            }
+            }*/
             displayBitmapforNID(nationalids, nidvalue, savedImagePath);
         }
     }

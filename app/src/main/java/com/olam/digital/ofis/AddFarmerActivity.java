@@ -1304,8 +1304,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID, section_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_CODE, farmer_Code);
 
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
+
             if (!editFarmerMode) {
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
             }
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
@@ -2361,7 +2362,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (duplicatePhoneNumberValidation()) {
+
                     ContentValues values = validateValues();
 
                     if (values.size() > 0) {
@@ -2454,7 +2455,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
 
                     }
-                }
+
             }
         });
     }

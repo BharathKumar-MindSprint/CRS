@@ -298,6 +298,12 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
+    public boolean getPhotostatusByTypeBlob(String type, Long farmerId) {
+        String blobPhotoAvailable = dl.blobPhotoAvailable(type, farmerId);
+        boolean photostatus = !"null".equals(blobPhotoAvailable) || dl.getPhotostatusByType(type).getCount() > 0;
+        return photostatus;
+    }
+
     public void removehmvalue(HashMap<Integer, String> hm_uripath, int val) {
         Iterator<Integer> iterator = hm_uripath.keySet().iterator();
         while (iterator.hasNext()) {
@@ -329,6 +335,8 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
                 storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                 storeableNids.put("backendDbId", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID)));
+                storeableNids.put("deletedFlag", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_DELETED)));
+                storeableNids.put("updatedFlag", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED)));
 
                 storeableNationalids.put(storeableNids);
 

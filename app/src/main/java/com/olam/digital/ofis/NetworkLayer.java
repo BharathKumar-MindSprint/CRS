@@ -2332,7 +2332,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         alert.show();
     }
 
-    // get farmer phone numbers
     private JSONArray farmerPhoneNumbers(long id, String columnName) {
         Cursor phonenumbers = dl.getFarmerPhoneNumbers(id, false, columnName);
         JSONArray numbersarray = new JSONArray();
@@ -2341,9 +2340,36 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             while (phonenumbers.moveToNext()) {
                 JSONObject phonenumber = new JSONObject();
                 //New
-
+                phonenumber.put("farmerId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID))));
+                phonenumber.put("countryId", new Long(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))));
                 phonenumber.put("phoneNumber", phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
                 phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
+
+                numbersarray.put(phonenumber);
+            }
+            return numbersarray;
+        } catch (JSONException e) {
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    // get farmer phone numbers
+    private JSONArray farmerNewPhoneNumbers(long id, String columnName) {
+        Cursor phonenumbers = dl.getNewAndUpdatedPhoneNumbers(id, columnName);
+        JSONArray numbersarray = new JSONArray();
+
+        try {
+            while (phonenumbers.moveToNext()) {
+                JSONObject phonenumber = new JSONObject();
+                //New
+
+                phonenumber.put("farmerPhoneNumberId", phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_ID)));
+                phonenumber.put("phoneNumber", phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                phonenumber.put("deletedFlag", Utilities.convertDT(phonenumbers.getString(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED))));
+                phonenumber.put("primaryNumber", Utilities.convertDT(String.valueOf(phonenumbers.getInt(phonenumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)))));
+
 
                 numbersarray.put(phonenumber);
             }
@@ -2363,7 +2389,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else {
             nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
         }
-
+       // nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -2372,14 +2398,62 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (value.equals("updateNationalId")) {
                     nationalids.put("id", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID))));
                 }
-                //   nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
-//                nationalids.put("countryId", countryId);
-//                nationalids.put("productId", productId);
                 nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
                 nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                 if (nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)) != null) {
                     nationalids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                 }
+
+                nationalids.put("deletedFlag", Utilities.convertDT(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED))));
+                String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
+                    try {
+                        String encodedImage = Utilities.base64ConversionForImage(farmerNIDPath);
+                        nationalids.put("photo", encodedImage);
+                    } catch (Exception e) {
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+                    }
+                }
+
+                numbersarray.put(nationalids);
+            }
+            return numbersarray;
+        } catch (JSONException e) {
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object" + e.getMessage());
+
+        }
+        return null;
+    }
+
+    private JSONArray farmerChangenationalids(long farmerId, long nid, String value, String columnName, Long countryId, Long productId, boolean isSyncAll) {
+        Cursor nids = null;
+//        if(value.equalsIgnoreCase("2") || value.equals("updateNationalId"))
+//        if (!isSyncAll) {
+//            nids = dl.getnationalidsbyfarmerid(farmerId, nid, columnName);
+//        } else {
+//            nids = dl.getnationalidsbyfarmerids(farmerId, columnName);
+//        }
+//        if(value.equalsIgnoreCase("updateNationalId")){
+//            nids = dl.getnationalidsbyfarmerid(farmerId, columnName,true);
+//        }else if(value.equalsIgnoreCase("2")){
+//            nids = dl.getnationalidsbyfarmerid(farmerId, columnName,false);
+//        }
+        nids = dl.getnationalidsbyfarmerid(farmerId, columnName,true);
+        JSONArray numbersarray = new JSONArray();
+
+        try {
+            while (nids.moveToNext()) {
+                JSONObject nationalids = new JSONObject();
+                if (value.equals("updateNationalId")) {
+                    nationalids.put("id", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID))));
+                }
+                nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
+                nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                if (nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)) != null) {
+                    nationalids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                }
+
+                nationalids.put("deletedFlag", Utilities.convertDT(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED))));
                 String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                 if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
                     try {
@@ -3381,8 +3455,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                 if (errorCode.equalsIgnoreCase("OFIS_3042")) {
                                     postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
-                                } else {
-                                    dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
+                                } else {dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                     dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
                                     String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
 
@@ -3517,7 +3590,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         JSONObject farmer = updateFarmers.getJSONObject(i);
                                         String farmerId = farmer.getString("id");
                                         // String name = farmer.getString("name");
-
+                                         dl.markFarmerAsSynced(Integer.parseInt(farmerId));
                                         // dl.markFarmerAsSynced(farmerId, "", "", "", "", jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), "");
 
                                         dl.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "Edit Farmer");
@@ -3603,7 +3676,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
 
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DATE_OF_BIRTH, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
+                        jsonObject.put("dob", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
 
                         jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
@@ -3678,7 +3751,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             String farmerId = farmer.getString("id");
                                             // String name = farmer.getString("name");
                                             dl.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "Edit Farmer");
-
+                                            dl.markFarmerAsSynced(Integer.parseInt(farmerId));
                                             initGPSSync();
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
@@ -3779,7 +3852,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                            profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DATE_OF_BIRTH, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
+                            profileUpdated.put("dob", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB)));
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
 
                             profileUpdated.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
@@ -3840,63 +3913,66 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         Cursor farmer = null;
         Cursor cursor = dl.getEditedFarmerPhoneIds();
         JSONArray updatePhoneArray = new JSONArray();
+        Set<Integer> processedFarmerIds = new HashSet<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-
+                int farmerId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 farmer = dl.getFarmerById(cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 JSONObject updatedPhone = new JSONObject();
+               if(!processedFarmerIds.contains(farmerId)) {
+                   processedFarmerIds.add(farmerId);
 
-                if (farmer.moveToFirst()) {
+                   if (farmer.moveToFirst()) {
 
-                    do {
-                        try {
-                            JSONArray numberstosend = farmerPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-                            updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                            updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
-                            updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
-                            if (isPhoneNumber) {
-                                updatedPhone.put("phoneNumbers", numberstosend);
-                            }
-                            if (isNationalId) {
-                                long typeID = cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                                final String typeName = cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                                long countryId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
-                                long productId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
-                                if (typeID <= 0) {
-                                    typeID = dl.getNIDTypeIDByName(typeName);
-                                }
-                                if (value.equals("2")) {
-                                    JSONArray nidstosend = farmernationalids(cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                            typeID, "2", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId);
+                       do {
+                           try {
+                               JSONArray numberstosend = farmerNewPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                               updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                               updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
+                               updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
+                               if (isPhoneNumber) {
+                                   updatedPhone.put("phoneNumbers", numberstosend);
+                               }
+                               if (isNationalId) {
+                                   long typeID = cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                   final String typeName = cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                   long countryId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
+                                   long productId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
+                                   if (typeID <= 0) {
+                                       typeID = dl.getNIDTypeIDByName(typeName);
+                                   }
+                                   if (value.equals("2")) {
+                                       JSONArray nidstosend = farmerChangenationalids(cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                               typeID, "2", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId,true);
 
-                                    updatedPhone.put("nationalIds", nidstosend);
-                                } else if (value.equals("updateNationalId")) {
-                                    JSONArray nidstosend = farmernationalids(cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                            typeID, "updateNationalId", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId);
+                                       updatedPhone.put("nationalIds", nidstosend);
+                                   } else if (value.equals("updateNationalId")) {
+                                       JSONArray nidstosend = farmerChangenationalids(cursor.getLong(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                               typeID, "updateNationalId", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId,true);
 
-                                    updatedPhone.put("nationalIds", nidstosend);
-                                }
+                                       updatedPhone.put("nationalIds", nidstosend);
+                                   }
 
-                            }
+                               }
 
-                            updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                            updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-                            if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                                updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, cursor.getInt(farmer.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-                            }
-
-
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
+                               updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
+                               updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                               if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
+                                   updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, cursor.getInt(farmer.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
+                               }
 
 
-                    } while (farmer.moveToNext());
+                           } catch (Exception e) {
+                               throw new RuntimeException(e);
+                           }
 
 
-                }
-                updatePhoneArray.put(updatedPhone);
+                       } while (farmer.moveToNext());
 
+
+                   }
+                   updatePhoneArray.put(updatedPhone);
+               }
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -3915,46 +3991,46 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (farmer.moveToFirst()) {
 
 
-                try {
-                    JSONArray numberstosend = farmerPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-                    updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                    updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
-                    updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
-                    if (isPhoneNumber) {
-                        updatedPhone.put("phoneNumbers", numberstosend);
-                    }
-                    if (isNationalId) {
-                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                        final String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                        long countryId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
-                        long productId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
-                        if (typeID <= 0) {
-                            typeID = dl.getNIDTypeIDByName(typeName);
-                        }
-                        if (value.equals("2")) {
-                            JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                    typeID, "2", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId);
-
-                            updatedPhone.put("nationalIds", nidstosend);
-                        } else if (value.equals("updateNationalId")) {
-                            JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                    typeID, "updateNationalId", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId);
-
-                            updatedPhone.put("nationalIds", nidstosend);
-                        }
-
-                    }
-
-                    updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                    updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-                    if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                        updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(farmer.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-                    }
-
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+            try {
+                JSONArray numberstosend = farmerNewPhoneNumbers(farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)), OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+                updatedPhone.put("farmerId", farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
+                updatedPhone.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
+                if (isPhoneNumber) {
+                    updatedPhone.put("phoneNumbers", numberstosend);
                 }
+                if (isNationalId) {
+                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                    final String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                    long countryId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
+                    long productId = farmer.getLong(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
+                    if (typeID <= 0) {
+                        typeID = dl.getNIDTypeIDByName(typeName);
+                    }
+                    if (value.equals("2")) {
+                        JSONArray nidstosend = farmerChangenationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                typeID, "2", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId,false);
+
+                        updatedPhone.put("nationalIds", nidstosend);
+                    } else if (value.equals("updateNationalId")) {
+                        JSONArray nidstosend = farmerChangenationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                typeID, "updateNationalId", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, countryId, productId,false);
+
+                        updatedPhone.put("nationalIds", nidstosend);
+                    }
+
+                }
+
+                updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
+                updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
+                    updatedPhone.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(farmer.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
+                }
+
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
         }
         updatePhoneArray.put(updatedPhone);
@@ -5175,7 +5251,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         }
                                                     }
                                                     dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+                                                   // dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
 
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -5352,8 +5428,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     msg.arg2 = progress;
                                                     msg.obj = statusMessage;
                                                     handler.dispatchMessage(msg);
-
+                                                    //String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                                                     // OW-4590 Fix
+//                                                    for(int i = 0 ; i < nationIdList.length() ; i++){
+//                                                        JSONObject duplicateNational = nationIdList.getJSONObject(i);
+//                                                        int typeId ;
+//                                                        if(duplicateNational.getInt("id_type") <= 0){
+//                                                            typeId = dl.getNIDTypeIDByName(typeName);
+//                                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+//                                                        }else {
+//                                                            for (int i = 0; i < nationIdList.length(); i++) {
+//                                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                                int id_type = entry.getInt("id_type");
+//                                                                dl.deleteNetworkQueueItemByfarmerId(entry.getInt("farmer_id"), id_type);
+//                                                            }
+//                                                    }
+                                                    dl.deleteNetworkQueueItem(networkQueueItemId);
                                                     if (typeID <= 0) {
                                                         typeID = dl.getNIDTypeIDByName(typeName);
                                                         dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -5361,11 +5451,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         for (int i = 0; i < nationIdList.length(); i++) {
                                                             JSONObject entry = nationIdList.getJSONObject(i);
                                                             int id_type = entry.getInt("id_type");
-                                                            dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+                                                            dl.deleteNetworkQueueItemByfarmerId(entry.getInt("farmer_id"), id_type);
                                                         }
                                                     }
-                                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+
+                                                    for(int i=0 ; i <nationIdList.length() ; i++){
+                                                        JSONObject duplicateupdate = nationIdList.getJSONObject(i);
+                                                        dl.updateSyncedStatus(duplicateupdate.getInt("farmer_id"), duplicateupdate.getInt("id_type"));
+                                                        dl.addFarmerNationalids(nationIdList, duplicateupdate.getInt("farmer_id"), duplicateupdate.getInt("id_type"));
+
+                                                    }
 
                                                     syncNetworkQueue(originalSyncRequestItemId, handler);
                                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -6466,16 +6561,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postUpdatePhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId, boolean isPhoneNumber, boolean isNationalId, String value) {
-        //  Cursor cursor = dl.getEditedFarmerPhoneIds();
-//        Cursor farmer = null;
-//        try {
-//            farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-        //Cursor cursor = dl.getEditedFarmerIds();
-//        boolean isConsentError = false;
-//        boolean isMandatoryError = false;
-        // do {
+
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         //  long farmerId = dl.getFarmerById(cursor.getInt(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
         if (!dl.isFarmerSynced(farmerId)) {
             msg.what = 3;
             msg.arg1 = total;
@@ -6490,35 +6579,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (isMandateSurveySynced) {
                     //  isMandatoryError = false;
                     JSONArray params;
-                    if(HomeActivity.syncOptionAll){
-                         params = updateFarmerPhoneNumbers(isPhoneNumber, isNationalId, value);
-                    }else{
-                         params = updateFarmerPhoneNationalNumbers(isPhoneNumber, isNationalId, value);
+                    if (HomeActivity.syncOptionAll) {
+                        params = updateFarmerPhoneNumbers(isPhoneNumber, isNationalId, value);
+                    } else {
+                        params = updateFarmerPhoneNationalNumbers(isPhoneNumber, isNationalId, value);
                     }
 
                     okHttpArrayPost(context, IAPIConstants.SAVE_UPDATE_PHONE_NATIONAL, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
-
                             if (postResponse.isSuccessful()) {
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                if (isNationalId) {
-                                    //Need to change length
-                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
+                                if(isNationalId){
+                                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                    // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                    String typeName = dl.getNidTypebyid((int) typeID);
 
-                                        //Need to get from API
-                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                                        String typeName = dl.getNidTypebyid((int) typeID);
-                                        if (typeID <= 0) {
-                                            typeID = dl.getNIDTypeIDByName(typeName);
-                                        }
-                                        //Need to Update from API
-                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                                typeID);
+                                    if (typeID <= 0) {
+                                        typeID = dl.getNIDTypeIDByName(typeName);
                                     }
-
+                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                            typeID);
                                 }
 
                                 statusMessage = res.getString(R.string.item_synced);
@@ -6527,13 +6609,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 msg.arg2 = progress;
                                 msg.obj = statusMessage;
                                 handler.dispatchMessage(msg);
+                                // update the cursor if this is part of a multi-sync
+                                if (originalSyncRequestItemId == null) {
+                                    getNetworkQueue(null);
+                                }
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
-                                    } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5047) {
+                                    } else if (postResponse.code() == 400 && response.has("errorCode") && (response.getInt("errorCode") == 5047 || response.getInt("errorCode") == 5054)) {
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
                                         dl.updateDuplicateStatusOfPhoneNumber(farmerId);
                                         String errorMsg = response.optString("message", "Duplicate Primary Phone Number.");
                                         handler.postDelayed(() -> {
@@ -6542,15 +6629,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }, 500);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "updating phone number");
                                     } else if (postResponse.code() == 400 && response.has("errorCode") && response.getInt("errorCode") == 5048) {
-                                        if (response.has("duplicateNationalIds")) {
-                                            JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIds");
+                                        if (response.has("duplicateNationalIDList")) {
+                                            JSONArray duplicateNationalIds = response.getJSONArray("duplicateNationalIDList");
                                             for (int i = 0; i < duplicateNationalIds.length(); i++) {
                                                 JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                                String typeId = duplicate.getString("typeId");
+                                                String typeId = duplicate.getString("id_type");
                                                 dl.updateDuplicateStatusOfNationalId(farmerId, typeId);
                                             }
                                         }
-
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
                                         String errorMsg = response.optString("message", "Duplicate National Id");
                                         handler.postDelayed(() -> {
                                             popupMsgInfo(errorMsg);
@@ -6558,11 +6645,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }, 500);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "register national id");
                                     } else {
+                                        recordFailedUpload(0, 0, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+
                                         String errorMessage = response.getString("message");
-                                        JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+                                      //  JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
                                         String errorCode = response.getString("errorCode");
-                                        int typeID = 0;
-                                        String typeName = "";
+                                        //int typeID = 0;
+                                       // String typeName = "";
+
                                         if (errorCode.equalsIgnoreCase("3043") && errorMessage.equalsIgnoreCase(Utilities.NID_ERROR)) {
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
@@ -6571,20 +6663,118 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             msg.obj = statusMessage;
                                             handler.dispatchMessage(msg);
                                         }
+                                        try {
+                                            JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+                                            long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                                            String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                                            if (typeID<=0) {
+                                                typeID = dl.getNIDTypeIDByName(typeName);
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            } else {
+                                                for (int i = 0; i < nationIdList.length(); i++) {
+                                                    JSONObject entry = nationIdList.getJSONObject(i);
+                                                    int id_type = entry.getInt("id_type");
+                                                    dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+                                                }
+                                            }
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                                                            typeID);
+
+                                            dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+
+//                                            if (response.has("duplicateNationalIDList")){
+//                                                JSONArray nationalIdList = response.getJSONArray("duplicateNationalIDList");
+//                                                for (int i = 0; i < nationalIdList.length(); i++){
+//                                                    long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                                                    // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                                                    String typeName = dl.getNidTypebyid((int) typeID);
+//                                                    if (typeID <= 0) {
+//                                                        typeID = dl.getNIDTypeIDByName(typeName);
+//                                                    }else {
+//                                                        for (int j = 0; j < nationIdList.length(); j++) {
+//                                                            JSONObject entry = nationIdList.getJSONObject(i);
+//                                                            int id_type = entry.getInt("id_type");
+//                                                            dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                                        }
+//                                                    }
+//                                                    //Need to Update from API
+//                                                    dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+//                                                            typeID);
+//
+//                                                    dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                                }
+//                                            }
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+
+//                                        if (isNationalId) {
+//                                            try {
+//
+//                                                if (response.has("duplicateNationalIDList")){
+//                                                    JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+//                                                    for (int i = 0; i < nationIdList.length(); i++){
+//                                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                                                        String typeName = dl.getNidTypebyid((int) typeID);
+//                                                        if (typeID <= 0) {
+//                                                            typeID = dl.getNIDTypeIDByName(typeName);
+//                                                        }else {
+//                                                            for (int j = 0; j < nationIdList.length(); j++) {
+//                                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                                int id_type = entry.getInt("id_type");
+//                                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                                            }
+//                                                        }
+//                                                        //Need to Update from API
+//                                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+//                                                                typeID);
+//                                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                                    }
+//                                                }
+//                                            } catch (JSONException e) {
+//                                                throw new RuntimeException(e);
+//                                            }
+//
+////                                    try {
+////                                        JSONArray nationalList = new JSONArray(postResponse.body().toString());
+////                                        for(int i = 0 ; i < nationalList.length() ; i++){
+////
+////                                        }
+////                                    } catch (JSONException e) {
+////                                        throw new RuntimeException(e);
+////                                    }
+//                                            //Need to change length
+////                                    for (int i = 0; i > postResponse.body().toString().length(); i++) {
+////
+////                                        //Need to get from API
+////                                        long typeID = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+////                                        // String typeName = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+////                                        String typeName = dl.getNidTypebyid((int) typeID);
+////                                        if (typeID <= 0) {
+////                                            typeID = dl.getNIDTypeIDByName(typeName);
+////                                        }
+////                                        //Need to Update from API
+////                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+////                                                typeID);
+////                                    }
+//
+//                                        }
 
                                         // OW-4590 Fix
-                                        if (typeID <= 0) {
-                                            typeID = dl.getNIDTypeIDByName(typeName);
-                                            dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        } else {
-                                            for (int i = 0; i < nationIdList.length(); i++) {
-                                                JSONObject entry = nationIdList.getJSONObject(i);
-                                                int id_type = entry.getInt("id_type");
-                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
-                                            }
-                                        }
-                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
-                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                        if (typeID <= 0) {
+//                                            typeID = dl.getNIDTypeIDByName(typeName);
+//                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+//                                        } else {
+//                                            for (int i = 0; i < nationIdList.length(); i++) {
+//                                                JSONObject entry = nationIdList.getJSONObject(i);
+//                                                int id_type = entry.getInt("id_type");
+//                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), id_type);
+//                                            }
+//                                        }
+//                                        dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
+//                                        dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), typeID);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override
