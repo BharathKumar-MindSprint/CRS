@@ -778,9 +778,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 try {
                                     JSONObject attendee = new JSONObject();
                                      if (farmerId != null) {
-                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, Long.parseLong(farmerId) );
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, Long.parseLong(farmerId));
                                      } else {
-                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, Long.parseLong(stakeholderId));
+                                         attendee.put("stakeIdFk", Long.parseLong(stakeholderId));
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId)).farmerId);
                                      }
                                     attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
                                     attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));

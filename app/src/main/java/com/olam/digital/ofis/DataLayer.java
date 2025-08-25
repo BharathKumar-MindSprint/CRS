@@ -7059,9 +7059,10 @@ public class DataLayer {
                         String farmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID));
                         String stakeholderId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID));
                         if (farmerId != null) {
-                            jsonObject1.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                            jsonObject1.put("trainingattendeesId", farmerId);
                         } else {
-                            jsonObject1.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID, stakeholderId);
+                            jsonObject1.put("stakeIdFk", Long.parseLong(stakeholderId));
+                            jsonObject1.put("trainingattendeesId", String.valueOf(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId)).farmerId));
                         }
                         jsonObject1.put("enumeratorsId",Utilities.getFromSharedPrefs(context));
                         jsonObject1.put("attendeesName",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME)));
