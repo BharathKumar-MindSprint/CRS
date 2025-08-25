@@ -19,12 +19,15 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by ben on 06/07/2016.
@@ -45,9 +48,10 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
     Boolean signatureAllowed;
     private boolean isStakeholder;
+    private OFISRoomDB ofisRoomDB;
 
     public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,
-                                               DataLayer dl_, HashMap<Long,Integer> attendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder) {
+                                               DataLayer dl_, HashMap<Long,Integer> attendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder, OFISRoomDB ofisRoomDB) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -63,6 +67,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.trainingRecordId=trainingRecordId;
         this.signatureAllowed = signatureAllowed;
         this.isStakeholder = isStakeholder;
+        this.ofisRoomDB = ofisRoomDB;
     }
 
     @Override
@@ -98,6 +103,21 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             LinearLayout itemTextContainer = (LinearLayout) view.findViewById(R.id.itemTextContainer);
             LinearLayout.LayoutParams llp = (LinearLayout.LayoutParams) itemTextContainer.getLayoutParams();
             llp.weight = 8;
+        }
+
+        TextView stakeholderRole = (TextView) view.findViewById(R.id.stakeholder_role);
+        TextView stakeholderFarmCode = (TextView) view.findViewById(R.id.stakeholder_farm_code);
+
+        if (isStakeholder) {
+            stakeholderRole.setVisibility(View.VISIBLE);
+            stakeholderFarmCode.setVisibility(View.VISIBLE);
+            List<FarmerRoleDto> stakeholderRoleDTOList = dl.getFarmerRoles(Utilities.getColumnNameByLanguage());
+            long stakeholderId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
+            stakeholderRole.setText(getStakeholderRoleNameById(stakeholderRoleDTOList, Integer.parseInt(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(stakeholderId).msRoleId)));
+            stakeholderFarmCode.setText(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(stakeholderId).farmHoldingCode);
+        } else {
+            stakeholderRole.setVisibility(View.GONE);
+            stakeholderFarmCode.setVisibility(View.GONE);
         }
 
         // show and label the correct scoring columns
@@ -219,5 +239,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             itemTextContainer.setPadding(0,0,0,0);
         }
 
+    }
+
+    public String getStakeholderRoleNameById(List<FarmerRoleDto> stakeholderRoleDTOList, int id) {
+        for (FarmerRoleDto role : stakeholderRoleDTOList) {
+            if (role.getId() == id) {
+                return role.getName();
+            }
+        }
+        return null;
     }
 }

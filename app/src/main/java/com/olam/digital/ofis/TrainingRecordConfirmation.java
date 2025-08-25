@@ -1,6 +1,5 @@
 package com.olam.digital.ofis;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,6 +27,7 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -284,7 +283,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_grade
             };
 
-            CustomListAdapter_SelectedAttendees customListAdapter = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix, dl, attendeeList, trainingRecordId, false, isStakeholder);
+            CustomListAdapter_SelectedAttendees customListAdapter = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix, dl, attendeeList, trainingRecordId, false, isStakeholder, OFISRoomDB.getDbInstance(context));
 
             listView.setAdapter(customListAdapter);
             listView.setOnItemClickListener(null);

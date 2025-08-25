@@ -419,7 +419,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_grade
             };
 
-            CustomListAdapter_SelectedAttendees adapter = new CustomListAdapter_SelectedAttendees(context, attendeesCursor, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix, dl, attendeeCountMap, trainingRecordId, signatureAllowed, isStakeholder);
+            CustomListAdapter_SelectedAttendees adapter = new CustomListAdapter_SelectedAttendees(context, attendeesCursor, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix, dl, attendeeCountMap, trainingRecordId, signatureAllowed, isStakeholder, ofisRoomDB);
 
             listView.setAdapter(adapter);
 
@@ -931,7 +931,8 @@ public class TrainingRecord extends BaseListActivity{
             addAttendeeScores.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
+                    if ((trainingAttendees == null || trainingAttendees.getCount() == 0) &&
+                            (trainingAttendeesStakeholder == null || trainingAttendeesStakeholder.getCount() == 0)) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else {
                         addOrUpdateTrainingRecord();
@@ -951,7 +952,8 @@ public class TrainingRecord extends BaseListActivity{
                 public void onClick(View v) {
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
-                    }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
+                    } else if ((trainingAttendees == null || trainingAttendees.getCount() == 0) &&
+                                    (trainingAttendeesStakeholder == null || trainingAttendeesStakeholder.getCount() == 0)) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else if (signatureAllowed) {
                         if (!dl.areAllSignaturesPresent(trainingRecordId)){
