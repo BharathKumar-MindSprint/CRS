@@ -183,46 +183,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="10">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_width_height"
-                    android:src="@drawable/attendee_icon"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/primary_farmer"
-                    android:paddingStart="@dimen/margin_10"
-                    android:textColor="@color/ofis_base_font_dark"
-                    android:textSize="@dimen/ofis_med_text"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="7" />
-
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_width_height"
-                    android:id="@+id/addTrainingAttendees"
-                    card_view:srcCompat="@drawable/ic_ofis_add"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
-                    android:contentDescription="@string/Add"
-                    android:layout_weight="1" />
+                android:gravity="end">
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/button_width_height"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_width_height"
+                        android:src="@drawable/attendee_icon"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/primary_farmer"
+                        android:paddingStart="@dimen/margin_10"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textSize="@dimen/ofis_med_text"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="7" />
+
+                    <ImageButton
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_width_height"
+                        android:id="@+id/addTrainingAttendees"
+                        card_view:srcCompat="@drawable/ic_ofis_add"
+                        android:scaleType="fitXY"
+                        android:background="@android:color/transparent"
+                        android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
+                        android:contentDescription="@string/Add"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@color/light_orange"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="7dp">
 
                     <ImageView
                         android:id="@+id/toggle_icon_farmer"
@@ -231,8 +237,6 @@
                         android:src="@drawable/ic_arrow_down"
                         card_view:tint="@color/ic_orange" />
                 </LinearLayout>
-
-
             </LinearLayout>
 
             <ListView
@@ -260,43 +264,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="10">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_width_height"
-                    android:src="@drawable/attendee_icon"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/stakeholder_attendee"
-                    android:paddingStart="@dimen/margin_10"
-                    android:textColor="@color/ofis_base_font_dark"
-                    android:textSize="@dimen/ofis_med_text"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="7" />
-
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_width_height"
-                    android:id="@+id/addTrainingAttendeesStakeholder"
-                    card_view:srcCompat="@drawable/ic_ofis_add"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
-                    android:contentDescription="@string/Add"
-                    android:layout_weight="1" />
+                android:gravity="end">
 
                 <LinearLayout
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_width_height"
+                        android:src="@drawable/attendee_icon"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stakeholder_attendee"
+                        android:paddingStart="@dimen/margin_10"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textSize="@dimen/ofis_med_text"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="7" />
+
+                    <ImageButton
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_width_height"
+                        android:id="@+id/addTrainingAttendeesStakeholder"
+                        card_view:srcCompat="@drawable/ic_ofis_add"
+                        android:scaleType="fitXY"
+                        android:background="@android:color/transparent"
+                        android:layout_marginRight="@dimen/ofis_bottom_section_padding_vertical"
+                        android:contentDescription="@string/Add"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/button_width_height"
                     android:background="@color/light_orange"
                     android:gravity="center"
-                    android:padding="4dp"
-                    android:layout_weight="1"
+                    android:padding="7dp"
                     android:orientation="vertical"
                     android:clickable="true"
                     android:focusable="true">
@@ -308,8 +318,6 @@
                         android:src="@drawable/ic_arrow_down"
                         card_view:tint="@color/ic_orange" />
                 </LinearLayout>
-
-
             </LinearLayout>
 
             <ListView
