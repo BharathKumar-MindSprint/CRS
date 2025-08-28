@@ -860,4 +860,6 @@
     <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
     <string name="Alert_txt">Uyarı !</string>
 
+    <string name="stakeholder_attendee">Paydaş Katılımcı</string>
+    <string name="max_age">En fazla 3 rakam girilebilir.</string>
 </resources>

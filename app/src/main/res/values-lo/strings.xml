@@ -1111,6 +1111,9 @@
     <string name="no_phone_number">ບໍ່ມີເບີໂທທີ່ໃຊ້ໄດ້!</string>
     <string name="invalid_national_id">ເລກປະຈຳຕົວບໍ່ຖືກຕ້ອງ!</string>
     <string name="invalid_phonenumber">ເບີໂທລະສັບບໍ່ຖືກຕ້ອງ!</string>
+
+    <string name="stakeholder_attendee">ຜູ້ເຂົ້າຮ່ວມທີ່ມີສ່ວນຮ່ວມ</string>
+    <string name="max_age">ອະນຸຍາດໃຫ້ໃຊ້ໄດ້ສູງສຸດ 3 ຕົວເລກ.</string>
 </resources>
 
 

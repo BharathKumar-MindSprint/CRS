@@ -855,4 +855,6 @@
     <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
     <string name="Alert_txt">เตือน !</string>
 
+    <string name="stakeholder_attendee">ผู้เข้าร่วมที่เกี่ยวข้อง</string>
+    <string name="max_age">อนุญาตให้ใช้ตัวเลขได้สูงสุด 3 หลัก</string>
 </resources>

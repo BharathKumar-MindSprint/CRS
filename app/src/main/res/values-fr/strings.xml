@@ -1285,4 +1285,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="invalid_national_id">Identifiant national invalide !</string>
     <string name="invalid_phonenumber">Numéro de téléphone invalide !</string>
 
+    <string name="stakeholder_attendee">Participant partie prenante</string>
+    <string name="max_age">Maximum de 3 chiffres autorisés.</string>
 </resources>
