@@ -1491,4 +1491,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="no_phone_number">No Phone Number Applicable!</string>
 
     <string name="stakeholder_attendee">Stakeholder Attendee</string>
+    <string name="max_age">Maximum 3 digits allowed.</string>
 </resources>

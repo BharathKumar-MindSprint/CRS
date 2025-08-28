@@ -8,8 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +64,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
     private boolean signatureAllowed;
     private boolean isStakeholder;
     private OFISRoomDB ofisRoomDB;
+    public static Context context;
 
 
 
@@ -70,6 +75,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         initWidget();
         getIntentDetails();
         ofisRoomDB = OFISRoomDB.getDbInstance(this);
+        context = this;
 
         // get Relationships
         String locale=Utilities.getLocaleSuffix(res);
@@ -202,6 +208,9 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         EditText etAttendeeName = (EditText) childAttendeeView.findViewById(R.id.etTraineeName);
         etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
 
+        EditText etAttendeeAge = (EditText) childAttendeeView.findViewById(R.id.etTraineeAge);
+        applyMaxValueFilter(etAttendeeAge, 999);
+
         LinearLayout traineeSignatureContainer = (LinearLayout) childAttendeeView.findViewById(R.id.traineeSignatureContainer);
         LinearLayout signatureRelationAttendee = (LinearLayout) childAttendeeView.findViewById(R.id.signatureRelationAttendee);
         ImageButton attendeeRelationSignatureDisplay = (ImageButton) childAttendeeView.findViewById(R.id.attendeeRelationSignatureDisplay);
@@ -259,6 +268,45 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 //        });
     }
 
+    public static void applyMaxValueFilter(EditText editText, int maxValue) {
+        editText.addTextChangedListener(new TextWatcher() {
+            private Handler handler = new Handler(Looper.getMainLooper());
+            private String previousValidText = "";
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String input = s.toString();
+                if (!input.isEmpty()) {
+                    try {
+                        int value = Integer.parseInt(input);
+                        if (value > maxValue) {
+                            editText.setError(context.getResources().getString(R.string.max_age));
+
+                            // Revert to previous valid value
+                            editText.removeTextChangedListener(this);
+                            editText.setText(previousValidText);
+                            editText.setSelection(previousValidText.length());
+                            editText.addTextChangedListener(this);
+
+                            handler.postDelayed(() -> {
+                                editText.setError(null);
+                            }, 3000);
+                        } else {
+                            previousValidText = input;
+                        }
+                    } catch (NumberFormatException e) {
+                        editText.setError("Invalid number");
+                        handler.postDelayed(() -> {
+                            editText.setError(null);
+                        }, 3000);
+                    }
+                }
+            }
+
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+    }
     public void addIconRefactor() {
         if (parentGroup.getChildCount()<5) {
             btnAddAttendee.setEnabled(true);
