@@ -436,7 +436,7 @@ public class TrainingRecord extends BaseListActivity{
     }
 
 
-    public void deleteTrainingAttendee(final int attendeeId) {
+    public void deleteTrainingAttendee(final int attendeeId, boolean isStakeholder) {
 
         // New Approach
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -466,13 +466,15 @@ public class TrainingRecord extends BaseListActivity{
                 dl.deleteAttendeeByTrainingId(attendeeId,trainingRecordId);
 
                 if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
-                    trainingAttendees.close();
-                    trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
-                    customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
-
-                    trainingAttendeesStakeholder.close();
-                    trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
-                    customListAdapter_selectedAttendeesStakeholder.swapCursor(trainingAttendeesStakeholder);
+                    if (isStakeholder) {
+                        trainingAttendeesStakeholder.close();
+                        trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+                        customListAdapter_selectedAttendeesStakeholder.swapCursor(trainingAttendeesStakeholder);
+                    } else {
+                        trainingAttendees.close();
+                        trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+                        customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
+                    }
 
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
