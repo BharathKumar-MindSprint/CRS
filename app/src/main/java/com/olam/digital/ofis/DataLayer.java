@@ -1516,7 +1516,7 @@ public class DataLayer {
         return moderationstatus;
     }
 
-    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid, long nationalId) {
+    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid) {
         int arrayLength = storeableNationalids.length();
         try {
             for (int i = 0; i < arrayLength; i++) {
