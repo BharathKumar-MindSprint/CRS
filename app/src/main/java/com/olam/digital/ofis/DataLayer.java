@@ -3429,7 +3429,7 @@ public class DataLayer {
 
     public Cursor getnationalidsbyfarmerids(long id, String columnName) {
         String[] columns = new String[]{"*"};
-        String whereClause = columnName + " = ?";
+        String whereClause = columnName + " = ? AND (" + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED + " LIKE 0)";;
         String[] whereArgs = new String[]{String.valueOf(id)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NATIONAL_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);

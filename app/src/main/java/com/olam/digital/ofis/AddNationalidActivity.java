@@ -732,14 +732,17 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
-                nid_type.setEnabled(true);
-                Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
-                return false;
-            } else {
-                nidtype_list.add(value);
-                selectednationalidList.add(value);
+            if(!isdeleted){
+                if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+                    nid_type.setEnabled(true);
+                    Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    nidtype_list.add(value);
+                    selectednationalidList.add(value);
+                }
             }
+
             if (getNidCaptureStatus(value).equalsIgnoreCase("true") && !isdeleted) {
                 if (!editmode) {
                     if (!getPhotostatusByType(String.valueOf(type))) {
@@ -814,6 +817,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             for (int i = 0; i < selectednationalidList.size(); i++) {
                 if (val.equalsIgnoreCase(selectednationalidList.get(i))) {
                     selectednationalidList.remove(i);
+                   //  nationalids.removeViewAt(i);
                 }
             }
             int type = getNidType(val);
