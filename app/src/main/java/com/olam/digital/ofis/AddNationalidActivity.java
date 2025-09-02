@@ -709,18 +709,21 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             String expDate = expiryDate.getText().toString();
 
             if (isSaveClicked) {
-                int localDuplicateNationalIdCount = dl.getLocalDuplicateNationaId(type, nid);
-                int farmerDuplicateNationalId = dl.getFarmerDuplicateNationaId(type, nid);
+                if(!isdeleted){
+                    int localDuplicateNationalIdCount = dl.getLocalDuplicateNationaId(type, nid);
+                    int farmerDuplicateNationalId = dl.getFarmerDuplicateNationaId(type, nid);
 
-                if (localDuplicateNationalIdCount > 1) {
-                    Toast.makeText(this, "Duplicate National Id", Toast.LENGTH_SHORT).show();
-                    return false;
+                    if (localDuplicateNationalIdCount > 1) {
+                        Toast.makeText(this, "Duplicate National Id", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+
+                    if (farmerDuplicateNationalId > 1) {
+                        Toast.makeText(this, "Duplicate National Id", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                 }
 
-                if (farmerDuplicateNationalId > 1) {
-                    Toast.makeText(this, "Duplicate National Id", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
             }
 
 
