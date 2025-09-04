@@ -5523,7 +5523,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
                         final String type = itemType.equalsIgnoreCase("Supplier Survey") ? "ASC" : "DM";
 
-                        List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
+                        List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId, false);
                         boolean isFileNotExists = false;
 
                         for (int k = 0; k < questionIds.size(); k++) {
@@ -5557,7 +5557,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             Log.d("question", String.valueOf(k));
                             okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
                                 @Override
-                                public void onResponse(Call call, Response postResponse) {
+                                public void onResponse(Call call, Response postResponse) throws IOException {
                                     if (postResponse.isSuccessful()) {
                                         for (int i = 0; i < ids.size(); i++) {
                                             db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
@@ -5565,15 +5565,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
                                         if (fileSyncedCount == 0) {
-                                            if(itemType.equalsIgnoreCase("DMSurvey")) {
-                                                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            }
-                                            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
-                                                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            }
-                                            else {
-                                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            }
+                                            syncCapturedFileSignature(networkQueueItemId, handler, msg, total, progress, itemId, itemType);
                                         }
                                     } else {
                                         if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
@@ -5610,15 +5602,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
 
                         if(!isFileNotExists) {
-                            if(itemType.equalsIgnoreCase("DMSurvey")) {
-                                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            }
-                            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
-                                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            }
-                            else {
-                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            }
+                            syncCapturedFileSignature(networkQueueItemId, handler, msg, total, progress, itemId, itemType);
                         }
 
                     } catch (Exception e) {
@@ -5641,7 +5625,98 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
+    public void syncCapturedFileSignature(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) throws IOException {
+
+        String farmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+        int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+        int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+
+        final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
+        List<Integer> signatureQuestionId = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId, true);
+        boolean isSignatureExists = false;
+
+        List<String> filePaths = new ArrayList<>();
+        List<String> fileName = new ArrayList<>();
+        List<DmSurveyAnswerTable> dmSignatureAnswer = db.dmSurveyAnswerTableDao().getSignatureAnswerData(farmerId, signatureQuestionId, plotId, Constants.SIGNATURE);
+        if (!dmSignatureAnswer.isEmpty()) {
+            isSignatureExists = true;
+            for (int m = 0; m < dmSignatureAnswer.size(); m++) {
+                String signName = dmSignatureAnswer.get(m).answer;
+                File storageDir = context.getExternalFilesDir("");
+                File image = File.createTempFile(signName, ".png", storageDir);
+                filePaths.add(String.valueOf(image));
+                fileName.add(signName);
+            }
+
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            for (int i = 0; i < filePaths.size(); i++) {
+                File file = new File(filePaths.get(i));
+                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                builder.addFormDataPart("files", fileName.get(i), fileBody);
+            }
+            builder.addFormDataPart("type", "DM_SIG");
+            builder.addFormDataPart("enumId", Utilities.getFromSharedPrefs(context));
+
+            RequestBody requestBody = builder.build();
+            okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response postResponse) throws IOException {
+                    if (postResponse.isSuccessful()) {
+                        if(itemType.equalsIgnoreCase("DMSurvey")) {
+                            postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                        else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
+                            postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                        else {
+                            postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                    } else {
+                        if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                            try {
+                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting dm signature");
+                            } catch (Exception e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            }
+                        } else {
+                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting dm signature");
+                            Log.d("Error in Upload Signature", postResponse.toString());
+                        }
+                    }
+                    postResponse.close();
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    try {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        if (e != null) {
+                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        }
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                    } catch (Exception onfailEx) {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                        onfailEx.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        if(!isSignatureExists) {
+            if(itemType.equalsIgnoreCase("DMSurvey")) {
+                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
+                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+            else {
+                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+        }
+    }
+        private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
         if (!isConsentAvailableToSync) {
