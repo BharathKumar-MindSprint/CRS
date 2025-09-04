@@ -47,8 +47,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, int plotId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType")
-    List<DmSurveyAnswerTable> getDataByModuleIdNoCheckbox(String id, String farmerId, int plotId, String displayType);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType NOT IN (:checkbox, :signature)")
+    List<DmSurveyAnswerTable> getDataByModuleIdNoCheckbox(String id, String farmerId, int plotId, String checkbox, String signature);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND isSynced = :isSynced")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, boolean isSynced);

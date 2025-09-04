@@ -1,10 +1,13 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -12,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -24,18 +28,23 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
@@ -48,8 +57,16 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DecimalFilter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NegativeDecimalFilter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -60,6 +77,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
     LinearLayout ll_servey_next, ll_servey_back, dm_Section, dm_Question;
     OFISRoomDB db;
     public LayoutInflater inflater;
+
+    public HashMap<Integer, Boolean> isSigned = new HashMap<Integer, Boolean>();
+    public HashMap<Integer, String> currentSignaturePhotoPath = new HashMap<Integer, String>();
     Resources resources;
 
 //    private DataRefreshListener dataRefreshListener;
@@ -136,6 +156,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
                 dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsSubModule.id);
                 renderCheckboxQuestionModule(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesItemList, dmQuestionsSubModule.question, true);
+            } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("signature")) {
+                renderSignatureQuestionModule(String.valueOf(dmQuestionsSubModule.id), dmQuestionsSubModule.question, true);
             }
 
         }
@@ -217,6 +239,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
                 dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
                 renderCheckboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question, false);
+            } else if (dmQuestionsModule.displayType.equalsIgnoreCase("signature")) {
+                renderSignatureQuestionModule(String.valueOf(dmQuestionsModule.id), dmQuestionsModule.question, false);
             }
 
         }
@@ -1061,6 +1085,179 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 this.dm_Question.addView(tl);
                 this.dm_Question.addView(textView);
             }
+        }
+    }
+
+    public void renderSignatureQuestionModule(String questionId, String question, boolean subSection) {
+        TextView textView = new TextView(getActivity());
+        textView.setText(getContext().getString(R.string.no_signature_available));
+        textView.setTextColor(getResources().getColor(R.color.red_view_survey));
+        textView.setTextSize(12);
+        textView.setPadding(0, 15, 0, 0);
+        textView.setVisibility(View.GONE);
+        textView.setTag(questionId);
+
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        final LinearLayout sign_dm = (LinearLayout) inflater.inflate(R.layout.module_signature_dm, null);
+        final RelativeLayout signatureLayout = (RelativeLayout) inflater.inflate(R.layout.module_photo_upload_question, sign_dm, false);
+        signatureLayout.setPadding(10,10,10,10);
+        sign_dm.addView(signatureLayout);
+        final ImageView signatureImageView = signatureLayout.findViewById(R.id.modulePhotoQuestion);
+        Button modulePhotoUploadButton = (Button) signatureLayout.findViewById(R.id.modulePhotoUpload);
+        modulePhotoUploadButton.setText(getResources().getString(R.string.Signature));
+
+        modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSignatureDialogBox(signatureImageView, Integer.parseInt(questionId), question);
+            }
+        });
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId, Constants.FARMER_ID, Constants.PLOT_ID);
+
+        if (!dmSurveyAnswerTableList.isEmpty()) {
+            String signatureLocation = dmSurveyAnswerTableList.get(0).answer;
+            setSignatureImage(signatureLocation, signatureImageView, Integer.valueOf(questionId));
+        }
+
+        if (subSection) {
+            if (dm_Section != null) {
+                dm_Section.addView(sign_dm);
+                dm_Section.addView(textView);
+            }
+        } else {
+            if (this.dm_Question != null) {
+                this.dm_Question.addView(sign_dm);
+                this.dm_Question.addView(textView);
+            }
+        }
+
+    }
+
+    public void showSignatureDialogBox(ImageView signatureImageView, Integer questionId, String question) {
+        isSigned.put(questionId, false);
+        final Dialog signatureDialog = new Dialog(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                isSigned.put(questionId, true);
+            }
+
+            @Override
+            public void onClear() {
+                isSigned.put(questionId, false);
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signatureDialog.dismiss();
+            }
+        });
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (Boolean.TRUE.equals(isSigned.get(questionId))) {
+                        signatureImageView.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
+
+                        File photoFile = createImageFile(Constants.FARMER_ID, questionId);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            try {
+                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                m.invoke(null);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                            mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
+
+                            List<DmSurveyAnswerTable> dmSurveyData = db.dmSurveyAnswerTableDao().getDataByQuestionId(String.valueOf(questionId),Constants.FARMER_ID, Constants.PLOT_ID);
+                            if (!dmSurveyData.isEmpty()) {
+                                db.dmSurveyAnswerTableDao().deleteByQuestionId(String.valueOf(questionId), Constants.FARMER_ID, Constants.PLOT_ID);
+                            }
+
+                            DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                            dmSurveyAnswerTable1.questionID = String.valueOf(questionId);
+                            dmSurveyAnswerTable1.answer = currentSignaturePhotoPath.get(questionId);
+                            dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                            dmSurveyAnswerTable1.question = question;
+                            dmSurveyAnswerTable1.complinceTypeId = String.valueOf(0);
+                            dmSurveyAnswerTable1.actionplanId = "";
+                            dmSurveyAnswerTable1.actionPlanText = "";
+                            dmSurveyAnswerTable1.amount = 0;
+                            dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                            dmSurveyAnswerTable1.plotId = Constants.PLOT_ID;
+                            dmSurveyAnswerTable1.isSynced = false;
+                            dmSurveyAnswerTable1.displayType = "signature";
+
+                            db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        signatureDialog.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), getResources().getString(R.string.no_signature_available), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        signatureDialog.show();
+    }
+
+    private File createImageFile(String farmerId, int questionId) throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = questionId + "_" + farmerId + "_" + timestamp;
+        File storageDir = getContext().getExternalFilesDir("");
+        File image = File.createTempFile(imageFileName, ".png", storageDir);
+        currentSignaturePhotoPath.put(questionId, image.getName());
+        return image;
+    }
+
+    private void setSignatureImage(String signaturePhotoPath, ImageView signatureImageView, Integer questionId) {
+        String storageDir = (getContext().getExternalFilesDir(null) != null) ? getContext().getExternalFilesDir(null).getPath() + "/" : "/";
+        final String finalCurrentAnswerValue = storageDir + signaturePhotoPath;
+        Uri uri = Uri.parse(finalCurrentAnswerValue);
+        currentSignaturePhotoPath.put(questionId, uri.getPath());
+        int baseWidth = 100;
+        int baseHeight = 28;
+        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, getResources());
+        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+        Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(finalCurrentAnswerValue, outputWidth, outputHeight);
+        if (existingSignatureBitmap != null) {
+            signatureImageView.setImageBitmap(existingSignatureBitmap);
         }
     }
 
