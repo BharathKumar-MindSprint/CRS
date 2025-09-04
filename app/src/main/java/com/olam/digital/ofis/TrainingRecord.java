@@ -25,11 +25,13 @@ import androidx.core.content.FileProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,8 +84,9 @@ public class TrainingRecord extends BaseListActivity{
     Button completeTrainingRecord;
     private String columnSuffix;
 
-    private Cursor trainingAttendees, trainingRecord;
+    private Cursor trainingAttendees, trainingRecord, trainingAttendeesStakeholder;
     private CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees;
+    private CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendeesStakeholder;
     private ImageButton trainingPhotoActionButton;
 
     // Runtime Permission Request Code
@@ -90,23 +94,39 @@ public class TrainingRecord extends BaseListActivity{
 
     private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
     private static final int REQUEST_CHECK_SETTINGS = 100;
-    ListView listView;
-
    public static HashMap<Long,Integer> farmerAttendeeList =null;
+   public static HashMap<Long,Integer> stakeholderAttendeeList =null;
    public static boolean isCaptureAttendee;
 
     public boolean signatureAllowed;
     String currentPhotoPathBackup;
 
+    private ImageView toggleFarmerIcon, toggleStakeholderIcon;
+    private ListView farmerList, stakeholderList;
+
+    private boolean isFarmerOpen = false;
+    private boolean isStakeholderOpen = false;
+    private LinearLayout farmerSection, stakeholderSection;
+
+    private OFISRoomDB ofisRoomDB;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
-        listView=findViewById(R.id.list);
+        farmerList=findViewById(R.id.list_farmer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         context = me = this;
         res = getResources();
+        ofisRoomDB = OFISRoomDB.getDbInstance(context);
+
+        farmerSection = findViewById(R.id.farmer_section);
+        stakeholderSection = findViewById(R.id.stakeholder_section);
+        toggleFarmerIcon = findViewById(R.id.toggle_icon_farmer);
+        toggleStakeholderIcon = findViewById(R.id.toggle_icon_stakeholder);
+        stakeholderList = findViewById(R.id.list_stakeholder);
 
         dl = new DataLayer(res, context);
 
@@ -166,7 +186,72 @@ public class TrainingRecord extends BaseListActivity{
 
         bindSpinners();
         bindButtons();
+
+        farmerList.setVisibility(View.VISIBLE);
+        stakeholderList.setVisibility(View.GONE);
+        toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_up);
+        toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+        updateWeights(farmerSection, 9);
+        updateWeights(stakeholderSection, 1);
+
+        toggleSection(true);
+        toggleFarmerIcon.setOnClickListener(v -> toggleSection(true));
+        toggleStakeholderIcon.setOnClickListener(v -> toggleSection(false));
+
     }
+
+    private void toggleSection(boolean isOpeningFarmer) {
+        boolean isCurrentlyOpen = isOpeningFarmer ? isFarmerOpen : isStakeholderOpen;
+
+        if (!isCurrentlyOpen) {
+            farmerList.setVisibility(isOpeningFarmer ? View.VISIBLE : View.GONE);
+            stakeholderList.setVisibility(isOpeningFarmer ? View.GONE : View.VISIBLE);
+
+            toggleFarmerIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+            toggleStakeholderIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up);
+
+            updateWeights(farmerSection, isOpeningFarmer ? 9 : 1);
+            updateWeights(stakeholderSection, isOpeningFarmer ? 1 : 9);
+
+            isFarmerOpen = isOpeningFarmer;
+            isStakeholderOpen = !isOpeningFarmer;
+        } else {
+            if (isOpeningFarmer) {
+                farmerList.setVisibility(View.GONE);
+                toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_down);
+            } else {
+                stakeholderList.setVisibility(View.GONE);
+                toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+            }
+
+            updateWeights(farmerSection, 1);
+            updateWeights(stakeholderSection, 1);
+
+            isFarmerOpen = false;
+            isStakeholderOpen = false;
+        }
+    }
+
+    private void updateWeights(LinearLayout layout, int weight) {
+        ViewGroup.MarginLayoutParams oldParams = (ViewGroup.MarginLayoutParams) layout.getLayoutParams();
+
+        LinearLayout.LayoutParams newParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                weight
+        );
+
+        newParams.setMargins(
+                oldParams.leftMargin,
+                oldParams.topMargin,
+                oldParams.rightMargin,
+                oldParams.bottomMargin
+        );
+
+        layout.setLayoutParams(newParams);
+    }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -301,14 +386,15 @@ public class TrainingRecord extends BaseListActivity{
             }
         }
     }
+    private void getTrainingAttendees(boolean isStakeholder, ListView listView) {
+        Cursor attendeesCursor = isStakeholder
+                ? dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId)
+                : dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
 
-    private void getTrainingAttendees() {
-        trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+        HashMap<Long, Integer> attendeeCountMap = dl.prepareAttendeeCountList(attendeesCursor, Integer.parseInt(String.valueOf(trainingRecordId)), isStakeholder
+        );
 
-        //Get All Training Attendees Counts
-         farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendees,Integer.parseInt(String.valueOf(trainingRecordId)));
-
-        if (trainingAttendees.getCount() > 0) {
+        if (attendeesCursor.getCount() > 0) {
             String[] adapterCols = new String[]{
                     "_id",
                     OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
@@ -320,6 +406,7 @@ public class TrainingRecord extends BaseListActivity{
                     OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
                     OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
             };
+
             int[] adapterRowViews = new int[]{
                     R.id.trainingAttendeeId,
                     R.id.attendeeName,
@@ -331,11 +418,23 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId, signatureAllowed);
-            listView.setAdapter(customListAdapter_selectedAttendees);
-            //setListAdapter(customListAdapter_selectedAttendees);
+
+            CustomListAdapter_SelectedAttendees adapter = new CustomListAdapter_SelectedAttendees(context, attendeesCursor, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix, dl, attendeeCountMap, trainingRecordId, signatureAllowed, isStakeholder, ofisRoomDB);
+
+            listView.setAdapter(adapter);
+
+            if (isStakeholder) {
+                trainingAttendeesStakeholder = attendeesCursor;
+                stakeholderAttendeeList = attendeeCountMap;
+                customListAdapter_selectedAttendeesStakeholder = adapter;
+            } else {
+                trainingAttendees = attendeesCursor;
+                farmerAttendeeList = attendeeCountMap;
+                customListAdapter_selectedAttendees = adapter;
+            }
         }
     }
+
 
     public void deleteTrainingAttendee(final int attendeeId) {
 
@@ -370,9 +469,19 @@ public class TrainingRecord extends BaseListActivity{
                     trainingAttendees.close();
                     trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
+
+                    trainingAttendeesStakeholder.close();
+                    trainingAttendeesStakeholder = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+                    customListAdapter_selectedAttendeesStakeholder.swapCursor(trainingAttendeesStakeholder);
+
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
                     alert.dismiss();
-                    getTrainingAttendees();
+
+                    // To load farmer attendees
+                    getTrainingAttendees(false, farmerList);
+                    // To load stakeholder attendees
+                    getTrainingAttendees(true, stakeholderList);
+
                     if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                         completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
                     } else {
@@ -389,8 +498,9 @@ public class TrainingRecord extends BaseListActivity{
 
     public void signTrainingAttendee(int attendeeId) {
         final boolean[] isSigned = {false};
-        long farmerId = dl.getFarmerByAttendeeItem(attendeeId);
-        Cursor farmer = dl.getFarmerById(farmerId);
+        boolean isStakeholder = false;
+        long attendeeIdByItem = 0;
+        attendeeIdByItem = dl.getAttendeeIdByItem(attendeeId, false);
         final Dialog signatureDialog = new Dialog(TrainingRecord.this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -400,10 +510,24 @@ public class TrainingRecord extends BaseListActivity{
         Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
         Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
         TextView tv_attendeeName = (TextView) signatureDialog.findViewById(R.id.tv_attendeeName);
-        if (farmer != null && farmer.getCount() > 0) {
-            farmer.moveToFirst();
-            tv_attendeeName.setVisibility(View.VISIBLE);
-            tv_attendeeName.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
+        if (attendeeIdByItem == 0) {
+            attendeeIdByItem = dl.getAttendeeIdByItem(attendeeId, true);
+            isStakeholder = true;
+        }
+
+        tv_attendeeName.setVisibility(View.VISIBLE);
+
+        if (isStakeholder) {
+            String stakeholderName = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(attendeeIdByItem).msName;
+            tv_attendeeName.setText(stakeholderName);
+        } else {
+            Cursor farmer = dl.getFarmerById(attendeeIdByItem);
+            if (farmer != null && farmer.moveToFirst()) {
+                String farmerName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                tv_attendeeName.setText(farmerName);
+                farmer.close();
+            }
         }
 
         bt_confirm.setEnabled(true);
@@ -441,17 +565,21 @@ public class TrainingRecord extends BaseListActivity{
             }
         });
 
+        long finalAttendee = attendeeIdByItem;
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     if (isSigned[0]) {
                         Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        String signatureName = finalAttendee + "_" + System.currentTimeMillis() + ".png";
                         saveSignatureImage(signatureBitmap, signatureName);
                         dl.saveAttendeeSignature(attendeeId, signatureName);
                         signatureDialog.dismiss();
-                        getTrainingAttendees();
+                        // To load farmer attendees
+                        getTrainingAttendees(false, farmerList);
+                        // To load stakeholder attendees
+                        getTrainingAttendees(true, stakeholderList);
 
                         if (dl.areAllSignaturesPresent(trainingRecordId)){
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
@@ -633,7 +761,10 @@ public class TrainingRecord extends BaseListActivity{
                             completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
                         }
                     }
-                    getTrainingAttendees();
+                    // To load farmer attendees
+                    getTrainingAttendees(false, farmerList);
+                    // To load stakeholder attendees
+                    getTrainingAttendees(true, stakeholderList);
                 }
 
                 if (editMode && trainingModuleId != 0 && !firstLoad && hasSwapped) {
@@ -642,8 +773,14 @@ public class TrainingRecord extends BaseListActivity{
 
                     if (trainingAttendees != null && trainingAttendees.getCount() > 0) {
                         dl.wipeAttendeeScores(trainingRecordId);
-                        getTrainingAttendees();
+                        // To load farmer attendees
+                        getTrainingAttendees(false, farmerList);
                     }
+
+                    if (trainingAttendeesStakeholder != null && trainingAttendeesStakeholder.getCount() > 0) {
+                        dl.wipeAttendeeScores(trainingRecordId);
+                        // To load stakeholder attendees
+                        getTrainingAttendees(true, stakeholderList);                    }
                 }
             }
 
@@ -733,6 +870,31 @@ public class TrainingRecord extends BaseListActivity{
                         intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
                         intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
                         intent.putExtra(EDIT_MODE, editMode);
+                        intent.putExtra(Utilities.IS_STAKE_HOLDER , false);
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        }
+
+        ImageButton addAttendeesStakeholder = (ImageButton) findViewById(R.id.addTrainingAttendeesStakeholder);
+        if (readOnlyMode) {
+            addAttendeesStakeholder.setVisibility(View.GONE);
+        } else {
+            addAttendeesStakeholder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
+                        Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
+                    } else {
+                        addOrUpdateTrainingRecord();
+                        Intent intent = new Intent(context, TrainingAttendees.class);
+                        intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
+                        intent.putExtra(COURSE_ID, courseId);
+                        intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
+                        intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
+                        intent.putExtra(EDIT_MODE, editMode);
+                        intent.putExtra(Utilities.IS_STAKE_HOLDER , true);
                         context.startActivity(intent);
                     }
                 }
@@ -769,7 +931,8 @@ public class TrainingRecord extends BaseListActivity{
             addAttendeeScores.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
+                    if ((trainingAttendees == null || trainingAttendees.getCount() == 0) &&
+                            (trainingAttendeesStakeholder == null || trainingAttendeesStakeholder.getCount() == 0)) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else {
                         addOrUpdateTrainingRecord();
@@ -789,7 +952,8 @@ public class TrainingRecord extends BaseListActivity{
                 public void onClick(View v) {
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
-                    }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
+                    } else if ((trainingAttendees == null || trainingAttendees.getCount() == 0) &&
+                                    (trainingAttendeesStakeholder == null || trainingAttendeesStakeholder.getCount() == 0)) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else if (signatureAllowed) {
                         if (!dl.areAllSignaturesPresent(trainingRecordId)){
@@ -817,7 +981,10 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         if (editMode) {
-            getTrainingAttendees();
+            // To load farmer attendees
+            getTrainingAttendees(false, farmerList);
+            // To load stakeholder attendees
+            getTrainingAttendees(true, stakeholderList);
             if (signatureAllowed && !dl.areAllSignaturesPresent(trainingRecordId)) {
                 completeTrainingRecord.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_disabled));
             } else {

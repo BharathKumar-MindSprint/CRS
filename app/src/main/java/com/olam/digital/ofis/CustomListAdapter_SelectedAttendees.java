@@ -19,12 +19,15 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by ben on 06/07/2016.
@@ -40,12 +43,15 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private final String columnSuffix;
     private final  Context mContext;
     private DataLayer dl;
-    private HashMap<Long,Integer> farmerAttendeeList;
+    private HashMap<Long,Integer> attendeeList;
     private long trainingRecordId;
 
     Boolean signatureAllowed;
+    private boolean isStakeholder;
+    private OFISRoomDB ofisRoomDB;
 
-    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_, DataLayer dl_, HashMap<Long,Integer> farmerAttendeeList, long trainingRecordId, boolean signatureAllowed) {
+    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,
+                                               DataLayer dl_, HashMap<Long,Integer> attendeeList, long trainingRecordId, boolean signatureAllowed, boolean isStakeholder, OFISRoomDB ofisRoomDB) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
 
         this.layout = R.layout.listview_selected_attendee_list;
@@ -57,9 +63,11 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.columnSuffix = columnSuffix_;
         this.mContext=c;
         this.dl=dl_;
-        this.farmerAttendeeList=farmerAttendeeList;
+        this.attendeeList=attendeeList;
         this.trainingRecordId=trainingRecordId;
         this.signatureAllowed = signatureAllowed;
+        this.isStakeholder = isStakeholder;
+        this.ofisRoomDB = ofisRoomDB;
     }
 
     @Override
@@ -95,6 +103,21 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             LinearLayout itemTextContainer = (LinearLayout) view.findViewById(R.id.itemTextContainer);
             LinearLayout.LayoutParams llp = (LinearLayout.LayoutParams) itemTextContainer.getLayoutParams();
             llp.weight = 8;
+        }
+
+        TextView stakeholderRole = (TextView) view.findViewById(R.id.stakeholder_role);
+        TextView stakeholderFarmCode = (TextView) view.findViewById(R.id.stakeholder_farm_code);
+
+        if (isStakeholder) {
+            stakeholderRole.setVisibility(View.VISIBLE);
+            stakeholderFarmCode.setVisibility(View.VISIBLE);
+            List<FarmerRoleDto> stakeholderRoleDTOList = dl.getFarmerRoles(Utilities.getColumnNameByLanguage());
+            long stakeholderId = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
+            stakeholderRole.setText(getStakeholderRoleNameById(stakeholderRoleDTOList, Integer.parseInt(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(stakeholderId).msRoleId)));
+            stakeholderFarmCode.setText(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(stakeholderId).farmHoldingCode);
+        } else {
+            stakeholderRole.setVisibility(View.GONE);
+            stakeholderFarmCode.setVisibility(View.GONE);
         }
 
         // show and label the correct scoring columns
@@ -140,9 +163,9 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
             // View Attendees logic
             if (TrainingRecord.isCaptureAttendee && !readOnlyMode) {
-                long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
-                if (farmerAttendeeList.get(id) > 0) {
-                    tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
+                long id = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
+                if (attendeeList.get(id) > 0) {
+                    tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(attendeeList.get(id))));
                     tvViewAttendees.setVisibility(View.VISIBLE);
                 } else {
                     tvViewAttendees.setVisibility(View.INVISIBLE);
@@ -150,27 +173,29 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
 
                 tvAddAttendee.setOnClickListener(view1 -> {
 
-                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    int attendeeIdByItem = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putString(Utilities.FARMER_OR_STAKEHOLDER, String.valueOf(attendeeIdByItem));
                     bundle.putBoolean("isEdit", true);
                     bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
+                    bundle.putBoolean(Utilities.IS_STAKE_HOLDER, isStakeholder);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });
 
                 tvViewAttendees.setOnClickListener(view12 -> {
-                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    int attendeeIdByItem = dl.getAttendeeIdByItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())), isStakeholder);
                     long trainingRecordId = trainingRecord.trainingRecordId;
                     Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putString(Utilities.FARMER_OR_STAKEHOLDER, String.valueOf(attendeeIdByItem));
                     bundle.putBoolean("isEdit", false);
                     bundle.putBoolean(Utilities.ATTENDEE_SIGNATURE, signatureAllowed);
+                    bundle.putBoolean(Utilities.IS_STAKE_HOLDER, isStakeholder);
                     addIntent.putExtras(bundle);
                     mContext.startActivity(addIntent);
                 });
@@ -199,25 +224,6 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             attendeeSignature.setImageDrawable(null);
             trainingRecord.showAttendeeSignature(attendeeId, attendeeSignature);
         } else  {
-            // Confirmation screen
-            // View Attendees logic
-//            long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
-//            if (farmerAttendeeList.get(id)>0) {
-//                tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
-//                tvViewAttendees.setVisibility(View.VISIBLE);
-//            } else{
-//                tvViewAttendees.setVisibility(View.INVISIBLE);
-//            }
-//            tvViewAttendees.setOnClickListener(view12 -> {
-//                int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
-//                Intent addIntent =new Intent(mContext, RegisterAdditionalTrainee.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
-//                bundle.putString("farmerId", String.valueOf(farmerId));
-//                bundle.putBoolean("isEdit",false);
-//                addIntent.putExtras(bundle);
-//                mContext.startActivity(addIntent);
-//            });
 
             tvViewAttendees.setVisibility(View.GONE);
             tvAddAttendee.setVisibility(View.GONE);
@@ -233,5 +239,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             itemTextContainer.setPadding(0,0,0,0);
         }
 
+    }
+
+    public String getStakeholderRoleNameById(List<FarmerRoleDto> stakeholderRoleDTOList, int id) {
+        for (FarmerRoleDto role : stakeholderRoleDTOList) {
+            if (role.getId() == id) {
+                return role.getName();
+            }
+        }
+        return null;
     }
 }
