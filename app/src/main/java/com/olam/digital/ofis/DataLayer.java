@@ -1516,25 +1516,27 @@ public class DataLayer {
         return moderationstatus;
     }
 
-    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid, long nationalId) {
-
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
-                OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid), String.valueOf(nationalId)};
-
-        try {
-            db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){}
-
+    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid) {
         int arrayLength = storeableNationalids.length();
         try {
             for (int i = 0; i < arrayLength; i++) {
+                String nationalIdType = storeableNationalids.getJSONObject(i).getString("id_type");
+                String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                        OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+                String[] whereArgs = new String[]{String.valueOf(farmerid), nationalIdType};
+
+                try {
+                    db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 ContentValues values = new ContentValues();
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID, storeableNationalids.getJSONObject(i).getString("primary_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getJSONObject(i).getString("id_number"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, storeableNationalids.getJSONObject(i).getString("farmer_id"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getJSONObject(i).getString("id_type"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, nationalIdType);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, 1);
 
                 db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
