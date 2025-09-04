@@ -1100,6 +1100,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final LinearLayout sign_dm = (LinearLayout) inflater.inflate(R.layout.module_signature_dm, null);
+        sign_dm.setTag(questionId + 4);
         final RelativeLayout signatureLayout = (RelativeLayout) inflater.inflate(R.layout.module_photo_upload_question, sign_dm, false);
         signatureLayout.setPadding(10,10,10,10);
         sign_dm.addView(signatureLayout);
@@ -1350,6 +1351,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             errorTextDisplayForDropdownQuestion(qId, i, dm_Question);
                         } else if (type.equalsIgnoreCase("checkbox")) {
                             errorTextDisplayForCheckboxQuestion(qId, i, dm_Question);
+                        } else if (type.equalsIgnoreCase("signature")) {
+                            errorTextDisplayForSignatureQuestion(qId, i, dm_Question);
                         }
                     }
                 }
@@ -1365,6 +1368,8 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                             errorTextDisplayForDropdownQuestion(qIdSections, j, dm_Section);
                         } else if (type.equalsIgnoreCase("checkbox")) {
                             errorTextDisplayForCheckboxQuestion(qIdSections, j, dm_Section);
+                        } else if (type.equalsIgnoreCase("signature")) {
+                            errorTextDisplayForSignatureQuestion(qIdSections, j, dm_Section);
                         }
                     }
                 }
@@ -1451,6 +1456,27 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 LayoutInflater inflaterCheckbox = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View layout = inflaterCheckbox.inflate(R.layout.module_checkbox_table_dm, null);
                 tl.setBackground(layout.getBackground());
+            }
+        }
+    }
+
+    private void errorTextDisplayForSignatureQuestion(ArrayList<String> qId, int i, LinearLayout questionLayout) {
+        View desiredView = questionLayout.findViewWithTag(qId.get(i));
+        View desiredView2 = questionLayout.findViewWithTag(qId.get(i) + 4);
+
+        if (desiredView != null) {
+            TextView textView = (TextView) desiredView;
+            LinearLayout sign_dm = (LinearLayout) desiredView2;
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID, Constants.PLOT_ID).isEmpty()) {
+                textView.setVisibility(View.VISIBLE);
+                LayoutInflater inflaterCheckbox = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout = inflaterCheckbox.inflate(R.layout.module_signature_dm_error, null);
+                sign_dm.setBackground(layout.getBackground());
+            } else {
+                textView.setVisibility(View.GONE);
+                LayoutInflater inflaterCheckbox = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout = inflaterCheckbox.inflate(R.layout.module_signature_dm, null);
+                sign_dm.setBackground(layout.getBackground());
             }
         }
     }
