@@ -2130,7 +2130,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
             String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
 
-            if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
+            if (numberRadio.isChecked() && (phoneNumberValue.isEmpty() || isdeleted)) {
                 Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
                 return false;
             }

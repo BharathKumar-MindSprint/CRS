@@ -919,36 +919,40 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private boolean duplicatePhoneNumberValidation() {
-        if (!editFarmerMode || !isNoPhoneNumber) {
-            phoneNumberList = new HashSet<>();
-            int phoneRowsCount = phonenumbers.getChildCount();
-            boolean isRadioChecked = false;
+        if (!editFarmerMode ) {
+            if (!isNoPhoneNumber) {
 
-            for (int j = 0; j < phoneRowsCount; j++) {
-                LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
-                RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
-                EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
-                String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
 
-                if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
-                    Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
+                phoneNumberList = new HashSet<>();
+                int phoneRowsCount = phonenumbers.getChildCount();
+                boolean isRadioChecked = false;
+
+                for (int j = 0; j < phoneRowsCount; j++) {
+                    LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+                    RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
+                    EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
+                    String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
+
+                    if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
+                        Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+
+                    isRadioChecked = numberRadio.isChecked() || isRadioChecked;
+                    if (!phoneNumberValue.isEmpty()) {
+                        if (!phoneNumberList.add(phoneNumberValue)) {
+                            Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                    }
+                }
+
+                if (!isRadioChecked) {
+                    Toast.makeText(context, res.getString(R.string.select_primary_phone_number), Toast.LENGTH_LONG).show();
                     return false;
                 }
 
-                isRadioChecked = numberRadio.isChecked() || isRadioChecked;
-                if (!phoneNumberValue.isEmpty()) {
-                    if (!phoneNumberList.add(phoneNumberValue)) {
-                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-                }
             }
-
-            if (!isRadioChecked) {
-                Toast.makeText(context, res.getString(R.string.select_primary_phone_number), Toast.LENGTH_LONG).show();
-                return false;
-            }
-
         }
 
         return true;
