@@ -73,6 +73,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -1061,8 +1063,13 @@ public class DynamicQuestions {
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
         int columnInfo = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO);
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        Integer questionNumber = questionNumbers.get(que);
-        tv.setText(Html.fromHtml(questionNumber + ". " + qCursor.getString(columnIndex)));
+        String questionNum = "";
+        if (!isRepeaterItem) {
+            questionNum = questionNumbers.get(que) + ". ";
+        }
+
+        tv.setText(Html.fromHtml(questionNum + qCursor.getString(columnIndex)));
+
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
         String infoVal = null;
 
@@ -2972,7 +2979,7 @@ public class DynamicQuestions {
                     List<String> tokens = tokenizeExpression(formula);
                     try {
                         double ans = getCalculatedValue(tokens);
-                        et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+                        et.setText(String.format("%.2f", ans));
                     } catch (Exception e) {
                         et.setText("");
                     }
@@ -2983,25 +2990,22 @@ public class DynamicQuestions {
 
     private List<String> tokenizeExpression(String expression) {
         List<String> tokens = new ArrayList<>();
-        StringBuilder currentToken = new StringBuilder();
-        int length = expression != null ? expression.length() : 0;
+        if (expression == null || expression.isEmpty()) return tokens;
 
-        for (int i = 0; i < length;) {
-            char ch = expression.charAt(i);
+        expression = expression.replaceAll("\\s+", "");
 
-            if (Character.isLetterOrDigit(ch)) {
-                currentToken.setLength(0);
-                while (i < length && Character.isLetterOrDigit(expression.charAt(i))) {
-                    currentToken.append(expression.charAt(i));
-                    i++;
-                }
-                tokens.add(currentToken.toString());
-            }
-            else {
-                tokens.add(String.valueOf(ch));
-                i++;
-            }
+        // regex:
+        // 1. Match numbers inside parentheses: (-1.66)
+        // 2. Match plain numbers: 1.5, 6.5
+        // 3. Match variables: Q1233
+        // 4. Match operators and parentheses: + - * /
+        Pattern pattern = Pattern.compile("\\(-?\\d+(\\.\\d+)?\\)|\\d+(\\.\\d+)?|Q\\d+|[+\\-*/]");
+        Matcher matcher = pattern.matcher(expression);
+
+        while (matcher.find()) {
+            tokens.add(matcher.group());
         }
+
         return tokens;
     }
 
@@ -3061,6 +3065,9 @@ public class DynamicQuestions {
             }
         } else {
             try {
+                if (token.contains("(")) {
+                    token = token.substring(1, token.length() - 1);
+                }
                 secondValue = Double.parseDouble(token);
             } catch (NumberFormatException e) {
                 throw new NumberFormatException("No data");
@@ -3266,7 +3273,7 @@ public class DynamicQuestions {
                         @Override
                         public void afterTextChanged(Editable s) {
                             String input = editText.getText().toString();
-                            if (!input.isEmpty()) {
+                            if (!input.isEmpty() && !input.equals("-")) {
                                 double number = Double.parseDouble(input);
                                 if (number >= minLimit) {
                                     // Valid input starting from the minimum value
@@ -3557,9 +3564,12 @@ public class DynamicQuestions {
                         @Override
                         public void afterTextChanged(Editable s) {
                             String input = editText.getText().toString();
-                            if (input.isEmpty()) {
+
+                            if (input.isEmpty() || input.equals(".")) {
                                 return;
                             }
+
+
 
                             double number = Double.parseDouble(input);
                             double vr_min = rangeArray.optDouble("vr_min");
@@ -3617,7 +3627,11 @@ public class DynamicQuestions {
                             return null; // Allow valid input
                         }
 
-                        if (input > maxValue || input < minValue) {
+                        if (input < minValue) {
+                            return null; // Allow input but prevent further input until minimum value is reached
+                        }
+
+                        if (input > maxValue) {
                             if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
                                 setRestrictMessage(editText, context.getString(R.string.alert_review), errorTextView, context.getString(R.string.alert_review));
                             } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
@@ -3631,6 +3645,7 @@ public class DynamicQuestions {
                         }
                     }
                     else {
+                        clearRestrictAndReviewError(editText, errorTextView);
                         return "";
                     }
                 } catch (NumberFormatException ignored) {
@@ -8051,6 +8066,7 @@ public class DynamicQuestions {
                 }
             }
         }
+
         final int answerId = answerIdTemp;
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -8071,23 +8087,6 @@ public class DynamicQuestions {
         errorText.setVisibility(View.GONE);
         errorText.setTextColor(context.getResources().getColor(R.color.ofis_btn_danger));
 
-
-        if (hasAnswers) {
-            String currentAnswerValue = null;
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-            } else {
-                if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                    currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                }
-            }
-
-            if (currentAnswerValue != null) {
-                et.setText(currentAnswerValue);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue, 0, 0, 0);
-            }
-        }
-
         String globally;
         String assignmentType = "";
         String assignmentField = "";
@@ -8106,7 +8105,7 @@ public class DynamicQuestions {
                 JSONObject display = displayConfig.getJSONObject("display");
                 JSONArray range = display.getJSONArray("range");
 
-                if (range != null && range.length() > 0) {
+                if (range.length() > 0) {
                     int validationOnRange = display.optInt("validationOnRangeId");
                     int[] farmerOrderList = new int[]{6, 5, 8, 9, 4, 3, 2, 1, 7, 0};
                     boolean valueFound = false;
@@ -8188,12 +8187,27 @@ public class DynamicQuestions {
             }
         });
 
-        if (!formula.isEmpty() && !formula.contains("Q")) {
-            List<String> tokens = tokenizeExpression(formula);
+        if (hasAnswers) {
+            String currentAnswerValue = null;
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
+            } else {
+                if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
+                    currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                }
+            }
 
+            if (currentAnswerValue != null) {
+                et.setText(currentAnswerValue);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue, 0, 0, 0);
+            }
+        }
+
+        if (!formula.isEmpty()) {
+            List<String> tokens = tokenizeExpression(formula);
             try {
                 double ans = getCalculatedValue(tokens);
-                et.setText(String.valueOf(Utilities.roundArea(ans,2)));
+                et.setText(String.format("%.2f", ans));
             } catch (Exception e) {
                 et.setText("");
             }
@@ -8209,15 +8223,19 @@ public class DynamicQuestions {
 
     private String getNoteMessage(String formula) {
         List<String> tokens = tokenizeExpression(formula);
-        StringBuilder stringBuilder = new StringBuilder();
+        List<Integer> questionNum = new ArrayList<>();
+
         for (String token : tokens) {
             if (token.contains("Q")) {
-                Integer questionNumber = questionNumbers.get(Integer.parseInt(token.substring(1)));
-                stringBuilder.append(questionNumber).append(",");
+                int questionNumber = questionNumbers.get(Integer.parseInt(token.substring(1)));
+                if (!questionNum.contains(questionNumber)) {
+                    questionNum.add(questionNumber);
+                }
             }
         }
-
-        return stringBuilder.length() == 0 ? context.getResources().getString(R.string.no_dependent_message) : context.getString(R.string.calculated_question_note_message) + " " + stringBuilder.deleteCharAt(stringBuilder.length() - 1).append(".").toString();
+        Collections.sort(questionNum);
+        String num = questionNum.toString();
+        return questionNum.size() == 0 ? context.getResources().getString(R.string.no_dependent_message) : context.getString(R.string.calculated_question_note_message) + " " + num.substring(1, num.length() - 1);
     }
 
     private void setHintAndNegativeFilters(JSONObject rangeArray, int validationOnRange, EditText et, TextView errorText) throws JSONException {
