@@ -170,6 +170,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
                 intent.putExtra(TRAINING_MODULE_ID, trainingModuleId);
                 intent.putExtra(TRAINING_PHOTO, mCurrentPhotoPath);
                 intent.putExtra(EDIT_MODE, true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra(Utilities.IS_STAKE_HOLDER, isStakeholder);
                 context.startActivity(intent);
             }

@@ -208,7 +208,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trainingRecord.deleteTrainingAttendee(itemId);
+                    trainingRecord.deleteTrainingAttendee(itemId, isStakeholder);
                 }
             });
 

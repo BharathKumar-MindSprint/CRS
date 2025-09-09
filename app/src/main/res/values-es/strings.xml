@@ -957,5 +957,7 @@
     <string name="Please_check_the_Internet_Connection">Por favor, compruebe la conexión a Internet</string>
     <string name="Alert_txt">Alerta !</string>
 
+    <string name="stakeholder_attendee">Asistente interesado</string>
+    <string name="max_age">Se permiten un máximo de 3 dígitos.</string>
 </resources>
 
