@@ -901,6 +901,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncConditionalLogicDetails() {
+        conditionalLogicResponse = new JSONObject();
         okHttpGet(context, IAPIConstants.GET_CONDITIONAL_DETAILS, new Callback() {
             @Override
             public void onResponse(Call call, Response postResponse) {

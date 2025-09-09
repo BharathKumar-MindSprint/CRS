@@ -393,26 +393,37 @@ public class ReviewFarmManagementPlan extends BaseActivity {
         Cursor fmpBaselineQuestions = dl.getFmpBaselineQuestions(farmerId, fmpId);
 
         if (fmpBaselineQuestions.getCount() > 0) {
+            int questionNumber = 0;
             while (fmpBaselineQuestions.moveToNext()) {
                 String displayType = fmpBaselineQuestions.getString(fmpBaselineQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                final int questionId = fmpBaselineQuestions.getInt(fmpBaselineQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
 
                 if (displayType.toLowerCase().equals("checkbox")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, null,0, false, false, -1, null, 0);
                 } else if (displayType.toLowerCase().equals("datepicker")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderDatePickerQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                 } else if (displayType.toLowerCase().equals("decimal")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderTextBoxQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.toLowerCase().equals("dropdown")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderDropDownQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.toLowerCase().equals("photocheckbox")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId);
                 } else if (displayType.toLowerCase().equals("repeater")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, null, olamFarmerId, 0, res, false);
                 } else if (displayType.toLowerCase().equals("textbox")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderTextBoxQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.toLowerCase().equals("yesno")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderYesNoQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.toLowerCase().equals("farmtreedensity")) {
+                    dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                     dynamicQuestions.renderTreeDensityQuestion(fmpBaselineQuestions, res);
                 }
 

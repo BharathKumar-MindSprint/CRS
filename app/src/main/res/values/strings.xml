@@ -1489,4 +1489,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="invalid_phonenumber">Invalid Phone Number!</string>
     <string name="no_national_id">No National Id Applicable!</string>
     <string name="no_phone_number">No Phone Number Applicable!</string>
+    <string name="calculated_question_note_message">Note: The result for this calculated question depends on question </string>
+    <string name="alert_review_hint_calculated">Please ensure calculated value is within the range %.2f - %.2f</string>
+    <string name="no_dependent_message">Note: This question does not depend on any other question.</string>
+    <string name="alert_review_hint_calculated_decimal">Please ensure calculated value is within the range %.2f - %.2f</string>
 </resources>
