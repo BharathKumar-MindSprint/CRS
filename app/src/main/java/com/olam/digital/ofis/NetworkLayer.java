@@ -5196,32 +5196,43 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
 
                     if (!dmSurveyAnswerTableList.isEmpty()) {
-                        for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+                        for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
                             JSONObject ans = new JSONObject();
-                            ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
-                            ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
-                            ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
-                            ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+                            String questionId = answerTable.questionID;
+                            String answerId = answerTable.answerID;
+                            String displayType = answerTable.displayType;
+                            String answer = answerTable.answer;
 
-                            if (!dmSurveyAnswerTableList.get(i).actionplanId.equalsIgnoreCase("1")) {
-                                ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            ans.put("questionId", questionId);
+                            ans.put("answerId", answerId);
+                            ans.put("answerValue", Objects.equals(displayType, Constants.SIGNATURE) ? "Yes" : answer);
+
+                            if (!"0".equals(answerTable.complinceTypeId)) {
+                                ans.put("complianceStatusId", answerTable.complinceTypeId);
                             }
 
-                            ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
-                            ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
-
-                            List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
-                            complaintFileTableList.clear();
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0, plotId);
-
-                            JSONArray jsonArray = new JSONArray();
-                            for (int j = 0; j < complaintFileTableList.size(); j++) {
-                                jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
+                            if (!"1".equalsIgnoreCase(answerTable.actionplanId)) {
+                                ans.put("actionPlanId", answerTable.actionplanId);
                             }
-                            ans.put("captureProof", jsonArray);
+
+                            ans.put("actionPlanText", answerTable.actionPlanText);
+                            ans.put("amount", answerTable.amount);
+
+                            JSONArray captureProofArray = new JSONArray();
+                            if (Objects.equals(displayType, Constants.SIGNATURE)) {
+                                captureProofArray.put(answer);
+                            } else {
+                                List<DmComplaintFileTable> complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(questionId), String.valueOf(farmerId), 0, plotId);
+
+                                for (DmComplaintFileTable file : complaintFileTableList) {
+                                    captureProofArray.put(file.getOfisFileName());
+                                }
+                            }
+                            ans.put("captureProof", captureProofArray);
+
                             answers.put(ans);
-                            hashMap.put("answers", answers);
                         }
+                        hashMap.put("answers", answers);
                     }
 
                     List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
