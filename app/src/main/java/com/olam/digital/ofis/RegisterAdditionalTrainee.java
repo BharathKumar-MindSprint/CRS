@@ -8,8 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +33,7 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,12 +56,16 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 
     //Variables
     int trainingRecordId;
-    long farmerId;
+    long attendeeIdByItem;
     boolean editAttendee;
     private List<AttendeeRelations> attendeeRelationsList=null;
     private List<String> relationShipList=new ArrayList<>();
     private String[] relationShips=null;
     private boolean signatureAllowed;
+    private boolean isStakeholder;
+    private OFISRoomDB ofisRoomDB;
+    public static Context context;
+
 
 
     @Override
@@ -65,6 +74,8 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         setContentView(R.layout.layout_register_additional_trainee);
         initWidget();
         getIntentDetails();
+        ofisRoomDB = OFISRoomDB.getDbInstance(this);
+        context = this;
 
         // get Relationships
         String locale=Utilities.getLocaleSuffix(res);
@@ -153,7 +164,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     Toast.makeText(RegisterAdditionalTrainee.this,getResources().getString(R.string.mandatory_msg),Toast.LENGTH_LONG).show();
                 }else {
                     // Add/Update the transaction Id
-                    dl.addOrUpdateTrainees(context, farmerId, trainingRecordId, attendeeList);
+                    dl.addOrUpdateTrainees(attendeeIdByItem, trainingRecordId, attendeeList, isStakeholder);
                     finish();
                 }
             }
@@ -196,6 +207,9 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 
         EditText etAttendeeName = (EditText) childAttendeeView.findViewById(R.id.etTraineeName);
         etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
+        EditText etAttendeeAge = (EditText) childAttendeeView.findViewById(R.id.etTraineeAge);
+        applyMaxValueFilter(etAttendeeAge, 999);
 
         LinearLayout traineeSignatureContainer = (LinearLayout) childAttendeeView.findViewById(R.id.traineeSignatureContainer);
         LinearLayout signatureRelationAttendee = (LinearLayout) childAttendeeView.findViewById(R.id.signatureRelationAttendee);
@@ -254,6 +268,45 @@ public class RegisterAdditionalTrainee extends BaseActivity {
 //        });
     }
 
+    public static void applyMaxValueFilter(EditText editText, int maxValue) {
+        editText.addTextChangedListener(new TextWatcher() {
+            private Handler handler = new Handler(Looper.getMainLooper());
+            private String previousValidText = "";
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String input = s.toString();
+                if (!input.isEmpty()) {
+                    try {
+                        int value = Integer.parseInt(input);
+                        if (value > maxValue) {
+                            editText.setError(context.getResources().getString(R.string.max_age));
+
+                            // Revert to previous valid value
+                            editText.removeTextChangedListener(this);
+                            editText.setText(previousValidText);
+                            editText.setSelection(previousValidText.length());
+                            editText.addTextChangedListener(this);
+
+                            handler.postDelayed(() -> {
+                                editText.setError(null);
+                            }, 3000);
+                        } else {
+                            previousValidText = input;
+                        }
+                    } catch (NumberFormatException e) {
+                        editText.setError("Invalid number");
+                        handler.postDelayed(() -> {
+                            editText.setError(null);
+                        }, 3000);
+                    }
+                }
+            }
+
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+    }
     public void addIconRefactor() {
         if (parentGroup.getChildCount()<5) {
             btnAddAttendee.setEnabled(true);
@@ -264,11 +317,15 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         }
     }
     private void setInitialData() {
-       Cursor farmerCursor= dl.getFarmerById(farmerId);
-       String name = null;
-        if (farmerCursor.getCount() > 0) {
-            farmerCursor.moveToFirst();
-            name = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+        String name = null;
+        if (isStakeholder) {
+            name = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(attendeeIdByItem).msName;
+        } else {
+            Cursor farmerCursor = dl.getFarmerById(attendeeIdByItem);
+            if (farmerCursor.getCount() > 0) {
+                farmerCursor.moveToFirst();
+                name = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+            }
         }
         tvFarmerName.setText(name);
 
@@ -278,13 +335,14 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         //Get the bundle
         Bundle bundle = getIntent().getExtras();
         trainingRecordId = Integer.parseInt(bundle.getString("traineeRecordId"));
-        farmerId=Long.valueOf(bundle.getString("farmerId"));
+        attendeeIdByItem = Long.valueOf(bundle.getString(Utilities.FARMER_OR_STAKEHOLDER));
         editAttendee=bundle.getBoolean("isEdit");
         signatureAllowed = bundle.getBoolean(Utilities.ATTENDEE_SIGNATURE);
+        isStakeholder = bundle.getBoolean(Utilities.IS_STAKE_HOLDER);
     }
 
     private void fillTraineeRelationship() {
-        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, farmerId);
+        Cursor traineeRelationshipCursor=dl.getTraineeRelationship(trainingRecordId, attendeeIdByItem, isStakeholder);
         int count =1;
         if (traineeRelationshipCursor.getCount()>0){
             if(traineeRelationshipCursor != null && traineeRelationshipCursor.moveToFirst()) {
@@ -449,7 +507,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                 try {
                     if (isSigned[0]) {
                         Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-                        String signatureName = farmerId + "_" + System.currentTimeMillis() + ".png";
+                        String signatureName = attendeeIdByItem + "_" + System.currentTimeMillis() + ".png";
                         attendeeRelationSignatureDisplay.setImageBitmap(signatureBitmap);
                         signatureRelationAttendee.setTag(signatureName);
                         signatureDialog.dismiss();

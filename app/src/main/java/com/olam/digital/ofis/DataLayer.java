@@ -1193,14 +1193,72 @@ public class DataLayer {
                 + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " = "
                 + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ID
                 + " WHERE " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
-                + " = " + trainingRecordId + " ORDER BY " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
+                + " = " + trainingRecordId
+                + " AND " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " IS NULL "
+                + " ORDER BY " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
 
         return db.rawQuery(sql, null);
     }
 
-    Cursor getTrainingAttendeeIdsByTrainingRecordId(long trainingRecordId) {
-        String[] columns = new String[]{OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID};
-        String whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+    Cursor getFarmerStakeholderAttendeesByTrainingRecordId(long trainingRecordId) {
+        String trainingAttendeesTable = OFISDBContract.TrainingAttendee.TABLE_NAME;
+
+        String sql = "SELECT " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " AS _id, "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
+                + " FROM " + trainingAttendeesTable
+                + " WHERE " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
+                + " = " + trainingRecordId
+                + " ORDER BY " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " ASC";
+
+        return db.rawQuery(sql, null);
+    }
+
+    Cursor getTrainingAttendeesByTrainingRecordIdStakeholder(long trainingRecordId) {
+        String trainingAttendeesTable = OFISDBContract.TrainingAttendee.TABLE_NAME;
+
+        String sql = "SELECT " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " AS _id, "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " AS name, "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + ", "
+                + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
+                + " FROM " + trainingAttendeesTable
+                + " WHERE " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
+                + " = " + trainingRecordId
+                + " AND " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " IS NULL "
+                + " ORDER BY " + trainingAttendeesTable + "." + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " ASC";
+
+        return db.rawQuery(sql, null);
+    }
+
+    Cursor getTrainingAttendeeIdsByTrainingRecordId(long trainingRecordId, boolean isStakeholder) {
+        String[] columns;
+        String whereClause;
+
+        if (isStakeholder) {
+            columns = new String[]{OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME};
+            whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " +
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " IS NULL";
+        } else {
+            columns = new String[]{OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME};
+            whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " +
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " IS NULL";
+        }
+
         String[] whereArgs = new String[]{String.valueOf(trainingRecordId)};
         return db.query(OFISDBContract.TrainingAttendee.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
@@ -1212,13 +1270,29 @@ public class DataLayer {
         return db.update(OFISDBContract.TrainingAttendee.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    int updateTrainingModuleAttendees(ArrayList<Long> selectedFarmers, long trainingRecordId) {
+    int updateTrainingModuleAttendees(HashMap<Long, String> selectedFarmers, long trainingRecordId, boolean isStakeholder) {
         // delete any records for farmers not in the list
         String attendeesTable = OFISDBContract.TrainingAttendee.TABLE_NAME;
-        String deleteSql = "DELETE FROM " + attendeesTable + " WHERE " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
-                + " = " + trainingRecordId + " AND " + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " NOT IN ("
-                + selectedFarmers.toString().replaceAll("\\[|\\]", "") + ")";
+
+        StringBuilder idListBuilder = new StringBuilder();
+        for (Long id : selectedFarmers.keySet()) {
+            if (idListBuilder.length() > 0) {
+                idListBuilder.append(",");
+            }
+            idListBuilder.append(id);
+        }
+        String idList = idListBuilder.toString();
+
+        String deleteSql;
+        if (isStakeholder) {
+            deleteSql = "DELETE FROM " + attendeesTable + " WHERE " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
+                    + " = " + trainingRecordId + " AND " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " NOT IN (" + idList + ")";
+        } else {
+            deleteSql = "DELETE FROM " + attendeesTable + " WHERE " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID
+                    + " = " + trainingRecordId + " AND " + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " NOT IN (" + idList + ")";
+        }
         db.execSQL(deleteSql);
+
 
         // now get all remaining attendees
         String[] columns = new String[]{"*"};
@@ -1228,26 +1302,41 @@ public class DataLayer {
 
         // remove any farmers already recorded from the array list
         while (attendees.moveToNext()) {
-            if (selectedFarmers.contains(attendees.getLong(attendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)))) {
-                selectedFarmers.remove(attendees.getLong(attendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+            long id = attendees.getLong(attendees.getColumnIndex(
+                    isStakeholder ? OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID
+                            : OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+            if (selectedFarmers.containsKey(id)) {
+                selectedFarmers.remove(id);
             }
         }
 
         // insert any remaining farmers in the array list
         int updatedCount = 0;
-        if (selectedFarmers.size() > 0) {
-            ContentValues newValues = new ContentValues();
-            newValues.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
-
-            for (Long farmerId : selectedFarmers) {
-                newValues.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, farmerId);
+        if (!selectedFarmers.isEmpty()) {
+            for (Map.Entry<Long, String> entry : selectedFarmers.entrySet()) {
+                ContentValues newValues = getContentValues(trainingRecordId, isStakeholder, entry);
                 db.insert(attendeesTable, null, newValues);
                 updatedCount++;
             }
-
         }
         attendees.close();
         return updatedCount;
+    }
+
+    private static ContentValues getContentValues(long trainingRecordId, boolean isStakeholder, Map.Entry<Long, String> entry) {
+        Long id = entry.getKey();
+        String name = entry.getValue();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
+
+        String columnName = isStakeholder
+                ? OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID
+                : OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID;
+
+        newValues.put(columnName, id);
+        newValues.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME, name);
+        return newValues;
     }
 
     int deleteTrainingAttendeeById(int attendeeId) {
@@ -2678,6 +2767,132 @@ public class DataLayer {
             }
         }
     }
+    Cursor getTrainingAttendeeListStakeholder(String searchQuery, long selectedFarmerGroup, long selectedSection, long courseId, Integer stakeholderRole) {
+        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
+        String farmerGroupsTable = OFISDBContract.FarmerGroupsEntry.TABLE_NAME;
+        String sectionsTable = OFISDBContract.SectionsEntry.TABLE_NAME;
+        String courseAssignmentTable = OFISDBContract.CourseAssignment.TABLE_NAME;
+        String subSelect = "SELECT " + courseAssignmentTable + "." + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ASSIGNMENT_ID + " FROM " +
+                courseAssignmentTable + " WHERE " + courseAssignmentTable + "." + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ASSIGNMENT_TYPE +
+                " = '%1$s'" + " AND " + courseAssignmentTable + "." + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ID + " = " + courseId;
+
+        String whereClause = " WHERE (" +
+                " (" + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " IN (" + String.format(subSelect, "FarmerGroup") + "))" +
+                " OR (" + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PROGRAMME_ID + " IN (" + String.format(subSelect, "Programme") + "))" +
+                " OR (" + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PARTNER_ID + " IN (" + String.format(subSelect, "Partner") + "))" +
+                " )";
+
+        if (selectedFarmerGroup > 0) {
+            whereClause += " AND " + farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " = " + selectedFarmerGroup;
+        }
+        if (selectedSection > 0) {
+            whereClause += " AND " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " = " + selectedSection;
+        }
+        String sql = "SELECT " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " AS _id, " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " FROM " +
+                farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
+                " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
+                sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID + " = " + farmerGroupsTable + "." +
+                OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + whereClause + " order by " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
+
+        Cursor farmers = db.rawQuery(sql, null);
+        List<Integer> farmerIds = new ArrayList<>();
+
+        if (farmers != null && farmers.moveToFirst()) {
+            do {
+                int id = farmers.getInt(farmers.getColumnIndex("_id"));
+                farmerIds.add(id);
+            } while (farmers.moveToNext());
+            farmers.close();
+        }
+
+
+        String queryParam = "%" + searchQuery + "%";
+        List<MultiStakeHolder> allStakeholders = ofisRoomDB.multiStakeHolderDao().getStakeHoldersByFarmerIdAndName(farmerIds, queryParam, stakeholderRole);
+
+        String[] columns = new String[] { "_id", "msTempId", "msName", "olamMultiStakeHolderId", "msRoleId" };
+        MatrixCursor cursor = new MatrixCursor(columns);
+
+        for (MultiStakeHolder stakeholder : allStakeholders) {
+            cursor.addRow(new Object[] {
+                    stakeholder.msId,
+                    stakeholder.msTempId,
+                    stakeholder.msName,
+                    stakeholder.olamMultiStakeholderId,
+                    stakeholder.msRoleId
+            });
+        }
+
+        return cursor;
+    }
+
+    Cursor getFindStakeholderList(String searchQuery, long selectedFarmerGroup, long selectedSection, Integer stakeholderRole) {
+        String whereClause = "";
+        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
+        String farmerModulesTable = OFISDBContract.FarmerModulesEntry.TABLE_NAME;
+        String farmerGroupsTable = OFISDBContract.FarmerGroupsEntry.TABLE_NAME;
+        String sectionsTable = OFISDBContract.SectionsEntry.TABLE_NAME;
+
+        if (selectedFarmerGroup > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += "WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerGroupsTable + "." + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " = " + selectedFarmerGroup;
+        }
+        if (selectedSection > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += "WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " = " + selectedSection;
+        }
+        String sql = "select distinct(farmers.id) as _id, " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " from " +
+                farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
+                " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
+                sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID + " = " + farmerGroupsTable + "." +
+                OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " LEFT OUTER JOIN " + farmerModulesTable + " ON (" + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ID +
+                " = " + farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " AND " +
+                farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " = 1 AND " +
+                farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " = 0) " +
+                whereClause + " group by _id order by " + farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED +
+                " DESC, " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " DESC, "
+                + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
+
+        Cursor farmers = db.rawQuery(sql, null);
+        List<Integer> farmerIds = new ArrayList<>();
+
+        if (farmers != null && farmers.moveToFirst()) {
+            do {
+                int id = farmers.getInt(farmers.getColumnIndex("_id"));
+                farmerIds.add(id);
+            } while (farmers.moveToNext());
+            farmers.close();
+        }
+
+
+        String queryParam = "%" + searchQuery + "%";
+        List<MultiStakeHolder> allStakeholders = ofisRoomDB.multiStakeHolderDao().getStakeHoldersByFarmerIdAndName(farmerIds, queryParam, stakeholderRole);
+
+        String[] columns = new String[] { "_id", "msTempId", "msName", "olamMultiStakeHolderId", "msRoleId" };
+        MatrixCursor cursor = new MatrixCursor(columns);
+
+        for (MultiStakeHolder stakeholder : allStakeholders) {
+            cursor.addRow(new Object[] {
+                    stakeholder.msId,
+                    stakeholder.msTempId,
+                    stakeholder.msName,
+                    stakeholder.olamMultiStakeholderId,
+                    stakeholder.msRoleId
+            });
+        }
+
+        return cursor;
+    }
+
 
     Cursor getTrainingAttendeeList(String query, long selectedFarmerGroup, long selectedSection, long courseId) {
         String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
@@ -4498,6 +4713,29 @@ public class DataLayer {
                 } catch (Exception e) {
                 }
 
+                // Update the photo and photo data in storage for training
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendee.TABLE_NAME,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(id)
+                );
+
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(id)
+                );
+
                 ContentValues farmerIdValue = new ContentValues();
                 farmerIdValue.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, id);
 
@@ -4546,6 +4784,37 @@ public class DataLayer {
                 // update any saved phone numbers
                 db.update(OFISDBContract.PhoneNumber.TABLE_NAME, stakeHolderIdValue, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " = ?", whereArgs);
 
+
+                // Update the photo and photo data in storage for training
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendee.TABLE_NAME,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID,
+                        OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(msId)
+                );
+
+                updateSignatureFileAndDB(
+                        db,
+                        context,
+                        OFISDBContract.TrainingAttendeeRelations.TABLE_NAME,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID,
+                        OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE,
+                        localFarmerId,
+                        String.valueOf(msId)
+                );
+
+                ContentValues stakeHolderIdValueTraining = new ContentValues();
+                stakeHolderIdValueTraining.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID, msId);
+
+                // update any training attendee stakeholderId
+                db.update(OFISDBContract.TrainingAttendee.TABLE_NAME, stakeHolderIdValueTraining, OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
+                db.update(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, stakeHolderIdValueTraining, OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
+
                 // update any network queue items
                 db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, stakeHolderIdValue, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
             }
@@ -4554,6 +4823,51 @@ public class DataLayer {
             e.printStackTrace();
         }
     }
+    private void updateSignatureFileAndDB(SQLiteDatabase db, Context context, String tableName, String columnId, String columnFarmerOrStakeholderId, String columnSignature, long localFarmerId, String newIdPrefix) {
+
+        String[] projection = {
+                columnId,
+                columnSignature
+        };
+
+        String selection = columnFarmerOrStakeholderId + " = ?";
+        String[] selectionArgs = { String.valueOf(localFarmerId) };
+
+        Cursor cursor = db.query(tableName, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(cursor.getColumnIndexOrThrow(columnId));
+                String oldSignature = cursor.getString(cursor.getColumnIndexOrThrow(columnSignature));
+
+                if (oldSignature != null && oldSignature.startsWith(localFarmerId + "_")) {
+                    String newSignature = oldSignature.replaceFirst(localFarmerId + "_", newIdPrefix + "_");
+
+                    // Rename signature file in internal storage
+                    File directory = new File(context.getFilesDir(), "signatures");
+                    File oldFile = new File(directory, oldSignature);
+                    File newFile = new File(directory, newSignature);
+
+                    if (oldFile.exists()) {
+                        boolean renamed = oldFile.renameTo(newFile);
+                        if (!renamed) {
+                            Log.e("SignatureUpdate", "Failed to rename file: " + oldSignature);
+                        }
+                    } else {
+                        Log.w("SignatureUpdate", "Old file does not exist: " + oldFile.getAbsolutePath());
+                    }
+
+                    // Update signature in DB
+                    ContentValues values = new ContentValues();
+                    values.put(columnSignature, newSignature);
+
+                    db.update(tableName, values, columnId + " = ?", new String[]{ String.valueOf(rowId) });
+                }
+            }
+        }
+        cursor.close();
+    }
+
 
     Cursor getAllUnUploadedPhotoById(Integer farmerModuleId, ArrayList<Integer> submoduleList) {
         StringBuilder submoduleIds = new StringBuilder();
@@ -6712,14 +7026,19 @@ public class DataLayer {
         return name;
     }
 
-    public Cursor getTraineeRelationship(int trainingRecordId, long farmerId) {
+    public Cursor getTraineeRelationship(int trainingRecordId, long attendeeId, boolean isStakeholder) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
-        Cursor cursor=null;
+        String columnName = isStakeholder
+                ? OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID
+                : OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID;
+
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + columnName + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(attendeeId)};
+
+        Cursor cursor = null;
         try {
             cursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
+        } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
         return cursor;
@@ -6737,7 +7056,14 @@ public class DataLayer {
                 if(cursor != null && cursor.moveToFirst()) {
                     do {
                         JSONObject jsonObject1=new JSONObject();
-                        jsonObject1.put("trainingattendeesId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        String farmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID));
+                        String stakeholderId = cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID));
+                        if (farmerId != null) {
+                            jsonObject1.put("trainingattendeesId", farmerId);
+                        } else {
+                            jsonObject1.put("stakeIdFk", Long.parseLong(stakeholderId));
+                            jsonObject1.put("trainingattendeesId", String.valueOf(ofisRoomDB.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId)).farmerId));
+                        }
                         jsonObject1.put("enumeratorsId",Utilities.getFromSharedPrefs(context));
                         jsonObject1.put("attendeesName",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME)));
                         jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );
@@ -6758,11 +7084,16 @@ public class DataLayer {
         return jsonArray;
     }
 
-    public void addOrUpdateTrainees(Context context, long farmerId, int trainingRecordId, ArrayList<Attendee> attendeeList) {
+    public void addOrUpdateTrainees(long attendeeId, int trainingRecordId, ArrayList<Attendee> attendeeList, boolean isStakeholder) {
 
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        String whereClause ;
+         if (isStakeholder) {
+             whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " = ?";
+         } else {
+             whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+         }
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(attendeeId)};
         Cursor traineeCursor=null;
         try {
             traineeCursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -6776,7 +7107,11 @@ public class DataLayer {
         if (attendeeList.size()>0) {
             for (Attendee attendee : attendeeList) {
                 ContentValues values = new ContentValues();
-                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                if (isStakeholder) {
+                    values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID, attendeeId);
+                } else {
+                    values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, attendeeId);
+                }
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME, attendee.getTraineeName());
                 values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE, attendee.getTraineeAge());
@@ -6790,45 +7125,54 @@ public class DataLayer {
         }
     }
 
-    public int getFarmerByAttendeeItem(int itemId) {
+    public int getAttendeeIdByItem(int itemId, boolean isStakeholder) {
+        int attendeeId = 0;
 
-        int farmerId = 0;
+        String columnName = isStakeholder
+                ? OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID
+                : OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID;
+
+        String query = "SELECT " + columnName + " FROM trainingattendees WHERE id = " + itemId;
+
+        Cursor cursor = null;
         try {
-            Cursor cursor=db.rawQuery("select * from trainingattendees where id="+itemId,null);
-            try {
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        farmerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
-                    }
-                }
-            }catch (Exception e){
-            }finally {
-                cursor.close();
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                attendeeId = cursor.getInt(cursor.getColumnIndex(columnName));
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
 
-        return  farmerId;
+        return attendeeId;
     }
 
-    public HashMap<Long, Integer> prepareAttendeeCountList(Cursor trainingAttendees, int trainingRecordId) {
-        HashMap<Long,Integer> hashMap=new HashMap<Long,Integer>();
-        try {
-            if (trainingAttendees != null) {
-                while (trainingAttendees.moveToNext()) {
-                    Cursor cursor=null;
-                    try {
-                        long farmerId=Long.valueOf(trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
-                        cursor=  getTraineeRelationship(trainingRecordId,farmerId);
-                        if (cursor!=null){
-                            hashMap.put(farmerId,cursor.getCount());
-                        }
-                    }catch (Exception e){
-                    }finally {
-                        cursor.close();
+
+    public HashMap<Long, Integer> prepareAttendeeCountList(Cursor trainingAttendees, int trainingRecordId, boolean isStakeholder) {
+        HashMap<Long, Integer> hashMap = new HashMap<>();
+
+        if (trainingAttendees == null) return hashMap;
+
+        int columnIndex = trainingAttendees.getColumnIndex(
+                isStakeholder
+                        ? OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID
+                        : OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID
+        );
+
+        while (trainingAttendees.moveToNext()) {
+            try {
+                long attendeeId = Long.parseLong(trainingAttendees.getString(columnIndex));
+                try (Cursor cursor = getTraineeRelationship(trainingRecordId, attendeeId, isStakeholder)) {
+                    if (cursor != null) {
+                        hashMap.put(attendeeId, cursor.getCount());
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e){}
+        }
 
         return hashMap;
     }
@@ -6861,23 +7205,33 @@ public class DataLayer {
     }
 
     public void deleteAttendeeByTrainingId(int attendeeId, long trainingRecordId) {
+        int id = 0;
+        boolean isStakeholder = false;
 
-        // getfarmer Id from Attendee Id
-        int farmerId=0;
         try {
-            farmerId=getFarmerByAttendeeItem(attendeeId);
-        }catch (Exception e){}
-
-
-        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
-        try {
-            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
+            id = getAttendeeIdByItem(attendeeId, false);
+            if (id == 0) {
+                id = getAttendeeIdByItem(attendeeId, true);
+                isStakeholder = true;
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log("Error fetching attendee ID: " + e.getMessage());
         }
 
+        String columnName = isStakeholder
+                ? OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID
+                : OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID;
+
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + columnName + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(id)};
+
+        try {
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log("Error deleting attendee: " + e.getMessage());
+        }
     }
+
 
     public boolean isCaptureAttendeeEligible(long trainingModuleId) {
 
