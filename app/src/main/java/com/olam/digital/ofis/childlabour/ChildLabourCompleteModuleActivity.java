@@ -599,7 +599,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
@@ -639,7 +639,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
                                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                                 dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
