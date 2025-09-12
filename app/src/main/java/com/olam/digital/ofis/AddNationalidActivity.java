@@ -731,6 +731,14 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
             }
+
+
+
+            if (nid.trim().matches("[.-]+")) {
+                Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
             if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                 return false;
