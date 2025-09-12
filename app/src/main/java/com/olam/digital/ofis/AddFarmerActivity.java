@@ -3288,6 +3288,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
             }
+
+            if (nid.trim().matches("[.-]+")) {
+                Toast.makeText(this, getResources().getString(R.string.invalid_national_id), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
             if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
                 if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
                     Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
