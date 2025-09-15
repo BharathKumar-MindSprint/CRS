@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
+import com.olam.digital.ofis.distributionmodule.distribution_domain.model.FarmerAndStakeHolderDto;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 
 import java.util.List;
@@ -61,4 +62,14 @@ public interface MultiStakeHolderDao {
 
     @Query("UPDATE MULTISTAKEHOLDER SET submitted_modules =:submittedModules WHERE msId=:stakeholderId ")
     void updateSubmittedModulesById(String stakeholderId, String submittedModules);
+
+    @Query("""
+        SELECT * FROM MultiStakeHolder 
+        WHERE (
+        (farmerId IN (:farmerId)) AND
+        (:query == '' OR (msName LIKE '%' || :query || '%') OR (olamMultiStakeholderId LIKE '%' || :query || '%')) AND 
+        (:role == 0 OR (msRoleId = :role)))
+        order by msName ASC
+    """)
+    List<MultiStakeHolder> getStakeHolders(String query, List<String> farmerId, Integer role);
 }

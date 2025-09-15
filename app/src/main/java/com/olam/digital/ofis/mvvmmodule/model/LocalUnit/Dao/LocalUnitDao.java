@@ -6,7 +6,10 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.olam.digital.ofis.model.SpinnerDataDto;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,9 @@ public interface LocalUnitDao {
 
     @Query("SELECT localUnitId, localUnitAbbreviation FROM LocalUnit WHERE globalUnitFk = :targetGlobalUnitFk ")
     List<UnitMapping> getValueByGlobalId(int targetGlobalUnitFk);
+
+    @Query("SELECT localUnitId as id, localUnitMetric as name, localUnitAbbreviation as notation FROM LOCALUNIT")
+    List<SpinnerDataDto> getLocalUnits();
 
     class UnitMapping {
         public int localUnitId;
