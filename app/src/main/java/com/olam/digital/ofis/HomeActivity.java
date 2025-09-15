@@ -3,7 +3,6 @@ package com.olam.digital.ofis;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -51,9 +50,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.internal.service.Common;
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.Common.Constants.StringConstants;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -73,11 +70,10 @@ import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.distributionmodule.distribution_presentation.DistributionModuleActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
-import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
-import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
 import com.olam.digital.ofis.gps.GPSListener;
@@ -183,8 +179,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
-    private static CardView cvSupplierAndSurvey;
-    private static Button supplierAndSurvey;
+    private static CardView cvSupplierAndSurvey, cvDistributionModule;
+    private static Button supplierAndSurvey, btnDistributionModule;
 
 
     @Override
@@ -606,6 +602,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             cvSupplierAndSurvey.setVisibility(View.GONE);
         }
 
+
+        btnDistributionModule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(staticContext, DistributionModuleActivity.class);
+                staticContext.startActivity(intent);
+            }
+        });
+
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
 
@@ -958,6 +963,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button downloadSurvey = findViewById(R.id.downloadSurveyData);
         supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
         cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
+        btnDistributionModule = findViewById(R.id.btnDistribution);
+        cvDistributionModule = findViewById(R.id.cvDistributionModule);
 
         syncAll = findViewById(R.id.syncAll);
         downloadSurveyWrap();
@@ -1021,6 +1028,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             else {
                 cvSupplierAndSurvey.setVisibility(View.GONE);
             }
+
+            btnDistributionModule.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, DistributionModuleActivity.class);
+                    context.startActivity(intent);
+                }
+            });
 
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1453,6 +1468,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putString("SupplierId", supplierId);
                 bundle.putString("SupplierName", supplierName);
                 intent.putExtras(bundle);
+                startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("Distribution Form")) {
+                Intent intent = new Intent(context, DistributionModuleActivity.class);
                 startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {

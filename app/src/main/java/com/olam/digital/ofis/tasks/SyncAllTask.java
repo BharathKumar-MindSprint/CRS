@@ -40,6 +40,10 @@ import com.olam.digital.ofis.authentication.DeviceIdExtractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionCategory;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionGroup;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionItem;
+import com.olam.digital.ofis.distributionmodule.distribution_domain.model.DistributionModuleResponseDto;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
@@ -53,6 +57,7 @@ import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Currency;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
 import org.json.JSONArray;
@@ -79,6 +84,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_DISTRIBUTION_MODULES_DETAILS;
 
 /**
  * Created by ben on 24/02/16.
@@ -105,7 +111,7 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse = new JSONObject();
+    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse, distributionModuleResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
@@ -277,6 +283,9 @@ public class SyncAllTask extends SyncTask {
         }
         else if (op == SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS) {
             syncConditionalLogicDetails();
+        }
+        else if (op == SYNC_DISTRIBUTION_MODULES_DETAILS) {
+            getDistributionModuleData();
         }
 
         return null;
@@ -470,6 +479,9 @@ public class SyncAllTask extends SyncTask {
 
             PhotoCheckBoxResponse(photoCheckBoxResponse);
             photoCheckBoxResponse = null;
+
+            updateDistributionModuleResponse(distributionModuleResponse);
+            distributionModuleResponse = null;
 
             if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
@@ -901,6 +913,7 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void syncConditionalLogicDetails() {
+        conditionalLogicResponse = new JSONObject();
         okHttpGet(context, IAPIConstants.GET_CONDITIONAL_DETAILS, new Callback() {
             @Override
             public void onResponse(Call call, Response postResponse) {
@@ -908,6 +921,37 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         JSONArray array = new JSONArray(postResponse.body().string());
                         conditionalLogicResponse.put("conditions", array);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
+                    } else {
+                        postFailureMessage(null);
+                    }
+                } catch (JSONException | IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing conditional details", e));
+                    postFailureMessage(null);
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing conditional details", e));
+                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+    }
+
+    private void getDistributionModuleData() {
+        okHttpGet(context, IAPIConstants.GET_DISTRIBUTION_MODULE_DATA, new Callback() {
+            @Override
+            public void onResponse(Call call, Response postResponse) {
+                try {
+                    if (postResponse.isSuccessful()) {
+                        distributionModuleResponse = new JSONObject(postResponse.body().string());
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     } else {
@@ -1956,6 +2000,21 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
+    private void updateDistributionModuleResponse(JSONObject distributionModuleResponse) {
+        try {
+            DistributionModuleResponseDto response = new Gson().fromJson(distributionModuleResponse.toString(), DistributionModuleResponseDto.class);
+            deleteDistributionDetails();
+
+            roomDB.distributionCategoryDao().insertDistributionCategory(response.getDistributionCategories());
+            roomDB.distributionGroupDao().insertDistributionGroup(response.getDistributionGroups());
+            roomDB.distributionItemDao().insertDistributionItem(response.getDistributionItems());
+            roomDB.currencyDao().insertCurrency(response.getCurrency());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteRoomDbValues() {
         roomDB.dmSectionsItemDao().deleteAll();
         roomDB.dmQuestionsModuleDao().deleteAll();
@@ -1986,6 +2045,13 @@ public class SyncAllTask extends SyncTask {
         roomDB.supplierGroupDao().deleteAll();
         roomDB.supplierTypeDao().deleteAll();
         roomDB.supplierSubmittedModuleDao().deleteAll();
+    }
+
+    private void deleteDistributionDetails() {
+        roomDB.currencyDao().deleteAll();
+        roomDB.distributionGroupDao().deleteAll();
+        roomDB.distributionItemDao().deleteAll();
+        roomDB.distributionCategoryDao().deleteAll();
     }
 
 }

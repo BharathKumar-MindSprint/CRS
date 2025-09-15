@@ -99,6 +99,7 @@
     <color name="weightage_bar">#860063</color>
     <color name="weightage_back">#f1f1f1</color>
     <color name="light_grey">#4A4949</color>
-
-
+    <color name="inactive">#C7C7C7</color>
+    <color name="border_gray">#D9D9D9</color>
+    <color name="light_orange">#FFFBF7</color>
 </resources>

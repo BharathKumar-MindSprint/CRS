@@ -114,4 +114,5 @@
 
     <color name="weightage_bar">#860063</color>
     <color name="weightage_back">#f1f1f1</color>
+    <color name="cancel_border">#860063</color>
 </resources>

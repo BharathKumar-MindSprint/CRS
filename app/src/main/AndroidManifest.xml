@@ -48,6 +48,15 @@
         android:theme="@style/AppCompactTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
+
+        <activity
+            android:name=".distributionmodule.distribution_presentation.DistributionModuleActivity"
+            android:label="@string/distribution"
+            android:parentActivityName=".HomeActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
         <activity
             android:name=".downloadsurvey.polygondatadownload.PolygonFarmer"
             android:label="@string/download_polygon"
@@ -64,9 +73,7 @@
             android:label="@string/supplier_details"
             android:parentActivityName=".agrisupplier.ui.ViewSupplierActivity"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute">
-
-        </activity>
+            tools:ignore="UnusedAttribute"/>
 
         <activity
             android:name=".agrisupplier.ui.ViewSupplierActivity"
@@ -78,7 +85,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity" />
         </activity>
-
         <activity
             android:name=".agrisupplier.ui.FindSupplierAndSurveyActivity"
             android:label="@string/title_find_supplier_and_survey"
@@ -172,6 +178,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <service
             android:name=".companionFirebaseInstanceIdService"
             android:exported="false">

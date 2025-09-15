@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by bengallienne on 29/11/14. - update
  * Describes and creates / updates all the tables the app needs in the SQLite database
  */
-class OFISDB extends SQLiteOpenHelper {
+public class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
     private static final int DATABASE_VERSION = 160;

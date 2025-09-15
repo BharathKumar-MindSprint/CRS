@@ -168,17 +168,17 @@
             card_view:cardElevation="@dimen/ofis_elevation_height"
             android:layout_marginTop="-4dp"
             card_view:cardUseCompatPadding="true"
-            android:id="@+id/recordTrainingWrapper"
+            android:id="@+id/cvDistributionModule"
             android:layout_marginLeft="@dimen/ofis_small_pad">
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/record_training_button"
-                android:id="@+id/RecordFarmerTraining"
+                android:text="@string/distribution_module"
+                android:id="@+id/btnDistribution"
                 android:textColor="@color/ofis_base_font_white"
-                android:drawableTop="@drawable/ic_record_training"
-                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/distribution_module_icon"
+                android:drawablePadding="15dp"
                 android:textSize="@dimen/ofis_micro_text"
                 android:background="@android:color/transparent"
                 tools:ignore="ButtonStyle"
@@ -202,11 +202,38 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            card_view:cardBackgroundColor="@color/ofis_home_screen_midsection_background"
+            card_view:cardElevation="@dimen/ofis_elevation_height"
+            android:layout_marginTop="-4dp"
+            card_view:cardUseCompatPadding="true"
+            android:id="@+id/recordTrainingWrapper">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/record_training_button"
+                android:id="@+id/RecordFarmerTraining"
+                android:textColor="@color/ofis_base_font_white"
+                android:drawableTop="@drawable/ic_record_training"
+                android:drawablePadding="10dp"
+                android:textSize="@dimen/ofis_micro_text"
+                android:background="@android:color/transparent"
+                tools:ignore="ButtonStyle"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:id="@+id/captureLocationWrapper"
             card_view:cardBackgroundColor="@color/ofis_home_screen_midsection_background"
             card_view:cardElevation="@dimen/ofis_elevation_height"
             android:layout_marginTop="-4dp"
-            card_view:cardUseCompatPadding="true">
+            card_view:cardUseCompatPadding="true"
+            android:layout_marginLeft="4dp">
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

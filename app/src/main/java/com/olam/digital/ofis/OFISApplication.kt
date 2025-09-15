@@ -1,17 +1,22 @@
-package com.olam.digital.ofis;
-import android.app.Application;
-import android.content.Context;
+package com.olam.digital.ofis
 
-public class OFISApplication extends Application {
-    private static Context context;
+import android.annotation.SuppressLint
+import android.app.Application
+import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        context = getApplicationContext();
+@HiltAndroidApp
+class OFISApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        context = applicationContext
     }
-    public static Context getContext(){
-        return context;
+
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        @JvmStatic
+        var context: Context? = null
+            private set
     }
 }
 
