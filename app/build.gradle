@@ -18,8 +18,8 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion = 34
-    buildToolsVersion ='34.0.0'
+    compileSdkVersion = 35
+    buildToolsVersion ='35.0.0'
     flavorDimensions = ["default"]
     defaultConfig {
         applicationId "com.olam.digital.ofis"
@@ -27,7 +27,8 @@ android {
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 21
-        targetSdkVersion 34
+        //noinspection EditedTargetSdkVersion
+        targetSdkVersion 35
         multiDexEnabled true
         versionCode 97
         versionName "10.8.9"
@@ -296,6 +297,7 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1' // for OkHttp library
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation 'androidx.core:core-ktx:1.12.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -9,6 +9,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +40,8 @@ public class BasePrivacyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
 
         dl = new DataLayer(res, context);
+
+        Utilities.configureSystemUIAndroid15(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
 //        InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
     }
@@ -66,4 +70,32 @@ public class BasePrivacyActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        applyFitsSystemWindows();
+    }
+
+    private void applyFitsSystemWindows() {
+        ViewGroup root = findViewById(android.R.id.content);
+        if (root != null && root.getChildCount() > 0) {
+            View child = root.getChildAt(0);
+            if (child != null) {
+                child.setFitsSystemWindows(true);
+            }
+        }
+    }
 }
