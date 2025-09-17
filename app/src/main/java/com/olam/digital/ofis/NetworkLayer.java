@@ -6605,6 +6605,25 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                 }
 
+                                if(isPhoneNumber){
+                                    try{
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        if(postResponse.code() == 200 && response.has("syncedPhoneNumberList") && !response.isNull("syncedPhoneNumberList")){
+                                            JSONArray syncedPhoneNumberList = response.getJSONArray("syncedPhoneNumberList");
+                                            for(int i=0 ; i < syncedPhoneNumberList.length() ; i++){
+                                                JSONObject duplicate = syncedPhoneNumberList.getJSONObject(i);
+                                                String phoneNumberValue = duplicate.getString("phone_number");
+                                                long phoneNumberID = duplicate.getLong("phone_number_id");
+                                                dl.updateIdBasedOnFarmer(farmerId,phoneNumberValue,phoneNumberID);
+                                            }
+                                        }
+                                    }catch (JSONException | IOException e) {
+                                        recordFailedUpload(0, 0, networkQueueItemId);
+                                        postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
+                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting phone numbers post failure response" + e.getMessage());
+                                    }
+                                }
+
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
@@ -6623,6 +6642,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     } else if (postResponse.code() == 400 && response.has("errorCode") && (response.getInt("errorCode") == 5047 || response.getInt("errorCode") == 5054)) {
                                         dl.updateDuplicateStatusOfPhoneNumber(farmerId);
+                                        if (response.has("syncedPhoneNumberList") && !response.isNull("syncedPhoneNumberList")){
+                                            JSONArray syncedPhoneNumberList = response.getJSONArray("syncedPhoneNumberList");
+                                            for(int i=0 ; i < syncedPhoneNumberList.length() ; i++){
+                                                JSONObject duplicate = syncedPhoneNumberList.getJSONObject(i);
+                                                String phoneNumberValue = duplicate.getString("phone_number");
+                                                long phoneNumberID = duplicate.getLong("phone_number_id");
+                                                dl.updateIdBasedOnFarmer(farmerId,phoneNumberValue,phoneNumberID);
+                                            }
+
+
+                                        }
+
                                         String errorMsg = response.optString("message", "Duplicate Primary Phone Number.");
                                         handler.postDelayed(() -> {
                                             popupMsgInfo(errorMsg);
