@@ -17,11 +17,16 @@ import android.os.StrictMode
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
+import android.text.InputFilter
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -35,8 +40,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import com.github.gcacace.signaturepad.views.SignaturePad
@@ -47,6 +55,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -94,6 +103,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController(view)
 
+        overrideMenuBar()
         initUiState()
         initObservers()
 
@@ -103,6 +113,29 @@ class InputOrFinanceDistributionFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callBack)
+    }
+
+    private fun overrideMenuBar() {
+        val menuHost: MenuHost = requireActivity()
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Do NOT inflate a new menu here
+                // Just override handling of existing menu items
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        viewModel.onEvent(DistributionModuleUiEvent.ResetDistributionFormState)
+                        navController.popBackStack()
+                        true
+                    }
+
+                    else -> return onMenuItemSelected(menuItem)
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun initUiState() {
@@ -139,7 +172,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
         viewModel.distributionGroups.value?.let { data ->
             val names = data.map { it.name.ifEmpty { getString(R.string.distribution_group) } }.toMutableList()
-            distributionGroupAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, names)
+            distributionGroupAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_white, names)
             bindSpinner(distributionGroupSpinner, distributionGroupAdapter) { position ->
                 DistributionModuleUiEvent.OnDistributionGroupChange(position)
             }
@@ -147,7 +180,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
         viewModel.distributionItem.value?.let { data ->
             val names = data.map { it.name.ifEmpty { getString(R.string.distribution_item) } }.toMutableList()
-            distributionItemAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, names)
+            distributionItemAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_white, names)
             bindSpinner(distributionItemSpinner, distributionItemAdapter) { position ->
                 DistributionModuleUiEvent.OnDistributionItemChange(position)
             }
@@ -161,7 +194,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
                 "${data.notation} (${data.name.ifEmpty { getString(stringId) }})"
             }.toMutableList()
 
-            uomAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, names)
+            uomAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_white, names)
             bindSpinner(uomSpinner, uomAdapter) { position ->
                 DistributionModuleUiEvent.OnUOMChange(position)
             }
@@ -172,6 +205,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
                 showSignatureDialogBox()
             }
         }
+        resetUiState()
     }
 
     private fun setupCategoryButtons() {
@@ -229,6 +263,9 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
     private fun addTextWatchers() {
         binding.apply {
+            etPricePerUnit.filters = getDecimalInputFilters()
+            etTransaction.filters = getDecimalInputFilters()
+
             etPricePerUnit.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -244,9 +281,12 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     if (value != null && value.toString()
                             .isNotEmpty() && transactionValue.isNotEmpty()
                     ) {
-                        val pricePerUnit = value.toString().toDouble()
-                        val transaction = transactionValue.toDouble()
-                        etTotalAmount.setText((pricePerUnit * transaction).toString())
+                        val pricePerUnit = BigDecimal(value.toString())
+                        val transaction = BigDecimal(transactionValue)
+                        val totalAmount = pricePerUnit.multiply(transaction)
+                        etTotalAmount.setText(totalAmount.toString())
+                    } else {
+                        etTotalAmount.setText("")
                     }
                 }
 
@@ -267,15 +307,46 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     if (value != null && value.toString()
                             .isNotEmpty() && transactionValue.isNotEmpty()
                     ) {
-                        val pricePerUnit = value.toString().toDouble()
-                        val transaction = transactionValue.toDouble()
-                        etTotalAmount.setText((pricePerUnit * transaction).toString())
+                        val pricePerUnit = BigDecimal(value.toString())
+                        val transaction = BigDecimal(transactionValue)
+                        val totalAmount = pricePerUnit.multiply(transaction)
+                        etTotalAmount.setText(totalAmount.toString())
+                    }
+                    else {
+                        etTotalAmount.setText("")
                     }
                 }
 
             })
         }
     }
+
+    fun getDecimalInputFilters(): Array<InputFilter> {
+        val decimalFilter = object : InputFilter {
+            private val regex = Regex("^[0-9]*+((\\.[0-9]{0,3})?)?\$")
+
+            override fun filter(
+                source: CharSequence,
+                start: Int,
+                end: Int,
+                dest: Spanned,
+                dstart: Int,
+                dend: Int
+            ): CharSequence? {
+                val newText = dest.toString().substring(0, dstart) +
+                        source.subSequence(start, end) +
+                        dest.toString().substring(dend)
+
+                return if (regex.matches(newText)) null else ""
+            }
+        }
+
+        return arrayOf(
+            decimalFilter,
+            InputFilter.LengthFilter(20)
+        )
+    }
+
 
     private fun initObservers() {
         viewModel.onEvent(DistributionModuleUiEvent.GetDistributionData)

@@ -252,7 +252,7 @@ class DistributionModuleViewModel @Inject constructor(
                 distributionModuleUseCases.saveDistributionForm(
                     DistributionFormDto(
                         id = currentState.id,
-                        tempId = olamFarmerId,
+                        distributionId = olamFarmerId,
                         distributionCategoryId = currentState.categoryId,
                         distributionItemId = currentState.distributionItemId.toInt(),
                         distributionGroupId = currentState.distributionGroupId.toInt(),
@@ -335,7 +335,7 @@ class DistributionModuleViewModel @Inject constructor(
                 if (distributionDetails != null) {
                     val state = currentDistributionFormState.copy(
                         id = distributionDetails.id,
-                        tempId = distributionDetails.tempId,
+                        tempId = distributionDetails.distributionId,
                         distributionGroupId = distributionDetails.distributionGroupId.toString(),
                         distributionItemId = distributionDetails.distributionItemId.toString(),
                         distributionCategory = if (categoryName == "input") CategoryEnum.INPUT else CategoryEnum.FINANCE,

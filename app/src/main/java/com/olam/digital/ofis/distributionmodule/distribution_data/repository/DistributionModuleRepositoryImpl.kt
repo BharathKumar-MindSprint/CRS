@@ -35,7 +35,7 @@ class DistributionModuleRepositoryImpl(
             val farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME
             val whereConditions = mutableListOf<String>()
 
-            if (query.isNotEmpty()) {
+            if (entityName == EntityEnum.FARMER && query.isNotEmpty()) {
                 whereConditions += "(${farmerTable}.${OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME} LIKE '%$query%' COLLATE NOCASE OR " +
                         "${farmerTable}.${OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID} LIKE '%$query%' COLLATE NOCASE)"
             }

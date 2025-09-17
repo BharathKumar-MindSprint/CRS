@@ -34,9 +34,12 @@ class DistributionModuleActivity : BaseListActivity() {
                         onBackPressed()
                         true
                     }
-                    R.id.inputOrFinanceDistribution, R.id.distributionSummaryFragment -> {
+                    R.id.distributionSummaryFragment -> {
                         navController!!.popBackStack()
                         true
+                    }
+                    R.id.inputOrFinanceDistribution -> {
+                        false
                     }
                     else -> {
                         super.onOptionsItemSelected(item)

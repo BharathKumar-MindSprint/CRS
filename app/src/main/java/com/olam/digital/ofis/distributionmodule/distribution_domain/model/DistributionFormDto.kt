@@ -2,7 +2,7 @@ package com.olam.digital.ofis.distributionmodule.distribution_domain.model
 
 data class DistributionFormDto(
     val id : Int? = null,
-    val tempId : String? = null,
+    val distributionId : String? = null,
     val distributionCategoryId : Int,
     val distributionGroupId : Int,
     val distributionItemId : Int,

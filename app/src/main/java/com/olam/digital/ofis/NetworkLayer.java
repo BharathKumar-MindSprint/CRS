@@ -3375,29 +3375,29 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             try {
                                 String statusMessage;
 
-                            if (postResponse.isSuccessful()) {
-                                JSONArray jsonResponse = new JSONArray(postResponse.body().string());
-                                JSONObject jsonObject1 = jsonResponse.getJSONObject(0);
-                                String errorCode = jsonObject1.getString("errorCode");
+                                if (postResponse.isSuccessful()) {
+                                    JSONArray jsonResponse = new JSONArray(postResponse.body().string());
+                                    JSONObject jsonObject1 = jsonResponse.getJSONObject(0);
+                                    String errorCode = jsonObject1.getString("errorCode");
 
-                                if (errorCode.equalsIgnoreCase("OFIS_3042")) {
-                                    postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
-                                } else {
-                                    dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
-                                    dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
-                                    String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
+                                    if (errorCode.equalsIgnoreCase("OFIS_3042")) {
+                                        postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+                                    } else {
+                                        dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
+                                        dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
+                                        String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
 
-                                    // update multiStakeholder table
-                                    db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
-                                    db.distributionFormDao().updateFarmerIdInDistribution(localFarmerId, jsonObject1.getInt("id"));
+                                        // update multiStakeholder table
+                                        db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
+                                        db.distributionFormDao().updateFarmerIdInDistribution(localFarmerId, jsonObject1.getInt("id"));
 
-                                    dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
+                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
 
-                                    // DM farmerId udpate
-                                    db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        // DM farmerId udpate
+                                        db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
 
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
                                         initGPSSync();
@@ -3420,11 +3420,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                     } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 2015) {
                                         dl.updateDuplicateFarmerCode(localFarmerId);
-                                      String errorMsg = errorObject.optString("message","Farmer code already exists.");
-                                      handler.postDelayed(() -> {
-                                          popupMsgInfo(errorMsg);
-                                          return;
-                                      }, 500);
+                                        String errorMsg = errorObject.optString("message", "Farmer code already exists.");
+                                        handler.postDelayed(() -> {
+                                            popupMsgInfo(errorMsg);
+                                            return;
+                                        }, 500);
                                         postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "Farmer Code");
                                     } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5047) {
                                         dl.updateDuplicateStatusOfPhoneNumber(localFarmerId);
@@ -3450,27 +3450,31 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             return;
                                         }, 500);
                                         postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register national id");
+
+                                    } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 3031) {
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "submitting farmer");
                                     } else {
                                         JSONArray jsonResponse = new JSONArray(postResponse.body().string());
                                         JSONObject response = jsonResponse.getJSONObject(0);
 
-                                    if (response != null) {
-                                        server_item_id = response.optLong("id", 0);
-                                        fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        if (response != null) {
+                                            server_item_id = response.optLong("id", 0);
+                                            fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                     }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                 }
+                                postResponse.close();
+                            } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                String failureMessage = res.getString(R.string.item_sync_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response" + e.getMessage());
                             }
-                            postResponse.close();
-                        } catch (JSONException | IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-                            String failureMessage = res.getString(R.string.item_sync_error);
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
-                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response" + e.getMessage());
                         }
-                    }
 
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -6028,16 +6032,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (isMandateSurveySynced) {
                     DistributionFormEntity distributionFormEntity = db.distributionFormDao().getDistributionFormByTempId(tempId, "false");
                     List<String> fileName = new ArrayList<>();
-
-                    if (!distributionFormEntity.getSignatureUrl().isEmpty()) {
-                        fileName.add(distributionFormEntity.getSignatureUrl());
-                    }
-
-                    if (!distributionFormEntity.getEvidenceUrl().isEmpty()) {
-                        fileName.add(distributionFormEntity.getEvidenceUrl());
-                    }
-
                     boolean isFileExists = false;
+
+                    if (distributionFormEntity != null) {
+                        if (!distributionFormEntity.getSignatureUrl().isEmpty()) {
+                            fileName.add(distributionFormEntity.getSignatureUrl());
+                        }
+
+                        if (!distributionFormEntity.getEvidenceUrl().isEmpty()) {
+                            fileName.add(distributionFormEntity.getEvidenceUrl());
+                        }
+                    }
+
                     if (!fileName.isEmpty()) {
                         isFileExists = true;
                         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -6095,6 +6101,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     if(!isFileExists) {
                         postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
                     }
+
                 } else {
                     msg.what = 8;
                     msg.arg1 = total;

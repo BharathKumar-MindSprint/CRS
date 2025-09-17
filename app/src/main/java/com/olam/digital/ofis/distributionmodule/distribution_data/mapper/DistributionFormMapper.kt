@@ -6,7 +6,7 @@ import com.olam.digital.ofis.distributionmodule.distribution_domain.model.Distri
 fun DistributionFormDto.toDistributionFormEntity() : DistributionFormEntity {
     return DistributionFormEntity(
         id = id,
-        distributionId = tempId,
+        distributionId = distributionId,
         distributionGroupId = distributionGroupId,
         distributionCategoryId = distributionCategoryId,
         distributionItemId = distributionItemId,
