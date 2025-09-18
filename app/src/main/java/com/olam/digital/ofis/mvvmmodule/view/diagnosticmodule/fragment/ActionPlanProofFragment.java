@@ -434,7 +434,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         boolean isCheckbox = Objects.equals(dmQuestionsModule.displayType, Constants.CHECKBOX);
         if (isCheckbox) {
-            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, "checkbox");
+            List<DmSurveyAnswerTable> checkboxAnswers = db.dmSurveyAnswerTableDao().getAnswerIdByQuestionId(Integer.valueOf(id), Constants.FARMER_ID, Constants.MODULE_ID, Constants.PLOT_ID, Constants.CHECKBOX);
             if (!checkboxAnswers.isEmpty()) {
                 for (int i = 0; i < checkboxAnswers.size(); i++) {
                     createAnswerDisplay(checkboxAnswers.get(i).answer, i, true, complaint_id, linearLayoutItems, layoutParamsQes);
