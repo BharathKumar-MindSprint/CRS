@@ -49,6 +49,7 @@ public class Constants {
     public static final String EUDR = "EUDR";
     public static final String PA = "PA";
     public static String CHECKBOX = "checkbox";
+    public static String SIGNATURE = "signature";
     public static String COMPLIANT = "Compliant";
     public static String NON_COMPLIANT = "Non Compliant";
     public static String SATISFACTORY = "Satisfactory";

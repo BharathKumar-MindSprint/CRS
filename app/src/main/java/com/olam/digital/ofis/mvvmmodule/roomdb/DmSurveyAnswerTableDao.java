@@ -47,8 +47,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, int plotId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType!=:displayType")
-    List<DmSurveyAnswerTable> getDataByModuleIdNoCheckbox(String id, String farmerId, int plotId, String displayType);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND plotId = :plotId AND displayType NOT IN (:checkbox, :signature)")
+    List<DmSurveyAnswerTable> getDataByModuleIdNoCheckbox(String id, String farmerId, int plotId, String checkbox, String signature);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND isSynced = :isSynced")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, boolean isSynced);
@@ -140,4 +140,7 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("SELECT  * from DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId = :supplierId AND moduleId = :moduleId")
     List<DmSurveyAnswerTable> getAnswerByQuestionsIds(int questionId, String supplierId, int moduleId);
+
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE farmerId =:farmerId AND questionID in (:questionId) AND plotId = :plotId AND displayType=:signature")
+    List<DmSurveyAnswerTable> getSignatureAnswerData(String farmerId, List<Integer> questionId,  int plotId, String signature);
 }
