@@ -864,5 +864,6 @@
 
     <string name="stakeholder_attendee">Người tham dự liên quan</string>
     <string name="max_age">Chỉ cho phép tối đa 3 chữ số.</string>
+    <string name="attendee_register_stakeholder">Thêm người tham dự ở đây không đăng ký bên liên quan trong OFIS</string>
 
 </resources>

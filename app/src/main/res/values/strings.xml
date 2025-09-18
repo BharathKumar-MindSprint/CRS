@@ -1492,4 +1492,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="stakeholder_attendee">Stakeholder Attendee</string>
     <string name="max_age">Maximum 3 digits allowed.</string>
+    <string name="attendee_register_stakeholder">Adding the attendee here does not register the stakeholder in OFIS</string>
 </resources>

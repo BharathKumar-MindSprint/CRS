@@ -857,4 +857,5 @@
 
     <string name="stakeholder_attendee">ผู้เข้าร่วมที่เกี่ยวข้อง</string>
     <string name="max_age">อนุญาตให้ใช้ตัวเลขได้สูงสุด 3 หลัก</string>
+    <string name="attendee_register_stakeholder">การเพิ่มผู้เข้าร่วมที่นี่จะไม่ลงทะเบียนผู้มีส่วนได้ส่วนเสียใน OFIS</string>
 </resources>

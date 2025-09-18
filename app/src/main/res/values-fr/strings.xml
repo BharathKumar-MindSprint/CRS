@@ -1287,4 +1287,5 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
 
     <string name="stakeholder_attendee">Participant partie prenante</string>
     <string name="max_age">Maximum de 3 chiffres autorisés.</string>
+    <string name="attendee_register_stakeholder">Ajouter le participant ici n\'enregistre pas le partie prenante dans OFIS</string>
 </resources>

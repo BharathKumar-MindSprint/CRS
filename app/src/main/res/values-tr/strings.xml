@@ -862,4 +862,5 @@
 
     <string name="stakeholder_attendee">Paydaş Katılımcı</string>
     <string name="max_age">En fazla 3 rakam girilebilir.</string>
+    <string name="attendee_register_stakeholder">Buradaki katılımcı, OFIS\'teki paydaşı kaydetmez</string>
 </resources>
