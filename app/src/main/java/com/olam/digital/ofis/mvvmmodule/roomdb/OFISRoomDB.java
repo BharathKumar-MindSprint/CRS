@@ -60,7 +60,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
                 Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
                 Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
                 FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-                Sections.class, Places.class, Products.class, Farmer.class, DistributionFormEntity.class, DistributionCategory.class, DistributionGroup.class, DistributionItem.class, Currency.class
+                Sections.class, Places.class, Products.class, Farmer.class, DistributionFormEntity.class, DistributionCategory.class, DistributionGroup.class, DistributionItem.class
         },
         version = 20,
         autoMigrations ={@AutoMigration(from =19, to=20, spec = OFISRoomDB.DeleteTable.class)}
@@ -118,7 +118,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DistributionCategoryDao distributionCategoryDao();
     public abstract DistributionGroupDao distributionGroupDao();
     public abstract DistributionItemDao distributionItemDao();
-    public abstract CurrencyDao currencyDao();
 
 
     @androidx.room.DeleteTable.Entries({

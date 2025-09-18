@@ -3,10 +3,8 @@ package com.olam.digital.ofis.distributionmodule.distribution_data.repository
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.olam.digital.ofis.DataLayer
 import com.olam.digital.ofis.OFISDBContract
 import com.olam.digital.ofis.Utilities
-import com.olam.digital.ofis.distributionmodule.distribution_data.mapper.cursorToCountryIdMapper
 import com.olam.digital.ofis.distributionmodule.distribution_data.mapper.cursorToFarmerIdMapper
 import com.olam.digital.ofis.distributionmodule.distribution_data.mapper.cursorToFarmerMapper
 import com.olam.digital.ofis.distributionmodule.distribution_data.mapper.cursorToSpinnerDataMapper
@@ -101,12 +99,28 @@ class DistributionModuleRepositoryImpl(
 
             val distributionCategory = roomDb.distributionCategoryDao().getAllDistributionCategory()
 
-            val countryCursor = ofisDb.rawQuery("Select id FROM ${OFISDBContract.CountriesEntry.TABLE_NAME}", null)
-            val currencyItems = roomDb.currencyDao().getCurrenciesByCountryId(cursorToCountryIdMapper(countryCursor))
-            currencyItems.add(0, SpinnerDataDto(0, "", ""))
+            val currencyItems = mutableListOf<SpinnerDataDto>()
+            currencyItems.add(0, SpinnerDataDto(0, "", "", false))
 
-            val localUnits = roomDb.localUnitDao().getLocalUnits()
-            localUnits.add(0, SpinnerDataDto(0, "", ""))
+
+            val localUnits = mutableListOf<SpinnerDataDto>()
+            localUnits.add(0, SpinnerDataDto(0, "", "", false))
+
+            val currencyMetric = roomDb.globalUnitDao().getGlobalUnits()
+            var globalMetricId = 0
+
+            currencyMetric.forEach {
+                if (it.globalMetric == "Currency") {
+                    globalMetricId = it.globalUnitId
+                    currencyItems.add(SpinnerDataDto(it.globalUnitId, it.globalUnit, it.globalAbbreviation, true))
+                }
+                else {
+                    localUnits.add(SpinnerDataDto(it.globalUnitId, it.globalUnit, it.globalAbbreviation, true))
+                }
+            }
+
+            currencyItems.addAll(roomDb.localUnitDao().getCurrency(globalMetricId))
+            localUnits.addAll(roomDb.localUnitDao().getLocalUnits(globalMetricId))
 
             Result.success(mutableListOf(farmerGroupList, sectionList, roleList, distributionCategory, distributionGroups, currencyItems, localUnits))
         }

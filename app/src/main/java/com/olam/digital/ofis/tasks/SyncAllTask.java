@@ -57,7 +57,6 @@ import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.PhotoCheckBoxData;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoCheckBoxResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Currency;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
 import org.json.JSONArray;
@@ -2008,7 +2007,6 @@ public class SyncAllTask extends SyncTask {
             roomDB.distributionCategoryDao().insertDistributionCategory(response.getDistributionCategories());
             roomDB.distributionGroupDao().insertDistributionGroup(response.getDistributionGroups());
             roomDB.distributionItemDao().insertDistributionItem(response.getDistributionItems());
-            roomDB.currencyDao().insertCurrency(response.getCurrency());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -2048,7 +2046,6 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void deleteDistributionDetails() {
-        roomDB.currencyDao().deleteAll();
         roomDB.distributionGroupDao().deleteAll();
         roomDB.distributionItemDao().deleteAll();
         roomDB.distributionCategoryDao().deleteAll();

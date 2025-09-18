@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -187,12 +188,13 @@ class InputOrFinanceDistributionFragment : Fragment() {
         }
 
         val uOMItem = if (distributionFormState.distributionCategory == CategoryEnum.INPUT) viewModel.localUnits else viewModel.currency
-        val stringId = if (distributionFormState.distributionCategory == CategoryEnum.INPUT) R.string.select_units else R.string.select_currency
+        val stringId = if (distributionFormState.distributionCategory == CategoryEnum.INPUT) R.string.select_unit else R.string.please_select_currency
 
         uOMItem.value?.let { uomList ->
-            val names = uomList.map { data ->
-                "${data.notation} (${data.name.ifEmpty { getString(stringId) }})"
-            }.toMutableList()
+            val names = uomList.mapIndexed { index, data ->
+                if (index == 0) getString(stringId)
+                else "${data.notation} (${data.name.ifEmpty { getString(stringId) }})"
+            }
 
             uomAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_white, names)
             bindSpinner(uomSpinner, uomAdapter) { position ->
@@ -251,7 +253,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
             return false
         }
 
-        val uom = if (state.distributionCategory == CategoryEnum.INPUT) state.localUnitId else state.currencyId
+        val uom = state.localUnitId ?: state.currencyId
         if (uom == null || uom == 0) {
             val id = if (state.distributionCategory == CategoryEnum.INPUT) R.string.error_message_local_units else R.string.error_messgae_currency
             Toast.makeText(context, getString(id), Toast.LENGTH_SHORT).show()
@@ -389,28 +391,38 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     clTotalAmount.visibility = View.GONE
 
                     viewModel.currency.value?.let { currencyList ->
-                        val names = currencyList.map { data ->
-                            "${data.notation} (${data.name.ifEmpty { getString(R.string.select_currency) }})"
-                        }.toMutableList()
-                        uomAdapter.clear()
-                        uomAdapter.addAll(names)
-                        uomAdapter.notifyDataSetChanged()
+                        val names = currencyList.mapIndexed { index, data ->
+                            if (index == 0) getString(R.string.please_select_currency)
+                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
+                        }
+
+                        uomAdapter.apply {
+                            clear()
+                            addAll(names)
+                            notifyDataSetChanged()
+                        }
                     }
-                    uomSpinner.setSelection(getIndexPosition(state.currencyId?.toString() ?: "", viewModel.currency.value ?: emptyList()))
+                    val isGlobalId = state.currencyId != null
+                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
 
                 } else {
                     clPricePerUnit.visibility = View.VISIBLE
                     clTotalAmount.visibility = View.VISIBLE
 
                     viewModel.localUnits.value?.let { localUnitList ->
-                        val names = localUnitList.map { data ->
-                            "${data.notation} (${data.name.ifEmpty { getString(R.string.select_units) }})"
-                        }.toMutableList()
-                        uomAdapter.clear()
-                        uomAdapter.addAll(names)
-                        uomAdapter.notifyDataSetChanged()
+                        val names = localUnitList.mapIndexed { index, data ->
+                            if (index == 0) getString(R.string.select_unit)
+                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
+                        }
+
+                        uomAdapter.apply {
+                            clear()
+                            addAll(names)
+                            notifyDataSetChanged()
+                        }
                     }
-                    uomSpinner.setSelection(getIndexPosition(state.localUnitId?.toString() ?: "", viewModel.localUnits.value ?: emptyList()))
+                    val isGlobalId = state.currencyId != null
+                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
                 }
 
                 val hasEvidence = state.evidenceName.isNotEmpty()
@@ -435,8 +447,9 @@ class InputOrFinanceDistributionFragment : Fragment() {
             distributionItemAdapter.addAll(names)
             distributionItemAdapter.notifyDataSetChanged()
 
-            val state = viewModel.distributionFormState.value
-            distributionItemSpinner.setSelection(getIndexPosition(state?.distributionItemId ?: "", viewModel.distributionItem.value ?: emptyList()))
+            val state = viewModel.distributionFormState.value ?: DistributionFormState()
+            val id = if (state.distributionItemId.isEmpty()) 0 else state.distributionItemId.toInt()
+            distributionItemSpinner.setSelection(getIndexPosition(id, viewModel.distributionItem.value ?: emptyList()))
         }
 
         viewModel.distributionGroups.observe(viewLifecycleOwner) { data ->
@@ -445,21 +458,21 @@ class InputOrFinanceDistributionFragment : Fragment() {
             distributionGroupAdapter.addAll(names)
             distributionGroupAdapter.notifyDataSetChanged()
 
-            val state = viewModel.distributionFormState.value
-            distributionGroupSpinner.setSelection(getIndexPosition(state?.distributionGroupId ?: "", viewModel.distributionGroups.value ?: emptyList()))
+            val state = viewModel.distributionFormState.value ?: DistributionFormState()
+            val id = if (state.distributionGroupId.isEmpty()) 0 else state.distributionGroupId.toInt()
+            distributionGroupSpinner.setSelection(getIndexPosition(id, viewModel.distributionGroups.value ?: emptyList()))
         }
     }
 
-    private fun getIndexPosition(value: String, data: List<SpinnerDataDto>): Int {
-        val id = if (value.isEmpty()) 0 else value.toInt()
-        data.let {
-            data.forEachIndexed { index, spinnerDataDto ->
-                if (spinnerDataDto.id == id) {
-                    return index
-                }
+    private fun getIndexPosition(value: Int?, data: List<SpinnerDataDto>, isGlobalId: Boolean = false): Int {
+        val id = value ?: 0
+        return data.indexOfFirst { spinnerDataDto ->
+            if (isGlobalId && spinnerDataDto.isGlobalId == true && spinnerDataDto.id == id) {
+                true
+            } else {
+                spinnerDataDto.id == id && spinnerDataDto.isGlobalId != true
             }
-        }
-        return 0
+        }.takeIf { it >= 0 } ?: 0
     }
 
     private fun bindSpinner(spinner: Spinner, adapter: ArrayAdapter<String>, event: (Int) -> DistributionModuleUiEvent) {
@@ -556,14 +569,16 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
     @Throws(IOException::class)
     private fun createSignatureFile(): File? {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-        val imageFileName = "distribution_signature _$timestamp"
-        val storageDir: File? = requireContext().getExternalFilesDir(null)
-        var image: File? = null
-        if (storageDir != null) {
-            image = File.createTempFile(imageFileName, ".jpg", storageDir)
+        val imageFileName = getFileName("distribution_signature")
+
+        return try {
+            val file = File(storageDir, imageFileName)
+            file.createNewFile()
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
-        return image
     }
 
     private fun deletePreviousSignatureFile() {
@@ -735,7 +750,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
                 clTakePhoto.visibility = View.GONE
             }
 
-            val imageFile = imageBitmap?.let { saveBitmapToFile(requireContext(), it) }
+            val imageFile = imageBitmap?.let { saveBitmapToFile(it) }
             if (imageFile != null) {
                 val uri = getUriFromFile(imageFile)
                 viewModel.onEvent(DistributionModuleUiEvent.EvidenceUpload(uri, imageFile.name))
@@ -751,9 +766,8 @@ class InputOrFinanceDistributionFragment : Fragment() {
         cameraLauncher.launch(cameraIntent)
     }
 
-    private fun saveBitmapToFile(context: Context, bitmap: Bitmap): File? {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-        val imageFileName = "distribution_evidence_${viewModel.farmerOrStakeHolderState.value?.selectedFarmerOrStakeHolder?.id}_$timestamp.jpg"
+    private fun saveBitmapToFile(bitmap: Bitmap): File? {
+        val imageFileName = getFileName("distribution_evidence")
 
         return try {
             val file = File(storageDir, imageFileName)
@@ -773,7 +787,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
     private fun createFileFromUri(context: Context, uri: Uri): File? {
         return try {
             val contentResolver = context.contentResolver
-            val fileName = getFileName()
+            val fileName = getFileName("distribution_evidence")
             val inputStream = contentResolver.openInputStream(uri) ?: return null
             val file = File(storageDir, fileName)
 
@@ -799,9 +813,9 @@ class InputOrFinanceDistributionFragment : Fragment() {
     }
 
     @SuppressLint("Range")
-    fun getFileName(): String {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-        return "distribution_evidence_${viewModel.farmerOrStakeHolderState.value?.selectedFarmerOrStakeHolder?.id}_$timestamp.jpg"
+    fun getFileName(fileNamePrefix : String): String {
+        val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH).format(Date())
+        return "${fileNamePrefix}_$timestamp.jpg"
     }
 
 }

@@ -164,17 +164,16 @@ class DistributionModuleViewModel @Inject constructor(
 
             is DistributionModuleUiEvent.OnUOMChange -> {
                 val currentState = _distributionFormState.value ?: DistributionFormState()
-                if (currentState.distributionCategory == CategoryEnum.INPUT) {
-                    val data = _localUnits.value?.get(event.position) ?: SpinnerDataDto(0,"","")
-                    currentState.localUnitId = data.id
-                    currentState.uomName = "${data.notation} (${data.name})"
-                    currentState.currencyId = null
-                }  else {
-                    val data = _currency.value?.get(event.position) ?: SpinnerDataDto(0,"","")
-                    currentState.currencyId = data.id
-                    currentState.uomName = "${data.notation} (${data.name})"
-                    currentState.localUnitId = null
-                }
+                val data = if (currentState.distributionCategory == CategoryEnum.INPUT) {
+                    _localUnits.value?.get(event.position)
+                } else {
+                    _currency.value?.get(event.position)
+                } ?: SpinnerDataDto(0, "", "", false)
+
+                currentState.localUnitId = if (data.isGlobalId != true) data.id else null
+                currentState.currencyId = if (data.isGlobalId == true) data.id else null
+                currentState.uomName = "${data.notation} (${data.name})"
+
             }
 
             DistributionModuleUiEvent.GetDistributionData -> {

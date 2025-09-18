@@ -20,17 +20,3 @@ fun cursorToSpinnerDataMapper(cursor: Cursor) : List<SpinnerDataDto> {
 
     return result
 }
-
-@SuppressLint("Range")
-fun cursorToCountryIdMapper(cursor: Cursor) : List<Int> {
-    val result : MutableList<Int> = mutableListOf()
-    cursor.use {
-        val idIdx = it.getColumnIndexOrThrow(OFISDBContract.CountriesEntry.COLUMN_NAME_ID)
-        while (it.moveToNext()) {
-            val id = it.getInt(idIdx)
-            result.add(id)
-        }
-    }
-
-    return result
-}

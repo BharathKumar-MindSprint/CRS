@@ -17,6 +17,6 @@ interface DistributionGroupDao {
     @Query("Select id, name from DistributionGroup WHERE categoryId = :distributionCategoryId ORDER by name ASC")
     fun getAllDistributionGroups(distributionCategoryId : Int) : MutableList<SpinnerDataDto>
 
-    @Query("DELETE FROM Currency")
+    @Query("DELETE FROM DistributionGroup")
     fun deleteAll()
 }
