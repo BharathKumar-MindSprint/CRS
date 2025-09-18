@@ -1209,7 +1209,7 @@ public class DynamicQuestions {
                                             String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(assignmentType));
                                             if (assignmentField.equals(farmerAssignmentField) && globally.equals("false") && !valueFound) {
                                                 double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
-                                                int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+                                                double max = rangeArray.optDouble(AppConstants.RANGE_MAX);
 
                                                 if (getAnswerMinMaxvalidation(questionId) != "noval") {
                                                     String wrongValue = getAnswerMinMaxvalidation(questionId);
@@ -1228,7 +1228,7 @@ public class DynamicQuestions {
                                                 break;
                                             } else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true") && !valueFound) {
                                                 double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
-                                                int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+                                                double max = rangeArray.optDouble(AppConstants.RANGE_MAX);
 
                                                 if (getAnswerMinMaxvalidation(questionId) != "noval") {
                                                     String wrongValue = getAnswerMinMaxvalidation(questionId);
@@ -1262,7 +1262,7 @@ public class DynamicQuestions {
 
                                                 if (String.valueOf(fieldMultipleAssignment).equals(farmerAssignmentField)) {
                                                     double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
-                                                    int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+                                                    double max = rangeArray.optDouble(AppConstants.RANGE_MAX);
 
                                                     if (getAnswerMinMaxvalidation(questionId) != "noval") {
                                                         String wrongValue = getAnswerMinMaxvalidation(questionId);
@@ -1282,9 +1282,10 @@ public class DynamicQuestions {
                                                 }
                                             }
                                         }
-                                    } else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
+                                    }
+                                    else if (Integer.parseInt(assignmentType) == 0 && orderList == 0 && !valueFound) {
                                         double min = rangeArray.optDouble(AppConstants.RANGE_MIN);
-                                        int max = rangeArray.optInt(AppConstants.RANGE_MAX);
+                                        double max = rangeArray.optDouble(AppConstants.RANGE_MAX);
 
                                         if (getAnswerMinMaxvalidation(questionId) != "noval") {
                                             String wrongValue = getAnswerMinMaxvalidation(questionId);
