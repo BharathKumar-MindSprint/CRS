@@ -755,8 +755,8 @@ public class DataLayer {
             if (updated > 0) {
                 ContentValues networkQueueValues = new ContentValues();
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "edit farmer");
-                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
-                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "update farmer");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "update farmer");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);

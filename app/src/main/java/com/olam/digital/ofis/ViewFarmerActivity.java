@@ -2018,12 +2018,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mainnumber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 if (isChecked) {
+                    mainnumber.setTag(R.id.phonenumbers,true);
                     int phonerowscount = phonenumbers.getChildCount();
                     for (int j = 0; j < phonerowscount; j++) {
                         LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
                         RadioButton primary_number = (RadioButton) phonenumberrow.findViewById(R.id.primary_number);
-
+                         if(primary_number.isChecked()){
+                             primary_number.setTag(R.id.phonenumbers,true);
+                         }
                         primary_number.setChecked(false);
                     }
                     buttonView.setChecked(true);
@@ -2264,16 +2268,20 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 break;
                             }
                             try {
+
+                                Boolean isPrimaryNumberChanged = (Boolean) primary_number.getTag(R.id.phonenumbers);
+                                Boolean isPhoneUpdated = (Boolean) phoneNumber.getTag(R.id.phonenumbers);
+
+                                boolean isUpdated = (isPrimaryNumberChanged != null && isPrimaryNumberChanged) || (isPhoneUpdated != null && isPhoneUpdated);
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
                                 storeableNumber.put("phonenumber", phoneNumberValue);
                                 storeableNumber.put("id",phoneNumber.getTag());
                                 storeableNumber.put("is_deleted",isdeleted);
-                                storeableNumber.put("is_updated",phoneNumber.getTag(R.id.phonenumbers));
+                                storeableNumber.put("is_updated",isUpdated);
                                 storeableNumbers.put(storeableNumber);
                             } catch (JSONException e) {
                                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer phone number", e));
-                                e.printStackTrace();
                             }
                         }
 

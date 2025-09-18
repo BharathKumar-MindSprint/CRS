@@ -2412,8 +2412,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             ContentValues nqiValues = new ContentValues();
                             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Edit Farmer");
-                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerNameValue);
-                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Update Farmer");
+                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Update Farmer");
+                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerNameValue);
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
                             if (existingItem.getCount() > 0 && editFarmerMode) {
                                 existingItem.moveToFirst();
@@ -2436,8 +2436,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             ContentValues nqiValues = new ContentValues();
                             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Edit Farmer");
-                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerNameValue);
-                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Update Farmer");
+                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Update Farmer");
+                            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,farmerNameValue);
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                             nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
