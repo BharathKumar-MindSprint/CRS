@@ -250,6 +250,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Utilities.configureSystemUIAndroid15(this);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         db = OFISRoomDB.getDbInstance(getApplicationContext());
         Dexter.withActivity(this)
@@ -516,6 +517,35 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         initializeLoggingVariables();
         loadPlotName(0);
 
+    }
+
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        applyFitsSystemWindows();
+    }
+
+    private void applyFitsSystemWindows() {
+        ViewGroup root = findViewById(android.R.id.content);
+        if (root != null && root.getChildCount() > 0) {
+            View child = root.getChildAt(0);
+            if (child != null) {
+                child.setFitsSystemWindows(true);
+            }
+        }
     }
 
     private void enablePauseBtn(Button btn){
