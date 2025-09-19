@@ -1223,7 +1223,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         datatype = "int";
                                                     }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
                                                             dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
-                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("calculated")){
                                                         datatype = "text";
                                                     } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                                         datatype = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
