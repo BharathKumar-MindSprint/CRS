@@ -1114,6 +1114,7 @@
 
     <string name="stakeholder_attendee">ຜູ້ເຂົ້າຮ່ວມທີ່ມີສ່ວນຮ່ວມ</string>
     <string name="max_age">ອະນຸຍາດໃຫ້ໃຊ້ໄດ້ສູງສຸດ 3 ຕົວເລກ.</string>
+    <string name="attendee_register_stakeholder">ການເພີ່ມຜູ້ມີສ່ວນຮ່ວມທີ່ນີ້ບໍ່ລົງທະບຽນຜູ້ມີສ່ວນທຸລະກິດໃນ OFIS</string>\
 </resources>
 
 

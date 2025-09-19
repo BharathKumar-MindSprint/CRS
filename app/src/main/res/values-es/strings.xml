@@ -959,5 +959,6 @@
 
     <string name="stakeholder_attendee">Asistente interesado</string>
     <string name="max_age">Se permiten un máximo de 3 dígitos.</string>
+    <string name="attendee_register_stakeholder">Agregar al asistente aquí no registra al interesado en OFIS</string>
 </resources>
 
