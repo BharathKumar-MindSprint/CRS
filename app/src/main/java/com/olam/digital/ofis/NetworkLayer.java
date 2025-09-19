@@ -3789,16 +3789,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     if (postResponse.code() == 401) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                     } else {
-                                        JSONArray jsonResponse = new JSONArray(postResponse.body().string());
-                                        JSONObject response = jsonResponse.getJSONObject(0);
-
-                                        if (response != null) {
-                                            server_item_id = response.optLong("id", 0);
-                                            fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        if (errorObject != null) {
+                                            server_item_id = errorObject.optLong("id", 0);
+                                            fully_synced = errorObject.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
                                         }
                                         recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
-                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "submitting farmer");
+                                        FirebaseCrash.report(new Exception(errorObject.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                     }
                                 }
                                 postResponse.close();
