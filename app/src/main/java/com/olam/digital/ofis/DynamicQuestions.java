@@ -8240,15 +8240,15 @@ public class DynamicQuestions {
     }
 
     private void setHintAndNegativeFilters(JSONObject rangeArray, int validationOnRange, EditText et, TextView errorText) throws JSONException {
-        int max = rangeArray.getInt("max");
-        int min = rangeArray.getInt("min");
+        double max = rangeArray.getDouble("max");
+        double min = rangeArray.getDouble("min");
 
         if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
-            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
         } else if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrictandReview()) {
-            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
+            et.setHint(String.format(context.getString(R.string.range_hint_A_R_decimal), min, max));
         } else {
-            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint_decimal), min, max));
         }
 
         if (min < 0) {
