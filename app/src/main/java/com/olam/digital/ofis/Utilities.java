@@ -661,7 +661,10 @@ public  static String base64ConversionForImage(String filepath)  {
     public static boolean convertDT(String input){
 
         boolean consent=false;
-        if (input.equalsIgnoreCase("1")){
+        if(input == null){
+            return consent;
+        }
+        if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("true")){
             consent=true;
         }
         return consent;
