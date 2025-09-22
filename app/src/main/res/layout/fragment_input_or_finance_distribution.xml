@@ -313,7 +313,7 @@
                     android:id="@+id/tvTitleUploadFile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/upload_file"
+                    android:text="@string/upload_image"
                     android:textColor="@color/light_grey"
                     android:textSize="14sp"
                     android:textStyle="bold"

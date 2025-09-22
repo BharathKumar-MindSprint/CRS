@@ -953,4 +953,10 @@
     <string name="alert_review_hint_calculated">Pastikan nilai yang dihitung berada dalam kisaran %.2f - %.2f</string>
     <string name="no_dependent_message">Catatan: Pertanyaan ini tidak bergantung pada pertanyaan lain.</string>
     <string name="alert_review_hint_calculated_decimal">Pastikan nilai yang dihitung berada dalam kisaran %.2f - %.2f</string>
+    <string name="stakeholder_attendee">Peserta pemangku kepentingan</string>
+    <string name="max_age">Maksimal 3 digit diperbolehkan.</string>
+    <string name="attendee_register_stakeholder">Menambahkan peserta di sini tidak mendaftarkan pemangku kepentingan di OFIS</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>
+
 </resources>

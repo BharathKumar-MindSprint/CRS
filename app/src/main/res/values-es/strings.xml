@@ -960,5 +960,10 @@
     <string name="alert_review_hint_calculated">Por favor, asegúrese de que el valor calculado esté dentro del rango %.2f - %.2f</string>
     <string name="no_dependent_message">Nota: Esta pregunta no depende de ninguna otra pregunta.</string>
     <string name="alert_review_hint_calculated_decimal">Por favor, asegúrese de que el valor calculado esté dentro del rango %.2f - %.2f</string>
+    <string name="stakeholder_attendee">Asistente interesado</string>
+    <string name="max_age">Se permiten un máximo de 3 dígitos.</string>
+    <string name="attendee_register_stakeholder">Agregar al asistente aquí no registra al interesado en OFIS</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>
 </resources>
 
