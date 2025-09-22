@@ -294,7 +294,7 @@ public class SurveyResultsFragment extends Fragment {
         complaint = 0;
         nonComplaint = 0;
         satisfactory = 0;
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleIdNoCheckbox(Constants.MODULE_ID, Constants.FARMER_ID, Constants.PLOT_ID, Constants.CHECKBOX, Constants.SIGNATURE);
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);

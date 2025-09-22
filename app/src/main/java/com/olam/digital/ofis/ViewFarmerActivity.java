@@ -42,6 +42,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -158,6 +160,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private static final String FARMER_NAME = "FARMER_NAME";
     private static final String PLOT_COUNT = "PLOT_COUNT";
     private static final String VIEW_MODULE = "VIEW_MODULE";
+    private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
+    private final static String EDIT_MODE = "EDIT_MODE";
+
+    private final static String EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
 
     private RelativeLayout phoneNumbersHolder;
     private LinearLayout phonenumbers;
@@ -169,6 +175,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private View phoneNumbersListItem, clickedLocationItem;
     private long farmerPlaceId;
     private ProgressDialog pd;
+
+    private final String IS_UPDATED = "";
+    private final String EXISTING_ID = "";
 
     // location updates interval - 2sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
@@ -190,6 +199,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private LocationSettingsRequest mLocationSettingsRequest;
     private LocationCallback mLocationCallback;
     private Location mCurrentLocation;
+    private int deleteCount = 0;
 
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
@@ -253,8 +263,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     boolean isMandateSurveyCompleted = false;
     boolean isToastShown = false;
 
+
+    boolean isPhoneUpdated = false;
+
+    private Integer addCount;
+
+
     private String primaryPhoneNumber = "";
     private boolean isPhoneNumber = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1221,6 +1238,45 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "farmpolygon","",""
                 });
 
+
+                mc.addRow(new String[]{
+                        "0",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "0",
+                        "",
+                        "",
+                        "",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "Edit Farmer Data",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "","","",
+                        "", "", "",
+                        "",
+                        "editFarmerData","",""
+                });
+
+
+
+
+
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
 
@@ -1933,11 +1989,27 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     }
 
     private void bindnumberdelete(ImageView trashbutton) {
+
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 LinearLayout numberrow = (LinearLayout) v.getParent();
-                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                numberrow.setVisibility(View.GONE);
+               // phonenumbers.removeView(numberrow);
+                //((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                addCount--;
+                ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
+                if(addCount < 5){
+
+                    addNumber.setVisibility(View.VISIBLE);
+                    isPhoneUpdated = false;
+                }else{
+                    addNumber.setVisibility(View.GONE);
+                }
+
+
+
             }
         });
     }
@@ -1946,12 +2018,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mainnumber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 if (isChecked) {
+                    mainnumber.setTag(R.id.phonenumbers,true);
                     int phonerowscount = phonenumbers.getChildCount();
                     for (int j = 0; j < phonerowscount; j++) {
                         LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
                         RadioButton primary_number = (RadioButton) phonenumberrow.findViewById(R.id.primary_number);
-
+                         if(primary_number.isChecked()){
+                             primary_number.setTag(R.id.phonenumbers,true);
+                         }
                         primary_number.setChecked(false);
                     }
                     buttonView.setChecked(true);
@@ -1963,10 +2039,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private void populatePhoneNumberDialog() {
         phonenumbers.removeAllViews();
         Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-
+        if(existingNumbers.getCount() > 0  &&  existingNumbers.getCount() < 6){
+            addCount = existingNumbers.getCount();
+            isPhoneUpdated = true;
+        }else{
+            addCount = 1;
+            isPhoneUpdated = false;
+         }
         if (existingNumbers.getCount() > 0) {
             boolean firstNumber = true;
             while (existingNumbers.moveToNext()) {
+
                 LinearLayout phoneNumberInclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 RadioButton numberRadio = (RadioButton) phoneNumberInclude.findViewById(R.id.primary_number);
                 TextView diallingCode = (TextView) phoneNumberInclude.findViewById(R.id.dialling_code);
@@ -1977,14 +2060,39 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 boolean isPrimaryNumber = (existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)).equalsIgnoreCase("true") || (existingNumbers.getInt(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)) == 1));
                 String isDuplicateValue = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DUPLICATE));
                 boolean isDuplicate = isDuplicateValue != null && isDuplicateValue.equalsIgnoreCase("true");
+                numberText.setTag(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_ID)));
+                if(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED)) != null){
+                    numberText.setTag(R.id.phonenumbers, existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_UPDATED)).equals("true"));
+                }
 
+                String farmerId =  existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID));
 
                 numberRadio.setChecked(isPrimaryNumber);
                 diallingCode.setText(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
                 numberText.setText(phoneNumber);
+                numberText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        numberText.setTag(R.id.phonenumbers,true);
+                    }
+                });
 
                 primaryPhoneNumber = isPrimaryNumber && isDuplicate ? phoneNumber : primaryPhoneNumber;
                 primaryPhoneNumberErrorMsg.setVisibility(isPrimaryNumber && isDuplicate ? View.VISIBLE : primaryPhoneNumberErrorMsg.getVisibility());
+                if(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)) != null){
+                    boolean isDeleted = existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_IS_DELETED)).equals("true");
+                    phoneNumberInclude.setVisibility(isDeleted ? View.GONE : View.VISIBLE);
+                }
 
                 phonenumbers.addView(phoneNumberInclude);
                 if (firstNumber) {
@@ -2021,20 +2129,25 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         for (int j = 0; j < phoneRowsCount; j++) {
             LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+            boolean isdeleted = phoneNumberRow.getVisibility() == View.GONE;
             RadioButton numberRadio = phoneNumberRow.findViewById(R.id.primary_number);
             EditText phoneNumber = phoneNumberRow.findViewById(R.id.phonenumber);
             String phoneNumberValue = String.valueOf(phoneNumber.getText()).replace(" ", "");
 
-            if (numberRadio.isChecked() && phoneNumberValue.isEmpty()) {
+            if (numberRadio.isChecked() && (phoneNumberValue.isEmpty() || isdeleted)) {
                 Toast.makeText(context, res.getString(R.string.fill_phone_number), Toast.LENGTH_LONG).show();
                 return false;
             }
+            if(!isdeleted){
+                if (!phoneNumberValue.isEmpty()) {
+                    if (!phoneNumberList.add(phoneNumberValue)) {
 
-            if (!phoneNumberValue.isEmpty()) {
-                if (!phoneNumberList.add(phoneNumberValue)) {
-                    Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
-                    return false;
-                }
+                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                        return false;
+
+                    }
+            }
+
             }
         }
         return true;
@@ -2049,50 +2162,100 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         primaryPhoneNumberErrorMsg = findViewById(R.id.primary_phone_number_error_msg);
         ImageButton hideNumbersBox = (ImageButton) findViewById(R.id.phonenumbersCloseButton);
         ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
-        Button phoneNumbersSave = (Button) findViewById(R.id.phonenumbersSave);
+
+        Button phonenumbersSave = (Button) findViewById(R.id.phonenumbersSave);
+        Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
+        if(existingNumbers.getCount() > 0 && existingNumbers.getCount() < 6){
+            addCount = existingNumbers.getCount();
+            isPhoneUpdated = true;
+        }else{
+            addCount = 1;
+            isPhoneUpdated = false;
+        }
+
+        if(existingNumbers.getCount() == 5){
+            addNumber.setVisibility(View.GONE);
+        }
+
 
         hideNumbersBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 phoneNumbersHolder.startAnimation(mSlideBottomDown);
-                if (isPhoneNumber) {
-                    finish();
-                }
+
+               if(existingNumbers.getCount() == 5){
+                   addNumber.setVisibility(View.GONE);
+               }else{
+                   addNumber.setVisibility(View.VISIBLE);}
+
             }
         });
 
         addNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addCount = addCount + 1;
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 EditText diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
                 if (diallingCode != null) {
                     EditText newDiallingCode = (EditText) phonenumberinclude.findViewById(R.id.dialling_code);
                     newDiallingCode.setText(diallingCode.getText());
                 }
+
+                if(addCount == 5 && !isPhoneUpdated){
+                    addNumber.setVisibility(View.GONE);
+                    isPhoneUpdated = true;
+                }else{
+                    addNumber.setVisibility(View.VISIBLE);
+                    isPhoneUpdated = false;
+                }
+
+
+
+
                 phonenumbers.addView(phonenumberinclude);
+
                 bindnumberdelete((ImageView) phonenumberinclude.findViewById(R.id.deleteNumber));
                 bindnumberradio((RadioButton) phonenumberinclude.findViewById(R.id.primary_number));
             }
         });
 
-        phoneNumbersSave.setOnClickListener(new View.OnClickListener() {
+
+
+
+        phonenumbersSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (duplicatePhoneNumberValidation()) {
-                    int phoneRowsCount = phonenumbers.getChildCount();
+                if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
+                    int phonerowscount = phonenumbers.getChildCount();
+                    boolean hasNumber = false;
+                    boolean hasMainNumber = false;
+                    boolean hasDuplicatePhoneNumber = false;
                     Cursor fullFarmer = dl.getFlattenedFarmer(farmerId);
                     JSONArray storeableNumbers = new JSONArray();
                     boolean isDuplicate = false, isNumberZero = false;
 
-                    for (int j = 0; j < phoneRowsCount; j++) {
+
+                    for (int j = 0; j < phonerowscount; j++) {
                         LinearLayout phoneNumberRow = (LinearLayout) phonenumbers.getChildAt(j);
+                        boolean isdeleted = phoneNumberRow.getVisibility() == View.GONE;
+
                         EditText phoneNumber = (EditText) phoneNumberRow.findViewById(R.id.phonenumber);
                         RadioButton primary_number = (RadioButton) phoneNumberRow.findViewById(R.id.primary_number);
                         String phoneNumberValue = String.valueOf(phoneNumber.getText());
 
+                        if(!phoneNumberValue.isEmpty() && !isdeleted){
+                            int count = dl.getDuplicateFarmerNumber(phoneNumberValue);
+                            if(count > 1){
+                                hasDuplicatePhoneNumber = true;
+                            }
+                        }
+
+
                         if (!phoneNumberValue.isEmpty() && PhoneNumberUtils.isGlobalPhoneNumber(phoneNumberValue)) {
+                            hasNumber = true;
                             boolean isPrimaryNumber = primary_number.isChecked();
+
                             JSONObject storeableNumber = new JSONObject();
                             if (isPrimaryNumber && primaryPhoneNumber.equalsIgnoreCase(phoneNumberValue)){
                                 Toast.makeText(ViewFarmerActivity.this, getResources().getString(R.string.duplicate_phone_number), Toast.LENGTH_SHORT).show();
@@ -2105,20 +2268,46 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 break;
                             }
                             try {
+
+                                Boolean isPrimaryNumberChanged = (Boolean) primary_number.getTag(R.id.phonenumbers);
+                                Boolean isPhoneUpdated = (Boolean) phoneNumber.getTag(R.id.phonenumbers);
+
+                                boolean isUpdated = (isPrimaryNumberChanged != null && isPrimaryNumberChanged) || (isPhoneUpdated != null && isPhoneUpdated);
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
                                 storeableNumber.put("phonenumber", phoneNumberValue);
+                                storeableNumber.put("id",phoneNumber.getTag());
+                                storeableNumber.put("is_deleted",isdeleted);
+                                storeableNumber.put("is_updated",isUpdated);
                                 storeableNumbers.put(storeableNumber);
                             } catch (JSONException e) {
                                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer phone number", e));
-                                e.printStackTrace();
                             }
                         }
+
+
+                        if (primary_number.isChecked()) {
+                            hasMainNumber = true;
+                        }
+                    }
+
+
+                    if (!hasNumber || !hasMainNumber) {
+
+                        Toast.makeText(context, "At least one mobile number is mandatory", Toast.LENGTH_LONG).show();
+                    } else if (hasDuplicatePhoneNumber) {
+                        Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
+                        return;
+                    } else {
+
+                        dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID,false );
+
                     }
 
                     if (isDuplicate || isNumberZero) {
                         return;
                     }
+                    //dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID );
                     dl.updateFarmerPhoneNumbers(farmerId,null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID, false);
 
                     if (mCurrentCapturedLocation != null) {
@@ -2131,6 +2320,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
 
                     if (!isPhoneNumber) {
+
                         ContentValues nqiValues = new ContentValues();
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
@@ -2159,7 +2349,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         textView.setText(res.getString(R.string.phone_number_recorded));
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
-                        phoneNumbersSave.setEnabled(false);
+                        phonenumbersSave.setEnabled(false);
                         setupUI();
                     }
                     else {
@@ -2538,6 +2728,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         polygon = false;
                         household = true;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
+                    } else if (recordedLng != null && recordedLng.getText().equals("editFarmerData")) {
+                        Intent in = new Intent(this, AddFarmerActivity.class);
+                        Bundle bundle = new Bundle();
+                        in.putExtra(EDIT_FARMER_ID, farmerId);
+                        bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        in.putExtra(EDIT_FARMER_MODE, true);
+                        in.putExtras(bundle);
+                        startActivity(in);
+
                     }
                     else if (recordedLng != null && recordedLng.getText().equals("addFarmStakeholders")) {
                         Intent in = new Intent(this, AddFarmStakeHolderActivity.class);

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Hashtable;
+import java.util.Objects;
 
 /**
  * Created by ben on 06/07/2016.
@@ -29,13 +30,15 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
     private final LayoutInflater inflater;
     private final Resources res;
     private final TrainingAttendees trainingAttendees;
+    private final boolean isStakeholder;
 
-    CustomListAdapter_Attendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, TrainingAttendees trainingAttendees_) {
+    CustomListAdapter_Attendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, TrainingAttendees trainingAttendees_, boolean isStakeholder) {
         super(c, R.layout.listview_attendee_list, cursor, adapterCols, adapterRowViews, 0);
         this.layout = R.layout.listview_attendee_list;
         this.inflater = LayoutInflater.from(c);
         this.res = res_;
         this.trainingAttendees = trainingAttendees_;
+        this.isStakeholder = isStakeholder;
     }
 
     @Override
@@ -50,10 +53,20 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
         try {
             ImageView farmerPhoto = (ImageView) view.findViewById(R.id.farmerListIcon);
             farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
-            long id = cursor.getLong(cursor.getColumnIndex("_id"));
-            int localColIndex = cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY);
+            long id;
 
-            if (localColIndex != -1 && cursor.getInt(localColIndex) == 1) {
+            if (isStakeholder && (cursor.getString(cursor.getColumnIndex("_id")) == null || cursor.getString(cursor.getColumnIndex("_id")).isEmpty())) {
+                id = cursor.getLong(cursor.getColumnIndex("msTempId"));
+            } else {
+                id = cursor.getLong(cursor.getColumnIndex("_id"));
+            }
+
+            int localColIndex = -1;
+            if (!isStakeholder) {
+                localColIndex = cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY);
+            }
+
+            if (localColIndex != -1 && cursor.getInt(localColIndex) == 1 && !isStakeholder) {
                 String farmerPhotoPath = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
                 if (farmerPhotoPath != null && farmerPhotoPath.length() > 0) {
                     // set our desired width and height for display
@@ -75,17 +88,16 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
             ImageView cbImage = (ImageView) view.findViewById(R.id.cbImage);
             LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
             TextView state = (TextView) view.findViewById(R.id.attendeeStatus);
+            boolean isSelected = isStakeholder
+                    ? trainingAttendees.selectedStakeholders.containsKey(id)
+                    : trainingAttendees.selectedFarmers.containsKey(id);
 
-            if (trainingAttendees.selectedFarmers.contains(id)) {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
-                //linearLayout.setBackgroundResource(R.drawable.list_item_selected);
-                state.setText("true");
+            int drawableRes = isSelected
+                    ? R.drawable.ic_check_box
+                    : R.drawable.ic_check_box_outline_blank;
 
-            } else {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
-                //linearLayout.setBackgroundResource(R.drawable.list_item);
-                state.setText("false");
-            }
+            cbImage.setImageDrawable(ContextCompat.getDrawable(context, drawableRes));
+            state.setText(isSelected ? "true" : "false");
 
 
         } catch (Exception e) {

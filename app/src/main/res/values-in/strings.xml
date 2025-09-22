@@ -959,4 +959,8 @@
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
 
+    <string name="stakeholder_attendee">Peserta pemangku kepentingan</string>
+    <string name="max_age">Maksimal 3 digit diperbolehkan.</string>
+    <string name="attendee_register_stakeholder">Menambahkan peserta di sini tidak mendaftarkan pemangku kepentingan di OFIS</string>
+
 </resources>

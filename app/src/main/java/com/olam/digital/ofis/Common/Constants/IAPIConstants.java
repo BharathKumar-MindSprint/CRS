@@ -80,6 +80,8 @@ public interface IAPIConstants {
      String GET_CONDITIONAL_DETAILS = "ofissurvey/survey/questionnaire/conditionalQuestionDetails";
      String GET_POLYGON_DATA_BY_PLOT_ID = "ofisfarmer-data/farmerdata/polygonDataByPlotIds";
     String GET_DISTRIBUTION_MODULE_DATA = "ofismaster/distribution-group/getDistributionDetails";
-
     String SAVE_DISTRIBUTION_FORM = "ofismaster/distribution-form/saveDistributionForm";
+    String POST_UPDATE_FARMER = "ofisfarmer/farmer/updateFarmerDetailsFromApp";
+    String SAVE_UPDATE_PHONE_NATIONAL = "ofisfarmer/farmer/saveOrUpdatePhNumAndNatId";
+
 }

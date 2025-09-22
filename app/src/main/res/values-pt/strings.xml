@@ -968,5 +968,9 @@
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
 
+    <string name="stakeholder_attendee">Participante interessado</string>
+    <string name="max_age">Máximo de 3 dígitos permitidos.</string>
+    <string name="attendee_register_stakeholder">Adicionar o participante aqui não registra o interessado no OFIS</string>
+
 </resources>
 

@@ -63,6 +63,9 @@ public interface MultiStakeHolderDao {
     @Query("UPDATE MULTISTAKEHOLDER SET submitted_modules =:submittedModules WHERE msId=:stakeholderId ")
     void updateSubmittedModulesById(String stakeholderId, String submittedModules);
 
+    @Query("SELECT * FROM MultiStakeHolder m WHERE m.farmerId IN (:farmerIds) AND (:searchQuery = '' OR m.msName LIKE :searchQuery) AND (:stakeholderRole = 0 OR m.msRoleId = :stakeholderRole)")
+    List<MultiStakeHolder> getStakeHoldersByFarmerIdAndName(List<Integer> farmerIds, String searchQuery, Integer stakeholderRole);
+
     @Query("""
         SELECT * FROM MultiStakeHolder 
         WHERE (

@@ -635,7 +635,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                         dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                         dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
@@ -693,7 +693,7 @@ public class CompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
@@ -1151,7 +1151,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                             dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                             dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                             dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                             dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
@@ -1208,7 +1208,7 @@ public class CompleteModuleActivity extends BaseActivity {
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                     dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                     dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                                     dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                     dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {

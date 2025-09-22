@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,11 +27,13 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 public class TrainingRecordConfirmation extends BaseListActivity {
@@ -45,7 +47,11 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     private long trainingRecordId;
     private JSONObject scoringColumns;
     private String columnSuffix, courseNameValue, moduleNameValue;
-    ListView listView;
+    private ListView farmerList, stakeholderList;
+    private boolean isFarmerOpen = false;
+    private boolean isStakeholderOpen = false;
+    private LinearLayout farmerSection, stakeholderSection;
+    private ImageView toggleFarmerIcon, toggleStakeholderIcon;
 
     private Location mCurrentLocation=null;
     GPSListener gpsListener=null;
@@ -53,12 +59,14 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
+    private int attendeeCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record_confirmation);
-        listView=findViewById(R.id.list);
+        farmerList=findViewById(R.id.list_farmer);
+        stakeholderList=findViewById(R.id.list_stakeholder);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -75,10 +83,35 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             columnSuffix = "";
         }
 
+        farmerSection = findViewById(R.id.farmer_section);
+        stakeholderSection = findViewById(R.id.stakeholder_section);
+        toggleFarmerIcon = findViewById(R.id.toggle_icon_farmer);
+        toggleStakeholderIcon = findViewById(R.id.toggle_icon_stakeholder);
+
+        farmerList.setVisibility(View.VISIBLE);
+        stakeholderList.setVisibility(View.GONE);
+        toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_up);
+        toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+        updateWeights(farmerSection, 9);
+        updateWeights(stakeholderSection, 1);
+
+        toggleSection(true);
+        toggleFarmerIcon.setOnClickListener(v -> toggleSection(true));
+        toggleStakeholderIcon.setOnClickListener(v -> toggleSection(false));
+
         if (trainingRecordId > 0) {
             getTrainingRecord();
-            getTrainingAttendees();
+
+            // To load Farmer
+            getTrainingAttendees(false);
+            // To load Stakeholder
+            getTrainingAttendees(true);
+
             bindButton();
+
+            TextView itemCount = (TextView) findViewById(R.id.trainingAttendeesTotal);
+            String itemCountValue = res.getQuantityString(R.plurals.trainingAttendeesCount, attendeeCount, attendeeCount);
+            itemCount.setText(itemCountValue);
         }
 
         gpsListener=new GPSListener() {
@@ -96,6 +129,56 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 //        }
     }
 
+    private void toggleSection(boolean isOpeningFarmer) {
+        boolean isCurrentlyOpen = isOpeningFarmer ? isFarmerOpen : isStakeholderOpen;
+
+        if (!isCurrentlyOpen) {
+            farmerList.setVisibility(isOpeningFarmer ? View.VISIBLE : View.GONE);
+            stakeholderList.setVisibility(isOpeningFarmer ? View.GONE : View.VISIBLE);
+
+            toggleFarmerIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+            toggleStakeholderIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up);
+
+            updateWeights(farmerSection, isOpeningFarmer ? 9 : 1);
+            updateWeights(stakeholderSection, isOpeningFarmer ? 1 : 9);
+
+            isFarmerOpen = isOpeningFarmer;
+            isStakeholderOpen = !isOpeningFarmer;
+        } else {
+            if (isOpeningFarmer) {
+                farmerList.setVisibility(View.GONE);
+                toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_down);
+            } else {
+                stakeholderList.setVisibility(View.GONE);
+                toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+            }
+
+            updateWeights(farmerSection, 1);
+            updateWeights(stakeholderSection, 1);
+
+            isFarmerOpen = false;
+            isStakeholderOpen = false;
+        }
+    }
+
+    private void updateWeights(LinearLayout layout, int weight) {
+        ViewGroup.MarginLayoutParams oldParams = (ViewGroup.MarginLayoutParams) layout.getLayoutParams();
+
+        LinearLayout.LayoutParams newParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                weight
+        );
+
+        newParams.setMargins(
+                oldParams.leftMargin,
+                oldParams.topMargin,
+                oldParams.rightMargin,
+                oldParams.bottomMargin
+        );
+
+        layout.setLayoutParams(newParams);
+    }
 
     @Override
     protected void onResume() {
@@ -159,17 +242,23 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             gpsTracker.stopLocationUpdates();
         }
     }
+    private void getTrainingAttendees(boolean isStakeholder) {
+        Cursor trainingAttendees;
+        HashMap<Long,Integer> attendeeList;
+        ListView listView;
 
-    private void getTrainingAttendees() {
-        Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+        if (isStakeholder) {
+            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId);
+            attendeeList = TrainingRecord.stakeholderAttendeeList;
+            listView = stakeholderList;
+        } else {
+            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+            attendeeList = TrainingRecord.farmerAttendeeList;
+            listView = farmerList;
+        }
 
         if (trainingAttendees.getCount() > 0) {
-            LinearLayout attendeesFooter = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.training_confirmation_footer, listView, false);
-            listView.addFooterView(attendeesFooter);
-
-            TextView itemCount = (TextView) findViewById(R.id.trainingAttendeesTotal);
-            String itemCountValue = res.getQuantityString(R.plurals.trainingAttendeesCount, trainingAttendees.getCount(), trainingAttendees.getCount());
-            itemCount.setText(itemCountValue);
+            attendeeCount += trainingAttendees.getCount();
 
             String[] adapterCols = new String[]{
                     "_id",
@@ -193,14 +282,14 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId, false);
 
-            listView.setAdapter(customListAdapter_selectedAttendees);
+            CustomListAdapter_SelectedAttendees customListAdapter = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix, dl, attendeeList, trainingRecordId, false, isStakeholder, OFISRoomDB.getDbInstance(context));
+
+            listView.setAdapter(customListAdapter);
             listView.setOnItemClickListener(null);
-//            setListAdapter(customListAdapter_selectedAttendees);
-//            getListView().setOnItemClickListener(null);
         }
     }
+
 
     private void bindButton() {
         Button confirmButton = (Button) findViewById(R.id.confirmTrainingRecord);

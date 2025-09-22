@@ -373,7 +373,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("farmtreedensity")) {
                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-            } else if (displayType.toLowerCase().replaceAll(" ","").equals("photoupload")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("fileupload")) {
                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             }

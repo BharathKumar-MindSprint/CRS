@@ -611,7 +611,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
                         dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                         dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
@@ -663,7 +663,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
                                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
                                 dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
