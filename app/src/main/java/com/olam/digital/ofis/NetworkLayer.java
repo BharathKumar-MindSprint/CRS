@@ -1247,7 +1247,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                             || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                                         datatype = "int";
                                                     }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                            dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("fileupload")
+                                                            dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
                                                             || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                                         datatype = "text";
                                                     } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
@@ -1269,7 +1269,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 } else {
                                                     answer.put("answer", moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex("answer_" + datatype)));
                                                 }
-                                                if (moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
+                                                if (moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                     answer.put("answer", Utilities.base64ConversionForImage(
                                                             storageDir
                                                                     + "/"
@@ -1322,7 +1322,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                             if (displayConfig.has("display")) {
                                                                 JSONObject display = displayConfig.getJSONObject("display");
-                                                                if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("fileupload")) {
+                                                                if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                                     subAnswer.put("has_photo_upload", true);
                                                                     subAnswer.put("answer", Utilities.base64ConversionForImage(
                                                                             storageDir + "/" +
@@ -2792,7 +2792,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                         }
 
-                        if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
+                        if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                             answer.put("answer", Utilities.base64ConversionForImage(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
                         }
 
@@ -4577,7 +4577,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                             datatype = "int";
                                         }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("fileupload")
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.toLowerCase().equals("signature")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
@@ -4600,7 +4600,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
-                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                         hasPhotos = true;
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("has_photo_upload", true);
@@ -4647,7 +4647,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("fileupload`")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
                                                         subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
