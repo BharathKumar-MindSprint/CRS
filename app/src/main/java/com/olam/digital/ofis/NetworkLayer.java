@@ -72,6 +72,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.net.ssl.SSLContext;
@@ -765,14 +766,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
-                Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+                Cursor trainingAttendees = dl.getFarmerStakeholderAttendeesByTrainingRecordId(trainingRecordId);
                 if (trainingAttendees.getCount() > 0) {
                     // create json objects
                     JSONArray attendeesJSON = new JSONArray();
 
                     while (trainingAttendees.moveToNext()) {
-                        long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
-                        if (!dl.isFarmerSynced(farmerId)) {
+                        String farmerId = trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                        String stakeholderId = trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
+                        if (farmerId != null && !dl.isFarmerSynced(Long.parseLong(farmerId))) {
                             msg.what = 3;
                             msg.arg1 = total;
                             msg.arg2 = HomeActivity.progressItem = progress + 1;
@@ -780,24 +782,46 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             return;
                         } else {
-                            try {
-                                JSONObject attendee = new JSONObject();
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
-                                attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
-                                attendee.put("signature", trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE)));
+                            Runnable syncTraining = () -> {
+                                try {
+                                    JSONObject attendee = new JSONObject();
+                                     if (farmerId != null) {
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, Long.parseLong(farmerId));
+                                     } else {
+                                         attendee.put("stakeIdFk", Long.parseLong(stakeholderId));
+                                         attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID, db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId)).farmerId);
+                                     }
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED, trainingAttendees.getInt(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE)));
+                                    attendee.put(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE, trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE)));
+                                    attendee.put("signature", trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE)));
 
-                                attendeesJSON.put(attendee);
-                                jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
-                                jsonObject.put("training_attendees", attendeesJSON);
+                                    attendeesJSON.put(attendee);
+                                    jsonObject.put("realtionshipAttendees", dl.getTraineeRelationshipByRecordId((int) trainingRecordId, context));
+                                    jsonObject.put("training_attendees", attendeesJSON);
 
-                            } catch (JSONException e) {
-                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
+                                } catch (JSONException e) {
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object " + e.getMessage());
+                                }
+                            };
+
+                            if (stakeholderId != null){
+                                MultiStakeHolder stakeHolder = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
+                                if (stakeHolder.synced == 0){
+                                    msg.what = 11;
+                                    msg.arg1 = total;
+                                    msg.arg2 = progress;
+                                    msg.obj = String.valueOf(res.getString(R.string.stakeholder_not_synced));
+                                    handler.dispatchMessage(msg);
+                                } else {
+                                    syncTraining.run();
+                                }
+                            } else {
+                                syncTraining.run();
                             }
 
                         }
@@ -1222,9 +1246,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                             || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
                                                             || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                                         datatype = "int";
-                                                    } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                            dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
-                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")) {
+                                                    }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
+                                                            dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("fileupload")
+                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                                         datatype = "text";
                                                     } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                                         datatype = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -1245,7 +1269,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 } else {
                                                     answer.put("answer", moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex("answer_" + datatype)));
                                                 }
-                                                if (moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
+                                                if (moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
                                                     answer.put("answer", Utilities.base64ConversionForImage(
                                                             storageDir
                                                                     + "/"
@@ -1298,7 +1322,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                             if (displayConfig.has("display")) {
                                                                 JSONObject display = displayConfig.getJSONObject("display");
-                                                                if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
+                                                                if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("fileupload")) {
                                                                     subAnswer.put("has_photo_upload", true);
                                                                     subAnswer.put("answer", Utilities.base64ConversionForImage(
                                                                             storageDir + "/" +
@@ -2768,7 +2792,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                         }
 
-                        if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
+                        if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
                             answer.put("answer", Utilities.base64ConversionForImage(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
                         }
 
@@ -3515,23 +3539,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
                                     }
 
-                                    String errorMsg = errorObject.optString("message", "Duplicate National Id");
-                                    handler.postDelayed(() -> {
-                                        popupMsgInfo(errorMsg);
-                                        return;
-                                    }, 500);
-                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register national id");
-                                } else {
-                                    JSONArray jsonResponse = new JSONArray(postResponse.body().string());
-                                    JSONObject response = jsonResponse.getJSONObject(0);
+                                        String errorMsg = errorObject.optString("message", "Duplicate National Id");
+                                        handler.postDelayed(() -> {
+                                            popupMsgInfo(errorMsg);
+                                            return;
+                                        }, 500);
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register national id");
+                                    } else {
 
-                                    if (response != null) {
-                                        server_item_id = response.optLong("id", 0);
-                                        fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    if (errorObject != null) {
+                                        server_item_id = errorObject.optLong("id", 0);
+                                        fully_synced = errorObject.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
                                     }
                                     recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "submitting farmer");
+                                    FirebaseCrash.report(new Exception(errorObject.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                 }
                             }
                             postResponse.close();
@@ -4554,9 +4576,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")
                                                 || dataTypeName.replaceAll(" ", "").toLowerCase().equals("farmtreedensitydropdown")) {
                                             datatype = "int";
-                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
-                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
-                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.toLowerCase().equals("signature")) {
+                                        }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("fileupload")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.toLowerCase().equals("signature")){
                                             datatype = "text";
                                         } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                             datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -4578,7 +4600,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     }
-                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("photoupload")) {
+                                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ", "").equals("fileupload")) {
                                         hasPhotos = true;
                                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                         answer.put("has_photo_upload", true);
@@ -4625,7 +4647,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                                 if (displayConfig.has("display")) {
                                                     JSONObject display = displayConfig.getJSONObject("display");
-                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("photoupload")) {
+                                                    if (display.optString("repeateritem_display_type", "").toLowerCase().replaceAll(" ", "").equals("fileupload`")) {
                                                         hasPhotos = true;
                                                         subAnswer.put("has_photo_upload", true);
                                                         subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
@@ -5757,34 +5779,45 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), plotId);
 
-                if (!dmSurveyAnswerTableList.isEmpty()) {
-                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
-                        JSONObject ans = new JSONObject();
-                        ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
-                        ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
-                        ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
-                        ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+                    if (!dmSurveyAnswerTableList.isEmpty()) {
+                        for (DmSurveyAnswerTable answerTable : dmSurveyAnswerTableList) {
+                            JSONObject ans = new JSONObject();
+                            String questionId = answerTable.questionID;
+                            String answerId = answerTable.answerID;
+                            String displayType = answerTable.displayType;
+                            String answer = answerTable.answer;
 
-                        if (!dmSurveyAnswerTableList.get(i).actionplanId.equalsIgnoreCase("1")) {
-                            ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            ans.put("questionId", questionId);
+                            ans.put("answerId", answerId);
+                            ans.put("answerValue", Objects.equals(displayType, Constants.SIGNATURE) ? "Yes" : answer);
+
+                            if (!"0".equals(answerTable.complinceTypeId)) {
+                                ans.put("complianceStatusId", answerTable.complinceTypeId);
+                            }
+
+                            if (!"1".equalsIgnoreCase(answerTable.actionplanId)) {
+                                ans.put("actionPlanId", answerTable.actionplanId);
+                            }
+
+                            ans.put("actionPlanText", answerTable.actionPlanText);
+                            ans.put("amount", answerTable.amount);
+
+                            JSONArray captureProofArray = new JSONArray();
+                            if (Objects.equals(displayType, Constants.SIGNATURE)) {
+                                captureProofArray.put(answer);
+                            } else {
+                                List<DmComplaintFileTable> complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(questionId), String.valueOf(farmerId), 0, plotId);
+
+                                for (DmComplaintFileTable file : complaintFileTableList) {
+                                    captureProofArray.put(file.getOfisFileName());
+                                }
+                            }
+                            ans.put("captureProof", captureProofArray);
+
+                            answers.put(ans);
                         }
-
-                        ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
-                        ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
-
-                        List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
-                        complaintFileTableList.clear();
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0, plotId);
-
-                        JSONArray jsonArray = new JSONArray();
-                        for (int j = 0; j < complaintFileTableList.size(); j++) {
-                            jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
-                        }
-                        ans.put("captureProof", jsonArray);
-                        answers.put(ans);
                         hashMap.put("answers", answers);
                     }
-                }
 
                 List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
                 currenciesItems.clear();
@@ -6085,7 +6118,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
                         final String type = itemType.equalsIgnoreCase("Supplier Survey") ? "ASC" : "DM";
 
-                        List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId);
+                        List<Integer> questionIds = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId, false);
                         boolean isFileNotExists = false;
 
                         for (int k = 0; k < questionIds.size(); k++) {
@@ -6119,7 +6152,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             Log.d("question", String.valueOf(k));
                             okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
                                 @Override
-                                public void onResponse(Call call, Response postResponse) {
+                                public void onResponse(Call call, Response postResponse) throws IOException {
                                     if (postResponse.isSuccessful()) {
                                         for (int i = 0; i < ids.size(); i++) {
                                             db.dmComplaintFileTableDao().updateSyncData(ids.get(i), true);
@@ -6127,13 +6160,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         int fileSyncedCount = db.dmComplaintFileTableDao().getUnSyncedFiles(questionIds, farmerId, plotId);
                                         if (fileSyncedCount == 0) {
-                                            if (itemType.equalsIgnoreCase("DMSurvey")) {
-                                                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            } else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
-                                                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            } else {
-                                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                                            }
+                                            syncCapturedFileSignature(networkQueueItemId, handler, msg, total, progress, itemId, itemType);
                                         }
                                     } else {
                                         if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
@@ -6169,14 +6196,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         }
 
-                        if (!isFileNotExists) {
-                            if (itemType.equalsIgnoreCase("DMSurvey")) {
-                                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            } else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
-                                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            } else {
-                                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
-                            }
+                        if(!isFileNotExists) {
+                            syncCapturedFileSignature(networkQueueItemId, handler, msg, total, progress, itemId, itemType);
                         }
 
                     } catch (Exception e) {
@@ -6199,7 +6220,98 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
+    public void syncCapturedFileSignature(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId, final String itemType) throws IOException {
+
+        String farmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+        int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+        int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+
+        final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
+        List<Integer> signatureQuestionId = db.dmQuestionsModuleDao().getDmQuestionsByModuleId(moduleId, true);
+        boolean isSignatureExists = false;
+
+        List<String> filePaths = new ArrayList<>();
+        List<String> fileName = new ArrayList<>();
+        List<DmSurveyAnswerTable> dmSignatureAnswer = db.dmSurveyAnswerTableDao().getSignatureAnswerData(farmerId, signatureQuestionId, plotId, Constants.SIGNATURE);
+        if (!dmSignatureAnswer.isEmpty()) {
+            isSignatureExists = true;
+            for (int m = 0; m < dmSignatureAnswer.size(); m++) {
+                String signName = dmSignatureAnswer.get(m).answer;
+                File storageDir = context.getExternalFilesDir("");
+                File image = File.createTempFile(signName, ".png", storageDir);
+                filePaths.add(String.valueOf(image));
+                fileName.add(signName);
+            }
+
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            for (int i = 0; i < filePaths.size(); i++) {
+                File file = new File(filePaths.get(i));
+                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                builder.addFormDataPart("files", fileName.get(i), fileBody);
+            }
+            builder.addFormDataPart("type", "DM_SIG");
+            builder.addFormDataPart("enumId", Utilities.getFromSharedPrefs(context));
+
+            RequestBody requestBody = builder.build();
+            okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response postResponse) throws IOException {
+                    if (postResponse.isSuccessful()) {
+                        if(itemType.equalsIgnoreCase("DMSurvey")) {
+                            postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                        else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
+                            postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                        else {
+                            postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+                    } else {
+                        if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                            try {
+                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting dm signature");
+                            } catch (Exception e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            }
+                        } else {
+                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting dm signature");
+                            Log.d("Error in Upload Signature", postResponse.toString());
+                        }
+                    }
+                    postResponse.close();
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    try {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        if (e != null) {
+                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        }
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                    } catch (Exception onfailEx) {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                        onfailEx.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        if(!isSignatureExists) {
+            if(itemType.equalsIgnoreCase("DMSurvey")) {
+                postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+            else if (itemType.equalsIgnoreCase("FollowUpSurvey")) {
+                postFollowupSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+            else {
+                postSupplierSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
+            }
+        }
+    }
+        private void postStakeHolderData(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId) {
         long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
         if (!isConsentAvailableToSync) {
@@ -6453,17 +6565,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
             final String sessionId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
-            Cursor traineeAttendeeById = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+            Cursor traineeAttendeeById = dl.getFarmerStakeholderAttendeesByTrainingRecordId(trainingRecordId);
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
             final String endpoint = "ofistraining/signature/upload";
 
             List<String> attendeeSignature = new ArrayList<>();
             List<Long> ids = new ArrayList<>();
-            boolean isFileExists = false;
+            AtomicBoolean isFileExists = new AtomicBoolean(false);
             if (traineeAttendeeById.getCount() > 0) {
                 while (traineeAttendeeById.moveToNext()) {
-                    long farmerId = traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
-                    if (!dl.isFarmerSynced(farmerId)) {
+                    String farmerId = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
+                    String stakeholderId = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID));
+                    if (farmerId != null && !dl.isFarmerSynced(Long.parseLong(farmerId))) {
                         msg.what = 3;
                         msg.arg1 = total;
                         msg.arg2 = HomeActivity.progressItem = progress + 1;
@@ -6471,11 +6584,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         handler.dispatchMessage(msg);
                         return;
                     } else {
-                        String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
-                        if (signatures != null) {
-                            isFileExists = true;
-                            attendeeSignature.add(signatures);
-                            ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex("_id")));
+                        Runnable syncTrainingPhoto = () -> {
+                            String signatures = traineeAttendeeById.getString(traineeAttendeeById.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE));
+                            if (signatures != null) {
+                                isFileExists.set(true);
+                                attendeeSignature.add(signatures);
+                                ids.add(traineeAttendeeById.getLong(traineeAttendeeById.getColumnIndex("_id")));
+                            }
+                        };
+
+                        if (stakeholderId != null){
+                            MultiStakeHolder stakeHolder = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
+                            if (stakeHolder.synced == 0){
+                                msg.what = 11;
+                                msg.arg1 = total;
+                                msg.arg2 = progress;
+                                msg.obj = String.valueOf(res.getString(R.string.stakeholder_not_synced));
+                                handler.dispatchMessage(msg);
+                            } else {
+                                syncTrainingPhoto.run();
+                            }
+                        } else {
+                            syncTrainingPhoto.run();
                         }
                     }
                 }
@@ -6490,7 +6620,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
 
-                if (isFileExists) {
+                if (isFileExists.get()) {
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     for (int i = 0; i < attendeeSignature.size(); i++) {
                         String signNatureName = attendeeSignature.get(i);
@@ -6546,7 +6676,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
 
-            if (!isFileExists) {
+            if(!isFileExists.get()) {
                 postTrainingRecord(networkQueueItemId, handler, msg, total, progress, itemId);
             }
 

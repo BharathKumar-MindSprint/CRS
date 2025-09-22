@@ -1489,4 +1489,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="invalid_phonenumber">Invalid Phone Number!</string>
     <string name="no_national_id">No National Id Applicable!</string>
     <string name="no_phone_number">No Phone Number Applicable!</string>
+
+    <string name="stakeholder_attendee">Stakeholder Attendee</string>
+    <string name="max_age">Maximum 3 digits allowed.</string>
+    <string name="attendee_register_stakeholder">Adding the attendee here does not register the stakeholder in OFIS</string>
 </resources>

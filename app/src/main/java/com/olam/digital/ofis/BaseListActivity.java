@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.olam.digital.ofis.smartnotification.AllNotificationActivity;
 import com.olam.digital.ofis.smartnotification.NotificationActivity;
@@ -29,9 +32,12 @@ public class BaseListActivity extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Utilities.configureSystemUIAndroid15(this);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
     }
@@ -82,4 +88,33 @@ public class BaseListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        applyFitsSystemWindows();
+    }
+
+    private void applyFitsSystemWindows() {
+        ViewGroup root = findViewById(android.R.id.content);
+        if (root != null && root.getChildCount() > 0) {
+            View child = root.getChildAt(0);
+            if (child != null) {
+                child.setFitsSystemWindows(true);
+            }
+        }
+    }
+
 }

@@ -70,7 +70,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+            android:paddingBottom="5dp"
             android:paddingLeft="0dp"
             android:layout_marginTop="5dp"
             android:paddingRight="0dp">
@@ -104,10 +104,22 @@
                 android:layout_weight="1"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:nextFocusDown="@+id/spinner_stakeholder_role"
+                android:nextFocusForward="@+id/spinner_stakeholder_role"
                 />
 
         </LinearLayout>
         <!-- end business groups -->
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_stakeholder_role"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="5dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -132,7 +144,6 @@
                 android:textColor="@color/ofis_base_font_dark"
                     android:drawableRight="@drawable/ic_searchimg"
                     android:drawablePadding="@dimen/margin_10"
-                    android:padding="@dimen/margin_10"
                 android:hint="@string/Attendee_Name"
                 android:background="@drawable/edittext_bg_dark"/>
 

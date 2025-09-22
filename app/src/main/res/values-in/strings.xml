@@ -955,4 +955,8 @@
     <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
     <string name="Alert_txt">Peringatan !</string>
 
+    <string name="stakeholder_attendee">Peserta pemangku kepentingan</string>
+    <string name="max_age">Maksimal 3 digit diperbolehkan.</string>
+    <string name="attendee_register_stakeholder">Menambahkan peserta di sini tidak mendaftarkan pemangku kepentingan di OFIS</string>
+
 </resources>

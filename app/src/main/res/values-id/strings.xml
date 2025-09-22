@@ -955,4 +955,8 @@
     <string name="invalid_national_id">ID Nasional tidak valid!</string>
     <string name="invalid_phonenumber">Nomor telepon tidak valid!</string>
 
+    <string name="stakeholder_attendee">Peserta pemangku kepentingan</string>
+    <string name="max_age">Maksimal 3 digit diperbolehkan.</string>
+    <string name="attendee_register_stakeholder">Menambahkan peserta di sini tidak mendaftarkan pemangku kepentingan di OFIS</string>
+
 </resources>
