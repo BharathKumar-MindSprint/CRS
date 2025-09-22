@@ -902,8 +902,6 @@ class OFISDB extends SQLiteOpenHelper {
                 migrateFrom159To160(sqLiteDatabase);
                 migrateFrom160To161(sqLiteDatabase);
                 break;
-            case 160:
-                migrateFrom160To161(sqLiteDatabase);
 
             case 160:
                 migrateFrom160To161(sqLiteDatabase);
@@ -998,20 +996,15 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED +  " TEXT ");
+                       sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
+
         }catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void migrateFrom160To161(SQLiteDatabase sqLiteDatabase) {
-        try {
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }
 
