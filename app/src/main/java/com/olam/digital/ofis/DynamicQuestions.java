@@ -1323,7 +1323,7 @@ public class DynamicQuestions {
         }
 
         if (oldDatatype != null) {
-            if (oldDatatype.equals("File Upload")) {
+            if (oldDatatype.equals("Photo Upload")) {
                 datatype = "text";
             }
         }
@@ -1423,7 +1423,7 @@ public class DynamicQuestions {
         } else {
             questionWrapper.addView(rl);
             parentLayout.addView(questionWrapper);
-            viewReference.put(questionId, new Pair<>("fileupload", questionWrapper));
+            viewReference.put(questionId, new Pair<>("photoupload", questionWrapper));
         }
     }
 
@@ -6678,7 +6678,7 @@ public class DynamicQuestions {
                                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
                                             renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                             questionPresent = true;
-                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
+                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                             renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                             questionPresent = true;
                                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
@@ -6719,7 +6719,7 @@ public class DynamicQuestions {
                                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
                                                     renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                                     questionPresent = true;
-                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
+                                                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                                     renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                                     questionPresent = true;
                                                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
@@ -6802,7 +6802,7 @@ public class DynamicQuestions {
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("Yes/No")) {
                     repeaterQuestions = dl.getRepeaterItemsForQuestion1(question_id);
                     renderYesNoQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), parentid, null, res);
-                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
 
                     renderPhotoUploadQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, parentid, 0, null, res);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
@@ -8100,7 +8100,7 @@ public class DynamicQuestions {
                 tvLocation.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 tvLocation.setEnabled(true);
             }
-            case "fileupload" -> {
+            case "photoupload" -> {
                 ImageView ivPhotoUpload = view.findViewById(R.id.modulePhotoQuestion);
                 ivPhotoUpload.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.ic_menu_gallery));
                 String savedImagePath = (String) ivPhotoUpload.getTag();

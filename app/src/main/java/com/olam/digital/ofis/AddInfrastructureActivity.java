@@ -359,7 +359,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("farmtreedensity")) {
                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-            } else if (displayType.toLowerCase().replaceAll(" ","").equals("fileupload")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("photoupload")) {
                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             }
         }
