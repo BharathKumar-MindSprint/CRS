@@ -6,7 +6,6 @@ import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -63,7 +62,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
                 Sections.class, Places.class, Products.class, Farmer.class, DistributionFormEntity.class, DistributionCategory.class, DistributionGroup.class, DistributionItem.class
         },
         version = 20,
-        autoMigrations ={@AutoMigration(from =19, to=20, spec = OFISRoomDB.DeleteTable.class)}
+        autoMigrations ={@AutoMigration(from =19, to=20)}
 )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -118,13 +117,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DistributionCategoryDao distributionCategoryDao();
     public abstract DistributionGroupDao distributionGroupDao();
     public abstract DistributionItemDao distributionItemDao();
-
-
-    @androidx.room.DeleteTable.Entries({
-            @androidx.room.DeleteTable(tableName = "PolygonHistoryData"),
-            @androidx.room.DeleteTable(tableName = "PolygonPlotHistory")
-    })
-    static class DeleteTable implements AutoMigrationSpec { }
 
     public static volatile OFISRoomDB INSTANCE = null;
 
