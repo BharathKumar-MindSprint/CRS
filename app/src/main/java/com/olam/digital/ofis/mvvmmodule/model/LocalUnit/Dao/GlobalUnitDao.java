@@ -1,6 +1,5 @@
 package com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -8,9 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
-import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -37,6 +34,9 @@ public interface GlobalUnitDao {
 
     @Query("SELECT globalUnitId, globalAbbreviation FROM GlobalUnit WHERE globalUnitId = :targetGlobalUnitFk")
     List<GlobalUnitDao.UnitMapping> getGlobalId(int targetGlobalUnitFk);
+
+    @Query("SELECT * FROM GlobalUnit")
+    List<GlobalUnit> getGlobalUnits();
 
     class UnitMapping {
         public int globalUnitId;

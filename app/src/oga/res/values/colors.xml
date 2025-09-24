@@ -109,4 +109,6 @@
 
     <color name="radio_checkbox__color_tint">#2E2D2C</color>
     <color name="info_icon_msg_text">#FF3000</color>
+    <color name="light_orange">#FFFDFF</color>
+    <color name="cancel_border">#4a4949</color>
 </resources>

@@ -6,7 +6,6 @@ import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.migration.AutoMigrationSpec;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -18,6 +17,14 @@ import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierGroup;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierSubmittedModules;
 import com.olam.digital.ofis.agrisupplier.entity.SupplierType;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.dao.DistributionCategoryDao;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.dao.DistributionGroupDao;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.dao.DistributionItemDao;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionCategory;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.dao.DistributionFormDao;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionFormEntity;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionGroup;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionItem;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.dao.MultiStakeHolderDao;
 import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.Dao.PhotoCheckBoxDataDao;
@@ -52,10 +59,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
                 Children.class, CompletionCriteria.class, ConsentStatement.class, Country.class,CourseAssignment.class,
                 Courses.class,DataTypes.class,Districts.class,DownloadedSurveys.class,FarmerRelationship.class,
                 FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
-                Sections.class, Places.class, Products.class, Farmer.class,
+                Sections.class, Places.class, Products.class, Farmer.class, DistributionFormEntity.class, DistributionCategory.class, DistributionGroup.class, DistributionItem.class
         },
-        version = 19,
-        autoMigrations ={@AutoMigration(from =18, to=19, spec = OFISRoomDB.DeleteTable.class)}
+        version = 20,
+        autoMigrations ={@AutoMigration(from =19, to=20)}
 )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -106,12 +113,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract IProductsDao productsDao();
     public abstract ConditionalLogicDao conditionalLogicDao();
     public abstract ConditionalTypeDao conditionalTypeDao();
-
-    @androidx.room.DeleteTable.Entries({
-            @androidx.room.DeleteTable(tableName = "PolygonHistoryData"),
-            @androidx.room.DeleteTable(tableName = "PolygonPlotHistory")
-    })
-    static class DeleteTable implements AutoMigrationSpec { }
+    public abstract DistributionFormDao distributionFormDao();
+    public abstract DistributionCategoryDao distributionCategoryDao();
+    public abstract DistributionGroupDao distributionGroupDao();
+    public abstract DistributionItemDao distributionItemDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 

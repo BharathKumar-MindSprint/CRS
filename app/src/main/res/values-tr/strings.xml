@@ -810,19 +810,13 @@
     <string name="supplier_search_hint">Tedarikçi Adı veya Tedarikçi Kimliğine Göre Arama</string>
     <string name="spinner_supplier_group">Tedarikçi Grubu</string>
     <string name="supplier_group">Tedarikçi Grubu</string>
-
-
     <string name="farmer_code_already_exists">"Çiftçi kodu zaten var!"</string>
     <string name="farmer_code">"Çiftçi Kodu"</string>
-
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
-
     <string name="enter_attendee_relation_name">Lütfen katılımcının adını girin</string>
     <string name="sign_all_attendee">Tüm katılımcılar için imza gereklidir!</string>
-
-
     <string name="fill_phone_number">Lütfen birincil telefon numarasını girin</string>
     <string name="select_primary_phone_number">lütfen birincil telefon numarasını seçin</string>
     <string name="error_msg_phone_number">* Birincil telefon numarası zaten kullanılıyor. Lütfen farklı bir numara girin.</string>
@@ -856,11 +850,16 @@
     <string name="no_phone_number">Geçerli bir telefon numarası yok!</string>
     <string name="invalid_national_id">Geçersiz Ulusal Kimlik!</string>
     <string name="invalid_phonenumber">Geçersiz Telefon Numarası!</string>
-
     <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
     <string name="Alert_txt">Uyarı !</string>
 
     <string name="stakeholder_attendee">Paydaş Katılımcı</string>
     <string name="max_age">En fazla 3 rakam girilebilir.</string>
     <string name="attendee_register_stakeholder">Buradaki katılımcı, OFIS\'teki paydaşı kaydetmez</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="calculated_question_note_message">Not: Bu hesaplanan sorunun sonucu, soruya bağlıdır</string>
+    <string name="alert_review_hint_calculated">Lütfen hesaplanan değerin %.2f - %.2f aralığında olduğundan emin olun</string>
+    <string name="no_dependent_message">Not: Bu soru başka herhangi bir soruya bağlı değildir.</string>
+    <string name="alert_review_hint_calculated_decimal">Lütfen hesaplanan değerin %.2f - %.2f aralığında olduğundan emin olun</string>
+    <string name="profile_icon">Farmer Profile</string>
 </resources>

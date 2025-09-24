@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".distributionmodule.distribution_presentation.DistributionSummaryFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:background="@drawable/profile_background_distribution"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profilePhoto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/profile_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/profile_icon"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/name"
+            app:layout_constraintBottom_toTopOf="@+id/tvDisplayId"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profilePhoto"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDisplayId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/Olam_Farmer_ID"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profilePhoto"
+            app:layout_constraintTop_toBottomOf="@+id/tvName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvTitleDistributionCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/distribution_category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <Button
+        android:id="@+id/btnCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/btn_purple_background"
+        android:text="@string/input"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitleDistributionCategory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvTitleDistributionCategory" />
+
+    <TextView
+        android:id="@+id/tvTitleDistributionGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/distribution_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleDistributionCategory" />
+
+    <TextView
+        android:id="@+id/tvDistributionGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textSize="14sp"
+        android:textColor="@color/ofis_base_font_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitleDistributionGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvTitleDistributionGroup"
+        app:layout_constraintTop_toTopOf="@+id/tvTitleDistributionGroup" />
+
+    <TextView
+        android:id="@+id/tvTitleDistributionItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/distribution_item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleDistributionGroup" />
+
+    <TextView
+        android:id="@+id/tvDistributionItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textSize="14sp"
+        android:textColor="@color/ofis_base_font_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitleDistributionItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvTitleDistributionItem"
+        app:layout_constraintTop_toTopOf="@+id/tvTitleDistributionItem" />
+
+    <TextView
+        android:id="@+id/tvTitleTransaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/transaction_value"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleDistributionItem" />
+
+    <TextView
+        android:id="@+id/tvTransactionValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textSize="14sp"
+        android:textColor="@color/ofis_base_font_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitleTransaction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvTitleTransaction"
+        app:layout_constraintTop_toTopOf="@+id/tvTitleTransaction" />
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clPriceAndTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleTransaction">
+
+        <TextView
+            android:id="@+id/tvTitlePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/light_grey"
+            android:text="@string/price_per_units"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPricePerUnit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:textSize="14sp"
+            android:textColor="@color/ofis_base_font_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitlePrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvTitlePrice"
+            app:layout_constraintTop_toTopOf="@+id/tvTitlePrice" />
+
+        <TextView
+            android:id="@+id/tvTitleTotalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/light_grey"
+            android:text="@string/total_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitlePrice" />
+
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:textSize="14sp"
+            android:textColor="@color/ofis_base_font_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitleTotalAmount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvTitleTotalAmount"
+            app:layout_constraintTop_toTopOf="@+id/tvTitleTotalAmount" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvAttachedEvidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/attached_evidence"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clPriceAndTotal" />
+
+    <TextView
+        android:id="@+id/tvAttachedFileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textSize="14sp"
+        android:textColor="@color/ofis_base_font_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAttachedEvidence"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvAttachedEvidence"
+        app:layout_constraintTop_toTopOf="@+id/tvAttachedEvidence" />
+
+    <TextView
+        android:id="@+id/tvSignature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey"
+        android:text="@string/Signature"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAttachedEvidence" />
+
+    <ImageView
+        android:id="@+id/ivSignature"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSignature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvSignature"
+        tools:src="@tools:sample/avatars" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        android:elevation="7dp"
+        android:background="@drawable/layout_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/cancel_button_background"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/btnColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:padding="10dp"
+            android:background="@drawable/primary_next_button_background"
+            android:text="@string/confirm_and_submit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

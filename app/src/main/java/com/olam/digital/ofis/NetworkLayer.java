@@ -31,6 +31,7 @@ import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionFormEntity;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
@@ -722,6 +723,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postStakeHolderData(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equals("Supplier Survey")) {
             syncCapturedFileData(networkQueueItemId, handler, msg, total, progress, itemId, "Supplier Survey");
+        } else if (itemType.equals("Distribution Form")) {
+            syncDistributionFile(networkQueueItemId, handler, msg, total, progress, itemId, Utilities.DISTRIBUTION);
         }
     }
 
@@ -1248,7 +1251,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         datatype = "int";
                                                     }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
                                                             dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload")
-                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
+                                                            || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("calculated")){
                                                         datatype = "text";
                                                     } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
                                                         datatype = moduleAnswers[0].getString(moduleAnswers[0].getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
@@ -3472,72 +3475,74 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         try {
                             String statusMessage;
 
-                            if (postResponse.isSuccessful()) {
-                                JSONArray jsonResponse = new JSONArray(postResponse.body().string());
-                                JSONObject jsonObject1 = jsonResponse.getJSONObject(0);
-                                String errorCode = jsonObject1.getString("errorCode");
+                                if (postResponse.isSuccessful()) {
+                                    JSONArray jsonResponse = new JSONArray(postResponse.body().string());
+                                    JSONObject jsonObject1 = jsonResponse.getJSONObject(0);
+                                    String errorCode = jsonObject1.getString("errorCode");
 
-                                if (errorCode.equalsIgnoreCase("OFIS_3042")) {
-                                    postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
-                                } else {dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
-                                    dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
-                                    String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
+                                    if (errorCode.equalsIgnoreCase("OFIS_3042")) {
+                                        postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+                                    } else {
+                                        dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
+                                        dl.updateSyncedStatusPlot(localFarmerId, jsonObject1.getInt("id"));
+                                        String complainceFlag = String.valueOf(jsonObject1.getBoolean("complianceFlag"));
 
-                                    // update multiStakeholder table
-                                    db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
+                                        // update multiStakeholder table
+                                        db.multiStakeHolderDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), jsonObject1.getString("farmHoldingCode"));
+                                        db.distributionFormDao().updateFarmerIdInDistribution(localFarmerId, jsonObject1.getInt("id"));
 
-                                    dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
+                                        dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
 
-                                    // DM farmerId udpate
-                                    db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
-                                    db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        // DM farmerId udpate
+                                        db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmComplaintFileTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                        db.dmActionPlanCurrenciesTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
 
-                                    dl.deleteNetworkQueueItem(networkQueueItemId);
-                                    initGPSSync();
-                                    statusMessage = res.getString(R.string.item_synced);
-                                    msg.what = 1;
-                                    msg.arg1 = total;
-                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                    msg.obj = statusMessage;
-                                    handler.dispatchMessage(msg);
-                                    // update the cursor if this is part of a multi-sync
-                                    if (originalSyncRequestItemId == null) {
-                                        getNetworkQueue(null);
-                                    }
-                                    syncNetworkQueue(originalSyncRequestItemId, handler);
-                                }
-                            } else {
-                                long server_item_id = 0, fully_synced = 0;
-                                JSONObject errorObject = new JSONObject(postResponse.body().string());
-                                if (postResponse.code() == 401) {
-                                    FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
-                                } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 2015) {
-                                    dl.updateDuplicateFarmerCode(localFarmerId);
-                                    String errorMsg = errorObject.optString("message", "Farmer code already exists.");
-                                    handler.postDelayed(() -> {
-                                        popupMsgInfo(errorMsg);
-                                        return;
-                                    }, 500);
-                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "Farmer Code");
-                                } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5047) {
-                                    dl.updateDuplicateStatusOfPhoneNumber(localFarmerId);
-                                    String errorMsg = errorObject.optString("message", "Duplicate Primary Phone Number");
-                                    handler.postDelayed(() -> {
-                                        popupMsgInfo(errorMsg);
-                                        return;
-                                    }, 500);
-                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register phone number");
-                                } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5048) {
-                                    if (errorObject.has("duplicateNationalIds")) {
-                                        JSONArray duplicateNationalIds = errorObject.getJSONArray("duplicateNationalIds");
-                                        for (int i = 0; i < duplicateNationalIds.length(); i++) {
-                                            JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
-                                            String typeId = duplicate.getString("typeId");
-                                            dl.updateDuplicateStatusOfNationalId(localFarmerId, typeId);
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
+                                        initGPSSync();
+                                        statusMessage = res.getString(R.string.item_synced);
+                                        msg.what = 1;
+                                        msg.arg1 = total;
+                                        msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                        msg.obj = statusMessage;
+                                        handler.dispatchMessage(msg);
+                                        // update the cursor if this is part of a multi-sync
+                                        if (originalSyncRequestItemId == null) {
+                                            getNetworkQueue(null);
                                         }
+                                        syncNetworkQueue(originalSyncRequestItemId, handler);
                                     }
+                                } else {
+                                    long server_item_id = 0, fully_synced = 0;
+                                    JSONObject errorObject = new JSONObject(postResponse.body().string());
+                                    if (postResponse.code() == 401) {
+                                        FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
+                                    } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 2015) {
+                                        dl.updateDuplicateFarmerCode(localFarmerId);
+                                        String errorMsg = errorObject.optString("message", "Farmer code already exists.");
+                                        handler.postDelayed(() -> {
+                                            popupMsgInfo(errorMsg);
+                                            return;
+                                        }, 500);
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "Farmer Code");
+                                    } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5047) {
+                                        dl.updateDuplicateStatusOfPhoneNumber(localFarmerId);
+                                        String errorMsg = errorObject.optString("message", "Duplicate Primary Phone Number");
+                                        handler.postDelayed(() -> {
+                                            popupMsgInfo(errorMsg);
+                                            return;
+                                        }, 500);
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register phone number");
+                                    } else if (postResponse.code() == 400 && errorObject.has("errorCode") && errorObject.getInt("errorCode") == 5048) {
+                                        if (errorObject.has("duplicateNationalIds")) {
+                                            JSONArray duplicateNationalIds = errorObject.getJSONArray("duplicateNationalIds");
+                                            for (int i = 0; i < duplicateNationalIds.length(); i++) {
+                                                JSONObject duplicate = duplicateNationalIds.getJSONObject(i);
+                                                String typeId = duplicate.getString("typeId");
+                                                dl.updateDuplicateStatusOfNationalId(localFarmerId, typeId);
+                                            }
+                                        }
 
                                         String errorMsg = errorObject.optString("message", "Duplicate National Id");
                                         handler.postDelayed(() -> {
@@ -3547,15 +3552,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "register national id");
                                     } else {
 
-                                    if (errorObject != null) {
-                                        server_item_id = errorObject.optLong("id", 0);
-                                        fully_synced = errorObject.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        if (errorObject != null) {
+                                            server_item_id = errorObject.optLong("id", 0);
+                                            fully_synced = errorObject.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "submitting farmer");
+                                        FirebaseCrash.report(new Exception(errorObject.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                     }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, errorObject, msg, 2, total, progress, null, "submitting farmer");
-                                    FirebaseCrash.report(new Exception(errorObject.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                 }
-                            }
                             postResponse.close();
                         } catch (JSONException | IOException e) {
                             recordFailedUpload(0, 0, networkQueueItemId);
@@ -4192,20 +4197,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             JSONArray msStakeHolders = jsonResponse.getJSONArray("msStakeHolders");
                                             JSONObject stakeholder = msStakeHolders.getJSONObject(0);
 
-                                            if (errorCode.equalsIgnoreCase("5045")) {
-                                                postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
-                                            } else {
-                                                dl.updateSyncedStatusFixedMs(localFarmerId, stakeholder.getInt("msId"));
-                                                dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getString("olamMultiStakeHolderId"));
-                                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                                dl.updateNqAndAnswerForStakeHolderModule(localFarmerId, stakeholder.getInt("msId"));
-                                                initGPSSync();
-                                                statusMessage = res.getString(R.string.item_synced);
-                                                msg.what = 1;
-                                                msg.arg1 = total;
-                                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                                msg.obj = statusMessage;
-                                                handler.dispatchMessage(msg);
+                                                if (errorCode.equalsIgnoreCase("5045")) {
+                                                    postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+                                                } else {
+                                                    dl.updateSyncedStatusFixedMs(localFarmerId, stakeholder.getInt("msId"));
+                                                    dl.markFarmerAsSyncedMs(localFarmerId, stakeholder.getLong("msId"), stakeholder.getString("farmId"), stakeholder.getString("olamMultiStakeHolderId"));
+                                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                    dl.updateNqAndAnswerForStakeHolderModule(localFarmerId, stakeholder.getInt("msId"));
+                                                    db.distributionFormDao().updateStakeHolderInDistribution(stakeholder.getLong("msId"), localFarmerId);
+                                                    initGPSSync();
+                                                    statusMessage = res.getString(R.string.item_synced);
+                                                    msg.what = 1;
+                                                    msg.arg1 = total;
+                                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                                    msg.obj = statusMessage;
+                                                    handler.dispatchMessage(msg);
 
                                                 // update the cursor if this is part of a multi-sync
                                                 if (originalSyncRequestItemId == null) {
@@ -6930,5 +6936,213 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
 //        } while (cursor.moveToNext());
 //        cursor.close();
+    }
+
+    private void syncDistributionFile(int networkQueueItemId, Handler handler, Message msg, int total, int progress, Integer itemId, String distribution) {
+        try {
+            long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            String tempId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
+            long msId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
+
+            boolean isFarmerSyncPending = !dl.isFarmerSynced(farmerId);
+            MultiStakeHolder stakeHolder = db.multiStakeHolderDao().getStakeHolderById(msId);
+            String storageDir = String.valueOf(context.getExternalFilesDir(""));
+
+            if (isFarmerSyncPending || (stakeHolder != null && stakeHolder.synced == 0)) {
+                msg.what = isFarmerSyncPending ? 3 : 11;
+                msg.arg1 = total;
+                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                msg.obj = isFarmerSyncPending ? res.getString(R.string.farmer_not_synced) : res.getString(R.string.stakeholder_not_synced);
+                handler.dispatchMessage(msg);
+            } else {
+                boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
+                final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
+                if (!isConsentAvailableToSync) {
+                    Boolean isMandateSurveySynced = getIsMandateSurveySynced(farmerId, 0);
+                    if (isMandateSurveySynced) {
+                        DistributionFormEntity distributionFormEntity = db.distributionFormDao().getDistributionFormByTempId(tempId, "false");
+                        List<String> fileName = new ArrayList<>();
+                        boolean isFileExists = false;
+
+                        if (!distributionFormEntity.getSignatureUrl().isEmpty()) {
+                            fileName.add(distributionFormEntity.getSignatureUrl());
+                        }
+
+                        if (!distributionFormEntity.getEvidenceUrl().isEmpty()) {
+                            fileName.add(distributionFormEntity.getEvidenceUrl());
+                        }
+
+                        if (!fileName.isEmpty()) {
+                            isFileExists = true;
+                            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                            for (int i = 0; i < fileName.size(); i++) {
+                                String photoName = fileName.get(i);
+                                File file = new File(storageDir + "/" + photoName);
+                                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                                builder.addFormDataPart("files", getFileName(photoName, distributionFormEntity.getFarmerId(), distributionFormEntity.getStakeHolderId()), fileBody);
+                            }
+
+                            builder.addFormDataPart("type", Utilities.DISTRIBUTION);
+                            RequestBody requestBody = builder.build();
+                            okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
+                                @Override
+                                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                    if (response.isSuccessful()) {
+                                        Log.d("Response_Upload", response.toString());
+                                        db.distributionFormDao().updateFileSyncStatus(tempId);
+                                        postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
+                                    } else {
+                                        if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                                            try {
+                                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting survey photo");
+                                            } catch (Exception e) {
+                                                FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                            }
+                                            Log.d("UPLOAD_FILE_FAILURE", "1");
+                                        } else {
+                                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey photo");
+                                            Log.d("Error in Upload Docs", response.toString());
+                                        }
+                                    }
+                                    response.close();
+                                }
+
+                                @Override
+                                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                                    Log.d("UPLOAD_FILE_FAILURE", e.toString());
+                                    try {
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        if (e != null) {
+                                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                        }
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                    } catch (Exception onfailEx) {
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                        onfailEx.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+
+                        if(!isFileExists) {
+                            postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
+                        }
+
+                    } else {
+                        msg.what = 8;
+                        msg.arg1 = total;
+                        msg.arg2 = progress;
+                        msg.obj = res.getString(R.string.mandate_survey_not_synced);
+                        handler.dispatchMessage(msg);
+                    }
+                } else {
+                    msg.what = 10;
+                    msg.arg1 = total;
+                    msg.arg2 = progress;
+                    msg.obj = res.getString(R.string.consent_not_synced);
+                    handler.dispatchMessage(msg);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void postDistributionForm(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer itemId) {
+        try {
+            String tempId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
+
+            DistributionFormEntity distributionFormEntity = db.distributionFormDao().getDistributionFormByTempId(tempId, "true");
+            String farmerId = distributionFormEntity.getFarmerId();
+            String stakeHolderId = distributionFormEntity.getStakeHolderId();
+
+            JSONObject hashMap = new JSONObject();
+            hashMap.put("categoryId", distributionFormEntity.getDistributionCategoryId());
+            hashMap.put("groupId", distributionFormEntity.getDistributionGroupId());
+            hashMap.put("itemId", distributionFormEntity.getDistributionItemId());
+            hashMap.put("transactionValue", distributionFormEntity.getTransactionValue());
+            hashMap.put("localUnitId", distributionFormEntity.getLocalUnitId());
+            hashMap.put("globalUnitId", distributionFormEntity.getCurrencyId());
+            hashMap.put("pricePerUnit", distributionFormEntity.getPrice());
+            hashMap.put("totalAmount", distributionFormEntity.getTotalAmount());
+            hashMap.put("farmerId", farmerId);
+            hashMap.put("stakeholderId", stakeHolderId);
+            hashMap.put("evidence", getFileName(distributionFormEntity.getEvidenceUrl(), farmerId, stakeHolderId));
+            hashMap.put("signature", getFileName(distributionFormEntity.getSignatureUrl(), farmerId, stakeHolderId));
+
+            okHttpPost(context, IAPIConstants.SAVE_DISTRIBUTION_FORM, hashMap, new Callback() {
+
+                @Override
+                public void onResponse(Call call, Response postResponse) throws IOException {
+                    if (postResponse.isSuccessful()) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(postResponse.body().string());
+                            String distributionId = jsonObject.optString("id", "0");
+                            db.distributionFormDao().updateSyncStatusForDistributionForm(distributionId, tempId);
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            String statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(itemId, handler);
+                        } catch (Exception e) {
+                            updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting distribution form");
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting distribution form");
+                            }
+                            else {
+                                JSONObject jsonObject = new JSONObject(postResponse.body().string());
+                                String errorCode = jsonObject.optString("errorCode", "");
+                                String errorItem = jsonObject.optString("message", "");
+                                if (errorCode.equals("1001")) {
+                                    msg.obj = errorItem;
+                                }
+                                updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting distribution form");
+                            }
+                        } catch (JSONException | IOException e) {
+                            updateErrorResponse(networkQueueItemId, handler, msg, total, progress, " submitting distribution form");
+                        }
+                    }
+                    postResponse.close();
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    try {
+                        recordFailedUpload(0, 0, networkQueueItemId);
+                        String failureMessage = res.getString(R.string.networking_error);
+                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting Distribution Form");
+                    } catch (Exception onFailEx) {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting Distribution Form");
+                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                        onFailEx.printStackTrace();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getFileName(String fileNamePrefix, String farmerId, String stakeHolderId) {
+        String[] fileName = fileNamePrefix.split("_");
+        if (fileName.length < 3) {
+            return "";
+        }
+
+        String id = stakeHolderId != null ? stakeHolderId : farmerId;
+        String entityName = stakeHolderId == null ? "farmer" : "stakeholder";
+        return fileName[0] + "_" + fileName[1] + "_" + entityName + "_" + id + "_" + fileName[2];
     }
 }

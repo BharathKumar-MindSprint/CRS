@@ -920,14 +920,9 @@
     <string name="invalid_format">Invalid format</string>
     <string name="cannot_have_consecutive_special_character">Cannot have consecutive special characters</string>
     <string name="example_format">Example Format </string>
-
-
     <string name="no_signature_available">Assinatura não disponível</string>
-
     <string name="enter_attendee_relation_name">Por favor, insira o nome do participante</string>
     <string name="sign_all_attendee">Assinatura necessária para todos os participantes!</string>
-
-
     <string name="fill_phone_number">Por favor, preencha o número de telefone principal</string>
     <string name="select_primary_phone_number">por favor selecione o número de telefone principal</string>
     <string name="error_msg_phone_number">* O número de telefone principal já está em uso. Por favor, insira um número diferente.</string>
@@ -963,10 +958,14 @@
     <string name="invalid_phonenumber">Número de telefone inválido!</string>
     <string name="Please_check_the_Internet_Connection">Por favor, verifique a conexão com a Internet</string>
     <string name="Alert_txt">Alerta!</string>
-
+    <string name="calculated_question_note_message">Nota: O resultado desta pergunta calculada depende da pergunta</string>
+    <string name="alert_review_hint_calculated">Certifique-se de que o valor calculado esteja dentro do intervalo de %.2f a %.2f</string>
+    <string name="no_dependent_message">Nota: Esta pergunta não depende de nenhuma outra pergunta.</string>
+    <string name="alert_review_hint_calculated_decimal">Certifique-se de que o valor calculado esteja dentro do intervalo de %.2f a %.2f</string>
     <string name="stakeholder_attendee">Participante interessado</string>
     <string name="max_age">Máximo de 3 dígitos permitidos.</string>
     <string name="attendee_register_stakeholder">Adicionar o participante aqui não registra o interessado no OFIS</string>
-
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>
 </resources>
 

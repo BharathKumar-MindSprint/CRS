@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by bengallienne on 29/11/14. - update
  * Describes and creates / updates all the tables the app needs in the SQLite database
  */
-class OFISDB extends SQLiteOpenHelper {
+public class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
     private static final int DATABASE_VERSION = 161;
@@ -353,7 +353,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT )";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT )";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -897,16 +898,16 @@ class OFISDB extends SQLiteOpenHelper {
         switch(oldVersion){
             case 158:
                 migrateFromVersion158To159(sqLiteDatabase);
+                migrateFrom159To160(sqLiteDatabase);
+                migrateFrom160To161(sqLiteDatabase);
                 break;
             case 159:
                 migrateFrom159To160(sqLiteDatabase);
                 migrateFrom160To161(sqLiteDatabase);
                 break;
-
             case 160:
                 migrateFrom160To161(sqLiteDatabase);
                 break;
-
             default:
                 migrateFromVersionBelow157(sqLiteDatabase);
                 migrateFromVersion158To159(sqLiteDatabase);
@@ -996,10 +997,10 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED +  " TEXT ");
-                       sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
-
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT ");
         }catch (SQLException e) {
             e.printStackTrace();
         }

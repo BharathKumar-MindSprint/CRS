@@ -4122,8 +4122,8 @@ public class DataLayer {
     public Cursor getQuestionsBySubModuleId(int id) {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
-        String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
+        String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " != ?";
+        String[] whereArgs = new String[]{String.valueOf(id), "Repeater Item"};
         String columnPosition = OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION;
 
         String sortOrder = "CASE " +
@@ -4198,6 +4198,7 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
@@ -4210,21 +4211,23 @@ public class DataLayer {
         String sql = "SELECT " + columns + " FROM " + questionTable + " LEFT OUTER JOIN " + answerTable
                 + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " AND "
                 + farmerQuery + " AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
-                + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? GROUP BY "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY " + sortOrder;
+                + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " != ? " +
+                " GROUP BY " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " ORDER BY " + sortOrder;
 
         String[] whereArgs;
         if (stakeholderId == null) {
             whereArgs = new String[]{
                     farmerQueryValue,
                     String.valueOf(farmerModuleId),
-                    String.valueOf(submoduleId)
+                    String.valueOf(submoduleId),
+                    "Repeater Item"
             };
         } else {
             whereArgs = new String[]{
                     farmerQueryValue, stakeholderId,
                     String.valueOf(farmerModuleId),
-                    String.valueOf(submoduleId)
+                    String.valueOf(submoduleId),
+                    "Repeater Item"
             };
         }
 
@@ -4941,6 +4944,7 @@ public class DataLayer {
 
                 // update any saved phone numbers
                 db.update(OFISDBContract.PhoneNumber.TABLE_NAME, stakeHolderIdValue, OFISDBContract.PhoneNumber.COLUMN_NAME_MULTI_STAKEHOLDER_ID + " = ?", whereArgs);
+                stakeHolderIdValue.clear();
 
 
                 // Update the photo and photo data in storage for training
@@ -4974,6 +4978,8 @@ public class DataLayer {
                 db.update(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, stakeHolderIdValueTraining, OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
 
                 // update any network queue items
+                stakeHolderIdValue.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID, msId);
+                stakeHolderIdValue.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                 db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, stakeHolderIdValue, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID + " = ?", whereArgs);
             }
 
