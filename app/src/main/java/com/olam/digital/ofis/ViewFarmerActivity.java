@@ -2245,8 +2245,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         String phoneNumberValue = String.valueOf(phoneNumber.getText());
 
                         if(!phoneNumberValue.isEmpty() && !isdeleted){
-                            int count = dl.getDuplicateFarmerNumber(phoneNumberValue);
-                            if(count > 1){
+                            int count = dl.getDuplicateFarmerNumber(phoneNumberValue,farmerId);
+                            if(count >= 1){
                                 hasDuplicatePhoneNumber = true;
                             }
                         }

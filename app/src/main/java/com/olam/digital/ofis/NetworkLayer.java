@@ -5432,6 +5432,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                     }
                                                 }
 
+
+
                                                 String errorMsg = response.optString("message", "Duplicate National Id");
                                                 handler.postDelayed(() -> {
                                                     popupMsgInfo(errorMsg);
@@ -6822,6 +6824,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
 
                                         String errorMessage = response.getString("message");
+
                                       //  JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
                                         String errorCode = response.getString("errorCode");
                                         //int typeID = 0;
