@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="16dp"
+    tools:context=".FindFarmerAndStakeHolderFragment">
+
+    <Button
+        android:id="@+id/btnFarmer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="@string/primary_farmer"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toStartOf="@+id/btnStakeHolder"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnStakeHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="@string/Stakeholders"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnFarmer"
+        app:layout_constraintTop_toTopOf="@+id/btnFarmer" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/btnColorPrimary"
+        app:layout_constraintEnd_toStartOf="@+id/view6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnFarmer" />
+
+    <View
+        android:id="@+id/view6"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_marginEnd="8dp"
+        android:background="#C7C7C7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/view5"
+        app:layout_constraintTop_toBottomOf="@+id/btnStakeHolder" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnFarmer"
+        app:layout_constraintBottom_toTopOf="@+id/llSearchBar">
+
+        <com.olam.digital.ofis.MultiSpinnerSearch
+            android:id="@+id/spinner_farmer_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:dropDownWidth="300dp"
+            android:minHeight="40dp"
+            android:paddingVertical="5dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:hintText="@string/spinner_farmergroup_view_farmer" />
+
+        <com.olam.digital.ofis.MultiSpinnerSearch
+            android:id="@+id/spinner_section"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="0.5"
+            android:dropDownWidth="300dp"
+            android:focusable="true"
+            android:minHeight="40dp"
+            android:paddingVertical="5dp"
+            android:focusableInTouchMode="true"
+            app:hintText="@string/spinner_section_view_farmer" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llSearchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Spinner
+            android:id="@+id/spinner_role"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.5"
+            android:focusable="true"
+            android:visibility="gone"
+            android:focusableInTouchMode="true"
+            android:nextFocusDown="@+id/spinner_section"
+            android:nextFocusForward="@+id/spinner_section"
+            />
+
+        <EditText
+            android:id="@+id/findFarmerSearchBox"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/edittext_bg_light"
+            android:drawableRight="@drawable/ic_searchimg"
+            android:drawablePadding="@dimen/margin_10"
+            android:hint="@string/farmer_search_hint"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_weight="1"
+            android:scrollHorizontally="true"
+            android:inputType="textCapWords"
+            android:padding="@dimen/margin_10"
+            android:textColor="@color/ofis_base_font_dark"
+            android:textColorHint="@color/icon_grey_palette_2"
+            android:textSize="@dimen/ofis_input_field_text"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvListName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/btn_secondary_background"
+        android:text="@string/primary_farmers_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llSearchBar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFarmerAndStakeHolder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvListName"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvNoFarmerFound"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/farmer_not_found"
+        android:textStyle="bold"
+        android:textColor="@color/btn_primary_disabled"
+        android:textSize="@dimen/ofis_xlarge_pad"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvListName"
+        app:layout_constraintVertical_bias="0.0"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -88,6 +88,7 @@ public class Utilities {
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
     public static final String IS_SUPPLIER_ENABLED = "isEnableSupplierModule";
+    public static final String IS_DISTRIBUTION_MODULE_ENABLED = "isDistributionModuleEnabled";
 
     public  static  long farmerId;
     public  static  String stakeholderId;
@@ -157,6 +158,8 @@ public class Utilities {
     public static final String CHILD_LABOUR_ACTIVITY = "ChildLabourCompleteModuleActivity";
     public static final String CLMRS = "CLMRS";
     public static final String QWR = "QWR";
+    public static final String DISTRIBUTION = "distribution";
+
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
     public static final String FLMRS = "FLMRS";
@@ -1208,6 +1211,14 @@ public  static String base64ConversionForImage(String filepath)  {
         }
         return null;
     };
+
+    public static double roundArea(double value, int places) {
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
     public static void configureSystemUIAndroid15(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), true);

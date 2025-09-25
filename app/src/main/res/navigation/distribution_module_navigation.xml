@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/distributionModuleNavigation"
+    app:startDestination="@id/findFarmerAndStakeHolder">
+
+    <fragment
+        android:id="@+id/findFarmerAndStakeHolder"
+        android:name="com.olam.digital.ofis.distributionmodule.distribution_presentation.FindFarmerAndStakeHolderFragment">
+        <action
+            android:id="@+id/find_farmer_and_stake_holder_to_input_or_finance_distribution"
+            app:destination="@id/inputOrFinanceDistribution" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/inputOrFinanceDistribution"
+        android:name="com.olam.digital.ofis.distributionmodule.distribution_presentation.InputOrFinanceDistributionFragment">
+        <action
+            android:id="@+id/input_or_finance_distribution_to_distribution_summary_fragment"
+            app:destination="@id/distributionSummaryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/distributionSummaryFragment"
+        android:name="com.olam.digital.ofis.distributionmodule.distribution_presentation.DistributionSummaryFragment"
+        android:label="fragment_distribution_summary"
+        tools:layout="@layout/fragment_distribution_summary" />
+
+
+</navigation>

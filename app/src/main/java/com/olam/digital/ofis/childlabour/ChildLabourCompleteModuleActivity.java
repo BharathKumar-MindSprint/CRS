@@ -87,6 +87,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -341,6 +342,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         DynamicQuestions.getInstance().context = context;
         DynamicQuestions.getInstance().updatingHundredPercent = false;
         DynamicQuestions.getInstance().questionColumnSuffix = Utilities.getLocaleSuffix(res);
+        DynamicQuestions.getInstance().questionNumbers = new HashMap<>();
     }
 
     private void setupFooter() {
@@ -572,6 +574,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     // method to setup submodule questions
     private void setupSubModuleQuestions() {
+        int questionNumber = 0;
         if(questions != null && questions.moveToFirst()) {
             do {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
@@ -582,28 +585,40 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
                 if (questionAssignmentField.equals("[]") || questionAssignmentField.equals("null")) {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId,null, farmerModuleId, false, false, -1, null, 0);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
                     } else if (displayType.replaceAll("", "").toLowerCase().equals("signature")) {
+                        dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                         renderSignatureQuestion(questions, false, dynamicQuestions.questionsSection, 0, 0, null);
                     }
 
@@ -622,28 +637,40 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         String farmerAssignmentFieldQuestion = dl.getAssignmentByFarmerTypeID(farmerId, getColumnName(questionAssignmentType));
                         if (String.valueOf(fieldMultipleAssignmentQuestion).equals(farmerAssignmentFieldQuestion)) {
                             if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId,null, farmerModuleId, false, false, -1, null, 0);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderRepeaterQuestion(questions, farmerId, null, olamFarmerId, farmerModuleId, res, false);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("fileupload")) {
+                            } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                             } else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, null, farmerModuleId, false, -1, null, 0);
                             } else if (displayType.replaceAll("", "").toLowerCase().equals("signature")) {
+                                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                                 renderSignatureQuestion(questions, false, dynamicQuestions.questionsSection, 0, 0, null);
                             }
                         }

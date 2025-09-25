@@ -1111,10 +1111,15 @@
     <string name="no_phone_number">ບໍ່ມີເບີໂທທີ່ໃຊ້ໄດ້!</string>
     <string name="invalid_national_id">ເລກປະຈຳຕົວບໍ່ຖືກຕ້ອງ!</string>
     <string name="invalid_phonenumber">ເບີໂທລະສັບບໍ່ຖືກຕ້ອງ!</string>
-
+    <string name="calculated_question_note_message">ໝາຍເຫດ: ຜົນລັບຂອງຄຳຖາມທີ່ຄຳນວນນີ້ຂຶ້ນກັບຄຳຖາມ</string>
+    <string name="alert_review_hint_calculated">ກະລຸນາໃຫ້ແນ່ໃຈວ່າຄ່າທີ່ຄຳນວນຢູ່ໃນຊ່ວງ %.2f - %.2f</string>
+    <string name="no_dependent_message">ໝາຍເຫດ: ຄຳຖາມນີ້ບໍ່ຂຶ້ນກັບຄຳຖາມໃດໆ</string>
+    <string name="alert_review_hint_calculated_decimal">ກະລຸນາໃຫ້ແນ່ໃຈວ່າຄ່າທີ່ຄຳນວນຢູ່ໃນຊ່ວງ %.2f - %.2f</string>
     <string name="stakeholder_attendee">ຜູ້ເຂົ້າຮ່ວມທີ່ມີສ່ວນຮ່ວມ</string>
     <string name="max_age">ອະນຸຍາດໃຫ້ໃຊ້ໄດ້ສູງສຸດ 3 ຕົວເລກ.</string>
-    <string name="attendee_register_stakeholder">ການເພີ່ມຜູ້ມີສ່ວນຮ່ວມທີ່ນີ້ບໍ່ລົງທະບຽນຜູ້ມີສ່ວນທຸລະກິດໃນ OFIS</string>\
+    <string name="attendee_register_stakeholder">ການເພີ່ມຜູ້ມີສ່ວນຮ່ວມທີ່ນີ້ບໍ່ລົງທະບຽນຜູ້ມີສ່ວນທຸລະກິດໃນ OFIS</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>\
 </resources>
 
 

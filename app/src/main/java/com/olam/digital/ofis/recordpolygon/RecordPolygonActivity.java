@@ -134,6 +134,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+import static com.olam.digital.ofis.Utilities.roundArea;
 
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
@@ -2359,12 +2360,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return lTotalArea;
     }
 
-    public static double roundArea(double value, int places) {
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
-    }
+
 
     private void getFarmLocation(double farmLatitude, double farmLongitude) {
         GeoPoint farmLocation = new GeoPoint(farmLatitude, farmLongitude);
