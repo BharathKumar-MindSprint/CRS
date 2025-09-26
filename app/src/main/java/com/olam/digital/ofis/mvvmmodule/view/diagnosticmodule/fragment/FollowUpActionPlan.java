@@ -2395,9 +2395,6 @@ public class FollowUpActionPlan extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkPermission();
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
