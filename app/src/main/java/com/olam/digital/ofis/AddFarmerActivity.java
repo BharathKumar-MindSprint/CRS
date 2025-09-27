@@ -2381,12 +2381,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
                         new GpsTrackerLogic().updateFarmerDetails(context, editFarmerId, farmerNameValue, genderValue);
                         // dl.updateFarmerPhoneNumbers(editFarmerId, null, storeableNumbers, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
-                        if (isNIDAvailable) {
-                            boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
-                            if (moduretationstatus) {
-                                statusmoduration = true;
-                            }
-                        }
+//                        if (isNIDAvailable) {
+//                            boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
+//                            if (moduretationstatus) {
+//                                statusmoduration = true;
+//                            }
+//                        }
 
                         Cursor existingItem = dl.getFlattenedFarmer(editFarmerId);
                         if (existingItem.getCount() > 0 && (editFarmerMode || isHome)) {
