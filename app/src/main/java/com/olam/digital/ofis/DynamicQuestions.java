@@ -3538,6 +3538,7 @@ public class DynamicQuestions {
                                        Spanned dest, int dstart, int dend) {
                 try {
                     String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+                    resultingText = resultingText.replaceAll(",", ".");
                     boolean addingDecimalPoint = source.toString().equals(".") && !dest.toString().contains(".");
 
                     // Check for exceeding decimal limit
@@ -3565,12 +3566,11 @@ public class DynamicQuestions {
                         @Override
                         public void afterTextChanged(Editable s) {
                             String input = editText.getText().toString();
+                            input = input.replaceAll(",", ".");
 
                             if (input.isEmpty() || input.equals(".")) {
                                 return;
                             }
-
-
 
                             double number = Double.parseDouble(input);
                             double vr_min = rangeArray.optDouble("vr_min");
@@ -3667,6 +3667,7 @@ public class DynamicQuestions {
                                        Spanned dest, int dstart, int dend) {
                 try {
                     String resultingText = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+                    resultingText = resultingText.replaceAll(",", ".");
 
                     if (resultingText.equals("-") && minValue < 0) {
                         editText.setError("Please enter a valid number.");
@@ -3701,6 +3702,7 @@ public class DynamicQuestions {
                         @Override
                         public void afterTextChanged(Editable s) {
                             String input = editText.getText().toString();
+                            input = input.replaceAll(",", ".");
 
                             if (!input.isEmpty() && input.matches("-?\\d+(\\.\\d+)?")) {
                                 try {
