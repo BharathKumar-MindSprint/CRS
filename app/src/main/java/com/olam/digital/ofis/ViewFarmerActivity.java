@@ -2164,6 +2164,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
 
         Button phonenumbersSave = (Button) findViewById(R.id.phonenumbersSave);
+        phonenumbersSave.setEnabled(true);
         Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false, OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID);
         if(existingNumbers.getCount() > 0 && existingNumbers.getCount() < 6){
             addCount = existingNumbers.getCount();
@@ -2234,6 +2235,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     Cursor fullFarmer = dl.getFlattenedFarmer(farmerId);
                     JSONArray storeableNumbers = new JSONArray();
                     boolean isDuplicate = false, isNumberZero = false;
+                    Boolean isPrimayUpdated = false;
 
 
                     for (int j = 0; j < phonerowscount; j++) {
@@ -2245,8 +2247,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         String phoneNumberValue = String.valueOf(phoneNumber.getText());
 
                         if(!phoneNumberValue.isEmpty() && !isdeleted){
-                            int count = dl.getDuplicateFarmerNumber(phoneNumberValue);
-                            if(count > 1){
+                            int count = dl.getDuplicateFarmerNumber(phoneNumberValue,farmerId);
+                            if(count >= 1){
                                 hasDuplicatePhoneNumber = true;
                             }
                         }
@@ -2271,7 +2273,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                                 Boolean isPrimaryNumberChanged = (Boolean) primary_number.getTag(R.id.phonenumbers);
                                 Boolean isPhoneUpdated = (Boolean) phoneNumber.getTag(R.id.phonenumbers);
-
+                                isPrimayUpdated = (isPrimaryNumberChanged != null && isPrimaryNumberChanged) || (isPhoneUpdated != null && isPhoneUpdated);
                                 boolean isUpdated = (isPrimaryNumberChanged != null && isPrimaryNumberChanged) || (isPhoneUpdated != null && isPhoneUpdated);
                                 storeableNumber.put("country_id", countryID);
                                 storeableNumber.put("primary_number", isPrimaryNumber);
@@ -2350,6 +2352,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
                         phonenumbersSave.setEnabled(false);
+//                        if(isPrimayUpdated){
+//                            phonenumbersSave.setEnabled(true);
+//                        }else{
+//                            phonenumbersSave.setEnabled(false);
+//                        }
+
+                        new Handler().postDelayed(() -> {
+                            phonenumbersSave.setEnabled(true);
+                        }, 2000);
+
                         setupUI();
                     }
                     else {

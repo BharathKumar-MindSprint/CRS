@@ -917,8 +917,8 @@ public class DataLayer {
         Cursor cursor = db.query(
                 OFISDBContract.NetworkQueueEntry.TABLE_NAME,
                 new String[] { "farmer_id" },
-                "farmer_id = ?",
-                new String[] { farmerId },
+                "farmer_id = ? AND (" + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? OR "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?)",
+                new String[] { farmerId , "National_ID","Update_ID"},
                 null, null, null
         );
 
@@ -8968,11 +8968,14 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int getDuplicateFarmerNumber(String phoneNumber) {
-        String query = "SELECT COUNT(*) FROM " +OFISDBContract.PhoneNumber.TABLE_NAME +
-                " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ?";
+    public int getDuplicateFarmerNumber(String phoneNumber,long farmerId) {
+        String query = "SELECT COUNT(*) FROM " + OFISDBContract.PhoneNumber.TABLE_NAME +
+                " WHERE " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " = ? AND " +
+                OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " != ? AND (" +
+                OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " = 1 OR " +
+                OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " = 'true')";
 
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(phoneNumber)});
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(phoneNumber), String.valueOf(farmerId)});
 
         int count = 0;
         if (cursor != null) {
