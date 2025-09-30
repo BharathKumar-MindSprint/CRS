@@ -6244,8 +6244,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             for (int m = 0; m < dmSignatureAnswer.size(); m++) {
                 String signName = dmSignatureAnswer.get(m).answer;
                 File storageDir = context.getExternalFilesDir("");
-                File image = File.createTempFile(signName, ".png", storageDir);
-                filePaths.add(String.valueOf(image));
+                File imageFile = new File(storageDir, signName);
+                filePaths.add(imageFile.getAbsolutePath());
                 fileName.add(signName);
             }
 

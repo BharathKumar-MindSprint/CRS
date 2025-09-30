@@ -2998,6 +2998,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         recyclerViewData.add(getResources().getString(R.string.existing_module));//0 index
         DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(Long.parseLong(farmerID), Integer.parseInt(moduleID), 0);
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(moduleID, String.valueOf(farmerId), true);
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableListUnSynced = db.dmSurveyAnswerTableDao().getDataByModuleId(moduleID, String.valueOf(farmerId), false);
 
         boolean moduleWithActionPlan = isModuleWithActionPlan(dmSurveyAnswerTableList, dmSurveyReport);
 
@@ -3075,7 +3076,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
         } else {
-            if (!dmSurveyAnswerTableList.isEmpty() || dmSurveyReport!=null) {
+            if (!dmSurveyAnswerTableList.isEmpty() || dmSurveyReport!=null && dmSurveyAnswerTableListUnSynced.isEmpty()) {
                 isCompleted = true;
             }
         }
