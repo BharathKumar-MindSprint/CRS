@@ -1489,4 +1489,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="invalid_phonenumber">Invalid Phone Number!</string>
     <string name="no_national_id">No National Id Applicable!</string>
     <string name="no_phone_number">No Phone Number Applicable!</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_brazil">(Opcional)</string>
 </resources>

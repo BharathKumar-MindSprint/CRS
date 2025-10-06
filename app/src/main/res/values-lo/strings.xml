@@ -1111,6 +1111,7 @@
     <string name="no_phone_number">ບໍ່ມີເບີໂທທີ່ໃຊ້ໄດ້!</string>
     <string name="invalid_national_id">ເລກປະຈຳຕົວບໍ່ຖືກຕ້ອງ!</string>
     <string name="invalid_phonenumber">ເບີໂທລະສັບບໍ່ຖືກຕ້ອງ!</string>
+    <string name="optional">(ທາງເລືອກ)</string>
 </resources>
 
 

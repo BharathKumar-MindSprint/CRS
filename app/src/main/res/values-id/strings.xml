@@ -954,5 +954,6 @@
     <string name="no_phone_number">Tidak Ada Nomor Telepon yang Berlaku!</string>
     <string name="invalid_national_id">ID Nasional tidak valid!</string>
     <string name="invalid_phonenumber">Nomor telepon tidak valid!</string>
+    <string name="optional">(Opsional)</string>
 
 </resources>

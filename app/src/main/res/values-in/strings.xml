@@ -954,5 +954,6 @@
     <string name="invalid_phonenumber">Nomor telepon tidak valid!</string>
     <string name="Please_check_the_Internet_Connection">Silakan periksa Koneksi Internet</string>
     <string name="Alert_txt">Peringatan !</string>
+    <string name="optional">(Opsional)</string>
 
 </resources>

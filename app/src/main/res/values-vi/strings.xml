@@ -861,5 +861,6 @@
     <string name="no_phone_number">Không có số điện thoại hợp lệ!</string>
     <string name="invalid_national_id">Mã số quốc gia không hợp lệ!</string>
     <string name="invalid_phonenumber">Số điện thoại không hợp lệ!</string>
+    <string name="optional">(Không bắt buộc)</string>
 
 </resources>

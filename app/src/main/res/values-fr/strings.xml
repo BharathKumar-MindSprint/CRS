@@ -1284,5 +1284,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="no_phone_number">Aucun numéro de téléphone applicable !</string>
     <string name="invalid_national_id">Identifiant national invalide !</string>
     <string name="invalid_phonenumber">Numéro de téléphone invalide !</string>
+    <string name="optional">(Facultative)</string>
 
 </resources>

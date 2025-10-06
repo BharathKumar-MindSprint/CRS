@@ -914,6 +914,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMER = "farmerName";
         public static final String COLUMN_NAME_DISPLAYFARMER_ID = "displayFarmerId";
         public static final String COLUMN_NAME_FARMER_CONFIRMATION = "farmerConfirmation";
+        public static final String COLUMN_NAME_CONSENT_CHECKBOX = "farmerConstentCheckBox";
         public static final String COLUMN_NAME_CHILDNAME = "childName";
         public static final String COLUMN_NAME_FARMER_SIGN = "farmerConsentSignature";
         public static final String COLUMN_NAME_ENUM_SIGN = "enumeratorConsentSignature";
@@ -985,6 +986,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_WIT2_CPF);
                     add(COLUMN_NAME_WIT2_RG);
                     add(COLUMN_NAME_WIT2_SIGN);
+                    add(COLUMN_NAME_CONSENT_CHECKBOX);
                 }}
         );
     }

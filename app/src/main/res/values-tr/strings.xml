@@ -859,5 +859,6 @@
 
     <string name="Please_check_the_Internet_Connection">Lütfen İnternet Bağlantısını kontrol edin</string>
     <string name="Alert_txt">Uyarı !</string>
+    <string name="optional">(İsteğe bağlı)</string>
 
 </resources>
