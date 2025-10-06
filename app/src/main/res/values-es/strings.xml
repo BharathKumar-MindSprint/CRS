@@ -965,5 +965,7 @@
     <string name="attendee_register_stakeholder">Agregar al asistente aquí no registra al interesado en OFIS</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Opcional)</string>
+
 </resources>
 

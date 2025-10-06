@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
 import com.olam.digital.ofis.agrisupplier.entity.Supplier;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
@@ -35,6 +36,7 @@ import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.D
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.model.FarmerConsentCheckBox;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
@@ -2175,6 +2177,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             String farmerSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN));
                             String enumSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN));
+                            if (Utilities.getOperatingUnitSharedPrefs(context).equals("OFI"))
+                            {
+                                //add check box condition here
+                                FarmerConsentCheckBox localData = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX)) != null ?
+                                        new Gson().fromJson(child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX)), FarmerConsentCheckBox.class) : new FarmerConsentCheckBox();
+                                params.put("ofiSystem", localData.getOfiSystem());
+                                params.put("traceability", localData.getTraceability());
+                                params.put("salesAndDevelpment", localData.getSalesAndDevelpment());
+                                params.put("advAndPromotion", localData.getAdvAndPromotion());
+                                params.put("research", localData.getResearch());
+                                params.put("traceAndPromotion", localData.isTraceAndPromotion());
+                                params.put("dataAndBusiness", localData.isDataAndBusiness());
+                            }
                             if (farmerSignaturePath != null && farmerSignaturePath.length() > 0) {
                                 try {
                                     String encodedImage = Utilities.base64ConversionForImage(farmerSignaturePath);
@@ -2523,6 +2538,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     String farmerSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN));
                     String enumSignaturePath = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN));
+
+                   if (Utilities.getOperatingUnitSharedPrefs(context).equals("OFI"))
+                   {
+                       //add check box condition here
+                       FarmerConsentCheckBox localData = child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX)) != null ?
+                               new Gson().fromJson(child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX)), FarmerConsentCheckBox.class) : new FarmerConsentCheckBox();
+                       params.put("ofiSystem", localData.getOfiSystem());
+                       params.put("traceability", localData.getTraceability());
+                       params.put("salesAndDevelpment", localData.getSalesAndDevelpment());
+                       params.put("advAndPromotion", localData.getAdvAndPromotion());
+                       params.put("research", localData.getResearch());
+                       params.put("traceAndPromotion", localData.isTraceAndPromotion());
+                       params.put("dataAndBusiness", localData.isDataAndBusiness());
+                   }
+
                     if (farmerSignaturePath != null && farmerSignaturePath.length() > 0) {
                         try {
                             String encodedImage = Utilities.base64ConversionForImage(farmerSignaturePath);

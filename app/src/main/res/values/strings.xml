@@ -1527,4 +1527,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="please_select_currency">Please select currency</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Optional)</string>
+    <string name="optional_brazil">(Opcional)</string>
 </resources>
