@@ -1004,37 +1004,11 @@ public class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX + " TEXT ");
         }catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
-    private boolean columnExists(SQLiteDatabase db, String tableName, String columnName) {
-        Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
-        boolean exists = false;
-        while (cursor.moveToNext()) {
-            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-            if (columnName.equals(name)) {
-                exists = true;
-                break;
-            }
-        }
-        cursor.close();
-        return exists;
-    }
-
-   /* private void migrateFromVersion160To161(SQLiteDatabase db) {
-        try {
-            if (!columnExists(db, OFISDBContract.ConsentStatementEntry.TABLE_NAME,
-                    OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX)) {
-                db.execSQL("ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME +
-                        " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX + " TEXT");
-            }
-        } catch (SQLException e) {
-            Log.e("DBMigration", "Failed to add column: " + e.getMessage());
-        }
-    }*/
-
-
 }
 
