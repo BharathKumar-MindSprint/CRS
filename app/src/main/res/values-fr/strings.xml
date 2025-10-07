@@ -1293,4 +1293,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="attendee_register_stakeholder">Ajouter le participant ici n\'enregistre pas le partie prenante dans OFIS</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Facultative)</string>
+
 </resources>

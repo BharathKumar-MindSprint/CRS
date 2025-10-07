@@ -870,4 +870,6 @@
     <string name="alert_review_hint_calculated_decimal">Vui lòng đảm bảo giá trị tính toán nằm trong khoảng %.2f - %.2f</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Không bắt buộc)</string>
+
 </resources>

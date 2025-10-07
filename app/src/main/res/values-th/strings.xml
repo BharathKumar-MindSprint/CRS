@@ -863,4 +863,6 @@
     <string name="attendee_register_stakeholder">การเพิ่มผู้เข้าร่วมที่นี่จะไม่ลงทะเบียนผู้มีส่วนได้ส่วนเสียใน OFIS</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(ไม่จำเป็น)</string>
+
 </resources>

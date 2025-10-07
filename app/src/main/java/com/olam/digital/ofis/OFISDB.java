@@ -1,9 +1,11 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by bengallienne on 29/11/14. - update
@@ -118,6 +120,7 @@ public class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_NAME + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_CPF + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_RG + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_WIT2_SIGN + " TEXT)";
 
     //Child Labour Table end
@@ -932,9 +935,9 @@ public class OFISDB extends SQLiteOpenHelper {
 
     private void migrateFromVersion158To159(SQLiteDatabase sqLiteDatabase) {
         try {
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE +" TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE +" TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE +" TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingModule.COLUMN_NAME_SIGNATURE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_SIGNATURE + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATION_SIGNATURE + " TEXT ");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1001,11 +1004,11 @@ public class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX + " TEXT ");
         }catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
-
 }
 

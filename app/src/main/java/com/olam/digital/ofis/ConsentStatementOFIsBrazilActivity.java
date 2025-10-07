@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,10 @@ import androidx.core.content.ContextCompat;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.Gson;
+import com.olam.digital.ofis.model.FarmerConsentCheckBox;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +44,7 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
     LinearLayout  consentStatement1,consentStatement2,consentStatement3,consentStatement4,consentStatement5;
     AppCompatCheckBox cb_sc7,cb_sc1,cb_sc2,cb_sc3,cb_sc4,cb_sc5,cb_sc6,cb_sc8;
     EditText childname,occupationET;
-    TextView et_farmername, et_farmername_first;
+    TextView et_farmername, et_farmername_first,txtAdv;
     Button nextsavebtn,prevbtn;
     Boolean reachedbottom = false;
     Long farmerId;
@@ -87,6 +92,7 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
         cb_sc3 = (AppCompatCheckBox) findViewById(R.id.cb_sc3);
         cb_sc4 = (AppCompatCheckBox) findViewById(R.id.cb_sc4);
         cb_sc5 = (AppCompatCheckBox) findViewById(R.id.cb_sc5);
+        txtAdv = (TextView)findViewById(R.id.txtAdv);
         cb_sc6 = (AppCompatCheckBox) findViewById(R.id.cb_sc6);
         cb_sc7 = (AppCompatCheckBox) findViewById(R.id.cb_sc7);
         cb_sc8 = (AppCompatCheckBox) findViewById(R.id.cb_sc8);
@@ -94,7 +100,10 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
         et_farmername_first = (TextView) findViewById(R.id.et_farmername_first);
         childname = (EditText) findViewById(R.id.childname);
         occupationET=(EditText) findViewById(R.id.occupationET);
-
+        if (Utilities.getOperatingUnitSharedPrefs(this).equals("OFI"))
+        {
+            txtAdv.setText(txtAdv.getText().toString()+" "+txtAdv.getContext().getString(R.string.optional_brazil));
+        }
         et_maritalstatus =(EditText) findViewById(R.id.et_maritalstatus);
         et_profession =(EditText) findViewById(R.id.et_profession);
         et_cpfNumber =(EditText) findViewById(R.id.et_cpfNumber);
@@ -277,7 +286,7 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                     }
                     if(page == 2){
                         if(!cb_sc1.isChecked() || !cb_sc3.isChecked()   ||
-                           !cb_sc5.isChecked() || !cb_sc6.isChecked() || !cb_sc7.isChecked()|| !cb_sc8.isChecked() ){
+                                (!Utilities.getOperatingUnitSharedPrefs(this).equals("OFI") && !cb_sc6.isChecked()) || !cb_sc5.isChecked() || !cb_sc7.isChecked()|| !cb_sc8.isChecked() ){
                             Toast.makeText(ConsentStatementOFIsBrazilActivity.this, getResources().getString(R.string.please_click_checkbox), Toast.LENGTH_LONG).show();
                             return;
                         }
@@ -460,6 +469,22 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                 String registereddate = format.format(today);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
 
+                if(Utilities.getOperatingUnitSharedPrefs(this).equals("OFI"))
+                {
+                    FarmerConsentCheckBox consentCheckBox = new FarmerConsentCheckBox();//farmer consent model class
+                    //consentCheckBox.setOfiSystem(cb_sc1.isChecked());
+                    consentCheckBox.setTraceability(cb_sc3.isChecked());
+                    consentCheckBox.setSalesAndDevelpment(cb_sc4.isChecked());
+                    consentCheckBox.setResearch(cb_sc8.isChecked());
+                    consentCheckBox.setAdvAndPromotion(cb_sc6.isChecked());
+                    consentCheckBox.setDataAndBusiness(cb_sc5.isChecked());
+                    consentCheckBox.setTraceAndPromotion(cb_sc7.isChecked());
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX, new Gson().toJson(consentCheckBox));
+                    String consentJson = new Gson().toJson(consentCheckBox);
+                    Log.d(">>>","Json value is brazil  %s"+consentJson);
+                }
+
+
                 if(type.equalsIgnoreCase(UPDATE)){
                     dataLayer.updateConsentStatus(farmerId);
                    if(isAddStakeHolder){
@@ -468,7 +493,6 @@ public class ConsentStatementOFIsBrazilActivity extends BaseActivity implements 
                        dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type,"Farmer consent captured");
                    }
                }
-
                 Intent intent=new Intent();
                 intent.putExtra(STATUS,true);
                 intent.putExtra(CONSENTVALUE,contentValue);
