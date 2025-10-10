@@ -4199,6 +4199,15 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
@@ -4461,7 +4470,17 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION;
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION;
         String sql = "SELECT " + columns + " FROM " + questionTable + " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
                 + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " WHERE replace(" + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ",' ','') like ? ORDER BY "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " ASC";
@@ -4485,7 +4504,17 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION;
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO + ","
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION;
         String sql = "SELECT questions.id, datatypes.name as datatype_name, questions.position, questions.display_type, questions.question, " +
                 "questions.question_fr, questions.question_es, questions.question_id, questions.question_pt, questions.question_tr, questions.question_lo," +
                 " questions.question_vi, questions.question_th, questions.display_configuration FROM questions INNER JOIN datatypes ON " +

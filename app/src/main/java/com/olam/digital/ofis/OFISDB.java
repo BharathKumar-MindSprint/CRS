@@ -14,7 +14,7 @@ import android.util.Log;
 public class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 161;
+    private static final int DATABASE_VERSION = 162;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -911,6 +911,9 @@ public class OFISDB extends SQLiteOpenHelper {
             case 160:
                 migrateFrom160To161(sqLiteDatabase);
                 break;
+            case 161:
+                migrateFrom161To162(sqLiteDatabase);
+                break;
             default:
                 migrateFromVersionBelow157(sqLiteDatabase);
                 migrateFromVersion158To159(sqLiteDatabase);
@@ -1000,8 +1003,8 @@ public class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED +  " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerNationalIDs.TABLE_NAME + " ADD COLUMN " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_DELETED +  " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendeeRelations.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_CALCULATION_LOGIC + " TEXT ");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ConsentStatementEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX + " TEXT ");
@@ -1009,6 +1012,60 @@ public class OFISDB extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
+    }
+
+    private void migrateFrom161To162(SQLiteDatabase sqLiteDatabase){
+        try {
+            boolean columnExists = addColumnIfNotExists(sqLiteDatabase);
+            if (columnExists) {
+                sqLiteDatabase.execSQL("CREATE TABLE trainingmodules_new (" +
+                        "id INTEGER PRIMARY KEY, " +
+                        "course_id INTEGER, " +
+                        "completioncriterion_id INTEGER, " +
+                        "name TEXT, " +
+                        "name_fr TEXT, " +
+                        "name_es TEXT, " +
+                        "name_id TEXT, " +
+                        "name_pt TEXT, " +
+                        "name_tr TEXT, " +
+                        "name_lo TEXT, " +
+                        "name_vi TEXT, " +
+                        "name_th TEXT, " +
+                        "captureAdditionalAttendees TEXT, " +
+                        "captureSignature TEXT" +
+                        ");");
+
+                sqLiteDatabase.execSQL("INSERT INTO trainingmodules_new SELECT " +
+                        "id, course_id, completioncriterion_id, name, name_fr, name_es, name_id, name_pt, name_tr, name_lo, name_vi, name_th, captureAdditionalAttendees, captureSignature " +
+                        "FROM trainingmodules;");
+
+                sqLiteDatabase.execSQL("DROP TABLE trainingmodules;");
+
+                sqLiteDatabase.execSQL("ALTER TABLE trainingmodules_new RENAME TO trainingmodules;");
+
+                sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID + " TEXT ");
+                sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.TrainingAttendee.TABLE_NAME + " ADD COLUMN " + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINEE_NAME + " TEXT ");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean addColumnIfNotExists(SQLiteDatabase db) {
+        Cursor cursor = db.rawQuery("PRAGMA table_info(" + OFISDBContract.TrainingModule.TABLE_NAME + ")", null);
+        boolean columnExists = false;
+
+        while (cursor.moveToNext()) {
+            String existingColumn = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            if (existingColumn.equals(OFISDBContract.TrainingAttendee.COLUMN_NAME_STAKEHOLDER_ID)) {
+                columnExists = true;
+                break;
+            }
+        }
+        cursor.close();
+
+        return columnExists;
     }
 }
 
