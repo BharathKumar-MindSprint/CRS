@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.Gson;
+import com.olam.digital.ofis.model.FarmerConsentCheckBox;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,16 +43,16 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.content.ContextCompat;
 
 public class ConsentStatementActivity extends BaseActivity implements View.OnClickListener {
-    LinearLayout  consentStatement1,consentStatement2,consentStatement3,consentStatement4,consentStatement5;
-    AppCompatCheckBox cb_sc7,cb_sc1,cb_sc2,cb_sc3,cb_sc4,cb_sc5,cb_sc6;
-    EditText childname,occupationET;
+    LinearLayout consentStatement1, consentStatement2, consentStatement3, consentStatement4, consentStatement5;
+    AppCompatCheckBox cb_sc7, cb_sc1, cb_sc2, cb_sc3, cb_sc4, cb_sc5, cb_sc6;
+    EditText childname, occupationET;
     TextView et_farmername;
-    Button nextsavebtn,prevbtn;
+    Button nextsavebtn, prevbtn;
     Boolean reachedbottom = false;
     Long farmerId;
-    String farmername,olamfarmername, childrenname, displayFarmerId, farmerSign = "", staffSign = "",type;
-    String occupation="";
-    TextView farmer_name,currentdate,currentdate2,enum_name,farmer_signature,enum_signature;
+    String farmername, olamfarmername, childrenname, displayFarmerId, farmerSign = "", staffSign = "", type;
+    String occupation = "";
+    TextView farmer_name, currentdate, currentdate2, enum_name, farmer_signature, enum_signature, txtAdv;
     int page = 1;
     ScrollView scrollView;
     DataLayer dataLayer;
@@ -65,13 +68,14 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         setContentView(R.layout.activity_consentstatement);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dataLayer = new DataLayer(context.getResources(), context);
-           try {
-               farmerId=getIntent().getExtras().getLong("FarmerId");
-               displayFarmerId=getIntent().getExtras().getString("displayFarmerId");
-               olamfarmername=getIntent().getExtras().getString("olamfarmername");
-               isAddStakeHolder = getIntent().getExtras().getBoolean(Utilities.STAKE_HOLDER_REGISTRATION);
-               type=getIntent().getExtras().getString("type");
-           }catch (Exception e){}
+        try {
+            farmerId = getIntent().getExtras().getLong("FarmerId");
+            displayFarmerId = getIntent().getExtras().getString("displayFarmerId");
+            olamfarmername = getIntent().getExtras().getString("olamfarmername");
+            isAddStakeHolder = getIntent().getExtras().getBoolean(Utilities.STAKE_HOLDER_REGISTRATION);
+            type = getIntent().getExtras().getString("type");
+        } catch (Exception e) {
+        }
         init();
     }
 
@@ -86,11 +90,12 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         cb_sc3 = (AppCompatCheckBox) findViewById(R.id.cb_sc3);
         cb_sc4 = (AppCompatCheckBox) findViewById(R.id.cb_sc4);
         cb_sc5 = (AppCompatCheckBox) findViewById(R.id.cb_sc5);
+        txtAdv = (TextView) findViewById(R.id.txtAdv);
         cb_sc6 = (AppCompatCheckBox) findViewById(R.id.cb_sc6);
         cb_sc7 = (AppCompatCheckBox) findViewById(R.id.cb_sc7);
         et_farmername = (TextView) findViewById(R.id.et_farmername);
         childname = (EditText) findViewById(R.id.childname);
-        occupationET=(EditText) findViewById(R.id.occupationET);
+        occupationET = (EditText) findViewById(R.id.occupationET);
         farmer_name = (TextView) findViewById(R.id.farmer_name);
         currentdate = (TextView) findViewById(R.id.currentdate);
         currentdate2 = (TextView) findViewById(R.id.currentdate2);
@@ -106,26 +111,28 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         statement_rubber_indo = (TableRow) findViewById(R.id.statement_rubber_indo);
         countryId = Objects.requireNonNull(getIntent().getExtras()).getInt("COUNTRY_ID");
         productId = dl.getEnumeratorProduct();
-
+        if (Utilities.getOperatingUnitSharedPrefs(this).equals("OFI")) {
+            txtAdv.setText(txtAdv.getText().toString() + " " + txtAdv.getContext().getString(R.string.optional));
+        }
         nextsavebtn.setOnClickListener(this);
         prevbtn.setOnClickListener(this);
         farmer_signature.setOnClickListener(this);
-        if (isAddStakeHolder){
+        if (isAddStakeHolder) {
             farmer_signature.setText(getResources().getString(R.string.stakeholder_signature));
             title.setText(getResources().getString(R.string.stakeholder_consent));
         }
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
-        et_farmername.setText(olamfarmername+" ,");
-       // nextsavebtn.setBackgroundResource(R.drawable.border);
+        et_farmername.setText(olamfarmername + " ,");
+        // nextsavebtn.setBackgroundResource(R.drawable.border);
         disableBtn(nextsavebtn);
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
             @Override
             public void onToggleSoftKeyboard(boolean isVisible) {
-                if(isVisible){
+                if (isVisible) {
                     nextsavebtn.setClickable(true);
-                  //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                    //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                     enableSaveBtn(nextsavebtn);
                 }
             }
@@ -138,17 +145,17 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     //scroll view is at bottom
                     nextsavebtn.setClickable(true);
                     reachedbottom = true;
-                  //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                    //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                     enableSaveBtn(nextsavebtn);
                 } else {
                     //scroll view is not at bottom
-                    if(! reachedbottom && page <= 3) {
+                    if (!reachedbottom && page <= 3) {
                         nextsavebtn.setClickable(false);
-                       // nextsavebtn.setBackgroundResource(R.drawable.border);
+                        // nextsavebtn.setBackgroundResource(R.drawable.border);
                         disableBtn(nextsavebtn);
-                    }else {
+                    } else {
                         nextsavebtn.setClickable(true);
-                       // nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                        // nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                         enableSaveBtn(nextsavebtn);
                     }
                 }
@@ -158,15 +165,16 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
 
     }
 
-    private  void enableSaveBtn(Button btn){
+    private void enableSaveBtn(Button btn) {
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.btnColorPrimary));
         btn.setTextColor(ContextCompat.getColor(this, R.color.white));
     }
 
-    private void disableBtn(Button btn){
+    private void disableBtn(Button btn) {
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_primary_disabled));
         btn.setTextColor(ContextCompat.getColor(this, R.color.btn_disabled_text));
     }
+
     private void addingGlobalLayoutListener() {
         scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -176,7 +184,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 boolean isScrollable = scrollView.getHeight() < childHeight + scrollView.getPaddingTop() + scrollView.getPaddingBottom();
                 if (!isScrollable) {
                     nextsavebtn.setClickable(true);
-                  //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                    //  nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                     enableSaveBtn(nextsavebtn);
                 }
             }
@@ -185,7 +193,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
 
     private void loadpage() {
 
-        if(page == 1){
+        if (page == 1) {
             prevbtn.setVisibility(View.GONE);
             consentStatement1.setVisibility(View.VISIBLE);
             consentStatement2.setVisibility(View.GONE);
@@ -193,7 +201,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement4.setVisibility(View.GONE);
             consentStatement5.setVisibility(View.GONE);
             nextsavebtn.setText(getResources().getString(R.string.ModuleNextButton));
-        }else if(page == 2){
+        } else if (page == 2) {
             prevbtn.setVisibility(View.VISIBLE);
             consentStatement1.setVisibility(View.GONE);
             consentStatement2.setVisibility(View.VISIBLE);
@@ -201,7 +209,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement4.setVisibility(View.GONE);
             consentStatement5.setVisibility(View.GONE);
             nextsavebtn.setText(getResources().getString(R.string.ModuleNextButton));
-        }else if (page == 3){
+        } else if (page == 3) {
             prevbtn.setVisibility(View.VISIBLE);
             consentStatement1.setVisibility(View.GONE);
             consentStatement2.setVisibility(View.GONE);
@@ -209,7 +217,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement4.setVisibility(View.GONE);
             consentStatement5.setVisibility(View.GONE);
             nextsavebtn.setText(getResources().getString(R.string.ModuleNextButton));
-        }else if (page == 4){
+        } else if (page == 4) {
             prevbtn.setVisibility(View.VISIBLE);
             consentStatement1.setVisibility(View.GONE);
             consentStatement2.setVisibility(View.GONE);
@@ -217,7 +225,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement4.setVisibility(View.VISIBLE);
             consentStatement5.setVisibility(View.GONE);
             nextsavebtn.setText(getResources().getString(R.string.ModuleNextButton));
-        }else if (page == 5){
+        } else if (page == 5) {
             prevbtn.setVisibility(View.VISIBLE);
             consentStatement1.setVisibility(View.GONE);
             consentStatement2.setVisibility(View.GONE);
@@ -226,7 +234,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement5.setVisibility(View.VISIBLE);
 
             // Indonesia Rubber requirement
-            if(countryId == 11 && productId == 4 && Utilities.getOperatingUnitSharedPrefs(this).equals("OGA")){
+            if (countryId == 11 && productId == 4 && Utilities.getOperatingUnitSharedPrefs(this).equals("OGA")) {
                 statement_rubber_indo.setVisibility(View.VISIBLE);
             } else {
                 statement_rubber_indo.setVisibility(View.GONE);
@@ -236,36 +244,35 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     }
 
 
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.nextsavebtn) {
-                scrollView.fullScroll(ScrollView.FOCUS_UP);
-            if(page <= 5 && page >= 1) {
+        if (id == R.id.nextsavebtn) {
+            scrollView.fullScroll(ScrollView.FOCUS_UP);
+            if (page <= 5 && page >= 1) {
                 if (page != 5) {
-                    if(page == 2){
-                        if(!cb_sc1.isChecked() || !cb_sc3.isChecked()  || !cb_sc4.isChecked() ||
-                                !cb_sc5.isChecked() || !cb_sc6.isChecked() || !cb_sc7.isChecked() ){
+                    if (page == 2) {
+                        if (!cb_sc1.isChecked() || !cb_sc3.isChecked() || !cb_sc4.isChecked() ||
+                                (!Utilities.getOperatingUnitSharedPrefs(this).equals("OFI") && !cb_sc5.isChecked()) || !cb_sc6.isChecked() || !cb_sc7.isChecked()) {
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.please_click_checkbox), Toast.LENGTH_LONG).show();
                             return;
                         }
                         nextsavebtn.setClickable(false);
-                      //  nextsavebtn.setBackgroundResource(R.drawable.border);
+                        //  nextsavebtn.setBackgroundResource(R.drawable.border);
                         disableBtn(nextsavebtn);
                         addingGlobalLayoutListener();
                     }
-                    if(page == 3){
-                        if(et_farmername.getText().toString().matches("")){
+                    if (page == 3) {
+                        if (et_farmername.getText().toString().matches("")) {
                             et_farmername.getBackground().setColorFilter(getResources().getColor(android.R.color.holo_red_light),
                                     PorterDuff.Mode.SRC_ATOP);
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
                             return;
-                        }else {
+                        } else {
 //                            nextsavebtn.setClickable(false);
 //                            nextsavebtn.setBackgroundResource(R.drawable.border);
-                            farmername = (et_farmername.getText().toString()).replace(",","");
+                            farmername = (et_farmername.getText().toString()).replace(",", "");
                             farmer_name.setText(farmername);
                             Date today = new Date();
                             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -276,14 +283,14 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                             addingGlobalLayoutListener();
                         }
                     }
-                    if(page == 4){
+                    if (page == 4) {
                         childrenname = childname.getText().toString();
                         occupation = occupationET.getText().toString();
-                        if(farmerSign.matches("")){
+                        if (farmerSign.matches("")) {
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.farmer_sign_required), Toast.LENGTH_LONG).show();
                             return;
                         }
-                        if(staffSign.matches("")){
+                        if (staffSign.matches("")) {
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.staff_sign_required), Toast.LENGTH_LONG).show();
                             return;
                         }
@@ -297,59 +304,75 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 }
 
 
-                if(page == 5){
+                if (page == 5) {
                     page++;
                     return;
                 }
 
-            }else if(page == 6){
+            } else if (page == 6) {
                 nextsavebtn.setClickable(false);
-                ContentValues contentValue=new ContentValues();
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerId);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmername);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID,displayFarmerId);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME,childrenname);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION,occupation);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN,farmerSign);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN,staffSign);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION,true);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,olamfarmername);
+                ContentValues contentValue = new ContentValues();
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER, farmername);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID, displayFarmerId);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME, childrenname);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION, occupation);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN, farmerSign);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN, staffSign);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION, true);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME, olamfarmername);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String registereddate = format.format(today);
-                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE, registereddate);
 
-                if(type.equalsIgnoreCase(UPDATE)) {
-                    dataLayer.updateConsentStatus(farmerId);
-                    if(isAddStakeHolder){
-                        dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type, "Stakeholder consent captured");
-                    } else {
-                        dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type,"Farmer consent captured");
-                    }
+                if(Utilities.getOperatingUnitSharedPrefs(this).equals("OFI"))
+                {
+                    FarmerConsentCheckBox consentCheckBox = new FarmerConsentCheckBox();//farmer consent model class
+                    consentCheckBox.setOfiSystem(cb_sc1.isChecked());
+                    consentCheckBox.setTraceability(cb_sc3.isChecked());
+                    consentCheckBox.setSalesAndDevelpment(cb_sc4.isChecked());
+                    consentCheckBox.setResearch(cb_sc6.isChecked());
+                    consentCheckBox.setAdvAndPromotion(cb_sc5.isChecked());
+                    contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONSENT_CHECKBOX,
+                            new Gson().toJson(consentCheckBox));
+
+                    String consentJson = new Gson().toJson(consentCheckBox);
+                    Log.d(">>>","Json value is %s"+consentJson);
                 }
 
-                Intent intent=new Intent();
-                intent.putExtra(STATUS,true);
-                intent.putExtra(CONSENTVALUE,contentValue);
-                setResult(2,intent);
+
+                if (type.equalsIgnoreCase(UPDATE)) {
+                    dataLayer.updateConsentStatus(farmerId);
+                    if (isAddStakeHolder) {
+                        dataLayer.insertConsentStatementDetails(contentValue, olamfarmername, type, "Stakeholder consent captured");
+                    } else {
+                        dataLayer.insertConsentStatementDetails(contentValue, olamfarmername, type, "Farmer consent captured");
+                    }
+                }
+                Intent intent = new Intent();
+                intent.putExtra(STATUS, true);
+                intent.putExtra(CONSENTVALUE, contentValue);
+                setResult(2, intent);
                 finish();
 
             }
             addingGlobalLayoutListener();
-        }else if(id == R.id.prevbtn){
+        } else if (id == R.id.prevbtn) {
             page--;
             loadpage();
             scrollView.scrollTo(0, scrollView.getBottom());
             addingGlobalLayoutListener();
-        }else if(id == R.id.farmer_signature){
+        } else if (id == R.id.farmer_signature) {
             showSignatureDialog(getResources().getString(R.string.farmer));
-        }else if(id == R.id.enum_signature){
+        } else if (id == R.id.enum_signature) {
             showSignatureDialog(getResources().getString(R.string.enum_name));
         }
     }
 
 
     boolean isSigned = false;
+
     public void showSignatureDialog(String signedby) {
         isSigned = false;
         final Dialog signatureDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
@@ -357,8 +380,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         signatureDialog.setContentView(R.layout.dialog_signature);
         SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
-        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
-        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        Button bt_clear = (Button) signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button) signatureDialog.findViewById(R.id.btn_add_signature);
         bt_confirm.setEnabled(true);
         bt_clear.setEnabled(true);
 
@@ -398,7 +421,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  signatureDialog.dismiss();
+                signatureDialog.dismiss();
             }
         });
 
@@ -426,9 +449,9 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                                     }
                                 }
                                 Uri fileUri = Uri.fromFile(photoFile);
-                                if(signedby.equalsIgnoreCase(getResources().getString(R.string.farmer))){
+                                if (signedby.equalsIgnoreCase(getResources().getString(R.string.farmer))) {
                                     farmerSign = fileUri.getPath();
-                                }else {
+                                } else {
                                     staffSign = fileUri.getPath();
                                 }
 
@@ -440,7 +463,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                                 }
                             }
                             signatureDialog.dismiss();
-                         } else {
+                        } else {
                             Toast.makeText(ConsentStatementActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {

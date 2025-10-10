@@ -553,38 +553,38 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:visibility="gone"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/margin_10"
-                        android:layout_height="wrap_content">
+<!--                    <LinearLayout-->
+<!--                        android:visibility="gone"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_marginTop="@dimen/margin_10"-->
+<!--                        android:layout_height="wrap_content">-->
 
-                        <Spinner
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/spinner_subdistrict"
-                            android:layout_weight="1"
-                            android:nextFocusDown="@+id/spinner_place"
-                            android:background="@drawable/spinner_bg_light" />
+<!--                        <Spinner-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:id="@+id/spinner_subdistrict"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:nextFocusDown="@+id/spinner_place"-->
+<!--                            android:background="@drawable/spinner_bg_light" />-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
-                            android:scaleType="center"
-                            android:visibility="invisible"
-                            android:id="@+id/haSubDistrict" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"-->
+<!--                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"-->
+<!--                            android:scaleType="center"-->
+<!--                            android:visibility="invisible"-->
+<!--                            android:id="@+id/haSubDistrict" />-->
 
-                        <Spinner
-                            android:visibility="invisible"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/spinner_bg_light"
-                            android:layout_weight="1" />
+<!--                        <Spinner-->
+<!--                            android:visibility="invisible"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:background="@drawable/spinner_bg_light"-->
+<!--                            android:layout_weight="1" />-->
 
-                    </LinearLayout>
+<!--                    </LinearLayout>-->
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -616,6 +616,7 @@
                 android:paddingRight="@dimen/ofis_large_pad"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
+                    android:id="@+id/farm_holding_ll"
                 android:background="@drawable/border_white_background"
                 android:layout_marginTop="@dimen/ofis_med_pad"
                 android:orientation="vertical">
@@ -947,6 +948,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:orientation="vertical"
+                    android:id="@+id/read_consent_ll"
                     android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin">
 
                     <Button
@@ -966,6 +968,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/add_farmer_ll"
                     android:paddingBottom="10dp">
 
                     <Button
@@ -1020,10 +1023,55 @@
 
                 </LinearLayout>
 
+
+
             </LinearLayout>
+
+
         </ScrollView>
 
+
+
     </LinearLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/update_farmer_ll"
+
+       android:gravity="bottom"
+        >
+
+        <!-- First Button -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update"
+            android:id="@+id/updateFarmer"
+            android:background="@color/ofis_action_button_background"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_med_text"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_gravity="bottom|end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp" />
+
+        <!-- Second Button -->
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:background="@color/btn_secondary_background"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/ofis_base_font_white"
+            android:layout_margin="16dp" />
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/llTitle"

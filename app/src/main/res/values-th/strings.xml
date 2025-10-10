@@ -854,5 +854,15 @@
     <string name="invalid_phonenumber">หมายเลขโทรศัพท์ไม่ถูกต้อง!</string>
     <string name="Please_check_the_Internet_Connection">กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต</string>
     <string name="Alert_txt">เตือน !</string>
+    <string name="calculated_question_note_message">หมายเหตุ: ผลลัพธ์ของคำถามที่คำนวณนี้ขึ้นอยู่กับคำถาม</string>
+    <string name="alert_review_hint_calculated">โปรดตรวจสอบให้แน่ใจว่าค่าที่คำนวณอยู่ในช่วง %.2f - %.2f</string>
+    <string name="no_dependent_message">หมายเหตุ: คำถามนี้ไม่ขึ้นอยู่กับคำถามอื่นใด</string>
+    <string name="alert_review_hint_calculated_decimal">โปรดตรวจสอบให้แน่ใจว่าค่าที่คำนวณอยู่ในช่วง %.2f - %.2f</string>
+    <string name="stakeholder_attendee">ผู้เข้าร่วมที่เกี่ยวข้อง</string>
+    <string name="max_age">อนุญาตให้ใช้ตัวเลขได้สูงสุด 3 หลัก</string>
+    <string name="attendee_register_stakeholder">การเพิ่มผู้เข้าร่วมที่นี่จะไม่ลงทะเบียนผู้มีส่วนได้ส่วนเสียใน OFIS</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(ไม่จำเป็น)</string>
 
 </resources>

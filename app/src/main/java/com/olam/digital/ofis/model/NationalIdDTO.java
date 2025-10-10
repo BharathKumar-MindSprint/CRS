@@ -13,6 +13,10 @@ public class NationalIdDTO implements Serializable {
     private String photo;
     private String expiryDate;
 
+    private boolean deletedFlag;
+
+    private boolean isUpdated;
+
     public String getExpiryDate() {
         return expiryDate;
     }
@@ -67,5 +71,21 @@ public class NationalIdDTO implements Serializable {
 
     public void setBackendDbId(String backendDbId) {
         this.backendDbId = backendDbId;
+    }
+
+    public boolean isDeletedFlag() {
+        return deletedFlag;
+    }
+
+    public void setDeletedFlag(boolean deletedFlag) {
+        this.deletedFlag = deletedFlag;
+    }
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
     }
 }

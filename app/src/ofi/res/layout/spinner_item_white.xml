@@ -10,4 +10,6 @@
     android:scrollHorizontally="false"
     android:singleLine="false"
     android:textAlignment="inherit"
-    android:padding="10dp" />
+    android:paddingStart="4dp"
+    android:paddingEnd="15dp"
+    android:paddingVertical="10dp" />

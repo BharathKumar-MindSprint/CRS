@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 import static org.apache.commons.lang3.time.DateUtils.isSameDay;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,20 +15,25 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
 
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputFilter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -82,6 +88,7 @@ public class Utilities {
     public static final String CALCULATE_COMPOSITE_FLAG = "isCompliance";
 
     public static final String IS_SUPPLIER_ENABLED = "isEnableSupplierModule";
+    public static final String IS_DISTRIBUTION_MODULE_ENABLED = "isDistributionModuleEnabled";
 
     public  static  long farmerId;
     public  static  String stakeholderId;
@@ -151,6 +158,8 @@ public class Utilities {
     public static final String CHILD_LABOUR_ACTIVITY = "ChildLabourCompleteModuleActivity";
     public static final String CLMRS = "CLMRS";
     public static final String QWR = "QWR";
+    public static final String DISTRIBUTION = "distribution";
+
     public static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2025;
     public static final int REQUEST_PERMISSIONS_FOR_M = 2024;
     public static final String FLMRS = "FLMRS";
@@ -163,6 +172,8 @@ public class Utilities {
     public static final String TYPE_POLYGON = "POLYGON";
     private static String blockCharacterSet = "~#^|$%&*!'\"";
     public static long SIZE_20_MB = 20 * 1024 * 1024;
+    public static final String IS_STAKE_HOLDER = "isStakeholder";
+    public static final String FARMER_OR_STAKEHOLDER = "farmerOrStakeholderId";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
@@ -653,7 +664,10 @@ public  static String base64ConversionForImage(String filepath)  {
     public static boolean convertDT(String input){
 
         boolean consent=false;
-        if (input.equalsIgnoreCase("1")){
+        if(input == null){
+            return consent;
+        }
+        if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase("true")){
             consent=true;
         }
         return consent;
@@ -1197,4 +1211,32 @@ public  static String base64ConversionForImage(String filepath)  {
         }
         return null;
     };
+
+    public static double roundArea(double value, int places) {
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
+    public static void configureSystemUIAndroid15(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), true);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            activity.getWindow().setAttributes(lp);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.getWindow().setStatusBarColor(Color.WHITE);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            activity.getWindow().getDecorView().setSystemUiVisibility(flags);
+        }
+    }
 }

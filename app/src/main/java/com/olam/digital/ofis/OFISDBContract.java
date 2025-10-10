@@ -606,6 +606,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_METRIC = "metric";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE = "questionAssignmentType";
         public static final String COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD = "questionAssignmentField";
+        public static final String COLUMN_NAME_CALCULATION_LOGIC = "calculationLogic";
+
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -650,6 +652,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_METRIC);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_TYPE);
                     add(COLUMN_NAME_QUESTION_ASSIGNMENT_FIELD);
+                    add(COLUMN_NAME_CALCULATION_LOGIC);
                 }}
         );
     }
@@ -914,6 +917,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMER = "farmerName";
         public static final String COLUMN_NAME_DISPLAYFARMER_ID = "displayFarmerId";
         public static final String COLUMN_NAME_FARMER_CONFIRMATION = "farmerConfirmation";
+        public static final String COLUMN_NAME_CONSENT_CHECKBOX = "farmerConstentCheckBox";
         public static final String COLUMN_NAME_CHILDNAME = "childName";
         public static final String COLUMN_NAME_FARMER_SIGN = "farmerConsentSignature";
         public static final String COLUMN_NAME_ENUM_SIGN = "enumeratorConsentSignature";
@@ -985,6 +989,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_WIT2_CPF);
                     add(COLUMN_NAME_WIT2_RG);
                     add(COLUMN_NAME_WIT2_SIGN);
+                    add(COLUMN_NAME_CONSENT_CHECKBOX);
                 }}
         );
     }
@@ -1218,6 +1223,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NUMBER = "phonenumber";
         public static final String COLUMN_NAME_PRIMARY = "primary_number";
         public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
+        public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
+        public static final String COLUMN_NAME_IS_UPDATED = "is_updated";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1227,6 +1234,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NUMBER);
                     add(COLUMN_NAME_PRIMARY);
                     add(COLUMN_NAME_IS_DUPLICATE);
+                    add(COLUMN_NAME_IS_DELETED);
+                    add(COLUMN_NAME_IS_UPDATED);
                 }}
         );
     }
@@ -1243,7 +1252,8 @@ public class OFISDBContract {
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final String COLUMN_NAME_IS_DUPLICATE = "is_duplicate";
-
+        public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
+        public static final String COLUMN_NAME_IS_UPDATED = "is_updated";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1255,6 +1265,8 @@ public class OFISDBContract {
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
                     add(COLUMN_NAME_IS_DUPLICATE);
+                    add(COLUMN_NAME_IS_UPDATED);
+                    add(COLUMN_NAME_IS_DELETED);
                 }}
         );
     }
@@ -1268,6 +1280,8 @@ public class OFISDBContract {
         public static final String COLUMN_NID_PHOTO = "photo";
         public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_BACKEND_DB_ID = "backendDbId";
+        public static final String COLUMN_IS_DELETED = "deletedFlag";
+        public static final String COLUMN_IS_UPDATED = "isUpdated";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1277,6 +1291,8 @@ public class OFISDBContract {
                     add(COLUMN_NID_PHOTO);
                     add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_BACKEND_DB_ID);
+                    add(COLUMN_IS_DELETED);
+                    add(COLUMN_IS_UPDATED);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
@@ -1884,6 +1900,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PERCENTAGE = "percentage";
         public static final String COLUMN_NAME_GRADE = "grade";
         public static final String COLUMN_NAME_TRAINEE_SIGNATURE = "trainee_signature";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
+        public static final String COLUMN_NAME_TRAINEE_NAME = "trainee_name";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1897,6 +1915,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PERCENTAGE);
                     add(COLUMN_NAME_GRADE);
                     add(COLUMN_NAME_TRAINEE_SIGNATURE);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
+                    add(COLUMN_NAME_TRAINEE_NAME);
                 }}
         );
 
@@ -1914,6 +1934,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_TRAINEE_RELATIONSHIP = "trainee_relationship";
         public static final String COLUMN_NAME_TRAINEE_RELATIONSHIP_ID = "Trainee_relationship_id";
         public static final String COLUMN_NAME_TRAINEE_RELATION_SIGNATURE = "trainee_relation_signature";
+        public static final String COLUMN_NAME_STAKEHOLDER_ID = "stakeholder_id";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1927,6 +1948,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_TRAINEE_RELATIONSHIP);
                     add(COLUMN_NAME_TRAINEE_RELATIONSHIP_ID);
                     add(COLUMN_NAME_TRAINEE_RELATION_SIGNATURE);
+                    add(COLUMN_NAME_STAKEHOLDER_ID);
                 }}
         );
 

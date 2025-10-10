@@ -407,6 +407,7 @@
                                             android:layout_weight="10"
                                             android:textSize="@dimen/ofis_med_text"
                                             android:textStyle="bold"
+                                            android:id="@+id/txtAdv"
                                             android:textColor="@color/cs_color"
                                             android:text="@string/cs_page2_13"/>
 

@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -93,6 +94,7 @@ public class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
 
         dl = new DataLayer(res, context);
+        Utilities.configureSystemUIAndroid15(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
 //        InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
     }
@@ -137,6 +139,34 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        applyFitsSystemWindows();
+    }
+
+    private void applyFitsSystemWindows() {
+        ViewGroup root = findViewById(android.R.id.content);
+        if (root != null && root.getChildCount() > 0) {
+            View child = root.getChildAt(0);
+            if (child != null) {
+                child.setFitsSystemWindows(true);
+            }
+        }
     }
 
     public boolean getNIDPhotostatusByType(String type, long editFarmerId, String columnName) {
@@ -335,6 +365,8 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
                 storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                 storeableNids.put("backendDbId", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_BACKEND_DB_ID)));
+                storeableNids.put("deletedFlag", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_DELETED)));
+                storeableNids.put("updatedFlag", nids.getString(nids.getColumnIndex(OFISDBContract.LocalFarmerNationalIDs.COLUMN_IS_UPDATED)));
 
                 storeableNationalids.put(storeableNids);
 

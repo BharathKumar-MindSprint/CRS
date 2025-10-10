@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +45,13 @@ public class TrainingAttendeeScores extends BaseActivity {
     private String columnSuffix;
 
     private LayoutInflater inflater;
-    private LinearLayout attendeeList;
+    private LinearLayout attendeeListFarmer, attendeeListStakeholder;
+    private ImageView toggleFarmerIcon, toggleStakeholderIcon;
+    private ScrollView farmerList, stakeholderList;
+
+    private boolean isFarmerOpen = false;
+    private boolean isStakeholderOpen = false;
+    private LinearLayout farmerSection, stakeholderSection;
 
 
     @Override
@@ -60,7 +68,8 @@ public class TrainingAttendeeScores extends BaseActivity {
         dl = new DataLayer(res, context);
 
         inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        attendeeList = (LinearLayout) findViewById(R.id.attendeeList);
+        attendeeListFarmer = (LinearLayout) findViewById(R.id.attendeeListFarmer);
+        attendeeListStakeholder = (LinearLayout) findViewById(R.id.attendeeListStakeholder);
 
         Intent intent = getIntent();
         trainingRecordId = intent.getLongExtra(EDIT_TRAININGRECORD_ID, 0);
@@ -71,10 +80,80 @@ public class TrainingAttendeeScores extends BaseActivity {
             columnSuffix = "";
         }
 
+        farmerSection = findViewById(R.id.farmer_section);
+        stakeholderSection = findViewById(R.id.stakeholder_section);
+        toggleFarmerIcon = findViewById(R.id.toggle_icon_farmer);
+        toggleStakeholderIcon = findViewById(R.id.toggle_icon_stakeholder);
+        stakeholderList = findViewById(R.id.list_stakeholder);
+        farmerList = findViewById(R.id.list_farmer);
+
+        farmerList.setVisibility(View.VISIBLE);
+        stakeholderList.setVisibility(View.GONE);
+        toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_up);
+        toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+        updateWeights(farmerSection, 9);
+        updateWeights(stakeholderSection, 1);
+
+        toggleSection(true);
+        toggleFarmerIcon.setOnClickListener(v -> toggleSection(true));
+        toggleStakeholderIcon.setOnClickListener(v -> toggleSection(false));
+
         getTrainingRecord();
-        getTrainingAttendees();
+        getTrainingAttendees(dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId), attendeeListFarmer);
+        getTrainingAttendees(dl.getTrainingAttendeesByTrainingRecordIdStakeholder(trainingRecordId), attendeeListStakeholder);
         bindButtons();
 
+    }
+
+    private void toggleSection(boolean isOpeningFarmer) {
+        boolean isCurrentlyOpen = isOpeningFarmer ? isFarmerOpen : isStakeholderOpen;
+
+        if (!isCurrentlyOpen) {
+            farmerList.setVisibility(isOpeningFarmer ? View.VISIBLE : View.GONE);
+            stakeholderList.setVisibility(isOpeningFarmer ? View.GONE : View.VISIBLE);
+
+            toggleFarmerIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
+            toggleStakeholderIcon.setImageResource(isOpeningFarmer ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up);
+
+            updateWeights(farmerSection, isOpeningFarmer ? 9 : 1);
+            updateWeights(stakeholderSection, isOpeningFarmer ? 1 : 9);
+
+            isFarmerOpen = isOpeningFarmer;
+            isStakeholderOpen = !isOpeningFarmer;
+        } else {
+            if (isOpeningFarmer) {
+                farmerList.setVisibility(View.GONE);
+                toggleFarmerIcon.setImageResource(R.drawable.ic_arrow_down);
+            } else {
+                stakeholderList.setVisibility(View.GONE);
+                toggleStakeholderIcon.setImageResource(R.drawable.ic_arrow_down);
+            }
+
+            updateWeights(farmerSection, 1);
+            updateWeights(stakeholderSection, 1);
+
+            isFarmerOpen = false;
+            isStakeholderOpen = false;
+        }
+    }
+
+    private void updateWeights(LinearLayout layout, int weight) {
+        ViewGroup.MarginLayoutParams oldParams = (ViewGroup.MarginLayoutParams) layout.getLayoutParams();
+
+        LinearLayout.LayoutParams newParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                weight
+        );
+
+        newParams.setMargins(
+                oldParams.leftMargin,
+                oldParams.topMargin,
+                oldParams.rightMargin,
+                oldParams.bottomMargin
+        );
+
+        layout.setLayoutParams(newParams);
     }
 
     @Override
@@ -96,9 +175,7 @@ public class TrainingAttendeeScores extends BaseActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    private void getTrainingAttendees() {
-        Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
-
+    private void getTrainingAttendees(Cursor trainingAttendees, LinearLayout attendeeList) {
         if (trainingAttendees.getCount() > 0) {
             while (trainingAttendees.moveToNext()) {
                 LinearLayout attendeeRow = (LinearLayout) inflater.inflate(R.layout.activity_training_attendee_score_row, attendeeList, false);
@@ -114,7 +191,7 @@ public class TrainingAttendeeScores extends BaseActivity {
                 }
 
                 // show and label the correct scoring columns
-                if (scoringColumns!=null && scoringColumns.length() > 0) {
+                if (scoringColumns != null && scoringColumns.length() > 0) {
                     int columnCount = 0;
                     Iterator<String> columnKeys = scoringColumns.keys();
                     while (columnKeys.hasNext()) {
@@ -122,13 +199,13 @@ public class TrainingAttendeeScores extends BaseActivity {
                         try {
                             JSONObject value = scoringColumns.getJSONObject(key);
                             String label = value.optString("label" + columnSuffix, "label");
-                            LinearLayout scoreWrapper = (LinearLayout) attendeeRow.findViewById(res.getIdentifier("wrapper_"+key, "id", getPackageName()));
-                            TextView scoreLabel = (TextView) scoreWrapper.findViewById(res.getIdentifier("label_"+key, "id", getPackageName()));
+                            LinearLayout scoreWrapper = (LinearLayout) attendeeRow.findViewById(res.getIdentifier("wrapper_" + key, "id", getPackageName()));
+                            TextView scoreLabel = (TextView) scoreWrapper.findViewById(res.getIdentifier("label_" + key, "id", getPackageName()));
                             View scoreView = scoreWrapper.getChildAt(1);
 
                             if (columnCount == 0) {
                                 scoreWrapper.setBackgroundResource(0);
-                                scoreWrapper.setPadding(0,0,0,0);
+                                scoreWrapper.setPadding(0, 0, 0, 0);
                                 ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) scoreWrapper.getLayoutParams();
                                 mlp.setMargins(0, 0, 0, 0);
                             }
@@ -142,7 +219,7 @@ public class TrainingAttendeeScores extends BaseActivity {
                                     final CheckBox scoreColumn = (CheckBox) scoreView;
                                     boolean isChecked = (trainingAttendees.getInt(trainingAttendees.getColumnIndex(key)) == 1);
                                     scoreColumn.setChecked(isChecked);
-                                } else {
+                                } else if (scoreView instanceof EditText) {
                                     EditText scoreColumn = (EditText) scoreView;
                                     scoreColumn.setText((!trainingAttendees.isNull(trainingAttendees.getColumnIndex(key))) ? trainingAttendees.getString(trainingAttendees.getColumnIndex(key)) : "");
 
@@ -153,7 +230,6 @@ public class TrainingAttendeeScores extends BaseActivity {
                             }
 
                             scoreWrapper.setVisibility(View.VISIBLE);
-
                             columnCount++;
                         } catch (JSONException e) {
                             FirebaseCrash.report(new Exception("TrainingAttendeeScores: Error getting scoring columns for training attendees", e));
@@ -163,7 +239,6 @@ public class TrainingAttendeeScores extends BaseActivity {
                 }
 
                 attendeeList.addView(attendeeRow);
-
             }
         }
     }
@@ -174,38 +249,13 @@ public class TrainingAttendeeScores extends BaseActivity {
         saveScores.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // save scores against attendees
-                int attendeeCount = attendeeList.getChildCount();
                 int updateCount = 0;
 
-                for (int i = 0; i < attendeeCount; i++) {
-                    LinearLayout attendeeRow = (LinearLayout) attendeeList.getChildAt(i);
-                    TextView attendeeIdView = (TextView) attendeeRow.findViewById(R.id.trainingAttendeeId);
-                    String attendeeId = attendeeIdView.getText().toString();
-                    ContentValues scoreValues = new ContentValues();
-
-                    // gather the correct scoring column values
-                    if (scoringColumns!=null && scoringColumns.length() > 0) {
-                        Iterator<String> columnKeys = scoringColumns.keys();
-                        while (columnKeys.hasNext()) {
-                            String key = columnKeys.next();
-                            LinearLayout scoreWrapper = (LinearLayout) attendeeRow.findViewById(res.getIdentifier("wrapper_"+key, "id", getPackageName()));
-                            View scoreView = scoreWrapper.getChildAt(1);
-
-                            if (scoreView != null) {
-                                if (scoreView instanceof CheckBox) {
-                                    scoreValues.put(key, ((CheckBox) scoreView).isChecked());
-                                } else {
-                                    scoreValues.put(key, ((EditText) scoreView).getText().toString());
-                                }
-                            }
-                        }
-                    }
-
-                    updateCount += dl.updateAttendeeScore(scoreValues, attendeeId);
-                }
+                updateCount += updateAttendeeScores(attendeeListFarmer);
+                updateCount += updateAttendeeScores(attendeeListStakeholder);
 
                 Toast.makeText(context, updateCount + " " + res.getString(R.string.attendees_scores_updated), Toast.LENGTH_LONG).show();
+
                 Intent intent = new Intent(context, TrainingRecord.class);
                 intent.putExtra(EDIT_TRAININGRECORD_ID, trainingRecordId);
                 intent.putExtra(EDIT_MODE, editMode);
@@ -214,6 +264,39 @@ public class TrainingAttendeeScores extends BaseActivity {
         });
 
     }
+    private int updateAttendeeScores(LinearLayout attendeeList) {
+        int updateCount = 0;
+        int attendeeCount = attendeeList.getChildCount();
+
+        for (int i = 0; i < attendeeCount; i++) {
+            LinearLayout attendeeRow = (LinearLayout) attendeeList.getChildAt(i);
+            TextView attendeeIdView = (TextView) attendeeRow.findViewById(R.id.trainingAttendeeId);
+            String attendeeId = attendeeIdView.getText().toString();
+            ContentValues scoreValues = new ContentValues();
+
+            // gather the correct scoring column values
+            if (scoringColumns != null && scoringColumns.length() > 0) {
+                Iterator<String> columnKeys = scoringColumns.keys();
+                while (columnKeys.hasNext()) {
+                    String key = columnKeys.next();
+                    LinearLayout scoreWrapper = (LinearLayout) attendeeRow.findViewById(res.getIdentifier("wrapper_" + key, "id", getPackageName()));
+                    View scoreView = scoreWrapper.getChildAt(1);
+
+                    if (scoreView != null) {
+                        if (scoreView instanceof CheckBox) {
+                            scoreValues.put(key, ((CheckBox) scoreView).isChecked());
+                        } else if (scoreView instanceof EditText) {
+                            scoreValues.put(key, ((EditText) scoreView).getText().toString());
+                        }
+                    }
+                }
+            }
+
+            updateCount += dl.updateAttendeeScore(scoreValues, attendeeId);
+        }
+        return updateCount;
+    }
+
 
     private class InputFilterMinMax implements InputFilter {
         private final double min;

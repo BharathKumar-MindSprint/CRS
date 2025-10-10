@@ -78,6 +78,7 @@ import com.olam.digital.ofis.recordpolygon.Utils;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -338,28 +339,42 @@ public class AddInfrastructureActivity extends BaseActivity {
 
 
     private void setupSubModuleQuestions() {
+        dynamicQuestions.questionNumbers = new HashMap<>();
+        int questionNumber = 0;
         // loop through questions and generate the right control for each
         while (questions.moveToNext()) {
             String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE));
+            final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+
             if (displayType.toLowerCase().replaceAll(" ","").equals("checkbox")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderCheckBoxQuestionForSIP(questions, dynamicQuestions.questionsSection);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("datepicker")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderDatePickerQuestionForSip(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("decimal")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("dropdown")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderSipDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("photocheckbox")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderPhotoCheckboxQuestionForSIP(questions, res, getPackageName());
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("repeater")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderRepeaterQuestionForSIP(questions, res);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("textbox")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("yesno") || displayType.toLowerCase().replaceAll(" ","").equals("yes/no")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("farmtreedensity")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
             } else if (displayType.toLowerCase().replaceAll(" ","").equals("photoupload")) {
+                dynamicQuestions.questionNumbers.put(questionId, ++questionNumber);
                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             }
         }

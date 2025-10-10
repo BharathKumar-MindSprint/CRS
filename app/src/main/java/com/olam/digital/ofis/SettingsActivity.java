@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -79,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         res = getResources();
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+        Utilities.configureSystemUIAndroid15(this);
         dl = new DataLayer(res, context);
         roomDB = OFISRoomDB.getDbInstance(context);
         progressDialog = new ProgressDialog(this);
@@ -171,6 +173,34 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             enumeratorID.setText(enumerator_id);
         }
 
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        applyFitsSystemWindows();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        applyFitsSystemWindows();
+    }
+
+    private void applyFitsSystemWindows() {
+        ViewGroup root = findViewById(android.R.id.content);
+        if (root != null && root.getChildCount() > 0) {
+            View child = root.getChildAt(0);
+            if (child != null) {
+                child.setFitsSystemWindows(true);
+            }
+        }
     }
 
     private void setupUI() {

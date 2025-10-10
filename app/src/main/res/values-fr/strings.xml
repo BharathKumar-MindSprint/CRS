@@ -1284,5 +1284,15 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="no_phone_number">Aucun numéro de téléphone applicable !</string>
     <string name="invalid_national_id">Identifiant national invalide !</string>
     <string name="invalid_phonenumber">Numéro de téléphone invalide !</string>
+    <string name="calculated_question_note_message">Remarque : Le résultat de cette question calculée dépend de la question</string>
+    <string name="alert_review_hint_calculated">Veuillez vous assurer que la valeur calculée est comprise entre %.2f et %.2f</string>
+    <string name="no_dependent_message">Remarque : Cette question ne dépend d\'aucune autre question.</string>
+    <string name="alert_review_hint_calculated_decimal">Veuillez vous assurer que la valeur calculée est comprise entre %.2f et %.2f</string>
+    <string name="stakeholder_attendee">Participant partie prenante</string>
+    <string name="max_age">Maximum de 3 chiffres autorisés.</string>
+    <string name="attendee_register_stakeholder">Ajouter le participant ici n\'enregistre pas le partie prenante dans OFIS</string>
+    <string name="please_enter_value">Please enter value</string>
+    <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Facultative)</string>
 
 </resources>

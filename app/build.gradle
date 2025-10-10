@@ -1,6 +1,12 @@
 //apply plugin: 'com.dynatrace.instrumentation'
-apply plugin: 'com.android.application'
-apply plugin: 'org.sonarqube'
+plugins {
+    id 'com.android.application'
+    id 'org.sonarqube'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'com.google.devtools.ksp'
+}
+
 
 
 android {
@@ -18,19 +24,38 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion = 34
-    buildToolsVersion ='34.0.0'
+    compileSdkVersion = 35
+    buildToolsVersion ='35.0.0'
     flavorDimensions = ["default"]
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+
+    kotlin {
+        jvmToolchain(17)
+    }
+
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+
     defaultConfig {
         applicationId "com.olam.digital.ofis"
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 21
-        targetSdkVersion 34
+        //noinspection EditedTargetSdkVersion
+        targetSdkVersion 35
         multiDexEnabled true
-        versionCode 97
-        versionName "10.8.9"
+        versionCode 98
+        versionName "10.9.0"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -295,7 +320,18 @@ dependencies {
     implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1' // for OkHttp library
+
+    implementation 'androidx.navigation:navigation-fragment:2.9.3'
+    implementation 'androidx.navigation:navigation-ui:2.9.3'
+    implementation 'com.google.dagger:hilt-android:2.56.2'
+    ksp 'com.google.dagger:hilt-compiler:2.56.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
+    implementation "androidx.hilt:hilt-navigation-fragment:1.2.0"
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation 'androidx.core:core-ktx:1.12.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

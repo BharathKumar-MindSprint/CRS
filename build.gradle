@@ -2,6 +2,8 @@
 //apply plugin: 'com.dynatrace.instrumentation'
 
 buildscript {
+    ext.kotlin_version = '2.0.0'
+
     repositories {
         google()
         mavenCentral()
@@ -16,8 +18,13 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.15'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7" //added for sonar
-
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
+}
+
+plugins {
+    id 'com.google.dagger.hilt.android' version '2.56.2' apply false
+    id 'com.google.devtools.ksp' version '2.0.0-1.0.21' apply false
 }
 
 allprojects {
