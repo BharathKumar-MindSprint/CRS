@@ -1120,6 +1120,7 @@
     <string name="attendee_register_stakeholder">ການເພີ່ມຜູ້ມີສ່ວນຮ່ວມທີ່ນີ້ບໍ່ລົງທະບຽນຜູ້ມີສ່ວນທຸລະກິດໃນ OFIS</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>\
+    <string name="optional">(ທາງເລືອກ)</string>
 </resources>
 
 

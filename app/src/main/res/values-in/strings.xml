@@ -958,4 +958,6 @@
     <string name="attendee_register_stakeholder">Menambahkan peserta di sini tidak mendaftarkan pemangku kepentingan di OFIS</string>
     <string name="please_enter_value">Please enter value</string>
     <string name="profile_icon">Farmer Profile</string>
+    <string name="optional">(Opsional)</string>
+
 </resources>
