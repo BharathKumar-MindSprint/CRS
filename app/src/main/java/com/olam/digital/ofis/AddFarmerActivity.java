@@ -2218,10 +2218,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, null, storeableNationalids, "1", "name", OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID);
                                 if (moduretationstatus) {
                                     statusmoduration = true;
-                                }else {
-
-                                    dl.deleteFarmerNationaId(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, editFarmerId, null);
                                 }
+                            } else {
+                                dl.deleteFarmerNationaId(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, editFarmerId, null);
                             }
 
                             if (updFarmerId > 0) {
