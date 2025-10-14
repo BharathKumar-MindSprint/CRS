@@ -9280,6 +9280,12 @@ public class DataLayer {
         return photoLink;
     }
 
+    public long deleteIdBasedOnSustainable(long farmerId) {
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        return db.delete(OFISDBContract.FarmerEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
     void addFarmerPhoneNumber(Long farmerId, String stakeHolder, JSONArray storeableNumbers) {
         int arrayLength = storeableNumbers.length();
 

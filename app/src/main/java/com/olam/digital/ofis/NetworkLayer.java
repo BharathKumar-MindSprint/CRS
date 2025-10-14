@@ -3522,7 +3522,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         db.distributionFormDao().updateFarmerIdInDistribution(localFarmerId, jsonObject1.getInt("id"));
 
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
-
+                                        if(!jsonObject1.getBoolean("sustainable")){
+                                            dl.deleteIdBasedOnSustainable(jsonObject1.getInt("id"));
+                                        }
                                         // DM farmerId udpate
                                         db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
