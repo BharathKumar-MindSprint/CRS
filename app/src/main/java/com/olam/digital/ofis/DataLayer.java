@@ -2065,37 +2065,53 @@ public class DataLayer {
             String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
             MatrixCursor mc = new MatrixCursor(adapterCols);
             mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
-            if (spinner.getId() == R.id.spinner_place) {
-                mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
+            Cursor[] cursors = {mc, cursor};
+            Cursor output = new MergeCursor(cursors);
 
+            initCursorAdapterForGeoGraphicSpinner(spinner, context, showAsWhite, output, adapterCols);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void bindDataDrivenPlaceSpinner(Spinner spinner, Cursor cursor, Context context, int placeholderTextResId, String textColumnName, boolean showAsWhite, boolean isSubdistrictCapture) {
+        try {
+            if (textColumnName == null) {
+                textColumnName = "name";
+            }
+            String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
+            MatrixCursor mc = new MatrixCursor(adapterCols);
+            mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
+            if (isSubdistrictCapture) {
+                mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
             }
             Cursor[] cursors = {mc, cursor};
             Cursor output = new MergeCursor(cursors);
 
-            int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
-            int spinnerItemLayout = (showAsWhite) ? R.layout.spinner_item_white : R.layout.spinner_item;
-            SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0) {
-                @Override
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    final View v = super.getDropDownView(position, convertView, parent);
-                    v.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((TextView) v.findViewById(R.id.ofis_spinner_text_view)).setSingleLine(false);
-                        }
-                    });
-                    return v;
-                }
-            };
-
-            simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-
-            spinner.setAdapter(simpleCursorAdapter);
-
-
+            initCursorAdapterForGeoGraphicSpinner(spinner, context, showAsWhite, output, adapterCols);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void initCursorAdapterForGeoGraphicSpinner(Spinner spinner, Context context, boolean showAsWhite, Cursor output, String[] adapterCols) {
+        int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
+        int spinnerItemLayout = showAsWhite ? R.layout.spinner_item_white : R.layout.spinner_item;
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                final View v = super.getDropDownView(position, convertView, parent);
+                v.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) v.findViewById(R.id.ofis_spinner_text_view)).setSingleLine(false);
+                    }
+                });
+                return v;
+            }
+        };
+        simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner.setAdapter(simpleCursorAdapter);
     }
 
     void bindDataDrivenSpinner1(Spinner spinner, Cursor cursor, Context context, int placeholderTextResId, String textColumnName, boolean showAsWhite) {
@@ -2351,6 +2367,7 @@ public class DataLayer {
 
 
         final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+        final boolean[] isODOrigin = {true};
 
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
@@ -2397,8 +2414,8 @@ public class DataLayer {
                 }
 
                 if (id > 0) {
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    if (!isODOrigin) {
+                    isODOrigin[0] = isSubdistrictCapture((int) id);
+                    if (!isODOrigin[0]) {
                         subdistrictSpinner.setVisibility(View.GONE);
                         haDistrict.setVisibility(View.GONE);
                     } else {
@@ -2508,9 +2525,9 @@ public class DataLayer {
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
+
                     Cursor places;
-                    if (!isODOrigin) {
+                    if (!isODOrigin[0]) {
                         places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
                     }else {
                         places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
@@ -2518,14 +2535,14 @@ public class DataLayer {
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
                     } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                        bindDataDrivenPlaceSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false, isODOrigin[0]);
                     }
 
                     if (placeSelection != 0) {
                         setSpinnerSelectionById(placeSelection, placeSpinner);
                     } else {
                         if (newPlace) {
-                            if (places.getCount() == 1) {
+                            if (isODOrigin[0] && places.getCount() == 1) {
                                 try {
                                     placeSpinner.setSelection(2, false);
                                 } catch (Exception e) {
@@ -2552,14 +2569,14 @@ public class DataLayer {
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
                     } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                        bindDataDrivenPlaceSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false, isODOrigin[0]);
                     }
 
                     if (placeSelection != 0) {
                         setSpinnerSelectionById(placeSelection, placeSpinner);
                     } else {
                         if (newPlace) {
-                            if (places.getCount() == 1) {
+                            if (isODOrigin[0] && places.getCount() == 1) {
                                 try {
                                     placeSpinner.setSelection(2, false);
                                 } catch (Exception e) {
@@ -2578,6 +2595,7 @@ public class DataLayer {
 
                 }
             });
+
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
