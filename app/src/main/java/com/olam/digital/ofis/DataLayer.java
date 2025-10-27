@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
+import com.olam.digital.ofis.Common.Utils.NetworkQueueDTO;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.StakeHolderDto;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
@@ -861,8 +862,8 @@ public class DataLayer {
 
     int updateNetworkEditedFarmer(ContentValues values, long farmerId) {
         int updated = 0;
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " =?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId), "Edit Farmer"};
         try {
             updated = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
@@ -1975,6 +1976,198 @@ public class DataLayer {
         }
         String orderByColumn = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " DESC, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT + " ASC";
         return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, null, null, null, null, orderByColumn);
+    }
+
+    Cursor getNetworkQueueBySubmissionType() {
+        List<String> columnList = OFISDBContract.NetworkQueueEntry.COLUMN_LIST;
+        String[] columns = new String[columnList.size()];
+        for (int i = 0; i < columnList.size(); i++) {
+            columns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+        }
+        String orderByColumn = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " DESC, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT + " ASC";
+        String querySelection = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+        String[] queryValues = new String[]{"Edit Farmer"};
+
+        return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, querySelection, queryValues, null, null, orderByColumn);
+    }
+
+    public List<NetworkQueueDTO> getNetworkQueueDTOs() {
+        Cursor cursor = getNetworkQueueBySubmissionType();
+        List<NetworkQueueDTO> dtoList = new ArrayList<>();
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                NetworkQueueDTO dto = new NetworkQueueDTO();
+                dto.id = cursor.getString(cursor.getColumnIndexOrThrow("_id"));
+                dto.uploadId = cursor.getString(cursor.getColumnIndexOrThrow("upload_id"));
+                dto.submissionType = cursor.getString(cursor.getColumnIndexOrThrow("submission_type"));
+                dto.poiTypeId = cursor.getString(cursor.getColumnIndexOrThrow("poi_type_id"));
+                dto.poiModuleId = cursor.getString(cursor.getColumnIndexOrThrow("poi_module_id"));
+                dto.poiType = cursor.getString(cursor.getColumnIndexOrThrow("poi_type"));
+                dto.poiSubgroupTypeId = cursor.getString(cursor.getColumnIndexOrThrow("poi_subgroup_type_id"));
+                dto.poiSubmoduleId = cursor.getString(cursor.getColumnIndexOrThrow("poi_submodule_id"));
+                dto.poiSubgroupType = cursor.getString(cursor.getColumnIndexOrThrow("poi_subgroup_type"));
+                dto.poiName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                dto.farmerId = cursor.getString(cursor.getColumnIndexOrThrow("farmer_id"));
+                dto.stakeholderId = cursor.getString(cursor.getColumnIndexOrThrow("multistakeholder_id"));
+                dto.olamFarmerId = cursor.getString(cursor.getColumnIndexOrThrow("olam_farmer_id"));
+                dto.farmId = cursor.getString(cursor.getColumnIndexOrThrow("farm_id"));
+                dto.farmerModuleId = cursor.getString(cursor.getColumnIndexOrThrow("farmer_module_id"));
+                dto.fmpId = cursor.getString(cursor.getColumnIndexOrThrow("fmp_id"));
+                dto.transactionItemId = cursor.getString(cursor.getColumnIndexOrThrow("transactionitem_id"));
+                dto.transacteeType = cursor.getString(cursor.getColumnIndexOrThrow("transactee_type"));
+                dto.trainingRecordId = cursor.getString(cursor.getColumnIndexOrThrow("trainingrecord_id"));
+                dto.recordedLat = cursor.getString(cursor.getColumnIndexOrThrow("recorded_lat"));
+                dto.recordedLng = cursor.getString(cursor.getColumnIndexOrThrow("recorded_lng"));
+                dto.recordedPlots = cursor.getString(cursor.getColumnIndexOrThrow("recorded_plots"));
+                dto.countryId = cursor.getString(cursor.getColumnIndexOrThrow("country_id"));
+                dto.regionId = cursor.getString(cursor.getColumnIndexOrThrow("region_id"));
+                dto.districtId = cursor.getString(cursor.getColumnIndexOrThrow("district_id"));
+                dto.subdistrictId = cursor.getString(cursor.getColumnIndexOrThrow("subdistrict_id"));
+                dto.placeId = cursor.getString(cursor.getColumnIndexOrThrow("place_id"));
+                dto.productId = cursor.getString(cursor.getColumnIndexOrThrow("product_id"));
+                dto.farmerGroupId = cursor.getString(cursor.getColumnIndexOrThrow("farmergroup_id"));
+                dto.capacity = cursor.getString(cursor.getColumnIndexOrThrow("capacity"));
+                dto.numClassrooms = cursor.getString(cursor.getColumnIndexOrThrow("num_classrooms"));
+                dto.yearOpened = cursor.getString(cursor.getColumnIndexOrThrow("year_opened"));
+                dto.genderMix = cursor.getString(cursor.getColumnIndexOrThrow("gender_mix"));
+                dto.schoolType = cursor.getString(cursor.getColumnIndexOrThrow("school_type"));
+                dto.cwsType = cursor.getString(cursor.getColumnIndexOrThrow("cws_type"));
+                dto.olamFunded = cursor.getString(cursor.getColumnIndexOrThrow("olam_funded"));
+                dto.serverItemId = cursor.getString(cursor.getColumnIndexOrThrow("server_item_id"));
+                dto.fullySynced = cursor.getString(cursor.getColumnIndexOrThrow("fully_synced"));
+                dto.uploadAttempts = cursor.getString(cursor.getColumnIndexOrThrow("upload_attempts"));
+                dto.createdAt = cursor.getString(cursor.getColumnIndexOrThrow("created_at"));
+                dto.updatedAt = cursor.getString(cursor.getColumnIndexOrThrow("updated_at"));
+                dto.farmerPhoto = cursor.getString(cursor.getColumnIndexOrThrow("farmer_photourl"));
+                dto.farmerChildId = cursor.getString(cursor.getColumnIndexOrThrow("farmer_child_id"));
+                dto.farmerSurveyCode = cursor.getString(cursor.getColumnIndexOrThrow("survey_code"));
+                dto.isVillage = cursor.getString(cursor.getColumnIndexOrThrow("is_village"));
+                dto.signature = cursor.getString(cursor.getColumnIndexOrThrow("signature"));
+                dto.accuracy = cursor.getString(cursor.getColumnIndexOrThrow("accuracy"));
+                dto.plotId = cursor.getString(cursor.getColumnIndexOrThrow("plot_id"));
+                dto.certificationIds = cursor.getString(cursor.getColumnIndexOrThrow("certificationIds"));
+                dto.certificationText = cursor.getString(cursor.getColumnIndexOrThrow("certificationText"));
+                dto.plotName = cursor.getString(cursor.getColumnIndexOrThrow("plotName"));
+                dto.sipPlot = cursor.getString(cursor.getColumnIndexOrThrow("sipPlot"));
+
+                dtoList.add(dto);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return dtoList;
+    }
+
+    public String getModuleNameById(int moduleId ,String lang) {
+        String moduleName = "";
+        Cursor moduleCursor = null;
+        try {
+            String column;
+            switch (lang) {
+                case "in":
+                case "id":
+                    column = "name_id";
+                    break;
+                case "en":
+                    column = "name";
+                    break;
+                default:
+                    column = "name" + lang;
+                    break;
+            }
+
+            String[] columns = new String[]{column};
+            String whereClause = OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+
+            moduleCursor = db.query(OFISDBContract.ModuleEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+            if (moduleCursor != null && moduleCursor.moveToFirst()) {
+                switch (lang) {
+                    case "en":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME));
+                        break;
+                    case "es":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ES));
+                        break;
+                    case "fr":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_FR));
+                        break;
+                    case "id":
+                    case "in":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID));
+                        break;
+                    case "lo":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO));
+                        break;
+                    case "pt":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT));
+                        break;
+                    case "th":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH));
+                        break;
+                    case "tr":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR));
+                        break;
+                    case "vi":
+                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI));
+                        break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (moduleCursor != null) {
+                moduleCursor.close();
+            }
+        }
+
+        return moduleName;
+    }
+
+    public Boolean checkNationalIdAvailable(String farmerId) {
+        Boolean isUpdated = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{farmerId};
+            cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String updatedValue = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_IS_UPDATED));
+                    if ("1".equals(updatedValue)) {
+                        isUpdated = true;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return isUpdated;
+    }
+
+    public Integer getModuleIdBySurveyCode(String surveyCode) {
+        String[] columns = new String[]{OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID};
+        String whereClause = OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_CODE + " = ?";
+        String[] whereArgs = new String[]{surveyCode};
+
+        try (Cursor cursor = db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null, "1" )) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(cursor.getColumnIndexOrThrow(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     public Cursor getSpinnerData(String table, Boolean getByRelationship, String getByColumnName, Integer getByColumnValue, @SuppressWarnings("SameParameterValue") Boolean orderByColumn, String orderByColumnName) {
