@@ -1621,6 +1621,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("Distribution Form")) {
                 Intent intent = new Intent(context, DistributionModuleActivity.class);
+                String farmerId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String olamFarmerId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                String stakeHolderId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
+                String name = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME));
+                String tempId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
+
+                intent.putExtra("farmerId", farmerId);
+                intent.putExtra("olamFarmerId", olamFarmerId);
+                intent.putExtra("stakeHolderId", stakeHolderId);
+                intent.putExtra("name", name);
+                intent.putExtra("fromSync", "SecondFragment");
+                intent.putExtra("tempId", tempId);
                 startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {

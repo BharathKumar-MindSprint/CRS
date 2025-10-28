@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import com.olam.digital.ofis.R
@@ -17,10 +18,11 @@ import com.olam.digital.ofis.databinding.FragmentDistributionSummaryBinding
 class DistributionSummaryFragment : Fragment() {
     private lateinit var binding: FragmentDistributionSummaryBinding
     private lateinit var navController : NavController
-    private val viewModel : DistributionModuleViewModel by hiltNavGraphViewModels(R.id.distributionModuleNavigation)
+    private lateinit var viewModel : DistributionModuleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[DistributionModuleViewModel::class.java]
     }
 
     override fun onCreateView(

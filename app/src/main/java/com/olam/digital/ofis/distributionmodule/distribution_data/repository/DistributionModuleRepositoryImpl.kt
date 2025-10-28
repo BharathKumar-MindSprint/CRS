@@ -99,28 +99,7 @@ class DistributionModuleRepositoryImpl(
 
             val distributionCategory = roomDb.distributionCategoryDao().getAllDistributionCategory()
 
-            val currencyItems = mutableListOf<SpinnerDataDto>()
-            currencyItems.add(0, SpinnerDataDto(0, "", "", false))
-
-
-            val localUnits = mutableListOf<SpinnerDataDto>()
-            localUnits.add(0, SpinnerDataDto(0, "", "", false))
-
-            val currencyMetric = roomDb.globalUnitDao().getGlobalUnits()
-            var globalMetricId = 0
-
-            currencyMetric.forEach {
-                if (it.globalMetric == "Currency") {
-                    globalMetricId = it.globalUnitId
-                    currencyItems.add(SpinnerDataDto(it.globalUnitId, it.globalUnit, it.globalAbbreviation, true))
-                }
-                else {
-                    localUnits.add(SpinnerDataDto(it.globalUnitId, it.globalUnit, it.globalAbbreviation, true))
-                }
-            }
-
-            currencyItems.addAll(roomDb.localUnitDao().getCurrency(globalMetricId))
-            localUnits.addAll(roomDb.localUnitDao().getLocalUnits(globalMetricId))
+            val (currencyItems, localUnits) = getUnits()
 
             Result.success(mutableListOf(farmerGroupList, sectionList, roleList, distributionCategory, distributionGroups, currencyItems, localUnits))
         }
@@ -152,12 +131,60 @@ class DistributionModuleRepositoryImpl(
     }
 
     override suspend fun getDistributionDetails(
-        farmerId: String?,
-        stakeHolderId: String?
+        distributionId: String?
     ): Result<DistributionFormDto> {
         return Result.success(
-            roomDb.distributionFormDao().getDistributionFormDetails(farmerId, stakeHolderId)
+            roomDb.distributionFormDao().getDistributionFormDetails(distributionId)
         )
+    }
+
+    override suspend fun getCategory(): Result<List<SpinnerDataDto>> {
+        val distributionCategory = roomDb.distributionCategoryDao().getAllDistributionCategory()
+        return Result.success(distributionCategory)
+    }
+
+    override suspend fun getUnitsData(): Result<List<List<SpinnerDataDto>>> {
+        val (currencyItems, localUnits) = getUnits()
+        return Result.success(mutableListOf(currencyItems, localUnits))
+    }
+
+    private fun getUnits(): Pair<MutableList<SpinnerDataDto>, MutableList<SpinnerDataDto>> {
+        val currencyItems = mutableListOf<SpinnerDataDto>()
+        currencyItems.add(0, SpinnerDataDto(0, "", "", false))
+
+
+        val localUnits = mutableListOf<SpinnerDataDto>()
+        localUnits.add(0, SpinnerDataDto(0, "", "", false))
+
+        val currencyMetric = roomDb.globalUnitDao().getGlobalUnits()
+        var globalMetricId = 0
+
+        currencyMetric.forEach {
+            if (it.globalMetric == "Currency") {
+                globalMetricId = it.globalUnitId
+                currencyItems.add(
+                    SpinnerDataDto(
+                        it.globalUnitId,
+                        it.globalUnit,
+                        it.globalAbbreviation,
+                        true
+                    )
+                )
+            } else {
+                localUnits.add(
+                    SpinnerDataDto(
+                        it.globalUnitId,
+                        it.globalUnit,
+                        it.globalAbbreviation,
+                        true
+                    )
+                )
+            }
+        }
+
+        currencyItems.addAll(roomDb.localUnitDao().getCurrency(globalMetricId))
+        localUnits.addAll(roomDb.localUnitDao().getLocalUnits(globalMetricId))
+        return Pair(currencyItems, localUnits)
     }
 
 }

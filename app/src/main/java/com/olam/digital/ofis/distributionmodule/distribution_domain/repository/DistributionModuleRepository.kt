@@ -26,6 +26,10 @@ interface DistributionModuleRepository {
 
     suspend fun insertNetworkQueueEntry(values: ContentValues): Long
 
-    suspend fun getDistributionDetails(farmerId: String?, stakeHolderId: String?): Result<DistributionFormDto>
+    suspend fun getDistributionDetails(distributionId: String?): Result<DistributionFormDto>
+
+    suspend fun getCategory() : Result<List<SpinnerDataDto>>
+
+    suspend fun getUnitsData(): Result<List<List<SpinnerDataDto>>>
 
 }

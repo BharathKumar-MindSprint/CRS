@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -24,6 +23,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -44,8 +44,8 @@ import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import com.github.gcacace.signaturepad.views.SignaturePad
@@ -65,7 +65,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class InputOrFinanceDistributionFragment : Fragment() {
     private lateinit var binding: FragmentInputOrFinanceDistributionBinding
-    private val viewModel : DistributionModuleViewModel by hiltNavGraphViewModels(R.id.distributionModuleNavigation)
+    private lateinit var viewModel : DistributionModuleViewModel
     private lateinit var navController: NavController
     private lateinit var distributionGroupSpinner : Spinner
     private lateinit var distributionGroupAdapter: ArrayAdapter<String>
@@ -84,6 +84,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[DistributionModuleViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -128,6 +129,11 @@ class InputOrFinanceDistributionFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     android.R.id.home -> {
+                        if (viewModel.isFromSyncScreen.value == true) {
+                            requireActivity().finish()
+                            return true
+                        }
+
                         viewModel.onEvent(DistributionModuleUiEvent.ResetDistributionFormState)
                         navController.popBackStack()
                         true
@@ -157,6 +163,11 @@ class InputOrFinanceDistributionFragment : Fragment() {
             setSpannableString(R.string.transaction_value, tvTransactionValue)
 
             btnBack.setOnClickListener {
+                if (viewModel.isFromSyncScreen.value == true) {
+                    requireActivity().finish()
+                    return@setOnClickListener
+                }
+
                 viewModel.onEvent(DistributionModuleUiEvent.ResetDistributionFormState)
                 navController.popBackStack()
             }
@@ -207,7 +218,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
                 showSignatureDialogBox()
             }
         }
-        resetUiState()
+        resetUiState(CategoryEnum.INPUT)
     }
 
     private fun setupCategoryButtons() {
@@ -218,21 +229,59 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
         categoryMap.forEach { (button, category) ->
             button.setOnClickListener {
-                resetUiState()
+                resetUiState(category)
                 viewModel.onEvent(DistributionModuleUiEvent.OnCategoryChange(category))
             }
         }
     }
 
 
-    private fun resetUiState() {
+    private fun resetUiState(categoryEnum: CategoryEnum) {
         distributionGroupSpinner.setSelection(0)
         distributionItemSpinner.setSelection(0)
-        uomSpinner.setSelection(0)
         binding.apply {
             clTakePhoto.visibility = View.VISIBLE
             clUploadFile.visibility = View.VISIBLE
             ivDisplayEvidence.visibility = View.GONE
+        }
+
+        if (categoryEnum == CategoryEnum.FINANCE) {
+            binding.clPricePerUnit.visibility = View.GONE
+            binding.clTotalAmount.visibility = View.GONE
+
+
+            viewModel.currency.value?.let { currencyList ->
+                val names = currencyList.mapIndexed { index, data ->
+                    if (index == 0) getString(R.string.please_select_currency)
+                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
+                }
+
+                uomAdapter.apply {
+                    clear()
+                    addAll(names)
+                    notifyDataSetChanged()
+                }
+                uomSpinner.setSelection(0)
+            }
+        } else {
+            binding.clPricePerUnit.visibility = View.VISIBLE
+            binding.clTotalAmount.visibility = View.VISIBLE
+
+            viewModel.localUnits.value?.let { localUnitList ->
+                val names = localUnitList.mapIndexed { index, data ->
+                    if (index == 0) getString(R.string.select_unit)
+                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
+                }
+
+
+                uomAdapter.apply {
+                    clear()
+                    addAll(names)
+                    notifyDataSetChanged()
+                }
+
+                uomSpinner.setSelection(0)
+            }
         }
     }
 
@@ -386,44 +435,51 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     )
                 }
 
-                if (isFinance) {
-                    clPricePerUnit.visibility = View.GONE
-                    clTotalAmount.visibility = View.GONE
+                if (state.currencyId != null || state.localUnitId != null) {
+                    if (isFinance) {
+                        clPricePerUnit.visibility = View.GONE
+                        clTotalAmount.visibility = View.GONE
 
-                    viewModel.currency.value?.let { currencyList ->
-                        val names = currencyList.mapIndexed { index, data ->
-                            if (index == 0) getString(R.string.please_select_currency)
-                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
-                        }
+                        viewModel.currency.observe(viewLifecycleOwner) { currencyList ->
+                            val names = currencyList.mapIndexed { index, data ->
+                                if (index == 0) getString(R.string.please_select_currency)
+                                else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
+                            }
 
-                        uomAdapter.apply {
-                            clear()
-                            addAll(names)
-                            notifyDataSetChanged()
-                        }
-                    }
-                    val isGlobalId = state.currencyId != null
-                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
+                            uomAdapter.apply {
+                                clear()
+                                addAll(names)
+                                notifyDataSetChanged()
+                            }
 
-                } else {
-                    clPricePerUnit.visibility = View.VISIBLE
-                    clTotalAmount.visibility = View.VISIBLE
-
-                    viewModel.localUnits.value?.let { localUnitList ->
-                        val names = localUnitList.mapIndexed { index, data ->
-                            if (index == 0) getString(R.string.select_unit)
-                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
-                        }
-
-                        uomAdapter.apply {
-                            clear()
-                            addAll(names)
-                            notifyDataSetChanged()
+                            val isGlobalId = state.currencyId != null
+                            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
                         }
                     }
-                    val isGlobalId = state.currencyId != null
-                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
+                    else {
+                        clPricePerUnit.visibility = View.VISIBLE
+                        clTotalAmount.visibility = View.VISIBLE
+
+                        viewModel.localUnits.observe(viewLifecycleOwner) { localUnitList ->
+                            val names = localUnitList.mapIndexed { index, data ->
+                                if (index == 0) getString(R.string.select_unit)
+                                else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
+                            }
+
+
+                            uomAdapter.apply {
+                                clear()
+                                addAll(names)
+                                notifyDataSetChanged()
+                            }
+
+                            val isGlobalId = state.currencyId != null
+                            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
+
+                        }
+                    }
                 }
+
 
                 val hasEvidence = state.evidenceName.isNotEmpty()
                 if (hasEvidence) {
@@ -462,6 +518,8 @@ class InputOrFinanceDistributionFragment : Fragment() {
             val id = if (state.distributionGroupId.isEmpty()) 0 else state.distributionGroupId.toInt()
             distributionGroupSpinner.setSelection(getIndexPosition(id, viewModel.distributionGroups.value ?: emptyList()))
         }
+
+
     }
 
     private fun getIndexPosition(value: Int?, data: List<SpinnerDataDto>, isGlobalId: Boolean = false): Int {
