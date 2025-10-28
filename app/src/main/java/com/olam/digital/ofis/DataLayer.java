@@ -2063,57 +2063,21 @@ public class DataLayer {
         String moduleName = "";
         Cursor moduleCursor = null;
         try {
-            String column;
-            switch (lang) {
-                case "in":
-                case "id":
-                    column = "name_id";
-                    break;
-                case "en":
-                    column = "name";
-                    break;
-                default:
-                    column = "name" + lang;
-                    break;
-            }
+            String langName = lang.toLowerCase();
+            String columnName = switch (langName) {
+                case "en" -> OFISDBContract.ModuleEntry.COLUMN_NAME_NAME;
+                case "id", "in" -> OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID;
+                default -> "name_" + langName;
+            };
 
-            String[] columns = new String[]{column};
+            String[] columns = new String[]{columnName};
             String whereClause = OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(moduleId)};
 
             moduleCursor = db.query(OFISDBContract.ModuleEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
 
             if (moduleCursor != null && moduleCursor.moveToFirst()) {
-                switch (lang) {
-                    case "en":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME));
-                        break;
-                    case "es":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ES));
-                        break;
-                    case "fr":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_FR));
-                        break;
-                    case "id":
-                    case "in":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID));
-                        break;
-                    case "lo":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO));
-                        break;
-                    case "pt":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT));
-                        break;
-                    case "th":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH));
-                        break;
-                    case "tr":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR));
-                        break;
-                    case "vi":
-                        moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI));
-                        break;
-                }
+                moduleName = moduleCursor.getString(moduleCursor.getColumnIndexOrThrow(columnName));
             }
         } catch (Exception e) {
             e.printStackTrace();
