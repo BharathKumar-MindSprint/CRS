@@ -239,49 +239,11 @@ class InputOrFinanceDistributionFragment : Fragment() {
     private fun resetUiState(categoryEnum: CategoryEnum) {
         distributionGroupSpinner.setSelection(0)
         distributionItemSpinner.setSelection(0)
+        uomSpinner.setSelection(0)
         binding.apply {
             clTakePhoto.visibility = View.VISIBLE
             clUploadFile.visibility = View.VISIBLE
             ivDisplayEvidence.visibility = View.GONE
-        }
-
-        if (categoryEnum == CategoryEnum.FINANCE) {
-            binding.clPricePerUnit.visibility = View.GONE
-            binding.clTotalAmount.visibility = View.GONE
-
-
-            viewModel.currency.value?.let { currencyList ->
-                val names = currencyList.mapIndexed { index, data ->
-                    if (index == 0) getString(R.string.please_select_currency)
-                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
-                }
-
-                uomAdapter.apply {
-                    clear()
-                    addAll(names)
-                    notifyDataSetChanged()
-                }
-                uomSpinner.setSelection(0)
-            }
-        } else {
-            binding.clPricePerUnit.visibility = View.VISIBLE
-            binding.clTotalAmount.visibility = View.VISIBLE
-
-            viewModel.localUnits.value?.let { localUnitList ->
-                val names = localUnitList.mapIndexed { index, data ->
-                    if (index == 0) getString(R.string.select_unit)
-                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
-                }
-
-
-                uomAdapter.apply {
-                    clear()
-                    addAll(names)
-                    notifyDataSetChanged()
-                }
-
-                uomSpinner.setSelection(0)
-            }
         }
     }
 
@@ -435,52 +397,6 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     )
                 }
 
-                if (state.currencyId != null || state.localUnitId != null) {
-                    if (isFinance) {
-                        clPricePerUnit.visibility = View.GONE
-                        clTotalAmount.visibility = View.GONE
-
-                        viewModel.currency.observe(viewLifecycleOwner) { currencyList ->
-                            val names = currencyList.mapIndexed { index, data ->
-                                if (index == 0) getString(R.string.please_select_currency)
-                                else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
-                            }
-
-                            uomAdapter.apply {
-                                clear()
-                                addAll(names)
-                                notifyDataSetChanged()
-                            }
-
-                            val isGlobalId = state.currencyId != null
-                            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
-                        }
-                    }
-                    else {
-                        clPricePerUnit.visibility = View.VISIBLE
-                        clTotalAmount.visibility = View.VISIBLE
-
-                        viewModel.localUnits.observe(viewLifecycleOwner) { localUnitList ->
-                            val names = localUnitList.mapIndexed { index, data ->
-                                if (index == 0) getString(R.string.select_unit)
-                                else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
-                            }
-
-
-                            uomAdapter.apply {
-                                clear()
-                                addAll(names)
-                                notifyDataSetChanged()
-                            }
-
-                            val isGlobalId = state.currencyId != null
-                            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
-
-                        }
-                    }
-                }
-
-
                 val hasEvidence = state.evidenceName.isNotEmpty()
                 if (hasEvidence) {
                     clTakePhoto.visibility = View.GONE
@@ -519,6 +435,58 @@ class InputOrFinanceDistributionFragment : Fragment() {
             distributionGroupSpinner.setSelection(getIndexPosition(id, viewModel.distributionGroups.value ?: emptyList()))
         }
 
+        viewModel.localUnits.observe(viewLifecycleOwner) {
+            binding.clPricePerUnit.visibility = View.VISIBLE
+            binding.clTotalAmount.visibility = View.VISIBLE
+
+            viewModel.localUnits.observe(viewLifecycleOwner) { localUnitList ->
+                val names = localUnitList.mapIndexed { index, data ->
+                    if (index == 0) getString(R.string.select_unit)
+                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
+                }
+
+                val state = viewModel.distributionFormState.value ?: DistributionFormState()
+
+                if (state.distributionCategory == CategoryEnum.FINANCE) {
+                    return@observe
+                }
+
+                uomAdapter.apply {
+                    clear()
+                    addAll(names)
+                    notifyDataSetChanged()
+                }
+
+                val isGlobalId = state.currencyId != null
+                uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
+
+            }
+        }
+
+        viewModel.currency.observe(viewLifecycleOwner) { currencyList ->
+            binding.clPricePerUnit.visibility = View.GONE
+            binding.clTotalAmount.visibility = View.GONE
+
+            val names = currencyList.mapIndexed { index, data ->
+                if (index == 0) getString(R.string.please_select_currency)
+                else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
+            }
+
+            val state = viewModel.distributionFormState.value ?: DistributionFormState()
+
+            if (state.distributionCategory == CategoryEnum.INPUT) {
+                return@observe
+            }
+
+            uomAdapter.apply {
+                clear()
+                addAll(names)
+                notifyDataSetChanged()
+            }
+
+            val isGlobalId = state.currencyId != null
+            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
+        }
 
     }
 

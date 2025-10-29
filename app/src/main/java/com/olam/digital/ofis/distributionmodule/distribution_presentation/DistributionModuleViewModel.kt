@@ -119,9 +119,7 @@ class DistributionModuleViewModel @Inject constructor(
                     id = currentState?.id,
                     tempId = currentState?.tempId)
                 loadDistributionGroup()
-                //loadUnits(event.enum)
                 _distributionFormState.postValue(newState)
-
             }
             is DistributionModuleUiEvent.UpdateDistributionFormDetails -> {
                 val currentState = _distributionFormState.value ?: DistributionFormState()
@@ -186,6 +184,7 @@ class DistributionModuleViewModel @Inject constructor(
             is DistributionModuleUiEvent.LoadDistributionSpinnerData -> {
                 loadDistributionGroup()
                 loadDistributionItem()
+                loadUnits()
             }
 
             is DistributionModuleUiEvent.setFarmerAndStakeHolderData -> {
@@ -216,12 +215,14 @@ class DistributionModuleViewModel @Inject constructor(
             val result = distributionModuleUseCases.getSpinnerData.getDistributionGroups(currentState.categoryId).getOrDefault(
                 mutableListOf(SpinnerDataDto(0, ""))
             )
-
             _distributionGroups.postValue(result)
         }
     }
 
-    private fun loadUnits(enum: CategoryEnum) {
+    private fun loadUnits() {
+        val isInput = (distributionFormState.value?.distributionCategory
+            ?: CategoryEnum.INPUT) == CategoryEnum.INPUT
+
         viewModelScope.launch(Dispatchers.IO) {
             val result: List<List<SpinnerDataDto>> = distributionModuleUseCases.getSpinnerData.getUnitsData()
                 .getOrDefault(
@@ -230,7 +231,13 @@ class DistributionModuleViewModel @Inject constructor(
                         listOf(SpinnerDataDto(0, "", "", false))
                     )
                 )
-            if (enum == CategoryEnum.INPUT) _localUnits.postValue(result.getOrNull(1) ?: emptyList()) else _currency.postValue(result.getOrNull(0) ?: emptyList())
+
+            if (isInput) {
+                _localUnits.postValue(result[1])
+            }
+            else {
+                _currency.postValue(result[0])
+            }
         }
     }
 
@@ -268,7 +275,6 @@ class DistributionModuleViewModel @Inject constructor(
                 val currentState = _distributionFormState.value ?: return@launch
                 val farmerOrStakeHolderState = _farmerOrStakeHolderState.value ?: return@launch
 
-                //val username = AuthenticationHelper(context).getuserName().toLong()
                 val time = System.currentTimeMillis()
                 val olamFarmerId = currentState.tempId ?: (time).toString()
 
@@ -334,8 +340,6 @@ class DistributionModuleViewModel @Inject constructor(
                 _roles.postValue(result[2])
                 _distributionCategory.postValue(result[3])
                 _distributionGroups.postValue(result[4])
-                _currency.postValue(result[5])
-                _localUnits.postValue(result[6])
             }
         }
     }
@@ -368,17 +372,6 @@ class DistributionModuleViewModel @Inject constructor(
             val categoryName = category
                 .find { it.id == distributionDetails?.distributionCategoryId }
                 ?.name?.lowercase()
-
-            val result: List<List<SpinnerDataDto>> = distributionModuleUseCases.getSpinnerData.getUnitsData()
-                .getOrDefault(
-                    listOf(
-                        listOf(SpinnerDataDto(0, "", "", false)),
-                        listOf(SpinnerDataDto(0, "", "", false))
-                    )
-                )
-
-            _localUnits.postValue(result.getOrNull(1) ?: emptyList())
-            _currency.postValue(result.getOrNull(0) ?: emptyList())
 
 
             distributionDetails.let {
