@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FindFarmerAndStakeHolderFragment : Fragment() {
     private lateinit var binding: FragmentFindFarmerAndStakeHolderBinding
     private lateinit var navController: NavController
-    private val viewModel : DistributionModuleViewModel by hiltNavGraphViewModels(R.id.distributionModuleNavigation)
+    private lateinit var viewModel : DistributionModuleViewModel
 
     private lateinit var rvFarmerAndStakeHolder: RecyclerView
     private lateinit var adapter: FarmerAndStakeHolderAdapter
@@ -39,6 +40,7 @@ class FindFarmerAndStakeHolderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[DistributionModuleViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -182,6 +184,7 @@ class FindFarmerAndStakeHolderFragment : Fragment() {
         val data = viewModel.farmerOrStakeHolderState.value?.data ?: FarmerAndStakeHolderState().data
         adapter = FarmerAndStakeHolderAdapter(data.toMutableList()) { position ->
             viewModel.onEvent(DistributionModuleUiEvent.OnItemClick(position))
+            viewModel.isFromSyncScreen.value = null
             navController.navigate(R.id.find_farmer_and_stake_holder_to_input_or_finance_distribution)
         }
 

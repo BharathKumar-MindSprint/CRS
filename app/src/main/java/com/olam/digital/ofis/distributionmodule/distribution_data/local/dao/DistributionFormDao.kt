@@ -24,11 +24,10 @@ interface DistributionFormDao {
 
     @Query("""
     SELECT * FROM DistributionFormEntity 
-    WHERE farmerId = :farmerId 
-    AND (:stakeHolderId IS NULL OR stakeHolderId = :stakeHolderId) 
+    WHERE distributionId = :distributionId
     AND isSync LIKE 'false'
 """)
-    fun getDistributionFormDetails(farmerId: String?, stakeHolderId: String?): DistributionFormDto
+    fun getDistributionFormDetails(distributionId: String?): DistributionFormDto
 
     @Query("""
         UPDATE distributionformentity SET stakeHolderId = :msId WHERE stakeHolderId = :tempMsId AND isSync LIKE 'false'
