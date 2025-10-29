@@ -6919,19 +6919,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                             typeID);
 
                                                     dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-
-                                                    syncNetworkQueue(originalSyncRequestItemId, handler);
-                                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            showNationIdAlertMessage();
-                                                        }
-                                                    });
                                                 }
                                                 if (response.has("syncedNationalIdList")  && !response.isNull("syncedNationalIdList")) {
                                                     JSONArray syncedNationalIdList = response.getJSONArray("syncedNationalIdList");
                                                     dl.addFarmerNationalids(syncedNationalIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                                 }
+                                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        showNationIdAlertMessage();
+                                                    }
+                                                });
 
                                             } catch (JSONException e) {
                                                 throw new RuntimeException(e);
