@@ -18,4 +18,12 @@ class GetSpinnerData(
     suspend fun getDistributionGroups(id : Int) : Result<List<SpinnerDataDto>> {
         return repository.getDistributionGroups(id)
     }
+
+    suspend fun getCategory() : Result<List<SpinnerDataDto>> {
+        return repository.getCategory()
+    }
+
+    suspend fun getUnitsData(): Result<List<List<SpinnerDataDto>>> {
+        return repository.getUnitsData();
+    }
 }

@@ -63,6 +63,8 @@ class DistributionModuleViewModel @Inject constructor(
     ))
     val localUnits : LiveData<List<SpinnerDataDto>> = _localUnits
 
+    var isFromSyncScreen : MutableLiveData<Boolean> = MutableLiveData(null)
+
     init {
         loadFarmerOrStakeHolderData()
         getSpinnerData()
@@ -118,7 +120,6 @@ class DistributionModuleViewModel @Inject constructor(
                     tempId = currentState?.tempId)
                 loadDistributionGroup()
                 _distributionFormState.postValue(newState)
-
             }
             is DistributionModuleUiEvent.UpdateDistributionFormDetails -> {
                 val currentState = _distributionFormState.value ?: DistributionFormState()
@@ -176,13 +177,22 @@ class DistributionModuleViewModel @Inject constructor(
 
             }
 
-            DistributionModuleUiEvent.GetDistributionData -> {
+            is DistributionModuleUiEvent.GetDistributionData -> {
                 getDistributionDetails()
             }
 
-            DistributionModuleUiEvent.LoadDistributionSpinnerData -> {
+            is DistributionModuleUiEvent.LoadDistributionSpinnerData -> {
                 loadDistributionGroup()
                 loadDistributionItem()
+                loadUnits()
+            }
+
+            is DistributionModuleUiEvent.setFarmerAndStakeHolderData -> {
+                val currentState = _farmerOrStakeHolderState.value ?: FarmerAndStakeHolderState()
+                currentState.selectedFarmerOrStakeHolder = event.farmerAndStakeHolderDto
+
+                val currentDistributionForm = _distributionFormState.value ?: DistributionFormState()
+                currentDistributionForm.tempId = event.tempId
             }
         }
     }
@@ -205,8 +215,29 @@ class DistributionModuleViewModel @Inject constructor(
             val result = distributionModuleUseCases.getSpinnerData.getDistributionGroups(currentState.categoryId).getOrDefault(
                 mutableListOf(SpinnerDataDto(0, ""))
             )
-
             _distributionGroups.postValue(result)
+        }
+    }
+
+    private fun loadUnits() {
+        val isInput = (distributionFormState.value?.distributionCategory
+            ?: CategoryEnum.INPUT) == CategoryEnum.INPUT
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val result: List<List<SpinnerDataDto>> = distributionModuleUseCases.getSpinnerData.getUnitsData()
+                .getOrDefault(
+                    listOf(
+                        listOf(SpinnerDataDto(0, "", "", false)),
+                        listOf(SpinnerDataDto(0, "", "", false))
+                    )
+                )
+
+            if (isInput) {
+                _localUnits.postValue(result[1])
+            }
+            else {
+                _currency.postValue(result[0])
+            }
         }
     }
 
@@ -244,7 +275,6 @@ class DistributionModuleViewModel @Inject constructor(
                 val currentState = _distributionFormState.value ?: return@launch
                 val farmerOrStakeHolderState = _farmerOrStakeHolderState.value ?: return@launch
 
-                //val username = AuthenticationHelper(context).getuserName().toLong()
                 val time = System.currentTimeMillis()
                 val olamFarmerId = currentState.tempId ?: (time).toString()
 
@@ -310,21 +340,35 @@ class DistributionModuleViewModel @Inject constructor(
                 _roles.postValue(result[2])
                 _distributionCategory.postValue(result[3])
                 _distributionGroups.postValue(result[4])
-                _currency.postValue(result[5])
-                _localUnits.postValue(result[6])
             }
         }
     }
 
     private fun getDistributionDetails() {
-        val farmerId = _farmerOrStakeHolderState.value?.selectedFarmerOrStakeHolder?.id
-        val stakeHolderId = _farmerOrStakeHolderState.value?.selectedFarmerOrStakeHolder?.stakeHolderId
+        val distributionId = _distributionFormState.value?.tempId
+        val id = _distributionFormState.value?.id
 
         viewModelScope.launch(Dispatchers.IO) {
-            val distributionDetails = distributionModuleUseCases.getDistributionDetails(farmerId, stakeHolderId).getOrDefault(null)
-            val currentDistributionFormState = _distributionFormState.value ?: DistributionFormState()
+            if (isFromSyncScreen.value == null || id != null) {
+                return@launch
+            }
 
-            val category = distributionCategory.value ?: mutableListOf()
+
+            var category = _distributionCategory.value ?: mutableListOf()
+
+            if (category.isEmpty()) {
+                val result = distributionModuleUseCases.getSpinnerData.getCategory().getOrDefault(
+                    mutableListOf()
+                )
+                category = result
+                _distributionCategory.postValue(result)
+            }
+
+            val distributionDetails = distributionId?.let { id ->
+                distributionModuleUseCases.getDistributionDetails(id).getOrDefault(null)
+            }
+
+            val currentDistributionFormState = _distributionFormState.value ?: DistributionFormState()
             val categoryName = category
                 .find { it.id == distributionDetails?.distributionCategoryId }
                 ?.name?.lowercase()
