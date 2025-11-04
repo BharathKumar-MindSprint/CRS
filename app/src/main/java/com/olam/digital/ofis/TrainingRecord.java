@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -92,7 +93,7 @@ public class TrainingRecord extends BaseListActivity{
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
-    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
+    private final static int REQUEST_PERMISSIONS_FOR_CAMERA = 7777;
     private static final int REQUEST_CHECK_SETTINGS = 100;
    public static HashMap<Long,Integer> farmerAttendeeList =null;
    public static HashMap<Long,Integer> stakeholderAttendeeList =null;
@@ -158,26 +159,11 @@ public class TrainingRecord extends BaseListActivity{
             trainingPhotoActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(TrainingRecord.this,
-                                    new String[]{android.Manifest.permission.CAMERA},
-                                    REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                        }else {
-                            bindTrainingPhotoButton();
-                        }
-                    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (ContextCompat
-                                .checkSelfPermission(TrainingRecord.this,
-                                        android.Manifest.permission.CAMERA)
-                                != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(TrainingRecord.this,
-                                    new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST);
-
-                        } else {
-                            bindTrainingPhotoButton();
-                        }
-                    } else {
+                    if (ContextCompat.checkSelfPermission(TrainingRecord.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(TrainingRecord.this,
+                                new String[]{android.Manifest.permission.CAMERA},
+                                REQUEST_PERMISSIONS_FOR_CAMERA);
+                    }else {
                         bindTrainingPhotoButton();
                     }
                 }
@@ -1072,30 +1058,17 @@ public class TrainingRecord extends BaseListActivity{
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            bindTrainingPhotoButton();
-                        } else {
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                        }
-                    }
-                }
-            }
-            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+            case REQUEST_PERMISSIONS_FOR_CAMERA: {
                 try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         bindTrainingPhotoButton();
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    } else {
+                        boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+                        if (showRationale) {
+                            Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                        } else {
+                            showSettingsDialog(getString(R.string.go_to_settings_msg));
+                        }
                     }
                     break;
                 }catch (Exception e) {

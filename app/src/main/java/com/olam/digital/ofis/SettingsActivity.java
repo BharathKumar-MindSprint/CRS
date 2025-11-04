@@ -67,8 +67,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX = 1111;
-    private final static int MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX = 2222;
     Button buttonPrivacyConsent, buttonReenterPasscode;
     OFISRoomDB roomDB;
     private long lastClickTime = 0;
@@ -122,32 +120,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         buttonPhotoCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(SettingsActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.READ_MEDIA_IMAGES},
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX);
-                    }else {
-                        // Permission already granted
-                        photoCheckboxDownload();
-                    }
-                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        ActivityCompat.requestPermissions(SettingsActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX);
-                    } else {
-                        photoCheckboxDownload();
-                    }
-                } else {
-                    // Call methods directly for Android versions lower than Marshmallow
-                    photoCheckboxDownload();
-                }
-
+                photoCheckboxDownload();
             }
         });
 
@@ -439,42 +412,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 }
                 break;
             }
-            case REQUEST_PERMISSIONS_FOR_TIRAMISU_PHOTOCHECKBOX: {
-                try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                        // Permissions granted, proceed with your code
-                        photoCheckboxDownload();
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                    }
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-            case MY_PERMISSIONS_REQUEST_PHOTOCHECKBOX: {
-
-                try {
-                    if (grantResults.length > 0
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        photoCheckboxDownload();
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    } else {
-                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e) {
-                }
-                break;
-            }
         }
     }
 
@@ -622,7 +559,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 @Override
                 public void onClick(View view) {
                     alert.dismiss();
-                    if (isNetworkAvailable(SettingsActivity.this)) {
+                    if (!isNetworkAvailable(SettingsActivity.this)) {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                         return;
                     }
