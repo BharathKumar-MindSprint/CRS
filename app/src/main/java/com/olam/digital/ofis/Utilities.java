@@ -19,6 +19,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputFilter;
@@ -59,6 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -506,6 +509,45 @@ public  static String base64ConversionForImage(String filepath)  {
         }
     }
 
+    public static Bitmap loadSizedBitmapFromUri(Context context, Uri uri, int reqWidth, int reqHeight) {
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) return null;
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+
+            int height = options.outHeight;
+            int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > reqHeight || width > reqWidth) {
+                int halfHeight = height / 2;
+                int halfWidth = width / 2;
+
+                while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                    inSampleSize *= 2;
+                }
+            }
+
+            // Decode bitmap with inSampleSize set
+            options.inSampleSize = inSampleSize;
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+            // Reopen the stream for actual decoding
+            try (InputStream inputStream2 = context.getContentResolver().openInputStream(uri)) {
+                return BitmapFactory.decodeStream(inputStream2, null, options);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public static Bitmap loadSizedBitmap(String filePath, int reqWidth, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -580,9 +622,7 @@ public  static String base64ConversionForImage(String filepath)  {
     }
 
     public static String scaleRotateAndSaveImage(String imagePath, String kind) {
-
         return saveResizedImage(imagePath, kind);
-
     }
 
     private static String saveResizedImage(String imagePath, String imageType) {
@@ -650,6 +690,85 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
         return finalImagePath;
+    }
+
+    public static String copyAndProcessImageFromUri(Context context, Uri uri, String filename, String imageType) {
+        File destination = new File(context.getFilesDir(), filename);
+
+        Bitmap originalBitmap;
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) return null;
+            originalBitmap = BitmapFactory.decodeStream(inputStream);
+            if (originalBitmap == null) return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // Determine target dimensions
+        int saveWidth = 600;
+        int saveHeight = 798;
+        if ("signature".equalsIgnoreCase(imageType)) {
+            saveHeight = 600;
+        } else if ("trainingphoto".equalsIgnoreCase(imageType) || "modulephoto".equalsIgnoreCase(imageType)) {
+            saveWidth = 804;
+            saveHeight = 480;
+        }
+
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, saveWidth, saveHeight, true);
+        Bitmap rotatedBitmap = resizedBitmap;
+
+        try {
+            ExifInterface exif;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                try (InputStream exifStream = context.getContentResolver().openInputStream(uri)) {
+                    if (exifStream != null) {
+                        exif = new ExifInterface(exifStream);
+                    } else {
+                        exif = null;
+                    }
+                }
+            } else {
+                String tempPath = getPathFromUriLegacy(context, uri);
+                exif = tempPath != null ? new ExifInterface(tempPath) : null;
+            }
+
+            if (exif != null) {
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                int angle = exifToDegrees(orientation);
+                if (angle != 0) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(angle);
+                    rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Save processed image
+        try (FileOutputStream out = new FileOutputStream(destination)) {
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return destination.getAbsolutePath();
+    }
+
+    public static String getPathFromUriLegacy(Context context, Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(columnIndex);
+            cursor.close();
+            return path;
+        }
+        return null;
     }
 
     public static long daysToUpdate(Context context) {

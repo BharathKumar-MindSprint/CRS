@@ -635,79 +635,39 @@ class InputOrFinanceDistributionFragment : Fragment() {
     private fun requestPermissions(isUpload: Boolean) {
         isUploadPending = isUpload
 
-        val permissions = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
-                Manifest.permission.READ_MEDIA_IMAGES
-            )
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_MEDIA_IMAGES
-            )
-            else -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        }
+        val permissions = arrayOf(Manifest.permission.CAMERA)
 
         val missingPermissions = permissions.filter {
             ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (missingPermissions.isEmpty()) {
-            if (isUpload) bindUploadImage() else openCamera()
+            if (isUpload) openPhotoPicker() else openCamera()
         } else {
             permissionLauncher.launch(permissions)
         }
     }
 
-    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
 
-            val mediaGranted = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                    permissions[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true ||
-                            permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
-                }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
-                }
-                else -> {
-                    permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
-                }
-            }
-
-            if (cameraGranted && mediaGranted) {
-                if (isUploadPending) bindUploadImage() else openCamera()
+        if (cameraGranted || isUploadPending) {
+            if (isUploadPending) openPhotoPicker() else openCamera()
+        } else {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                showSettingsDialog(getString(R.string.go_to_settings_msg))
             } else {
-                val showRationale = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                (!shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) &&
-                                        !shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES))
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                !shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES)
-                    }
-                    else -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    }
-                }
-
-                if (showRationale) {
-                    showSettingsDialog(getString(R.string.go_to_settings_msg))
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.permission_denial_msg_android_13_above,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                Toast.makeText(
+                    requireContext(),
+                    R.string.permission_denial_msg_android_13_above,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
+    }
+
 
     fun showSettingsDialog(msg: String?) {
         val dialog = AlertDialog.Builder(requireContext())
@@ -733,9 +693,16 @@ class InputOrFinanceDistributionFragment : Fragment() {
         dialog.show()
     }
 
-    private fun bindUploadImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
+    private fun openPhotoPicker() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Intent(MediaStore.ACTION_PICK_IMAGES).apply {
+                putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1)
+            }
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "image/*"
+                addCategory(Intent.CATEGORY_OPENABLE)
+            }
         }
         galleryLauncher.launch(intent)
     }

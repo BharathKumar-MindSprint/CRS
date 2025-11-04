@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -95,12 +96,7 @@ public class FollowUpActionPlan extends Fragment {
     LinearLayout ll_servey_back_followup_actionplan, ll_servey_next_followup_actionplan;
 
     public Resources res;
-
-    private static final int MY_GALLERYPERMISSION_CODE = 100;
-    private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
-
-    private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
     private static final int CAMERA_REQUEST = 2277;
     private static final int GALLERY_PICK = 2233;
     private static final int GALLERY_PICK_DOCX = 4455;
@@ -727,62 +723,58 @@ public class FollowUpActionPlan extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
                                 if (finalOptions[item].equals(getResources().getString(R.string.take_photo))) {
-                                    if (isStoragePermissionCameraGranted()) {
+                                    if (isCameraPermissionGranted()) {
                                         GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
                                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                                             File photoFile = null;
                                             try {
                                                 photoFile = createImageFile();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
+                                                mCurrentPhotoPath = photoFile.getAbsolutePath();
+                                            } catch (IOException ex) {
+                                                ex.printStackTrace();
                                             }
 
-                                            // Continue only if the File was successfully created
                                             if (photoFile != null) {
-                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                        FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
-                                                                new File(mCurrentPhotoPath)));
+                                                Uri photoUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider", photoFile);
+                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                                                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                                             }
                                         }
-
                                     } else {
                                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
-
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.dm_choose_from_gallery))) {
+                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
+                                    String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
+                                    Intent galleryIntent;
 
-                                    if (isStoragePermissionGalleryGranted()) {
-
-                                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id,answerID);
-                                        String formatValue = getProofFormat(dmQuestionsModule.displayType, id,  complaint_id, answerID);
-                                        if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
-                                            Intent galleryIntent = new Intent();
-                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                                        galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.setType("*/*");
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose document"), GALLERY_PICK_DOCX);
+                                    } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            galleryIntent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                                            galleryIntent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1);
+                                        } else {
+                                            galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                                            galleryIntent.setType("image/*");
                                             galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                                            galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                                            galleryIntent.setType("*/*");
-                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_DOCX);
-                                        }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")){
-                                            Intent galleryIntent = new Intent();
-                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
-                                            galleryIntent.setType("*/*");
-                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                        } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
-                                            Intent galleryIntent = new Intent();
-                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
-                                            galleryIntent.setType("*/*");
-                                            GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
-                                            startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                         }
-                                    } else {
-                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose image"), GALLERY_PICK);
+                                    } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValue, "Both")) {
+                                        galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.setType("*/*");
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
+                                        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        GALLERY_QUESTION_ID = Integer.parseInt(textView.getTag().toString());
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose file"), GALLERY_PICK);
                                     }
                                 } else if (finalOptions[item].equals(getResources().getString(R.string.cancel))) {
                                     dialog.dismiss();
@@ -1638,37 +1630,38 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("image/jpeg")
                     || mime.equalsIgnoreCase("image/png")){
-                final BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                options.inSampleSize = 2;
-                options.inJustDecodeBounds = false;
-                options.inTempStorage = new byte[16 * 1024];
-
-                String filePathimage = null;
-                try {
-                    filePathimage = PathUtil.getPath(getActivity(), uri);
-                } catch (Exception e) {
+                Bitmap bmp = null;
+                try (InputStream inputStream = getActivity().getContentResolver().openInputStream(uri)) {
+                    if (inputStream != null) {
+                        bmp = BitmapFactory.decodeStream(inputStream);
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
-                String fileExtension = Constants.getFileExtension(filename);
+                if (bmp == null) {
+                    Toast.makeText(getActivity(), "Unable to decode image. Please try again.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                // Resize and correct orientation
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 750, 650, false);
-
+                Bitmap resizedBitmapNew;
                 try {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    resizedBitmapNew = resizedBitmap;
                 }
 
-                if (fileExtension.equalsIgnoreCase(Bitmap.CompressFormat.PNG.name())) {
+                // Compress to byte array
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                String filename = getFileNameFromUri(getActivity(), uri);
+                String fileExtension = Constants.getFileExtension(filename);
+                if (fileExtension.equalsIgnoreCase("png")) {
                     resizedBitmapNew.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 } else {
                     resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
                 }
                 byte[] imageBytes = baos.toByteArray();
 
@@ -1676,25 +1669,13 @@ public class FollowUpActionPlan extends Fragment {
                     return;
                 }
 
-                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                dmComplaintFileTable.setFile_name(filename);
-                dmComplaintFileTable.setSurveyType("FollowUp");
-                dmComplaintFileTable.setFileData(imageBytes);
-                Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                String currentTime = format.format(today);
+                // Prepare metadata
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+                String currentTime = format.format(new Date());
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
-                dmComplaintFileTable.setOfisFileName(OFISFileName);
-                dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
-                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
-                dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
-                dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                dmComplaintFileTable.setFileSize(imageBytes.length);
 
-                // Get an array of app-specific external storage directories
+                // Save to app-specific external storage
                 File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
-
-                // The first element of the array will be the primary external storage directory
                 File primaryExternalStorageDir = externalStorageDirs[0];
                 File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
@@ -1702,16 +1683,25 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
                 File destinationFile = new File(destinationFolder, OFISFileName);
-                try {
-                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                try (FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
                     outputStream.write(imageBytes);
-                    outputStream.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                String destinationFilePath = destinationFile.getAbsolutePath();
-                dmComplaintFileTable.setFilePath(destinationFilePath);
+                // Save to database
+                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setSurveyType("FollowUp");
+                dmComplaintFileTable.setFileData(imageBytes);
+                dmComplaintFileTable.setOfisFileName(OFISFileName);
+                dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
+                dmComplaintFileTable.setPlotId(Constants.PLOT_ID);
+                dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                dmComplaintFileTable.setFileSize(imageBytes.length);
+                dmComplaintFileTable.setFilePath(destinationFile.getAbsolutePath());
+
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
                 dynamicArrayName = "imageArray" + questionId;
@@ -2127,6 +2117,24 @@ public class FollowUpActionPlan extends Fragment {
 
     }
 
+    public static String getFileNameFromUri(Context context, Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (nameIndex >= 0) {
+                    result = cursor.getString(nameIndex);
+                }
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
+    }
+
     public void showCurrencyDropDown(List<DmCurrency> dmCurrenciesItemList) {
 
 
@@ -2219,44 +2227,15 @@ public class FollowUpActionPlan extends Fragment {
         return image;
     }
 
-    public boolean isStoragePermissionGalleryGranted() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-                return  true;
-            }else {
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{
-                                android.Manifest.permission.READ_MEDIA_IMAGES}, MY_GALLERYPERMISSION_CODE_TIRAMISU);
-                return false;
-            }
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                return true;
-            } else {
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_GALLERYPERMISSION_CODE);
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
-    }
-
-    public boolean isStoragePermissionCameraGranted() {
+    public boolean isCameraPermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return true;
             } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-                        MY_CAMERA_PERMISSION_CODE);
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
                 return false;
             }
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -2265,39 +2244,16 @@ public class FollowUpActionPlan extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == MY_GALLERYPERMISSION_CODE_TIRAMISU) {
-            try {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                )) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                }else {
-                    Toast.makeText(getContext(), R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                }
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                Toast.makeText(getActivity(), getResources().getString(R.string.dm_please_give_camera_permission), Toast.LENGTH_LONG).show();
+            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA);
+                if (showRationale) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.permission_denial_msg_android_13_above), Toast.LENGTH_LONG).show();
+                } else {
+                    showSettingsDialog(getString(R.string.go_to_settings_msg));
+                }
             }
         }
-
-        if (requestCode == MY_GALLERYPERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                Toast.makeText(getActivity(),getResources().getString(R.string.dm_please_give_gallery_permission), Toast.LENGTH_LONG).show();
-            }
-        }
-
     }
 
     public void showSettingsDialog(String msg) {
