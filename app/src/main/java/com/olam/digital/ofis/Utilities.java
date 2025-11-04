@@ -693,7 +693,7 @@ public  static String base64ConversionForImage(String filepath)  {
     }
 
     public static String copyAndProcessImageFromUri(Context context, Uri uri, String filename, String imageType) {
-        File destination = new File(context.getFilesDir(), filename);
+        File destination = new File(context.getExternalFilesDir(""), filename);
 
         Bitmap originalBitmap;
         try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {

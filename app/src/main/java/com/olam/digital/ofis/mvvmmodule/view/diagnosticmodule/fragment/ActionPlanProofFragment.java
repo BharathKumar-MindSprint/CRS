@@ -608,8 +608,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                                             }
                                         }
-                                    } else {
-                                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                                     }
                                 }
                                 else if (finalOptions[item].equals( getResources().getString(R.string.dm_choose_from_gallery))) {
@@ -2187,7 +2185,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 return true;
             } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
                 return false;
             }
         } else {
