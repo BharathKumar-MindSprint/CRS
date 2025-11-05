@@ -75,6 +75,7 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt AND complianceId =:complianceId")
     List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt, String complianceId);
 
-
+    @Query("SELECT EXISTS(SELECT 1 FROM FollowUpItemMainTable WHERE moduleId = :moduleId AND farmerId = :farmerId)")
+    boolean isFollowUpExistForNq(int moduleId, int farmerId);
 
 }
