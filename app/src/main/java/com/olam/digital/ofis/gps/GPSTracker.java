@@ -44,6 +44,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 
@@ -368,6 +369,7 @@ public class GPSTracker extends AppCompatActivity {
             @Override
             public void onSuccess(Location location) {
                 if (location != null){
+                    DynamicQuestions.mCurrentCapturedLocation = mCurrentLocation;
                     mCurrentLocation = location;
                 }
             }
@@ -399,6 +401,7 @@ public class GPSTracker extends AppCompatActivity {
                                         progressDialog.dismiss();
                                     }
                                     if(gpsListener!=null) {
+                                        DynamicQuestions.mCurrentCapturedLocation = mCurrentLocation;
                                         gpsListener.onGPSClick(mCurrentLocation);
                                     }
                                 }else{
