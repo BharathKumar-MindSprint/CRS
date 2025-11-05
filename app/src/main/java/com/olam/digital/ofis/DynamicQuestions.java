@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -54,6 +55,8 @@ import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
@@ -97,6 +100,8 @@ public class DynamicQuestions {
     public static String SurveyType = "";
     public static FarmerGeo farmerGeo;
 
+    public  static Location mCurrentCapturedLocation = null;
+    public  static GPSTracker gpsTracker = null;
     public ArrayList<EditText> et_list;
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
@@ -6771,6 +6776,84 @@ public class DynamicQuestions {
         return displayType;
     }
 
+
+
+    public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers,final Resources res) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+
+        int answerIdTemp = 0;
+        final int answerId = answerIdTemp;
+
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6) {
+            oldDatatype = dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        } else {
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        }
+        if (oldDatatype != null) {
+            if (oldDatatype.equals("Location")) {
+                datatype = "text";
+            }
+        }
+
+        try {
+            final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+            String finalDatatype = datatype;
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        if (mCurrentCapturedLocation != null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)) {
+
+                        } else {
+                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
+                        }
+                        String locationValue = mCurrentCapturedLocation.getLatitude() + "," + mCurrentCapturedLocation.getLongitude();
+                       saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, locationValue, 0, 0, 0);
+                        textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
+                        textView.setBackgroundResource(R.drawable.list_item_disabled);
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setEnabled(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("DynamicQuestions:", "Error capturing location " + e.getMessage());
+                    }
+
+                }
+            });
+
+            if(viewAnswer){
+                int syncedAnswer = 0;
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    syncedAnswer = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+                textView.setText("Location: " + dl.locationValueFromSavedAnswersTable(syncedAnswer));
+                textView.setClickable(false);
+            } else {
+                textView.setClickable(true);
+            }
+
+            questionWrapper.addView(textView);
+            parentLayout.addView(questionWrapper);
+            viewReference.put(questionId, new Pair<>("location", questionWrapper));
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" + e.getMessage());
+        }
+    }
+
+
+
     private void renderRepeaterItems(int questionId, long repetitions, LinearLayout repeaterItemsWrapper, long farmerId, String stakeholderId, String olamFarmerId, long farmerModuleId, Resources res, boolean isSavedAns) {
         Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion(questionId);
         // Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion1(questionId);
@@ -6818,7 +6901,13 @@ public class DynamicQuestions {
                                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                                             renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
                                             questionPresent = true;
-                                        } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
+                                        }
+                                        else if ((displayType.replaceAll(" ", "").toLowerCase().equals("location")))
+                                        {
+                                            renderCaptureLocationQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                            questionPresent = true;
+                                        }
+                                        else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
                                             renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                             questionPresent = true;
                                         } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {

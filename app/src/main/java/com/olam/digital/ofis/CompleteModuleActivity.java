@@ -209,11 +209,13 @@ public class CompleteModuleActivity extends BaseActivity {
             @Override
             public void onGPSClick(Location location) {
                 if (location != null && !GPSUtils.isMockLocation(location)) {
+                    DynamicQuestions.mCurrentCapturedLocation = mCurrentLocation;
                     mCurrentCapturedLocation = location;
                 }
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
+        DynamicQuestions.gpsTracker = gpsTracker;
         // gpsTracker.getDeviceLocation();
 //        if (gpsTracker.isGpsEnabled()){
         gpsTracker.startLocationUpdateInitially();
@@ -363,6 +365,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
+                DynamicQuestions.mCurrentCapturedLocation = mCurrentCapturedLocation;
                 if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
                     setPoiGPS(mCurrentLocation);
             }
