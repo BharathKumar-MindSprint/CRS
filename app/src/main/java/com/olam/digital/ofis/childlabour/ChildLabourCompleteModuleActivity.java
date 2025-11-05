@@ -1,5 +1,8 @@
 package com.olam.digital.ofis.childlabour;
 
+import static com.olam.digital.ofis.Utilities.copyAndProcessImageFromUri;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -22,6 +25,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -58,6 +62,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.ImageFilePath;
@@ -769,18 +774,13 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         switch (requestCode) {
             case Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU: {
                 try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
-
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                        boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+                        if (showRationale) {
+                            Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                        } else {
+                            showSettingsDialog(getString(R.string.go_to_settings_msg));
+                        }
                     }
                     break;
                 }catch (Exception e) {
@@ -837,34 +837,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    String realPath = ImageFilePath.getPath(ChildLabourCompleteModuleActivity.this, imageReturnedIntent.getData());
                     try {
-                        if (realPath != null) {
-                            File sourceFile = new File(realPath);
-                            long fileSize = sourceFile.length();
-
-                            if (fileSize > 5 * 1024 * 1024) {
-                                Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
-
-                            try {
-                                if (sourceFile.renameTo(destinationFile)) {
-                                    // Success! File renamed
-                                } else {
-                                    FileUtils.copyFile(sourceFile, destinationFile);
-
-                                }
-                            } catch (IOException e) {
-                                // Handle IOException
-                                e.printStackTrace();
-                            }
-                            dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
-                            // setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
-                        } else {
-                            Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
-                        }
+                        setImageForGalleryPick(imageReturnedIntent.getData());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -876,6 +850,25 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 }
         }
     }
+
+    private void setImageForGalleryPick(Uri uri) {
+        String photoPath = copyAndProcessImageFromUri(context, uri, dynamicQuestions.getCurrentPhotoFileName(), "portrait");
+
+        if (photoPath != null) {
+            File sourceFile = new File(photoPath);
+            long fileSize = sourceFile.length();
+
+            if (fileSize > 5 * 1024 * 1024) {
+                Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dynamicQuestions.setFullImageFromFilePath(photoPath, "portrait","IMAGE_GALLERY");
+        }
+        else {
+            Toast.makeText(ChildLabourCompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
+        }
+    }
+
     /**
      * Starting location updates
      * Check whether location settings are satisfied and then

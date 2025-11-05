@@ -1402,30 +1402,10 @@ public class DynamicQuestions {
         modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                        ActivityCompat.requestPermissions((Activity) context,
-                                new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.CAMERA},
-                                Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU);
-
-                    } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
-                    }
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
-                        ActivityCompat.requestPermissions((Activity) context,
-                                new String[]{
-                                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        Manifest.permission.CAMERA},
-                                Utilities.REQUEST_PERMISSIONS_FOR_M);
-
-                    } else {
-                        bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
-                    }
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) context,
+                            new String[]{Manifest.permission.CAMERA},
+                            Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU);
                 } else {
                     bindFarmerPhotoButton(iv, questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                 }
@@ -1496,7 +1476,8 @@ public class DynamicQuestions {
                             Toast.makeText(context,context.getResources().getString(R.string.gallery_is_not_available_in_mobile), Toast.LENGTH_LONG).show();
                         }
                     }
-                } else if (items[item].equals(context.getString(R.string.Gallery))) {
+                }
+                else if (items[item].equals(context.getString(R.string.Gallery))) {
                     File photoFile = null;
                     try {
                         photoFile = createImageFile();
@@ -1504,10 +1485,16 @@ public class DynamicQuestions {
                         e.printStackTrace();
                     }
                     if (photoFile != null) {
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
+                        Intent intent;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                            intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1);
+                        } else {
+                            intent = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent.setType("image/*");
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        }
+
                         Uri photoURI = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", photoFile);
                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                         setCapturedImageURI(photoURI);
@@ -1541,7 +1528,12 @@ public class DynamicQuestions {
 
 
     public void setFullImageFromFilePath(String imagePath, String portraitOrSignature, String requestType) {
-        String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, portraitOrSignature);
+        String savedImagePath = imagePath;
+
+        if (requestType.equalsIgnoreCase("IMAGE_CAPTURE")) {
+            savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, portraitOrSignature);
+        }
+
         if (savedImagePath != null) {
             if (portraitOrSignature.equalsIgnoreCase("portrait")) {
                 Uri uri = Uri.parse(savedImagePath);
@@ -1704,7 +1696,7 @@ public class DynamicQuestions {
         return this.mCurrentPhotoMetadata;
     }
 
-    private String getCurrentPhotoFileName() {
+    public String getCurrentPhotoFileName() {
         return this.mCurrentPhotoFileName;
     }
 

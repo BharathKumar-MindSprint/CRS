@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.Utilities.copyAndProcessImageFromUri;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -11,6 +13,8 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +25,7 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextUtils;
@@ -79,6 +84,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -553,33 +559,8 @@ public class CompleteModuleActivity extends BaseActivity {
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    String realPath = ImageFilePath.getPath(CompleteModuleActivity.this, imageReturnedIntent.getData());
                     try {
-                        if (realPath != null) {
-                            File sourceFile = new File(realPath);
-                            long fileSize = sourceFile.length(); // Get file size in bytes
-
-                            if (fileSize > 5 * 1024 * 1024) {
-                                Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            File destinationFile = new File(dynamicQuestions.getCurrentPhotoPath());
-
-                            try {
-                                if (sourceFile.renameTo(destinationFile)) {
-                                    // Success! File renamed
-                                } else {
-                                    FileUtils.copyFile(sourceFile, destinationFile);
-
-                                }
-                            } catch (IOException e) {
-                                // Handle IOException
-                                e.printStackTrace();
-                            }
-                            dynamicQuestions.setFullImageFromFilePath(dynamicQuestions.getCurrentPhotoPath(), "portrait","IMAGE_GALLERY");
-                        } else {
-                            Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
-                        }
+                        setImageForGalleryPick(imageReturnedIntent.getData());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -589,6 +570,24 @@ public class CompleteModuleActivity extends BaseActivity {
                 if (resultCode == RESULT_OK) {
                     dynamicQuestions.setFullImageFromFilePath(res);
                 }
+        }
+    }
+
+    private void setImageForGalleryPick(Uri uri) {
+        String photoPath = copyAndProcessImageFromUri(context, uri, dynamicQuestions.getCurrentPhotoFileName(), "portrait");
+
+        if (photoPath != null) {
+            File sourceFile = new File(photoPath);
+            long fileSize = sourceFile.length();
+
+            if (fileSize > 5 * 1024 * 1024) {
+                Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.image_size_exceeds_5_mb), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dynamicQuestions.setFullImageFromFilePath(photoPath, "portrait","IMAGE_GALLERY");
+        }
+        else {
+            Toast.makeText(CompleteModuleActivity.this, getResources().getString(R.string.something_went_wrong_please_try_again), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1353,21 +1352,17 @@ public class CompleteModuleActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case Utilities.REQUEST_PERMISSIONS_FOR_TIRAMISU: {
                 try {
-                    if (grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
-
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                        boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+                        if (showRationale) {
+                            Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                        } else {
+                            showSettingsDialog(getString(R.string.go_to_settings_msg));
+                        }
                     }
                     break;
                 }catch (Exception e) {
