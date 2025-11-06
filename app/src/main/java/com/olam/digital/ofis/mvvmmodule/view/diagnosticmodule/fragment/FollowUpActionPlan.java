@@ -2352,27 +2352,6 @@ public class FollowUpActionPlan extends Fragment {
         super.onStart();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void checkPermission() {
-        final String[] permissions = {
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE};
-
-        final List<String> permissionsToRequest = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(permission);
-            }
-        }
-        if (!permissionsToRequest.isEmpty()) {
-            // ActivityCompat.requestPermissions(getActivity(), permissionsToRequest.toArray(new String[permissionsToRequest.size()]), REQUEST_CAMERA_PERMISSIONS);
-            requestPermissions(new String[]{
-                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSIONS);
-
-        }
-
-    }
-
 
     @Override
     public void onResume() {
