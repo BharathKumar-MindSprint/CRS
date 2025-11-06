@@ -60,7 +60,6 @@ import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
-import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmActionPlanCurrenciesTable;
@@ -1161,7 +1160,9 @@ public class FollowUpActionPlan extends Fragment {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
             } catch (Exception e) {
                 e.printStackTrace();
+                resizedBitmapNew = resizedBitmap;
             }
+
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageBytes = baos.toByteArray();
 

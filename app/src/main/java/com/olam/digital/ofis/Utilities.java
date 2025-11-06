@@ -719,18 +719,13 @@ public  static String base64ConversionForImage(String filepath)  {
         Bitmap rotatedBitmap = resizedBitmap;
 
         try {
-            ExifInterface exif;
+            ExifInterface exif = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 try (InputStream exifStream = context.getContentResolver().openInputStream(uri)) {
                     if (exifStream != null) {
                         exif = new ExifInterface(exifStream);
-                    } else {
-                        exif = null;
                     }
                 }
-            } else {
-                String tempPath = getPathFromUriLegacy(context, uri);
-                exif = tempPath != null ? new ExifInterface(tempPath) : null;
             }
 
             if (exif != null) {

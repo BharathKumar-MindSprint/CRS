@@ -83,6 +83,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
+import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.Certifications;
@@ -2966,7 +2967,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
         if (bitmap != null) {
-            farmerPhoto.setImageBitmap(bitmap);
+            farmerPhoto.setImageBitmap(ImageOrientation.modifyOrientation(context, bitmap, uri));
             String filename = "farmer_profile_" + System.currentTimeMillis() + ".jpg";
             String photoPath = copyAndProcessImageFromUri(context, uri, filename, "portrait");
             setCurrentPhotoPath(photoPath);
