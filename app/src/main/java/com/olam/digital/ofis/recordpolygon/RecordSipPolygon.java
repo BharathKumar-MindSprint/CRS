@@ -204,8 +204,8 @@ public class RecordSipPolygon extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
-        Configuration.getInstance().setOsmdroidTileCache(new File(Environment.getExternalStorageDirectory(), "osmdroid/tiles"));
+        Configuration.getInstance().setOsmdroidBasePath(new File(this.getExternalFilesDir(null), "osmdroid"));
+        Configuration.getInstance().setOsmdroidTileCache(new File(this.getExternalFilesDir(null), "osmdroid/tiles"));
 
         boolean hwAccelerationOK = true;
         Configuration.getInstance().setMapViewHardwareAccelerated(hwAccelerationOK);

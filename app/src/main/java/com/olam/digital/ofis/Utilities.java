@@ -181,21 +181,29 @@ public class Utilities {
     public static final String IS_STAKE_HOLDER = "isStakeholder";
     public static final String FARMER_OR_STAKEHOLDER = "farmerOrStakeholderId";
 
-public  static String base64ConversionForImage(String filepath)  {
-    String encoded="";
-    try {
-        File photo = new File(filepath);
-        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-        Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-    }catch (Exception e){
-
+    public static String base64ConversionForImage(String filepath)  {
+        String encoded="";
+        try {
+            File photo = new File(filepath);
+            Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+            Bitmap compressedBitmap = imageCompress(bitmap);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return encoded;
     }
-    return encoded;
-}
+
+    public static Bitmap imageCompress(Bitmap bitmap){
+        int h = 250; // Height in pixels
+        int w = 250; // Width in pixels
+        Bitmap compressImg = Bitmap.createScaledBitmap(bitmap, h, w, true);
+        return compressImg;
+    }
 
 
     public static String getLocaleSuffix(Resources res) {
@@ -719,18 +727,13 @@ public  static String base64ConversionForImage(String filepath)  {
         Bitmap rotatedBitmap = resizedBitmap;
 
         try {
-            ExifInterface exif;
+            ExifInterface exif = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 try (InputStream exifStream = context.getContentResolver().openInputStream(uri)) {
                     if (exifStream != null) {
                         exif = new ExifInterface(exifStream);
-                    } else {
-                        exif = null;
                     }
                 }
-            } else {
-                String tempPath = getPathFromUriLegacy(context, uri);
-                exif = tempPath != null ? new ExifInterface(tempPath) : null;
             }
 
             if (exif != null) {
@@ -756,19 +759,6 @@ public  static String base64ConversionForImage(String filepath)  {
         }
 
         return destination.getAbsolutePath();
-    }
-
-    public static String getPathFromUriLegacy(Context context, Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String path = cursor.getString(columnIndex);
-            cursor.close();
-            return path;
-        }
-        return null;
     }
 
     public static long daysToUpdate(Context context) {

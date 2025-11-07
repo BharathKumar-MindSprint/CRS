@@ -62,10 +62,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
-import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
-import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -78,9 +76,7 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-import com.olam.digital.ofis.recordpolygon.location;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 import java.io.File;

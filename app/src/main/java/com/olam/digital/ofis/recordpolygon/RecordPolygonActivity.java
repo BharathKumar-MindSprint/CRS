@@ -239,8 +239,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
-        Configuration.getInstance().setOsmdroidTileCache(new File(Environment.getExternalStorageDirectory(), "osmdroid/tiles"));
+        Configuration.getInstance().setOsmdroidBasePath(new File(this.getExternalFilesDir(null), "osmdroid"));
+        Configuration.getInstance().setOsmdroidTileCache(new File(this.getExternalFilesDir(null), "osmdroid/tiles"));
 
         boolean hwAccelerationOK = true;
         Configuration.getInstance().setMapViewHardwareAccelerated(hwAccelerationOK);
