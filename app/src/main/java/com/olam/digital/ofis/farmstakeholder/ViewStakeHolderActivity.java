@@ -37,15 +37,14 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
-import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
@@ -598,7 +597,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
         }
 
         if (bitmap != null) {
-            farmerPhoto.setImageBitmap(bitmap);
+            farmerPhoto.setImageBitmap(ImageOrientation.modifyOrientation(context, bitmap, uri));
             String filename = "farmer_profile_" + System.currentTimeMillis() + ".jpg";
             String photoPath = copyAndProcessImageFromUri(context, uri, filename, "portrait");
 

@@ -2544,20 +2544,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-    private static String getFilePathUri(Context context, Uri uri) {
-        Uri filePathUri = uri;
-        if (uri.getScheme().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            assert cursor != null;
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
-            }
-            cursor.close();
-        }
-        return filePathUri + "";
-    }
-
     //frank
     @Override
     public boolean onItemLongClick(AdapterView<?> l, View v, int position, long id) {

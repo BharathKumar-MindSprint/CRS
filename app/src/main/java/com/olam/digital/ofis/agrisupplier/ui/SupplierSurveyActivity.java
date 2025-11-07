@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -54,13 +53,11 @@ import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
-import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
-import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmLookupValuesItem;
@@ -366,7 +363,9 @@ public class SupplierSurveyActivity extends BaseListActivity {
                     resizedBitmapNew = ImageOrientation.modifyOrientation(this, resizedBitmap, uriImage);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    resizedBitmapNew = resizedBitmap;
                 }
+
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] imageBytes = baos.toByteArray();
 

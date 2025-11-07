@@ -54,8 +54,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.Common.Utils.NetworkQueueDTO;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
-import com.olam.digital.ofis.RetrofitServices.ManageRecords;
-import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.agrisupplier.dto.SupplierSurveyDto;
 import com.olam.digital.ofis.agrisupplier.ui.FindSupplierAndSurveyActivity;
 import com.olam.digital.ofis.agrisupplier.ui.SupplierSurveyActivity;
@@ -75,8 +73,6 @@ import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.distributionmodule.distribution_presentation.DistributionModuleActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
-import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
-import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -100,7 +96,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -285,16 +280,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         } else {
             cardview_downloadFarmplan.setVisibility(View.GONE);
         }
-
-        Button downloadFarmplan = findViewById(R.id.DownloadFarmPlan);
-        downloadFarmplan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, DownloadFarmPlanActivity.class);
-                context.startActivity(intent);
-
-            }
-        });
 
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1668,66 +1653,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 showDailyRemainderPopUp(onGroundSurveyNotificationCount);
             }
         }
-    }
-
-    /*Get DownLoad Farm Form List*/
-    public static void DownloadFormList(String value) {
-        ManageRecords AllFarmFormList = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Long.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
-        call.enqueue(new Callback<DownloadFormList>() {
-
-            @Override
-            public void onResponse(Call<DownloadFormList> call, Response<DownloadFormList> response) {
-                Log.e("ListOnResponse", response.message());
-                Log.e("ListOnRequest", call.toString());
-
-                if (response.code() == 200) {
-
-                    //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
-                    // progressDialog.hide();
-                    if (response.body() != null && response.body().getStatusCode() == 200) {
-                        if (response.body().getData() != null) {
-                            //data1 =response.body().getData();
-
-                            ArrayList<DownloadFormList.data> dataArrayList = response.body().getData();
-                            ;
-                            // dataArrayList = response.body().getData();
-                            //String[] names = new String[dataArrayList.size()];
-                            for (int i = 0; i < dataArrayList.size(); i++) {
-                                isdownloadfarmplan = dataArrayList.get(i).isIsdownloadfarmplan();
-                                Log.d("FARMPLAN_Status", String.valueOf(isdownloadfarmplan));
-
-                                if (isdownloadfarmplan && dataArrayList.size() > 0) {
-                                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", true);
-                                    if (value.equalsIgnoreCase("home")) {
-                                        cardview_downloadFarmplan.setVisibility(View.VISIBLE);
-                                    }
-
-                                } else {
-                                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                                    if (value.equalsIgnoreCase("home")) {
-                                        cardview_downloadFarmplan.setVisibility(View.GONE);
-                                    }
-                                }
-                            }
-                            Log.e("ListRespValue", response.body().getStatusMessage());
-
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DownloadFormList> call, Throwable t) {
-                //progressDialog.hide();
-                //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                // GetAllDiagnosticModuleHome();
-                /*if (isEnableDM) {
-                    GetAllDiagnosticModule();
-                }*/
-            }
-        });
-
     }
 
     private void triggerAutomaticAskForHelp() {
