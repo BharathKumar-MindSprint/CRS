@@ -3515,58 +3515,38 @@ public class DataLayer {
         }
     }
 
-    public Cursor getFarmerModules(long id, boolean farmSurvey) {
+    public Cursor getPlotSurveyModules(long id) {
         Cursor farmer = null;
-
         try {
             farmer = getFlattenedFarmer(id);
             Cursor output = null;
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
-                String modulesQuery="";
-                if (farmSurvey){
-                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency,moduleassignments.startDate, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration FROM moduleassignments " +
-                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND " + "modules.surveyType != '8' AND " +
-                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
-                }else {
-                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency,moduleassignments.startDate, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration FROM moduleassignments " +
-                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.childLabour != 'true' AND " +
-                            "moduleassignments.isPlotSurvey == 'true' AND "+
-                            "moduleassignments.isFarmSurvey == 'false' AND " +
-                            "modules.surveyType != '8' AND " +
-                            "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
-                }
+                String autoSampleIds = getAutoSampleIds(id);
+                String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                        "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                        "modules.expires, " + "moduleassignments.recurrence_frequency,moduleassignments.startDate, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                        " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration FROM moduleassignments " +
+                        " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                        " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                        " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                        "moduleassignments.childLabour != 'true' AND " +
+                        "moduleassignments.isPlotSurvey == 'true' AND "+
+                        "moduleassignments.isFarmSurvey == 'false' AND " +
+                        "modules.surveyType != '8' AND " +
+                        "((modules.isAutoSurvey = 'true' AND modules.id IN (" + autoSampleIds + ")) OR (modules.isAutoSurvey != 'true')) AND " +
+                        "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
+                        "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
+                
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -3581,8 +3561,8 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex("programme_id")),
                         farmer.getString(farmer.getColumnIndex("partner_id"))
                 };
-//                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
-                @SuppressLint("Recycle") Cursor farmerModules = getfarmerModules(modulesQuery, modulesQueryValues);
+
+                Cursor farmerModules = getfarmerModules(modulesQuery, modulesQueryValues);
 
                 String[] mcColumns = new String[]{
                         "_id",
@@ -3626,9 +3606,21 @@ public class DataLayer {
                 output = new MergeCursor(cursors);
             }
             return output;
-        } finally {
-            farmer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
+    }
+
+    public String getAutoSampleIds(Long farmerId) {
+        List<Integer> getAutoSampleModuleIds = ofisRoomDB.assignedFarmerForSurveyDao().getModuleIdsByFarmerId(farmerId);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getAutoSampleModuleIds.size(); i++) {
+            sb.append(getAutoSampleModuleIds.get(i));
+            if (i < getAutoSampleModuleIds.size() - 1) sb.append(", ");
+        }
+        return sb.toString();
     }
 
     // modules tasks
@@ -8772,6 +8764,7 @@ public class DataLayer {
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
+                String autoSampleIds = getAutoSampleIds(id);
 
                 String countryId = farmer.getString(farmer.getColumnIndex("country_id"));
                 String regionId = farmer.getString(farmer.getColumnIndex("region_id"));
@@ -8792,7 +8785,8 @@ public class DataLayer {
                         "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                         "moduleassignments.childLabour != 'true' AND " +
-                        "moduleassignments.isPlotSurvey != 'true' AND "+
+                        "moduleassignments.isPlotSurvey != 'true' AND " +
+                        "((modules.isAutoSurvey = 'true' AND modules.id IN (" + autoSampleIds + ")) OR (modules.isAutoSurvey != 'true')) AND " +
                         "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
                         "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +

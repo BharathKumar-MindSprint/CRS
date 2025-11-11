@@ -62,6 +62,11 @@ public interface IAPIConstants {
     String ENUMERATOR_ASSIGNMENT_CHECK = "ofismaster/master/enumeratorAssignmentsCheck";
     String COUNTRY_SPINNERS ="ofisfarmer-data/farmerdata/getcountryspinners";
      String GET_ALL_QUESTIONNAIRE_DATA =  "ofissurvey/survey/questionnaire/getAllQuestionnaireData";
+
+     String GET_MODULE_IDS_BY_ENUMERATOR_ID = "ofissurvey/survey/questionnaire/getModuleIdsByEnumeratorId";
+
+     String GET_ASSIGNED_FARMER_AGAINST_SURVEYS = "ofissurvey/survey/asd/getAssignedFarmerAgainstSurveys";
+
      //TODO: REmove the below two APIs
      String IS_CHILD_ENUMERATOR = "ofismaster/master/ischildenumerator";
      String IS_FARMER_HH_ENUMERATOR = "ofismaster/master/isFarmerHHEnumerator";

@@ -830,7 +830,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 valid = true;
             }
 
-            Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+            Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
             int moduleCount = moduleAssignments.getCount();
             if(moduleCount == 0){
                 valid = true;
@@ -846,7 +846,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private boolean checkPendingPlotSurvey(JSONObject submittedModules) {
         boolean valid = false;
         try {
-            Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+            Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
             int moduleCount = moduleAssignments.getCount();
             int plotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             int expectedSurveySubmission = moduleCount * plotCount;
@@ -1038,53 +1038,23 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     public Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
-
-        String countryId = "";
-        String regionId = "";
-        String districtId = "";
-        String placeId = "";
-        String farmerGroupId = "";
-        String sectionId = "";
-        String programmeId = "";
-        String productId = "";
-        String partnerId = "";
-
         try {
             farmer = dl.getFlattenedFarmer(id);
             Cursor output = null;
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
 
-                countryId = farmer.getString(farmer.getColumnIndex("country_id"));
-                regionId = farmer.getString(farmer.getColumnIndex("region_id"));
-                districtId = farmer.getString(farmer.getColumnIndex("district_id"));
-                placeId = farmer.getString(farmer.getColumnIndex("place_id"));
-                farmerGroupId = farmer.getString(farmer.getColumnIndex("farmergroup_id"));
-                sectionId = farmer.getString(farmer.getColumnIndex("section_id"));
-                programmeId = farmer.getString(farmer.getColumnIndex("programme_id"));
-                productId = farmer.getString(farmer.getColumnIndex("product_id"));
-                partnerId = farmer.getString(farmer.getColumnIndex("partner_id"));
+                String countryId = farmer.getString(farmer.getColumnIndex("country_id"));
+                String regionId = farmer.getString(farmer.getColumnIndex("region_id"));
+                String districtId = farmer.getString(farmer.getColumnIndex("district_id"));
+                String placeId = farmer.getString(farmer.getColumnIndex("place_id"));
+                String farmerGroupId = farmer.getString(farmer.getColumnIndex("farmergroup_id"));
+                String sectionId = farmer.getString(farmer.getColumnIndex("section_id"));
+                String programmeId = farmer.getString(farmer.getColumnIndex("programme_id"));
+                String productId = farmer.getString(farmer.getColumnIndex("product_id"));
+                String partnerId = farmer.getString(farmer.getColumnIndex("partner_id"));
 
-                String modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration, modules.isMandate FROM moduleassignments " +
-                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.childLabour != 'true' AND " +
-                             "moduleassignments.isPlotSurvey != 'true' AND "+
-                             "modules.surveyType != '8' AND " +
-                             "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
+                String modulesQuery = getQueryBasedOnAutoSample();
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -1448,7 +1418,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     });
                 }
 
-                Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+                Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey","",""});
@@ -1583,6 +1553,33 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             farmer.close();
         }
 
+    }
+
+    @NonNull
+    private String getQueryBasedOnAutoSample() {
+        String autoSampleIds = dl.getAutoSampleIds(farmerId);
+
+        return "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
+                " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration, modules.isMandate FROM moduleassignments " +
+                " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                "moduleassignments.childLabour != 'true' AND " +
+                "moduleassignments.isPlotSurvey != 'true' AND "+
+                "modules.surveyType != '8' AND " +
+                "((modules.isAutoSurvey = 'true' AND modules.id IN (" + autoSampleIds + ")) OR (modules.isAutoSurvey != 'true')) AND " +
+                "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
+                "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
     }
 
     private void recordFarmLocation(final View v, String statement) {
