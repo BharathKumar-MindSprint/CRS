@@ -1,10 +1,9 @@
 package com.olam.digital.ofis.tasks;
 
-import static com.olam.digital.ofis.NetworkLayer.TAG;
-
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
@@ -12,11 +11,12 @@ import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.agrisupplier.dto.SupplierResponse;
+import com.olam.digital.ofis.mvvmmodule.model.FarmerSurveyAssignmentResponse;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.FarmerSurveyAssignment;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ConditionalLogic;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ConditionalType;
 
@@ -35,10 +35,11 @@ import java.util.List;
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateModuleListsTask extends DatabaseTask {
     ProgressDialog pd;
+    private SQLiteDatabase db;
     public UpdateModuleListsTask(Context context) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
-
+        db = Utilities.getWriteableDb(context);
     }
 
     @Override
@@ -53,6 +54,9 @@ class UpdateModuleListsTask extends DatabaseTask {
         try {
             JSONObject moduleResponse = params[0];
             JSONObject conditionalLogicResponse = params[1];
+            JSONObject moduleIdResponse = params[2];
+            JSONObject assignedFarmerResponse = params[3];
+
             OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
             Gson gson = new Gson();
 
@@ -193,6 +197,69 @@ class UpdateModuleListsTask extends DatabaseTask {
                 List<ConditionalLogic> conditionalResponse = gson.fromJson(conditionsResponseArray.toString(), type);
                 roomDB.conditionalLogicDao().insertAll(conditionalResponse);
             }
+
+            if (moduleIdResponse != null) {
+                db.beginTransaction();
+                try {
+                    JSONArray moduleIdsForNormalSurvey = moduleIdResponse.getJSONArray("modulesWithoutAutoSampling");
+                    if (moduleIdsForNormalSurvey.length() > 0) {
+                        ContentValues values = new ContentValues();
+                        values.put(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY, "false");
+
+                        StringBuilder whereClause = new StringBuilder(OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " IN (");
+                        String[] whereArgs = new String[moduleIdsForNormalSurvey.length()];
+                        for (int i = 0; i < moduleIdsForNormalSurvey.length(); i++) {
+                            whereArgs[i] = moduleIdsForNormalSurvey.getString(i);
+                            whereClause.append("?");
+                            if (i < moduleIdsForNormalSurvey.length() - 1) whereClause.append(", ");
+                        }
+                        whereClause.append(")");
+
+                        db.update(OFISDBContract.ModuleEntry.TABLE_NAME, values, whereClause.toString(), whereArgs);
+                    }
+
+                    JSONArray moduleIdsForAutoSampleSurvey = moduleIdResponse.getJSONArray("modulesWithAutoSampling");
+                    if (moduleIdsForAutoSampleSurvey.length() > 0) {
+                        ContentValues values = new ContentValues();
+                        values.put(OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY, "true");
+
+                        StringBuilder whereClause = new StringBuilder(OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " IN (");
+                        String[] whereArgs = new String[moduleIdsForAutoSampleSurvey.length()];
+                        for (int i = 0; i < moduleIdsForAutoSampleSurvey.length(); i++) {
+                            whereArgs[i] = moduleIdsForAutoSampleSurvey.getString(i);
+                            whereClause.append("?");
+                            if (i < moduleIdsForAutoSampleSurvey.length() - 1) whereClause.append(", ");
+                        }
+                        whereClause.append(")");
+
+                        db.update(OFISDBContract.ModuleEntry.TABLE_NAME, values, whereClause.toString(), whereArgs);
+                    }
+
+                    db.setTransactionSuccessful();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            roomDB.assignedFarmerForSurveyDao().deleteAll();
+            if (assignedFarmerResponse != null && assignedFarmerResponse.has("assignedFarmers")) {
+                JSONArray responseArray = assignedFarmerResponse.getJSONArray("assignedFarmers");
+                Type type = new TypeToken<List<FarmerSurveyAssignmentResponse>>() {}.getType( );
+                List<FarmerSurveyAssignmentResponse> farmerSurveyAssignmentRespons = gson.fromJson(responseArray.toString(), type);
+
+                List<FarmerSurveyAssignment> farmerSurveyAssignments = new ArrayList<>();
+                for (FarmerSurveyAssignmentResponse assignedFarmer : farmerSurveyAssignmentRespons) {
+                    int moduleId = assignedFarmer.getModuleId();
+                    for (Integer farmerId : assignedFarmer.getFarmerIds()) {
+                        farmerSurveyAssignments.add(new FarmerSurveyAssignment(moduleId, farmerId));
+                    }
+                }
+
+                roomDB.assignedFarmerForSurveyDao().insertAssignedFarmers(farmerSurveyAssignments);
+            }
+
         } catch(JSONException e){
             FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error getting module lists table response", e));
             e.printStackTrace();

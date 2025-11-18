@@ -19,6 +19,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputFilter;
@@ -59,6 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -178,21 +181,29 @@ public class Utilities {
     public static final String IS_STAKE_HOLDER = "isStakeholder";
     public static final String FARMER_OR_STAKEHOLDER = "farmerOrStakeholderId";
 
-public  static String base64ConversionForImage(String filepath)  {
-    String encoded="";
-    try {
-        File photo = new File(filepath);
-        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-        Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-    }catch (Exception e){
-
+    public static String base64ConversionForImage(String filepath)  {
+        String encoded="";
+        try {
+            File photo = new File(filepath);
+            Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+            Bitmap compressedBitmap = imageCompress(bitmap);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return encoded;
     }
-    return encoded;
-}
+
+    public static Bitmap imageCompress(Bitmap bitmap){
+        int h = 250; // Height in pixels
+        int w = 250; // Width in pixels
+        Bitmap compressImg = Bitmap.createScaledBitmap(bitmap, h, w, true);
+        return compressImg;
+    }
 
 
     public static String getLocaleSuffix(Resources res) {
@@ -506,6 +517,45 @@ public  static String base64ConversionForImage(String filepath)  {
         }
     }
 
+    public static Bitmap loadSizedBitmapFromUri(Context context, Uri uri, int reqWidth, int reqHeight) {
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) return null;
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+
+            int height = options.outHeight;
+            int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > reqHeight || width > reqWidth) {
+                int halfHeight = height / 2;
+                int halfWidth = width / 2;
+
+                while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                    inSampleSize *= 2;
+                }
+            }
+
+            // Decode bitmap with inSampleSize set
+            options.inSampleSize = inSampleSize;
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+            // Reopen the stream for actual decoding
+            try (InputStream inputStream2 = context.getContentResolver().openInputStream(uri)) {
+                return BitmapFactory.decodeStream(inputStream2, null, options);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public static Bitmap loadSizedBitmap(String filePath, int reqWidth, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -580,9 +630,7 @@ public  static String base64ConversionForImage(String filepath)  {
     }
 
     public static String scaleRotateAndSaveImage(String imagePath, String kind) {
-
         return saveResizedImage(imagePath, kind);
-
     }
 
     private static String saveResizedImage(String imagePath, String imageType) {
@@ -650,6 +698,67 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
         return finalImagePath;
+    }
+
+    public static String copyAndProcessImageFromUri(Context context, Uri uri, String filename, String imageType) {
+        File destination = new File(context.getExternalFilesDir(""), filename);
+
+        Bitmap originalBitmap;
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) return null;
+            originalBitmap = BitmapFactory.decodeStream(inputStream);
+            if (originalBitmap == null) return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // Determine target dimensions
+        int saveWidth = 600;
+        int saveHeight = 798;
+        if ("signature".equalsIgnoreCase(imageType)) {
+            saveHeight = 600;
+        } else if ("trainingphoto".equalsIgnoreCase(imageType) || "modulephoto".equalsIgnoreCase(imageType)) {
+            saveWidth = 804;
+            saveHeight = 480;
+        }
+
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, saveWidth, saveHeight, true);
+        Bitmap rotatedBitmap = resizedBitmap;
+
+        try {
+            ExifInterface exif = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                try (InputStream exifStream = context.getContentResolver().openInputStream(uri)) {
+                    if (exifStream != null) {
+                        exif = new ExifInterface(exifStream);
+                    }
+                }
+            }
+
+            if (exif != null) {
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                int angle = exifToDegrees(orientation);
+                if (angle != 0) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(angle);
+                    rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Save processed image
+        try (FileOutputStream out = new FileOutputStream(destination)) {
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return destination.getAbsolutePath();
     }
 
     public static long daysToUpdate(Context context) {

@@ -1625,7 +1625,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     String disabledMonthsString = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                     List<String> disabledMonths = Arrays.asList(disabledMonthsString.split("\\s*,\\s*"));
                     for (String month : disabledMonths) {
-                        if (!Objects.equals(month, "null")) {
+                        if (!Objects.equals(month, "null") && !month.isEmpty()) {
                             disableMonthList.add(Integer.parseInt(month));
                         }
                     }
@@ -3522,7 +3522,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         db.distributionFormDao().updateFarmerIdInDistribution(localFarmerId, jsonObject1.getInt("id"));
 
                                         dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"), jsonObject1.getString("olamFarmerId"), jsonObject1.getString("olamFarmerId"), complainceFlag);
-
+                                        if(!jsonObject1.getBoolean("sustainable")){
+                                            dl.deleteIdBasedOnSustainable(jsonObject1.getInt("id"));
+                                        }
                                         // DM farmerId udpate
                                         db.dmSurveyReportDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
                                         db.dmSurveyAnswerTableDao().updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
@@ -6917,19 +6919,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                             typeID);
 
                                                     dl.addFarmerNationalids(nationIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-
-                                                    syncNetworkQueue(originalSyncRequestItemId, handler);
-                                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            showNationIdAlertMessage();
-                                                        }
-                                                    });
                                                 }
                                                 if (response.has("syncedNationalIdList")  && !response.isNull("syncedNationalIdList")) {
                                                     JSONArray syncedNationalIdList = response.getJSONArray("syncedNationalIdList");
                                                     dl.addFarmerNationalids(syncedNationalIdList, networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                                 }
+                                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        showNationIdAlertMessage();
+                                                    }
+                                                });
 
                                             } catch (JSONException e) {
                                                 throw new RuntimeException(e);
@@ -7017,86 +7018,84 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 handler.dispatchMessage(msg);
             } else {
                 boolean isConsentAvailableToSync = dl.getIsConsentAvailableToSync(farmerId);
+                boolean isConsentCapture = false;
+                Cursor farmer = dl.getFarmerById(farmerId);
+
+                if (farmer != null && farmer.moveToFirst()) {
+                    String isConsentAvailable = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
+                    isConsentCapture = isConsentAvailable != null && isConsentAvailable.equalsIgnoreCase("true");
+                }
+
                 final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
-                if (!isConsentAvailableToSync) {
-                    Boolean isMandateSurveySynced = getIsMandateSurveySynced(farmerId, 0);
-                    if (isMandateSurveySynced) {
-                        DistributionFormEntity distributionFormEntity = db.distributionFormDao().getDistributionFormByTempId(tempId, "false");
-                        List<String> fileName = new ArrayList<>();
-                        boolean isFileExists = false;
+                if (!isConsentAvailableToSync && isConsentCapture) {
+                    DistributionFormEntity distributionFormEntity = db.distributionFormDao().getDistributionFormByTempId(tempId, "false");
+                    List<String> fileName = new ArrayList<>();
+                    boolean isFileExists = false;
 
-                        if (!distributionFormEntity.getSignatureUrl().isEmpty()) {
-                            fileName.add(distributionFormEntity.getSignatureUrl());
+                    if (!distributionFormEntity.getSignatureUrl().isEmpty()) {
+                        fileName.add(distributionFormEntity.getSignatureUrl());
+                    }
+
+                    if (!distributionFormEntity.getEvidenceUrl().isEmpty()) {
+                        fileName.add(distributionFormEntity.getEvidenceUrl());
+                    }
+
+                    if (!fileName.isEmpty()) {
+                        isFileExists = true;
+                        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                        for (int i = 0; i < fileName.size(); i++) {
+                            String photoName = fileName.get(i);
+                            File file = new File(storageDir + "/" + photoName);
+                            RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                            builder.addFormDataPart("files", getFileName(photoName, distributionFormEntity.getFarmerId(), distributionFormEntity.getStakeHolderId()), fileBody);
                         }
 
-                        if (!distributionFormEntity.getEvidenceUrl().isEmpty()) {
-                            fileName.add(distributionFormEntity.getEvidenceUrl());
-                        }
-
-                        if (!fileName.isEmpty()) {
-                            isFileExists = true;
-                            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                            for (int i = 0; i < fileName.size(); i++) {
-                                String photoName = fileName.get(i);
-                                File file = new File(storageDir + "/" + photoName);
-                                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-                                builder.addFormDataPart("files", getFileName(photoName, distributionFormEntity.getFarmerId(), distributionFormEntity.getStakeHolderId()), fileBody);
+                        builder.addFormDataPart("type", Utilities.DISTRIBUTION);
+                        RequestBody requestBody = builder.build();
+                        okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
+                            @Override
+                            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                if (response.isSuccessful()) {
+                                    Log.d("Response_Upload", response.toString());
+                                    db.distributionFormDao().updateFileSyncStatus(tempId);
+                                    postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
+                                } else {
+                                    if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
+                                        try {
+                                            FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting survey photo");
+                                        } catch (Exception e) {
+                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                        }
+                                        Log.d("UPLOAD_FILE_FAILURE", "1");
+                                    } else {
+                                        postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey photo");
+                                        Log.d("Error in Upload Docs", response.toString());
+                                    }
+                                }
+                                response.close();
                             }
 
-                            builder.addFormDataPart("type", Utilities.DISTRIBUTION);
-                            RequestBody requestBody = builder.build();
-                            okHttpMultiPartPost1(context, IAPIConstants.POST_SURVEY_IMAGE, requestBody, new Callback() {
-                                @Override
-                                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                                    if (response.isSuccessful()) {
-                                        Log.d("Response_Upload", response.toString());
-                                        db.distributionFormDao().updateFileSyncStatus(tempId);
-                                        postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
-                                    } else {
-                                        if (response.code() == 401 && response.headers().toString().contains("invalid_token")) {
-                                            try {
-                                                FailureGetRefreshToken(handler, itemId, msg, 2, total, progress, null, "submitting survey photo");
-                                            } catch (Exception e) {
-                                                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                            }
-                                            Log.d("UPLOAD_FILE_FAILURE", "1");
-                                        } else {
-                                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey photo");
-                                            Log.d("Error in Upload Docs", response.toString());
-                                        }
+                            @Override
+                            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                                Log.d("UPLOAD_FILE_FAILURE", e.toString());
+                                try {
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    if (e != null) {
+                                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                                     }
-                                    response.close();
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                } catch (Exception onfailEx) {
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
+                                    FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                                    onfailEx.printStackTrace();
                                 }
+                            }
+                        });
+                    }
 
-                                @Override
-                                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                                    Log.d("UPLOAD_FILE_FAILURE", e.toString());
-                                    try {
-                                        String failureMessage = res.getString(R.string.networking_error);
-                                        if (e != null) {
-                                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                        }
-                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
-                                    } catch (Exception onfailEx) {
-                                        String failureMessage = res.getString(R.string.networking_error);
-                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey photo");
-                                        FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
-                                        onfailEx.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-
-                        if(!isFileExists) {
-                            postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
-                        }
-
-                    } else {
-                        msg.what = 8;
-                        msg.arg1 = total;
-                        msg.arg2 = progress;
-                        msg.obj = res.getString(R.string.mandate_survey_not_synced);
-                        handler.dispatchMessage(msg);
+                    if(!isFileExists) {
+                        postDistributionForm(networkQueueItemId, handler, msg, total, progress, itemId);
                     }
                 } else {
                     msg.what = 10;

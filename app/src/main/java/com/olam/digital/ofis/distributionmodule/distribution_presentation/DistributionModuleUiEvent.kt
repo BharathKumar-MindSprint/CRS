@@ -2,6 +2,7 @@ package com.olam.digital.ofis.distributionmodule.distribution_presentation
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.olam.digital.ofis.distributionmodule.distribution_domain.model.FarmerAndStakeHolderDto
 import java.io.File
 
 sealed class DistributionModuleUiEvent {
@@ -29,4 +30,5 @@ sealed class DistributionModuleUiEvent {
     data class EvidenceUpload(val uri : Uri, val filePath : String) : DistributionModuleUiEvent()
     data object GetDistributionData : DistributionModuleUiEvent()
     data object LoadDistributionSpinnerData : DistributionModuleUiEvent()
+    data class setFarmerAndStakeHolderData(val farmerAndStakeHolderDto: FarmerAndStakeHolderDto, val tempId : String?) : DistributionModuleUiEvent()
 }

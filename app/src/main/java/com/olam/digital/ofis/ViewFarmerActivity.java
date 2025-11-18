@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import static com.olam.digital.ofis.BaseActivity.UPDATE;
+import static com.olam.digital.ofis.Utilities.copyAndProcessImageFromUri;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -19,6 +20,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -120,6 +122,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -459,23 +462,40 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    String realPath = ImageFilePath.getPath(ViewFarmerActivity.this, data.getData());
-
-                    try {
-                        if (realPath != null) {
-                            setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
-                        } else {
-                            Toast.makeText(ViewFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    setImageForGalleryPick(data.getData(), farmerPhoto);
+                } else {
+                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
+                    setCurrentPhotoPath(null);
                 }
                 break;
             case REQUEST_RESOLVE_ERROR:
                 mResolvingError = false;
                 break;
             default:
+        }
+    }
+
+    private void setImageForGalleryPick(Uri uri, ImageView farmerPhoto) {
+        Bitmap bitmap = null;
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream != null) {
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (bitmap != null) {
+            farmerPhoto.setImageBitmap(bitmap);
+            String filename = "farmer_profile_" + System.currentTimeMillis() + ".jpg";
+            String photoPath = copyAndProcessImageFromUri(context, uri, filename, "portrait");
+
+            if (photoPath != null) {
+                dl.updateFarmerPhoto(farmerId, photoPath, olamFarmerIdStr, farmerNameStr);
+                setCurrentPhotoPath(photoPath);
+            }
+        } else {
+            Toast.makeText(this, "Failed to decode image", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -737,31 +757,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         return;
                     }
                 }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    String[] PERMISSIONS = new String[] {
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.READ_MEDIA_IMAGES
-                    };
-
-                    if (!Utilities.hasPermissions(PERMISSIONS, context)) {
-                        ActivityCompat.requestPermissions(ViewFarmerActivity.this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                        return;
-                    }
-                    bindFarmerPhotoButton();
-                }
-                else {
-                    String[] PERMISSIONS = new String[] {
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    };
-
-                    if (!Utilities.hasPermissions(PERMISSIONS, context)) {
-                        ActivityCompat.requestPermissions(ViewFarmerActivity.this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                        return;
-                    }
-                    bindFarmerPhotoButton();
-                }
+                bindFarmerPhotoButton();
             }
         });
 
@@ -834,7 +830,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 valid = true;
             }
 
-            Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+            Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
             int moduleCount = moduleAssignments.getCount();
             if(moduleCount == 0){
                 valid = true;
@@ -850,7 +846,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private boolean checkPendingPlotSurvey(JSONObject submittedModules) {
         boolean valid = false;
         try {
-            Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+            Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
             int moduleCount = moduleAssignments.getCount();
             int plotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             int expectedSurveySubmission = moduleCount * plotCount;
@@ -987,36 +983,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getFarmGPS(clickedLocationItem);
             }
-        } else if (requestCode == MY_PROFILE_PIC_PERMISSIONS_REQUEST) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                bindFarmerPhotoButton();
-            } else if (Build.VERSION.SDK_INT >= 23
-                    && (!shouldShowRequestPermissionRationale(permissions[0])
-                    || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-            } else {
-                Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-            }
         } else if (requestCode == REQUEST_PERMISSIONS_FOR_TIRAMISU) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults[0] == PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                    == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
-                    == PackageManager.PERMISSION_GRANTED)) {
-                bindFarmerPhotoButton();
-            }
-            else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE && (grantResults.length > 0 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                    grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
-                bindFarmerPhotoButton();
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                    && (!shouldShowRequestPermissionRationale(permissions[0])
-                    || !shouldShowRequestPermissionRationale(permissions[1])
-            )) {
-                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-            }else {
-                Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+                if (showRationale) {
+                    Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                } else {
+                    showSettingsDialog(getString(R.string.go_to_settings_msg));
+                }
             }
         }
     }
@@ -1062,53 +1038,23 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     public Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
-
-        String countryId = "";
-        String regionId = "";
-        String districtId = "";
-        String placeId = "";
-        String farmerGroupId = "";
-        String sectionId = "";
-        String programmeId = "";
-        String productId = "";
-        String partnerId = "";
-
         try {
             farmer = dl.getFlattenedFarmer(id);
             Cursor output = null;
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
 
-                countryId = farmer.getString(farmer.getColumnIndex("country_id"));
-                regionId = farmer.getString(farmer.getColumnIndex("region_id"));
-                districtId = farmer.getString(farmer.getColumnIndex("district_id"));
-                placeId = farmer.getString(farmer.getColumnIndex("place_id"));
-                farmerGroupId = farmer.getString(farmer.getColumnIndex("farmergroup_id"));
-                sectionId = farmer.getString(farmer.getColumnIndex("section_id"));
-                programmeId = farmer.getString(farmer.getColumnIndex("programme_id"));
-                productId = farmer.getString(farmer.getColumnIndex("product_id"));
-                partnerId = farmer.getString(farmer.getColumnIndex("partner_id"));
+                String countryId = farmer.getString(farmer.getColumnIndex("country_id"));
+                String regionId = farmer.getString(farmer.getColumnIndex("region_id"));
+                String districtId = farmer.getString(farmer.getColumnIndex("district_id"));
+                String placeId = farmer.getString(farmer.getColumnIndex("place_id"));
+                String farmerGroupId = farmer.getString(farmer.getColumnIndex("farmergroup_id"));
+                String sectionId = farmer.getString(farmer.getColumnIndex("section_id"));
+                String programmeId = farmer.getString(farmer.getColumnIndex("programme_id"));
+                String productId = farmer.getString(farmer.getColumnIndex("product_id"));
+                String partnerId = farmer.getString(farmer.getColumnIndex("partner_id"));
 
-                String modulesQuery = "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
-                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration, modules.isMandate FROM moduleassignments " +
-                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.childLabour != 'true' AND " +
-                             "moduleassignments.isPlotSurvey != 'true' AND "+
-                             "modules.surveyType != '8' AND " +
-                             "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
-                            "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
+                String modulesQuery = getQueryBasedOnAutoSample();
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -1472,7 +1418,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     });
                 }
 
-                Cursor moduleAssignments = dl.getFarmerModules(farmerId,false);
+                Cursor moduleAssignments = dl.getPlotSurveyModules(farmerId);
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "","", "", "", "", "", "", "PlotSurvey","",""});
@@ -1607,6 +1553,33 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             farmer.close();
         }
 
+    }
+
+    @NonNull
+    private String getQueryBasedOnAutoSample() {
+        String autoSampleIds = dl.getAutoSampleIds(farmerId);
+
+        return "SELECT distinct modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, moduleassignments.startDate, moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId,moduleassignments.farmerRoleId, " +
+                " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng, moduleassignments.surveyDuration, modules.isMandate FROM moduleassignments " +
+                " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                "moduleassignments.childLabour != 'true' AND " +
+                "moduleassignments.isPlotSurvey != 'true' AND "+
+                "modules.surveyType != '8' AND " +
+                "((modules.isAutoSurvey = 'true' AND modules.id IN (" + autoSampleIds + ")) OR (modules.isAutoSurvey != 'true')) AND " +
+                "moduleassignments.country_id = ( case when moduleassignments.country_id = ? then ? else 'null' end ) AND " +
+                "((moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) group by modules.id";
     }
 
     private void recordFarmLocation(final View v, String statement) {
@@ -2424,49 +2397,62 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
-
                 if (items[item].equals(res.getString(R.string.Camera))) {
-                    // New
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile("portrait");
-                    } catch (IOException e) {
-                        FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating photo image file", e));
-                        e.printStackTrace();
-                    }
-
-                    if (photoFile != null) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if ((intent.resolveActivity(getPackageManager()) != null)) {
-                            //Uri photoURI = FileProvider.getUriForFile(ViewFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
-                            Uri photoURI = FileProvider.getUriForFile(ViewFarmerActivity.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
-
-                            // Samsung Galaxy S3 Fix
-                            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                            for (ResolveInfo resolveInfo : resInfoList) {
-                                String packageName = resolveInfo.activityInfo.packageName;
-                                grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            }
-
-                            //  tempProfileImageFile=photoFile;
-                            setCapturedImageURI(photoURI);
-                            setCurrentPhotoPath(photoFile.getPath());
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                        } else {
-                            Toast.makeText(ViewFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
+                    requestCameraPermissionAndProceed();
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_PICK);
-                    intent.setType("image/*");
-                    startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                    openPhotoPicker();
                 }
+                dialog.dismiss();
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void requestCameraPermissionAndProceed() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+        } else {
+            openCamera();
+        }
+    }
+    private void openCamera() {
+        File photoFile = null;
+        try {
+            photoFile = createImageFile("portrait");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (photoFile != null) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
+
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    grantUriPermission(resolveInfo.activityInfo.packageName, photoURI,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+
+                setCapturedImageURI(photoURI);
+                setCurrentPhotoPath(photoFile.getPath());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+    private void openPhotoPicker() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1);
+        } else {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+        startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
     }
 
     private File createImageFile(String portraitOrSignature) throws IOException {
@@ -2553,20 +2539,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         } else {
             //
         }
-    }
-
-    private static String getFilePathUri(Context context, Uri uri) {
-        Uri filePathUri = uri;
-        if (uri.getScheme().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            assert cursor != null;
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
-            }
-            cursor.close();
-        }
-        return filePathUri + "";
     }
 
     //frank

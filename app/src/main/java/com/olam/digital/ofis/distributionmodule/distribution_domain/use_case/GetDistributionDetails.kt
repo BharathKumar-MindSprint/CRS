@@ -7,7 +7,7 @@ class GetDistributionDetails(
     private val repository: DistributionModuleRepository
 ) {
 
-    suspend operator fun invoke(farmerId : String?, stakeHolderId : String?) : Result<DistributionFormDto> {
-        return repository.getDistributionDetails(farmerId, stakeHolderId)
+    suspend operator fun invoke(distributionId : String?) : Result<DistributionFormDto> {
+        return repository.getDistributionDetails(distributionId)
     }
 }

@@ -54,8 +54,8 @@ android {
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 35
         multiDexEnabled true
-        versionCode 99
-        versionName "10.9.1"
+        versionCode 102
+        versionName "10.9.4"
 
         javaCompileOptions {
             annotationProcessorOptions {

@@ -40,9 +40,6 @@ import com.olam.digital.ofis.authentication.DeviceIdExtractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionCategory;
-import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionGroup;
-import com.olam.digital.ofis.distributionmodule.distribution_data.local.entity.DistributionItem;
 import com.olam.digital.ofis.distributionmodule.distribution_domain.model.DistributionModuleResponseDto;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
@@ -84,6 +81,8 @@ import okhttp3.ResponseBody;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_DISTRIBUTION_MODULES_DETAILS;
+import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS;
+import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_MODULE_ID_BY_ENUMERATOR_ID;
 
 /**
  * Created by ben on 24/02/16.
@@ -110,8 +109,8 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse, distributionModuleResponse = new JSONObject();
-    public static JSONObject nationalidresponse,enumnationalidresponse;
+    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse, distributionModuleResponse, moduleIdResponse, assignedFarmersAgainstSurvey = new JSONObject();
+    public static JSONObject nationalidresponse, enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
     public static JSONArray notificationArray = new JSONArray();
@@ -283,6 +282,12 @@ public class SyncAllTask extends SyncTask {
         else if (op == SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS) {
             syncConditionalLogicDetails();
         }
+        else if (op == SYNC_MODULE_ID_BY_ENUMERATOR_ID) {
+            getModuleIdsByEnumeratorId();
+        }
+        else if (op == SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS) {
+            getAssignedFarmerAgainstSurveys();
+        }
         else if (op == SYNC_DISTRIBUTION_MODULES_DETAILS) {
             getDistributionModuleData();
         }
@@ -425,7 +430,7 @@ public class SyncAllTask extends SyncTask {
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
 
-            new UpdateModuleListsTask(context).execute(moduleResponse, conditionalLogicResponse);
+            new UpdateModuleListsTask(context).execute(moduleResponse, conditionalLogicResponse, moduleIdResponse, assignedFarmersAgainstSurvey);
             moduleResponse = null;
             conditionalLogicResponse = null;
 
@@ -920,8 +925,8 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         JSONArray array = new JSONArray(postResponse.body().string());
                         conditionalLogicResponse.put("conditions", array);
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULE_ID_BY_ENUMERATOR_ID);
                     } else {
                         postFailureMessage(null);
                     }
@@ -941,6 +946,102 @@ public class SyncAllTask extends SyncTask {
                 failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                 publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
             }
+        });
+    }
+
+    private void getModuleIdsByEnumeratorId() {
+
+        okHttpGet(context, IAPIConstants.GET_MODULE_IDS_BY_ENUMERATOR_ID, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+                        moduleIdResponse = response;
+                        Log.d("moduleId Response:", moduleIdResponse.toString());
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS);
+                    } else {
+                        postFailureMessage(response);
+                    }
+
+                } catch (JSONException | IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing modules", e));
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+
+        });
+
+
+    }
+
+    private void getAssignedFarmerAgainstSurveys() {
+        JSONArray moduleIdsForAutoSampleSurvey;
+        JSONObject requestBody = new JSONObject();
+
+        try {
+            moduleIdsForAutoSampleSurvey = moduleIdResponse!= null && moduleIdResponse.has("modulesWithAutoSampling") ? moduleIdResponse.getJSONArray("modulesWithAutoSampling") : new JSONArray();
+            requestBody.put("modulesWithAutoSampling", moduleIdsForAutoSampleSurvey);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
+            delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
+            return;
+        }
+
+        if (moduleIdsForAutoSampleSurvey.length() == 0) {
+            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
+            delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
+            return;
+        }
+
+        okHttpPost(context, IAPIConstants.GET_ASSIGNED_FARMER_AGAINST_SURVEYS, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+                        assignedFarmersAgainstSurvey = response;
+                        Log.d("Farmer Assignment: ", assignedFarmersAgainstSurvey.toString());
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
+                    } else {
+                        postFailureMessage(response);
+                    }
+
+                } catch (JSONException | IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing modules", e));
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+
         });
     }
 

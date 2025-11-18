@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -24,6 +23,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -44,8 +44,8 @@ import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import com.github.gcacace.signaturepad.views.SignaturePad
@@ -65,7 +65,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class InputOrFinanceDistributionFragment : Fragment() {
     private lateinit var binding: FragmentInputOrFinanceDistributionBinding
-    private val viewModel : DistributionModuleViewModel by hiltNavGraphViewModels(R.id.distributionModuleNavigation)
+    private lateinit var viewModel : DistributionModuleViewModel
     private lateinit var navController: NavController
     private lateinit var distributionGroupSpinner : Spinner
     private lateinit var distributionGroupAdapter: ArrayAdapter<String>
@@ -84,6 +84,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[DistributionModuleViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -128,6 +129,11 @@ class InputOrFinanceDistributionFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     android.R.id.home -> {
+                        if (viewModel.isFromSyncScreen.value == true) {
+                            requireActivity().finish()
+                            return true
+                        }
+
                         viewModel.onEvent(DistributionModuleUiEvent.ResetDistributionFormState)
                         navController.popBackStack()
                         true
@@ -157,6 +163,11 @@ class InputOrFinanceDistributionFragment : Fragment() {
             setSpannableString(R.string.transaction_value, tvTransactionValue)
 
             btnBack.setOnClickListener {
+                if (viewModel.isFromSyncScreen.value == true) {
+                    requireActivity().finish()
+                    return@setOnClickListener
+                }
+
                 viewModel.onEvent(DistributionModuleUiEvent.ResetDistributionFormState)
                 navController.popBackStack()
             }
@@ -207,7 +218,7 @@ class InputOrFinanceDistributionFragment : Fragment() {
                 showSignatureDialogBox()
             }
         }
-        resetUiState()
+        resetUiState(CategoryEnum.INPUT)
     }
 
     private fun setupCategoryButtons() {
@@ -218,14 +229,14 @@ class InputOrFinanceDistributionFragment : Fragment() {
 
         categoryMap.forEach { (button, category) ->
             button.setOnClickListener {
-                resetUiState()
+                resetUiState(category)
                 viewModel.onEvent(DistributionModuleUiEvent.OnCategoryChange(category))
             }
         }
     }
 
 
-    private fun resetUiState() {
+    private fun resetUiState(categoryEnum: CategoryEnum) {
         distributionGroupSpinner.setSelection(0)
         distributionItemSpinner.setSelection(0)
         uomSpinner.setSelection(0)
@@ -386,45 +397,6 @@ class InputOrFinanceDistributionFragment : Fragment() {
                     )
                 }
 
-                if (isFinance) {
-                    clPricePerUnit.visibility = View.GONE
-                    clTotalAmount.visibility = View.GONE
-
-                    viewModel.currency.value?.let { currencyList ->
-                        val names = currencyList.mapIndexed { index, data ->
-                            if (index == 0) getString(R.string.please_select_currency)
-                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
-                        }
-
-                        uomAdapter.apply {
-                            clear()
-                            addAll(names)
-                            notifyDataSetChanged()
-                        }
-                    }
-                    val isGlobalId = state.currencyId != null
-                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
-
-                } else {
-                    clPricePerUnit.visibility = View.VISIBLE
-                    clTotalAmount.visibility = View.VISIBLE
-
-                    viewModel.localUnits.value?.let { localUnitList ->
-                        val names = localUnitList.mapIndexed { index, data ->
-                            if (index == 0) getString(R.string.select_unit)
-                            else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
-                        }
-
-                        uomAdapter.apply {
-                            clear()
-                            addAll(names)
-                            notifyDataSetChanged()
-                        }
-                    }
-                    val isGlobalId = state.currencyId != null
-                    uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
-                }
-
                 val hasEvidence = state.evidenceName.isNotEmpty()
                 if (hasEvidence) {
                     clTakePhoto.visibility = View.GONE
@@ -462,6 +434,60 @@ class InputOrFinanceDistributionFragment : Fragment() {
             val id = if (state.distributionGroupId.isEmpty()) 0 else state.distributionGroupId.toInt()
             distributionGroupSpinner.setSelection(getIndexPosition(id, viewModel.distributionGroups.value ?: emptyList()))
         }
+
+        viewModel.localUnits.observe(viewLifecycleOwner) {
+            binding.clPricePerUnit.visibility = View.VISIBLE
+            binding.clTotalAmount.visibility = View.VISIBLE
+
+            viewModel.localUnits.observe(viewLifecycleOwner) { localUnitList ->
+                val names = localUnitList.mapIndexed { index, data ->
+                    if (index == 0) getString(R.string.select_unit)
+                    else "${data.notation} (${data.name.ifEmpty { getString(R.string.select_unit) }})"
+                }
+
+                val state = viewModel.distributionFormState.value ?: DistributionFormState()
+
+                if (state.distributionCategory == CategoryEnum.FINANCE) {
+                    return@observe
+                }
+
+                uomAdapter.apply {
+                    clear()
+                    addAll(names)
+                    notifyDataSetChanged()
+                }
+
+                val isGlobalId = state.currencyId != null
+                uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.localUnits.value ?: emptyList(), isGlobalId))
+
+            }
+        }
+
+        viewModel.currency.observe(viewLifecycleOwner) { currencyList ->
+            binding.clPricePerUnit.visibility = View.GONE
+            binding.clTotalAmount.visibility = View.GONE
+
+            val names = currencyList.mapIndexed { index, data ->
+                if (index == 0) getString(R.string.please_select_currency)
+                else "${data.notation} (${data.name.ifEmpty { getString(R.string.please_select_currency) }})"
+            }
+
+            val state = viewModel.distributionFormState.value ?: DistributionFormState()
+
+            if (state.distributionCategory == CategoryEnum.INPUT) {
+                return@observe
+            }
+
+            uomAdapter.apply {
+                clear()
+                addAll(names)
+                notifyDataSetChanged()
+            }
+
+            val isGlobalId = state.currencyId != null
+            uomSpinner.setSelection(getIndexPosition(state.currencyId ?: state.localUnitId, viewModel.currency.value ?: emptyList(), isGlobalId))
+        }
+
     }
 
     private fun getIndexPosition(value: Int?, data: List<SpinnerDataDto>, isGlobalId: Boolean = false): Int {
@@ -609,79 +635,39 @@ class InputOrFinanceDistributionFragment : Fragment() {
     private fun requestPermissions(isUpload: Boolean) {
         isUploadPending = isUpload
 
-        val permissions = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
-                Manifest.permission.READ_MEDIA_IMAGES
-            )
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_MEDIA_IMAGES
-            )
-            else -> arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        }
+        val permissions = arrayOf(Manifest.permission.CAMERA)
 
         val missingPermissions = permissions.filter {
             ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (missingPermissions.isEmpty()) {
-            if (isUpload) bindUploadImage() else openCamera()
+            if (isUpload) openPhotoPicker() else openCamera()
         } else {
             permissionLauncher.launch(permissions)
         }
     }
 
-    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
 
-            val mediaGranted = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                    permissions[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true ||
-                            permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
-                }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
-                }
-                else -> {
-                    permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
-                }
-            }
-
-            if (cameraGranted && mediaGranted) {
-                if (isUploadPending) bindUploadImage() else openCamera()
+        if (cameraGranted || isUploadPending) {
+            if (isUploadPending) openPhotoPicker() else openCamera()
+        } else {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                showSettingsDialog(getString(R.string.go_to_settings_msg))
             } else {
-                val showRationale = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                (!shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) &&
-                                        !shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES))
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                !shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES)
-                    }
-                    else -> {
-                        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ||
-                                !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    }
-                }
-
-                if (showRationale) {
-                    showSettingsDialog(getString(R.string.go_to_settings_msg))
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.permission_denial_msg_android_13_above,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                Toast.makeText(
+                    requireContext(),
+                    R.string.permission_denial_msg_android_13_above,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
+    }
+
 
     fun showSettingsDialog(msg: String?) {
         val dialog = AlertDialog.Builder(requireContext())
@@ -707,9 +693,16 @@ class InputOrFinanceDistributionFragment : Fragment() {
         dialog.show()
     }
 
-    private fun bindUploadImage() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
+    private fun openPhotoPicker() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Intent(MediaStore.ACTION_PICK_IMAGES).apply {
+                putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1)
+            }
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "image/*"
+                addCategory(Intent.CATEGORY_OPENABLE)
+            }
         }
         galleryLauncher.launch(intent)
     }

@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.farmstakeholder;
 
+import static com.olam.digital.ofis.Utilities.copyAndProcessImageFromUri;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -9,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,15 +37,14 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
-import com.olam.digital.ofis.ImageFilePath;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
@@ -51,6 +53,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -340,7 +343,7 @@ public class ViewStakeHolderActivity extends BaseActivity {
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestPermissions();
+                bindFarmerPhotoButton();
             }
         });
 
@@ -371,44 +374,61 @@ public class ViewStakeHolderActivity extends BaseActivity {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
-
                 if (items[item].equals(res.getString(R.string.Camera))) {
-                    // New
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile("portrait");
-                    } catch (IOException e) {
-                        FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating photo image file", e));
-                        e.printStackTrace();
-                    }
-
-                    if (photoFile != null) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if ((intent.resolveActivity(getPackageManager()) != null)) {
-                            Uri photoURI = FileProvider.getUriForFile(ViewStakeHolderActivity.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
-                            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                            for (ResolveInfo resolveInfo : resInfoList) {
-                                String packageName = resolveInfo.activityInfo.packageName;
-                                grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            }
-
-                            setCapturedImageURI(photoURI);
-                            setCurrentPhotoPath(photoFile.getPath());
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                        } else {
-                            Toast.makeText(ViewStakeHolderActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
-                        }
-                    }
+                    requestCameraPermissionAndProceed();
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent intent = new Intent(Intent.ACTION_PICK);
-                    intent.setType("image/*");
-                    startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+                    openPhotoPicker();
                 }
+                dialog.dismiss();
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+    private void requestCameraPermissionAndProceed() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSIONS_FOR_TIRAMISU);
+        } else {
+            openCamera();
+        }
+    }
+    private void openCamera() {
+        File photoFile = null;
+        try {
+            photoFile = createImageFile("portrait");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (photoFile != null) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
+
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    grantUriPermission(resolveInfo.activityInfo.packageName, photoURI,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+
+                setCapturedImageURI(photoURI);
+                setCurrentPhotoPath(photoFile.getPath());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+    private void openPhotoPicker() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1);
+        } else {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+        startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
     }
 
     private File createImageFile(String portraitOrSignature) throws IOException {
@@ -514,6 +534,30 @@ public class ViewStakeHolderActivity extends BaseActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        openCamera();
+                    } else {
+                        boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
+                        if (showRationale) {
+                            Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                        } else {
+                            showSettingsDialog(getString(R.string.go_to_settings_msg));
+                        }
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Activity.RESULT_CANCELED) return;
@@ -531,14 +575,8 @@ public class ViewStakeHolderActivity extends BaseActivity {
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    String realPath = ImageFilePath.getPath(ViewStakeHolderActivity.this, data.getData());
-
                     try {
-                        if (realPath != null) {
-                            setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
-                        } else {
-                            Toast.makeText(ViewStakeHolderActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
-                        }
+                        setImageForGalleryPick(data.getData(), farmerPhoto);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -546,6 +584,44 @@ public class ViewStakeHolderActivity extends BaseActivity {
                 break;
             default:
         }
+    }
+
+    private void setImageForGalleryPick(Uri uri, ImageView farmerPhoto) {
+        Bitmap bitmap = null;
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream != null) {
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (bitmap != null) {
+            farmerPhoto.setImageBitmap(ImageOrientation.modifyOrientation(context, bitmap, uri));
+            String filename = "farmer_profile_" + System.currentTimeMillis() + ".jpg";
+            String photoPath = copyAndProcessImageFromUri(context, uri, filename, "portrait");
+
+            if (photoPath != null) {
+                db.multiStakeHolderDao().updatePhotoByMsId(stakeHolder.msId, photoPath);
+                setCurrentPhotoPath(photoPath);
+
+                if (stakeHolder.synced == 1) {
+                    dl.updateNqForStakeHolder(String.valueOf(stakeHolder.farmerId), String.valueOf(stakeHolder.msId), "true", stakeHolder.msName, stakeHolder.olamMultiStakeholderId);
+                }
+            }
+        } else {
+            Toast.makeText(this, "Failed to decode image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() != android.R.id.home) {
+            return super.onOptionsItemSelected(item);
+        }
+
+        onBackPressed();
+        return true;
     }
 
     private void setFullImageFromFilePath(String imagePath, ImageView target, String portraitOrSignature) {
@@ -576,75 +652,6 @@ public class ViewStakeHolderActivity extends BaseActivity {
             dl.updateNqForStakeHolder(String.valueOf(stakeHolder.farmerId), String.valueOf(stakeHolder.msId), "true", stakeHolder.msName, stakeHolder.olamMultiStakeholderId);
         }
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() != android.R.id.home) {
-            return super.onOptionsItemSelected(item);
-        }
-
-        onBackPressed();
-        return true;
-    }
-
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            String[] PERMISSIONS = new String[] {
-                    android.Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES
-            };
-
-            if (!Utilities.hasPermissions(PERMISSIONS, context)) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                return;
-            }
-            bindFarmerPhotoButton();
-        }
-        else {
-            String[] PERMISSIONS = new String[] {
-                    android.Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-            };
-
-            if (!Utilities.hasPermissions(PERMISSIONS, context)) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                return;
-            }
-            bindFarmerPhotoButton();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults[0] == PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                            == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
-                            == PackageManager.PERMISSION_GRANTED)) {
-                        bindFarmerPhotoButton();
-                    }
-                    else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE && grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                        bindFarmerPhotoButton();
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                            && (!shouldShowRequestPermissionRationale(permissions[0])
-                            || !shouldShowRequestPermissionRationale(permissions[1])
-                    )) {
-                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-
-                    }else {
-                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
-                    }
-                    break;
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     private void updateNoTaskVisibility(List<ModulesDTO> filteredModules) {

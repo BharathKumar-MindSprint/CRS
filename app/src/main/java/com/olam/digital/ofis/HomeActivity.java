@@ -51,6 +51,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.olam.digital.ofis.Common.Utils.NetworkQueueDTO;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -83,7 +85,9 @@ import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 
+import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
@@ -94,7 +98,9 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -638,6 +644,141 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
     private void bindNetworkQueue(boolean isClickable) {
+        String language = Locale.getDefault().getLanguage();
+        List<NetworkQueueDTO> getAllEditFarmerQueue = dl.getNetworkQueueDTOs();
+
+        for (NetworkQueueDTO networkQueueDTO : getAllEditFarmerQueue) {
+            Cursor farmer = dl.getFarmerById(Long.parseLong(networkQueueDTO.farmerId));
+            MultiStakeHolder ms = null;
+
+            if (networkQueueDTO.stakeholderId != null) {
+                ms = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(networkQueueDTO.stakeholderId));
+            }
+            String farmerName = "";
+            String olamFarmerId = "";
+
+            if (farmer != null && farmer.getCount() > 0) {
+                farmer.moveToFirst();
+                try {
+                    farmerName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                    olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                } catch (Exception e) {
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                }
+            }
+
+            boolean isDataModified = networkQueueDTO.submissionType.equalsIgnoreCase("Edit Farmer") && networkQueueDTO.poiName.equalsIgnoreCase("Update Farmer");
+            if (isDataModified) {
+                ContentValues values = new ContentValues();
+                if ((networkQueueDTO.recordedPlots != null && !networkQueueDTO.recordedPlots.isEmpty()) && (networkQueueDTO.plotName != null && !networkQueueDTO.plotName.isEmpty())) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmpolygon");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Plot Location / Polygon recorded");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+                } else if ((networkQueueDTO.poiSubgroupType != null && networkQueueDTO.poiSubgroupType.equalsIgnoreCase("Flag for Deactivation"))) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmpolygon");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Plot Location / Polygon recorded");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamFarmerId);
+                } else if ((networkQueueDTO.stakeholderId != null && !networkQueueDTO.stakeholderId.isEmpty()) && (networkQueueDTO.poiModuleId == null || networkQueueDTO.poiModuleId.isEmpty())) {
+                    if (ms != null) {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, ms.synced == 0 ? "stakeholder" : "update stakeholder");
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, ms.synced == 0 ? "New StakeHolder" : ms.msName);
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, ms.synced == 0 ? ms.msName : "Update Stakeholder");
+                    }
+                } else if ((networkQueueDTO.farmerChildId != null && !networkQueueDTO.farmerChildId.isEmpty())) {
+                    Cursor child = dl.getChildById(Long.parseLong(networkQueueDTO.farmerChildId));
+
+                    if (child != null && child.moveToFirst()) {
+                        String childName = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
+                        if (networkQueueDTO.farmerSurveyCode == null) {
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "New Child");
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, childName);
+                        } else {
+                            String moduleName = dl.getModuleNameById(dl.getModuleIdBySurveyCode(networkQueueDTO.farmerSurveyCode), language);
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child: " + childName);
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
+                        }
+
+                    }
+                } else if (networkQueueDTO.farmerModuleId != null && !networkQueueDTO.farmerModuleId.isEmpty()
+                        && networkQueueDTO.poiModuleId != null && !networkQueueDTO.poiModuleId.isEmpty()) {
+                    String moduleName = dl.getModuleNameById(Integer.parseInt(networkQueueDTO.poiModuleId), language);
+                    if (dl.isSurveyMandate(Integer.parseInt(networkQueueDTO.poiModuleId))){
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "mandate_module");
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
+                    } else {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
+                    }
+                } else if (networkQueueDTO.olamFarmerId != null && !networkQueueDTO.olamFarmerId.isEmpty()
+                        && networkQueueDTO.farmId != null && !networkQueueDTO.farmId.isEmpty()
+                        && networkQueueDTO.farmerModuleId == null && networkQueueDTO.recordedLat == null) {
+
+                    if (dl.checkNationalIdAvailable(networkQueueDTO.farmerId)) {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Update_ID");
+                    } else {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "National_ID");
+                    }
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "National ID");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                } else if (networkQueueDTO.countryId != null && !networkQueueDTO.countryId.isEmpty()
+                && networkQueueDTO.productId != null && !networkQueueDTO.productId.isEmpty()) {
+
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Update Phone Numbers");
+
+                } else if (networkQueueDTO.signature != null && !networkQueueDTO.signature.isEmpty()) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "signature");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Signature");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                } else if (networkQueueDTO.poiTypeId != null && !networkQueueDTO.poiTypeId.isEmpty()) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Distribution Form");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Distribution Form");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                } else if (networkQueueDTO.poiModuleId != null && !networkQueueDTO.poiModuleId.isEmpty()
+                    && networkQueueDTO.farmerModuleId == null) {
+                    DmMainModule dmSurvey= db.dmMainModuleDao().getDmMainModule(Integer.parseInt(networkQueueDTO.poiModuleId));
+                    String surveyName = Utilities.getNamesByLanguage(dmSurvey);
+
+                    if (db.followUpItemMainTableDao().isFollowUpExistForNq(Integer.parseInt(networkQueueDTO.poiModuleId), Integer.parseInt(networkQueueDTO.farmerId))) {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "FollowUpSurvey");
+                    } else {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "DMSurvey");
+                    }
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Diagnostic Module Survey");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, surveyName);
+
+                } else if (networkQueueDTO.districtId != null && !networkQueueDTO.districtId.isEmpty()) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmer");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "New farmer");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                } else if (networkQueueDTO.certificationIds != null && !networkQueueDTO.certificationIds.isEmpty()) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "certification");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "certification");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                } else if (networkQueueDTO.farmId != null && !networkQueueDTO.farmId.isEmpty()
+                        && networkQueueDTO.recordedLng != null && !networkQueueDTO.recordedLng.isEmpty()) {
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Household");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Household Location recorded");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+
+                }
+
+                if (values.size() > 0) {
+                    dl.updateNetworkQueueEntry(values, Long.parseLong(networkQueueDTO.id));
+                }
+            }
+        }
+
         TextView nomodulestosubmittext = findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
 
@@ -1480,6 +1621,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 startActivity(intent);
             } else if (itemType.equalsIgnoreCase("Distribution Form")) {
                 Intent intent = new Intent(context, DistributionModuleActivity.class);
+                String farmerId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String olamFarmerId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                String stakeHolderId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID));
+                String name = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME));
+                String tempId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
+
+                intent.putExtra("farmerId", farmerId);
+                intent.putExtra("olamFarmerId", olamFarmerId);
+                intent.putExtra("stakeHolderId", stakeHolderId);
+                intent.putExtra("name", name);
+                intent.putExtra("fromSync", "SecondFragment");
+                intent.putExtra("tempId", tempId);
                 startActivity(intent);
             }
         } catch (CursorIndexOutOfBoundsException ignored) {
