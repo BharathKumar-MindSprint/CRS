@@ -58,7 +58,7 @@ class DistributionSummaryFragment : Fragment() {
             tvName.text = state.selectedFarmerOrStakeHolder?.name ?: ""
             tvDisplayId.text = state.selectedFarmerOrStakeHolder?.displayId ?: ""
             tvDistributionGroup.text = distributionFormState.distributionGroupName
-            btnCategory.text = distributionFormState.distributionCategory.name
+            btnCategory.text = if(distributionFormState.distributionCategory == CategoryEnum.INPUT) getString(R.string.input) else getString(R.string.finance)
             tvDistributionItem.text = distributionFormState.distributionItemName
             tvTransactionValue.text = "${distributionFormState.transactionValue} ${distributionFormState.uomName}"
             tvPricePerUnit.text = distributionFormState.pricePerUnit

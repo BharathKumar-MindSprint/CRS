@@ -863,4 +863,32 @@
     <string name="no_dependent_message">Not: Bu soru başka herhangi bir soruya bağlı değildir.</string>
     <string name="alert_review_hint_calculated_decimal">Lütfen hesaplanan değerin %.2f - %.2f aralığında olduğundan emin olun</string>
     <string name="profile_icon">Farmer Profile</string>
+
+    <string name="distribution_module">Dağıtım Modülü</string>
+    <string name="distribution">Dağıtım</string>
+    <string name="distribution_form">Dağıtım Formu</string>
+    <string name="Stakeholders">Paydaşlar</string>
+    <string name="primary_farmers_list">Birincil Çiftçiler Listesi</string>
+    <string name="distribution_category">Dağıtım Kategorisi</string>
+    <string name="input">Girdi</string>
+    <string name="finance">Finans</string>
+    <string name="distribution_group">Dağıtım Grubu</string>
+    <string name="distribution_item">Dağıtım Kalemi</string>
+    <string name="total_amount">Toplam tutar</string>
+    <string name="price_per_units">Birim Fiyat</string>
+    <string name="transaction_value">İşlem Değeri</string>
+    <string name="attached_evidence">Ekli Kanıt</string>
+    <string name="confirm_and_submit">Onayla &amp; Gönder</string>
+    <string name="upload_image">Resim yükle</string>
+    <string name="download_distribution_data">Dağıtım Modülü Verilerini İndirme</string>
+    <string name="please_enter_transaction_value">Lütfen işlem değerini girin</string>
+    <string name="please_enter_price">Lütfen birim fiyatı girin</string>
+    <string name="error_message_distribution_groups">Lütfen dağıtım grubunu seçin</string>
+    <string name="error_message_distribution_items">Lütfen dağıtım kalemini seçin</string>
+    <string name="error_message_transaction_value">Lütfen işlem değerini girin</string>
+    <string name="error_message_local_units">Lütfen birim seçin</string>
+    <string name="error_messgae_currency">Lütfen para birimini seçin</string>
+    <string name="stakeholder_not_found">Paydaş Bulunamadı</string>
+    <string name="select_unit">Lütfen birim seçin</string>
+    <string name="please_select_currency">Lütfen para birimini seçin</string>
 </resources>
