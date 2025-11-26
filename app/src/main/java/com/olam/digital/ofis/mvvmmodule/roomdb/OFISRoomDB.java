@@ -2,6 +2,7 @@ package com.olam.digital.ofis.mvvmmodule.roomdb;
 
 import android.content.Context;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -60,7 +61,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
                 FarmerChildModules.class,FarmerModules.class, FarmerGroup.class, SubDistricts.class, Regions.class,
                 Sections.class, Places.class, Products.class, Farmer.class, DistributionFormEntity.class, DistributionCategory.class, DistributionGroup.class, DistributionItem.class, FarmerSurveyAssignment.class
         },
-        version = 21
+        version = 21,
+        autoMigrations ={@AutoMigration(from =20, to=21)}
 )
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";

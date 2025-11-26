@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 162;
+    private static final int DATABASE_VERSION = 163;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -1077,7 +1077,7 @@ public class OFISDB extends SQLiteOpenHelper {
 
     private void migrateFrom162To163(SQLiteDatabase sqLiteDatabase) {
         try {
-            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY +  " TEXT ");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY +  " TEXT DEFAULT 'false'");
         }
         catch (SQLException e) {
             e.printStackTrace();
