@@ -872,4 +872,31 @@
     <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(Không bắt buộc)</string>
 
+    <string name="distribution_module">Mô đun phân phối</string>
+    <string name="distribution">Phân phối</string>
+    <string name="distribution_form">Biểu mẫu phân phối</string>
+    <string name="Stakeholders">Các phần liên quan</string>
+    <string name="primary_farmers_list">Danh sách nông dân chính</string>
+    <string name="distribution_category">Danh mục phân phối</string>
+    <string name="input">Đầu vào </string>
+    <string name="finance">Tài chính</string>
+    <string name="distribution_group">Nhòm phân phối</string>
+    <string name="distribution_item">Nội dung phân phối</string>
+    <string name="total_amount">Tổng số lượng</string>
+    <string name="price_per_units">Giá theo đơn vị</string>
+    <string name="transaction_value">Giá trị giao dịch</string>
+    <string name="attached_evidence">Bằng chính đính kèm</string>
+    <string name="confirm_and_submit">Xác nhận và gửi</string>
+    <string name="upload_image">Tải hình ảnh</string>
+    <string name="download_distribution_data">Tải dữ liệu mô đun phân phối</string>
+    <string name="please_enter_transaction_value">Vui lòng nhập giá trị giao dịch</string>
+    <string name="please_enter_price">Vui lòng nhập giá trị theo đơn vị</string>
+    <string name="error_message_distribution_groups">Vui lòng chọn nhóm phân phối</string>
+    <string name="error_message_distribution_items">Vui lòng chọn nội dung phân phối</string>
+    <string name="error_message_transaction_value">Vui lòng nhập giá trị giao dịch</string>
+    <string name="error_message_local_units">Vui lòng chọn đơn vị</string>
+    <string name="error_messgae_currency">Vui lòng chọn đơn vị tiền tệ</string>
+    <string name="stakeholder_not_found">Không tìm thấy các phần liên quan</string>
+    <string name="select_unit">Vui lòng chọn đơn vị</string>
+    <string name="please_select_currency">Vui lòng chọn đơn vị tiền tệ</string>
 </resources>

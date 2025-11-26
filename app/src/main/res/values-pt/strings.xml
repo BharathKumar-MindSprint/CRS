@@ -969,5 +969,33 @@
     <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(Opcional)</string>
 
+    <string name="distribution_module">Módulo de distribuição</string>
+    <string name="distribution">Distribuição</string>
+    <string name="distribution_form">Formulário de Distribuição</string>
+    <string name="Stakeholders">Partes interessadas</string>
+    <string name="primary_farmers_list">Lista de agricultores primários</string>
+    <string name="distribution_category">Categoria de Distribuição</string>
+    <string name="input">Entrada</string>
+    <string name="finance">Finanzas</string>
+    <string name="distribution_group">Grupo de Distribuição</string>
+    <string name="distribution_item">Item de Distribuição</string>
+    <string name="total_amount">Valor total</string>
+    <string name="price_per_units">Preço unitário</string>
+    <string name="transaction_value">Valor da transação</string>
+    <string name="attached_evidence">Evidências anexadas</string>
+    <string name="confirm_and_submit">Confirmar e enviar</string>
+    <string name="upload_image">Carregar imagem</string>
+    <string name="download_distribution_data">Baixando dados do módulo de distribuição</string>
+    <string name="please_enter_transaction_value">Insira o valor da transação</string>
+    <string name="please_enter_price">Insira o preço unitário</string>
+    <string name="error_message_distribution_groups">Selecione o grupo de distribuição</string>
+    <string name="error_message_distribution_items">Selecione o item de distribuição</string>
+    <string name="error_message_transaction_value">Insira o valor da transação</string>
+    <string name="error_message_local_units">Selecione a unidade</string>
+    <string name="error_messgae_currency">Selecione a moeda</string>
+    <string name="stakeholder_not_found">Parte interessada não encontrada</string>
+    <string name="select_unit">Selecione a unidade</string>
+    <string name="please_select_currency">Selecione a moeda</string>
+
 </resources>
 

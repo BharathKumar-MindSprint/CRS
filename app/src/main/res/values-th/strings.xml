@@ -865,4 +865,33 @@
     <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(ไม่จำเป็น)</string>
 
+    <string name="distribution_module">Distribution Module</string>
+    <string name="distribution">Distribution</string>
+    <string name="distribution_form">Distribution Form</string>
+    <string name="Stakeholders">Stakeholders</string>
+    <string name="primary_farmers_list">Primary Farmers List</string>
+    <string name="distribution_category">Distribution Category</string>
+    <string name="input">Input</string>
+    <string name="finance">Finance</string>
+    <string name="distribution_group">Distribution Group</string>
+    <string name="distribution_item">Distribution Item</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="price_per_units">Price Per Unit</string>
+    <string name="transaction_value">Transaction Value</string>
+    <string name="upload_file">Upload File</string>
+    <string name="attached_evidence">Attached Evidence</string>
+    <string name="confirm_and_submit">Confirm &amp; Submit</string>
+    <string name="stakeholder_hint">Search by Stakeholder or id</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="download_distribution_data">Downloading Distribution Module Data</string>
+    <string name="please_enter_transaction_value">Please enter transaction value</string>
+    <string name="please_enter_price">Please enter price per unit</string>
+    <string name="error_message_distribution_groups">Please select distribution Group</string>
+    <string name="error_message_distribution_items">Please select distribution item</string>
+    <string name="error_message_transaction_value">Please enter transaction value</string>
+    <string name="error_message_local_units">Please select units</string>
+    <string name="error_messgae_currency">Please select currency</string>
+    <string name="stakeholder_not_found">Stakeholder Not Found</string>
+    <string name="select_unit">Please select \nunit</string>
+    <string name="please_select_currency">Please select currency</string>
 </resources>
