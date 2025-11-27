@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by bengallienne on 29/11/14. - update
@@ -14,7 +13,7 @@ import android.util.Log;
 public class OFISDB extends SQLiteOpenHelper {
     private static volatile OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 162;
+    private static final int DATABASE_VERSION = 163;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -144,7 +143,8 @@ public class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_SURVEY_TYPE + " TEXT, "
-            + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT )";
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_MANDATE + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY + " TEXT )";
     // create SubModules
     private static final String OFIS_SUBMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubmoduleEntry.TABLE_NAME
             + " ( " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
@@ -903,22 +903,29 @@ public class OFISDB extends SQLiteOpenHelper {
                 migrateFromVersion158To159(sqLiteDatabase);
                 migrateFrom159To160(sqLiteDatabase);
                 migrateFrom160To161(sqLiteDatabase);
+                migrateFrom162To163(sqLiteDatabase);
                 break;
             case 159:
                 migrateFrom159To160(sqLiteDatabase);
                 migrateFrom160To161(sqLiteDatabase);
+                migrateFrom162To163(sqLiteDatabase);
                 break;
             case 160:
                 migrateFrom160To161(sqLiteDatabase);
+                migrateFrom162To163(sqLiteDatabase);
                 break;
             case 161:
                 migrateFrom161To162(sqLiteDatabase);
+                migrateFrom162To163(sqLiteDatabase);
                 break;
+            case 162:
+                migrateFrom162To163(sqLiteDatabase);
             default:
                 migrateFromVersionBelow157(sqLiteDatabase);
                 migrateFromVersion158To159(sqLiteDatabase);
                 migrateFrom159To160(sqLiteDatabase);
                 migrateFrom160To161(sqLiteDatabase);
+                migrateFrom162To163(sqLiteDatabase);
                 break;
         }
     }
@@ -1066,6 +1073,15 @@ public class OFISDB extends SQLiteOpenHelper {
         cursor.close();
 
         return columnExists;
+    }
+
+    private void migrateFrom162To163(SQLiteDatabase sqLiteDatabase) {
+        try {
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN " + OFISDBContract.ModuleEntry.COLUMN_NAME_IS_AUTO_SURVEY +  " TEXT DEFAULT 'false'");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
 

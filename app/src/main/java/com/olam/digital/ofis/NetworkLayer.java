@@ -1625,7 +1625,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     String disabledMonthsString = getIdCursor.getString(getIdCursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                     List<String> disabledMonths = Arrays.asList(disabledMonthsString.split("\\s*,\\s*"));
                     for (String month : disabledMonths) {
-                        if (!Objects.equals(month, "null")) {
+                        if (!Objects.equals(month, "null") && !month.isEmpty()) {
                             disableMonthList.add(Integer.parseInt(month));
                         }
                     }

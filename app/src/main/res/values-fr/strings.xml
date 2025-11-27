@@ -1295,4 +1295,31 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(Facultative)</string>
 
+    <string name="distribution_module">Module de distribution</string>
+    <string name="distribution">Distribution</string>
+    <string name="distribution_form">Formulaire de distribution</string>
+    <string name="Stakeholders">Autres Intervenants</string>
+    <string name="primary_farmers_list">Liste des producteurs</string>
+    <string name="distribution_category">Catégorie de distribution</string>
+    <string name="input">Intrants</string>
+    <string name="finance">Finances</string>
+    <string name="distribution_group">Groupe de distribution</string>
+    <string name="distribution_item">Article de distribution</string>
+    <string name="total_amount">Montant total</string>
+    <string name="price_per_units">Prix unitaire</string>
+    <string name="transaction_value">Nombre d \'article</string>
+    <string name="attached_evidence">Preuves jointes</string>
+    <string name="confirm_and_submit">Confirmer et envoyer</string>
+    <string name="upload_image">Télécharger une image</string>
+    <string name="download_distribution_data">Téléchargement les données du module de distribution</string>
+    <string name="please_enter_transaction_value">Veuillez saisir le nombre d\'article distribué s\'il vous plait</string>
+    <string name="please_enter_price">Veuillez saisir le prix unitaire s\'il vous plait</string>
+    <string name="error_message_distribution_groups">Veuillez sélectionner le groupe de distributions\'il vous plait</string>
+    <string name="error_message_distribution_items">Veuillez sélectionner l\'article de distributions\'il vous plait</string>
+    <string name="error_message_transaction_value">Veuillez saisir le nombre d\'article distribué s\'il vous plait</string>
+    <string name="error_message_local_units">Veuillez sélectionner l\'unité s\'il vous plait</string>
+    <string name="error_messgae_currency">Veuillez sélectionner la devise s\'il vous plait</string>
+    <string name="stakeholder_not_found">Autres Intervenants introuvable</string>
+    <string name="select_unit">Veuillez sélectionner l\'unité s\'il vous plait</string>
+    <string name="please_select_currency">Veuillez sélectionner la devise s\'il vous plait</string>
 </resources>

@@ -270,7 +270,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         List<ChildModuleDto> childModuleDtoList = new ArrayList<ChildModuleDto>();
         Cursor moduleAssignments = null;
         if (!isDiagnosticsPlotSurvey) {
-            moduleAssignments = dl.getFarmerModules(farmerID,farmSurvey);
+            moduleAssignments = dl.getPlotSurveyModules(farmerID);
         }
         else {
             moduleAssignments = getDiagnosticPlotSurveyModules();

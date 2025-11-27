@@ -3694,17 +3694,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return true;
     }
     public InputFilter LetterHypenFilter = (source, start, end, dest, dstart, dend) -> {
+        StringBuilder filtered = new StringBuilder();
         for (int i = start; i < end; i++) {
             char c = source.charAt(i);
-
-            // Allow: Unicode letters + . , /
             if (Character.isLetter(c) || c == '.' || c == '-' || c == ' ') {
-                continue;
-            } else {
-                return ""; // Reject character
+                filtered.append(c);
             }
         }
-        return null; // Accept input
+        return filtered.length() == (end - start) ? null : filtered.toString();
     };
 
     public InputFilter LetterDigitHyphenFilter = new InputFilter() {

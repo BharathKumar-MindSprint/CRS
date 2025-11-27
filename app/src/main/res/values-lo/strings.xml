@@ -1119,8 +1119,36 @@
     <string name="max_age">ອະນຸຍາດໃຫ້ໃຊ້ໄດ້ສູງສຸດ 3 ຕົວເລກ.</string>
     <string name="attendee_register_stakeholder">ການເພີ່ມຜູ້ມີສ່ວນຮ່ວມທີ່ນີ້ບໍ່ລົງທະບຽນຜູ້ມີສ່ວນທຸລະກິດໃນ OFIS</string>
     <string name="please_enter_value">Please enter value</string>
-    <string name="profile_icon">Farmer Profile</string>\
+    <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(ທາງເລືອກ)</string>
+
+    <string name="distribution_module">ໂມດູນການແຈກຢາຍ</string>
+    <string name="distribution">ການແຈກຢາຍ</string>
+    <string name="distribution_form">ແບບຟອມການແຈກຢາຍ</string>
+    <string name="Stakeholders">ຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="primary_farmers_list">ລາຍຊື່ຊາວກະສິກອນຫຼັກ</string>
+    <string name="distribution_category">ໝວດໝູ່ການແຈກຢາຍ</string>
+    <string name="input">ຂໍ້ມູນປ້ອນຂໍ້ມູນ</string>
+    <string name="finance">ການເງິນ</string>
+    <string name="distribution_group">ກຸ່ມການແຈກຢາຍ</string>
+    <string name="distribution_item">ລາຍການການແຈກຢາຍ</string>
+    <string name="total_amount">ຈຳນວນເງິນທັງໝົດ</string>
+    <string name="price_per_units">ລາຄາຕໍ່ໜ່ວຍ</string>
+    <string name="transaction_value">ມູນຄ່າການເຮັດທຸລະກຳ</string>
+    <string name="attached_evidence">ຫຼັກຖານທີ່ແນບມາ</string>
+    <string name="confirm_and_submit">ຢືນຢັນ ແລະ ສົ່ງ</string>
+    <string name="upload_image">ອັບໂຫຼດຮູບພາບ</string>
+    <string name="download_distribution_data">ດາວໂຫຼດຂໍ້ມູນໂມດູນການແຈກຢາຍ</string>
+    <string name="please_enter_transaction_value">ກະລຸນາໃສ່ມູນຄ່າການເຮັດທຸລະກຳ</string>
+    <string name="please_enter_price">ກະລຸນາໃສ່ລາຄາຕໍ່ໜ່ວຍ</string>
+    <string name="error_message_distribution_groups">ກະລຸນາເລືອກກຸ່ມການແຈກຢາຍ</string>
+    <string name="error_message_distribution_items">ກະລຸນາເລືອກລາຍການການແຈກຢາຍ</string>
+    <string name="error_message_transaction_value">ກະລຸນາໃສ່ມູນຄ່າການເຮັດທຸລະກຳ</string>
+    <string name="error_message_local_units">ກະລຸນາເລືອກໜ່ວຍ</string>
+    <string name="error_messgae_currency">ກະລຸນາເລືອກສະກຸນເງິນ</string>
+    <string name="stakeholder_not_found">ບໍ່ພົບຜູ້ມີສ່ວນຮ່ວມ</string>
+    <string name="select_unit">ກະລຸນາເລືອກໜ່ວຍ</string>
+    <string name="please_select_currency">ກະລຸນາເລືອກສະກຸນເງິນ</string>
 </resources>
 
 
