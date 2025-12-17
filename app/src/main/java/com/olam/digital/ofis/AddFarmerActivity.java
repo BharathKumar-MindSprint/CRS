@@ -103,6 +103,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -113,6 +114,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 // update
 public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
@@ -1459,6 +1461,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
 
+        if (!nationalIdTypes.isEmpty())
+        {
+            boolean isDuplicate = hasDuplicate(nationalIdTypes);
+            if (isDuplicate) {
+                Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+
+
         int phonerowscount = phonenumbers.getChildCount();
 
         storeableNumbers = new JSONArray();
@@ -1527,6 +1539,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
         return multiStakeHolder;
+    }
+
+    boolean hasDuplicate(ArrayList<String> list) {
+        return new HashSet<>(list).size() != list.size();
     }
 
     private void bindnumberdelete(ImageView trashbutton) {

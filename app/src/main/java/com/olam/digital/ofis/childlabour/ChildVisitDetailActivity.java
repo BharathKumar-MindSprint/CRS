@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -168,6 +169,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(household == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,1);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"HouseHold Survey");
+            Log.e("ContentValues", new Gson().toJson(contentValue));
             long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName, getResources().getString(R.string.household));
 
             if (hh_rowId != -1){
@@ -179,6 +181,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
                 }
             }
         }
+        Log.e("ContentValues1", new Gson().toJson(contentValue));
         if(inspection == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,2);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"Inspection Survey");
@@ -307,9 +310,8 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
                 mCursor.moveToFirst();
                 countryId = mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
                 productId = mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
-                if (countryId!=null){
-                    if (countryId.equalsIgnoreCase("32") ||
-                            (countryId.equalsIgnoreCase("16") && productId.equalsIgnoreCase("6"))){
+                if (countryId!=null){//(countryId.equalsIgnoreCase("16") && productId.equalsIgnoreCase("6")
+                    if (countryId.equalsIgnoreCase("32") ){
                         houseHoldCheckBox.setEnabled(false);
                         houseHoldCheckBox.setBackgroundColor(ContextCompat.getColor(this, R.color.clmrs_bg_gray));
                     }

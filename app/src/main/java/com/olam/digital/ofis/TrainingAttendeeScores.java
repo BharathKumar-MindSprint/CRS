@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.R;
 
 import org.json.JSONException;
@@ -159,6 +161,8 @@ public class TrainingAttendeeScores extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+       DateTimeUtils.checkTime(this, this);
+        Log.e("TrainingAttendeeScores", "onResume: called" );
     }
 
     private void getTrainingRecord() {

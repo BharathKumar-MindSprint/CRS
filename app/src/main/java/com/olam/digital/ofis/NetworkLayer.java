@@ -102,17 +102,26 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private final Resources res;
     private static final String BASE_URL = BuildConfig.BASE_URL;
     public static final String TAG = "NetworkLayer";
-    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+
+    private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+    private static final HttpLoggingInterceptor LOGGING =
+            new HttpLoggingInterceptor(message -> Log.d("API_LOG", message)) // custom tag at DEBUG
+                    .setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY
+                            : HttpLoggingInterceptor.Level.NONE);
+
+
 
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
-            .readTimeout(720, TimeUnit.SECONDS)
-            .writeTimeout(720, TimeUnit.SECONDS)
-            .sslSocketFactory(getSSLSocketFactory())
+            .readTimeout(120, TimeUnit.SECONDS)   // 720s is excessive unless required
+            .writeTimeout(120, TimeUnit.SECONDS)
             .retryOnConnectionFailure(false)
-            .addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addNetworkInterceptor(interceptor)
+            .addInterceptor(LOGGING)              // only application interceptor
+            // IMPORTANT: if you use a custom SSL factory, also provide its TrustManager
+            // .sslSocketFactory(sslSocketFactory, trustManager)
             .build();
+
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_SQLITE = MediaType.parse("application/x-sqlite3");
     private final DataLayer dl;
@@ -194,6 +203,59 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+
+
+    private static void okHttpPostNew(Context context, String url, JSONObject params, Callback callback) {
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity = Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit = Utilities.getOperatingUnitSharedPrefs(context);
+
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrl(url);
+
+        // Ensure media type and non-null JSON
+        RequestBody body = RequestBody.create(JSON, params != null ? params.toString() : "{}");
+
+        Request request = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id", "1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url(fullUrl)
+                .post(body)
+                .build();
+
+        // Optional: minimal safe debug log at call site
+        if (BuildConfig.DEBUG) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("➡️ POST ").append(fullUrl).append('\n');
+            for (String name : request.headers().names()) {
+                String value = request.header(name);
+                if ("Authorization".equalsIgnoreCase(name)
+                        || "enumerator-id".equalsIgnoreCase(name)
+                        || "imei-number".equalsIgnoreCase(name)
+                        || "unique-id".equalsIgnoreCase(name)) {
+                    value = "██REDACTED██";
+                }
+                sb.append(name).append(": ").append(value).append('\n');
+            }
+            sb.append("Body length: ").append(params != null ? params.toString().length() : 0);
+            Log.d("API_CALL", sb.toString());
+        }
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+
     private static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String commodity = Utilities.getCommoditySharedPrefs(context);
@@ -207,7 +269,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String fullUrl = getAbsoluteUrl(url);
 
         RequestBody body = RequestBody.create(JSONBody, params.toString());
-
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
                 .header("CL-Fetch-UserID", enumeratorId)
@@ -3167,7 +3228,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 JSONObject jsonObject = new JSONObject();
                                 try {
                                     tempChildId = child.getInt(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID));
-
                                     jsonObject.put("farmerId", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID)));
                                     jsonObject.put("name", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)));
                                     jsonObject.put("age", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
@@ -4882,7 +4942,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         Cursor reviewValues = dl.getCheckVisitEntry(farmerID, surveyCode);
                         while (reviewValues.moveToNext()) {
                             JSONObject value = new JSONObject();
-                            value.put("id", "");
+                            value.put("id", null);
                             value.put("farmerId", reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID)));
                             value.put("surveyCode", reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
                             value.put("surveyDescription", reviewValues.getString(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));

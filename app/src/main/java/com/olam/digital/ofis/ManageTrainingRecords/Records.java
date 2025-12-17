@@ -3,10 +3,14 @@ package com.olam.digital.ofis.ManageTrainingRecords;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+
 import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.TrainingRecords;
 import com.olam.digital.ofis.Utilities;
@@ -18,6 +22,7 @@ private RelativeLayout Manage_Training_Records,Training_Records;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
+        Log.e("Records", "onCreate: called" );
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Manage_Training_Records=findViewById(R.id.manage_training_btn);
         Training_Records=findViewById(R.id.training_records_btn);
@@ -43,5 +48,19 @@ private RelativeLayout Manage_Training_Records,Training_Records;
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+       DateTimeUtils.checkTime(this, this);
+        Log.e("Records", "onResume: called" );
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+       DateTimeUtils.checkTime(this, this);
+        Log.e("Records", "onRestoreInstanceState: called" );
     }
 }

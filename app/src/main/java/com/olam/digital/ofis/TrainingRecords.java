@@ -6,13 +6,19 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 
 public class TrainingRecords extends BaseListActivity implements AdapterView.OnItemClickListener {
 
@@ -51,8 +57,16 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
     }
 
     @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+       DateTimeUtils.checkTime(this, this);
+        Log.e("TrainingRecords", "onRestoreInstanceState: called" );
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+       DateTimeUtils.checkTime(this, this);
     }
 
     private void getTrainingRecords() {

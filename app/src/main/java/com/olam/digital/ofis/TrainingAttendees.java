@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
@@ -27,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.farmstakeholder.FarmerRoleDto;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
@@ -118,6 +120,13 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         showAttendeeList();
         setUpSearchFunctionality();
         bindButtons();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+       DateTimeUtils.checkTime(this, this);
+        Log.e("Training List", "onResume: called" );
     }
 
     private void getExistingAttendees(boolean isStakeholder) {

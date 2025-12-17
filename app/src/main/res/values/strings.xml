@@ -1529,4 +1529,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="profile_icon">Farmer Profile</string>
     <string name="optional">(Optional)</string>
     <string name="optional_brazil">(Opcional)</string>
+    <string name="enable_auto_date_time"><![CDATA[Automatic Date & Time Disabled]]></string>
+    <string name="enable_auto_date_time_message"><![CDATA[Please enable Automatic Date & Time and Time Zone for accurate validation.]]></string>
+    <string name="open_settings">Open Settings</string>
 </resources>

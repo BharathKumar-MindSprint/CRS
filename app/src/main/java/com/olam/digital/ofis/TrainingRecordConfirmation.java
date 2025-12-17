@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -183,6 +185,8 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     @Override
     protected void onResume() {
         super.onResume();
+       DateTimeUtils.checkTime(this, this);
+        Log.e("Records", "onResume: called" );
     }
 
     private void getTrainingRecord() {

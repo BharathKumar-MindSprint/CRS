@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
@@ -46,6 +48,8 @@ import retrofit2.Response;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
+import androidx.annotation.NonNull;
+
 public class ManagingTrainingActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
     private Spinner courseSpinner,moduleSpinner,languageSpinner;
     private Button retry_btn;
@@ -63,6 +67,14 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     List<DocumentList.data> data;
     ViewpageAdapter adapter;
     boolean noDataFound = false;
+
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        DateTimeUtils.checkTime(this, this);
+        Log.e("ManagingTraining", "onRestoreInstanceState: called" );
+    }
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -443,6 +455,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     @Override
     protected void onResume() {
         super.onResume();
+       DateTimeUtils.checkTime(this, this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(MyReceiver,mIntentFilter,RECEIVER_EXPORTED);
         } else {

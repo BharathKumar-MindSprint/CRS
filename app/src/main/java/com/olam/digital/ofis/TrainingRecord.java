@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Utils.DateTimeUtils;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONException;
@@ -117,6 +119,7 @@ public class TrainingRecord extends BaseListActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
         farmerList=findViewById(R.id.list_farmer);
+        Log.e("TrainingRecord", "onCreate: Training Record Activity Created" );
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         context = me = this;
@@ -258,6 +261,8 @@ public class TrainingRecord extends BaseListActivity{
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        Log.d("TrainingRecord", "onRestoreInstanceState: Restoring instance state");
+       DateTimeUtils.checkTime(this, this);
         ImageView trainingPhoto = (ImageView)findViewById(R.id.trainingPhoto);
 
         if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
@@ -965,9 +970,12 @@ public class TrainingRecord extends BaseListActivity{
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
+       DateTimeUtils.checkTime(this, this);
+        Log.d("TrainingRecord", "onResume: Resumed Training Record Activity");
         if (editMode) {
             // To load farmer attendees
             getTrainingAttendees(false, farmerList);
