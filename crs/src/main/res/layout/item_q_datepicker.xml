@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:background="@drawable/editext_cursor_round_sharp_edge"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:textStyle="bold"
+            style="@style/medium_dark_gray_medium_tv"
+            android:textSize="16sp"
+            android:lineSpacingExtra="@dimen/_6sdp"
+            tools:text="1)Lorem ipsum dolor sit amet, consectetur adipiscing elit?"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvHelp"
+            android:textColor="#666666"
+            style="@style/regular_small_tv"
+            android:visibility="gone"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnPickDate"
+            android:text="Select date"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvSelectedDate"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginTop="8dp"
+            tools:visibility="visible"
+            android:visibility="gone"
+            style="@style/medium_dark_small_tv"
+            tools:text="12 Dec 2023"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvError"
+            android:textColor="#D32F2F"
+            style="@style/regular_small_tv"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:layout_marginTop="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</layout>

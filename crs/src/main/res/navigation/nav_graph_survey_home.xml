@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_survey_home"
+    app:startDestination="@id/surveyHomeFragment">
+
+    <fragment
+        android:id="@+id/surveySurveyListFragment"
+        tools:layout="@layout/layout_survey_home"
+        android:name="com.olam.digital.crs.fragment.SurveySurveyListFragment"
+        android:label="SurveySurveyListFragment" >
+
+        <argument
+        android:name="farmerId"
+        app:argType="string" />
+
+        <action
+            android:id="@+id/action_surveySurveyListFragment_to_crsConsentFragment"
+            app:destination="@id/crsConsentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/surveyFragment"
+        tools:layout="@layout/fragment_survey_crs"
+        android:name="com.olam.digital.crs.fragment.SurveyFragment"
+        android:label="SurveyFragment" />
+
+    <fragment
+        android:id="@+id/surveyHomeFragment"
+        tools:layout="@layout/layout_survey_home"
+        android:name="com.olam.digital.crs.fragment.SurveyHomeFragment"
+        android:label="SurveyHomeFragment" >
+        <action
+            android:id="@+id/action_surveyHomeFragment_to_surveySurveyListFragment"
+            app:destination="@id/surveySurveyListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/crsConsentFragment"
+        tools:layout="@layout/layout_crs_consents"
+        android:name="com.olam.digital.crs.fragment.CrsConsentFragment"
+        android:label="CrsConsentFragment" >
+        <action
+            android:id="@+id/action_crsConsentFragment_to_surveyFragment"
+            app:destination="@id/surveyFragment" />
+    </fragment>
+</navigation>

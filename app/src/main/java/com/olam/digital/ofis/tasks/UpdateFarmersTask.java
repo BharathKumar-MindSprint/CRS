@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonArray;
+import com.olam.digital.crs.model.mapper.CrsFarmerMapper;
+import com.olam.digital.crs.room.FarmerEntity;
+import com.olam.digital.crs.viewmodel.api.CrsApi;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -14,6 +17,8 @@ import com.olam.digital.ofis.Utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by ben on 24/02/16.
@@ -62,6 +67,13 @@ class UpdateFarmersTask extends DatabaseTask {
                 try {
                     farmerArray = response.getJSONArray(OFISDBContract.FarmerEntry.TABLE_NAME);
                     fillTable(farmerArray, OFISDBContract.FarmerEntry.TABLE_NAME, OFISDBContract.FarmerEntry.SYNC_COLUMN_LIST);
+
+
+                    // 2) CRS insert (Java-friendly API)
+                    List<FarmerEntity> crsEntities = CrsFarmerMapper.mapJsonArrayToEntities(farmerArray);
+                    //delete farmers and then insert into crs library
+                    CrsApi.insertFarmers(context,crsEntities);
+
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateFarmersTask: Error filling farmers table", e));
                     e.printStackTrace();

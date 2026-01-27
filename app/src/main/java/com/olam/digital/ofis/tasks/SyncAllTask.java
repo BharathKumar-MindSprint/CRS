@@ -366,7 +366,10 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
                     } else {
-                        postFailureMessage(response);
+                       // postFailureMessage(response);
+                        //need to revert
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_modules));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -693,7 +696,10 @@ public class SyncAllTask extends SyncTask {
 
 
                     } else {
-                        postFailureMessage(response);
+                      //  postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+                        //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
 
                     }
                 } catch (JSONException | IOException e) {
@@ -749,7 +755,9 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
 
                     } else {
-                        postFailureMessage(response);
+                       // postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -795,6 +803,10 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
 
+                }
+                else{
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
                 }
             }
 
@@ -850,6 +862,9 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 
+                }else{
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
                 }
             }
 
@@ -874,7 +889,7 @@ public class SyncAllTask extends SyncTask {
             inputArgs.put("ENUMERATOR_COUNTRY_ID", enumeratorCountryId);
         }
 
-        okHttpGet(context, IAPIConstants.GET_ALL_QUESTIONNAIRE_DATA, new Callback() {
+        okHttpGet(context, IAPIConstants.GET_ALL_QUESTIONNAIRE_DATA_OGA, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -891,7 +906,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS);
                     } else {
-                        postFailureMessage(response);
+                       // postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -928,7 +945,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULE_ID_BY_ENUMERATOR_ID);
                     } else {
-                        postFailureMessage(null);
+                        //postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULE_ID_BY_ENUMERATOR_ID);
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing conditional details", e));
@@ -961,8 +980,10 @@ public class SyncAllTask extends SyncTask {
                         Log.d("moduleId Response:", moduleIdResponse.toString());
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS);
-                    } else {
-                        postFailureMessage(response);
+                    } else {//need to revert
+                        //postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -1020,7 +1041,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
                     } else {
-                        postFailureMessage(response);
+                        //postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_distribution_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SYNC_DISTRIBUTION_MODULES_DETAILS);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -1055,7 +1078,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     } else {
-                        postFailureMessage(null);
+                       // postFailureMessage(null);//need to revert
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing conditional details", e));
@@ -1097,7 +1122,9 @@ public class SyncAllTask extends SyncTask {
 
 
                     } else {
-                        postFailureMessage(null);
+                       // postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
                     }
                 } catch (IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
@@ -1175,7 +1202,9 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
 
                     } else {
-                        postFailureMessage(null);
+                       // postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiStakeHolder Existing");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1209,7 +1238,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     } else {
-                        postFailureMessage(null);
+                       // postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -1247,7 +1278,9 @@ public class SyncAllTask extends SyncTask {
 
 
                     } else {
-                        postFailureMessage(null);
+                        //postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalid_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_NID);
                     }
                 }catch (Exception e){ e.printStackTrace();
                 } finally {
@@ -1286,7 +1319,9 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_HHGPS);
 
                     } else {
-                        postFailureMessage(null);
+                        //postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_hhgps_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_HHGPS);
                     }
                 }catch (Exception e){ e.printStackTrace();
                 } finally {
@@ -1323,7 +1358,10 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
                     } else {
-                        postFailureMessage(response);
+                       // postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_tasks));
+
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
 
                     }
                 } catch (JSONException | IOException e) {
@@ -1362,7 +1400,9 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_enumerator_assignment));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);
                     } else {
-                        postFailureMessage(response);
+                        //postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_enumerator_assignment));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing task data", e));
@@ -1419,7 +1459,20 @@ public class SyncAllTask extends SyncTask {
                         }
 
                     } else {
-                        postFailureMessage(response);
+                       // postFailureMessage(response);
+                        String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
+                        if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
+                        }
+                        else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
+                        }
+                        else {
+                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
+                        }
+
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing farmer data", e));
@@ -1610,6 +1663,10 @@ public class SyncAllTask extends SyncTask {
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                             }
                         }
+                    }
+                    else{
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                     }
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
@@ -1923,7 +1980,9 @@ public class SyncAllTask extends SyncTask {
                             }
 
                         } else {
-                            postFailureMessage(null);
+                            //postFailureMessage(null);
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1964,7 +2023,8 @@ public class SyncAllTask extends SyncTask {
                     } else if (response.code() == 400){
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
-                        postFailureMessage(null);
+                       // postFailureMessage(null);
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -2000,7 +2060,9 @@ public class SyncAllTask extends SyncTask {
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
                         }
                         else {
-                            postFailureMessage(null);
+                           // postFailureMessage(null);
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Data");
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
                         }
                     } catch (Exception e) {
                         Log.e("RESPONSE", "Error with supplier response");
@@ -2040,7 +2102,9 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
                     }
                     else {
-                        postFailureMessage(null);
+                      //  postFailureMessage(null);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Submitted Module Data");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
                     }
                 }
                 catch (Exception e) {
@@ -2077,7 +2141,8 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
                     else {
-                        postFailureMessage(null);
+                        //postFailureMessage(null);
+                        publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
                 }
                 catch (Exception e) {

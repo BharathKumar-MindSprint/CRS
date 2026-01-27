@@ -62,6 +62,7 @@ public interface IAPIConstants {
     String ENUMERATOR_ASSIGNMENT_CHECK = "ofismaster/master/enumeratorAssignmentsCheck";
     String COUNTRY_SPINNERS ="ofisfarmer-data/farmerdata/getcountryspinners";
      String GET_ALL_QUESTIONNAIRE_DATA =  "ofissurvey/survey/questionnaire/getAllQuestionnaireData";
+     String GET_ALL_QUESTIONNAIRE_DATA_OGA =  "ofissurvey/survey/crsSurvey/questionnaire/getAllQuestionnaireData";
 
      String GET_MODULE_IDS_BY_ENUMERATOR_ID = "ofissurvey/survey/questionnaire/getModuleIdsByEnumeratorId";
 

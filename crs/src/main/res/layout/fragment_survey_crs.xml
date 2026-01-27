@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="showQuickAdd"
+            type="boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/margin_24"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/mainLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_16"
+                android:src="@drawable/ic_back_ios" />
+
+            <LinearLayout
+                android:id="@+id/layOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_toEndOf="@+id/imgBack"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/regular_large_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selectresponents"
+                    android:textColor="@android:color/white" />
+
+
+                <TextView
+                    style="@style/regular_white_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:text="@string/choose_farmer_for_survey" />
+
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/layOne"
+                android:layout_marginTop="@dimen/margin_8"
+                android:background="@color/colorgraydisable" />
+
+        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@+id/mBottom"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/margin_8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainLay"
+            />
+
+
+
+        <ProgressBar
+            android:layout_width="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/mProgress"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="center" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/mBottom"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@drawable/bg_button_color"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="@dimen/height_36">
+
+            <TextView
+                style="@style/medium_dark_gray_medium_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:lineSpacingExtra="6sp"
+                android:textAllCaps="true"
+                android:text="@string/submit"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

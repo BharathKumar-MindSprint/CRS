@@ -11,6 +11,7 @@
     <color name="ofis_list_item_background">#ffffff</color>
     <color name="gray">#707070</color>
     <color name="white">#FFFFFF</color>
+    <color name="textBalance">#364153</color>
     <color name="black">#000000</color>
 
     <color name="ofis_action_button_disabled">#9da1a2</color>

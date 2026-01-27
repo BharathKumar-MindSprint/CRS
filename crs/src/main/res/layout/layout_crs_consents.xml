@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/mTopView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/margin_24"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_16"
+                android:src="@drawable/ic_back_ios" />
+
+            <LinearLayout
+                android:id="@+id/layOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_toEndOf="@+id/imgBack"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/regular_large_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/survey_cosent"
+                    android:textColor="@android:color/white" />
+
+
+                <TextView
+                    style="@style/regular_white_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:text="@string/please_review_and_sign" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/layOne"
+                android:layout_marginTop="@dimen/margin_12" />
+
+        </RelativeLayout>
+
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/mTopView"
+            android:layout_marginBottom="@dimen/margin_6"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    app:cardCornerRadius="@dimen/margin_4">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            style="@style/regular_large_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_8"
+                            android:text="@string/survey_information"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_8">
+
+
+                            <TextView
+                                style="@style/regular_medium_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="@dimen/margin_16"
+                                android:text="@string/survey_id"
+                                android:textColor="#4A5565"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+
+                            <TextView
+                                android:id="@+id/txtSurveyId"
+                                style="@style/regular_medium_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginEnd="@dimen/margin_16"
+                                android:textColor="#4A5565"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="SRV001" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_8"
+                            android:layout_marginBottom="@dimen/margin_16">
+
+
+                            <TextView
+                                style="@style/regular_medium_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="@dimen/margin_16"
+                                android:text="@string/farmer_id"
+                                android:textColor="#4A5565"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+
+                            <TextView
+                                android:id="@+id/txtFarmerId"
+                                style="@style/regular_medium_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginEnd="@dimen/margin_16"
+                                android:textColor="#4A5565"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="SRV001" />
+
+                        </RelativeLayout>
+
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    app:cardCornerRadius="@dimen/margin_4">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/regular_large_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_8"
+                            android:text="@string/consent_agreement"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <TextView
+                            style="@style/regular_medium_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_12"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:lineSpacingExtra="6sp"
+                            android:scrollbars="vertical"
+                            android:text="@string/i_hereby_consent_to_participate_in_this_survey_conducted_by_olam_agri_i_understand_that"
+                            android:textColor="#4A5565"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtSurveyContent"
+                            style="@style/regular_medium_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_28"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:layout_marginBottom="@dimen/margin_12"
+                            android:lineSpacingExtra="3sp"
+                            android:maxHeight="@dimen/height_150"
+                            android:scrollbars="vertical"
+                            android:textColor="#4A5565"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+
+
+                        <TextView
+                            style="@style/regular_medium_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:layout_marginBottom="@dimen/margin_15"
+                            android:lineSpacingExtra="6sp"
+                            android:scrollbars="vertical"
+                            android:text="@string/by_signing_below_i_confirm_that_i_have_read_and_understood_the_above_information_and_agree_to_participate_in_this_survey"
+                            android:textColor="#4A5565"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    app:cardCornerRadius="@dimen/margin_4">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_4"
+                        android:orientation="horizontal">
+
+
+                        <CheckBox
+                            android:id="@+id/chkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            style="@style/regular_large_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_2"
+                            android:text="@string/i_have_read_and_agree_to_the_terms_stated_above"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    app:cardCornerRadius="@dimen/margin_4">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                style="@style/regular_large_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="@dimen/margin_16"
+                                android:layout_marginTop="@dimen/margin_8"
+                                android:text="@string/signature"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/txtClear"
+                                style="@style/regular_medium_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginStart="@dimen/margin_16"
+                                android:layout_marginTop="@dimen/margin_12"
+                                android:layout_marginEnd="@dimen/margin_16"
+                                android:lineSpacingExtra="6sp"
+                                android:scrollbars="vertical"
+                                android:text="@string/clear"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_250"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:layout_marginBottom="@dimen/margin_12"
+                            android:background="@drawable/editext_cursor_round_sharp_edge">
+
+                            <com.github.gcacace.signaturepad.views.SignaturePad
+                                android:id="@+id/signature_pad"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_above="@+id/ll_footer"
+                                android:layout_below="@+id/tv_attendeeName"
+                                android:layout_margin="@dimen/margin_10"
+                                android:background="@drawable/ic_signature_bg"
+                                app:penColor="@color/black"
+                                app:penMaxWidth="5dp"
+                                app:penMinWidth="7dp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
+
+
+                <RelativeLayout
+                    android:id="@+id/layBottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_36"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="@dimen/margin_16"
+                    android:layout_marginEnd="@dimen/margin_16"
+                    android:layout_marginBottom="@dimen/margin_12"
+                    android:alpha="0.8"
+                    android:background="@drawable/bg_button_color">
+
+                    <TextView
+                        style="@style/regular_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/margin_12"
+                        android:layout_marginEnd="@dimen/margin_16"
+                        android:lineSpacingExtra="6sp"
+                        android:text="@string/provide_consent_continue"
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+
+
+
+    </RelativeLayout>
+</layout>

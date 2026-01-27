@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.SurveyHomeFragment"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="showQuickAdd"
+            type="boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_24"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_16"
+                android:src="@drawable/ic_back_ios" />
+
+            <LinearLayout
+                android:id="@+id/layOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_toEndOf="@+id/imgBack"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/regular_large_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selectresponents"
+                    android:textColor="@android:color/white" />
+
+
+                <TextView
+                    style="@style/regular_white_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:text="@string/choose_farmer_for_survey" />
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_36"
+                android:layout_below="@id/layOne"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginEnd="@dimen/margin_12"
+                android:visibility='@{showQuickAdd ? View.VISIBLE : View.GONE}'
+                android:id="@+id/laylast"
+                android:background="@drawable/drawable_white_bg"
+               >
+
+                <TextView
+                    style="@style/medium_black_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:drawableStart="@drawable/ic_add_user_icon"
+                    android:drawablePadding="@dimen/padding_5"
+                    android:text="Quick Add Respondent"
+                    android:textColor="@color/colorPrimary" />
+
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/laylast"
+                android:layout_marginTop="@dimen/margin_12"
+                />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_8">
+
+
+            <EditText
+                style="@style/edittext2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_36"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:drawableStart="@drawable/ic_search_icon"
+                android:drawablePadding="@dimen/padding_5"
+                android:id="@+id/edtSearch"
+                android:hint="@string/search_survey"
+                android:padding="@dimen/padding_4" />
+
+        </RelativeLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="@dimen/margin_8"
+            android:background="@color/colorgraydisable" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mRecylerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="12"
+            tools:listitem="@layout/items_survey_list" />
+
+
+    </LinearLayout>
+</layout>

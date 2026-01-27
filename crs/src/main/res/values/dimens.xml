@@ -1,0 +1,270 @@
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="tab_max_width">264dp</dimen>
+    <dimen name="tab_padding_bottom">16dp</dimen>
+    <dimen name="custom_tab_layout_height">72dp</dimen>
+    <dimen name="grid_height">250dp</dimen>
+    <dimen name="grid_padding">-100dp</dimen>
+    <dimen name="_1sdp">1.00dp</dimen>
+    <dimen name="_18sdp">18.00dp</dimen>
+
+    <dimen name="header_16">16sp</dimen>
+    <dimen name="dropdown_width">60dp</dimen>
+    <dimen name="dropdown_height">40dp</dimen>
+
+    <dimen name="text_20">20sp</dimen>
+    <dimen name="weight_40">40dp</dimen>
+    <dimen name="marign_30">30dp</dimen>
+    <dimen name="margin_80">80dp</dimen>
+    <dimen name="margin_57">57dp</dimen>
+
+
+    <dimen name="dashboard_greeting_regn_sz">11sp</dimen>
+    <dimen name="dashboard_greeting_bold_tx_sz">15sp</dimen>
+
+    <dimen name="fa_switchMinWidth">50dp</dimen>
+    <dimen name="fa_switchPadding">20dp</dimen>
+
+
+    <dimen name="height_45">45dp</dimen>
+    <dimen name="height_44">44dp</dimen>
+    <dimen name="height_42">42dp</dimen>
+
+    <dimen name="bar_txt_size">12sp</dimen>
+    <dimen name="txt_size_5">5sp</dimen>
+
+    <dimen name="minus_btn_size">28dp</dimen>
+    <dimen name="add_btn_size">48dp</dimen>
+
+    <dimen name="action_bar_height">56dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+
+    <dimen name="width_05">0.5dp</dimen>
+    <dimen name="width_12">12dp</dimen>
+    <dimen name="width_15">15dp</dimen>
+    <dimen name="width_20">20dp</dimen>
+    <dimen name="width_22">22dp</dimen>
+    <dimen name="width_24dp">24dp</dimen>
+    <dimen name="width_25">25dp</dimen>
+    <dimen name="width_30">30dp</dimen>
+    <dimen name="width_32dp">32dp</dimen>
+    <dimen name="width_36">36dp</dimen>
+    <dimen name="width_40">40dp</dimen>
+    <dimen name="width_48">48dp</dimen>
+    <dimen name="width_50">50dp</dimen>
+    <dimen name="width_60">60dp</dimen>
+    <dimen name="width_66">66dp</dimen>
+    <dimen name="width_70">70dp</dimen>
+    <dimen name="width_90">90dp</dimen>
+    <dimen name="width_100">100dp</dimen>
+    <dimen name="width_104">104dp</dimen>
+    <dimen name="width_130">130dp</dimen>
+    <dimen name="width_132">132dp</dimen>
+    <dimen name="width_145">145dp</dimen>
+    <dimen name="width_164">164dp</dimen>
+    <dimen name="width_200">200dp</dimen>
+    <dimen name="width_211">211dp</dimen>
+    <dimen name="width_225">225dp</dimen>
+    <dimen name="width_250">250dp</dimen>
+    <dimen name="width_300">300dp</dimen>
+    <dimen name="width_325">325dp</dimen>
+
+
+    <dimen name="height_8">8dp</dimen>
+    <dimen name="height_15">15dp</dimen>
+    <dimen name="height_16">16dp</dimen>
+    <dimen name="height_18">18dp</dimen>
+    <dimen name="height_20">20dp</dimen>
+    <dimen name="height_24dp">24dp</dimen>
+    <dimen name="height_25">25dp</dimen>
+    <dimen name="height_28">28dp</dimen>
+    <dimen name="height_30">30dp</dimen>
+    <dimen name="height_32">32dp</dimen>
+    <dimen name="height_36">36dp</dimen>
+    <dimen name="height_38">38dp</dimen>
+    <dimen name="height_40">40dp</dimen>
+    <dimen name="height_48">48dp</dimen>
+    <dimen name="height_50">50dp</dimen>
+    <dimen name="height_54">54dp</dimen>
+    <dimen name="height_56">56dp</dimen>
+    <dimen name="height_60">60dp</dimen>
+    <dimen name="height_64">64dp</dimen>
+    <dimen name="height_66">66dp</dimen>
+    <dimen name="height_68">68dp</dimen>
+    <dimen name="height_70">70dp</dimen>
+    <dimen name="height_78">78dp</dimen>
+    <dimen name="height_80">80dp</dimen>
+    <dimen name="height_86">86dp</dimen>
+    <dimen name="height_90">90dp</dimen>
+    <dimen name="height_94">94dp</dimen>
+    <dimen name="height_100">100dp</dimen>
+    <dimen name="height_104">104dp</dimen>
+    <dimen name="height_119">119dp</dimen>
+    <dimen name="height_120">120dp</dimen>
+    <dimen name="height_130">130dp</dimen>
+    <dimen name="height_140">140dp</dimen>
+    <dimen name="height_150">150dp</dimen>
+    <dimen name="height_160">160dp</dimen>
+    <dimen name="height_167">167dp</dimen>
+    <dimen name="height_170">170dp</dimen>
+    <dimen name="height_180">180dp</dimen>
+    <dimen name="height_200">200dp</dimen>
+    <dimen name="height_250">250dp</dimen>
+
+    <dimen name="txt_size_8">8sp</dimen>
+
+    <dimen name="txt_size_9">9sp</dimen>
+
+    <dimen name="txt_size_10">10sp</dimen>
+    <dimen name="txt_size_11">11sp</dimen>
+    <dimen name="txt_size_12">12sp</dimen>
+    <dimen name="txt_size_14">14sp</dimen>
+    <dimen name="txt_size_15">15sp</dimen>
+    <dimen name="txt_size_16">16sp</dimen>
+    <dimen name="txt_size_17">17sp</dimen>
+    <dimen name="txt_size_18">18sp</dimen>
+    <dimen name="txt_size_22">19sp</dimen>
+    <dimen name="txt_size_20">20sp</dimen>
+    <dimen name="txt_size_40">40sp</dimen>
+    <dimen name="txt_size_48">48sp</dimen>
+    <dimen name="txt_size_50">50sp</dimen>
+    <dimen name="dashboard_title_sz">18sp</dimen>
+    <dimen name="dashboard_greeting_Txt_sz">16sp</dimen>
+    <dimen name="text_12">12sp</dimen>
+
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="margin_3">3dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+    <dimen name="margin_5">5dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_7">7dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_11">11dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_15">15dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_17">17dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="margin_19">19dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_22">22dp</dimen>
+    <dimen name="margin_23">23dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_25">25dp</dimen>
+    <dimen name="margin_28">28dp</dimen>
+    <dimen name="margin_30">30dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_33">33dp</dimen>
+    <dimen name="margin_34">34dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+    <dimen name="margin_50">50dp</dimen>
+    <dimen name="margin_51">51dp</dimen>
+    <dimen name="margin_55">55dp</dimen>
+    <dimen name="margin_60">60dp</dimen>
+    <dimen name="margin_62">62dp</dimen>
+    <dimen name="margin_72">72dp</dimen>
+    <dimen name="margin_82">82dp</dimen>
+    <dimen name="margin_95">95dp</dimen>
+    <dimen name="margin_100">100dp</dimen>
+    <dimen name="margin_118">118dp</dimen>
+    <dimen name="margin_132">132dp</dimen>
+    <dimen name="margin_140">140dp</dimen>
+    <dimen name="margin_160">160dp</dimen>
+    <dimen name="margin_168">168dp</dimen>
+    <dimen name="margin_180">180dp</dimen>
+    <dimen name="margin_195">195dp</dimen>
+    <dimen name="margin_205">205dp</dimen>
+    <dimen name="margin_225">225dp</dimen>
+    <dimen name="margin_250">250dp</dimen>
+    <dimen name="margin_268">268dp</dimen>
+    <dimen name="margin_420">420dp</dimen>
+
+    <dimen name="padding_3">3dp</dimen>
+    <dimen name="padding_4">4dp</dimen>
+    <dimen name="padding_5">5dp</dimen>
+    <dimen name="padding_6">6dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_15">15dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_30">30dp</dimen>
+    <dimen name="padding_42">42dp</dimen>
+    <dimen name="padding_50">50dp</dimen>
+    <dimen name="padding_180">180dp</dimen>
+
+    <dimen name="fa_image_size">32dp</dimen>
+    <dimen name="edit_icon">12sp</dimen>
+    <dimen name="menu_item_icon_size">24dp</dimen>
+
+    <dimen name="line_1">1dp</dimen>
+    <dimen name="button_min_radius">2dp</dimen>
+
+    <dimen name="button_radius">4dp</dimen>
+    <dimen name="txt_size_60">60sp</dimen>
+    <dimen name="size_120dp">120dp</dimen>
+    <dimen name="size_100dp">100dp</dimen>
+    <dimen name="txt_size_26">26sp</dimen>
+    <dimen name="tab_label">14sp</dimen>
+    <dimen name="margin_35">35dp</dimen>
+    <dimen name="txt_size_24">24sp</dimen>
+
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_9">9sp</dimen>
+
+    <dimen name="margin_86">86dp</dimen>
+    <dimen name="padding_2">2dp</dimen>
+    <dimen name="width_80">80dp</dimen>
+    <dimen name="width_45">45dp</dimen>
+    <dimen name="weight_35">35dp</dimen>
+    <dimen name="height_35">35dp</dimen>
+
+    <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_64">64dp</dimen>
+
+    <dimen name="sp_9">9sp</dimen>
+    <dimen name="sp_12">12sp</dimen>
+    <dimen name="sp_13">13sp</dimen>
+    <dimen name="sp_14">14sp</dimen>
+    <dimen name="sp_15">15sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_17">17sp</dimen>
+    <dimen name="sp_18">18sp</dimen>
+    <dimen name="sp_24">24sp</dimen>
+    <dimen name="sp_30">30sp</dimen>
+    <dimen name="sp_20">20sp</dimen>
+    <dimen name="dp_54">54dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_75">75dp</dimen>
+    <dimen name="dp_60">60dp</dimen>
+    <dimen name="dp_200">200dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_150">150dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_65">65dp</dimen>
+    <dimen name="_4sdp">4.00dp</dimen>
+    <dimen name="_2sdp">2.00dp</dimen>
+    <dimen name="_6sdp">6.00dp</dimen>
+    <dimen name="_30sdp">30.00dp</dimen>
+    <dimen name="_50sdp">50.00dp</dimen>
+    <dimen name="_14sdp">14.00dp</dimen>
+</resources>

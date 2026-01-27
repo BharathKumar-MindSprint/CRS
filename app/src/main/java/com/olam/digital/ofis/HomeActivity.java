@@ -52,6 +52,7 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.olam.digital.crs.CrsMainActivity;
 import com.olam.digital.ofis.Common.Utils.NetworkQueueDTO;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
@@ -1207,8 +1208,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, Records.class);
-                    context.startActivity(intent);
+                   /* Intent intent = new Intent(context, Records.class);
+                    context.startActivity(intent);*/
+                    //start normal survey
+
+                    startActivity(CrsMainActivity.createIntent(context,""));
                 }
             });
 

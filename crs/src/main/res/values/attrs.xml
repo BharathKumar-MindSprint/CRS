@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <declare-styleable name="custom_attributes">
+        <attr name="percentage" format="integer"/>
+        <attr name="light" format="integer"/>
+        <attr name="red" format="integer"/>
+        <attr name="gray" format="integer"/>
+    </declare-styleable>
+
+</resources>

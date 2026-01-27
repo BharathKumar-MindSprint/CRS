@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2e2d2c</color>
+    <color name="colorPrimary">#FF7000</color>
+    <color name="colorPrimaryDark">#FF7000</color>
+    <color name="colorLanguageBack">#FFF6EF</color>
+    <color name="colorAccent">#62cac2</color>
+    <color name="colorBlacki">#000</color>
+    <color name="colorGrayDi">#555</color>
+    <color name="background">#F8F6F8</color>
+    <color name="toolbarheading">#020202</color>
+    <color name="topBarBrown">#FCFCFD</color>
+    <color name="halfPurple">#75AC7DFF</color>
+    <color name="safety_orange">#FF7000</color>
+    <color name="gray_view_bg">#DEDAD4</color>
+    <color name="btn_primary">#33978F</color>
+    <color name="btn_primary_light_transparent">#6033978F</color>
+    <color name="btn_primary_light">#71cfc8</color>
+
+    <color name="btn_secondary">#05353D</color>
+    <color name="btn_secondary_light_transparent">#6005353D</color>
+    <color name="btn_secondary_light">#06454f</color>
+    <color name="fill_color_white">#D9D9D9</color>
+    <color name="light_gray">#DBE6E6</color>
+    <color name="gray_light_two">#90A4AE</color>
+    <color name="ofis_list_item_disabled_text">#66222222</color>
+
+    <color name="backi_color">#1005353D</color>
+    <color name="main_dashback">#1E72AC</color>
+
+
+    <color name="primary_very_light">#69868B</color>
+    <color name="color_face_live">#577C81</color>
+
+
+    <color name="gray_DDDAD5">#DDDAD5</color>
+    <color name="gray_D0D5DD">#D0D5DD</color>
+
+
+    <color name="tab_text_color">#555555</color>
+
+    <color name="white_coffee_d4dedf">#D4DEDF</color>
+
+
+    <color name="black_273113">#273113</color>
+    <color name="orange">#FB8C00</color>
+
+    <color name="color_primary_light">#E8F5E9</color>
+
+    <color name="color_back_gray">#F5F5F5</color>
+    <color name="color_white_radio">#E0F2F1</color>fi
+    <color name="color_fill_bg">#F5F8F8</color>
+
+    <color name="purple_700">#FF3700B3</color>
+    <color name="red_D43D48_with_opacity">#30D43D48</color>
+
+    <color name="teal_700">#FF018786</color>
+    <color name="colorgraydisable">#EAE9E4</color>
+
+    <color name="colorPink">#F000F0</color>
+
+    <color name="toolbar_back">#f0f0f0</color>
+
+    <color name="text_dark">#3E3E3E</color>
+    <color name="text_light">#B08D7D</color>
+
+
+    <!--View Status colors-->
+    <color name="graph_backgrd">#9fcfd5</color>
+    <color name="vs_bar_ripe">#a897c6</color>
+    <color name="vs_bar_over_ripe">#f0ac41</color>
+    <color name="vs_bar_under_ripe">#74b9d0</color>
+    <color name="vs_bar_lng_stalk">#5fb3ad</color>
+    <color name="vs_bar_empty">#9899a1</color>
+    <color name="vs_bar_unripe">#9d8e84</color>
+
+    <!--Crop recovery-->
+    <color name="vs_bar_uncollected">#bf6f6f</color>
+    <color name="vs_bar_unharvested">#71a96b</color>
+    <color name="vs_bar_diseased">#bf6fa2</color>
+
+    <!--fertilizer app-->
+    <color name="vs_bar_type_1">#f04141</color>
+    <color name="vs_bar_type_2">#fb8200</color>
+    <color name="vs_bar_type_3">#b2b154</color>
+    <color name="vs_bar_type_4">#699c51</color>
+
+
+    <!--uncollected losse fruits-->
+    <color name="vs_bar_upper">#dedad4</color>
+
+    <color name="colorDarkGrey">#FF494848</color>
+    <color name="colorGrey">#999999</color>
+    <color name="md_teal_100">#B2DFDB</color>
+
+    <color name="grey_ECECEC">#ECECEC</color>
+    <color name="blue_7373C0">#7373C0</color>
+    <color name="green_6DBA21">#6DBA21</color>
+
+
+    <color name="hibiscus">#D83548</color>
+    <color name="header_txt_color">#222222</color>
+    <color name="txt_grey_color">#DDE0E8</color>
+
+    <color name="orangeLight">#f78c2a</color>
+    <color name="orangeLightTransparent">#60f78c2a</color>
+
+    <color name="grey_4A4949">#4A4949</color>
+    <color name="purple">#860063</color>
+    <color name="grey_4A4949_Transparent">#804A4949</color>
+    <color name="greyLight">#F8F6F8</color>
+    <color name="redLight">#D83548</color>
+
+
+    <color name="colorGreen">#6DBA00</color>
+    <color name="colorDarkGreen">#44BF45</color>
+    <color name="colorRed">#C22424</color>
+    <color name="colorLightRed">#f43232</color>
+
+    <color name="colorOrange">#fd8104</color>
+    <color name="colorFaintOrange">#FFB400</color>
+    <color name="colorDarkOrange">#F78C2A</color>
+    <color name="colorYellow">#F0F000</color>
+    <color name="colorBlue">#5fb3ad</color>
+
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#7d7d7d</color>
+    <color name="colorWhite">#FEFCFD</color>
+    <color name="colorWhitey">#F8F8F8</color>
+    <color name="errorColor">#FF3000</color>
+    <color name="shimmerColor">#C2C2C2</color>
+    <color name="disableGray">#EAECF0</color>
+    <color name="browniColor">#D3DBE3</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="colorzakyablack">#0C0B0B</color>
+    <color name="black">#000000</color>
+    <color name="darkGray">#2E2D2C</color>
+    <color name="liteYellow">#FF9300</color>
+    <color name="lightTextGray">#667085</color>
+    <color name="white">#ffffff</color>
+    <color name="lightGray">#E6E6E6</color>
+    <color name="background_white">#F8F6F8</color>
+    <color name="validated_green">#00A865</color>
+
+    <color name="dropdown_back">#7C7C7C</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_30">#30000000</color>
+
+    <color name="dashboard_title">#ffffff</color>
+    <color name="dashboard_greeting">#ffffff</color>
+
+
+    <!--Status Bar Loading-->
+    <color name="orange_E6784B">#E6784B</color>
+    <color name="green_A0C800">#A0C800</color>
+    <color name="grey_5C5C5C">#5C5C5C</color>
+    <color name="red_F555555">#F55555</color>
+    <color name="grey_575757">#575757</color>
+    <color name="grey_border">#BFBFBF</color>
+    <color name="grey_EFEFEF">#EFEFEF</color>
+    <color name="camouflage_green">#E2EEB1</color>
+
+    <color name="black_22222">#222222</color>
+    <color name="blacksquad">#344054</color>
+    <color name="greysquad">#E9E9E9</color>
+    <color name="purpleLight">#B666A1</color>
+    <color name="purpleLightTransparent">#60B666A1</color>
+    <color name="green_809B2C">#809B2C</color>
+    <color name="grey_EAEAEA">#EAEAEA</color>
+    <color name="grey_707070">#707070</color>
+    <color name="blue">#57A9EF</color>
+    <color name="red">#FF5050</color>
+    <color name="colorOrangeBack">#FF5700</color>
+    <color name="yellow">#C4B045</color>
+    <color name="yellowish">#FFD64D</color>
+    <color name="green">#78C97E</color>
+    <color name="grey_CCCCCC">#CCCCCC</color>
+    <color name="orange_FFC250">#FFC250</color>
+    <color name="orange_FEA729">#FEA729</color>
+    <color name="blue_34AAA5">#34AAA5</color>
+    <color name="black_262626">#262626</color>
+    <color name="white_F7F5F5">#F7F5F5</color>
+    <color name="grey_F2F2F2">#F2F2F2</color>
+    <color name="green_A0C827">#A0C827</color>
+    <color name="grey_0000001F">#0000001F</color>
+    <color name="red_D43D48">#D43D48</color>
+
+
+</resources>

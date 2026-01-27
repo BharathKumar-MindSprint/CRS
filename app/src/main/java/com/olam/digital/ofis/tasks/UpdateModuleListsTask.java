@@ -8,18 +8,18 @@ import android.database.sqlite.SQLiteDatabase;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.olam.digital.crs.viewmodel.api.CrsApi;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.model.FarmerSurveyAssignmentResponse;
+import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.ValidationOnRange;
-import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.entity.FarmerSurveyAssignment;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ConditionalLogic;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.ConditionalType;
-
+import com.olam.digital.ofis.mvvmmodule.roomdb.entity.FarmerSurveyAssignment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +29,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by ben on 24/02/16.
  */
@@ -36,6 +38,7 @@ import java.util.List;
 class UpdateModuleListsTask extends DatabaseTask {
     ProgressDialog pd;
     private SQLiteDatabase db;
+
     public UpdateModuleListsTask(Context context) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
@@ -51,6 +54,32 @@ class UpdateModuleListsTask extends DatabaseTask {
     @Override
     protected String doInBackground(JSONObject... params) {
 
+        // oldmethods(params);
+        //new method for oga
+        insertModulesListForOga(params);
+
+        return null;
+    }
+
+    private void insertModulesListForOga(JSONObject[] rootArray) {
+        try {
+            Timber.d("insertModulesListForOga: Modules and Questions inserted successfully");
+            //import thread here
+            new Thread(() -> {
+                // Fire-and-forget
+                CrsApi.insertAllQuestionsAndModulesBlocking(context,rootArray); // roots is JSONObject[] allowing nulls
+            }).start();
+
+
+        } catch (Exception exception) {
+            FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling module lists tables", exception));
+            Timber.e("insertModulesListForOga: Error inserting Modules and Questions -%s", exception.getMessage());
+            exception.printStackTrace();
+        }
+    }
+
+
+    private void oldmethods(JSONObject[] params) {
         try {
             JSONObject moduleResponse = params[0];
             JSONObject conditionalLogicResponse = params[1];
@@ -65,7 +94,7 @@ class UpdateModuleListsTask extends DatabaseTask {
                 JSONObject questionnaireData = moduleResponse.getJSONObject("outputdata").getJSONObject("questionnaireData");
 
                 // get the various sub lists
-                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray, questionTypeArray , answerTypeArray, recurrenceTypeArray;
+                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray, questionTypeArray, answerTypeArray, recurrenceTypeArray;
                 List<ValidationOnRange> validationOnRangeList;
                 List<AssignmentType> assignmentTypeList;
                 List<SurveyDurationType> surveyDurationTypeList;
@@ -147,7 +176,8 @@ class UpdateModuleListsTask extends DatabaseTask {
 
                 try {
                     JSONArray valiOnRangeArray = questionnaireData.getJSONArray("validationOnRange");
-                    Type type = new TypeToken<List<ValidationOnRange>>() {}.getType();
+                    Type type = new TypeToken<List<ValidationOnRange>>() {
+                    }.getType();
                     validationOnRangeList = gson.fromJson(String.valueOf(valiOnRangeArray), type);
                     roomDB.validationOnRangeDao().insertAll(validationOnRangeList);
                 } catch (JSONException e) {
@@ -155,19 +185,21 @@ class UpdateModuleListsTask extends DatabaseTask {
                     e.printStackTrace();
                 }
 
-                try{
+                try {
                     JSONArray assignmentTypeArray = response.getJSONArray("assignmentTypes");
-                    Type type = new TypeToken<List<AssignmentType>>() {}.getType();
+                    Type type = new TypeToken<List<AssignmentType>>() {
+                    }.getType();
                     assignmentTypeList = gson.fromJson(String.valueOf(assignmentTypeArray), type);
                     roomDB.assignmentTypeDao().insertAll(assignmentTypeList);
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling AssignmentTypes table", e));
                     e.printStackTrace();
                 }
 
                 try {
                     JSONArray surveyDurationTypeArray = questionnaireData.getJSONArray("surveyDurationType");
-                    Type type = new TypeToken<List<SurveyDurationType>>() {}.getType();
+                    Type type = new TypeToken<List<SurveyDurationType>>() {
+                    }.getType();
                     surveyDurationTypeList = gson.fromJson(String.valueOf(surveyDurationTypeArray), type);
                     roomDB.surveyDurationTypeDao().insertAll(surveyDurationTypeList);
                 } catch (JSONException e) {
@@ -177,14 +209,14 @@ class UpdateModuleListsTask extends DatabaseTask {
 
                 try {
                     JSONArray conditionalTypeArray = questionnaireData.getJSONArray("conditionalType");
-                    Type type = new TypeToken<List<ConditionalType>>() {}.getType();
+                    Type type = new TypeToken<List<ConditionalType>>() {
+                    }.getType();
                     conditionalTypeList = gson.fromJson(String.valueOf(conditionalTypeArray), type);
                     if (!conditionalTypeList.isEmpty()) {
                         roomDB.conditionalTypeDao().deleteAll();
                         roomDB.conditionalTypeDao().insertAll(conditionalTypeList);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     FirebaseCrash.report(new Exception("Question Type: Error filling question type table", e));
                     e.printStackTrace();
                 }
@@ -193,7 +225,8 @@ class UpdateModuleListsTask extends DatabaseTask {
             if (conditionalLogicResponse != null) {
                 roomDB.conditionalLogicDao().deleteAll();
                 JSONArray conditionsResponseArray = conditionalLogicResponse.getJSONArray("conditions");
-                Type type = new TypeToken<List<ConditionalLogic>>() {}.getType( );
+                Type type = new TypeToken<List<ConditionalLogic>>() {
+                }.getType();
                 List<ConditionalLogic> conditionalResponse = gson.fromJson(conditionsResponseArray.toString(), type);
                 roomDB.conditionalLogicDao().insertAll(conditionalResponse);
             }
@@ -228,7 +261,8 @@ class UpdateModuleListsTask extends DatabaseTask {
                         for (int i = 0; i < moduleIdsForAutoSampleSurvey.length(); i++) {
                             whereArgs[i] = moduleIdsForAutoSampleSurvey.getString(i);
                             whereClause.append("?");
-                            if (i < moduleIdsForAutoSampleSurvey.length() - 1) whereClause.append(", ");
+                            if (i < moduleIdsForAutoSampleSurvey.length() - 1)
+                                whereClause.append(", ");
                         }
                         whereClause.append(")");
 
@@ -246,7 +280,8 @@ class UpdateModuleListsTask extends DatabaseTask {
             roomDB.assignedFarmerForSurveyDao().deleteAll();
             if (assignedFarmerResponse != null && assignedFarmerResponse.has("assignedFarmers")) {
                 JSONArray responseArray = assignedFarmerResponse.getJSONArray("assignedFarmers");
-                Type type = new TypeToken<List<FarmerSurveyAssignmentResponse>>() {}.getType( );
+                Type type = new TypeToken<List<FarmerSurveyAssignmentResponse>>() {
+                }.getType();
                 List<FarmerSurveyAssignmentResponse> farmerSurveyAssignmentRespons = gson.fromJson(responseArray.toString(), type);
 
                 List<FarmerSurveyAssignment> farmerSurveyAssignments = new ArrayList<>();
@@ -259,12 +294,17 @@ class UpdateModuleListsTask extends DatabaseTask {
 
                 roomDB.assignedFarmerForSurveyDao().insertAssignedFarmers(farmerSurveyAssignments);
             }
-
-        } catch(JSONException e){
-            FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error getting module lists table response", e));
-            e.printStackTrace();
+        } catch (Exception exception) {
+            FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling module lists tables", exception));
+            exception.printStackTrace();
         }
-
-        return null;
     }
 }
+
+
+
+
+
+
+
+
