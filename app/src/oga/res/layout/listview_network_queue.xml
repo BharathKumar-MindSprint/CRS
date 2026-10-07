@@ -19,7 +19,7 @@
         android:minHeight="60dp"
         android:background="@drawable/list_item"
         android:baselineAligned="false"
-        android:weightSum="8"
+        android:weightSum="2"
         tools:ignore="UselessParent">
 
         <LinearLayout
@@ -33,7 +33,7 @@
             android:layout_marginRight="8dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:layout_weight="7">
+            android:layout_weight="1.9">
 
             <TextView
                 android:id="@+id/networkQueueId"
@@ -73,14 +73,12 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/left_border"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight=".1"
+            android:gravity="end">
             <ImageView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="false"
                 android:padding="@dimen/ofis_large_pad"

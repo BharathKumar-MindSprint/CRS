@@ -44,6 +44,7 @@
                 style="@style/medium_dark_small_tv"
                 android:visibility="gone"
                 android:ellipsize="end"
+                android:saveEnabled="false"
                 android:maxLines="3"
                 android:textColor="#333"
                 android:textSize="14sp" />

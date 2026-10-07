@@ -1515,6 +1515,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="stakeholder_hint">Search by Stakeholder or id</string>
     <string name="upload_image">Upload Image</string>
     <string name="download_distribution_data">Downloading Distribution Module Data</string>
+    <string name="download_crs_profile_data">Downloading CRS profile Module Data</string>
+    <string name="download_community_distribution_data">Downloading Community Module Data</string>
     <string name="please_enter_transaction_value">Please enter transaction value</string>
     <string name="please_enter_price">Please enter price per unit</string>
     <string name="error_message_distribution_groups">Please select distribution Group</string>
@@ -1535,4 +1537,39 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="survey_ofis">Survey+OFIS</string>
     <string name="survey">Survey</string>
     <string name="add_new_farmer_farm_holding"><![CDATA[ADD NEW FARMER & FARM HOLDING]]></string>
+    <string name="revoke_survey">REVOKE SURVEY</string>
+    <string name="survey_name">Survey:</string>
+    <string name="module_name">Module:</string>
+    <string name="sync_sucesfully">Sync Succesfully..!</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="download_questionnaire_data">Downloading Conditional Questions</string>
+    <string name="download_conditional_question_details">Downloading Main Condition</string>
+
+    <string-array name="language_names">
+        <item>English</item>
+        <item>French</item>
+        <item>Spanish</item>
+        <item>Portuguese</item>
+        <item>Indonesian</item>
+        <item>Turkish</item>
+        <item>Lao</item>
+        <item>Vietnamese</item>
+        <item>Thai</item>
+        <item>Marathi</item>
+    </string-array>
+
+    <string-array name="language_codes">
+        <item>en</item>
+        <item>fr</item>
+        <item>es</item>
+        <item>pt</item>
+        <item>id</item>
+        <item>tr</item>
+        <item>lo</item>
+        <item>vi</item>
+        <item>th</item>
+        <item>mr</item>
+    </string-array>
+
+
 </resources>

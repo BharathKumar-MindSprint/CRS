@@ -19,7 +19,27 @@ import androidx.room.TypeConverters
         CrsConsent::class,
         CrsAnswerEntity::class,
         CrsSurveyInstance::class,
-        CrsOptionEntity::class
+        CrsOptionEntity::class,
+        CountryEntity::class,
+        RegionEntity::class,
+        DistrictEntity::class,
+        SubDistrictEntity::class,
+        PlaceEntity::class,
+        FarmerGroupEntity::class,
+        SectionEntity::class,
+        ProductEntity::class,
+        CrsCommunityRegionMappingEntity::class,
+        CrsCommunityRegionEntity::class,
+        CrsProfileEntity::class,
+        CRSMandatoryQuestionEntity::class,
+        CrsCommunityProfileMappingEntity::class,
+        RespondentEntity::class,
+        ConditionalTypeEntity::class,
+        ConditionalQuestionDetailEntity::class,
+        RecurrenceTypeEntity::class,
+        SurveyDurationTypeEntity::class,
+        CrsRepeaterMappingEntity::class
+
     ],
     version = 1,
     exportSchema = false

@@ -1,12 +1,16 @@
 package com.olam.digital.crs.room
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.olam.digital.crs.model.surveysubmit.RecurrenceType
+import kotlinx.datetime.Clock
 import java.io.Serializable
 
 
@@ -108,21 +112,29 @@ data class CRSModuleEntity(
     var surveyType: Int? = null,
     var channel: Int? = null,
     // Keep raw JSON for future-proofing
-    var rawJson: String? = null
+    var rawJson: String? = null,
+    var submitedCrsSurveyFarmerId: String? = null,
+    var isCommunitySurvey: Boolean = false,
+    var isConsentEnabled: Boolean = false,
+    var communityIds: List<Int>? = null,
+    var mandatoryQuestionIds: List<Int>? = null // comma-separated list of questionIds that become mandatory if this question is answered in a certain way (requires frontend logic to enforce)
 ) : Serializable
 
 
 @Entity(
-    tableName = "module_assignment", indices = [Index(value = ["moduleId"]),
-        Index(value = ["moduleAssignmentType"]), Index(value = ["moduleAssignmentId"]),
-        Index(value = ["countryId"])]
+    tableName = "module_assignment",
+    indices = [
+        Index(value = ["moduleId"]),
+        Index(value = ["moduleAssignmentType"]),
+        Index(value = ["moduleAssignmentId"]),
+        Index(value = ["countryId"])
+    ]
 )
 data class ModuleAssignmentEntity(
     @PrimaryKey
     var id: Long = 0,
 
     var moduleId: Long = 0,
-
     var moduleAssignmentId: Long = 0,
     var moduleAssignmentType: String? = null,
 
@@ -132,6 +144,21 @@ data class ModuleAssignmentEntity(
     var countryId: Long? = null,
 
     var rawJson: String? = null,
+    var recurrenceType: String? = null,
+    var recurrenceFrequency: Int? = null,
+    var disabledMonths: String? = null,
+
+    // Missing fields added
+    var active: Boolean? = null,
+    var createdAt: String? = null,
+    var updatedAt: String? = null,
+    var appId: String? = null,
+    var surveyCode: String? = null,
+    var isChildLabour: Boolean? = null,
+    var fkFarmerRoleId: Long? = null,
+    var isFarmSurvey: Boolean? = null,
+    var isPlotSurvey: Boolean? = null,
+    var isOfflineDownload: Boolean? = null
 ) : Serializable
 
 
@@ -153,6 +180,28 @@ data class FarmerModuleEntity(
 )
 
 
+@Entity(
+    tableName = "crs_mandatory_questions",
+    primaryKeys = ["moduleId", "questionId"],
+    foreignKeys = [
+        ForeignKey(
+            entity = CRSModuleEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["moduleId"],
+            onDelete = CASCADE
+        )
+    ],
+    indices = [Index(value = ["moduleId"]), Index(value = ["questionId"])]
+)
+data class CRSMandatoryQuestionEntity(
+    val moduleId: Long,
+    val questionId: Long
+): Serializable
+
+
+
+
+
 @Entity(tableName = "crs_question_type")
 data class CRSResponseTypeDTO(
     @PrimaryKey
@@ -162,17 +211,40 @@ data class CRSResponseTypeDTO(
     var isActive: Boolean = false
 ) : Serializable
 
+@Entity("crs_community_profiles_mapping")
+data class CrsCommunityProfileMappingEntity(
+    @PrimaryKey(autoGenerate = true)
+    val uniqueId: Long = 0,
+    val communityProfileId: Int? = null,
+    val countryId: Int? = null,
+) : Serializable
 
-@Entity(tableName = "crs_question")
+
+@Entity(tableName = "crs_question", primaryKeys = ["questionId","moduleId"], indices = [Index(value = ["moduleId"])])
 data class CRSQuestionEntity(
-    @PrimaryKey val questionId: Long,
+    val questionId: Long,
     val responseType: Long? = null,//id for question type
     val questionText: String? = null,
-    val moduleId: Long? = null,
+    val moduleId: Long,
     val moduleName: String? = null,//case to check whether need for frontend
     val questionStatus: String? = null,
     val helpText: String? = null,
-    val questionCode: String? = null
+    val questionCode: String? = null,
+    val isMandatory: Boolean? = null,
+    val characterLimit: Long? = null,
+    val decimalLimit: Long? = null,
+    var questionText_fr: String? = null,
+    var questionText_es: String? = null,
+    var questionText_id: String? = null,
+    var questionText_pt: String? = null,
+    var questionText_tr: String? = null,
+    var questionText_lo: String? = null,
+    var questionText_vi: String? = null,
+    var questionText_th: String? = null,
+    var questionText_mr: String? = null,
+    val displayOrder: Int? = null,
+    val repeaterTimes: Int? = null,
+    val moduleStatus: String? = null
 ) : Serializable
 
 
@@ -184,33 +256,117 @@ data class CRSQuestionEntity(
 data class CrsQuestionModuleXref(
     var questionId: Long = 0,
     var moduleId: Long = 0,
-
     var moduleName: String? = null,
     var moduleStatus: String? = null,
-    var questionStatus: String? = null
+    var questionStatus: String? = null,
+    var mandatoryQuestionIds: String? = null // comma-separated list of questionIds that become mandatory if this question is answered in a certain way (requires frontend logic to enforce)
 ) : Serializable
 
 
-@Entity("crs_consents")
+
+@Entity(
+    tableName = "crs_repeater_mappings",
+    primaryKeys = ["moduleId", "parentQuestionId", "childQuestionId"],
+    indices = [
+        Index(value = ["moduleId"]),
+        Index(value = ["parentQuestionId"]),
+        Index(value = ["childQuestionId"])
+    ]
+)
+data class CrsRepeaterMappingEntity(
+    val moduleId: Long,
+
+    // The controlling parent question
+    val parentQuestionId: Long,
+
+    // The child question this mapping points to
+    val childQuestionId: Long,
+
+    // Optional label for UI (e.g., "Member", "Plot")
+    val repeatLabel: Int? = null,
+
+    // Display order for child block (helps when multiple children exist)
+    val displayOrder: Int? = null
+): Serializable
+
+
+
+@Entity(tableName = "conditional_question_details")
+data class ConditionalQuestionDetailEntity(
+    @PrimaryKey val id: Long,
+    val questionId: Long,
+    val conditionalId: Long,
+    val conditionalText: String?,
+    val isAnswered: Boolean?,
+    val moduleId: Long?,
+    val subModuleId: Long?,
+    val isDeleted: Boolean?,
+    val lookupValues: String?,
+    val skipQuestions: String?,
+    val lookupIds: String?,
+    val questionsDraftDtoList: String?, // store raw JSON if needed
+    val skipQuestionIds: String?,
+    val lookUpValueIds: String?
+): Serializable
+
+@Entity(tableName = "crs_recurrence_type")
+data class RecurrenceTypeEntity(
+    @PrimaryKey val id: Long,
+    val value: String?,
+    val active: Boolean?
+):Serializable
+
+@Entity(tableName = "crs_survey_duration_type")
+data class SurveyDurationTypeEntity(
+    @PrimaryKey val id: Long,
+    val value: String?,
+    val active: Boolean?
+): Serializable
+
+@Entity(
+    tableName = "conditional_type",
+    primaryKeys = ["id"]
+)
+data class ConditionalTypeEntity(
+    val id: Long,
+    val value: String? = null,
+    val operator: String? = null,
+    val active: Boolean? = null,
+    val questionType: String? = null,      // supports multiple values like "2,5,7,11"
+    val crsQuestionType: String? = null    // supports multiple values like "3,4,5,7"
+) : Serializable
+
+
+
+
+    @Entity("crs_consents")
 data class CrsConsent(
     @PrimaryKey
-    val id:Long=0,
-    val consentText: String?=null,
-    val consentType: String?=null,
-    val moduleName: String?=null,
-    val consentPath: String?=null,
-    val moduleId: Long?=null,
-): Serializable
+    val id: Long = 0,
+    val consentText: String? = null,
+    val consentType: String? = null,
+    val moduleName: String? = null,
+    val consentPath: String? = null,
+    val moduleId: Long? = null,
+) : Serializable
 
 
 @Entity(tableName = "crs_options", indices = [Index(value = arrayOf("questionId"))])
 data class CrsOptionEntity(
     @PrimaryKey
     var optionId: Long = 0,
-
     var questionId: Long = 0,
     var label: String? = null,
-    var isDeleted: Boolean? = null
+    var isDeleted: Boolean? = null,
+    val options_fr: String? = null,
+    val options_es: String? = null,
+    val options_id: String? = null,
+    val options_pt: String? = null,
+    val options_tr: String? = null,
+    val options_lo: String? = null,
+    val options_vi: String? = null,
+    val options_th: String? = null,
+    val options_mr: String? = null
 ) : Serializable
 
 @Entity(
@@ -223,12 +379,6 @@ data class CrsOptionEntity(
         Index(value = ["startedAt"]),
     ],
     foreignKeys = [
-        ForeignKey(
-            entity = FarmerEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["farmerId"],
-            onDelete = ForeignKey.CASCADE
-        ),
         ForeignKey(
             entity = CRSModuleEntity::class,
             parentColumns = ["id"],
@@ -260,6 +410,10 @@ data class CrsSurveyInstance(
     @ColumnInfo(name = "appVersion") val appVersion: String? = null,
     @ColumnInfo(name = "lat") val lat: Double? = null,
     @ColumnInfo(name = "lng") val lng: Double? = null,
+    @ColumnInfo("isCrsSurvey") val isCrsSurvey: Int = 1, // 1 = true, 0 = false
+
+    @ColumnInfo(name = "crsSignature")
+    val crsSignature: String? = null,
 
     // server-side id (if backend creates one)
     @ColumnInfo(name = "serverInstanceId") val serverInstanceId: String? = null
@@ -314,12 +468,299 @@ data class CrsAnswerEntity(
     @ColumnInfo(name = "isSynced") val isSynced: Int = 1,  // 1 = needs sync, 0 = synced
 
     // backend id for individual answer (if server returns)
-    @ColumnInfo(name = "serverAnswerId") val serverAnswerId: String? = null
+    @ColumnInfo(name = "serverAnswerId") val serverAnswerId: String? = null,
+    @ColumnInfo(name = "repeatIndex") val repeatIndex: Int? = null,   // NEW: distinguish repeated answers
+    @ColumnInfo(name = "repeaterId") val repeaterId: Long? = null    // NEW: link to CrsRepeaterMappingEntity if this answer is part of a repeated block
+): Serializable
+
+
+/*Room for Countries*/
+
+@Entity(tableName = "countries")
+data class CountryEntity(
+    @PrimaryKey val id: Int,
+    val code: String?,
+    val name: String?,
+    val dialling_code: String?,
+    val olam_country_id: String?,
+    val enumerator_country: String?,
+    val isSubdistrictCapture: Boolean?,
+    val countryIsoCode: String?
+) : Serializable
+
+@Entity(
+    tableName = "regions",
+    foreignKeys = [
+        ForeignKey(
+            entity = CountryEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["country_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("country_id")]
+)
+data class RegionEntity(
+    @PrimaryKey val id: Int,
+    val name: String?,
+    @ColumnInfo(name = "country_id") val countryId: Int
+) : Serializable
+
+
+@Entity(
+    tableName = "farmergroups",
+    foreignKeys = [
+        ForeignKey(
+            entity = ProductEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["product_id"],
+            onDelete = ForeignKey.SET_NULL
+        )
+    ],
+    indices = [
+        Index("product_id"),
+        Index("programme_id"),
+        Index("partner_id")
+    ]
+)
+data class FarmerGroupEntity(
+
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Int,
+
+    @ColumnInfo(name = "programme_id")
+    val programmeId: Int? = null,
+
+    @ColumnInfo(name = "partner_id")
+    val partnerId: Int? = null,
+
+    @ColumnInfo(name = "product_id")
+    val productId: Int? = null,
+
+    @ColumnInfo(name = "code")
+    val code: String? = null,
+
+    @ColumnInfo(name = "name")
+    val name: String? = null
+) : Serializable
+
+@Entity(
+    tableName = "districts",
+    foreignKeys = [
+        ForeignKey(
+            entity = RegionEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["region_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("region_id")]
+)
+data class DistrictEntity(
+    @PrimaryKey val id: Int,
+    val name: String?,
+    @ColumnInfo(name = "region_id") val regionId: Int
+) : Serializable
+
+@Entity(
+    tableName = "subdistricts",
+    foreignKeys = [
+        ForeignKey(
+            entity = DistrictEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["district_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("district_id")]
+)
+data class SubDistrictEntity(
+    @PrimaryKey val id: Int,
+    val name: String?,
+    @ColumnInfo(name = "district_id") val districtId: Int
+) : Serializable
+
+@Entity(
+    tableName = "places",
+    indices = [Index("district_id"), Index("subdistrictId")]
+)
+data class PlaceEntity(
+    @PrimaryKey val id: Int,
+    val name: String?,
+    val district_id: Int,
+    val subdistrictId: Int?,
+    val type: String?
+) : Serializable
+
+
+@Entity(
+    tableName = "sections",
+    foreignKeys = [
+        ForeignKey(
+            entity = FarmerGroupEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["farmergroup_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("farmergroup_id")]
+)
+data class SectionEntity(
+    @PrimaryKey val id: Int,
+    val code: String?,
+    val name: String?,
+    @ColumnInfo(name = "farmergroup_id") val farmerGroupId: Int
+) : Serializable
+
+
+@Entity(tableName = "products")
+data class ProductEntity(
+    @PrimaryKey val id: Int,
+    val name: String?
 )
 
+@Entity("crs_community_regions")
+data class CrsCommunityRegionEntity(
+    @PrimaryKey val id: Int,
+    val countryId: String? = null,
+    val name: String? = null
+) : Serializable
 
 
+@Entity("crs_profiles")
+data class CrsProfileEntity(
+    @PrimaryKey val id: Int,
+    val profileName: String? = null,
+    val isActive: Boolean = false
+) : Serializable
 
+
+@Entity(
+    tableName = "crs_community_region_mapping",
+    foreignKeys = [
+        ForeignKey(
+            entity = CountryEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["country_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = RegionEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["region_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = DistrictEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["district_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = SubDistrictEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["subdistrict_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = PlaceEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["place_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = FarmerGroupEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["farmergroup_id"],
+            onDelete = ForeignKey.SET_NULL
+        ),
+        ForeignKey(
+            entity = ProductEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["product_id"],
+            onDelete = ForeignKey.SET_NULL
+        )
+    ],
+    indices = [
+        Index("crs_community_region_id"),
+        Index("country_id"),
+        Index("region_id"),
+        Index("district_id"),
+        Index("subdistrict_id"),
+        Index("place_id"),
+        Index("farmergroup_id"),
+        Index("product_id")
+    ]
+)
+data class CrsCommunityRegionMappingEntity(
+
+    @PrimaryKey(autoGenerate = true)
+    val mappingId: Int = 0,
+
+    @ColumnInfo(name = "crs_community_region_id")
+    val crsCommunityRegionId: Int,
+
+    @ColumnInfo(name = "country_id")
+    val countryId: Int? = null,
+
+    @ColumnInfo(name = "region_id")
+    val regionId: Int? = null,
+
+    @ColumnInfo(name = "district_id")
+    val districtId: Int? = null,
+
+    @ColumnInfo(name = "subdistrict_id")
+    val subdistrictId: Int? = null,
+
+    @ColumnInfo(name = "place_id")
+    val placeId: Int? = null,
+
+    @ColumnInfo(name = "farmergroup_id")
+    val farmerGroupId: Int? = null,
+
+    @ColumnInfo(name = "product_id")
+    val productId: Int? = null,
+
+    @ColumnInfo("sectionId")
+    val sectionId: Int? = null
+) : Serializable
+
+
+@Entity(tableName = "crs_respondents")
+data class RespondentEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val name: String? = null,
+    val countryId: Int? = null,
+    val regionId: Int? = null,
+    val profileId: Int? = null,
+    val productId: Int? = null,
+    val districtId: Int? = null,
+    val placeId: Int? = null,
+    val emailId: String? = null,
+    val countryCode: String? = null,
+    val phoneNumber: String? = null,
+    val respondentCode: String? = null,
+    var photo: String? = null,
+    val dateOfBirth: String? = null,
+    val gender: String? = null,
+    @ColumnInfo("isSynced")
+    val isSynced: Int = 1, // 1 = needs sync, 0 = synced
+    @ColumnInfo("created_at")
+    val createdAt: Long = System.currentTimeMillis(),
+) : Serializable
+
+
+//@Entity(tableName = "SurveyDurationType")
+data class SurveyDurationType (
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    var id: Int = 0,
+    @ColumnInfo(name = "value")
+    var value: String? = null,
+    @ColumnInfo(name = "active")
+    var active: Boolean = false
+):Serializable
 
 data class ModuleWithQuestions(
     @Embedded val module: CRSModuleEntity,
@@ -340,8 +781,48 @@ data class QuestionWithOptions(
 ) : java.io.Serializable
 
 
+data class SurveyWithAnswers(
+    @Embedded val instance: CrsSurveyInstance,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "instanceId",
+        entity = CrsAnswerEntity::class
+    )
+    val answers: List<CrsAnswerEntity>
+) : Serializable
 
 
+data class SubmissionContext(
+    var stakeholderId: Int = 0,
+    var olamEnumeratorId: Int = 0,
+    var isWebEdit: Boolean = false,
+    var fmPreview: Boolean = false,
+    var uploadAttempts: Int = 1,
+    var uploadId: String = "LOCAL-" + Clock.System.now().toEpochMilliseconds().toString(),
+    var lastEditUserId: Int = 0,
+    var isReviewEdit: Boolean = false,
+    var isUploadJob: Boolean = true,
+    var updateReason: String = "Auto-generated from local instance",
+    var recurrenceFrequency: Int = 0,
+    var recurrenceType: RecurrenceType = RecurrenceType.MONTHLY,
+    var appVersion: String? = null
+) : Serializable
+
+@Keep
+data class ProfileWithMapping(
+    @Embedded val profile: CrsProfileEntity,
+    @Embedded val mapping: CrsCommunityProfileMappingEntity
+) : Serializable
+
+
+@Keep
+data class ConditionalRule(val keyword: String, val childCount: Int) : Serializable
+
+val conditionalRules = listOf(
+    ConditionalRule("Besides sugarcane, do you farm any other crop as well?", 4),
+    ConditionalRule("Besides rice, did you produce and sell any other crops during the past 12 months?", 8)
+    // Add more rules here
+)
 
 
 

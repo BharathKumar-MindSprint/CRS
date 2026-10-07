@@ -25,9 +25,9 @@
 
 
         <LinearLayout
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:orientation="vertical"
             android:visibility='@{showShimmer?View.VISIBLE:View.GONE,default=visible}'
             tools:visibility="gone">
@@ -135,6 +135,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -232,142 +233,109 @@
                         android:textColor="#101828" />
 
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_6"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:padding="@dimen/margin_16">
 
+                        <!-- Left label -->
                         <TextView
-                            style="@style/regular_lite_gray_small_tv"
+                            android:id="@+id/tvLabelSurveyName"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Survey ID:" />
+                            android:text="@string/survey_name"
+                            style="@style/regular_lite_gray_small_tv"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvSurveyId" />
 
-
+                        <!-- Right value -->
                         <TextView
-                            android:id="@+id/txtSuveyId"
+                            android:id="@+id/tvSurveyId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="SRV001"
                             style="@style/regular_medium_tv"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/tvLabelSurveyName" />
+
+                        <!-- Next row -->
+                        <TextView
+                            android:id="@+id/tvLabelFarmerId"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="viewEnd"
-                            tools:text="SRV001" />
-
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_4"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-
-                        <TextView
-                            android:id="@+id/txt_gender"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:text="@string/farmer_id"
                             style="@style/regular_lite_gray_small_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Farmer ID:" />
-
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvLabelSurveyName"
+                            app:layout_constraintEnd_toStartOf="@+id/tvFarmerId" />
 
                         <TextView
-                            android:id="@+id/txtFarmerId"
+                            android:id="@+id/tvFarmerId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="F001"
+                            android:layout_marginTop="@dimen/margin_6"
                             style="@style/regular_medium_tv"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/tvLabelFarmerId" />
+
+                        <!-- Submitted row -->
+                        <TextView
+                            android:id="@+id/tvLabelSubmitted"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="viewEnd"
-                            tools:text="F001" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_8"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <TextView
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:text="@string/submitted"
                             style="@style/regular_lite_gray_small_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Submitted:" />
-
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvLabelFarmerId"
+                            app:layout_constraintEnd_toStartOf="@+id/tvSubmittedDate" />
 
                         <TextView
-                            android:id="@+id/txtSubmitedDate"
+                            android:id="@+id/tvSubmittedDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="12/10/2025, 2:31:03 PM"
                             style="@style/regular_medium_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textAlignment="viewEnd"
-                            tools:text="12/10/2025, 2:31:03 PM" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/tvLabelSubmitted" />
 
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_4"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:layout_marginBottom="@dimen/margin_16"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-
+                        <!-- Status row -->
                         <TextView
-                            style="@style/regular_lite_gray_small_tv"
+                            android:id="@+id/tvLabelStatus"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.6"
-                            android:text="Status:" />
+                            android:text="@string/status"
+                            style="@style/regular_lite_gray_small_tv"
+                            android:layout_marginTop="@dimen/margin_6"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvLabelSubmitted"
+                            app:layout_constraintEnd_toStartOf="@+id/layStatus" />
 
+                        <!-- Status badge -->
                         <RelativeLayout
-                            android:layout_width="0dp"
+                            android:id="@+id/layStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="@dimen/margin_6"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_4"
-                            android:layout_marginTop="@dimen/margin_4"
-                            android:layout_weight="0.4"
                             android:background="@drawable/bg_fill_green_color"
-                            app:layout_constraintLeft_toRightOf="@+id/txtNoOfQuestions"
-                            app:layout_constraintTop_toBottomOf="@+id/txtSurveyDesc">
-
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/tvLabelStatus">
 
                             <TextView
-                                android:id="@+id/txtActiveState"
-                                style="@style/regular_small_tv"
+                                android:id="@+id/tvStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:layout_marginStart="@dimen/margin_2"
-                                android:layout_marginEnd="@dimen/margin_2"
+                                android:text="@string/completed"
                                 android:textColor="#016630"
-                                tools:text="Completed" />
-
+                                android:padding="@dimen/margin_4"
+                                style="@style/regular_small_tv" />
 
                         </RelativeLayout>
 
-
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 </LinearLayout>
@@ -415,7 +383,7 @@
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_8"
             android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/height_48"
             android:background="@drawable/rounded_primary_fully_edge">
 
             <TextView
@@ -423,7 +391,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Back to Home" />
+                android:text="@string/back_to_home" />
 
 
         </RelativeLayout>

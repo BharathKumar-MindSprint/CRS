@@ -1,5 +1,8 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
+import static com.olam.digital.ofis.Common.Utils.NetworkUtils.showAlert;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -14,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.MatrixCursor;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
@@ -26,12 +30,6 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.Settings;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,9 +48,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.olam.digital.crs.CrsMainActivity;
+import com.olam.digital.crs.model.surveysubmit.Submission;
+import com.olam.digital.crs.room.RespondentEntity;
+import com.olam.digital.crs.room.SubmissionContext;
+import com.olam.digital.crs.ui.RevokeSurveyActivity;
+import com.olam.digital.crs.viewmodel.api.CrsApi;
 import com.olam.digital.ofis.Common.Utils.NetworkQueueDTO;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
@@ -76,6 +86,7 @@ import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.distributionmodule.distribution_presentation.DistributionModuleActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
+import com.olam.digital.ofis.extension.GlobalState;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmstakeholder.ViewStakeHolderActivity;
@@ -85,30 +96,30 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
-
 import com.olam.digital.ofis.mvvmmodule.model.multistakeholder.MultiStakeHolder;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.entity.DmMainModule;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Queue;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
-import static com.olam.digital.ofis.Common.Utils.NetworkUtils.showAlert;
+import timber.log.Timber;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
@@ -122,7 +133,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private HomeActivity me;
     private static DataLayer dl;
 
-    private  static OFISRoomDB db;
+    private static OFISRoomDB db;
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading = null;
@@ -143,7 +154,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static String READ_ONLY_MODE = "READ_ONLY_MODE";
     private final static String EDIT_MODE = "EDIT_MODE";
 
-    private final static String  EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
+    private final static String EDIT_FARMER_MODE = "EDIT_FARMER_MODE";
 
     private static final String FARMER_ID = "FARMER_ID";
     private static final String FARM_ID = "FARM_ID";
@@ -167,7 +178,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public static boolean syncOptionAll;
     private int itemId;
+    private Submission itemSubmission;
+    private RespondentEntity itemRespondent;
     public static int totalItems;
+
+    public static int totalProgressForCrsSurvey = 0;
     public static int progressItem;
     private long lastClickTime = 0;
     private boolean isChildSynced = true;
@@ -191,12 +206,44 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static CardView cvSupplierAndSurvey, cvDistributionModule;
     private static Button supplierAndSurvey, btnDistributionModule;
 
+    public static void recordFailedUpload(long serverItemId, long fullySynced, Submission submission) {
+        //update failure method to crs crs updated failed
+    }
+
+    public static void recordFailedUploadRespondent(int serverItemId, int fullySynced, RespondentEntity submission) {
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    public void setTotalProgressForCrsSurvey() {
+        GlobalState.setOnValueChangeListener(newValue -> {
+            Timber.d("New value changed %s", newValue);
+            CrsApi.CrsApiAsync.getAllPendingSyncSurveyCount(context, new CrsApi.CrsApiAsync.CallbackNormal() {
+                @Override
+                public void onSuccess(@NotNull String result) {
+                    totalItems = Integer.parseInt(result) + newValue;
+                    totalProgressForCrsSurvey = Integer.parseInt(result);
+                }
+
+                @Override
+                public void onError(@NotNull Throwable t) {
+
+                }
+            });
+        });
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         listView = findViewById(R.id.list);
+        CrsApi.setImageUrl(BuildConfig.IMAGE_BASE_URL);
         listView.setOnItemClickListener(this);
         staticContext = this;
         context = me = this;
@@ -239,6 +286,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         setKeycloakCredentials(environment);
         setOperatingUnit(environment);
         setCommodity();
+        setTotalProgressForCrsSurvey();
         if (sharedPreferences.getBoolean("FIRST_RUN", true)) {
             firstRunSection.setVisibility(View.VISIBLE);
             if (!enumeratorId.equalsIgnoreCase("")) {
@@ -249,8 +297,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 enumeratorID.setFocusableInTouchMode(false);
                 enumeratorID.setClickable(false);
             }
-        }
-        else {
+        } else {
             int onGroundSurveyNotificationCount = db.onGroundSurveyNotificationDao().getPendingEUDRSurveyCount("");
             if (onGroundSurveyNotificationCount > 0 && shouldShowPopup()) {
                 showDailyRemainderPopUp(onGroundSurveyNotificationCount);
@@ -338,7 +385,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener, true);
-
+        checkTime();
     }
 
     private void setKeycloakCredentials(String environment) {
@@ -401,9 +448,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         String userpasscode = passcode.getText().toString().trim();
-        if (!isNetworkAvailable(this))
-        {
-            showAlert(getString(R.string.Please_check_the_Internet_Connection),this);
+        if (!isNetworkAvailable(this)) {
+            showAlert(getString(R.string.Please_check_the_Internet_Connection), this);
             return;
         }
 
@@ -606,8 +652,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     staticContext.startActivity(intent);
                 }
             });
-        }
-        else {
+        } else {
             cvSupplierAndSurvey.setVisibility(View.GONE);
         }
 
@@ -644,68 +689,114 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
+    private Cursor emptyNetworkQueueCursor() {
+        return new MatrixCursor(new String[]{
+                "_id",
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME,
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID
+        });
+    }
+
     private void bindNetworkQueue(boolean isClickable) {
+        Timber.d("Binding network queue with clickability: %s", isClickable);
+
         String language = Locale.getDefault().getLanguage();
         List<NetworkQueueDTO> getAllEditFarmerQueue = dl.getNetworkQueueDTOs();
+        queueCount = findViewById(R.id.networkQueueCount);
 
+        // ---------------------------------------------------
+        // PROCESS EXISTING NETWORK QUEUE ENTRIES (unchanged)
+        // ---------------------------------------------------
         for (NetworkQueueDTO networkQueueDTO : getAllEditFarmerQueue) {
+
             Cursor farmer = dl.getFarmerById(Long.parseLong(networkQueueDTO.farmerId));
             MultiStakeHolder ms = null;
 
             if (networkQueueDTO.stakeholderId != null) {
-                ms = db.multiStakeHolderDao().getStakeHolderById(Long.parseLong(networkQueueDTO.stakeholderId));
+                ms = db.multiStakeHolderDao().getStakeHolderById(
+                        Long.parseLong(networkQueueDTO.stakeholderId)
+                );
             }
+
             String farmerName = "";
             String olamFarmerId = "";
 
             if (farmer != null && farmer.getCount() > 0) {
                 farmer.moveToFirst();
                 try {
-                    farmerName = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
-                    olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                    farmerName = farmer.getString(
+                            farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)
+                    );
+                    olamFarmerId = farmer.getString(
+                            farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)
+                    );
                 } catch (Exception e) {
                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
             }
 
-            boolean isDataModified = networkQueueDTO.submissionType.equalsIgnoreCase("Edit Farmer") && networkQueueDTO.poiName.equalsIgnoreCase("Update Farmer");
+            boolean isDataModified =
+                    networkQueueDTO.submissionType.equalsIgnoreCase("Edit Farmer") &&
+                            networkQueueDTO.poiName.equalsIgnoreCase("Update Farmer");
+
             if (isDataModified) {
                 ContentValues values = new ContentValues();
-                if ((networkQueueDTO.recordedPlots != null && !networkQueueDTO.recordedPlots.isEmpty()) && (networkQueueDTO.plotName != null && !networkQueueDTO.plotName.isEmpty())) {
+
+                if (networkQueueDTO.recordedPlots != null && !networkQueueDTO.recordedPlots.isEmpty()
+                        && networkQueueDTO.plotName != null && !networkQueueDTO.plotName.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmpolygon");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Plot Location / Polygon recorded");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
-                } else if ((networkQueueDTO.poiSubgroupType != null && networkQueueDTO.poiSubgroupType.equalsIgnoreCase("Flag for Deactivation"))) {
+
+                } else if (networkQueueDTO.poiSubgroupType != null
+                        && networkQueueDTO.poiSubgroupType.equalsIgnoreCase("Flag for Deactivation")) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmpolygon");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Plot Location / Polygon recorded");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamFarmerId);
-                } else if ((networkQueueDTO.stakeholderId != null && !networkQueueDTO.stakeholderId.isEmpty()) && (networkQueueDTO.poiModuleId == null || networkQueueDTO.poiModuleId.isEmpty())) {
-                    if (ms != null) {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, ms.synced == 0 ? "stakeholder" : "update stakeholder");
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, ms.synced == 0 ? "New StakeHolder" : ms.msName);
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, ms.synced == 0 ? ms.msName : "Update Stakeholder");
-                    }
-                } else if ((networkQueueDTO.farmerChildId != null && !networkQueueDTO.farmerChildId.isEmpty())) {
-                    Cursor child = dl.getChildById(Long.parseLong(networkQueueDTO.farmerChildId));
 
+                } else if (networkQueueDTO.stakeholderId != null && !networkQueueDTO.stakeholderId.isEmpty()
+                        && (networkQueueDTO.poiModuleId == null || networkQueueDTO.poiModuleId.isEmpty())) {
+
+                    if (ms != null) {
+                        boolean isNew = ms.synced == 0;
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE,
+                                isNew ? "stakeholder" : "update stakeholder");
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                                isNew ? "New StakeHolder" : ms.msName);
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME,
+                                isNew ? ms.msName : "Update Stakeholder");
+                    }
+
+                } else if (networkQueueDTO.farmerChildId != null && !networkQueueDTO.farmerChildId.isEmpty()) {
+
+                    Cursor child = dl.getChildById(Long.parseLong(networkQueueDTO.farmerChildId));
                     if (child != null && child.moveToFirst()) {
-                        String childName = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
+                        String childName = child.getString(
+                                child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)
+                        );
+
                         if (networkQueueDTO.farmerSurveyCode == null) {
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "New Child");
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, childName);
                         } else {
-                            String moduleName = dl.getModuleNameById(dl.getModuleIdBySurveyCode(networkQueueDTO.farmerSurveyCode), language);
+                            String moduleName = dl.getModuleNameById(
+                                    dl.getModuleIdBySurveyCode(networkQueueDTO.farmerSurveyCode), language
+                            );
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child: " + childName);
                             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                         }
-
                     }
+
                 } else if (networkQueueDTO.farmerModuleId != null && !networkQueueDTO.farmerModuleId.isEmpty()
                         && networkQueueDTO.poiModuleId != null && !networkQueueDTO.poiModuleId.isEmpty()) {
+
                     String moduleName = dl.getModuleNameById(Integer.parseInt(networkQueueDTO.poiModuleId), language);
-                    if (dl.isSurveyMandate(Integer.parseInt(networkQueueDTO.poiModuleId))){
+                    if (dl.isSurveyMandate(Integer.parseInt(networkQueueDTO.poiModuleId))) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "mandate_module");
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
@@ -714,64 +805,74 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                     }
+
                 } else if (networkQueueDTO.olamFarmerId != null && !networkQueueDTO.olamFarmerId.isEmpty()
                         && networkQueueDTO.farmId != null && !networkQueueDTO.farmId.isEmpty()
                         && networkQueueDTO.farmerModuleId == null && networkQueueDTO.recordedLat == null) {
 
-                    if (dl.checkNationalIdAvailable(networkQueueDTO.farmerId)) {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Update_ID");
-                    } else {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "National_ID");
-                    }
+                    boolean idExists = dl.checkNationalIdAvailable(networkQueueDTO.farmerId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE,
+                            idExists ? "Update_ID" : "National_ID");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "National ID");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
 
                 } else if (networkQueueDTO.countryId != null && !networkQueueDTO.countryId.isEmpty()
-                && networkQueueDTO.productId != null && !networkQueueDTO.productId.isEmpty()) {
+                        && networkQueueDTO.productId != null && !networkQueueDTO.productId.isEmpty()) {
 
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Update Phone Numbers");
 
                 } else if (networkQueueDTO.signature != null && !networkQueueDTO.signature.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "signature");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Signature");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
 
                 } else if (networkQueueDTO.poiTypeId != null && !networkQueueDTO.poiTypeId.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Distribution Form");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Distribution Form");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
 
                 } else if (networkQueueDTO.poiModuleId != null && !networkQueueDTO.poiModuleId.isEmpty()
-                    && networkQueueDTO.farmerModuleId == null) {
-                    DmMainModule dmSurvey= db.dmMainModuleDao().getDmMainModule(Integer.parseInt(networkQueueDTO.poiModuleId));
-                    String surveyName = Utilities.getNamesByLanguage(dmSurvey);
+                        && networkQueueDTO.farmerModuleId == null) {
 
-                    if (db.followUpItemMainTableDao().isFollowUpExistForNq(Integer.parseInt(networkQueueDTO.poiModuleId), Integer.parseInt(networkQueueDTO.farmerId))) {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "FollowUpSurvey");
-                    } else {
-                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "DMSurvey");
-                    }
+                    DmMainModule dmSurvey = db.dmMainModuleDao().getDmMainModule(
+                            Integer.parseInt(networkQueueDTO.poiModuleId)
+                    );
+                    String surveyName = Utilities.getNamesByLanguage(dmSurvey);
+                    boolean followUpExists = db.followUpItemMainTableDao()
+                            .isFollowUpExistForNq(
+                                    Integer.parseInt(networkQueueDTO.poiModuleId),
+                                    Integer.parseInt(networkQueueDTO.farmerId)
+                            );
+
+                    values.put(
+                            OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE,
+                            followUpExists ? "FollowUpSurvey" : "DMSurvey"
+                    );
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Diagnostic Module Survey");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, surveyName);
 
                 } else if (networkQueueDTO.districtId != null && !networkQueueDTO.districtId.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "farmer");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "New farmer");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
 
                 } else if (networkQueueDTO.certificationIds != null && !networkQueueDTO.certificationIds.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "certification");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "certification");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
 
                 } else if (networkQueueDTO.farmId != null && !networkQueueDTO.farmId.isEmpty()
                         && networkQueueDTO.recordedLng != null && !networkQueueDTO.recordedLng.isEmpty()) {
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Household");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Household Location recorded");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
-
                 }
 
                 if (values.size() > 0) {
@@ -780,59 +881,145 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
 
+        // ---------------------------------------------------
+        // BIND ADAPTER ALWAYS (even when cursor is empty)
+        // ---------------------------------------------------
         TextView nomodulestosubmittext = findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
 
-        if (networkQueue.getCount() > 0) {
-            queueCount = findViewById(R.id.networkQueueCount);
-            totalItems = networkQueue.getCount();
-            String queueTotal = Integer.toString(totalItems);
-            queueCount.setText(queueTotal);
+        // Provide an empty cursor when no rows — keeps SimpleCursorAdapter happy
+        Cursor cursorToUse = (networkQueue != null && !networkQueue.isClosed() && networkQueue.getCount() > 0)
+                ? networkQueue
+                : emptyNetworkQueueCursor();
 
-            nomodulestosubmittext.setVisibility(View.GONE);
-            String[] adapterCols = new String[]{"_id", OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID};
-            int[] adapterRowViews = new int[]{R.id.networkQueueId, R.id.networkQueueName, R.id.networkQueuePoiType, R.id.networkQueueOlamFarmerId};
-            customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me, isClickable);
-            listView.setAdapter(customListAdapter_networkQueue);
-            //setListAdapter(customListAdapter_networkQueue);
+        String[] adapterCols = new String[]{
+                "_id",
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME,
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID
+        };
+        int[] adapterRowViews = new int[]{
+                R.id.networkQueueId,
+                R.id.networkQueueName,
+                R.id.networkQueuePoiType,
+                R.id.networkQueueOlamFarmerId
+        };
 
-            if (Utilities.daysToUpdate(context) <= 0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setCancelable(true);
-                builder.setMessage(res.getString(R.string.ofis_update_overdue))
-                        .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
+        // Create the mixed adapter (cursor + submissions)
+        customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(
+                context, cursorToUse, adapterCols, adapterRowViews, me, isClickable
+        );
+        customListAdapter_networkQueue.setShowSubmissionsFirst(true); // submissions above cursor rows (optional)
+        listView.setAdapter(customListAdapter_networkQueue);
+
+        // Initial UI state based on cursor rows only (submissions will arrive async)
+        int initialCursorCount = cursorToUse.getCount();
+        queueCount.setText(String.valueOf(initialCursorCount));
+        nomodulestosubmittext.setVisibility(initialCursorCount > 0 ? View.GONE : View.VISIBLE);
+        if (Utilities.daysToUpdate(context) <= 0 && initialCursorCount == 0) {
+            nomodulestosubmittext.setText(R.string.ofis_update_overdue);
+            nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
+        }
+
+        CrsApi.CrsApiAsync.getAllPendingRespondent(context, new CrsApi.CrsApiAsync.CallbackNormalRespondent() {
+            @Override
+            public void onSuccess(@NotNull List<@NotNull RespondentEntity> mainResult) {
+
+
+                // ---------------------------------------------------
+                // ASYNC: LOAD PENDING CRS SUBMISSIONS AND INJECT
+                // ---------------------------------------------------
+                CrsApi.CrsApiAsync.getAllPendingSyncSurveyModulesAsync(
+                        context,
+                        generateSubmission(), // your SubmissionContext builder
+                        new CrsApi.CrsApiAsync.Callback() {
+                            @Override
+                            public void onSuccess(List<Submission> result) {
+                                Timber.d("Submission JSON: %s", new Gson().toJson(result));
+
+                                // inject submission rows into the adapter
+                                if (customListAdapter_networkQueue != null) {
+                                    customListAdapter_networkQueue.setSubmissions(result != null ? result : Collections.emptyList());
+                                }
+
+                                // inject submission rows into the adapter
+                                if (customListAdapter_networkQueue != null) {
+                                    customListAdapter_networkQueue.setSubmissionRespondent(mainResult != null ? mainResult : Collections.emptyList());
+                                }
+
+                                // update counts & UI (cursor + submissions)
+                                int totalCount = initialCursorCount + (result != null ? result.size() : 0) + (mainResult != null ? mainResult.size() : 0);
+                                queueCount.setText(String.valueOf(totalCount));
+
+                                if (totalCount > 0) {
+                                    nomodulestosubmittext.setVisibility(View.GONE);
+                                } else {
+                                    nomodulestosubmittext.setVisibility(View.VISIBLE);
+                                    if (Utilities.daysToUpdate(context) <= 0) {
+                                        nomodulestosubmittext.setText(R.string.ofis_update_overdue);
+                                        nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
+                                    }
+                                }
+
+                                // Overdue prompt when there is something to show
+                                if (Utilities.daysToUpdate(context) <= 0 && totalCount > 0) {
+                                    AlertDialog alert = new AlertDialog.Builder(context)
+                                            .setCancelable(true)
+                                            .setMessage(res.getString(R.string.ofis_update_overdue))
+                                            .setPositiveButton(res.getString(R.string.app_update_ok), (dialog, id) -> dialog.cancel())
+                                            .setNegativeButton(R.string.app_update_cancel, (dialog, id) -> dialog.cancel())
+                                            .create();
+                                    alert.show();
+                                }
+
+                                // Automatic Trigger ASK For Help (now based on total items)
+                                if (totalCount > 0) {
+                                    triggerAutomaticAskForHelp();
+                                } else {
+                                    Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER", null, false);
+                                    Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER_SEND_HELP", null, true);
+                                }
                             }
-                        })
-                        .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Timber.e(t, "Exception while retrieving submissions");
+                                // Even on error we keep the adapter; it will still show any cursor rows.
                             }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+                        }
+                );
+
+
             }
 
-        } else {
-            listView.setAdapter(null);
-            queueCount = findViewById(R.id.networkQueueCount);
-            queueCount.setText("0");
-            if (Utilities.daysToUpdate(context) <= 0) {
-                nomodulestosubmittext.setText(R.string.ofis_update_overdue);
-                nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
+            @Override
+            public void onError(@NotNull Throwable t) {
+
             }
-        }
+        });
 
-        //Automatic Trigger ASK For Help
-        if (networkQueue != null && networkQueue.getCount() > 0) {
-            triggerAutomaticAskForHelp();
-        }
-        else {
-            Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER", null, false);
-            Utilities.saveToSharedPrefs(staticContext, "AUTO_TRIGGER_SEND_HELP", null, true);
-        }
+        //close progress dialog if it was open for sync all
 
+            if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                Utilities.closeProgressDialog(m_ProgressDialog, 2000);
+            }
+    }
+
+
+    private @NotNull SubmissionContext generateSubmission() {
+        SubmissionContext submissionContext = new SubmissionContext();
+        submissionContext.setStakeholderId(2001);//need to change
+        submissionContext.setOlamEnumeratorId(Integer.parseInt((Utilities.getFromSharedPrefs(context).isEmpty()) ? "0" : Utilities.getFromSharedPrefs(context)));
+        submissionContext.setWebEdit(true);
+        submissionContext.setFmPreview(false);
+        submissionContext.setUploadAttempts(1);
+        submissionContext.setLastEditUserId(501);//need to check
+        submissionContext.setReviewEdit(false);
+        submissionContext.setUploadJob(true);
+        submissionContext.setUpdateReason("Correction of farmer details");//need to check
+        submissionContext.setRecurrenceFrequency(12);//need to set from module recurrenc
+        submissionContext.setAppVersion(BuildConfig.VERSION_NAME);
+        return submissionContext;
     }
 
     private void checkAuthenticate() {
@@ -862,86 +1049,136 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private void startAllItemSync() {
-        if (isNetworkAvailable(context)) {
-            final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
-            mainHandler.post(new Runnable() {
 
+
+
+    private void syncAllCrsItems() {
+
+        //need to check syncallbutton enabled
+        Queue<RespondentEntity> pendingResp = new LinkedList<>(customListAdapter_networkQueue.getSubmissionRespondent());
+        Queue<Submission> pendingSubs = new LinkedList<>(customListAdapter_networkQueue.getSubmissions());
+
+        Timber.d("SyncAll starting - Respondents: %d, Submissions: %d",
+                pendingResp != null ? pendingResp.size() : -1,
+                pendingSubs != null ? pendingSubs.size() : -1);
+        processNextRespondent(pendingResp, pendingSubs);
+    }
+
+    private void processNextRespondent(Queue<RespondentEntity> resp, Queue<Submission> subs) {
+        if (!resp.isEmpty()) {
+            RespondentEntity current = resp.poll();
+            startRespondentItemSync(current, new CrsApi.CrsApiAsync.CallbackNormal() {
                 @Override
-                public void run() {
-                    m_ProgressDialog = Utilities.openProgressDialog(context, message, true);
-                    if (!farmerSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!isChildSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!mandateSurveySynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.mandate_survey_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!isConsentSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.consent_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else if (!stakeholderSynced) {
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.stakeholder_not_synced));
-                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                        enableSync();
-                    } else {
-                        if (totalItems == 0)
-                            totalItems = networkQueue.getCount();
-
-                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
-
-                    }
+                public void onSuccess(@NotNull String result) {
+                    processNextRespondent(resp, subs);
+                }
+                @Override
+                public void onError(@NotNull Throwable t) {
+                    Timber.e(t, "Respondent sync failed");
+                    processNextRespondent(resp, subs);
                 }
             });
+        } else {
+            // ✅ Respondents done, move to submissions
+            processNextSubmission(subs);
+        }
+    }
 
-            Handler syncHandler = new Handler() {
+    private void processNextSubmission(Queue<Submission> subs) {
+        Timber.d("Processing next submission, remaining: %d", subs != null ? subs.size() : -1);
+        if (!subs.isEmpty()) {
+            Submission current = subs.poll();
+            startSubmissionItemSync(current, new CrsApi.CrsApiAsync.CallbackNormal() {
                 @Override
-                public void handleMessage(Message msg) {
-                    if (msg.what == 1) {
-                        if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
-                            String pdUpdate = msg.obj.toString();
-                            int storedCount = Utilities.minProgressCount;
-                            int min = storedCount + 1;
-                            int max = networkQueue.getCount();
-                            Log.d("HomeActivity", "min : " + min + ",  max : " + max);
-                            m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, max, min, pdUpdate);
-                            //  m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
-                        }
-                    } else if (msg.what == 2) {
-                        finishItemSync(msg);
-                    } else if (msg.what == 3) {
-                        farmerSynced = false;
-                    } else if (msg.what == 5) {
-                        isChildSynced = false;
-                    } else if (msg.what == 8) {
-                        mandateSurveySynced = false;
-                    } else if (msg.what == 10) {
-                        isConsentSynced = false;
-                    } else if (msg.what == 11) {
-                        stakeholderSynced = false;
-                    } else if (msg.what == 9) {
-                        closePopup(msg);
-                    }
+                public void onSuccess(@NotNull String result) {
+                    processNextSubmission(subs);
                 }
-            };
-            farmerSynced = true;
-            isChildSynced = true;
-            mandateSurveySynced = true;
-            isConsentSynced = true;
-            stakeholderSynced = true;
-            nl.getNetworkQueue(null);
-            nl.syncNetworkQueue(null, syncHandler);
+                @Override
+                public void onError(@NotNull Throwable t) {
+                    Timber.e(t, "Submission sync failed");
+                    processNextSubmission(subs);
+                }
+            });
+        } else {
+            // ✅ All done
+            mainHandler.post(() -> {
+                Timber.d("All CRS items processed");
+                Utilities.closeProgressDialog(m_ProgressDialog, 2000);
+                bindNetworkQueue(true);
+            });
+        }
+    }
+
+
+
+    private void startAllItemSync() {
+        if (isNetworkAvailable(context)) {
+            Timber.d("Coming inside the startAllItemSync method");
+            final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
+            mainHandler.post(() -> {
+                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
+                {
+                    Timber.d("Progress dialog already showing, not opening another");
+                    Utilities.closeProgressDialog(m_ProgressDialog,0);
+                }
+                m_ProgressDialog = Utilities.openProgressDialog(context, message, true);
+                Timber.d("Progress dialog opened for sync all with message: %s, line number is 1120", message);
+
+                if (!farmerSynced || !isChildSynced || !mandateSurveySynced || !isConsentSynced || !stakeholderSynced) {
+                    enableSync();
+                    return;
+                }
+
+                // If queue is empty at the very beginning
+                if (networkQueue == null || networkQueue.getCount() == 0) {
+                    // 🔑 Trigger CRS sync loop immediately
+                    if (customListAdapter_networkQueue != null) {
+                        Timber.d("No queue items, starting CRS sync directly");
+                        syncAllCrsItems();   // <-- instead of starting just one item
+                    } else {
+                        Utilities.closeProgressDialog(m_ProgressDialog, 2000);
+                        enableSync();
+                    }
+                    return; // skip queue sync
+                }
+
+                // Normal queue sync path
+                totalItems = networkQueue.getCount()
+                        + (customListAdapter_networkQueue != null ? customListAdapter_networkQueue.getSubmissions().size() : 0)
+                        + (customListAdapter_networkQueue != null ? customListAdapter_networkQueue.getSubmissionRespondent().size() : 0);
+
+                m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
+                Timber.d("Progress dialog coming here with total items: %d line numer is 1145", totalItems);
+
+                Handler syncHandler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if (msg.what == 1) {
+                            // update progress
+                        } else if (msg.what == 2) {
+                            finishItemSync(msg);
+                            // when queue finishes, CRS sync will be triggered there
+                            mainHandler.post(()-> syncAllCrsItems());   // <-- start CRS sync after queue is done
+                        }
+                    }
+                };
+
+                farmerSynced = true;
+                isChildSynced = true;
+                mandateSurveySynced = true;
+                isConsentSynced = true;
+                stakeholderSynced = true;
+
+                nl.getNetworkQueue(null);
+                nl.syncNetworkQueue(null, syncHandler);
+            });
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
             enableSync();
         }
     }
+
+
 
     public void setupSyncAllBtn(boolean isClickable) {
         if (isClickable) {
@@ -953,6 +1190,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    public void startSubmissionUpload(Submission item) {
+        setupSyncAllBtn(false);
+        bindNetworkQueue(false);
+        this.itemSubmission = item;
+        syncOptionAll = false;
+        checkAuthenticate();
+    }
+
+    public void showRespondentDetails(RespondentEntity item) {
+        setupSyncAllBtn(false);
+        bindNetworkQueue(false);
+        this.itemRespondent = item;
+        syncOptionAll = false;
+        checkAuthenticate();
+    }
+
     public void startItemSyncAuth(int itemId) {
         setupSyncAllBtn(false);
         bindNetworkQueue(false);
@@ -961,6 +1214,144 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         checkAuthenticate();
     }
 
+    public void startSubmissionItemSync(Submission submission,
+                                        CrsApi.CrsApiAsync.CallbackNormal callback) {
+        if (isNetworkAvailable(context)) {
+            mainHandler.post(() -> {
+                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
+                {
+                    Timber.d("Progress dialog already showing, not opening another inside startSubmissionItemSync");
+                    Utilities.closeProgressDialog(m_ProgressDialog,0);
+                }
+
+                m_ProgressDialog = Utilities.openProgressDialog(
+                        context,
+                        res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data),
+                        false
+                );
+                Timber.d("Progress dialog coming here with total items: %d line numer is 1221", totalItems);
+
+
+                Handler syncHandler = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if (msg.what == 1) {
+                            if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                                String pdUpdate = msg.obj.toString();
+                                m_ProgressDialog = Utilities.updateProgressDialog(
+                                        m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate
+                                );
+
+                                Timber.d("msg.arg1 : %d, msg.arg2 : %d, networkQueue.getCount() : %d", msg.arg1, msg.arg2, networkQueue != null ? networkQueue.getCount() : -1);
+                                Timber.d("Progress dialog coming here with total items: %d line numer is 1233", totalItems);
+                            }
+                        } else if (msg.what == 2) {
+                            finishItemSyncSubmission(msg, submission);
+                            if (callback != null) {
+                                callback.onSuccess("Submission synced");
+                            }
+                        }
+                        else if (msg.what == 9) {
+                            Utilities.closeProgressDialog(m_ProgressDialog,2000);
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setTitle(res.getString(R.string.survey_already_synced))
+                                        .setCancelable(false)
+                                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                            dialog.dismiss();
+                                            // ✅ Only continue to next submission after OK
+                                            finishItemSyncSubmission(msg, submission);
+                                            if (callback != null) {
+                                                callback.onSuccess("Submission synced");
+                                            }
+                                        });
+                                builder.show();
+                            });
+                        }
+                        else {
+                            finishItemSyncSubmission(msg, submission);
+                            if (callback != null) {
+                                Timber.e("Submission sync error: %s", msg.obj instanceof Throwable ? ((Throwable) msg.obj).getMessage() : "Unknown error");
+                                Throwable cause = msg.obj instanceof Throwable ? (Throwable) msg.obj : null;
+                                callback.onError(new Exception("Submission sync error", cause));
+                            }
+                        }
+                    }
+                };
+
+                nl.syncNetworkQueueFromHomeSurveyCrs(submission, syncHandler);
+            });
+
+        } else {
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
+            if (callback != null) {
+                callback.onError(new Exception("No network"));
+            }
+        }
+    }
+
+
+
+
+
+    public void startRespondentItemSync(RespondentEntity submission,
+                                        CrsApi.CrsApiAsync.CallbackNormal callback) {
+        if (isNetworkAvailable(context)) {
+            if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
+            {
+                Timber.d("Progress dialog already showing, not opening another inside startRespondentItemSync");
+                Utilities.closeProgressDialog(m_ProgressDialog,0);
+            }
+            m_ProgressDialog = Utilities.openProgressDialog(
+                    context,
+                    res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data),
+                    false
+            );
+            Timber.d("Progress dialog coming here with total items: %d line numer is 1293", totalItems);
+            mainHandler.post(() -> {
+                Handler syncHandler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if (msg.what == 1) {
+                            if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                                String pdUpdate = msg.obj.toString();
+                                m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog,
+                                        msg.arg1, msg.arg2, pdUpdate);
+                                Timber.d("Progress dialog coming here with total items: %d line numer is 1303", totalItems);
+                            }
+                        } else if (msg.what == 2) {
+                            finishItemRespondentSyncSubmission(msg, submission);
+                            if (callback != null) {
+                                callback.onSuccess("Respondent synced");
+                            }
+                        } else {
+                            // handle other flags...
+                            finishItemRespondentSyncSubmission(msg, submission);
+                            if (callback != null) {
+                                Throwable cause = msg.obj instanceof Throwable ? (Throwable) msg.obj : null;
+                                callback.onError(new Exception("Respondent sync error", cause));
+                            }
+                        }
+                    }
+                };
+
+                nl.syncNetworkQueueFromHomeSurveyCrsRespondent(submission, syncHandler);
+            });
+
+        } else {
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            enableSync();
+            if (callback != null) {
+                callback.onError(new Exception("No network"));
+            }
+        }
+    }
+
+
+
+
+
     public void startItemSync(int itemId) {
         if (isNetworkAvailable(context)) {
             mainHandler.post(new Runnable() {
@@ -968,6 +1359,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 @Override
                 public void run() {
                     m_ProgressDialog = Utilities.openProgressDialog(context, res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data), false);
+                    Timber.d("Progress dialog coming here with total items: %d line numer is 1344", totalItems);
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
@@ -1001,6 +1393,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             String pdUpdate = msg.obj.toString();
                             Log.d("HomeActivity", "msg.arg1 : " + msg.arg1 + ",msg.arg2 : " + ",networkQueue.getCount() : " + networkQueue.getCount());
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+                            Timber.d("Progress dialog coming here with total items: %d line numer is 1378", totalItems);
                         }
                     } else if (msg.what == 2) {
                         finishItemSync(msg);
@@ -1040,7 +1433,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         enableSync();
     }
 
-    private void finishItemSync(final Message msg) {
+    private void finishItemSyncSubmission(final Message msg, Submission submission) {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -1049,19 +1442,138 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     m_ProgressDialog.setMessage(pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
-                networkQueue.close();
-                enableSync();
-                networkQueue = dl.getNetworkQueue();
-                String queueTotal = Integer.toString(networkQueue.getCount());
-                queueCount.setText(queueTotal);
-                totalItems = networkQueue.getCount();
-                if (networkQueue.getCount() == 0) {
-                    TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
-                    nomodulestosubmittext.setVisibility(View.VISIBLE);
+
+                CrsApi.CrsApiAsync.updateInstanceSurveyAsync(
+                        submission.getServiceInstanceId(),
+                        context,
+                        new CrsApi.CrsApiAsync.CallbackNormal() {
+                            @Override
+                            public void onSuccess(@NotNull String result) {
+                                Timber.d("Submission Updated");
+
+                                // Wrap ALL UI touches on the main thread
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        enableSync(); // UI-safe
+
+                                        itemSubmission = null;
+
+                                        networkQueue = dl.getNetworkQueue();
+                                        int count = networkQueue.getCount();
+
+                                        queueCount.setText(Integer.toString(count)); // UI-safe
+                                        GlobalState.setCounter(count);
+                                        // totalItems = count;
+
+                                        if (count == 0) {
+                                            TextView nomodulestosubmittext =
+                                                    (TextView) findViewById(R.id.nomodulestosubmittext);
+                                            nomodulestosubmittext.setVisibility(View.VISIBLE); // UI-safe
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(@NotNull Throwable t) {
+                                // If you show a Toast, Snackbar, or change views here,
+                                // also wrap it in runOnUiThread(...)
+                            }
+                        }
+                );
+            }
+        });
+    }
+
+    private void finishItemRespondentSyncSubmission(final Message msg, RespondentEntity submission) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                    String pdUpdate = msg.obj.toString();
+                    m_ProgressDialog.setMessage(pdUpdate);
+                    Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                }
+
+                CrsApi.CrsApiAsync.updateInstanceRespondentAsync(
+                        submission.getId(),
+                        context,
+                        new CrsApi.CrsApiAsync.CallbackNormal() {
+                            @Override
+                            public void onSuccess(@NotNull String result) {
+                                Timber.d("Submission Updated");
+
+                                // Wrap ALL UI touches on the main thread
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        enableSync(); // UI-safe
+
+                                        itemRespondent = null;
+
+                                        networkQueue = dl.getNetworkQueue();
+                                        int count = networkQueue.getCount();
+
+                                        queueCount.setText(Integer.toString(count)); // UI-safe
+                                        GlobalState.setCounter(count);
+                                        // totalItems = count;
+
+                                        if (count == 0) {
+                                            TextView nomodulestosubmittext =
+                                                    (TextView) findViewById(R.id.nomodulestosubmittext);
+                                            nomodulestosubmittext.setVisibility(View.VISIBLE); // UI-safe
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(@NotNull Throwable t) {
+                                // If you show a Toast, Snackbar, or change views here,
+                                // also wrap it in runOnUiThread(...)
+                            }
+                        }
+                );
+            }
+        });
+    }
+
+
+
+
+    private void finishItemSync(final Message msg) {
+        mainHandler.post(() -> {
+            if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                String pdUpdate = msg.obj.toString();
+                m_ProgressDialog.setMessage(pdUpdate);
+                Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+            }
+
+            networkQueue.close();
+            enableSync();
+
+            networkQueue = dl.getNetworkQueue();
+            int count = networkQueue.getCount();
+            queueCount.setText(String.valueOf(count));
+            GlobalState.setCounter(count);
+
+            if (count == 0) {
+                TextView nomodulestosubmittext = findViewById(R.id.nomodulestosubmittext);
+                nomodulestosubmittext.setVisibility(View.VISIBLE);
+
+                // 🔑 Trigger CRS sync loop when queue is empty
+                if (customListAdapter_networkQueue != null) {
+                    syncAllCrsItems();   // <-- instead of starting just one item
                 }
             }
         });
     }
+
+
+
+
+
 
     private void closePopup(final Message msg) {
         mainHandler.post(new Runnable() {
@@ -1075,7 +1587,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 networkQueue = dl.getNetworkQueue();
                 String queueTotal = Integer.toString(networkQueue.getCount());
                 queueCount.setText(queueTotal);
-                totalItems = networkQueue.getCount();
+                // totalItems = networkQueue.getCount();
+                GlobalState.setCounter(networkQueue.getCount());
                 if (networkQueue.getCount() == 0) {
                     TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
                     nomodulestosubmittext.setVisibility(View.VISIBLE);
@@ -1102,9 +1615,36 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button addNewFarmer = findViewById(R.id.AddNewFarmer);
         Button completeModule = findViewById(R.id.CompleteQuestionnaireModule);
         Button addSocialInfra = findViewById(R.id.AddSocialInfrastructure);
-        Button captureLocation = findViewById(R.id.captureLocation);
+        Button revokeOfisSurvey = findViewById(R.id.captureLocation);
         Button recordTraining = findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = findViewById(R.id.downloadSurveyData);
+
+        Button btnRecordTraining = findViewById(R.id.btnRecordTraining);
+        Button btnCaptureLocation = findViewById(R.id.btnCaptureLocation);
+
+
+        /*Crs*/
+        Button addFarmerCrs = findViewById(R.id.AddNewFarmerCrs);
+        Button btnAddCrsSurvey = findViewById(R.id.btnAddCrsSurvey);
+        CardView btnRevokeSurvey = findViewById(R.id.btnRevokeCrsSurvey);
+
+        /*Linear Layout*/
+        LinearLayout layCrs = findViewById(R.id.layCrs);
+        LinearLayout layOfis = findViewById(R.id.layOfis);
+
+        boolean isLiteVersion = Utilities.getBoolFromSharedPrefs(context, "isLiteVersion", false);//function for crs things
+        Timber.d("IsCrs Enabled %s",isLiteVersion);
+        if (isLiteVersion) {
+            layCrs.setVisibility(View.VISIBLE);
+            layOfis.setVisibility(View.GONE);
+        } else {
+            layCrs.setVisibility(View.GONE);
+            layOfis.setVisibility(View.VISIBLE);
+        }
+
+       /* layCrs.setVisibility(View.GONE);
+        layOfis.setVisibility(View.VISIBLE);*/
+
         supplierAndSurvey = (Button) findViewById(R.id.SupplierAndSurveys);
         cvSupplierAndSurvey = findViewById(R.id.cvSupplierAndSurvey);
         btnDistributionModule = findViewById(R.id.btnDistribution);
@@ -1127,16 +1667,30 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                     return;
                 } else {
+                    m_ProgressDialog = Utilities.openProgressDialog(
+                            context,
+                            res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data),
+                            false
+                    );
+
+                    Timber.d("Progress dialog coming here with total items: %d line numer is 1658", totalItems);
                     if (networkQueue.getCount() > 0) {
                         syncOptionAll = true;
                         setupSyncAllBtn(false);
                         bindNetworkQueue(false);
-                        checkAuthenticate();
+                        checkAuthenticate(); // token call
+                    } else {
+                        syncOptionAll = true;
+                        setupSyncAllBtn(false);
+                        // 🔑 Queue empty → trigger CRS sync
+                        checkAuthenticate(); // still call token
+                       // mainHandler.post(() -> syncAllCrsItems());
                     }
                 }
                 lastClickTime = SystemClock.elapsedRealtime();
             }
         });
+
 
         if (Utilities.daysToUpdate(context) > 0 && autotimeEnabled) {
 
@@ -1168,8 +1722,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         context.startActivity(intent);
                     }
                 });
-            }
-            else {
+            } else {
                 cvSupplierAndSurvey.setVisibility(View.GONE);
             }
 
@@ -1191,7 +1744,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
-            captureLocation.setOnClickListener(new View.OnClickListener() {
+            btnCaptureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // nl.syncGPSData();
@@ -1205,16 +1758,55 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+            btnRecordTraining.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, Records.class);
+                    context.startActivity(intent);
+                    //start normal survey
+                }
+            });
+
+
+            addFarmerCrs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, AddFarmerActivity.class);
+                    intent.putExtra(EDIT_FARMER_ID, (long) 0);
+                    intent.putExtra(EDIT_MODE, false);
+                    context.startActivity(intent);
+                }
+            });
+
+            btnAddCrsSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(CrsMainActivity.createIntent(context, ""));
+                }
+            });
+
+            btnRevokeSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(RevokeSurveyActivity.createIntent(context, ""));
+                }
+            });
+
+
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   /* Intent intent = new Intent(context, Records.class);
-                    context.startActivity(intent);*/
-                    //start normal survey
-
-                    startActivity(CrsMainActivity.createIntent(context,""));
+                    startActivity(CrsMainActivity.createIntent(context, ""));
                 }
             });
+
+            revokeOfisSurvey.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(RevokeSurveyActivity.createIntent(context, ""));
+                }
+            });
+
 
         } else {
             addNewFarmer.setAlpha(.5f);
@@ -1223,10 +1815,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setClickable(false);
             addSocialInfra.setAlpha(.5f);
             addSocialInfra.setClickable(false);
-            captureLocation.setAlpha(.5f);
-            captureLocation.setClickable(false);
+            revokeOfisSurvey.setAlpha(.5f);
+            revokeOfisSurvey.setClickable(false);
             recordTraining.setAlpha(.5f);
             recordTraining.setClickable(false);
+
+            /*Crs Survey*/
+            addFarmerCrs.setAlpha(.5f);
+            addFarmerCrs.setClickable(false);
+            btnAddCrsSurvey.setAlpha(.5f);
+            btnAddCrsSurvey.setClickable(false);
+            btnRevokeSurvey.setAlpha(.5f);
+            btnRevokeSurvey.setClickable(false);
+            btnRecordTraining.setAlpha(.5f);
+            btnRecordTraining.setClickable(false);
+            btnCaptureLocation.setAlpha(.5f);
+            btnCaptureLocation.setClickable(false);
         }
     }
 
@@ -1336,10 +1940,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (lastLockedOutTime != -1L) {
             Long currentTime = Utilities.currentTimeInMilliSeconds();
 
-            if(currentTime - lastLockedOutTime < 900000 && currentTime - lastLockedOutTime > 0) {
+            if (currentTime - lastLockedOutTime < 900000 && currentTime - lastLockedOutTime > 0) {
                 return true;
-            }
-            else {
+            } else {
                 Utilities.removeFromSharedPrefs(context, Utilities.LOCKOUT_TIME);
             }
         }
@@ -1443,7 +2046,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (grantResults.length > 0 &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                             grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                            grantResults[2] == PackageManager.PERMISSION_GRANTED ) {
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                         // Permissions granted, proceed with your code
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                             && (!shouldShowRequestPermissionRationale(permissions[0])
@@ -1452,10 +2055,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     )) {
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                    }else {
+                    } else {
                         Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -1465,15 +2068,55 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onTokenCompleted(String status) {
-        enableSync();
+        Timber.d("Token call completed with status: " + status);
+        if (customListAdapter_networkQueue.getSubmissionRespondent().isEmpty() && customListAdapter_networkQueue.getSubmissions().isEmpty())
+        {
+            enableSync();
+        }
         if (!status.equalsIgnoreCase("false")) {
             Utilities.minProgressCount = 0;
+            Timber.d("Token call successful, starting sync with itemId: " + itemId);
+            Timber.d("syncOptionAll: " + syncOptionAll);
             if (syncOptionAll) {
                 startAllItemSync();
             } else {
-                startItemSync(itemId);
+                if (itemId != 0) {
+                    startItemSync(itemId);
+                }
+
+                if (itemSubmission != null) {
+                    startSubmissionItemSync(itemSubmission, new CrsApi.CrsApiAsync.CallbackNormal() {
+                        @Override
+                        public void onSuccess(@NotNull String result) {
+                            Timber.d("Submission Updated in Single click data");
+                        }
+
+                        @Override
+                        public void onError(@NotNull Throwable t) {
+                            //Timber.d("Submission Updated in Single click data");
+                            Timber.e("Excpetion while surver sync "+t.getMessage());
+                        }
+                    });
+                }
+
+                if (itemRespondent != null) {
+                    startRespondentItemSync(itemRespondent, new CrsApi.CrsApiAsync.CallbackNormal() {
+                        @Override
+                        public void onSuccess(@NotNull String result) {
+                            Timber.d("Submission Updated in Single click data");
+
+                        }
+
+                        @Override
+                        public void onError(@NotNull Throwable t) {
+                            Timber.d("Submission Updated in Single click data");
+                        }
+                    });
+                }
+
             }
         } else {
+            Utilities.closeProgressDialog(m_ProgressDialog,2000);
             Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
         }
 
@@ -1494,20 +2137,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 AddInfrastructureActivity.infrastructureID = id;
                 AddInfrastructureActivity.editMode = true;
                 startActivity(intent);
-            } else if (itemType.equalsIgnoreCase("farmer")  ) {
+            } else if (itemType.equalsIgnoreCase("farmer")) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 intent.putExtra(EDIT_MODE, true);
                 startActivity(intent);
-            }else if (itemType.equalsIgnoreCase("Edit farmer")  ) {
+            } else if (itemType.equalsIgnoreCase("Edit farmer")) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 intent.putExtra("farmId", (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 intent.putExtra(EDIT_FARMER_MODE, true);
-                intent.putExtra("isHome",true);
+                intent.putExtra("isHome", true);
                 startActivity(intent);
-            }else if (itemType.equalsIgnoreCase("stakeholder")) {
+            } else if (itemType.equalsIgnoreCase("stakeholder")) {
                 Intent intent = new Intent(this, AddFarmerActivity.class);
                 intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_STAKEHOLDER_ID)));
                 intent.putExtra(Utilities.STAKE_HOLDER_REGISTRATION, true);
@@ -1517,7 +2160,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Intent intent = new Intent(this, ViewFarmerActivity.class);
                 ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 startActivity(intent);
-            }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
+            } else if (itemType.equalsIgnoreCase("farmpolygon")) {
                 Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
                 final String lFarmID = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                 DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
@@ -1609,8 +2252,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putBoolean("edit_mode", true);
                 in.putExtras(bundle);
                 startActivity(in);
-            }
-            else if (itemType.equalsIgnoreCase("Supplier Survey")) {
+            } else if (itemType.equalsIgnoreCase("Supplier Survey")) {
                 int moduleId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                 String supplierId = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 String supplierName = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
@@ -1751,10 +2393,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         } else if (msg.what == 2) {
                             toastMsg = "AUTO TRIGGERED UNSUCCESSFUL";
                         }
-                    } catch(ClassCastException e) {
+                    } catch (ClassCastException e) {
                         toastMsg = "AUTO TRIGGERED UNSUCCESSFUL";
-                    }
-                    finally {
+                    } finally {
                         String finalToastMsg = toastMsg;
                         runOnUiThread(new Runnable() {
                             @Override

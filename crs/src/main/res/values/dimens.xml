@@ -199,7 +199,7 @@
     <dimen name="padding_42">42dp</dimen>
     <dimen name="padding_50">50dp</dimen>
     <dimen name="padding_180">180dp</dimen>
-
+    <dimen name="bottom_nav_padding">24dp</dimen>
     <dimen name="fa_image_size">32dp</dimen>
     <dimen name="edit_icon">12sp</dimen>
     <dimen name="menu_item_icon_size">24dp</dimen>

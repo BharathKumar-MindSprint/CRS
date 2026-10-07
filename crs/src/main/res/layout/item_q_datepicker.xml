@@ -37,21 +37,32 @@
 
         <Button
             android:id="@+id/btnPickDate"
-            android:text="Select date"
+            android:text="@string/select_date"
             android:backgroundTint="@color/colorPrimary"
+            android:drawableStart="@drawable/ic_calendar"
+            android:drawableTint="@color/white"
+            android:drawablePadding="@dimen/padding_8"
+            android:textColor="@color/white"
             android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_6"
+            android:layout_marginBottom="@dimen/margin_6"
+            android:layout_height="@dimen/width_05"
+            android:background="@color/gray_view_bg"
+            />
+
         <TextView
             android:id="@+id/tvSelectedDate"
-            android:textSize="14sp"
             android:textColor="#333333"
             android:layout_marginTop="8dp"
             tools:visibility="visible"
             android:visibility="gone"
-            style="@style/medium_dark_small_tv"
-            tools:text="12 Dec 2023"
+            style="@style/regular_medium_tv"
+            tools:text="2026-12-31"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

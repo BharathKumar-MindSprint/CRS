@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.CRS" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Brand colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/safety_orange</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/primary</item>
+
+        <item name="android:fontFamily">@font/gtwalsheimpro_regular</item>
+        <item name="windowActionBar">false</item>
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+
+        <!-- Ensure dark status bar icons are DISABLED -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

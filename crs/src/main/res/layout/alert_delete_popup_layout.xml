@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:cardCornerRadius="@dimen/margin_4">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/txtAlertHeading"
+                style="@style/medium_gray_x_large_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_20"
+                android:layout_marginTop="@dimen/margin_20"
+                android:text="@string/delete_confirmation" />
+
+
+            <TextView
+                android:id="@+id/txtAlertDesc"
+                style="@style/medium_black_large_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_20"
+                android:layout_marginTop="@dimen/margin_4"
+                android:text="@string/delete_desc" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_20"
+                android:layout_marginTop="@dimen/margin_24"
+                android:id="@+id/layBtnNegative"
+                android:layout_marginEnd="@dimen/margin_20"
+                android:layout_marginBottom="@dimen/margin_20"
+                android:weightSum="2">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_40"
+                    android:layout_marginEnd="@dimen/margin_8"
+                    android:id="@+id/layCancel"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/medium_glory_tv"
+                        android:id="@+id/txtCancel"
+                        android:layout_centerInParent="true"
+                        android:text="@string/cancel"
+                        />
+
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_40"
+                    android:layout_marginEnd="@dimen/margin_8"
+                    android:id="@+id/layBtnPositive"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_fill_red_color">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/medium_glory_tv"
+                        android:textColor="@color/white"
+                        android:id="@+id/txtDelete"
+                        android:layout_centerInParent="true"
+                        android:text="@string/delete"
+                        />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

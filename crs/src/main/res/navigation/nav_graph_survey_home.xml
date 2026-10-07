@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_survey_home"
-    app:startDestination="@id/surveyHomeFragment">
+    app:startDestination="@id/crsHomeIntentFragment">
 
     <fragment
         android:id="@+id/surveySurveyListFragment"
@@ -14,16 +14,23 @@
         <argument
         android:name="farmerId"
         app:argType="string" />
-
         <action
             android:id="@+id/action_surveySurveyListFragment_to_crsConsentFragment"
             app:destination="@id/crsConsentFragment" />
+        <action
+            android:id="@+id/action_surveySurveyListFragment_to_surveyFragment"
+            app:destination="@id/surveyFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/surveyFragment"
         tools:layout="@layout/fragment_survey_crs"
         android:name="com.olam.digital.crs.fragment.SurveyFragment"
-        android:label="SurveyFragment" />
+        android:label="SurveyFragment" >
+        <action
+            android:id="@+id/action_surveyFragment_to_crsSuccessFragment"
+            app:destination="@id/crsSuccessFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/surveyHomeFragment"
@@ -33,6 +40,9 @@
         <action
             android:id="@+id/action_surveyHomeFragment_to_surveySurveyListFragment"
             app:destination="@id/surveySurveyListFragment" />
+        <action
+            android:id="@+id/action_surveyHomeFragment_to_crsCommunityRegisterFragment"
+            app:destination="@id/crsCommunityRegisterFragment" />
     </fragment>
     <fragment
         android:id="@+id/crsConsentFragment"
@@ -42,5 +52,36 @@
         <action
             android:id="@+id/action_crsConsentFragment_to_surveyFragment"
             app:destination="@id/surveyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/crsSuccessFragment"
+        tools:layout="@layout/layout_survey_submit_success"
+        android:name="com.olam.digital.crs.fragment.CrsSuccessFragment"
+        android:label="CrsSuccessFragment" />
+    <fragment
+        android:id="@+id/crsCommunityRegisterFragment"
+        tools:layout="@layout/layout_fragment_add_community_survey"
+        android:name="com.olam.digital.crs.fragment.CrsCommunityRegisterFragment"
+        android:label="CrsCommunityRegisterFragment" />
+    <fragment
+        android:id="@+id/crsHomeIntentFragment"
+        tools:layout="@layout/layout_fragment_home_crs_select"
+        android:name="com.olam.digital.crs.fragment.CrsHomeIntentFragment"
+        android:label="CrsHomeIntentFragment" >
+        <action
+            android:id="@+id/action_crsHomeIntentFragment_to_crsProfileFragment"
+            app:destination="@id/crsProfileFragment" />
+        <action
+            android:id="@+id/action_crsHomeIntentFragment_to_surveyHomeFragment"
+            app:destination="@id/surveyHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/crsProfileFragment"
+        tools:layout="@layout/layout_fragment_crs_profile"
+        android:name="com.olam.digital.crs.fragment.CrsProfileFragment"
+        android:label="CrsProfileFragment" >
+        <action
+            android:id="@+id/action_crsProfileFragment_to_surveyHomeFragment"
+            app:destination="@id/surveyHomeFragment" />
     </fragment>
 </navigation>

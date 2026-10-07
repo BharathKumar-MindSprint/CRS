@@ -103,5 +103,6 @@
     <color name="border_gray">#D9D9D9</color>
     <color name="light_orange">#FFFBF7</color>
     <color name="ic_orange">#FB8C00</color>
+    <color name="textBalance">#364153</color>
 
 </resources>

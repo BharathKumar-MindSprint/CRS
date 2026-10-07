@@ -533,6 +533,7 @@
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
     <string name="download_nationalid_enumerator">Downloading NationalID details</string>
     <string name="download_nationalidtype_enumerator">Downloading NationalID Types</string>
+    <string name="download_CRS_PROFILES_enumerator">Downloading CRS Profile </string>
     <string name="visit_detail">Visit Detail</string>
     <string name="child_visit_details_inserted">Child Visit Details Successfully Registered</string>
     <string name="child_register_successfully">Child registered Successfully</string>

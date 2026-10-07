@@ -9,10 +9,14 @@ data class FarmerModuleView(
     val surveyType: Int?,
     val channel: Int?,
     val moduleRawJson: String?,
+    val submitedCrsSurveyFarmerId: String?,
+    val surveyInstanceId: Long?,
 
     // ===== Assignment =====
     val assignmentId: Long?,
     val assignmentType: String?,
+    val communityIds: List<Int>? = null,
+    val mandatoryQuestionIds: List<Int>? = null,
     val countryId: Long?,
     val startDateEpoch: String?,
     val surveyDuration: Int?,
@@ -30,12 +34,49 @@ data class FarmerModuleView(
     // ===== Question count =====
     val questionCount: Int,
 
-    // ✅ ===== Consent fields =====
+    // ===== Consent fields =====
     val consentId: Long?,
     val consentText: String?,
     val consentType: String?,
-    val consentPath: String?
-): Serializable
+    val consentPath: String?,
+
+    val isConsentEnabled: Boolean?=null,
+
+    // ===== Recurrence =====
+    val recurrenceType: String? = null,
+    val recurrenceFrequency: Int? = null,
+    val disabledMonths: String? = null
+) : Serializable {
+
+    // ✅ Computed properties parse JSON flags safely
+    val isChildLabour: Boolean
+        get() = parseFlag("isChildLabour")
+
+    val isFarmSurvey: Boolean
+        get() = parseFlag("isFarmSurvey")
+
+    val isPlotSurvey: Boolean
+        get() = parseFlag("isPlotSurvey")
+
+    val isOfflineDownload: Boolean
+        get() = parseFlag("isOfflineDownload")
+
+    // Convert disabledMonths string like "6,7" into a list
+    val disabledMonthsList: List<String>
+        get() = disabledMonths?.split(",")?.map { it.trim() } ?: emptyList()
+
+    // Helper to parse boolean flags from assignmentRawJson
+    private fun parseFlag(key: String): Boolean {
+        return try {
+            val obj = org.json.JSONObject(assignmentRawJson ?: "{}")
+            obj.optBoolean(key, false)
+        } catch (e: Exception) {
+            false
+        }
+    }
+}
+
+
 
 data class FarmerScope(
     val farmerId: String,

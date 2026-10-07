@@ -54,10 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:drawableStart="@drawable/ic_upload_sync"
+                android:drawableTint="@color/white"
+                android:drawableStart="@drawable/ic_edit_sign"
                 android:text="@string/choose_file"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
+                android:textColor="@color/white"
+                android:drawablePadding="@dimen/padding_8"
                 android:backgroundTint="@color/colorPrimary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtDescription" />
@@ -79,6 +82,7 @@
 
                 <!-- Icon -->
                 <ImageView
+                    android:saveEnabled="false"
                     android:id="@+id/imgFileType"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -101,6 +105,7 @@
 
                 <!-- Remove Button -->
                 <ImageView
+                    android:saveEnabled="false"
                     android:id="@+id/imgRemove"
                     android:layout_width="24dp"
                     android:layout_height="24dp"

@@ -44,6 +44,10 @@
                 android:id="@+id/btnUpload"
                 android:text="@string/upload_photo"
                 android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:drawablePadding="@dimen/padding_8"
+                android:drawableTint="@color/white"
+                android:drawableStart="@drawable/ic_edit_sign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -52,11 +56,24 @@
                 android:text="@string/clear"
                 android:layout_marginStart="12dp"
                 android:visibility="gone"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/colorLightRed"
                 tools:visibility="visible"
+                android:drawablePadding="@dimen/padding_8"
+                android:drawableTint="@color/white"
+                android:drawableStart="@drawable/ic_delete_red_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_6"
+            android:layout_marginBottom="@dimen/margin_6"
+            android:layout_height="@dimen/width_05"
+            android:background="@color/gray_view_bg"
+            />
+
 
         <ImageView
             android:id="@+id/ivPreview"

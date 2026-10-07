@@ -3412,9 +3412,11 @@ public class DynamicQuestions {
                             public void run() {
                                 editText.setError(null);
                             }
-                        }, 3000);
+                        }, 3000);   //10
                         return "";
                     }
+
+
 
                     String afterDecimal = newValue.substring(dotIndex + 1);
                     if (afterDecimal.length() > maxDecimalLimit) {

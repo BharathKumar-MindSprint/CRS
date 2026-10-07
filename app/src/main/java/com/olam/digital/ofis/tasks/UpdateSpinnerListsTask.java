@@ -7,6 +7,8 @@ import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.olam.digital.crs.viewmodel.api.CrsApi;
+
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -51,9 +53,13 @@ class UpdateSpinnerListsTask extends DatabaseTask {
 
             JSONObject spinnerResponse = params[0];
 
+            CrsApi.insertCountriesProductDetailsRunBlocking(context, params);
+
+
             if (spinnerResponse.getInt("resultcount") > 0) {
 
                 JSONObject response = spinnerResponse.getJSONObject("outputdata");
+
 
                 // get the various sub lists
                 JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray, subdistrictArray;

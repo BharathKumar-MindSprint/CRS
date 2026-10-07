@@ -114,6 +114,7 @@
 
     <color name="colorGreen">#6DBA00</color>
     <color name="colorDarkGreen">#44BF45</color>
+    <color name="colorActiveGreen">#016630</color>
     <color name="colorRed">#C22424</color>
     <color name="colorLightRed">#f43232</color>
 

@@ -5632,7 +5632,10 @@ public class DataLayer {
             String submittedModulesJSON;
             if (stakeholderId != null) {
                 MultiStakeHolder multiStakeHolder = ofisRoomDB.multiStakeHolderDao().getStakeHolderById(Long.parseLong(stakeholderId));
-                submittedModulesJSON = (multiStakeHolder.submitted_modules == null) ? "null" : multiStakeHolder.submitted_modules;
+               // submittedModulesJSON = (multiStakeHolder.submitted_modules == null) ? "null" : multiStakeHolder.submitted_modules;
+                submittedModulesJSON = (multiStakeHolder == null || multiStakeHolder.submitted_modules == null)
+                        ? "null"
+                        : multiStakeHolder.submitted_modules;
                 ofisRoomDB.multiStakeHolderDao().updateSubmittedModulesById(stakeholderId, updateModules(submittedModulesJSON, newModule));
             } else {
                 Cursor farmer = getFarmerById(farmerId);

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:background="@drawable/editext_cursor_round_sharp_edge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:textStyle="bold"
+            tools:text="1)Lorem ipsum dolor sit amet, consectetur adipiscing elit?"
+            android:textSize="16sp"
+            style="@style/medium_dark_gray_medium_tv_noto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvHelp"
+            android:textColor="#666666"
+            android:textSize="13sp"
+            android:visibility="gone"
+            style="@style/regular_small_tv"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/etAnswer"
+            android:layout_marginTop="8dp"
+            android:imeOptions="actionNext"
+            style="@style/edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:longClickable="true"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:cursorVisible="true"
+            />
+
+        <TextView
+            android:id="@+id/tvError"
+            android:textColor="#D32F2F"
+            android:textSize="12sp"
+            android:visibility="gone"
+            style="@style/regular_small_tv"
+            android:layout_marginTop="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.olam.digital.crs.adapter.NonScrollingRecyclerView
+            android:id="@+id/rvChildQuestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_q_edittext" />
+
+    </LinearLayout>
+</layout>

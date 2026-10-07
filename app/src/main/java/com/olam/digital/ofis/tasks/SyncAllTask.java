@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+
 import androidx.appcompat.app.AlertDialog;
 
 import android.util.Base64;
@@ -21,6 +22,11 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.olam.digital.crs.room.CrsCommunityRegionMappingEntity;
+import com.olam.digital.crs.room.CrsConsent;
+import com.olam.digital.crs.room.CrsOptionEntity;
+import com.olam.digital.crs.viewmodel.api.CrsApi;
+
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Common.Constants.IAPIConstants;
 import com.olam.digital.ofis.Common.Constants.StringConstants;
@@ -56,8 +62,11 @@ import com.olam.digital.ofis.mvvmmodule.model.photocheckbox.ResponseModel.PhotoC
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+
 import android.os.Handler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,11 +87,20 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import timber.log.Timber;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_DISTRIBUTION_MODULES_DETAILS;
 import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS;
 import static com.olam.digital.ofis.tasks.SyncTaskOperationType.SYNC_MODULE_ID_BY_ENUMERATOR_ID;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * Created by ben on 24/02/16.
@@ -108,10 +126,11 @@ public class SyncAllTask extends SyncTask {
     }
 
     public static final String TAG = "SyncAllTask";
-    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,assignmentCheckResponse, notificationResponse, conditionalLogicResponse, distributionModuleResponse, moduleIdResponse, assignedFarmersAgainstSurvey = new JSONObject();
+
+    public JSONObject spinnerResponse, crsProfileResponse, crsAllCommunityProfiles, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, trainingResponse, tasksResponse, answerResponse;
+    public static JSONObject childResponse, assignmentCheckResponse, notificationResponse, conditionalLogicResponse, distributionModuleResponse, moduleIdResponse, assignedFarmersAgainstSurvey = new JSONObject();
     public static JSONObject nationalidresponse, enumnationalidresponse;
-    public static  JSONObject multifarmRoleResponse,stakeHolderResponse;
+    public static JSONObject multifarmRoleResponse, stakeHolderResponse;
     public static JSONObject localUnitResponse, photoCheckBoxResponse, dmResponseObject, dmFollowUpResponse, supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse;
     public static JSONArray notificationArray = new JSONArray();
     public static JSONArray moduleArray = new JSONArray();
@@ -123,7 +142,7 @@ public class SyncAllTask extends SyncTask {
     private SyncAllTaskDelegate delegate;
     AnswerRequestDTO answerRequestDTO;
     int notificationModuleId;
-    int repeaterCount ;
+    int repeaterCount;
 
     OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
 
@@ -163,20 +182,28 @@ public class SyncAllTask extends SyncTask {
                 }
 
             }
-        }
-        else if (op == SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO) {
+        } else if (op == SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO) {
             //  syncSpinners();
             syncDeviceInfo();
 
         } else if (op == SyncTaskOperationType.SYNC_SPINNERS) {
             syncSpinners();
-        } else if (op == SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT) {
+        } else if (op == SyncTaskOperationType.SYNC_ALL_CRS_PROFILES) {
+            getAllCrsProfiles();
+        } else if (op == SyncTaskOperationType.SYNC_ALL_COMMUNITY_PROFILES) {
+            getAllCrsCommunityProfiles();
+        }
+        else if (op==SyncTaskOperationType.SYNC_ALL_CONDITIONAL_QUESTIONS_MAIN){
+            getAllConditionalQuestionDetails();
+        }
+
+        else if (op == SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT) {
             syncEnumAssignmentCheck();
 
-        }else if (op == SyncTaskOperationType.SYNC_LOCAL_UNIT) {
+        } else if (op == SyncTaskOperationType.SYNC_LOCAL_UNIT) {
             try {
                 syncLocalUnit();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (op == SyncTaskOperationType.SYNC_MODULES) {
@@ -213,14 +240,11 @@ public class SyncAllTask extends SyncTask {
 
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
-        }
-        else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
+        } else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
             syncMultiFarmRoles();
-        }
-        else if (op == SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS) {
+        } else if (op == SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS) {
             syncExistingStakeHolders();
-        }
-        else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
+        } else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
                 syncChildEnumerator();
             } catch (Exception e) {
@@ -234,61 +258,52 @@ public class SyncAllTask extends SyncTask {
                 e.printStackTrace();
             }
 
-        }else if (op == SyncTaskOperationType.SYNC_ENUM_NID) {
+        } else if (op == SyncTaskOperationType.SYNC_ENUM_NID) {
             try {
                 syncEnumNationalIDs();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }else if (op == SyncTaskOperationType.SYNC_HHGPS) {
+        } else if (op == SyncTaskOperationType.SYNC_HHGPS) {
             try {
                 syncHouseholdEnumerator();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if (op == SyncTaskOperationType.SYNC_SURVEYANSWERS) {
+        } else if (op == SyncTaskOperationType.SYNC_SURVEYANSWERS) {
             try {
                 syncSurveyAnswers();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if (op == SyncTaskOperationType.SYNC_SMART_NOTIFICATION) {
+        } else if (op == SyncTaskOperationType.SYNC_SMART_NOTIFICATION) {
             try {
                 String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
                 notificationModuleId = Integer.parseInt(ids[0]);
-                syncSmartNotification(notificationModuleId,1);
+                syncSmartNotification(notificationModuleId, 1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if ( op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
+        } else if (op == SyncTaskOperationType.SYNC_PHOTO_CHECKBOX) {
             syncPhotoCheckBoxData(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxSyncDate());
-        }
-        else if (op == SyncTaskOperationType.SYNC_DM_MODULES) {
+        } else if (op == SyncTaskOperationType.SYNC_DM_MODULES) {
             GetAllDiagnosticModule();
-        }
-        else if (op == SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES) {
+        } else if (op == SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES) {
             GetAllFollowUpDMData();
-        }
-        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_DATA) {
+        } else if (op == SyncTaskOperationType.SYNC_SUPPLIER_DATA) {
             syncSupplierDetails();
-        }
-        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA) {
+        } else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA) {
             syncSupplierSurveys();
-        }
-        else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE) {
+        } else if (op == SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE) {
             getAllSubmittedModules();
-        }
-        else if (op == SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS) {
+        } else if (op == SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS) {
             syncConditionalLogicDetails();
-        }
-        else if (op == SYNC_MODULE_ID_BY_ENUMERATOR_ID) {
+        } else if (op == SYNC_MODULE_ID_BY_ENUMERATOR_ID) {
             getModuleIdsByEnumeratorId();
-        }
-        else if (op == SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS) {
+        } else if (op == SYNC_ASSIGNED_FARMER_AGAINST_SURVEYS) {
             getAssignedFarmerAgainstSurveys();
-        }
-        else if (op == SYNC_DISTRIBUTION_MODULES_DETAILS) {
+        } else if (op == SYNC_DISTRIBUTION_MODULES_DETAILS) {
             getDistributionModuleData();
         }
 
@@ -301,7 +316,7 @@ public class SyncAllTask extends SyncTask {
         JSONObject inputArgs = new JSONObject();
         try {
             inputArgs.put("deviceId", DeviceIdExtractor.fetchDeviceID(context));
-            inputArgs.put("firebaseToken",Utilities.getFirebaseTokenSharedPrefs(context));
+            inputArgs.put("firebaseToken", Utilities.getFirebaseTokenSharedPrefs(context));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -311,6 +326,24 @@ public class SyncAllTask extends SyncTask {
 
                 if (postResponse.isSuccessful()) {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_master_details));
+                    try {
+
+                        ResponseBody responseBody = postResponse.body();
+                        String bodyString = responseBody != null ? responseBody.string() : null;
+                        Timber.d("Raw API response: %s", bodyString);
+                        if (bodyString != null && !bodyString.isEmpty()) {
+                            JSONObject jsonObject = new JSONObject(bodyString);
+                            boolean isCrsSurvey = jsonObject.optBoolean("isCrsSurvey", false);
+                            boolean isLiteVersion = jsonObject.optBoolean("isLiteVersion", false);
+                            Timber.d("isCrsSurvey flag received: %s", isCrsSurvey);
+                            Timber.d("isCrsSurvey flag received: %s", isLiteVersion);
+                            Utilities.saveToSharedPrefs(context, "isCrsSurvey", null, isCrsSurvey);
+                            Utilities.saveToSharedPrefs(context, "isLiteVersion", null, isLiteVersion);
+                        }
+                    } catch (Exception exception) {
+                        Timber.e("Exception in saving isCrsSurvey flag: %s", exception.getMessage());
+                        Timber.e("Exception in saving isLiteVersion flag %s", exception.getMessage());
+                    }
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
                 } else {
                     try {
@@ -321,8 +354,6 @@ public class SyncAllTask extends SyncTask {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
 
@@ -337,7 +368,6 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
-
 
 
     private void syncSipModules() throws JSONException {
@@ -366,7 +396,7 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
                     } else {
-                       // postFailureMessage(response);
+                        // postFailureMessage(response);
                         //need to revert
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_modules));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
@@ -425,13 +455,21 @@ public class SyncAllTask extends SyncTask {
             if (pd != null && pd.isShowing()) {
                 Utilities.closeProgressDialog(pd, 4000);
             }
-            DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO,ansCount);
+            DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO, ansCount);
         } else if (operation == SyncOperation.START_IMPORT) {
             // Goes directly to the AsyncTask
             new UpdateFarmersTask(context).execute(farmerResponse);
 
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
+
+          /*  new UpdateCrsProfileListTask(context,pd).execute(crsProfileResponse);
+            crsProfileResponse = null;
+
+            new UpdateAllCommunityProfileListsTask(context,pd).execute(crsAllCommunityProfiles);
+            crsAllCommunityProfiles = null;
+*/
+
 
             new UpdateModuleListsTask(context).execute(moduleResponse, conditionalLogicResponse, moduleIdResponse, assignedFarmersAgainstSurvey);
             moduleResponse = null;
@@ -477,7 +515,7 @@ public class SyncAllTask extends SyncTask {
             dmResponseObject = null;
             dmFollowUpResponse = null;
 
-            new UpdateSupplierTask(context).execute(supplierResponse,supplierSurveyResponse, supplierSurveySubmittedResponse);
+            new UpdateSupplierTask(context).execute(supplierResponse, supplierSurveyResponse, supplierSurveySubmittedResponse);
             supplierResponse = null;
             supplierSurveyResponse = null;
 
@@ -490,12 +528,23 @@ public class SyncAllTask extends SyncTask {
             updateDistributionModuleResponse(distributionModuleResponse);
             distributionModuleResponse = null;
 
-            if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
+            if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
+                Timber.d("First run setup completed, launching HomeActivity");
             }
-            if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
-                photoCheckboxDownload();
-            }
+            Timber.d("Completed all updates, checking if photo checkbox data needs to be downloaded");
+            Timber.d("Photo checkbox count is %s", CrsApi.getPhotoCheckConsentBoxCount(context));
+
+               new Handler().postDelayed(new Runnable() {
+                   @Override
+                   public void run() {
+                       Timber.d("Photo Check box count is %s",CrsApi.getPhotoCheckBoxCount(context));
+                       if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty() || CrsApi.getPhotoCheckBoxCount(context) != 0 || CrsApi.getPhotoCheckConsentBoxCount(context)!=0) {
+                           photoCheckboxDownload();
+                       }
+                   }
+               },3500);
+
 
         } else if (operation == SyncOperation.ERROR_RECEIVED) {
             if (pd != null && pd.isShowing()) {
@@ -628,14 +677,14 @@ public class SyncAllTask extends SyncTask {
     private void FailureGetRefreshToken(JSONObject response) throws IOException, JSONException {
 
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        String clientId=Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
-        String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
-        String grantType=context.getResources().getString(R.string.refresh_token);
-        String refreshToken=authenticationDTO.getRefreshToken();
+        String clientId = Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
+        String clientSecret = Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Secret);
+        String grantType = context.getResources().getString(R.string.refresh_token);
+        String refreshToken = authenticationDTO.getRefreshToken();
 
         // Auth Call
         AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId, clientSecret, grantType, refreshToken);
         retrofit2.Response authResponse = authCall.execute();
 
 
@@ -668,12 +717,12 @@ public class SyncAllTask extends SyncTask {
                                 item = countryArray.getJSONObject(j);
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
-                                Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
-                                Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
+                                Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR, null, isEnableAgroLearn);
+                                Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR, null, item.getBoolean("isEnableDiagnosticModule"));
                                 Utilities.saveToSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, null, item.getBoolean(Utilities.IS_SUPPLIER_ENABLED));
 
-                                if(isODOrigin){
-                                    String code = item.getString("countryIsoCode").substring(0,2);
+                                if (isODOrigin) {
+                                    String code = item.getString("countryIsoCode").substring(0, 2);
                                     isoCodes.add(code);
                                     String countryId = item.getString("countryId");
                                     countryIds.add(countryId);
@@ -691,12 +740,13 @@ public class SyncAllTask extends SyncTask {
                             //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
 
-                        }catch (Exception e){e.printStackTrace();}
-
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
 
                     } else {
-                      //  postFailureMessage(response);
+                        //  postFailureMessage(response);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                         //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
@@ -725,6 +775,292 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
+
+    private @NotNull JSONObject buildCommunityProfilesRequestBody(
+            @NotNull List<CrsCommunityRegionMappingEntity> mappings,
+            @Nullable Collection<Integer> profileIds // pass selected profile IDs from UI or separate API
+    ) throws JSONException {
+        // Use Sets to deduplicate
+        Set<Integer> countryIds = new LinkedHashSet<>();
+        Set<Integer> regionIds = new LinkedHashSet<>();
+        Set<Integer> districtIds = new LinkedHashSet<>();
+        Set<Integer> placeIds = new LinkedHashSet<>();
+        Set<Integer> productIds = new LinkedHashSet<>();
+        Set<Integer> profileIdSet = new LinkedHashSet<>();
+
+        // Collect IDs from mapping list
+        for (CrsCommunityRegionMappingEntity e : mappings) {
+            addIfPositive(countryIds, e.getCountryId());
+            addIfPositive(regionIds, e.getRegionId());
+            addIfPositive(districtIds, e.getDistrictId());
+            addIfPositive(placeIds, e.getPlaceId());
+            addIfPositive(productIds, e.getProductId());
+        }
+
+        // Add profile IDs (external selection)
+        if (profileIds != null) {
+            for (Integer pid : profileIds) {
+                addIfPositive(profileIdSet, pid);
+            }
+        }
+
+        // Construct JSON
+        JSONObject body = new JSONObject();
+        body.put("countryIds", toJsonArray(countryIds));
+        body.put("profileIds", toJsonArray(profileIdSet));
+        body.put("regionIds", toJsonArray(regionIds));
+        body.put("productIds", JSONObject.NULL);
+        body.put("districtIds", JSONObject.NULL);
+        body.put("placeIds", JSONObject.NULL);
+
+        return body;
+    }
+
+    private void addIfPositive(@NotNull Set<Integer> set, @Nullable Integer value) {
+        if (value != null && value > 0) {
+            set.add(value);
+        }
+    }
+
+    private @NotNull JSONArray toJsonArray(@NotNull Collection<Integer> values) {
+        JSONArray arr = new JSONArray();
+        for (Integer v : values) {
+            arr.put(v);
+        }
+        return arr;
+    }
+
+
+    private void getAllCrsCommunityProfiles() {
+        CrsApi.CrsApiAsync.getAllCrsCommunitySurvey(context, new JSONObject[]{spinnerResponse}, new CrsApi.CrsApiAsync.CallBackSCrsCommunitySurvey() {
+            @Override
+            public void onSuccess(@NotNull List<@NotNull CrsCommunityRegionMappingEntity> result) {
+                JSONObject requestBody = new JSONObject();
+                List<Integer> selectedProfileIds = CrsApi.CrsApiAsync.getSelectedCrsProfileIds(context); // Implement this method to fetch selected profile IDs from UI or separate API
+                try {
+                    requestBody = buildCommunityProfilesRequestBody(result, selectedProfileIds);
+                } catch (JSONException ex) {
+                    FirebaseCrash.report(new Exception("Failed to build request body for GET_ALL_CRS_COMMUNITY_PROFILES", ex));
+                    publishProgress(SyncOperation.ERROR_RECEIVED, "Failed to build request body");
+                    return;
+                }
+                okHttpPost(context, IAPIConstants.GET_ALL_CRS_COMMUNITY_PROFILES, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, final Response postResponse) {
+                        try {
+                            JSONArray response = new JSONArray(postResponse.body().string());
+                            if (postResponse.isSuccessful()) {
+                                JSONObject wrapper = new JSONObject();
+                                wrapper.put("profiles", response);
+                                crsAllCommunityProfiles = wrapper;
+                                CrsApi.insertAllCrsCommunityProfilesBlocking(context, response);
+                                Log.d("Farmer Assignment: ", assignedFarmersAgainstSurvey.toString());
+                            } else {
+                                //postFailureMessage(response);
+                            }
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_community_distribution_data));
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ALL_CONDITIONAL_QUESTIONS_MAIN);
+
+                        } catch (JSONException | IOException e) {
+                            FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Crs Community Profiles", e));
+                            e.printStackTrace();
+                        } finally {
+                            postResponse.close();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        String failureMessage = res.getString(R.string.networking_error);
+                        if (e != null) {
+                            FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing Crs Community Profiles", e));
+                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        }
+
+                        publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+                    }
+
+                });
+
+            }
+
+            @Override
+            public void onError(@NotNull Throwable e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing Crs Community Profiles", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+    }
+
+
+   /* private void getAllQuestionnaireDataCondition() {
+        okHttpGet(context, IAPIConstants.GET_ALL_QUESTIONNAIRE_DATA_CONDITION, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    assert postResponse.body() != null;
+                    String jsonString = postResponse.body().string();
+                    JSONObject response = new JSONObject(jsonString);
+
+                    if (postResponse.isSuccessful()) {
+                        try {
+                            // Extract conditionalType array
+                            JSONArray conditionalTypes = response.optJSONArray("conditionalType");
+
+                            if (conditionalTypes != null) {
+                                // Insert into DB or handle entity conversion
+                                CrsApi.insertAllConditionalTypesBlocking(context, conditionalTypes);
+
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING,
+                                        res.getString(R.string.download_questionnaire_data));
+
+                                delegate.didCompleteSyncOperation(SyncAllTask.this,
+                                        SyncTaskOperationType.SYNC_ALL_CONDITIONAL_QUESTIONS_MAIN);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING,
+                                res.getString(R.string.download_questionnaire_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this,
+                                SyncTaskOperationType.SYNC_ALL_CONDITIONAL_QUESTIONS_MAIN);
+                    }
+
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error Questionnaire Data", e));
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing Questionnaire Data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+    }*/
+
+
+    private void getAllConditionalQuestionDetails() {
+        okHttpGet(context, IAPIConstants.GET_ALL_CONDITIONAL_QUESTION_DETAILS, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    assert postResponse.body() != null;
+                    String jsonString = postResponse.body().string();
+                    JSONArray response = new JSONArray(jsonString);
+
+                    if (postResponse.isSuccessful()) {
+                        try {
+                            // Insert into DB or handle entity conversion
+                            CrsApi.insertAllConditionalQuestionDetailsBlocking(context, response);
+
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING,
+                                    res.getString(R.string.download_conditional_question_details));
+
+                            delegate.didCompleteSyncOperation(SyncAllTask.this,
+                                    SyncTaskOperationType.SYNC_NATIONALIDS);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING,
+                                res.getString(R.string.download_conditional_question_details));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this,
+                                SyncTaskOperationType.SYNC_NATIONALIDS);
+                    }
+
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error Conditional Question Details", e));
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing Conditional Question Details", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+        });
+    }
+
+
+
+    private void getAllCrsProfiles() {
+        okHttpGet(context, IAPIConstants.GET_ALL_CRS_PROFILES, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    assert postResponse.body() != null;
+                    String jsonString = postResponse.body().string();
+                    JSONArray response = new JSONArray(jsonString);
+                    if (postResponse.isSuccessful()) {
+                        try {
+                            JSONObject wrapper = new JSONObject();
+                            wrapper.put("profiles", response);
+                            crsProfileResponse = wrapper;
+                            CrsApi.insertAllCrsProfilesBlocking(context, response);
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_crs_profile_data));
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ALL_COMMUNITY_PROFILES);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        // postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_crs_profile_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ALL_COMMUNITY_PROFILES);
+                    }
+
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error Crs Profiles", e));
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing Crs Profiles", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+
+        });
+    }
+
+
     private void syncSpinners() {
         okHttpGet(context, IAPIConstants.COUNTRY_SPINNERS, new Callback() {
             @Override
@@ -732,8 +1068,8 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-                            String enumName= response.getJSONObject("outputdata").get(StringConstants.ENUMERATOR_NAME).toString();
-                            Utilities.setEnumeratorNameSharedPrefs(context,StringConstants.ENUMERATOR_NAME,enumName);
+                        String enumName = response.getJSONObject("outputdata").get(StringConstants.ENUMERATOR_NAME).toString();
+                        Utilities.setEnumeratorNameSharedPrefs(context, StringConstants.ENUMERATOR_NAME, enumName);
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
                             JSONObject item = new JSONObject();
@@ -741,9 +1077,11 @@ public class SyncAllTask extends SyncTask {
                             for (int j = 0; j < length; j++) {
                                 item = countryArray.getJSONObject(j);
                                 String countryCode = item.getString("countryIsoCode");
-                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", countryCode.substring(0,2), null);
+                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", countryCode.substring(0, 2), null);
                             }
-                        }catch (Exception e){e.printStackTrace();}
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
 
@@ -751,13 +1089,13 @@ public class SyncAllTask extends SyncTask {
 
                         }
                         spinnerResponse = response;
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_crs_profile_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ALL_CRS_PROFILES);
 
                     } else {
-                       // postFailureMessage(response);
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+                        // postFailureMessage(response);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_crs_profile_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ALL_CRS_PROFILES);
                     }
 
                 } catch (JSONException | IOException e) {
@@ -782,7 +1120,7 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncLocalUnit() throws JSONException{
+    private void syncLocalUnit() throws JSONException {
         ManageRecords getLocalUnitMasterData = RetrofitClient.getRetrofit().create(ManageRecords.class);
         retrofit2.Call<LocalUnitResponseModel> call = getLocalUnitMasterData.getAllLocalUnitResponseModel();
 
@@ -796,15 +1134,14 @@ public class SyncAllTask extends SyncTask {
                         String jsonString = gson.toJson(responseBody);
                         localUnitResponse = new JSONObject(jsonString);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
 
-                }
-                else{
+                } else {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_PHOTO_CHECKBOX);
                 }
@@ -848,21 +1185,21 @@ public class SyncAllTask extends SyncTask {
         call.enqueue(new retrofit2.Callback<PhotoCheckBoxResponseModel>() {
             @Override
             public void onResponse(retrofit2.Call<PhotoCheckBoxResponseModel> call, retrofit2.Response<PhotoCheckBoxResponseModel> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getPhotoCheckBoxList() != null ) {
+                if (response.isSuccessful() && response.body() != null && response.body().getPhotoCheckBoxList() != null) {
                     try {
                         PhotoCheckBoxResponseModel responseBody = response.body();
                         Gson gson = new Gson();
                         String jsonString = gson.toJson(responseBody);
                         photoCheckBoxResponse = new JSONObject(jsonString);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 
-                }else{
+                } else {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
                 }
@@ -906,7 +1243,7 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS);
                     } else {
-                       // postFailureMessage(response);
+                        // postFailureMessage(response);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CONDITIONAL_DETAILS);
                     }
@@ -970,7 +1307,7 @@ public class SyncAllTask extends SyncTask {
 
     private void getModuleIdsByEnumeratorId() {
 
-        okHttpGet(context, IAPIConstants.GET_MODULE_IDS_BY_ENUMERATOR_ID, new Callback() {
+        okHttpGet(context, IAPIConstants.ALREADY_SUBMITED_CRS_SURVEY, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1015,7 +1352,7 @@ public class SyncAllTask extends SyncTask {
         JSONObject requestBody = new JSONObject();
 
         try {
-            moduleIdsForAutoSampleSurvey = moduleIdResponse!= null && moduleIdResponse.has("modulesWithAutoSampling") ? moduleIdResponse.getJSONArray("modulesWithAutoSampling") : new JSONArray();
+            moduleIdsForAutoSampleSurvey = moduleIdResponse != null && moduleIdResponse.has("modulesWithAutoSampling") ? moduleIdResponse.getJSONArray("modulesWithAutoSampling") : new JSONArray();
             requestBody.put("modulesWithAutoSampling", moduleIdsForAutoSampleSurvey);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1078,7 +1415,7 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     } else {
-                       // postFailureMessage(null);//need to revert
+                        // postFailureMessage(null);//need to revert
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     }
@@ -1122,7 +1459,7 @@ public class SyncAllTask extends SyncTask {
 
 
                     } else {
-                       // postFailureMessage(null);
+                        // postFailureMessage(null);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
                     }
@@ -1158,7 +1495,7 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
                         Boolean ishousehold = Boolean.parseBoolean(output.trim());
-                        Utilities.saveToSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR,null, ishousehold);
+                        Utilities.saveToSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, null, ishousehold);
 
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
@@ -1197,12 +1534,12 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-                        multifarmRoleResponse=response;
+                        multifarmRoleResponse = response;
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiStakeHolder Existing");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
 
                     } else {
-                       // postFailureMessage(null);
+                        // postFailureMessage(null);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiStakeHolder Existing");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_EXISTING_STAKEHOLDERS);
                     }
@@ -1238,7 +1575,7 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     } else {
-                       // postFailureMessage(null);
+                        // postFailureMessage(null);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     }
@@ -1282,7 +1619,8 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalid_enumerator));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_NID);
                     }
-                }catch (Exception e){ e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 } finally {
                     postResponse.close();
                 }
@@ -1323,7 +1661,8 @@ public class SyncAllTask extends SyncTask {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_hhgps_enumerator));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_HHGPS);
                     }
-                }catch (Exception e){ e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 } finally {
                     postResponse.close();
                 }
@@ -1358,7 +1697,7 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
                     } else {
-                       // postFailureMessage(response);
+                        // postFailureMessage(response);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_tasks));
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
@@ -1449,27 +1788,23 @@ public class SyncAllTask extends SyncTask {
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
-                        }
-                        else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                        } else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
-                        }
-                        else {
+                        } else {
                             publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
                         }
 
                     } else {
-                       // postFailureMessage(response);
+                        // postFailureMessage(response);
                         String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
                         if (Utilities.getBoolFromSharedPrefs(context, Utilities.DM_ENUMERATOR, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Module");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_MODULES);
-                        }
-                        else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
+                        } else if (Utilities.getBoolFromSharedPrefs(context, Utilities.IS_SUPPLIER_ENABLED, false)) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
-                        }
-                        else {
+                        } else {
                             publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
                         }
 
@@ -1502,16 +1837,16 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    JSONArray  response = new JSONArray(postResponse.body().string());
+                    JSONArray response = new JSONArray(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
-                        JSONObject jsonObject=new JSONObject();
+                        JSONObject jsonObject = new JSONObject();
                         try {
-                            jsonObject.put("child",response);
+                            jsonObject.put("child", response);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        childResponse=jsonObject;
+                        childResponse = jsonObject;
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
                     }
@@ -1538,11 +1873,11 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncSurveyAnswers(){
+    private void syncSurveyAnswers() {
 
-        String endpoint = IAPIConstants.SAVE_SURVEY_ANSWERS + "?module_id="+Integer.parseInt(answerRequestDTO.getModule_id())
-                +"&farmergroup_id="+Integer.parseInt(answerRequestDTO.getFarmerGroupId())
-                +"&section_id="+Integer.parseInt(answerRequestDTO.getSectionId());
+        String endpoint = IAPIConstants.SAVE_SURVEY_ANSWERS + "?module_id=" + Integer.parseInt(answerRequestDTO.getModule_id())
+                + "&farmergroup_id=" + Integer.parseInt(answerRequestDTO.getFarmerGroupId())
+                + "&section_id=" + Integer.parseInt(answerRequestDTO.getSectionId());
         okHttpGet(context, endpoint, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -1580,13 +1915,13 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-    private void syncSmartNotification(int notificationModuleId, int pageNumber){
+    private void syncSmartNotification(int notificationModuleId, int pageNumber) {
 
         String endpoint = IAPIConstants.GET_CHILD_DETAILS
-                +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
-                +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
-                +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
-        okHttpGet(context, endpoint,  new Callback() {
+                + ChildLabourUtils.PAGENUMBER_CONSTANT + pageNumber
+                + ChildLabourUtils.LIMIT_CONSTANT + Utilities.notificationLimit
+                + ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
+        okHttpGet(context, endpoint, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -1663,8 +1998,7 @@ public class SyncAllTask extends SyncTask {
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                             }
                         }
-                    }
-                    else{
+                    } else {
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
                     }
@@ -1689,9 +2023,10 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
+
     public static void deleteAllInActivePhotoData(OFISRoomDB ofisRoomDB, Context context) {
         List<PhotoCheckBoxData> inActivePhoto = ofisRoomDB.photoCheckBoxDataDao().getInactivePhoto(false);
-        if (!inActivePhoto.isEmpty()){
+        if (!inActivePhoto.isEmpty()) {
             for (int i = 0; i < inActivePhoto.size(); i++) {
                 String fileName = inActivePhoto.get(i).fileName;
                 File internalStorageDir = context.getFilesDir();
@@ -1703,19 +2038,34 @@ public class SyncAllTask extends SyncTask {
         }
     }
 
-    public static void deleteInActiveModuleIdData(OFISRoomDB ofisRoomDB, Context context){
+    public static void deleteAllImagesOptions(List<CrsOptionEntity> crsOptionEntities, Context context) {
+        if (!crsOptionEntities.isEmpty()) {
+            for (int i = 0; i < crsOptionEntities.size(); i++) {
+                if (!CrsApi.isImageFile(crsOptionEntities.get(i).getLabel())) {
+                    return;
+                }
+                File internalStorageDir = context.getFilesDir();
+                File imageFile = new File(internalStorageDir, crsOptionEntities.get(i).getLabel());
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
+        }
+    }
+
+    public static void deleteInActiveModuleIdData(OFISRoomDB ofisRoomDB, Context context) {
         if (!ofisRoomDB.photoCheckBoxDataDao().getPhotoModuleId().isEmpty()) {
             ArrayList<Integer> moduleNotInUse = SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxModuleNotInUse();
-            for (int i=0; i < moduleNotInUse.size(); i++) {
+            for (int i = 0; i < moduleNotInUse.size(); i++) {
                 // delete file
                 int moduleId = moduleNotInUse.get(i);
                 List<PhotoCheckBoxData> fileNamesModuleId = ofisRoomDB.photoCheckBoxDataDao().getFileNameByModuleId(moduleId);
-                if (!fileNamesModuleId.isEmpty()){
-                    for (int j=0; j<fileNamesModuleId.size(); j++) {
+                if (!fileNamesModuleId.isEmpty()) {
+                    for (int j = 0; j < fileNamesModuleId.size(); j++) {
 
                         // get list of filenames
                         File internalStorageDir = context.getFilesDir();
-                        File imageFile = new File(internalStorageDir,fileNamesModuleId.get(j).fileName);
+                        File imageFile = new File(internalStorageDir, fileNamesModuleId.get(j).fileName);
                         if (imageFile.exists()) {
                             imageFile.delete();
                         }
@@ -1728,12 +2078,14 @@ public class SyncAllTask extends SyncTask {
         }
 
     }
-    public void photoCheckboxDownload(){
+
+    public void photoCheckboxDownload() {
         deleteAllInActivePhotoData(roomDB, context);
         deleteInActiveModuleIdData(roomDB, context);
+        deleteAllImagesOptions(CrsApi.getPhotoCheckBoxImage(context), context);
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
 
-        if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
+        if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty() || CrsApi.getPhotoCheckBoxCount(context) != 0 || CrsApi.getPhotoCheckConsentBoxCount(context)!=0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -1768,51 +2120,328 @@ public class SyncAllTask extends SyncTask {
         }
     }
 
+
+    private static void postImageForCheckBoxConsentFile(CrsConsent crsOptionEntity, int currentRecord, int totalRecords, Context context, Handler handler, ProgressDialog progressDialog) {
+        String message = context.getString(R.string.downloading) + currentRecord + " of " + totalRecords;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.setMessage(message);
+            }
+        });
+        PhotoCheckBoxCrsApiCallForConsent(crsOptionEntity, context);
+    }
+
+
+    /*public static void PhotoCheckBoxCrsApiCallForConsent(CrsConsent crsOptionEntity, Context context) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+
+        try {
+            DownloadUrlRequestBody modal = new DownloadUrlRequestBody("crs_survey", crsOptionEntity.getConsentPath());
+            retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            retrofit2.Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                resizedBitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
+                File internalStorageDir = context.getFilesDir();
+
+                File imageFile = new File(internalStorageDir, crsOptionEntity.getConsentPath());
+                File parentDir = imageFile.getParentFile();
+
+                if (!parentDir.exists()) {
+                    parentDir.mkdirs();   // <-- IMPORTANT
+                }
+
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(compressedImageBytes);
+                fileWrite.close();
+                CrsApi.updateConsentFilePath(context, imageFile.getAbsolutePath(), crsOptionEntity);
+
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+
+    public static void PhotoCheckBoxCrsApiCallForConsent(CrsConsent consent, Context context) {
+        ManageRecords api = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+
+        try {
+            DownloadUrlRequestBody modal = new DownloadUrlRequestBody("crs_survey", consent.getConsentPath());
+            retrofit2.Call<ResponseBody> call = api.getDownloadUrl(modal);
+            retrofit2.Response<ResponseBody> response = call.execute();
+
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] fileBytes = responseBody.bytes();
+
+                // Decide based on extension
+                String extension = consent.getConsentPath()
+                        .substring(consent.getConsentPath().lastIndexOf('.') + 1)
+                        .toLowerCase();
+
+                File internalStorageDir = context.getFilesDir();
+                File targetFile = new File(internalStorageDir, consent.getConsentPath());
+                File parentDir = targetFile.getParentFile();
+                if (!parentDir.exists()) parentDir.mkdirs();
+
+                if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("webp")) {
+                    // === IMAGE HANDLING ===
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(fileBytes, 0, fileBytes.length);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    Bitmap.CompressFormat format = extension.equals("png") ? Bitmap.CompressFormat.PNG :
+                            extension.equals("webp") ? Bitmap.CompressFormat.WEBP :
+                                    Bitmap.CompressFormat.JPEG;
+                    resizedBitmap.compress(format, 80, outputStream);
+                    byte[] compressedImageBytes = outputStream.toByteArray();
+
+                    FileOutputStream fileWrite = new FileOutputStream(targetFile);
+                    fileWrite.write(compressedImageBytes);
+                    fileWrite.close();
+
+                } else {
+                    // === NON-IMAGE HANDLING (PDF/DOCX etc.) ===
+                    FileOutputStream fileWrite = new FileOutputStream(targetFile);
+                    fileWrite.write(fileBytes);
+                    fileWrite.close();
+                }
+
+                // Update DB path
+                CrsApi.updateConsentFilePath(context, targetFile.getAbsolutePath(), consent);
+                Log.d("ConsentDownload", "File saved to: " + targetFile.getAbsolutePath());
+
+            } else {
+                Log.e("ConsentDownload", "Error downloading file: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static void downloadConsentFiles(Context context, Handler handler, ProgressDialog progressDialog,
+                                             OFISRoomDB ofisRoomDB, List<PhotoCheckBoxData> photoData, int totalRecords) {
+
+        try {
+            // Delay before starting consent file download (e.g., 2 seconds)
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        CrsApi.getAllConsentFiles(context, new CrsApi.CrsApiAsync.CallbackConsentFiles() {
+            @Override
+            public void onSuccess(@NotNull List<CrsConsent> result) {
+                if (!result.isEmpty()) {
+                    for (int i = 0; i < result.size(); i++) {
+                        postImageForCheckBoxConsentFile(result.get(i), i,
+                                (photoData.size() + result.size()), context, handler, progressDialog);
+
+                        if (i + 1 == result.size()) {
+                            oldmethodForPhoto(photoData, totalRecords, handler, progressDialog, context, ofisRoomDB);
+                        }
+                    }
+                } else {
+                    oldmethodForPhoto(photoData, totalRecords, handler, progressDialog, context, ofisRoomDB);
+                }
+            }
+
+            @Override
+            public void onError(@NotNull Throwable t) {
+                oldmethodForPhoto(photoData, totalRecords, handler, progressDialog, context, ofisRoomDB);
+            }
+        });
+    }
+
+
+
+
     public static void photoCheckboxThreadCall(ProgressDialog progressDialog, Context context, OFISRoomDB ofisRoomDB, Handler handler) {
         progressDialog.setMessage(context.getString(R.string.image_download_start));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
         progressDialog.show();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<PhotoCheckBoxData> photoData = ofisRoomDB.photoCheckBoxDataDao().getNoPhotoData(false);
-                int totalRecords = photoData.size();
-                int currentRecord = 0;
-                if (!photoData.isEmpty()){
-                    for (int i=0; i < photoData.size(); i++) {
-                        long id = photoData.get(i).id;
-                        long questionId = Long.parseLong(photoData.get(i).questionId);
-                        long lookupId = Long.parseLong(photoData.get(i).lookupId);
-                        String fileName = photoData.get(i).fileName;
-                        currentRecord++;
-                        Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
-                        String message = context.getString(R.string.downloading) + currentRecord + " of " + totalRecords;
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.setMessage(message);
+
+        Thread thread = new Thread(() -> {
+            List<PhotoCheckBoxData> photoData = ofisRoomDB.photoCheckBoxDataDao().getNoPhotoData(false);
+            int totalRecords = photoData.size();
+
+            // First: download photo checkbox images
+            CrsApi.getAllPhotoImages(context, new CrsApi.CrsApiAsync.CallbackPhotoNormal() {
+                @Override
+                public void onSuccess(@NotNull List<CrsOptionEntity> result) {
+                    if (!result.isEmpty()) {
+                        for (int i = 0; i < result.size(); i++) {
+                            postImageForCheckBox(result.get(i), i, (photoData.size() + result.size()), context, handler, progressDialog);
+
+                            if (i + 1 == result.size()) {
+                                // After finishing photos, trigger consent file download
+                                downloadConsentFiles(context, handler, progressDialog, ofisRoomDB, photoData, totalRecords);
                             }
-                        });
-                        SyncAllTask.PhotoCheckboxAPICALL(id, questionId, lookupId, fileName, context, ofisRoomDB);
+                        }
+                    } else {
+                        downloadConsentFiles(context, handler, progressDialog, ofisRoomDB, photoData, totalRecords);
                     }
                 }
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                        Toast.makeText(context,context.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+                @Override
+                public void onError(@NotNull Throwable t) {
+                    downloadConsentFiles(context, handler, progressDialog, ofisRoomDB, photoData, totalRecords);
+                }
+            });
         });
         thread.start();
     }
 
+
+    private static void postImageForCheckBox(CrsOptionEntity crsOptionEntity, int currentRecord, int totalRecords, Context context, Handler handler, ProgressDialog progressDialog) {
+        String message = context.getString(R.string.downloading) + currentRecord + " of " + totalRecords;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.setMessage(message);
+            }
+        });
+        PhotoCheckBoxCrsApiCall(crsOptionEntity, context);
+    }
+
+
+    static void oldmethodForPhoto(List<PhotoCheckBoxData> photoData, int totalRecords, Handler handler, ProgressDialog progressDialog, Context context, OFISRoomDB ofisRoomDB) {
+        int currentRecord = 0;
+        if (!photoData.isEmpty()) {
+            for (int i = 0; i < photoData.size(); i++) {
+                long id = photoData.get(i).id;
+                long questionId = Long.parseLong(photoData.get(i).questionId);
+                long lookupId = Long.parseLong(photoData.get(i).lookupId);
+                String fileName = photoData.get(i).fileName;
+                currentRecord++;
+                Log.d("PHOTOOOOOOOOO", context.getString(R.string.download) + ": " + currentRecord + " of " + totalRecords);
+                String message = context.getString(R.string.downloading) + currentRecord + " of " + totalRecords;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMessage(message);
+                    }
+                });
+                SyncAllTask.PhotoCheckboxAPICALL(id, questionId, lookupId, fileName, context, ofisRoomDB);
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.dismiss();
+                    Toast.makeText(context, context.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.dismiss();
+                    Toast.makeText(context, context.getString(R.string.image_downloaded), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+
+    public static void PhotoCheckBoxCrsApiCall(CrsOptionEntity crsOptionEntity, Context context) {
+        ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
+
+        try {
+            DownloadUrlRequestBody modal = new DownloadUrlRequestBody("crs_survey", crsOptionEntity.getLabel());
+            retrofit2.Call<ResponseBody> call = getPhotoCheckboxImages.getDownloadUrl(modal);
+            retrofit2.Response<ResponseBody> response = call.execute();
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                byte[] imageBytes = responseBody.bytes();
+                // image compression
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+                int quality = 80;
+                String imageType = getImageType(imageBytes);
+                Bitmap.CompressFormat format;
+                switch (imageType) {
+                    case "jpeg":
+                    case "jpg":
+                        format = Bitmap.CompressFormat.JPEG;
+                        break;
+                    case "png":
+                        format = Bitmap.CompressFormat.PNG;
+                        break;
+                    case "webp":
+                        format = Bitmap.CompressFormat.WEBP;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported image format: " + imageType);
+                }
+                resizedBitmap.compress(format, quality, outputStream);
+                byte[] compressedImageBytes = outputStream.toByteArray();
+                File internalStorageDir = context.getFilesDir();
+
+                File imageFile = new File(internalStorageDir, crsOptionEntity.getLabel());
+                File parentDir = imageFile.getParentFile();
+
+                if (!parentDir.exists()) {
+                    parentDir.mkdirs();   // <-- IMPORTANT
+                }
+
+                FileOutputStream fileWrite = new FileOutputStream(imageFile);
+                fileWrite.write(compressedImageBytes);
+                fileWrite.close();
+                CrsApi.updateUserImage(context, imageFile.getAbsolutePath(), crsOptionEntity.getOptionId(), crsOptionEntity.getQuestionId());
+
+                Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
+            } else {
+                Log.e("ImageDownload", "Error downloading image: " + response.code());
+                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void PhotoCheckboxAPICALL(long id, long questionId, long lookupId, String fileName, Context context, OFISRoomDB roomDBPhoto) {
         ManageRecords getPhotoCheckboxImages = RetrofitClient.getRetrofitImage().create(ManageRecords.class);
-        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(),fileName);
+        DownloadUrlRequestBody modal = new DownloadUrlRequestBody(SharedPreferenceUtils.getInstance(context).getPhotoCheckBoxContainer(), fileName);
+
+        //need to include crs things
+
 
         //Synchronous API call for PhotoCheckbox Data
         try {
@@ -1853,7 +2482,7 @@ public class SyncAllTask extends SyncTask {
                 fileWrite.write(compressedImageBytes);
                 fileWrite.close();
 
-                roomDBPhoto.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true,questionId, lookupId, id);
+                roomDBPhoto.photoCheckBoxDataDao().updatePhotoCheckboxUrl(imageFile.getAbsolutePath(), true, questionId, lookupId, id);
 
 
                 Log.d("ImageDownload", "Image downloaded and saved to: " + imageFile.getAbsolutePath());
@@ -1861,10 +2490,11 @@ public class SyncAllTask extends SyncTask {
                 Log.e("ImageDownload", "Error downloading image: " + response.code());
                 Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     private static String getImageType(byte[] imageBytes) {
         String base64EncodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         if (base64EncodedImage.startsWith("iVBORw0KGgoAAA")) {
@@ -1876,7 +2506,7 @@ public class SyncAllTask extends SyncTask {
         }
     }
 
-    private void LocalUnitResponse(JSONObject localUnitResponse){
+    private void LocalUnitResponse(JSONObject localUnitResponse) {
         try {
             Gson gson = new Gson();
             LocalUnitResponseModel model = gson.fromJson(String.valueOf(localUnitResponse), LocalUnitResponseModel.class);
@@ -1909,7 +2539,7 @@ public class SyncAllTask extends SyncTask {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1947,12 +2577,12 @@ public class SyncAllTask extends SyncTask {
             Gson gson = new Gson();
             JSONObject multiStakeHolderResponseObject = stakeHolderResponse.has("outputData") ? stakeHolderResponse.getJSONObject("outputData") : new JSONObject();
             JSONArray multiStakeHolderResponse = multiStakeHolderResponseObject.has("multiStakeHolders") ? multiStakeHolderResponseObject.getJSONArray("multiStakeHolders") : new JSONArray();
-            Type MultiStakeHolderDtoType = new TypeToken<List<MultiStakeHolder>>(){}.getType();
+            Type MultiStakeHolderDtoType = new TypeToken<List<MultiStakeHolder>>() {
+            }.getType();
             List<MultiStakeHolder> multiStakeHolder = gson.fromJson(multiStakeHolderResponse.toString(), MultiStakeHolderDtoType);
             roomDB.multiStakeHolderDao().deleteAll();
             roomDB.multiStakeHolderDao().insert(multiStakeHolder);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             FirebaseCrash.report(new Exception("UpdateStakeHolderResponse: Error filling StakeHolders table", e));
             e.printStackTrace();
         }
@@ -1973,8 +2603,7 @@ public class SyncAllTask extends SyncTask {
                             if (dmResponse.getErrorMessage() != null && dmResponse.getErrorMessage().equals(Utilities.DM_ERROR_MESSAGE)) {
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
-                            }
-                            else {
+                            } else {
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Diagnostic Modules");
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_DM_FOLLOW_UP_MODULES);
                             }
@@ -2001,8 +2630,7 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
                 }
             });
-        }
-        else {
+        } else {
             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
         }
@@ -2020,10 +2648,10 @@ public class SyncAllTask extends SyncTask {
                         dmFollowUpResponse = new JSONObject(new Gson().toJson(followUpResponseModel));
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Details");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_DATA);
-                    } else if (response.code() == 400){
+                    } else if (response.code() == 400) {
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     } else {
-                       // postFailureMessage(null);
+                        // postFailureMessage(null);
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
                 } catch (Exception e) {
@@ -2058,9 +2686,8 @@ public class SyncAllTask extends SyncTask {
                             supplierResponse = new JSONObject(new Gson().toJson(response.body()));
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Data");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
-                        }
-                        else {
-                           // postFailureMessage(null);
+                        } else {
+                            // postFailureMessage(null);
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Data");
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SURVEY_DATA);
                         }
@@ -2082,8 +2709,7 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
                 }
             });
-        }
-        else {
+        } else {
             publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
         }
     }
@@ -2100,14 +2726,12 @@ public class SyncAllTask extends SyncTask {
                         supplierSurveyResponse = new JSONObject(new Gson().toJson(response.body()));
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Submitted Module Data");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
-                    }
-                    else {
-                      //  postFailureMessage(null);
+                    } else {
+                        //  postFailureMessage(null);
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Downloading Supplier Submitted Module Data");
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SUPPLIER_SUBMITTED_MODULE);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("RESPONSE", "Error with supplier response");
                     e.printStackTrace();
                     postFailureMessage(null);
@@ -2139,13 +2763,11 @@ public class SyncAllTask extends SyncTask {
                     if (response.code() == 200) {
                         supplierSurveySubmittedResponse = new JSONObject(new Gson().toJson(response.body()));
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
-                    }
-                    else {
+                    } else {
                         //postFailureMessage(null);
                         publishProgress(SyncOperation.START_IMPORT, "", syncResultCount);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.d("Error", "Issue in supplier survey submitted module response");
                     e.printStackTrace();
                     postFailureMessage(null);

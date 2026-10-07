@@ -17,7 +17,10 @@ enum class QuestionType {
     PHOTO_CHECKBOX,
     FILE_UPLOAD,
 
-    SIGNATURE
+    SIGNATURE,
+    NUMBERIC,
+    DECIMAL,
+    REPEATER
 }
 
 fun CRSResponseTypeDTO.toQuestionType(): QuestionType? = when (name?.normalizeToken()) {
@@ -43,8 +46,13 @@ fun CRSResponseTypeDTO.toQuestionType(): QuestionType? = when (name?.normalizeTo
     "fileupload", "documentupload", "file"
         -> QuestionType.FILE_UPLOAD        // handles "File upload"
     "signature" -> QuestionType.SIGNATURE
+    "numeric" -> QuestionType.NUMBERIC
+    "decimal" -> QuestionType.DECIMAL
+    "repeater" -> QuestionType.REPEATER
     else -> null
 }
+
+
 
 
 // -----------------------------------------
@@ -60,5 +68,9 @@ enum class ViewType {
     RADIO,
     TEXTBOX,
     FILE_UPLOAD,
-    SIGNATURE
+    SIGNATURE,
+    NUMBERIC,
+    DECIMAL,
+    REPEATER
 }
+

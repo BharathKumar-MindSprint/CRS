@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -21,7 +22,7 @@
             android:textStyle="bold"
             tools:text="1)Lorem ipsum dolor sit amet, consectetur adipiscing elit?"
             android:textSize="16sp"
-            style="@style/medium_dark_gray_medium_tv"
+            style="@style/medium_dark_gray_medium_tv_noto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -38,6 +39,7 @@
         <EditText
             android:id="@+id/etAnswer"
             android:layout_marginTop="8dp"
+            android:imeOptions="actionNext"
             style="@style/edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,5 +54,24 @@
             android:layout_marginTop="6dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <com.olam.digital.crs.adapter.NonScrollingRecyclerView
+            android:id="@+id/rvChildQuestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_q_edittext" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/containerChildQuestions"
+            />
+
     </LinearLayout>
 </layout>

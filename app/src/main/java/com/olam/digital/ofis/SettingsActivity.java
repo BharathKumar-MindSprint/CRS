@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.crs.viewmodel.api.CrsApi;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
@@ -51,6 +54,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.olam.digital.ofis.Common.Utils.NetworkUtils.isNetworkAvailable;
 
@@ -62,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private Resources res;
     private DataLayer dl;
     private ProgressDialog m_ProgressDialog;
-    Button buttonSave, buttonPhotoCheckbox;
+    Button buttonSave, buttonPhotoCheckbox,buttonPhotoChooseLanguage;
     private static ProgressDialog progressDialog;
     private boolean updateData=false;
     // Runtime Permission Request Code
@@ -87,6 +91,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
         buttonPhotoCheckbox = (Button) findViewById(R.id.buttonPhotoCheckbox);
+        buttonPhotoChooseLanguage = (Button) findViewById(R.id.buttonPhotoChooseLanguage);
         TextView deviceid = (TextView) findViewById(R.id.deviceid);
         deviceid.setText(getResources().getString(R.string.android_id) + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         buttonPrivacyConsent=(Button) findViewById(R.id.buttonPrivacyConsent);
@@ -123,6 +128,12 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 photoCheckboxDownload();
             }
         });
+        buttonPhotoChooseLanguage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              chooseLanguage();
+            }
+        });
 
         buttonPrivacyConsent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,6 +147,39 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         setupUI();
         bindHelpButton();
     }
+
+    private void chooseLanguage() {
+        String[] languageNames = getResources().getStringArray(R.array.language_names);
+        String[] languageCodes = getResources().getStringArray(R.array.language_codes);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Choose Language")
+                .setItems(languageNames, (dialog, which) -> {
+                    String selectedName = languageNames[which];
+                    String selectedCode = languageCodes[which];
+
+                    PreferenceManager.getDefaultSharedPreferences(this)
+                            .edit()
+                            .putString("app_language", selectedCode)
+                            .apply();
+
+                    Toast.makeText(this, "Selected: " + selectedName, Toast.LENGTH_SHORT).show();
+
+                    //setLocale(selectedCode);
+                    //recreate();
+                })
+                .show();
+    }
+
+    private void setLocale(String langCode) {
+        Locale locale = new Locale(langCode);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+
 
     @Override
     protected void onResume()
@@ -524,8 +568,10 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             @Override
             public void onClick(View view) {
                 alert.dismiss();
+
                 Utilities.saveToSharedPrefs(SettingsActivity.this, "FIRST_RUN", "", true);
                 Intent in = new Intent(SettingsActivity.this, HomeActivity.class);
+                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(in);
             }
         });
@@ -536,8 +582,9 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     public void photoCheckboxDownload(){
         SyncAllTask.deleteAllInActivePhotoData(roomDB, context);
         SyncAllTask.deleteInActiveModuleIdData(roomDB, context);
+        SyncAllTask.deleteAllImagesOptions(CrsApi.getPhotoCheckBoxImage(context),context);
         roomDB.photoCheckBoxDataDao().deleteDeactivatedPhoto(false);
-        if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty()){
+        if (!roomDB.photoCheckBoxDataDao().getNoPhotoData(false).isEmpty() || CrsApi.getPhotoCheckBoxCount(context)!=0 || CrsApi.getPhotoCheckConsentBoxCount(context)!=0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
             LayoutInflater inflater = this.getLayoutInflater();

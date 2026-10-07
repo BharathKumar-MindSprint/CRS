@@ -44,31 +44,47 @@
 
             <Button
                 android:id="@+id/btnCaptureLocation"
-                android:text="Capture location"
+                android:text="@string/capture_location"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/btnClearLocation"
-                android:text="Clear"
+                android:text="@string/clear"
                 android:layout_marginStart="12dp"
+                tools:visibility="visible"
+                android:backgroundTint="@color/colorLightRed"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/width_05"
+            android:background="@color/gray_view_bg"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="@dimen/margin_6"
+            />
+
         <TextView
             android:id="@+id/tvLocationStatus"
-            android:text="No location captured"
-            android:textSize="14sp"
+            android:text="@string/no_location_captured"
             android:textColor="#333333"
             android:layout_marginTop="8dp"
+            android:drawablePadding="@dimen/padding_5"
+            android:drawableTint="@color/black"
+            android:drawableStart="@drawable/ic_marker_location"
+            style="@style/regular_medium_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvError"
             android:textColor="#D32F2F"
+            style="@style/regular_small_tv"
             android:textSize="12sp"
             android:visibility="gone"
             android:layout_marginTop="6dp"

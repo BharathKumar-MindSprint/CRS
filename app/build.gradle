@@ -9,7 +9,6 @@ plugins {
 }
 
 
-
 android {
     signingConfigs {
         release {
@@ -26,7 +25,7 @@ android {
         }
     }
     compileSdkVersion = 35
-    buildToolsVersion ='35.0.0'
+    buildToolsVersion = '35.0.0'
     flavorDimensions = ["default"]
 
     buildFeatures {
@@ -51,12 +50,12 @@ android {
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-        minSdkVersion 21
+        minSdkVersion 26
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 35
         multiDexEnabled true
-        versionCode 103
-        versionName "10.9.5"
+        versionCode 156
+        versionName "15.4.7"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -170,14 +169,34 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             resValue "string", "applicationName", "OGA DEV"
             buildConfigField "String", 'AUTH_SERVER_URL', '"https://authdev.olamagri.com/auth/realms/ofis-dse-olamagri-dev/protocol/openid-connect/"'
-            buildConfigField 'String', 'BASE_URL', '"https://otofis-gateway-dev-oa.olamagri.com/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-gateway-dev.olamagri.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisdevscs-oa.olamagri.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisdevscs.olamagri.com/"'
         }
         sitoga { /* ... */ }
-        uatoga { /* ... */ }
+        uatoga {
+            applicationId "com.olam.digital.ofispreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            resValue "string", "applicationName", "OGA UAT"
+            buildConfigField "String", 'AUTH_SERVER_URL', '"https://authdev.olamagri.com/auth/realms/ofis-dse-olamagri-uat/protocol/openid-connect/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-gateway-uat.olamagri.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisuatscs.olamagri.com/"'
+        }
         preprodoga { /* ... */ }
-        prodoga { /* ... */ }
+        prodoga {
+            applicationId "com.olam.digital.ofis"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
+            resValue "string", "applicationName", "OFIS Enumerator"
+            buildConfigField "String", 'AUTH_SERVER_URL', '"https://auth.olamagri.com/auth/realms/ofis-dse/protocol/openid-connect/"'
+            buildConfigField 'String', 'BASE_URL', '"https://otofis-gateway.olamagri.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'IMAGE_BASE_URL', '"https://ofisscs.olamagri.com/"'
+        }
     }
 
     testOptions {
@@ -284,7 +303,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
 
     //  timber
-      implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation project(":library")
     implementation project(":crs")
 }

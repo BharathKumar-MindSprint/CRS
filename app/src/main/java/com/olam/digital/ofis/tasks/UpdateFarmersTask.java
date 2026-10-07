@@ -46,6 +46,13 @@ class UpdateFarmersTask extends DatabaseTask {
         try {
             JSONObject farmerResponse = params[0];
 
+            if (farmerResponse == null) {
+                FirebaseCrash.report(new Exception("UpdateFarmersTask: farmerResponse is null"));
+                Log.e("UpdateFarmersTask", "No response received for farmers data");
+                return null;
+            }
+
+
             if (farmerResponse.getInt("resultcount") > 0) {
 
                 JSONObject response = farmerResponse.getJSONObject("outputData");

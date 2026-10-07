@@ -12,6 +12,7 @@ import com.olam.digital.crs.viewmodel.api.CrsApi;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.mvvmmodule.model.FarmerSurveyAssignmentResponse;
 import com.olam.digital.ofis.mvvmmodule.model.assigmenttype.AssignmentType;
 import com.olam.digital.ofis.mvvmmodule.model.qwrdata.SurveyDurationType;
@@ -67,7 +68,7 @@ class UpdateModuleListsTask extends DatabaseTask {
             //import thread here
             new Thread(() -> {
                 // Fire-and-forget
-                CrsApi.insertAllQuestionsAndModulesBlocking(context,rootArray); // roots is JSONObject[] allowing nulls
+                CrsApi.insertAllQuestionsAndModulesBlocking(context,rootArray,new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken()); // roots is JSONObject[] allowing nulls
             }).start();
 
 
@@ -242,6 +243,7 @@ class UpdateModuleListsTask extends DatabaseTask {
                         StringBuilder whereClause = new StringBuilder(OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " IN (");
                         String[] whereArgs = new String[moduleIdsForNormalSurvey.length()];
                         for (int i = 0; i < moduleIdsForNormalSurvey.length(); i++) {
+
                             whereArgs[i] = moduleIdsForNormalSurvey.getString(i);
                             whereClause.append("?");
                             if (i < moduleIdsForNormalSurvey.length() - 1) whereClause.append(", ");

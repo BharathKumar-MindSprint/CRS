@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -13,24 +14,32 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/margin_24"
-            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/mainLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imgBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginStart="@dimen/margin_16"
                 android:layout_marginTop="@dimen/margin_16"
+                android:scaleType="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/back"
+                android:focusable="true"
+                android:padding="12dp"
                 android:src="@drawable/ic_back_ios" />
+
 
             <LinearLayout
                 android:id="@+id/layOne"
@@ -57,7 +66,6 @@
                     android:text="@string/choose_farmer_for_survey" />
 
 
-
             </LinearLayout>
 
 
@@ -69,58 +77,102 @@
                 android:background="@color/colorgraydisable" />
 
         </RelativeLayout>
-        <androidx.recyclerview.widget.RecyclerView
+
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:id="@+id/recyclerView"
-            app:layout_constraintBottom_toTopOf="@+id/mBottom"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/mainLay"
+            app:layout_constraintBottom_toTopOf="@id/mBottom"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="@dimen/margin_8"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainLay"
-            />
+            android:visibility="visible"
+            app:shimmer_auto_start="true">
+            <include layout="@layout/shimmer_layout_for_survey"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
+
+      <!--  <com.olam.digital.crs.adapter.NonScrollingRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            android:paddingBottom="@dimen/margin_72"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/mBottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/recyclerView"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mainLay"
+            />-->
+
+        <com.olam.digital.crs.adapter.NonScrollingRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/margin_72"
+            android:descendantFocusability="afterDescendants"
+            android:focusableInTouchMode="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/mainLay"
+            app:layout_constraintBottom_toTopOf="@id/mBottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
 
 
         <ProgressBar
-            android:layout_width="48dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_height="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/mProgress"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_gravity="center" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <LinearLayout
-            android:layout_width="match_parent"
             android:id="@+id/mBottom"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/bg_button_color"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/margin_8"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_12"
+            android:layout_marginBottom="@dimen/margin_40"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_height="@dimen/height_36">
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
 
             <TextView
                 style="@style/medium_dark_gray_medium_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_16"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_12"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_8"
                 android:layout_marginEnd="@dimen/margin_16"
+                android:layout_marginBottom="@dimen/margin_8"
                 android:lineSpacingExtra="6sp"
+                android:text="@string/submit_survey"
                 android:textAllCaps="true"
-                android:text="@string/submit"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
 
         </LinearLayout>

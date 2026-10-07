@@ -1,0 +1,145 @@
+
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+    id "androidx.navigation.safeargs.kotlin"
+}
+
+android {
+    namespace 'com.olam.digital.crs'
+    compileSdk 34   // safer with Gradle 8.7
+
+    defaultConfig {
+        minSdk 26
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'
+            ), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packagingOptions {
+        resources {
+            excludes += [
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/license.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/notice.txt',
+                    'META-INF/ASL2.0',
+                    'META-INF/*.kotlin_module'
+            ]
+        }
+    }
+
+    kotlin {
+        jvmToolchain(17)
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+}
+
+dependencies {
+
+    // ✅ Core AndroidX (Downgraded + stable)
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // ✅ Activity / Fragment (stable with AGP 8.x)
+    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
+
+    // ✅ Navigation (AGP 8.x aligned)
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
+
+    // ✅ Room (most stable for Gradle 8.7)
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
+
+    // ✅ Google Play Services – Location
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // ✅ Hilt (recommended for AGP 8.x)
+    implementation "com.google.dagger:hilt-android:2.56.2"
+    ksp "com.google.dagger:hilt-compiler:2.56.2"
+
+    // ✅ Lifecycle (safe + widely used)
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+
+    // ✅ Shimmer (no change needed)
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    // ✅ Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    //  timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    //signaturepad
+    implementation 'com.github.gcacace:signature-pad:1.3.1'
+
+
+
+    //serialization
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+
+    //retrofit
+    implementation 'com.squareup.okhttp3:okhttp:3.7.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
+
+    //countryCode
+    implementation("com.googlecode.libphonenumber:libphonenumber:8.13.36")
+
+    //document viewer libaray
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    // This is often required for modern POI to handle XML schemas properly on Android
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
+    implementation 'org.apache.poi:poi-scratchpad:5.2.5'
+
+
+
+
+
+
+}
+
+
+
+
+kapt {
+    correctErrorTypes = true
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}

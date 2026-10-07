@@ -11,16 +11,18 @@
         android:layout_width="match_parent"
         android:background="@drawable/rounded_corners_for_shapes"
         android:layout_margin="@dimen/margin_4"
+        android:id="@+id/mainRoot"
         android:layout_height="wrap_content">
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_8"
-            tools:text="Farm Assessment Survey 2024"
             android:id="@+id/txtSurveyName"
+            app:layout_constraintEnd_toStartOf="@+id/imgView"
+            tools:text="Cotton property Local Development, Public Services, Environmental Sustainability, Digital Transformation, Social Wellbeing, and Future Opportunities to Strengthen Collaboration Between Citizens, Organ"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             style="@style/regular_large_tv"
@@ -60,6 +62,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:src="@drawable/ic_vector_right_orange"
             android:layout_marginTop="@dimen/margin_4"
+            android:id="@+id/imgView"
             android:layout_marginEnd="@dimen/margin_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@color/colorGray" />
@@ -82,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="active"
-                android:textColor="#016630"
+                android:textColor="@color/colorActiveGreen"
                 android:layout_marginStart="@dimen/margin_2"
                 android:layout_marginEnd="@dimen/margin_2"
                 android:layout_centerInParent="true"

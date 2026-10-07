@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="showprimarycard"
+            type="boolean" />
+
+        <variable
+            name="showsecoundarycard"
+            type="boolean" />
+
+        <variable
+            name="showValidationSucess"
+            type="boolean" />
+
+        <variable
+            name="showValidationLoader"
+            type="boolean" />
+
+    </data>
+
+    <RelativeLayout
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/mTopView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_16"
+                android:scaleType="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/back"
+                android:focusable="true"
+                android:padding="12dp"
+                android:src="@drawable/ic_back_ios" />
+
+            <LinearLayout
+                android:id="@+id/layOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_toEndOf="@+id/imgBack"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/regular_large_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_new_respondent"
+                    android:textColor="@android:color/white" />
+
+
+                <TextView
+                    style="@style/regular_white_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:text="@string/complete_respondent_registeration" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/layOne"
+                android:layout_marginTop="@dimen/margin_12" />
+
+        </RelativeLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/mTopView"
+            android:layout_above="@+id/layBottom"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:id="@+id/laybacktohome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_12"
+                    android:background="@drawable/ic_drawable_blue_edge">
+
+
+                    <TextView
+                        style="@style/regular_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="@dimen/margin_6"
+                        android:layout_marginTop="@dimen/margin_12"
+                        android:layout_marginEnd="@dimen/margin_6"
+                        android:layout_marginBottom="@dimen/margin_6"
+                        android:lineSpacingExtra="@dimen/_6sdp"
+                        android:text="@string/please_register_the_farmer_before_taking_the_survey_fields_marked_with_are_required"
+                        android:textColor="#193CB8" />
+
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_25">
+
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgfarmer"
+                        android:layout_width="@dimen/height_120"
+                        android:layout_height="@dimen/height_120"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_circle_user_profile"
+                        android:tag="0"
+                        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+                        app:strokeColor="@color/txt_grey_color"
+                        app:strokeWidth="1dp" />
+
+
+                    <ImageView
+                        android:id="@+id/imgCamera"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_alignEnd="@+id/imgfarmer"
+                        android:layout_alignBottom="@+id/imgfarmer"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:padding="@dimen/padding_2"
+                        android:scaleType="fitEnd"
+                        android:src="@drawable/ic_camera_icons" />
+
+
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvgender"
+                        style="@style/medium_dark_gray_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/respondent_name"
+                        app:drawableEndCompat="@drawable/ic_mantory_label" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layGender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:background="@drawable/bg_background_edit_text_rounded_edge_black"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/etFarmerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_marginEnd="@dimen/margin_2"
+                        android:background="@null"
+                        android:hint="@string/farmer_hint"
+                        android:inputType="textPersonName"
+                        android:textSize="@dimen/txt_size_14" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/medium_dark_gray_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/gender"
+                        app:drawableEndCompat="@drawable/ic_mantory_label" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:background="@drawable/bg_background_edit_text_rounded_edge_black"
+                    android:orientation="horizontal">
+
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etgender"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_marginEnd="@dimen/margin_2"
+                        android:background="@null"
+                        android:drawableEnd="@drawable/ic_drop_down_icons"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:cursorVisible="false"
+                        android:hint="@string/gender"
+                        android:inputType="none"
+                        android:maxLength="10"
+                        android:textSize="@dimen/txt_size_14" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/tvPhonenumber"
+                        style="@style/medium_dark_gray_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/phone_number"
+                        app:drawableEndCompat="@drawable/ic_mantory_label" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:layout_marginBottom="@dimen/margin_4"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+
+                    <EditText
+                        android:id="@+id/etCountryCode"
+                        style="@style/edittext"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_weight="0.3"
+                        android:gravity="center"
+                        android:importantForAutofill="no"
+                        android:inputType="numberDecimal"
+                        android:maxLength="10"
+                        android:text="+91"
+                        android:textSize="@dimen/txt_size_14" />
+
+
+                    <EditText
+                        android:id="@+id/etMobileNumber"
+                        style="@style/edittext"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:hint="@string/mobile_number"
+                        android:importantForAutofill="no"
+                        android:inputType="number"
+                        android:maxLength="10"
+                        android:textSize="@dimen/txt_size_14" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvEmailId"
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/emailid" />
+
+                    <TextView
+                        style="@style/small_glory_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/optional"
+                        android:textColor="@color/gray_D0D5DD" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:id="@+id/layYearOfJoining"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+
+                        <EditText
+                            android:id="@+id/etEmailId"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@color/white"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:hint="example@email.com"
+                            android:importantForAutofill="no"
+                            android:inputType="textEmailAddress"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvDob"
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dob" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:id="@+id/layDateOfBirth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_4"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/etdateofbirth"
+                            style="@style/edittext"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_weight="1"
+                            android:drawableEnd="@drawable/ic_calendar"
+                            android:focusable="false"
+                            android:hint="@string/select_dob"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:tag="0"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvMartialStatus"
+                        style="@style/medium_black_medium_tv"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/country" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/layMartialStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:background="@drawable/bg_background_edit_text_rounded_edge_black"
+                    android:orientation="horizontal">
+
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etmartialstatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_40"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:layout_marginEnd="@dimen/margin_2"
+                        android:background="@null"
+                        android:drawableEnd="@drawable/ic_drop_down_icons"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:cursorVisible="false"
+                        android:hint="@string/select_country"
+                        android:importantForAutofill="no"
+                        android:inputType="none"
+                        android:textSize="@dimen/txt_size_14" />
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvProduct"
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:layout_height="wrap_content"
+                        android:text="@string/respondent_profile" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etproduct"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@null"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:cursorVisible="false"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:hint="@string/select_profile"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvnoofchild"
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/business_unit"
+                        app:drawableEndCompat="@drawable/ic_mantory_label" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:id="@+id/layNoofChildren"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etBusineesUnit"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@color/white"
+                            android:drawableEnd="@drawable/ic_drop_down_icons"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:focusable="true"
+                            android:hint="@string/select_business_unit"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/region" />
+
+                    <TextView
+                        style="@style/small_glory_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:visibility="gone"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/optional"
+                        android:textColor="@color/gray_D0D5DD" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etRegionMain"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@color/white"
+                            android:drawableEnd="@drawable/ic_drop_down_icons"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:cursorVisible="false"
+                            android:hint="@string/select_region"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/district" />
+
+                    <TextView
+                        style="@style/small_glory_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:visibility="gone"
+                        android:text="@string/optional"
+                        android:textColor="@color/gray_D0D5DD" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etDistrict"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@color/white"
+                            android:drawableEnd="@drawable/ic_drop_down_icons"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:cursorVisible="false"
+                            android:hint="@string/select_zone"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_18"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/medium_black_medium_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:drawableEndCompat="@drawable/ic_mantory_label"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/place" />
+
+                    <TextView
+                        style="@style/small_glory_tv"
+                        android:layout_width="wrap_content"
+                        android:visibility="gone"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_8"
+                        android:drawablePadding="@dimen/padding_2"
+                        android:text="@string/optional"
+                        android:textColor="@color/gray_D0D5DD" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:baselineAligned="false"
+                    android:layout_marginBottom="@dimen/margin_6"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_background_edit_text_rounded_edge_black">
+
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etPlace"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/height_40"
+                            android:layout_marginStart="@dimen/margin_8"
+                            android:layout_marginTop="@dimen/margin_2"
+                            android:layout_marginEnd="@dimen/margin_2"
+                            android:layout_marginBottom="@dimen/margin_2"
+                            android:background="@color/white"
+                            android:drawableEnd="@drawable/ic_drop_down_icons"
+                            android:drawablePadding="@dimen/padding_6"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:cursorVisible="false"
+                            android:hint="@string/select_section"
+                            android:importantForAutofill="no"
+                            android:inputType="none"
+                            android:padding="1dp"
+                            android:singleLine="true"
+                            android:textSize="@dimen/txt_size_14" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+
+
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+
+
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:paddingBottom="@dimen/bottom_nav_padding"
+            android:orientation="vertical"
+            android:id="@+id/layBottom"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/width_05"
+                android:layout_marginTop="@dimen/margin_16"
+                android:background="@color/gray_view_bg"
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/layFilter"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_40"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginBottom="@dimen/margin_12"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:background="@drawable/rounded_primary_fully_edge">
+
+                <TextView
+                    style="@style/medium_white_medium_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/register_continue_to_survey" />
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+            <TextView
+                style="@style/medium_white_medium_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:textColor="@color/colorGrayDi"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/by_registering_you_confirm_that_all_information_provided_is_accurate" />
+
+
+
+        </LinearLayout>
+
+
+
+
+    </RelativeLayout>
+
+
+</layout>

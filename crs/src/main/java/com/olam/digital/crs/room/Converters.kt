@@ -19,4 +19,15 @@ class Converters {
     fun toIntList(data: String): List<Int> =
         if (data.isEmpty()) emptyList()
         else data.split(",").map { it.toInt() }
+
+    @TypeConverter
+    fun fromString(value: String?): List<String>? {
+        return value?.split(",")
+    }
+
+    @TypeConverter
+    fun listToString(list: List<String>?): String? {
+        return list?.joinToString(",")
+    }
+
 }

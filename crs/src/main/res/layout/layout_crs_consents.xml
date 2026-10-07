@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
+        <import type="com.olam.digital.crs.model.ContentType"/>
+         <variable
+            name="action"
+            type="com.olam.digital.crs.model.ContentType" />
 
     </data>
 
@@ -17,7 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/margin_24"
             android:background="@color/colorPrimary">
 
             <ImageView
@@ -66,7 +71,13 @@
 
 
 
+
+
+
+
+
         <androidx.core.widget.NestedScrollView
+            android:layout_above="@+id/layBottom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/mTopView"
@@ -87,87 +98,94 @@
                     android:layout_marginEnd="@dimen/margin_16"
                     app:cardCornerRadius="@dimen/margin_4">
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content">
 
-
+                        <!-- Title -->
                         <TextView
+                            android:id="@+id/tvTitle"
                             style="@style/regular_large_tv"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_16"
                             android:layout_marginTop="@dimen/margin_8"
+                            android:layout_marginEnd="@dimen/margin_16"
                             android:text="@string/survey_information"
                             app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-
-                        <RelativeLayout
+                        <!-- Survey Name Row -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/rowSurvey"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_8">
-
+                            app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
                             <TextView
-                                style="@style/regular_medium_tv"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/txtSurvey"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
+                                android:text="@string/survey_name"
+                                android:textColor="#4A5565"
                                 android:layout_marginStart="@dimen/margin_16"
-                                android:text="@string/survey_id"
-                                android:textColor="#4A5565"
-                                app:layout_constraintStart_toStartOf="parent" />
-
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/txtSurveyValue"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBaseline_toBaselineOf="@id/txtSurveyValue"/>
 
                             <TextView
-                                android:id="@+id/txtSurveyId"
-                                style="@style/regular_medium_tv"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/txtSurveyValue"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_marginEnd="@dimen/margin_16"
                                 android:textColor="#4A5565"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="SRV001" />
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:maxWidth="@dimen/width_250"
+                                tools:text="AgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrowth StudyAgriGrow"
+                                android:layout_marginStart="@dimen/margin_8"
+                                android:layout_marginEnd="@dimen/margin_16"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBaseline_toBaselineOf="@id/txtSurvey" />
 
-                        </RelativeLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <RelativeLayout
+
+                        <!-- Respondent Row (same pattern) -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/rowRespondent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_8"
-                            android:layout_marginBottom="@dimen/margin_16">
-
+                            app:layout_constraintTop_toBottomOf="@id/rowSurvey">
 
                             <TextView
-                                style="@style/regular_medium_tv"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/txtRespondent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
+                                android:text="@string/respondent_id"
+                                android:textColor="#4A5565"
+                                app:layout_constraintTop_toTopOf="parent"
                                 android:layout_marginStart="@dimen/margin_16"
-                                android:text="@string/farmer_id"
-                                android:textColor="#4A5565"
-                                app:layout_constraintStart_toStartOf="parent" />
-
+                                app:layout_constraintStart_toStartOf="parent"
+                                 />
 
                             <TextView
-                                android:id="@+id/txtFarmerId"
-                                style="@style/regular_medium_tv"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/txtRespondentValue"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_marginEnd="@dimen/margin_16"
                                 android:textColor="#4A5565"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="SRV001" />
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                tools:text="CD-02483948-23223"
+                                android:layout_marginStart="@dimen/margin_8"
+                                android:layout_marginEnd="@dimen/margin_16"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBaseline_toBaselineOf="@id/txtRespondent" />
 
-                        </RelativeLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                    </LinearLayout>
-
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
 
@@ -175,6 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_16"
+                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="@dimen/margin_12"
                     android:layout_marginEnd="@dimen/margin_16"
                     app:cardCornerRadius="@dimen/margin_4">
@@ -182,7 +201,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical">
 
                         <TextView
@@ -212,19 +231,90 @@
                         <TextView
                             android:id="@+id/txtSurveyContent"
                             style="@style/regular_medium_tv"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_28"
+                            android:layout_marginStart="@dimen/margin_16"
+                            tools:visibility="gone"
                             android:layout_marginTop="@dimen/margin_6"
                             android:layout_marginEnd="@dimen/margin_16"
+                            android:visibility='@{(action==ContentType.TEXT)? View.VISIBLE : View.GONE,default=gone}'
                             android:layout_marginBottom="@dimen/margin_12"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
                             android:lineSpacingExtra="3sp"
                             android:maxHeight="@dimen/height_150"
                             android:scrollbars="vertical"
                             android:textColor="#4A5565"
                             app:layout_constraintStart_toStartOf="parent"
-                            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+                            tools:text="form test
+
+Curiosity is often described as the spark that ignites human progress. It is the quiet but persistent voice that asks, “Why?” and “What if?” From the earliest cave paintings to the latest breakthroughs in artificial intelligence, curiosity has been the invisible thread connecting generations of thinkers, dreamers, and builders. Without it, humanity would remain stagnant, content with the familiar rather than daring to explore the unknown.
+
+At its core, curiosity is not simply about gathering facts. It is about cultivating a mindset that embraces uncertainty and welcomes discovery. A curious person sees obstacles not as barriers but as puzzles waiting to be solved. This perspective transforms challenges into opportunities, allowing innovation to flourish. Consider the explorers who sailed across uncharted oceans, the scientists who peered through telescopes to map the stars, or the children who dismantle toys just to see how they work. Each act of curiosity expands the boundaries of what is possible.
+
+Yet curiosity is fragile. It can be stifled by fear of failure, rigid systems, or environments that discourage questioning. When curiosity is suppressed, creativity diminishes, and progress slows. That is why nurturing curiosity is essential in schools, workplaces, and communities. Encouraging questions, rewarding exploration, and valuing diverse perspectives create cultures where curiosity thrives.
+
+In today’s world, curiosity is more important than ever. Technology evolves at breathtaking speed, global challenges demand fresh solutions, and knowledge expands exponentially. To navigate this complexity, we must remain curious — not only about science and innovation but also about each other. Curiosity about different cultures, experiences, and viewpoints fosters empathy and bridges divides.
+
+Ultimately, curiosity is both a personal compass and a collective force. It guides individuals toward growth and societies toward advancement. To be curious is to be alive, engaged, and open to the endless possibilities that the universe offers." />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/pdfRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            tools:visibility="gone"
+                            android:layout_marginBottom="@dimen/margin_12"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:lineSpacingExtra="3sp"
+                            android:maxHeight="@dimen/height_150"
+                            android:scrollbars="vertical"
+                            android:textColor="#4A5565"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:visibility="@{(action==ContentType.PDF)? View.VISIBLE : View.GONE}"/>
+
+
+                        <ImageView
+                            android:id="@+id/pdfImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:contentDescription="@string/consent_agreement"
+                            tools:visibility="visible"
+                            android:layout_marginBottom="@dimen/margin_12"
+                            android:focusable="true"
+                            android:src="@drawable/circular_image_view"
+                            android:focusableInTouchMode="true"
+                            android:lineSpacingExtra="3sp"
+                            android:maxHeight="@dimen/height_150"
+                            android:scrollbars="vertical"
+                            android:textColor="#4A5565"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:visibility="@{(action==ContentType.IMAGE)? View.VISIBLE : View.GONE}"/>
+
+
+
+                        <WebView
+                            android:id="@+id/docWebView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_16"
+                            android:layout_marginTop="@dimen/margin_6"
+                            android:layout_marginEnd="@dimen/margin_16"
+                            android:layout_marginBottom="@dimen/margin_12"
+                            android:contentDescription="@string/consent_agreement"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:maxHeight="@dimen/height_150"
+                            android:scrollbars="vertical"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:visibility="@{(action==ContentType.DOCUMENT)? View.VISIBLE : View.GONE}" />
 
 
                         <TextView
@@ -364,35 +454,50 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
                 </androidx.cardview.widget.CardView>
 
 
-                <RelativeLayout
-                    android:id="@+id/layBottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_36"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="@dimen/margin_16"
-                    android:layout_marginEnd="@dimen/margin_16"
-                    android:layout_marginBottom="@dimen/margin_12"
-                    android:alpha="0.8"
-                    android:background="@drawable/bg_button_color">
 
-                    <TextView
-                        style="@style/regular_medium_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_12"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:lineSpacingExtra="6sp"
-                        android:text="@string/provide_consent_continue"
-                        android:textColor="@color/white"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </RelativeLayout>
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"/>
+
+
+        <RelativeLayout
+            android:id="@+id/layBottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_44"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_50"
+            android:alpha="0.8"
+            android:background="@drawable/bg_button_color">
+
+            <TextView
+                style="@style/regular_medium_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_16"
+                android:lineSpacingExtra="6sp"
+                android:text="@string/provide_consent_continue"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </RelativeLayout>
+
 
 
 

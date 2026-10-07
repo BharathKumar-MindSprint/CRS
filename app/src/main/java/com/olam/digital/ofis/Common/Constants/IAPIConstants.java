@@ -56,12 +56,16 @@ public interface IAPIConstants {
     String DM_SAVE_FOLLOWUP_SURVEY = "ofissurvey/survey/diagnosticmodule/saveFollowUpData";
     //Survey
     String POST_SURVEY_IMAGE = "ofissurvey/image/upload";
+    String POST_SURVEY_IMAGE_CRS = "storageconnect/api/v1/upload";
     String SUBMIT_SURVEY= "ofissurvey/survey/submitSurveyAppModule";
     //CHECK APP VERSION
     String CHECK_APP_VERSION = "ofismaster/master/checkAppVersion";
     String ENUMERATOR_ASSIGNMENT_CHECK = "ofismaster/master/enumeratorAssignmentsCheck";
     String COUNTRY_SPINNERS ="ofisfarmer-data/farmerdata/getcountryspinners";
+    String GET_ALL_CRS_PROFILES ="ofissurvey/survey/getAllCrsProfiles";
+    String GET_ALL_CRS_COMMUNITY_PROFILES ="ofissurvey/survey/getAllCommunityRespondents";
      String GET_ALL_QUESTIONNAIRE_DATA =  "ofissurvey/survey/questionnaire/getAllQuestionnaireData";
+     String GET_ALL_CONDITIONAL_QUESTION_DETAILS =  "ofissurvey/survey/crsQuestionnaire/conditionalQuestionDetails";
      String GET_ALL_QUESTIONNAIRE_DATA_OGA =  "ofissurvey/survey/crsSurvey/questionnaire/getAllQuestionnaireData";
 
      String GET_MODULE_IDS_BY_ENUMERATOR_ID = "ofissurvey/survey/questionnaire/getModuleIdsByEnumeratorId";
@@ -90,4 +94,10 @@ public interface IAPIConstants {
     String POST_UPDATE_FARMER = "ofisfarmer/farmer/updateFarmerDetailsFromApp";
     String SAVE_UPDATE_PHONE_NATIONAL = "ofisfarmer/farmer/saveOrUpdatePhNumAndNatId";
 
+    String SUBMIT_CRS_SURVEY = "ofissurvey/survey/submitCRSSurveyAppModule";
+    String SUBMIT_CRS_SURVEY_COMMUNITy = "ofissurvey/survey/submitCRSCommunitySurveyApp";
+    String SUBMIT_CRS_RESPONDENT_SAVE = "ofissurvey/survey/crsRespondentProfile/save";
+
+
+    String ALREADY_SUBMITED_CRS_SURVEY="ofissurvey/survey/questionnaire/getCRSModuleIdsByEnumeratorId";
 }
